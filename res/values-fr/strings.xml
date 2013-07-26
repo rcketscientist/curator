@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid</string>
+<string name="positive">Accepter</string>
+<string name="negative">Refuser</string>
+<string name="neutral">Annuler</string>
+<string name="DecodeAll">Tout décoder</string>
+<string name="file">Fichier</string>
+<string name="save_as">Enregistrer sous ...</string>
+<string name="wallpaper">Enregister comme fond d\\\'écran</string>
+<string name="edit">Editer avec ...</string>
+<string name="multi_select">Selection multipe</string>
+<string name="help">Aide</string>
+<string name="delete">Effacer</string>
+<string name="view_tag">Mots-clés</string>
+<string name="menu_exit">Quitter</string>
+<string name="button_Recent">Récent</string>
+<string name="accessDenied">Accès refusé</string>
+<string name="grid_reset">Réinitialiser l\\\'imager</string>
+<string name="bad_source">Fichier source introuvable</string>
+<string name="rename">Renommer</string>
+<string name="format_prompt">Format</string>
+<string name="save">Enregistrer</string>
+<string name="save_success">Enregistrement réussi</string>
+<string name="save_fail">Enregistrement impossible</string>
+<string name="decode_locked">L\\\'appli a rencontré un problème, redémarrage exigé. Utiliser \\\"Recent\\\" pour revenir au répertoire précédent. Si le problème persiste envoyer un email à rawddroid@anthonymandra.</string>
+<string name="no_filemanager_installed">Aucun gestionnaire de fichier</string>
+
+<string-array name="format_array">
+<item>Nom personnalisé - séquence</item>
+<item>Nom personnalisé(x sur y)</item>
+<!-- <item>Custom Name - Original Number</item> -->
+</string-array>
+
+<string name="Date">Date</string>
+<string name="Name">Nom</string>
+<string name="settings">Options</string>
+<string name="importKeywords">Import mots-clés</string>
+<string name="importImages">Import images</string>
+<string name="chooseDestination">Choisissez la destination</string>
+<string name="choosefile">Choisissez le fichier</string>
+<string name="import1">Import</string>
+<string name="all">TOUS</string>
+<string name="selected">SELECTIONNE</string>
+<string name="renameImages"> Renommer %1s images</string>
+<string name="view">visualiser</string>
+<string name="gallery">Gallerie</string>
+<string name="image">Image</string>
+
+<!-- Error Messages -->
+<string name="errorKeywordRequired">Chargement du fichier de mots-clés requis</string>
+
+<!-- Meta -->
+<string name="altitude">Altitude</string>
+<string name="aperture">Ouverture</string>
+<string name="dimensions">Dimensions</string>
+<string name="driveMode">Mode de prise de vue</string>
+<string name="expMode">Mode d\\\'exposition</string>
+<string name="expProgram">Mode programme</string>
+<string name="exposure">Exposition</string>
+<string name="flash">Flash</string>
+<string name="focalLength">Distance focale</string>
+<string name="iso">ISO</string>
+<string name="latitude">Latitude</string>
+<string name="lens">Objectif</string>
+<string name="longitude">Longitude</string>
+<string name="model">Modèle</string>
+<string name="whiteBalance">Balance des blancs</string>
+<string name="metadata">Métadonnée</string>
+
+<!-- Results -->
+<string name="resultImportSuccessful">Import réussi.</string>
+<string name="resultImportFailed">Import impossible.</string>
+<string name="resultDeleteSucceded">Les images sélectionnées ont été supprimées.</string>
+<string name="resultWallpaperFailed">Changement du fond d\\\\\'écran impossible.</string>
+
+<!-- Warnings -->
+<string name="warningNoFolderDecoded">Vous n\\\'avez pas encore décodé de répertoire.</string>
+<string name="warningFileWrongFormat">Format de fichier incorrect.</string>
+<string name="warningNoItemsSelected">Aucun objet sélectionné.</string>
+<string name="warningInvalidPath">Le chemin n\\\'est plus accessible. Redémarrage...</string>
+<string name="warningNotEnoughSpace">Espace libre insuffisant pour importer tout le répertoire.</string>
+
+<!-- Preferences -->
+<string name="prefTitleImageInterface">Affichage auto de l\\\'interface</string>
+<string name="prefSummaryImageInterface">au changement d\\\\\'image</string>
+
+
+<!-- Colors for xmp -->
+<string name="red">Rouge</string>
+<string name="green">Vert</string>
+<string name="blue">Bleu</string>
+<string name="cyan">Cyan</string>
+<string name="purple">Pourpre</string>
+<string name="yellow">Jaune</string>
+
+<!-- Tutorials -->
+
+</resources>

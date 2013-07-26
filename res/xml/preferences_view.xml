@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/gallery" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="prefKeyShowXmpFiles"
+            android:summary="@string/prefSummaryShowXmpFiles"
+            android:title="@string/prefTitleShowXmpFiles" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="prefKeyShowNativeFiles"
+            android:summary="@string/prefSummaryShowNativeFiles"
+            android:title="@string/prefTitleShowNativeFiles" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="prefKeyShowUnknownFiles"
+            android:summary="@string/prefSummaryShowUnknownFiles"
+            android:title="@string/prefTitleShowUnknownFiles" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/viewer" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefKeyShowImageInterface"
+            android:summary="@string/prefSummaryImageInterface"
+            android:title="@string/prefTitleImageInterface" />
+        <ListPreference
+            android:defaultValue="Automatic"
+            android:key="prefKeyShowNav"
+            android:title="@string/prefTitleShowNav"
+            android:entries="@array/showOptions"
+            android:entryValues="@array/showOptionsResult" />
+        <ListPreference
+            android:defaultValue="Automatic"
+            android:key="prefKeyShowMeta"
+            android:title="@string/prefTitleShowMeta" 
+            android:entries="@array/showOptions"
+            android:entryValues="@array/showOptionsResult"/>
+        <ListPreference
+            android:defaultValue="Automatic"
+            android:key="prefKeyShowHist"
+            android:title="@string/prefTitleShowHist" 
+            android:entries="@array/showOptions"
+            android:entryValues="@array/showOptionsResult"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

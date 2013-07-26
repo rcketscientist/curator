@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MetaTextAppearance">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">14sp</item>
+        <!-- <item name="android:textStyle">bold</item> -->
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+    </style>
+
+    <style name="MetaLabel" parent="@style/MetaTextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:width">100sp</item>
+    </style>
+
+    <style name="MetaField" parent="@style/MetaTextAppearance">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:maxLength">30</item>
+    </style>
+
+    <style name="ButtonText">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
+    <style name="ButtonColorKey">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="GalleryShowcaseTheme" parent="ShowcaseView.Light">
+        <item name="backgroundColor">#B4FFFFFF</item>
+        <item name="titleTextColor">#ffbb33</item>
+        <item name="detailTextColor">#000000</item>
+       <!--  <item name="backgroundColor">#33ffbb33</item> -->
+    </style>
+
+    <style name="GalleryTheme" parent="@style/Theme.Sherlock">
+        <item name="showcaseViewStyle">@style/GalleryShowcaseTheme</item>
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+
+    <style name="PhotoGridLayout">
+        <item name="android:drawSelectorOnTop">true</item>
+        <item name="android:listSelector">@drawable/photogrid_list_selector</item>
+    </style>
+
+</resources>

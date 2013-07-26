@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <Preference android:title="@string/storage" >
+        <intent
+            android:action="com.anthonymandra.rawdroid.PREFS_STORAGE"
+            android:targetClass="com.anthonymandra.rawdroid.FullSettingsActivity"
+            android:targetPackage="com.anthonymandra.rawdroid" />
+    </Preference>
+    <Preference android:title="@string/view" >
+        <intent
+            android:action="com.anthonymandra.rawdroid.PREFS_VIEW"
+            android:targetClass="com.anthonymandra.rawdroid.FullSettingsActivity"
+            android:targetPackage="com.anthonymandra.rawdroid" />
+    </Preference>
+    <Preference android:title="@string/metadata" >
+        <intent
+            android:action="com.anthonymandra.rawdroid.PREFS_METADATA"
+            android:targetClass="com.anthonymandra.rawdroid.FullSettingsActivity"
+            android:targetPackage="com.anthonymandra.rawdroid" />
+    </Preference>
+
+</PreferenceScreen>

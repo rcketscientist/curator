@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="Transparent_Black">#3000</color>
+    <color name="Black_Medium">#171717</color>
+    <color name="Black_Highlight">#343434</color>
+    <color name="grid_state_pressed">#BB7dbcd3</color>
+    <color name="grid_state_focused">#777dbcd3</color>
+    <color name="brightGreen">#00FF00</color>
+
+</resources>

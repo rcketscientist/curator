@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="showOptionsResult">
+        <item>Automatic</item>
+        <item>Always</item>
+        <item>Never</item>
+    </string-array>
+    
+    <string-array name="testArray">
+        <item>Test1</item>
+        <item>Test2</item>
+        <item>Test3</item>
+    </string-array>
+</resources>

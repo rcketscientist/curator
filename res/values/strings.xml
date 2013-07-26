@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RawDroid</string>
+    <string name="positive">Accept</string>
+    <string name="negative">Decline</string>
+    <string name="neutral">Cancel</string>
+    <string name="DecodeAll">Decode All</string>
+    <string name="file">File</string>
+    <string name="save_as">Save as...</string>
+    <string name="export">Export</string>
+    <string name="wallpaper">Set as wallpaper</string>
+    <string name="edit">Edit with...</string>
+    <string name="multi_select">Multi-Select</string>
+    <string name="selectAll">Select All</string>
+    <string name="help">Help</string>
+    <string name="delete">Delete</string>
+    <string name="view_tag">Tag</string>
+    <string name="menu_exit">Exit</string>
+    <string name="button_Recent">Recent</string>
+    <string name="lastUsedFolder">Last Used Folder</string>
+    <string name="accessDenied">Access denied</string>
+    <string name="grid_reset">Reset Image</string>
+    <string name="bad_source">Source file could not be found</string>
+    <string name="rename">Rename</string>
+    <string name="format_prompt">Format</string>
+    <string name="save">Save</string>
+    <string name="save_success">Save successful</string>
+    <string name="save_fail">Save failed</string>
+    <string name="decode_locked">Decoder has frozen, restart required. Use "Recent" to jump back to this folder.  If this continues please email rawdroid@anthonymandra.com.</string>
+    <string name="no_filemanager_installed">No file manager</string>
+
+    <string-array name="format_array">
+        <item>Custom Name - Sequence</item>
+        <item>Custom Name (x of y)</item>
+        <!-- <item>Custom Name - Original Number</item> -->
+    </string-array>
+
+    <string name="Date">Date</string>
+    <string name="Name">Name</string>
+    <string name="settings">Settings</string>
+    <string name="importKeywords">Import Keywords</string>
+    <string name="importImages">Import Images</string>
+    <string name="chooseDestination">Choose Destination</string>
+    <string name="choosefile">Choose File</string>
+    <string name="import1">Import</string>
+    <string name="all">ALL</string>
+    <string name="selected">SELECTED</string>
+    <string name="renameImages">Rename %1$s Images</string>
+    <string name="exportThumbsFormat">Export %1$s Thumbnails</string>
+    <string name="view">View</string>
+    <string name="gallery">Gallery</string>
+    <string name="viewer">Viewer</string>
+    <string name="image">Image</string>
+    <string name="storage">Storage</string>
+    <string name="firstImage">First Image</string>
+    <string name="lastImage">Last Image</string>
+    <string name="licensed">licensed</string>
+    <string name="unlicensed">unlicensed</string>
+
+    <!-- Error Messages -->
+    <string name="errorKeywordRequired">Invalid keyword file</string>
+
+    <!-- Meta -->
+    <string name="altitude">Altitude</string>
+    <string name="aperture">Aperture</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="driveMode">Drive Mode</string>
+    <string name="expMode">Exp. Mode</string>
+    <string name="expProgram">Exp. Program</string>
+    <string name="exposure">Exposure</string>
+    <string name="flash">Flash</string>
+    <string name="focalLength">Focal Length</string>
+    <string name="iso">ISO</string>
+    <string name="latitude">Latitude</string>
+    <string name="lens">Lens</string>
+    <string name="longitude">Longitude</string>
+    <string name="model">Model</string>
+    <string name="whiteBalance">White Balance</string>
+    <string name="metadata">Metadata</string>
+    <string name="tutorial">Tutorial</string>
+
+    <!-- Results -->
+    <string name="resultImportSuccessful">Import successful.</string>
+    <string name="resultImportFailed">Import failed.</string>
+    <string name="resultDeleteSucceded">Selected images deleted successfully.</string>
+    <string name="resultWallpaperFailed">Failed to set wallpaper.</string>
+
+    <!-- Warnings -->
+    <string name="warningNoFolderDecoded">You have not decoded a folder yet.</string>
+    <string name="warningFileWrongFormat">File is not the correct format.</string>
+    <string name="warningNoItemsSelected">No items selected.</string>
+    <string name="warningInvalidPath">Path no longer available, restarting...</string>
+    <string name="warningNotEnoughSpace">Not enough space to import entire folder.</string>
+    <string name="warningSourceEqualsDestination">Cannot import into same directory.</string>
+    <string name="warningDeleteExceedsRecycle">Deleted file exceeds recycle bin size.  Delete permananetly?  (Note: Size can be edited in settings)</string>
+    <string name="warningRecycleMtp">Recycle bin does not support usb at this time.  Delete is permanent.</string>
+    <string name="warningDeleteDirect">Files will be deleted directly.</string>
+    <string name="warningNoRecycleBin">Recycle bin does not exist. Files will be deleted directly.</string>
+    <string name="warningGenericImagesOff">Generic images (ex: jpg) have been disabled in settings.</string>
+    <string name="warningInvalidMeta">Invalid metadata (Please email offending file).</string>
+    <string name="warningInvalidLabel">Invalid label "%1$s".  Labels can be customized in settings.</string>
+    <string name="warningInvalidSidebar">Sidebar instance has become invalid, please reopen.</string>
+    <string name="warningNoUSB">No usb media found.  If you know the device is mounted, please email rawdroid@anthonymandra.com with the location for addition.</string>
+    <string name="warningLicenseError">License check failed.  Default to previous check: </string>
+    <string name="warningLicenseDeny">License: Enjoy the demo! </string>
+    <string name="warningLicenseAllow">License: Thank you for your support! </string>
+    <string name="warningFailedToGetStream">Warning: Failed to get image stream.  If this continues please email:rawdroid@anthonymandra.com</string>
+    <string name="warningShareFail">Share could not be completed.</string>
+
+    <!-- Preferences -->
+    <string name="prefTitleImageInterface">Automatically display interface</string>
+    <string name="prefSummaryImageInterface">when image changes</string>
+    <string name="prefTitleRecycleBin">Recycle Bin Size</string>
+    <string name="prefSummaryRecycleBin">Space allocated to recycle bin (Default: 50MB, Min: 30MB, Max: 500MB)\nBe careful with size, 500MB is over 6% of an 8GB device!</string>
+    <string name="prefTitleFilter">Exif Filter</string>
+    <string name="prefTitleComingSoon">Coming Soon</string>
+    <string name="prefTitleDeleteConfirmation">Delete Confirmation</string>
+    <string name="prefSummaryDeleteConfirmation">If disabled deletes will not require confirmation even if they exceed recycle bin size.</string>
+    <string name="prefTitleUseRecycleBin">Use Recycle Bin</string>
+    <string name="prefSummaryUseRecycleBin">When disabled images will be directly deleted.</string>
+    <string name="prefTitleShowXmpFiles">Show XMP Files</string>
+    <string name="prefSummaryShowXmpFiles">This will show xmp sidecar files in the gallery.</string>
+    <string name="prefTitleShowNativeFiles">Show Generic Images</string>
+    <string name="prefSummaryShowNativeFiles">This will show jpg, gif, bmp, and png.</string>
+    <string name="prefTitleShowUnknownFiles">Show Unhandled Files</string>
+    <string name="prefSummaryShowUnknownFiles">This will show files that RawDroid does not process.</string>
+    <string name="prefTitleImportKeywords">Import Keywords</string>
+    <string name="prefSummaryImportKeywords">Click to import a tab-delimited keyword file, such as that exported from Lightroom.</string>
+    <string name="prefTitleClearGalleryCache">Clear Gallery Cache</string>
+    <string name="prefSummaryClearGalleryCache">Click to clear the gallery thumbnail cache.</string>
+    <string name="prefTitleShowNav">Show Navigation</string>
+    <string name="prefTitleShowMeta">Show Metadata</string>
+    <string name="prefTitleShowHist">Show Histogram</string>
+    
+    <string-array name="showOptions">
+        <item>Automatic</item>
+        <item>Always</item>
+        <item>Never</item>
+    </string-array>
+    
+    <string name="clearCache">Clear Thumbnail Cache</string>
+    <string name="cacheCleared">Gallery image cache cleared.</string>
+    <string name="accessRecycle">Access Recycle Bin</string>
+    <string name="recycleBin">Recycle Bin</string>
+    <string name="restoreFile">Restore File</string>
+    <string name="emptyRecycleBin">Empty Recycle Bin</string>
+    <string name="exportThumbnails">Export Thumbnails</string>
+    <string name="shareWith">Share with…</string>
+    <string name="ratingRequest">If you enjoy using RawDroid please take a moment to rate it.\n\nIf you\'ve rated based on a bug that is now fixed please update your rating.\n\nThanks for your support!</string>
+    <string name="intentPending">You have an action pending, do you want to continue?</string>
+    <string name="cont">Continue</string>
+    <string name="convertingFiles">Converting Files...</string>
+    <string name="importingImages">Importing Images...</string>
+    <string name="exportingThumb">Exporting Thumbnails...</string>
+    <string name="deletingFiles">Deleting Files...</string>
+    <string name="recyclingFiles">Recycling Files...</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="clear">Clear</string>
+    <string name="write">Write</string>
+    <string name="reuse">Reuse</string>
+    <string name="customKeywords">Custom Keywords</string>
+    <string name="addKeyword">Add Keyword</string>
+    <string name="select">Select</string>
+    <string name="directory">Directory</string>
+    <string name="about">About</string>
+    <string name="usb">Find USB Mount</string>
+    <string name="search">Search</string>
+    <string name="experimental">(Experimental)</string>
+    <string name="imageFolders">Folders Containing Raw Images</string>
+    
+    <!-- Colors for xmp -->
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="cyan">Cyan</string>
+    <string name="purple">Purple</string>
+    <string name="yellow">Yellow</string>
+    
+    <!-- Tutorials -->
+    <string name="tutorialSelect">Long press any image to enter selection mode.</string>
+    <string name="tutorialSelectAll">Alternatively, Select All.</string>
+    <string name="tutorialRecycle">This will open the recycling bin allowing you to restore deleted items.</string>
+    <string name="tutorialRecentFolder">This will go to the most recently decoded folder.</string>
+    <string name="tutorialShare">This will share the selected files with the given application.</string>
+    <string name="tutorialDelete">This will delete all selected images.</string>
+    <string name="tutorialSelectModeTitle">Selection Mode</string>
+    <string name="tutorialSelectMode">We have entered selection mode!</string>
+    <string name="tutorialSelectBetweenTitle">Select Between</string>
+    <string name="tutorialSelectBetween">While in selection mode another long press on an image will select between the last selection.</string>
+    <string name="tutorialRename">This will rename all selected files with a selected template.</string>
+    <string name="tutorialImport">This will import selected images to a new destination.</string>
+    <string name="tutorialExport">This will export selected images as a compressed jpeg thumbnail.</string>
+    <string name="tutorialStart">Welcome to the Rawdroid tutorial!\nI appreciate any feedback, sometimes it is hard to explain an intimate subject to the uninitiated :).</string>
+    <string name="tutorialConnectTitle">How to Connect Images</string>
+    <string name="tutorialConnect1">There are three ways to access data:</string>
+    <string name="tutorialConnect2">1. Fastest: Transfer images to your device via PC connection.  Obviously not an ideal use.</string>
+    <string name="tutorialConnect3">2. Fast: Connect your media card with a card reader and OTG cable.  A single format card reader is best.\n\ta. Some devices will require root.  My nexus did.  I use "StickMount" to connect.  More details on the website.</string>
+    <string name="tutorialConnect3a">\ta. Some devices will require root.  My nexus did.  I use "StickMount" to connect.  More details on the website.</string>
+    <string name="tutorialConnect4">3. Slow: Connect your camera with an OTG cable.  Due to limitations in Android we cannot write to cameras, this will import images to your device.\nYour device must have enough storage.  More details on the website.</string>
+    <string name="tutorialConnect5">4. Eventually I will be adding network support.</string>
+    <string name="tutorialMemoryTitle">Memory Issues</string>
+    <string name="tutorialMemory">If you have an older device that crashes, this is likely due to memory limitations.\nI recommend rooting and using "VM Heap Tool" to allow more memory.</string>
+    <string name="tutorialPath">This is the current path.  You can quickly navigate the drop-down.</string>
+    <string name="tutorialActionLongPressTitle">Action Bar Help</string>
+    <string name="tutorialActionLongPress">Long press action items to see a short description.</string>
+    <string name="tutorialUsbTitle">USB Mount Search</string>
+    <string name="tutorialUsb">This will search known mount points for any USB devices.  If your device is not found please email the mount point ex:"/mnt/weird/device/usb"</string>
+
+</resources>
