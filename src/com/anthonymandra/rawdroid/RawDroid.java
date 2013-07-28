@@ -150,7 +150,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		Util.debugClearCache(this);
 
 		// checkLicense();
-		checkExpiration(8, 1, 2013);
+		checkExpiration(10, 1, 2013);
 		
 		int majorVersion = -1;
 		final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -200,7 +200,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
 
-		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
 
 		getKeywords();
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/ActionBarSherlock.iml" filepath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/ActionBarSherlock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" filepath="$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/Inscription/library/Inscription.iml" filepath="$PROJECT_DIR$/../../rawdroid/Inscription/library/Inscription.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/NineOldAndroids.iml" filepath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/NineOldAndroids.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/ShowcaseView.iml" filepath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/ShowcaseView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/amandra-treeview/amandra-treeview.iml" filepath="$PROJECT_DIR$/../../rawdroid/amandra-treeview/amandra-treeview.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" filepath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
+    </modules>
+  </component>
+</project>
+
