@@ -48,7 +48,7 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="GalleryShowcaseTheme" parent="ShowcaseView.Light">
+    <style name="GalleryShowcaseTheme" parent="@style/ShowcaseView.Light">
         <item name="backgroundColor">#B4FFFFFF</item>
         <item name="titleTextColor">#ffbb33</item>
         <item name="detailTextColor">#000000</item>

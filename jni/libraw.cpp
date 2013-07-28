@@ -411,14 +411,14 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromFil
 //	__android_log_print(ANDROID_LOG_INFO, "JNI", "unpack = %d", result);
 	if (result != LIBRAW_SUCCESS)
 	{
-		__android_log_print(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
+		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
 		return NULL;
 	}
 	libraw_processed_image_t *image = RawProcessor.dcraw_make_mem_thumb(&result);
 //	__android_log_print(ANDROID_LOG_INFO, "JNI", "make thumb = %d", result);
 	if (result != LIBRAW_SUCCESS)
 	{
-		__android_log_print(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
+		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
 		return NULL;
 	}
 
