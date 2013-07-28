@@ -121,7 +121,9 @@ public class CameraImport extends Activity
 		protected void onPreExecute()
 		{		
 			MtpDeviceInfo info = mMtpDevice.getDeviceInfo();
-			String title = info.getManufacturer() + " " + info.getModel();
+            String title = "Import";
+            if (info != null)
+                 title = info.getManufacturer() + " " + info.getModel();
 			mProgressDialog = new ProgressDialog(CameraImport.this);
 			mProgressDialog.setTitle(title);
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);

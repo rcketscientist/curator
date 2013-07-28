@@ -333,7 +333,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		final WhatsNewDialog whatsNewDialog = new WhatsNewDialog(this);
 		whatsNewDialog.show();
 
-		if (mCurrentPath.exists())
+		if (mCurrentPath != null && mCurrentPath.exists())
 		{
 			updatePath(mCurrentPath);
 			resetScrollLocation();
