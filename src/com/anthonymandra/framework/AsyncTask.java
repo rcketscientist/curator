@@ -614,10 +614,10 @@ public abstract class AsyncTask<Params, Progress, Result>
 		{
 			switch (mStatus)
 			{
-			case RUNNING:
-				throw new IllegalStateException("Cannot execute task:" + " the task is already running.");
-			case FINISHED:
-				throw new IllegalStateException("Cannot execute task:" + " the task has already been executed " + "(a task can be executed only once)");
+				case RUNNING:
+					throw new IllegalStateException("Cannot execute task:" + " the task is already running.");
+				case FINISHED:
+					throw new IllegalStateException("Cannot execute task:" + " the task has already been executed " + "(a task can be executed only once)");
 			}
 		}
 
@@ -685,13 +685,13 @@ public abstract class AsyncTask<Params, Progress, Result>
 			AsyncTaskResult result = (AsyncTaskResult) msg.obj;
 			switch (msg.what)
 			{
-			case MESSAGE_POST_RESULT:
-				// There is only one result
-				result.mTask.finish(result.mData[0]);
-				break;
-			case MESSAGE_POST_PROGRESS:
-				result.mTask.onProgressUpdate(result.mData);
-				break;
+				case MESSAGE_POST_RESULT:
+					// There is only one result
+					result.mTask.finish(result.mData[0]);
+					break;
+				case MESSAGE_POST_PROGRESS:
+					result.mTask.onProgressUpdate(result.mData);
+					break;
 			}
 		}
 	}

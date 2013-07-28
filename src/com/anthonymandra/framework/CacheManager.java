@@ -71,18 +71,18 @@ public abstract class CacheManager
 		{
 			switch ((Integer) params[0])
 			{
-			case MESSAGE_CLEAR:
-				clearCacheInternal();
-				break;
-			case MESSAGE_INIT_DISK_CACHE:
-				initDiskCacheInternal();
-				break;
-			case MESSAGE_FLUSH:
-				flushCacheInternal();
-				break;
-			case MESSAGE_CLOSE:
-				closeCacheInternal();
-				break;
+				case MESSAGE_CLEAR:
+					clearCacheInternal();
+					break;
+				case MESSAGE_INIT_DISK_CACHE:
+					initDiskCacheInternal();
+					break;
+				case MESSAGE_FLUSH:
+					flushCacheInternal();
+					break;
+				case MESSAGE_CLOSE:
+					closeCacheInternal();
+					break;
 			}
 			return null;
 		}

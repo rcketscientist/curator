@@ -54,15 +54,15 @@ public class DownUpDetector
 	{
 		switch (ev.getAction() & MotionEvent.ACTION_MASK)
 		{
-		case MotionEvent.ACTION_DOWN:
-			setState(true, ev);
-			break;
+			case MotionEvent.ACTION_DOWN:
+				setState(true, ev);
+				break;
 
-		case MotionEvent.ACTION_UP:
-		case MotionEvent.ACTION_CANCEL:
-		case MotionEvent.ACTION_POINTER_DOWN: // Multitouch event - abort.
-			setState(false, ev);
-			break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+			case MotionEvent.ACTION_POINTER_DOWN: // Multitouch event - abort.
+				setState(false, ev);
+				break;
 		}
 	}
 

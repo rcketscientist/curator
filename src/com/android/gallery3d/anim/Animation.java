@@ -63,6 +63,10 @@ abstract public class Animation
 		return mStartTime != NO_ANIMATION;
 	}
 
+	public void forceStop()
+	{
+		mStartTime = NO_ANIMATION;
+	}
 	public boolean calculate(long currentTimeMillis)
 	{
 		if (mStartTime == NO_ANIMATION)
@@ -71,16 +75,11 @@ abstract public class Animation
 			mStartTime = currentTimeMillis;
 		int elapse = (int) (currentTimeMillis - mStartTime);
 		float x = Utils.clamp((float) elapse / mDuration, 0f, 1f);
-		onCalculate(mInterpolator != null ? mInterpolator.getInterpolation(x) : x);
+		Interpolator i = mInterpolator;
+		onCalculate(i != null ? i.getInterpolation(x) : x);
 		if (elapse >= mDuration)
-		{
 			mStartTime = NO_ANIMATION;
-			return false;
-		}
-		else
-		{
-			return true;
-		}
+		return mStartTime != NO_ANIMATION;
 	}
 
 	abstract protected void onCalculate(float progress);

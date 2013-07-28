@@ -8,14 +8,17 @@
 <string name="DecodeAll">Tout décoder</string>
 <string name="file">Fichier</string>
 <string name="save_as">Enregistrer sous ...</string>
+<string name="export">Exporter</string>
 <string name="wallpaper">Enregister comme fond d\\\'écran</string>
 <string name="edit">Editer avec ...</string>
-<string name="multi_select">Selection multipe</string>
+<string name="multi_select">Selection multiple</string>
+<string name="selectAll">tout sélectionner</string>
 <string name="help">Aide</string>
 <string name="delete">Effacer</string>
 <string name="view_tag">Mots-clés</string>
 <string name="menu_exit">Quitter</string>
 <string name="button_Recent">Récent</string>
+<string name="lastUsedFolder">Dernier dossier utilisé</string>
 <string name="accessDenied">Accès refusé</string>
 <string name="grid_reset">Réinitialiser l\\\'imager</string>
 <string name="bad_source">Fichier source introuvable</string>
@@ -43,10 +46,14 @@
 <string name="import1">Import</string>
 <string name="all">TOUS</string>
 <string name="selected">SELECTIONNE</string>
-<string name="renameImages"> Renommer %1s images</string>
+<string name="renameImages"> Renommer images</string>
 <string name="view">visualiser</string>
 <string name="gallery">Gallerie</string>
+<string name="viewer">Lecteur</string>
 <string name="image">Image</string>
+<string name="storage">Stockage</string>
+<string name="firstImage">1ere image</string>
+<string name="lastImage">dernière image</string>
 
 <!-- Error Messages -->
 <string name="errorKeywordRequired">Chargement du fichier de mots-clés requis</string>
@@ -68,6 +75,7 @@
 <string name="model">Modèle</string>
 <string name="whiteBalance">Balance des blancs</string>
 <string name="metadata">Métadonnée</string>
+<string name="tutorial">Formation</string>
 
 <!-- Results -->
 <string name="resultImportSuccessful">Import réussi.</string>
@@ -81,11 +89,75 @@
 <string name="warningNoItemsSelected">Aucun objet sélectionné.</string>
 <string name="warningInvalidPath">Le chemin n\\\'est plus accessible. Redémarrage...</string>
 <string name="warningNotEnoughSpace">Espace libre insuffisant pour importer tout le répertoire.</string>
+<string name="warningSourceEqualsDestination">Importation impossible dans le même dossier</string>
+<string name="warningDeleteExceedsRecycle">Les fichiers à détruire ne rentrent pas dans la poubelle. Suppression définitive ? (Note: taille de la poubelle ajustable dans les paramètres)</string>
+<string name="warningRecycleMtp">La poubelle ne traite par l\'USB. La suppression est définitive.</string>
+<string name="warningDeleteDirect">Les fichiers seront détruits immédiatement</string>
+<string name="warningNoRecycleBin">La poubelle n existe pas. Les fihiers seront immédiatement détruits</string>
+<string name="warningGenericImagesOff">Les images génériques (ex:jpg) ont été desactivées dans les paramètres</string>
+<string name="warningInvalidMeta">metadata invalides (merci d\'envoyer le fichier par email)</string>
+<string name="warningNoUSB">Aucun media USB trouvé. Si le prériphérique est connecté, merci d\\\'envoyer un email à rawdroid@anthonymandra.com avec les références</string>
+<string name="warningLicenseError">Vérification de la licence invalide. Restauration de la vérification précédante.</string>
+<string name="warningLicenseDeny">Licence : profitez de la démo !</string>
+<string name="warningLicenseAllow">Licence : merci de votre participation !</string>
+<string name="warningShareFail">Le partage ne peut aboutir.</string>
 
 <!-- Preferences -->
 <string name="prefTitleImageInterface">Affichage auto de l\\\'interface</string>
 <string name="prefSummaryImageInterface">au changement d\\\\\'image</string>
+<string name="prefTitleRecycleBin">taille de la poubelle</string>
+<string name="prefTitleFilter">Filtrage Exif</string>
+<string name="prefTitleComingSoon">C\\\'est pour bientôt</string>
+<string name="prefTitleDeleteConfirmation">onfirmer la suppression</string>
+<string name="prefSummaryDeleteConfirmation">Si desactivé, la suppression sera faite sans confirmation, meme si cela depasse le taille dela poubelle.</string>
+<string name="prefTitleUseRecycleBin">Utilisation de la poubelle</string>
+<string name="prefSummaryUseRecycleBin">Si desactivé les images seront supprimées directement.</string>
+<string name="prefTitleShowXmpFiles">Voir les fichiers XMP</string>
+<string name="prefSummaryShowXmpFiles">Ceci affiche les fichiers xmp dans la gallerie</string>
+<string name="prefTitleShowNativeFiles">Voir les images génériques</string>
+<string name="prefSummaryShowNativeFiles">Ceci montrera jpg,gif,bmp, et png</string>
+<string name="prefTitleShowUnknownFiles">Affiche les fichiers non supportées</string>
+<string name="prefSummaryShowUnknownFiles">Ceci affiche les fichiers non traités par RawDroid</string>
+<string name="prefTitleImportKeywords">Importer les mots clés</string>
+<string name="prefTitleClearGalleryCache">Nettoyer le cache de la Gallerie</string>
+<string name="prefSummaryClearGalleryCache">Cliquer pour supprimer le cache des miniatures.</string>
+<string name="prefTitleShowNav">Afficher la navigation</string>
+<string name="prefTitleShowMeta">Afficher Meta données</string>
+<string name="prefTitleShowHist">Affichier histogramme</string>
 
+<string-array name="showOptions">
+<item>Auto </item>
+<item> Toujours </item>
+<item> jamais</item>
+</string-array>
+<string name="clearCache">Nettoyer le cache des miniatures</string>
+<string name="cacheCleared">Le cache de la Gallerie d\'image est supprimé</string>
+<string name="accessRecycle">Acces à la poubelle</string>
+<string name="recycleBin">Poubelle</string>
+<string name="restoreFile">Restaure le fichier</string>
+<string name="emptyRecycleBin">Vide la poubelle</string>
+<string name="exportThumbnails">Exporte les miniatures</string>
+<string name="shareWith">Partager avec ...</string>
+<string name="intentPending">Vous avez quelque chose en cours, voulez vous contibuer ?</string>
+<string name="cont">Continue</string>
+<string name="convertingFiles">Conversion des fichiers.....</string>
+<string name="importingImages">Importation d\\\'images...</string>
+<string name="exportingThumb">Exportation des miniatures...</string>
+<string name="deletingFiles">Suppression des fichiers...</string>
+<string name="recyclingFiles">Recyclage des fichiers...</string>
+<string name="cancelled">Annulé</string>
+<string name="clear">Supprimé</string>
+<string name="write">Ecriture</string>
+<string name="reuse">Réutilisation</string>
+<string name="customKeywords">Mot clés personnalisés</string>
+<string name="addKeyword">Ajout de Mots clés</string>
+<string name="select">Choix</string>
+<string name="directory">Dossier</string>
+<string name="about">A propos</string>
+<string name="usb">USB trouvé</string>
+<string name="search">Recherche</string>
+<string name="experimental">experimantal</string>
+<string name="imageFolders">Dossier contenant des images RAW</string>
 
 <!-- Colors for xmp -->
 <string name="red">Rouge</string>
@@ -96,5 +168,11 @@
 <string name="yellow">Jaune</string>
 
 <!-- Tutorials -->
+<string name="tutorialSelect">Appuie long pour activer le mode séléction</string>
+<string name="tutorialRecycle">Ceci ouvre la poubelle, pour permettre de restaurer des fichiers suprimés</string>
+<string name="tutorialSelectModeTitle">Mode séléction</string>
+<string name="tutorialSelectBetweenTitle">Choisir entre</string>
+<string name="tutorialConnect1">Il y a trois façon d\\\'acceder aux données</string>
+<string name="tutorialUsbTitle">Recherche périphérique USB.</string>
 
 </resources>

@@ -16,17 +16,18 @@
 
 package com.android.gallery3d.ui;
 
-import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;
 
-import com.android.gallery3d.ui.UploadedTexture.DeadBitmapException;
-import com.android.gallery3d.util.Utils;
+import android.util.Log;
+
+import com.android.gallery3d.common.Utils;
 
 // BasicTexture is a Texture corresponds to a real GL texture.
 // The state of a BasicTexture indicates whether its data is loaded to GL memory.
 // If a BasicTexture is loaded into GL memory, it has a GL texture id.
 abstract class BasicTexture implements Texture
 {
+
 	@SuppressWarnings("unused")
 	private static final String TAG = "BasicTexture";
 	protected static final int UNSPECIFIED = -1;
@@ -34,6 +35,8 @@ abstract class BasicTexture implements Texture
 	protected static final int STATE_UNLOADED = 0;
 	protected static final int STATE_LOADED = 1;
 	protected static final int STATE_ERROR = -1;
+
+	private static final int MAX_TEXTURE_SIZE = 2048;
 
 	protected int mId;
 	protected int mState;
@@ -44,7 +47,9 @@ abstract class BasicTexture implements Texture
 	private int mTextureWidth;
 	private int mTextureHeight;
 
-	protected WeakReference<GLCanvas> mCanvasRef = null;
+	private boolean mHasBorder;
+
+	protected GLCanvas mCanvasRef = null;
 	private static WeakHashMap<BasicTexture, Object> sAllTextures = new WeakHashMap<BasicTexture, Object>();
 	private static ThreadLocal sInFinalizer = new ThreadLocal();
 
@@ -66,7 +71,7 @@ abstract class BasicTexture implements Texture
 
 	protected void setAssociatedCanvas(GLCanvas canvas)
 	{
-		mCanvasRef = canvas == null ? null : new WeakReference<GLCanvas>(canvas);
+		mCanvasRef = canvas;
 	}
 
 	/**
@@ -78,6 +83,10 @@ abstract class BasicTexture implements Texture
 		mHeight = height;
 		mTextureWidth = Utils.nextPowerOf2(width);
 		mTextureHeight = Utils.nextPowerOf2(height);
+		if (mTextureWidth > MAX_TEXTURE_SIZE || mTextureHeight > MAX_TEXTURE_SIZE)
+		{
+			Log.w(TAG, String.format("texture is too large: %d x %d", mTextureWidth, mTextureHeight), new Exception());
+		}
 	}
 
 	public int getId()
@@ -85,12 +94,12 @@ abstract class BasicTexture implements Texture
 		return mId;
 	}
 
-	public int getWidth() throws DeadBitmapException
+	public int getWidth()
 	{
 		return mWidth;
 	}
 
-	public int getHeight() throws DeadBitmapException
+	public int getHeight()
 	{
 		return mHeight;
 	}
@@ -107,23 +116,47 @@ abstract class BasicTexture implements Texture
 		return mTextureHeight;
 	}
 
-	public void draw(GLCanvas canvas, int x, int y) throws DeadBitmapException
+	// Returns true if the texture has one pixel transparent border around the
+	// actual content. This is used to avoid jigged edges.
+	//
+	// The jigged edges appear because we use GL_CLAMP_TO_EDGE for texture wrap
+	// mode (GL_CLAMP is not available in OpenGL ES), so a pixel partially
+	// covered by the texture will use the color of the edge texel. If we add
+	// the transparent border, the color of the edge texel will be mixed with
+	// appropriate amount of transparent.
+	//
+	// Currently our background is black, so we can draw the thumbnails without
+	// enabling blending.
+	public boolean hasBorder()
+	{
+		return mHasBorder;
+	}
+
+	protected void setBorder(boolean hasBorder)
+	{
+		mHasBorder = hasBorder;
+	}
+
+	public void draw(GLCanvas canvas, int x, int y)
 	{
 		canvas.drawTexture(this, x, y, getWidth(), getHeight());
 	}
 
-	public void draw(GLCanvas canvas, int x, int y, int w, int h) throws DeadBitmapException
+	public void draw(GLCanvas canvas, int x, int y, int w, int h)
 	{
 		canvas.drawTexture(this, x, y, w, h);
 	}
 
 	// onBind is called before GLCanvas binds this texture.
 	// It should make sure the data is uploaded to GL memory.
-	abstract protected boolean onBind(GLCanvas canvas) throws DeadBitmapException;
+	abstract protected boolean onBind(GLCanvas canvas);
 
-	public boolean isLoaded(GLCanvas canvas)
+	// Returns the GL texture target for this texture (e.g. GL_TEXTURE_2D).
+	abstract protected int getTarget();
+
+	public boolean isLoaded()
 	{
-		return mState == STATE_LOADED && mCanvasRef.get() == canvas;
+		return mState == STATE_LOADED;
 	}
 
 	// recycle() is called when the texture will never be used again,
@@ -145,12 +178,12 @@ abstract class BasicTexture implements Texture
 
 	private void freeResource()
 	{
-		GLCanvas canvas = mCanvasRef == null ? null : mCanvasRef.get();
-		if (canvas != null && isLoaded(canvas))
+		GLCanvas canvas = mCanvasRef;
+		if (canvas != null && isLoaded())
 		{
 			canvas.unloadTexture(this);
 		}
-		mState = BasicTexture.STATE_UNLOADED;
+		mState = STATE_UNLOADED;
 		setAssociatedCanvas(null);
 	}
 
@@ -177,6 +210,18 @@ abstract class BasicTexture implements Texture
 			for (BasicTexture t : sAllTextures.keySet())
 			{
 				t.yield();
+			}
+		}
+	}
+
+	public static void invalidateAllTextures()
+	{
+		synchronized (sAllTextures)
+		{
+			for (BasicTexture t : sAllTextures.keySet())
+			{
+				t.mState = STATE_UNLOADED;
+				t.setAssociatedCanvas(null);
 			}
 		}
 	}

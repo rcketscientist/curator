@@ -63,7 +63,7 @@ public class FormatDialog extends Dialog
 		return (x < 10 ? 1 : (x < 100 ? 2 : (x < 1000 ? 3 : (x < 10000 ? 4 : (x < 100000 ? 5 : (x < 1000000 ? 6 : (x < 10000000 ? 7 : (x < 100000000 ? 8
 				: (x < 1000000000 ? 9 : 10)))))))));
 	}
-	
+
 	private class AcceptListener implements android.view.View.OnClickListener
 	{
 		@Override
@@ -78,22 +78,22 @@ public class FormatDialog extends Dialog
 			{
 				switch (selected)
 				{
-				case 0:
-					for (MediaObject raw : sourceFiles)
-					{
-						++counter;
-						String baseName = customName + "-" + String.format(format, counter);
-						raw.rename(baseName);
-					}
-					break;
-				case 1:
-					for (MediaObject raw : sourceFiles)
-					{
-						++counter;
-						String baseName = customName + " (" + String.format(format, counter) + " of " + total + ")";
-						raw.rename(baseName);
-					}
-					break;
+					case 0:
+						for (MediaObject raw : sourceFiles)
+						{
+							++counter;
+							String baseName = customName + "-" + String.format(format, counter);
+							raw.rename(baseName);
+						}
+						break;
+					case 1:
+						for (MediaObject raw : sourceFiles)
+						{
+							++counter;
+							String baseName = customName + " (" + String.format(format, counter) + " of " + total + ")";
+							raw.rename(baseName);
+						}
+						break;
 				}
 			}
 			responseListener.Response(true);

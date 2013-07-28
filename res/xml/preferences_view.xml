@@ -8,7 +8,7 @@
             android:summary="@string/prefSummaryShowXmpFiles"
             android:title="@string/prefTitleShowXmpFiles" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="prefKeyShowNativeFiles"
             android:summary="@string/prefSummaryShowNativeFiles"
             android:title="@string/prefTitleShowNativeFiles" />

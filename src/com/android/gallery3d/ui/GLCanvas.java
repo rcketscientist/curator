@@ -20,8 +20,6 @@ import javax.microedition.khronos.opengles.GL11;
 
 import android.graphics.RectF;
 
-import com.android.gallery3d.ui.UploadedTexture.DeadBitmapException;
-
 //
 // GLCanvas gives a convenient interface to draw using OpenGL.
 //
@@ -40,13 +38,6 @@ public interface GLCanvas
 	// Clear the drawing buffers. This should only be used by GLRoot.
 	public void clearBuffer();
 
-	// This is the time value used to calculate the animation in the current
-	// frame. The "set" function should only called by GLRoot, and the
-	// "time" parameter must be nonnegative.
-	public void setCurrentAnimationTimeMillis(long time);
-
-	public long currentAnimationTimeMillis();
-
 	// Sets and gets the current alpha, alpha must be in [0, 1].
 	public void setAlpha(float alpha);
 
@@ -57,26 +48,25 @@ public interface GLCanvas
 
 	// Change the current transform matrix.
 	public void translate(float x, float y, float z);
+
 	public void translate(float x, float y);
+
 	public void scale(float sx, float sy, float sz);
+
 	public void rotate(float angle, float x, float y, float z);
 
-	// Modifies the current clip with the specified rectangle.
-	// (current clip) = (current clip) intersect (specified rectangle).
-	// Returns true if the result clip is non-empty.
-	public boolean clipRect(int left, int top, int right, int bottom);
+	public void multiplyMatrix(float[] mMatrix, int offset);
 
-	// Pushes the configuration state (matrix, alpha, and clip) onto
+	// Pushes the configuration state (matrix, and alpha) onto
 	// a private stack.
-	public int save();
+	public void save();
 
 	// Same as save(), but only save those specified in saveFlags.
-	public int save(int saveFlags);
+	public void save(int saveFlags);
 
 	public static final int SAVE_FLAG_ALL = 0xFFFFFFFF;
-	public static final int SAVE_FLAG_CLIP = 0x01;
-	public static final int SAVE_FLAG_ALPHA = 0x02;
-	public static final int SAVE_FLAG_MATRIX = 0x04;
+	public static final int SAVE_FLAG_ALPHA = 0x01;
+	public static final int SAVE_FLAG_MATRIX = 0x02;
 
 	// Pops from the top of the stack as current configuration state (matrix,
 	// alpha, and clip). This call balances a previous call to save(), and is
@@ -84,32 +74,32 @@ public interface GLCanvas
 	// last save call.
 	public void restore();
 
-	// Draws a line using the specified color from (x1, y1) to (x2, y2).
+	// Draws a line using the specified paint from (x1, y1) to (x2, y2).
 	// (Both end points are included).
-	public void drawLine(int x1, int y1, int x2, int y2, int color);
+	public void drawLine(float x1, float y1, float x2, float y2, GLPaint paint);
 
-	// Fills the specified rectange with the specified color.
+	// Draws a rectangle using the specified paint from (x1, y1) to (x2, y2).
+	// (Both end points are included).
+	public void drawRect(float x1, float y1, float x2, float y2, GLPaint paint);
+
+	// Fills the specified rectangle with the specified color.
 	public void fillRect(float x, float y, float width, float height, int color);
 
 	// Draws a texture to the specified rectangle.
-	public void drawTexture(BasicTexture texture, int x, int y, int width, int height) throws DeadBitmapException;
+	public void drawTexture(BasicTexture texture, int x, int y, int width, int height);
 
-	public void drawMesh(BasicTexture tex, int x, int y, int xyBuffer, int uvBuffer, int indexBuffer, int indexCount) throws DeadBitmapException;
+	public void drawMesh(BasicTexture tex, int x, int y, int xyBuffer, int uvBuffer, int indexBuffer, int indexCount);
 
-	// Draws a texture to the specified rectangle. The "alpha" parameter
-	// overrides the current drawing alpha value.
-	public void drawTexture(BasicTexture texture, int x, int y, int width, int height, float alpha) throws DeadBitmapException;
+	// Draws the source rectangle part of the texture to the target rectangle.
+	public void drawTexture(BasicTexture texture, RectF source, RectF target);
 
-	// Draws a the source rectangle part of the texture to the target rectangle.
-	public void drawTexture(BasicTexture texture, RectF source, RectF target) throws DeadBitmapException;
+	// Draw a texture with a specified texture transform.
+	public void drawTexture(BasicTexture texture, float[] mTextureTransform, int x, int y, int w, int h);
 
-	// Draw two textures to the specified rectange. The actual texture used is
+	// Draw two textures to the specified rectangle. The actual texture used is
 	// from * (1 - ratio) + to * ratio
 	// The two textures must have the same size.
-	public void drawMixed(BasicTexture from, BasicTexture to, float ratio, int x, int y, int w, int h) throws DeadBitmapException;
-
-	// Return a texture copied from the specified rectangle.
-	public BasicTexture copyTexture(int x, int y, int width, int height);
+	public void drawMixed(BasicTexture from, int toColor, float ratio, int x, int y, int w, int h);
 
 	// Gets the underlying GL instance. This is used only when direct access to
 	// GL is needed.
@@ -127,4 +117,11 @@ public interface GLCanvas
 	// Delete the textures and buffers in GL side. This function should only be
 	// called in the GL thread.
 	public void deleteRecycledResources();
+
+	// Dump statistics information and clear the counters. For debug only.
+	public void dumpStatisticsAndClear();
+
+	public void beginRenderTarget(RawTexture texture);
+
+	public void endRenderTarget();
 }

@@ -171,7 +171,7 @@ public class ImageCache
 					{
 						diskCacheDir.mkdirs();
 					}
-					if (Utils.getUsableSpace(diskCacheDir) > mCacheParams.diskCacheSize)
+					if (Util.getUsableSpace(diskCacheDir) > mCacheParams.diskCacheSize)
 					{
 						try
 						{
@@ -437,7 +437,7 @@ public class ImageCache
 
 		public ImageCacheParams(Context context, String uniqueName)
 		{
-			diskCacheDir = Utils.getDiskCacheDir(context, uniqueName);
+			diskCacheDir = Util.getDiskCacheDir(context, uniqueName);
 		}
 
 		public ImageCacheParams(File diskCacheDir)
@@ -516,7 +516,7 @@ public class ImageCache
 	@TargetApi(12)
 	public static int getBitmapSize(Bitmap bitmap)
 	{
-		if (Utils.hasHoneycombMR1())
+		if (Util.hasHoneycombMR1())
 		{
 			return bitmap.getByteCount();
 		}

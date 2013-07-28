@@ -16,28 +16,32 @@
 
 package com.android.gallery3d.ui;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Rect;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 
 import com.android.gallery3d.anim.CanvasAnimation;
-import com.android.gallery3d.ui.UploadedTexture.DeadBitmapException;
-import com.android.gallery3d.util.Utils;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.Profile;
 
 // The root component of all <code>GLView</code>s. The rendering is done in GL
 // thread while the event handling is done in the main thread.  To synchronize
@@ -51,42 +55,57 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 {
 	private static final String TAG = "GLRootView";
 
-	private final boolean DEBUG_FPS = false;
+	private static final boolean DEBUG_FPS = false;
 	private int mFrameCount = 0;
 	private long mFrameCountingStart = 0;
 
-	private final boolean DEBUG_INVALIDATE = false;
+	private static final boolean DEBUG_INVALIDATE = false;
 	private int mInvalidateColor = 0;
 
-	private final boolean DEBUG_DRAWING_STAT = false;
+	private static final boolean DEBUG_DRAWING_STAT = false;
+
+	private static final boolean DEBUG_PROFILE = false;
+	private static final boolean DEBUG_PROFILE_SLOW_ONLY = false;
 
 	private static final int FLAG_INITIALIZED = 1;
 	private static final int FLAG_NEED_LAYOUT = 2;
 
 	private GL11 mGL;
-	private GLCanvasImp mCanvas;
-
+	private GLCanvas mCanvas;
 	private GLView mContentView;
-	private DisplayMetrics mDisplayMetrics;
+
+	private OrientationSource mOrientationSource;
+	// mCompensation is the difference between the UI orientation on GLCanvas
+	// and the framework orientation. See OrientationManager for details.
+	private int mCompensation;
+	// mCompensationMatrix maps the coordinates of touch events. It is kept sync
+	// with mCompensation.
+	private Matrix mCompensationMatrix = new Matrix();
+	private int mDisplayRotation;
+
+	// The value which will become mCompensation in next layout.
+	@SuppressWarnings("unused")
+	private int mPendingCompensation;
 
 	private int mFlags = FLAG_NEED_LAYOUT;
 	private volatile boolean mRenderRequested = false;
-
-	private Rect mClipRect = new Rect();
-	private int mClipRetryCount = 0;
 
 	private final GalleryEGLConfigChooser mEglConfigChooser = new GalleryEGLConfigChooser();
 
 	private final ArrayList<CanvasAnimation> mAnimations = new ArrayList<CanvasAnimation>();
 
-	private final LinkedList<OnGLIdleListener> mIdleListeners = new LinkedList<OnGLIdleListener>();
+	private final ArrayDeque<OnGLIdleListener> mIdleListeners = new ArrayDeque<OnGLIdleListener>();
 
 	private final IdleRunner mIdleRunner = new IdleRunner();
 
-	private ReentrantLock mRenderLock = new ReentrantLock();
+	private final ReentrantLock mRenderLock = new ReentrantLock();
+	private final Condition mFreezeCondition = mRenderLock.newCondition();
+	private boolean mFreeze;
 
-	private static final int TARGET_FRAME_TIME = 33;
 	private long mLastDrawFinishTime;
+	private boolean mInDownState = false;
+
+//    private boolean mFirstDraw = true;
 
 	public GLRootView(Context context)
 	{
@@ -100,21 +119,13 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		setBackgroundDrawable(null);
 		setEGLConfigChooser(mEglConfigChooser);
 		setRenderer(this);
+		getHolder().setFormat(PixelFormat.RGB_565);
 
 		// Uncomment this to enable gl error check.
 		// setDebugFlags(DEBUG_CHECK_GL_ERROR);
 	}
 
-	public GalleryEGLConfigChooser getEGLConfigChooser()
-	{
-		return mEglConfigChooser;
-	}
-
-	public boolean hasStencil()
-	{
-		return getEGLConfigChooser().getStencilBits() > 0;
-	}
-
+	@Override
 	public void registerLaunchedAnimation(CanvasAnimation animation)
 	{
 		// Register the newly launched animation so that we can set the start
@@ -124,42 +135,40 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		mAnimations.add(animation);
 	}
 
+	@Override
 	public void addOnGLIdleListener(OnGLIdleListener listener)
 	{
-		mRenderLock.lock();
-		try
+		synchronized (mIdleListeners)
 		{
 			mIdleListeners.addLast(listener);
-			if (!mRenderRequested && !mIdleRunner.mActive)
-			{
-				mIdleRunner.mActive = true;
-				queueEvent(mIdleRunner);
-			}
-		}
-		finally
-		{
-			mRenderLock.unlock();
+			mIdleRunner.enable();
 		}
 	}
 
+	@Override
 	public void setContentPane(GLView content)
 	{
+		if (mContentView == content)
+			return;
 		if (mContentView != null)
 		{
+			if (mInDownState)
+			{
+				long now = SystemClock.uptimeMillis();
+				MotionEvent cancelEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0);
+				mContentView.dispatchTouchEvent(cancelEvent);
+				cancelEvent.recycle();
+				mInDownState = false;
+			}
 			mContentView.detachFromRoot();
 			BasicTexture.yieldAllTextures();
 		}
+		mContentView = content;
 		if (content != null)
 		{
-			mContentView = content;
 			content.attachToRoot(this);
 			requestLayoutContentPane();
 		}
-	}
-
-	public GLView getContentPane()
-	{
-		return mContentView;
 	}
 
 	@Override
@@ -169,7 +178,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		{
 			StackTraceElement e = Thread.currentThread().getStackTrace()[4];
 			String caller = e.getFileName() + ":" + e.getLineNumber() + " ";
-			Log.v(TAG, "invalidate: " + caller);
+			Log.d(TAG, "invalidate: " + caller);
 		}
 		if (mRenderRequested)
 			return;
@@ -177,6 +186,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		super.requestRender();
 	}
 
+	@Override
 	public void requestLayoutContentPane()
 	{
 		mRenderLock.lock();
@@ -185,8 +195,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 			if (mContentView == null || (mFlags & FLAG_NEED_LAYOUT) != 0)
 				return;
 
-			// "View" system will invoke onLayout() for initialization(bug ?),
-			// we
+			// "View" system will invoke onLayout() for initialization(bug ?), we
 			// have to ignore it since the GLThread is not ready yet.
 			if ((mFlags & FLAG_INITIALIZED) == 0)
 				return;
@@ -203,12 +212,53 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	private void layoutContentPane()
 	{
 		mFlags &= ~FLAG_NEED_LAYOUT;
-		int width = getWidth();
-		int height = getHeight();
-		Log.v(TAG, "layout content pane " + width + "x" + height);
-		if (mContentView != null && width != 0 && height != 0)
+
+		int w = getWidth();
+		int h = getHeight();
+		int displayRotation = 0;
+		int compensation = 0;
+
+		// Get the new orientation values
+		if (mOrientationSource != null)
 		{
-			mContentView.layout(0, 0, width, height);
+			displayRotation = mOrientationSource.getDisplayRotation();
+			compensation = mOrientationSource.getCompensation();
+		}
+		else
+		{
+			displayRotation = 0;
+			compensation = 0;
+		}
+
+		if (mCompensation != compensation)
+		{
+			mCompensation = compensation;
+			if (mCompensation % 180 != 0)
+			{
+				mCompensationMatrix.setRotate(mCompensation);
+				// move center to origin before rotation
+				mCompensationMatrix.preTranslate(-w / 2, -h / 2);
+				// align with the new origin after rotation
+				mCompensationMatrix.postTranslate(h / 2, w / 2);
+			}
+			else
+			{
+				mCompensationMatrix.setRotate(mCompensation, w / 2, h / 2);
+			}
+		}
+		mDisplayRotation = displayRotation;
+
+		// Do the actual layout.
+		if (mCompensation % 180 != 0)
+		{
+			int tmp = w;
+			w = h;
+			h = tmp;
+		}
+		Log.i(TAG, "layout content pane " + w + "x" + h + " (compensation " + mCompensation + ")");
+		if (mContentView != null && w != 0 && h != 0)
+		{
+			mContentView.layout(0, 0, w, h);
 		}
 		// Uncomment this to dump the view hierarchy.
 		// mContentView.dumpTree("");
@@ -225,6 +275,7 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	 * Called when the context is created, possibly after automatic destruction.
 	 */
 	// This is a GLSurfaceView.Renderer callback
+	@Override
 	public void onSurfaceCreated(GL10 gl1, EGLConfig config)
 	{
 		GL11 gl = (GL11) gl1;
@@ -233,15 +284,25 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 			// The GL Object has changed
 			Log.i(TAG, "GLObject has changed from " + mGL + " to " + gl);
 		}
-		mGL = gl;
-		mCanvas = new GLCanvasImp(gl);
-		if (!DEBUG_FPS)
+		mRenderLock.lock();
+		try
 		{
-			setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+			mGL = gl;
+			mCanvas = new GLCanvasImpl(gl);
+			BasicTexture.invalidateAllTextures();
+		}
+		finally
+		{
+			mRenderLock.unlock();
+		}
+
+		if (DEBUG_FPS || DEBUG_PROFILE)
+		{
+			setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
 		}
 		else
 		{
-			setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+			setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		}
 	}
 
@@ -249,18 +310,21 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 	 * Called when the OpenGL surface is recreated without destroying the context.
 	 */
 	// This is a GLSurfaceView.Renderer callback
+	@Override
 	public void onSurfaceChanged(GL10 gl1, int width, int height)
 	{
-		Log.v(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
+		Log.i(TAG, "onSurfaceChanged: " + width + "x" + height + ", gl10: " + gl1.toString());
 		Process.setThreadPriority(Process.THREAD_PRIORITY_DISPLAY);
-		Utils.setRenderThread();
+		GalleryUtils.setRenderThread();
+		if (DEBUG_PROFILE)
+		{
+			Log.d(TAG, "Start profiling");
+			Profile.enable(20); // take a sample every 20ms
+		}
 		GL11 gl = (GL11) gl1;
-		Utils.Assert(mGL == gl);
+		Utils.assertTrue(mGL == gl);
 
 		mCanvas.setSize(width, height);
-
-		mClipRect.set(0, 0, width, height);
-		mClipRetryCount = 2;
 	}
 
 	private void outputFps()
@@ -272,17 +336,30 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		}
 		else if ((now - mFrameCountingStart) > 1000000000)
 		{
-			Log.v(TAG, "fps: " + (double) mFrameCount * 1000000000 / (now - mFrameCountingStart));
+			Log.d(TAG, "fps: " + (double) mFrameCount * 1000000000 / (now - mFrameCountingStart));
 			mFrameCountingStart = now;
 			mFrameCount = 0;
 		}
 		++mFrameCount;
 	}
 
+	@Override
 	public void onDrawFrame(GL10 gl)
 	{
-		long begin = SystemClock.uptimeMillis();
+		AnimationTime.update();
+		long t0;
+		if (DEBUG_PROFILE_SLOW_ONLY)
+		{
+			Profile.hold();
+			t0 = System.nanoTime();
+		}
 		mRenderLock.lock();
+
+		while (mFreeze)
+		{
+			mFreezeCondition.awaitUninterruptibly();
+		}
+
 		try
 		{
 			onDrawFrameLocked(gl);
@@ -291,17 +368,38 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		{
 			mRenderLock.unlock();
 		}
-		long end = SystemClock.uptimeMillis();
 
-		if (mLastDrawFinishTime != 0)
+//        // We put a black cover View in front of the SurfaceView and hide it
+//        // after the first draw. This prevents the SurfaceView being transparent
+//        // before the first draw.
+//        if (mFirstDraw) {
+//            mFirstDraw = false;
+//            post(new Runnable() {
+//                    public void run() {
+//                        View root = getRootView();
+//                        View cover = root.findViewById(R.id.gl_root_cover);
+//                        cover.setVisibility(GONE);
+//                    }
+//                });
+//        }
+
+		if (DEBUG_PROFILE_SLOW_ONLY)
 		{
-			long wait = mLastDrawFinishTime + TARGET_FRAME_TIME - end;
-			if (wait > 0)
+			long t = System.nanoTime();
+			long durationInMs = (t - mLastDrawFinishTime) / 1000000;
+			long durationDrawInMs = (t - t0) / 1000000;
+			mLastDrawFinishTime = t;
+
+			if (durationInMs > 34)
+			{ // 34ms -> we skipped at least 2 frames
+				Log.v(TAG, "----- SLOW (" + durationDrawInMs + "/" + durationInMs + ") -----");
+				Profile.commit();
+			}
+			else
 			{
-				SystemClock.sleep(wait);
+				Profile.drop();
 			}
 		}
-		mLastDrawFinishTime = SystemClock.uptimeMillis();
 	}
 
 	private void onDrawFrameLocked(GL10 gl)
@@ -320,25 +418,17 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		if ((mFlags & FLAG_NEED_LAYOUT) != 0)
 			layoutContentPane();
 
-		// OpenGL seems having a bug causing us not being able to reset the
-		// scissor box in "onSurfaceChanged()". We have to do it in the second
-		// onDrawFrame().
-		if (mClipRetryCount > 0)
-		{
-			--mClipRetryCount;
-			Rect clip = mClipRect;
-			gl.glScissor(clip.left, clip.top, clip.width(), clip.height());
-		}
-
-		mCanvas.setCurrentAnimationTimeMillis(SystemClock.uptimeMillis());
+		mCanvas.save(GLCanvas.SAVE_FLAG_ALL);
+		rotateCanvas(-mCompensation);
 		if (mContentView != null)
 		{
 			mContentView.render(mCanvas);
 		}
+		mCanvas.restore();
 
 		if (!mAnimations.isEmpty())
 		{
-			long now = SystemClock.uptimeMillis();
+			long now = AnimationTime.get();
 			for (int i = 0, n = mAnimations.size(); i < n; i++)
 			{
 				mAnimations.get(i).setStartTime(now);
@@ -351,10 +441,10 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 			requestRender();
 		}
 
-		if (!mRenderRequested && !mIdleRunner.mActive && !mIdleListeners.isEmpty())
+		synchronized (mIdleListeners)
 		{
-			mIdleRunner.mActive = true;
-			queueEvent(mIdleRunner);
+			if (!mIdleListeners.isEmpty())
+				mIdleRunner.enable();
 		}
 
 		if (DEBUG_INVALIDATE)
@@ -369,15 +459,57 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		}
 	}
 
+	private void rotateCanvas(int degrees)
+	{
+		if (degrees == 0)
+			return;
+		int w = getWidth();
+		int h = getHeight();
+		int cx = w / 2;
+		int cy = h / 2;
+		mCanvas.translate(cx, cy);
+		mCanvas.rotate(degrees, 0, 0, 1);
+		if (degrees % 180 != 0)
+		{
+			mCanvas.translate(-cy, -cx);
+		}
+		else
+		{
+			mCanvas.translate(-cx, -cy);
+		}
+	}
+
+	// TODO:
+
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent event)
 	{
+		if (!isEnabled())
+			return false;
+
+		int action = event.getAction();
+		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP)
+		{
+			mInDownState = false;
+		}
+		else if (!mInDownState && action != MotionEvent.ACTION_DOWN)
+		{
+			return false;
+		}
+
+		if (com.anthonymandra.framework.Util.hasHoneycomb())
+			transformTouch(event);
+
 		mRenderLock.lock();
 		try
 		{
-			// If this has been detached from root, we don't need to handle
-			// event
-			return mContentView != null ? mContentView.dispatchTouchEvent(event) : false;
+			// If this has been detached from root, we don't need to handle event
+			boolean handled = mContentView != null && mContentView.dispatchTouchEvent(event);
+			if (action == MotionEvent.ACTION_DOWN && handled)
+			{
+				mInDownState = true;
+			}
+			return handled;
 		}
 		finally
 		{
@@ -385,70 +517,180 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 		}
 	}
 
-	public DisplayMetrics getDisplayMetrics()
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	private void transformTouch(MotionEvent event)
 	{
-		if (mDisplayMetrics == null)
+		if (mCompensation != 0)
 		{
-			mDisplayMetrics = new DisplayMetrics();
-			((Activity) getContext()).getWindowManager().getDefaultDisplay().getMetrics(mDisplayMetrics);
+			event.transform(mCompensationMatrix);
 		}
-		return mDisplayMetrics;
-	}
-
-	public GLCanvas getCanvas()
-	{
-		return mCanvas;
 	}
 
 	private class IdleRunner implements Runnable
 	{
-		protected boolean mActive = false;
+		// true if the idle runner is in the queue
+		private boolean mActive = false;
 
-		private boolean runInternal() throws DeadBitmapException
-		{
-			if (mRenderRequested)
-				return false;
-			if (mIdleListeners.isEmpty())
-				return false;
-			OnGLIdleListener listener = mIdleListeners.removeFirst();
-			if (listener.onGLIdle(GLRootView.this, mCanvas))
-			{
-				mIdleListeners.addLast(listener);
-			}
-			return mIdleListeners.isEmpty();
-		}
-
+		@Override
 		public void run()
 		{
+			OnGLIdleListener listener;
+			synchronized (mIdleListeners)
+			{
+				mActive = false;
+				if (mIdleListeners.isEmpty())
+					return;
+				listener = mIdleListeners.removeFirst();
+			}
 			mRenderLock.lock();
 			try
 			{
-				try
-				{
-					mActive = runInternal();
-				}
-				catch (DeadBitmapException e)
-				{
-					Log.d(TAG, "DeadBitmapException");
-					// e.printStackTrace();
-				}
-				if (mActive)
-					queueEvent(this);
+				if (!listener.onGLIdle(mCanvas, mRenderRequested))
+					return;
 			}
 			finally
 			{
 				mRenderLock.unlock();
 			}
+			synchronized (mIdleListeners)
+			{
+				mIdleListeners.addLast(listener);
+				if (!mRenderRequested)
+					enable();
+			}
+		}
+
+		public void enable()
+		{
+			// Who gets the flag can add it to the queue
+			if (mActive)
+				return;
+			mActive = true;
+			queueEvent(this);
 		}
 	}
 
+	@Override
 	public void lockRenderThread()
 	{
 		mRenderLock.lock();
 	}
 
+	@Override
 	public void unlockRenderThread()
 	{
 		mRenderLock.unlock();
+	}
+
+	@Override
+	public void onPause()
+	{
+		unfreeze();
+		super.onPause();
+		if (DEBUG_PROFILE)
+		{
+			Log.d(TAG, "Stop profiling");
+			Profile.disableAll();
+			Profile.dumpToFile("/sdcard/gallery.prof");
+			Profile.reset();
+		}
+	}
+
+	@Override
+	public void setOrientationSource(OrientationSource source)
+	{
+		mOrientationSource = source;
+	}
+
+	@Override
+	public int getDisplayRotation()
+	{
+		return mDisplayRotation;
+	}
+
+	@Override
+	public int getCompensation()
+	{
+		return mCompensation;
+	}
+
+	@Override
+	public Matrix getCompensationMatrix()
+	{
+		return mCompensationMatrix;
+	}
+
+	@Override
+	public void freeze()
+	{
+		mRenderLock.lock();
+		mFreeze = true;
+		mRenderLock.unlock();
+	}
+
+	@Override
+	public void unfreeze()
+	{
+		mRenderLock.lock();
+		mFreeze = false;
+		mFreezeCondition.signalAll();
+		mRenderLock.unlock();
+	}
+
+//	@Override
+//	public void setLightsOutMode(boolean enabled)
+//	{
+//		throw new NoSuchMethodError();
+//        int flags = enabled
+//                ? SYSTEM_UI_FLAG_LOW_PROFILE
+//                | SYSTEM_UI_FLAG_FULLSCREEN
+//                | SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                : 0;
+//        setSystemUiVisibility(flags);
+//	}
+
+	// We need to unfreeze in the following methods and in onPause().
+	// These methods will wait on GLThread. If we have freezed the GLRootView,
+	// the GLThread will wait on main thread to call unfreeze and cause dead
+	// lock.
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h)
+	{
+		unfreeze();
+		super.surfaceChanged(holder, format, w, h);
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder)
+	{
+		unfreeze();
+		super.surfaceCreated(holder);
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder)
+	{
+		unfreeze();
+		super.surfaceDestroyed(holder);
+	}
+
+	@Override
+	protected void onDetachedFromWindow()
+	{
+		unfreeze();
+		super.onDetachedFromWindow();
+	}
+
+	@Override
+	protected void finalize() throws Throwable
+	{
+		try
+		{
+			unfreeze();
+		}
+		finally
+		{
+			super.finalize();
+		}
 	}
 }

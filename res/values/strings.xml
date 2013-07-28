@@ -46,8 +46,7 @@
     <string name="import1">Import</string>
     <string name="all">ALL</string>
     <string name="selected">SELECTED</string>
-    <string name="renameImages">Rename %1$s Images</string>
-    <string name="exportThumbsFormat">Export %1$s Thumbnails</string>
+    <string name="renameImages">Rename Images</string>
     <string name="view">View</string>
     <string name="gallery">Gallery</string>
     <string name="viewer">Viewer</string>
@@ -99,7 +98,7 @@
     <string name="warningNoRecycleBin">Recycle bin does not exist. Files will be deleted directly.</string>
     <string name="warningGenericImagesOff">Generic images (ex: jpg) have been disabled in settings.</string>
     <string name="warningInvalidMeta">Invalid metadata (Please email offending file).</string>
-    <string name="warningInvalidLabel">Invalid label "%1$s".  Labels can be customized in settings.</string>
+    <string name="warningInvalidLabel">is an invalid label.  Labels can be customized in settings.</string>
     <string name="warningInvalidSidebar">Sidebar instance has become invalid, please reopen.</string>
     <string name="warningNoUSB">No usb media found.  If you know the device is mounted, please email rawdroid@anthonymandra.com with the location for addition.</string>
     <string name="warningLicenseError">License check failed.  Default to previous check: </string>
@@ -206,5 +205,9 @@
     <string name="tutorialActionLongPress">Long press action items to see a short description.</string>
     <string name="tutorialUsbTitle">USB Mount Search</string>
     <string name="tutorialUsb">This will search known mount points for any USB devices.  If your device is not found please email the mount point ex:"/mnt/weird/device/usb"</string>
+    
+    <string name="unit_mm">mm</string>
+    <string name="loading">Loading\u2026</string>
+    <string name="no_thumbnail">No thumbnail</string>
 
 </resources>

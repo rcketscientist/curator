@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.anthonymandra.rawdroid"
-    android:versionCode="98"
-    android:versionName="1.37" >
+    android:versionCode="97"
+    android:versionName="1.61" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -20,6 +20,7 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
+    
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -63,9 +64,8 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name=".ViewImage"
+            android:name=".ImageViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
             android:theme="@style/GalleryTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

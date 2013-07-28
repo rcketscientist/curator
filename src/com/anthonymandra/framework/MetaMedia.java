@@ -9,6 +9,8 @@ import java.util.Date;
 
 import android.util.Log;
 
+import com.android.gallery3d.data.BitmapPool;
+import com.android.gallery3d.data.BytesBufferPool;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
@@ -29,6 +31,25 @@ import com.drew.metadata.xmp.XmpWriter;
 public abstract class MetaMedia implements MediaObject
 {
 	private static final String TAG = MetaMedia.class.getSimpleName();
+	// NOTE: These type numbers are stored in the image cache, so it should not
+	// not be changed without resetting the cache.
+	public static final int TYPE_THUMBNAIL = 1;
+	public static final int TYPE_MICROTHUMBNAIL = 2;
+	protected static long sVersion = 0;
+
+	public static final int THUMBNAIL_TARGET_SIZE = 640;
+	public static final int MICROTHUMBNAIL_TARGET_SIZE = 200;
+	public static final int CACHED_IMAGE_QUALITY = 95;
+
+	private static final int BYTESBUFFE_POOL_SIZE = 4;
+	private static final int BYTESBUFFER_SIZE = 200 * 1024;
+
+	private static final BitmapPool sMicroThumbPool = new BitmapPool(MICROTHUMBNAIL_TARGET_SIZE, MICROTHUMBNAIL_TARGET_SIZE, 16);
+	private static final BitmapPool sThumbPool = new BitmapPool(4);
+	private static final BytesBufferPool sMicroThumbBufferPool = new BytesBufferPool(BYTESBUFFE_POOL_SIZE, BYTESBUFFER_SIZE);
+
+	// TODO: fix default value for latlng and change this.
+	public static final double INVALID_LATLNG = 0f;
 
 	protected Metadata mMetadata = new Metadata();
 	protected int width;
@@ -74,7 +95,6 @@ public abstract class MetaMedia implements MediaObject
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -88,7 +108,6 @@ public abstract class MetaMedia implements MediaObject
 		// }
 		// catch (FileNotFoundException e)
 		// {
-		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
 		new Runnable()
@@ -127,7 +146,7 @@ public abstract class MetaMedia implements MediaObject
 				return getShutterSpeed();
 			}
 		}
-			
+
 		return null;
 	}
 
@@ -256,7 +275,7 @@ public abstract class MetaMedia implements MediaObject
 				return getAperture();
 			}
 		}
-			
+
 		return null;
 	}
 
@@ -280,6 +299,7 @@ public abstract class MetaMedia implements MediaObject
 		return makeLegacy;
 //		return null;
 	}
+
 	public String getModel()
 	{
 		if (mMetadata.containsDirectory(ExifIFD0Directory.class) &&
@@ -291,6 +311,7 @@ public abstract class MetaMedia implements MediaObject
 		return modelLegacy;
 //		return null;
 	}
+
 	public int getOrientation()
 	{
 		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
@@ -514,6 +535,20 @@ public abstract class MetaMedia implements MediaObject
 			}
 		}
 	}
+
+	public static int getTargetSize(int type)
+	{
+		switch (type)
+		{
+			case TYPE_THUMBNAIL:
+				return THUMBNAIL_TARGET_SIZE;
+			case TYPE_MICROTHUMBNAIL:
+				return MICROTHUMBNAIL_TARGET_SIZE;
+			default:
+				throw new RuntimeException("should only request thumb/microthumb from cache");
+		}
+	}
+
 	public int getWidth()
 	{
 		return width;
@@ -552,5 +587,20 @@ public abstract class MetaMedia implements MediaObject
 	public void setThumbHeight(int thumbHeight)
 	{
 		this.thumbHeight = thumbHeight;
+	}
+
+	public static BitmapPool getMicroThumbPool()
+	{
+		return sMicroThumbPool;
+	}
+
+	public static BitmapPool getThumbPool()
+	{
+		return sThumbPool;
+	}
+
+	public static BytesBufferPool getBytesBufferPool()
+	{
+		return sMicroThumbBufferPool;
 	}
 }

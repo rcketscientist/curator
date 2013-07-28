@@ -36,7 +36,7 @@ import android.os.StatFs;
 /**
  * Class containing some static utility methods.
  */
-public class Utils
+public class Util
 {
 
 	public static boolean hasFroyo()
@@ -99,7 +99,7 @@ public class Utils
 		//
 		// return new File(cachePath, uniqueName);
 	}
-	
+
 	public static void debugClearCache(Context context)
 	{
 		// Check if media is mounted or storage is built-in, if so, try and use external cache dir
@@ -135,7 +135,7 @@ public class Utils
 	@TargetApi(9)
 	public static boolean isExternalStorageRemovable()
 	{
-		if (Utils.hasGingerbread())
+		if (Util.hasGingerbread())
 		{
 			return Environment.isExternalStorageRemovable();
 		}
@@ -172,7 +172,7 @@ public class Utils
 	@TargetApi(9)
 	public static long getUsableSpace(File path)
 	{
-		if (Utils.hasGingerbread())
+		if (Util.hasGingerbread())
 		{
 			return path.getUsableSpace();
 		}
@@ -212,7 +212,6 @@ public class Utils
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -360,7 +359,7 @@ public class Utils
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeByteArray(image, 0, image.length, o);
-		o.inSampleSize = Utils.getLargeSampleSize(o, viewWidth, viewHeight);
+		o.inSampleSize = Util.getLargeSampleSize(o, viewWidth, viewHeight);
 		// setScalingPow2(image, viewWidth, viewHeight, o, minSize);
 		o.inJustDecodeBounds = false;
 		result = BitmapFactory.decodeByteArray(image, 0, image.length, o);
@@ -373,7 +372,7 @@ public class Utils
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(data, null, o);
-		o.inSampleSize = Utils.getLargeSampleSize(o, viewWidth, viewHeight);
+		o.inSampleSize = Util.getLargeSampleSize(o, viewWidth, viewHeight);
 		// setScalingPow2(image, viewWidth, viewHeight, o, minSize);
 		o.inJustDecodeBounds = false;
 		result = BitmapFactory.decodeStream(data, null, o);
@@ -386,7 +385,7 @@ public class Utils
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(data, null, o);
-		o.inSampleSize = Utils.getExactSampleSize(o, width, height);
+		o.inSampleSize = Util.getExactSampleSize(o, width, height);
 		o.inJustDecodeBounds = false;
 		result = BitmapFactory.decodeStream(data, null, o);
 		return result;
@@ -398,7 +397,7 @@ public class Utils
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeByteArray(image, 0, image.length, o);
-		o.inSampleSize = Utils.getExactSampleSize(o, width, height);
+		o.inSampleSize = Util.getExactSampleSize(o, width, height);
 		o.inJustDecodeBounds = false;
 		result = BitmapFactory.decodeByteArray(image, 0, image.length, o);
 		return result;

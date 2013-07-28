@@ -16,13 +16,16 @@
 
 package com.android.gallery3d.ui;
 
+import java.util.HashMap;
+
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.opengl.GLUtils;
 
-import com.android.gallery3d.util.Utils;
+import com.android.gallery3d.common.Utils;
 
 // UploadedTextures use a Bitmap for the content of the texture.
 //
@@ -41,19 +44,84 @@ import com.android.gallery3d.util.Utils;
 abstract class UploadedTexture extends BasicTexture
 {
 
+	// To prevent keeping allocation the borders, we store those used borders here.
+	// Since the length will be power of two, it won't use too much memory.
+	private static HashMap<BorderKey, Bitmap> sBorderLines = new HashMap<BorderKey, Bitmap>();
+	private static BorderKey sBorderKey = new BorderKey();
+
 	@SuppressWarnings("unused")
 	private static final String TAG = "Texture";
 	private boolean mContentValid = true;
+
+	// indicate this textures is being uploaded in background
+	private boolean mIsUploading = false;
 	private boolean mOpaque = true;
 	private boolean mThrottled = false;
 	private static int sUploadedCount;
-	private static final int UPLOAD_LIMIT = 1;
+	private static final int UPLOAD_LIMIT = 100;
 
 	protected Bitmap mBitmap;
+	private int mBorder;
 
 	protected UploadedTexture()
 	{
+		this(false);
+	}
+
+	protected UploadedTexture(boolean hasBorder)
+	{
 		super(null, 0, STATE_UNLOADED);
+		if (hasBorder)
+		{
+			setBorder(true);
+			mBorder = 1;
+		}
+	}
+
+	protected void setIsUploading(boolean uploading)
+	{
+		mIsUploading = uploading;
+	}
+
+	public boolean isUploading()
+	{
+		return mIsUploading;
+	}
+
+	private static class BorderKey implements Cloneable
+	{
+		public boolean vertical;
+		public Config config;
+		public int length;
+
+		@Override
+		public int hashCode()
+		{
+			int x = config.hashCode() ^ length;
+			return vertical ? x : -x;
+		}
+
+		@Override
+		public boolean equals(Object object)
+		{
+			if (!(object instanceof BorderKey))
+				return false;
+			BorderKey o = (BorderKey) object;
+			return vertical == o.vertical && config == o.config && length == o.length;
+		}
+
+		@Override
+		public BorderKey clone()
+		{
+			try
+			{
+				return (BorderKey) super.clone();
+			}
+			catch (CloneNotSupportedException e)
+			{
+				throw new AssertionError(e);
+			}
+		}
 	}
 
 	protected void setThrottled(boolean throttled)
@@ -61,18 +129,31 @@ abstract class UploadedTexture extends BasicTexture
 		mThrottled = throttled;
 	}
 
-	private Bitmap getBitmap() throws DeadBitmapException
+	private static Bitmap getBorderLine(boolean vertical, Config config, int length)
+	{
+		BorderKey key = sBorderKey;
+		key.vertical = vertical;
+		key.config = config;
+		key.length = length;
+		Bitmap bitmap = sBorderLines.get(key);
+		if (bitmap == null)
+		{
+			bitmap = vertical ? Bitmap.createBitmap(1, length, config) : Bitmap.createBitmap(length, 1, config);
+			sBorderLines.put(key.clone(), bitmap);
+		}
+		return bitmap;
+	}
+
+	private Bitmap getBitmap()
 	{
 		if (mBitmap == null)
 		{
 			mBitmap = onGetBitmap();
+			int w = mBitmap.getWidth() + mBorder * 2;
+			int h = mBitmap.getHeight() + mBorder * 2;
 			if (mWidth == UNSPECIFIED)
 			{
-				setSize(mBitmap.getWidth(), mBitmap.getHeight());
-			}
-			else if (mWidth != mBitmap.getWidth() || mHeight != mBitmap.getHeight())
-			{
-				throw new IllegalStateException("cannot change content size");
+				setSize(w, h);
 			}
 		}
 		return mBitmap;
@@ -80,13 +161,13 @@ abstract class UploadedTexture extends BasicTexture
 
 	private void freeBitmap()
 	{
-		Utils.Assert(mBitmap != null);
+		Utils.assertTrue(mBitmap != null);
 		onFreeBitmap(mBitmap);
 		mBitmap = null;
 	}
 
 	@Override
-	public int getWidth() throws DeadBitmapException
+	public int getWidth()
 	{
 		if (mWidth == UNSPECIFIED)
 			getBitmap();
@@ -94,14 +175,14 @@ abstract class UploadedTexture extends BasicTexture
 	}
 
 	@Override
-	public int getHeight() throws DeadBitmapException
+	public int getHeight()
 	{
 		if (mWidth == UNSPECIFIED)
 			getBitmap();
 		return mHeight;
 	}
 
-	protected abstract Bitmap onGetBitmap() throws DeadBitmapException;
+	protected abstract Bitmap onGetBitmap();
 
 	protected abstract void onFreeBitmap(Bitmap bitmap);
 
@@ -110,25 +191,26 @@ abstract class UploadedTexture extends BasicTexture
 		if (mBitmap != null)
 			freeBitmap();
 		mContentValid = false;
+		mWidth = UNSPECIFIED;
+		mHeight = UNSPECIFIED;
 	}
 
 	/**
 	 * Whether the content on GPU is valid.
 	 */
-	public boolean isContentValid(GLCanvas canvas)
+	public boolean isContentValid()
 	{
-		return isLoaded(canvas) && mContentValid;
+		return isLoaded() && mContentValid;
 	}
 
 	/**
 	 * Updates the content on GPU's memory.
 	 * 
 	 * @param canvas
-	 * @throws DeadBitmapException
 	 */
-	public void updateContent(GLCanvas canvas) throws DeadBitmapException
+	public void updateContent(GLCanvas canvas)
 	{
-		if (!isLoaded(canvas))
+		if (!isLoaded())
 		{
 			if (mThrottled && ++sUploadedCount > UPLOAD_LIMIT)
 			{
@@ -142,7 +224,7 @@ abstract class UploadedTexture extends BasicTexture
 			int format = GLUtils.getInternalFormat(bitmap);
 			int type = GLUtils.getType(bitmap);
 			canvas.getGLInstance().glBindTexture(GL11.GL_TEXTURE_2D, mId);
-			GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, bitmap, format, type);
+			GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, mBorder, mBorder, bitmap, format, type);
 			freeBitmap();
 			mContentValid = true;
 		}
@@ -159,75 +241,111 @@ abstract class UploadedTexture extends BasicTexture
 	}
 
 	static int[] sTextureId = new int[1];
-	static int[] sCropRect = new int[4];
+	static float[] sCropRect = new float[4];
 
-	private void uploadToCanvas(GLCanvas canvas) throws DeadBitmapException
+	private void uploadToCanvas(GLCanvas canvas)
 	{
 		GL11 gl = canvas.getGLInstance();
 
 		Bitmap bitmap = getBitmap();
-		if (bitmap == null)
+		if (bitmap != null)
+		{
+			try
+			{
+				int bWidth = bitmap.getWidth();
+				int bHeight = bitmap.getHeight();
+				int width = bWidth + mBorder * 2;
+				int height = bHeight + mBorder * 2;
+				int texWidth = getTextureWidth();
+				int texHeight = getTextureHeight();
+
+				Utils.assertTrue(bWidth <= texWidth && bHeight <= texHeight);
+
+				// Define a vertically flipped crop rectangle for
+				// OES_draw_texture.
+				// The four values in sCropRect are: left, bottom, width, and
+				// height. Negative value of width or height means flip.
+				sCropRect[0] = mBorder;
+				sCropRect[1] = mBorder + bHeight;
+				sCropRect[2] = bWidth;
+				sCropRect[3] = -bHeight;
+
+				// Upload the bitmap to a new texture.
+				GLId.glGenTextures(1, sTextureId, 0);
+				gl.glBindTexture(GL11.GL_TEXTURE_2D, sTextureId[0]);
+				gl.glTexParameterfv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
+				gl.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
+				gl.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
+				gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+				gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+				if (bWidth == texWidth && bHeight == texHeight)
+				{
+					GLUtils.texImage2D(GL11.GL_TEXTURE_2D, 0, bitmap, 0);
+				}
+				else
+				{
+					int format = GLUtils.getInternalFormat(bitmap);
+					int type = GLUtils.getType(bitmap);
+					Config config = bitmap.getConfig();
+
+					gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format, texWidth, texHeight, 0, format, type, null);
+					GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, mBorder, mBorder, bitmap, format, type);
+
+					if (mBorder > 0)
+					{
+						// Left border
+						Bitmap line = getBorderLine(true, config, texHeight);
+						GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, line, format, type);
+
+						// Top border
+						line = getBorderLine(false, config, texWidth);
+						GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, line, format, type);
+					}
+
+					// Right border
+					if (mBorder + bWidth < texWidth)
+					{
+						Bitmap line = getBorderLine(true, config, texHeight);
+						GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, mBorder + bWidth, 0, line, format, type);
+					}
+
+					// Bottom border
+					if (mBorder + bHeight < texHeight)
+					{
+						Bitmap line = getBorderLine(false, config, texWidth);
+						GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, mBorder + bHeight, line, format, type);
+					}
+				}
+			}
+			finally
+			{
+				freeBitmap();
+			}
+			// Update texture state.
+			setAssociatedCanvas(canvas);
+			mId = sTextureId[0];
+			mState = STATE_LOADED;
+			mContentValid = true;
+		}
+		else
 		{
 			mState = STATE_ERROR;
 			throw new RuntimeException("Texture load fail, no bitmap");
 		}
-		else if (bitmap.isRecycled())
-		{
-			throw new DeadBitmapException();
-		}
-
-		try
-		{
-			// Define a vertically flipped crop rectangle for
-			// OES_draw_texture.
-			int width = bitmap.getWidth();
-			int height = bitmap.getHeight();
-			sCropRect[0] = 0;
-			sCropRect[1] = height;
-			sCropRect[2] = width;
-			sCropRect[3] = -height;
-
-			// Upload the bitmap to a new texture.
-			gl.glGenTextures(1, sTextureId, 0);
-			gl.glBindTexture(GL11.GL_TEXTURE_2D, sTextureId[0]);
-			gl.glTexParameteriv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
-			gl.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
-			gl.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
-			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-			gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
-			if (width == getTextureWidth() && height == getTextureWidth())
-			{
-				GLUtils.texImage2D(GL11.GL_TEXTURE_2D, 0, bitmap, 0);
-			}
-			else
-			{
-				int format = GLUtils.getInternalFormat(bitmap);
-				int type = GLUtils.getType(bitmap);
-
-				gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format, getTextureWidth(), getTextureHeight(), 0, format, type, null);
-				GLUtils.texSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, bitmap, format, type);
-			}
-		}
-		catch (IllegalArgumentException e)
-		{
-			// This will handle animated gifs
-		}
-		finally
-		{
-			freeBitmap();
-		}
-		// Update texture state.
-		setAssociatedCanvas(canvas);
-		mId = sTextureId[0];
-		mState = UploadedTexture.STATE_LOADED;
 	}
 
 	@Override
-	protected boolean onBind(GLCanvas canvas) throws DeadBitmapException
+	protected boolean onBind(GLCanvas canvas)
 	{
 		updateContent(canvas);
-		return isContentValid(canvas);
+		return isContentValid();
+	}
+
+	@Override
+	protected int getTarget()
+	{
+		return GL11.GL_TEXTURE_2D;
 	}
 
 	public void setOpaque(boolean isOpaque)
@@ -246,16 +364,5 @@ abstract class UploadedTexture extends BasicTexture
 		super.recycle();
 		if (mBitmap != null)
 			freeBitmap();
-	}
-
-	@SuppressWarnings("serial")
-	/**
-	 * Thrown when a bitmap is null or recycled.  This should be captured and images reset.
-	 * @author anthony.mandra
-	 *
-	 */
-	public class DeadBitmapException extends Exception
-	{
-
 	}
 }

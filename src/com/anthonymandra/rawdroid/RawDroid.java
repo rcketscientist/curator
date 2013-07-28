@@ -13,6 +13,7 @@ import java.util.List;
 import org.openintents.intents.FileManagerIntents;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -23,6 +24,8 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.ConfigurationInfo;
+import android.content.pm.FeatureInfo;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
@@ -63,7 +66,7 @@ import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.MediaObject;
-import com.anthonymandra.framework.Utils;
+import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.LoadingImageView;
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.inscription.ChangeLogDialog;
@@ -117,7 +120,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private ImageAdapter imageAdapter;
 	protected ArrayList<MediaObject> mSelectedImages = new ArrayList<MediaObject>();
 	protected List<MediaObject> mItemsForIntent = new ArrayList<MediaObject>();
-	
+
 	Dialog formatDialog;
 
 	// Selection support
@@ -142,12 +145,33 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
-		
-		//TODO: Clean up bogus cache
-		Utils.debugClearCache(this);
+
+		// TODO: Clean up bogus cache
+		Util.debugClearCache(this);
 
 		// checkLicense();
 		checkExpiration(8, 1, 2013);
+		
+		int majorVersion = -1;
+		final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		FeatureInfo[] featureInfos = getPackageManager().getSystemAvailableFeatures();
+	    if (featureInfos != null && featureInfos.length > 0) 
+	    {
+	        for (FeatureInfo featureInfo : featureInfos)
+	        {
+	            // Null feature name means this feature is the open gl es version feature.
+	            if (featureInfo.name == null) 
+	            {
+	                if (featureInfo.reqGlEsVersion != FeatureInfo.GL_ES_VERSION_UNDEFINED) 
+	                {
+	                	majorVersion = ((featureInfo.reqGlEsVersion & 0xffff0000) >> 16);
+	                }
+	            }
+	        }
+	    }
+		final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+		final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x10001;
+		Toast.makeText(this, "Supports es2: " + majorVersion/*configurationInfo.getGlEsVersion()*/,Toast.LENGTH_LONG).show();
 
 		AppRater.app_launched(this);
 
@@ -278,7 +302,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -553,22 +576,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 //		if (mRawImages.size() > 0 && mRawImages.get(0) instanceof MtpImage)
 //		{
 //			Toast.makeText(this, "Feature not supported for usb host.", Toast.LENGTH_LONG).show();
+//			return;
 //		}
 
 		List<MediaObject> filesToRename = new ArrayList<MediaObject>();
-		String title;
 		if (mSelectedImages.size() > 0)
 		{
-			title = String.format(getString(R.string.renameImages), getString(R.string.selected));
 			filesToRename = mSelectedImages;
 		}
 		else
 		{
-			title = String.format(getString(R.string.renameImages), getString(R.string.all));
 			filesToRename.addAll(mRawImages);
 		}
 		// TODO: This should manage raw and jpg
-		new FormatDialog(this, title, filesToRename, new OnResponseListener()).show();
+		new FormatDialog(this, getString(R.string.renameImages), filesToRename, new OnResponseListener()).show();
 	}
 
 	private void requestImportImageLocation()
@@ -623,21 +644,11 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 		}
 
-		String title;
-		if (mSelectedImages.size() > 0)
-		{
-			title = String.format(getString(R.string.exportThumbsFormat), getString(R.string.selected));
-		}
-		else
-		{
-			title = String.format(getString(R.string.exportThumbsFormat), getString(R.string.all));
-		}
-
 		// Construct URI from file name.
 		intent.setData(Uri.fromFile(exportLocation));
 
 		// Set fancy title and button (optional)
-		intent.putExtra(FileManagerIntents.EXTRA_TITLE, title);
+		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
 		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
 
 		try
@@ -1036,7 +1047,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				return null;
 			return mVisibleItems.get(location);
 		}
-		
+
 		private void addUniqueSelection(MediaObject media)
 		{
 			if (!mSelectedImages.contains(media))
@@ -1075,7 +1086,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					startIndex = visibleIndex;
 				}
 			}
-			
+
 			if (endIndex >= mVisibleItems.size())
 				Toast.makeText(RawDroid.this, "Select between indexing failed, if this continues please email me!", Toast.LENGTH_LONG).show();
 
@@ -1209,7 +1220,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
 			editor.commit();
 
-			Intent data = new Intent(RawDroid.this, ViewImage.class);
+			Intent data = new Intent(RawDroid.this, ImageViewActivity.class);
 			data.setData(Uri.fromFile(new File(media.getPath())));
 
 			startActivity(data);
@@ -1413,7 +1424,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private static enum Tutorials
 	{
-		Connection1, Connection2, Connection3, Connection4, Connection5, Memory, Directory, /*RecentFolder,*/ Usb, LongPressHelp, RecycleBin, LongPressSelect, SelectAll, SelectMode, SelectBetween, Import, Export, Rename, Delete, Share
+		Connection1, Connection2, Connection3, Connection4, Connection5, Memory, Directory, /* RecentFolder, */Usb, LongPressHelp, RecycleBin, LongPressSelect, SelectAll, SelectMode, SelectBetween, Import, Export, Rename, Delete, Share
 	};
 
 	private static final EnumSet<Tutorials> tutorialOrder = EnumSet.allOf(Tutorials.class);
@@ -1524,12 +1535,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 		}
 	}
-	
+
 	protected class SearchTask extends AsyncTask<Void, Void, Void> implements OnCancelListener
 	{
 		boolean cancelled;
 		List<String> imageFolders = new ArrayList<String>();
-		
+
 		@Override
 		protected void onPreExecute()
 		{
@@ -1547,7 +1558,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			search(mount);
 			return null;
 		}
-		
+
 		public void search(File dir)
 		{
 			if (cancelled || dir == null)
@@ -1619,9 +1630,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		if (key == FullSettingsActivity.KEY_ShowXmpFiles || 
-			key == FullSettingsActivity.KEY_ShowNativeFiles || 
-			key == FullSettingsActivity.KEY_ShowUnknownFiles)
+		if (key == FullSettingsActivity.KEY_ShowXmpFiles || key == FullSettingsActivity.KEY_ShowNativeFiles || key == FullSettingsActivity.KEY_ShowUnknownFiles)
 		{
 			updateLocalFiles();
 		}

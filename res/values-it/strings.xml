@@ -46,8 +46,7 @@
 <string name="import1">Importazione</string>
 <string name="all">Tutti</string>
 <string name="selected">SELEZIONATO</string>
-<string name="renameImages">Rinomina% 1 $ s Immagini</string>
-<string name="exportThumbsFormat">Esportare% 1 $ s  miniature</string>
+<string name="renameImages">Rinomina Immagini</string>
 <string name="view">Visualizza</string>
 <string name="gallery">Galleria</string>
 <string name="viewer">Visualizzatore</string>
@@ -99,7 +98,7 @@
 <string name="warningNoRecycleBin">Cestino non esiste. I file saranno cancellati direttamente</string>
 <string name="warningGenericImagesOff">Immagini generiche (es: jpg) sono state disabilitate nelle impostazioni.</string>
 <string name="warningInvalidMeta">Metadati non validi (Si prega di inviare e-mail del file incriminato).</string>
-<string name="warningInvalidLabel">Invalid label "% 1 $ s". Le etichette possono essere personalizzate nelle impostazioni.</string>
+<string name="warningInvalidLabel">è un etichetta non valida. Le etichette possono essere personalizzate nelle impostazioni.</string>
 <string name="warningInvalidSidebar">Attivazione barra laterale non valido, si prega di riprovare</string>
 <string name="warningNoUSB">Nessun USB o periferica  trovato  Se si conosce quale dispositivo è montato, si prega di inviare mail a  rawdroid@anthonymandra.com  con la posizione per addizione.</string>
 <string name="warningLicenseError">Controllo Licenza non valida</string>

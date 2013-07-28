@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="1.37" 
-        versioncode="98" 
-        summary="Revert to old viewer during troubleshooting.  New viewer is back in beta."
-        date="06/06/2013">
-        <change>Fixed: Various bugs</change>
+    <release version="1.60" 
+        versioncode="96" 
+        summary="Complete overhaul of image viewer model.  I expect a few bugs, please email me with any issues!"
+        date="05/30/2013">
+        <change>Added: Auto-orientation</change>
+        <change>Added: Support for additional cameras</change>
+        <change>Fixed: New xmp modification model to fix accidental writes</change>
+        <change>Fixed: Decoder no longer hangs on special system files</change>
+        <change>Translations: Thanks Paschalis, Robert, Waldemar!</change>
+    </release>
+    <release version="1.36" 
+        versioncode="90" 
+        summary="Cleanup build in preparation for larger auto-orient rewrite."
+        date="05/16/2013">
+        <change>Fixed: Sharing will now properly exit context mode</change>
+        <change>Fixed: Gmail attachment bug</change>
+        <change>Fixed: Camera import crash</change>
+        <change>Polish: Thanks Marcin!</change>
     </release>
     <release version="1.35" 
         versioncode="89" 

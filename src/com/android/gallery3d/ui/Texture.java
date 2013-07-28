@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.ui;
 
-import com.android.gallery3d.ui.UploadedTexture.DeadBitmapException;
-
 // Texture is a rectangular image which can be drawn on GLCanvas.
 // The isOpaque() function gives a hint about whether the texture is opaque,
 // so the drawing can be done faster.
@@ -26,26 +24,25 @@ import com.android.gallery3d.ui.UploadedTexture.DeadBitmapException;
 //
 // Texture
 // -- ColorTexture
+// -- FadeInTexture
 // -- BasicTexture
-//    -- RawTexture
 //    -- UploadedTexture
 //       -- BitmapTexture
 //       -- Tile
 //       -- ResourceTexture
 //          -- NinePatchTexture
 //       -- CanvasTexture
-//          -- DrawableTexture
 //          -- StringTexture
 //
 public interface Texture
 {
-	public int getWidth() throws DeadBitmapException;
+	public int getWidth();
 
-	public int getHeight() throws DeadBitmapException;
+	public int getHeight();
 
-	public void draw(GLCanvas canvas, int x, int y) throws DeadBitmapException;
+	public void draw(GLCanvas canvas, int x, int y);
 
-	public void draw(GLCanvas canvas, int x, int y, int w, int h) throws DeadBitmapException;
+	public void draw(GLCanvas canvas, int x, int y, int w, int h);
 
 	public boolean isOpaque();
 }

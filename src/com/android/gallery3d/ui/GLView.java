@@ -25,7 +25,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.android.gallery3d.anim.CanvasAnimation;
-import com.android.gallery3d.util.Utils;
+import com.android.gallery3d.common.Utils;
 
 // GLView is a UI component. It can render to a GLCanvas and accept touch
 // events. A GLView may have zero or more child GLView and they form a tree
@@ -42,7 +42,6 @@ import com.android.gallery3d.util.Utils;
 // from main thread (like a Handler) in your GLView, you need to call
 // lockRendering() if the rendering thread should not run at the same time.
 //
-@SuppressLint("WrongCall")
 public class GLView
 {
 	private static final String TAG = "GLView";
@@ -53,6 +52,11 @@ public class GLView
 	private static final int FLAG_INVISIBLE = 1;
 	private static final int FLAG_SET_MEASURED_SIZE = 2;
 	private static final int FLAG_LAYOUT_REQUESTED = 4;
+
+	public interface OnClickListener
+	{
+		void onClick(GLView v);
+	}
 
 	protected final Rect mBounds = new Rect();
 	protected final Rect mPaddings = new Rect();
@@ -82,10 +86,12 @@ public class GLView
 		GLRoot root = getGLRoot();
 		if (root == null)
 			throw new IllegalStateException();
-
 		mAnimation = animation;
-		mAnimation.start();
-		root.registerLaunchedAnimation(mAnimation);
+		if (mAnimation != null)
+		{
+			mAnimation.start();
+			root.registerLaunchedAnimation(mAnimation);
+		}
 		invalidate();
 	}
 
@@ -116,14 +122,14 @@ public class GLView
 	// This should only be called on the content pane (the topmost GLView).
 	public void attachToRoot(GLRoot root)
 	{
-		Utils.Assert(mParent == null && mRoot == null);
+		Utils.assertTrue(mParent == null && mRoot == null);
 		onAttachToRoot(root);
 	}
 
 	// This should only be called on the content pane (the topmost GLView).
 	public void detachFromRoot()
 	{
-		Utils.Assert(mParent == null && mRoot != null);
+		Utils.assertTrue(mParent == null && mRoot != null);
 		onDetachFromRoot();
 	}
 
@@ -193,7 +199,9 @@ public class GLView
 		if (mMotionTarget == component)
 		{
 			long now = SystemClock.uptimeMillis();
-			dispatchTouchEvent(MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0));
+			MotionEvent cancelEvent = MotionEvent.obtain(now, now, MotionEvent.ACTION_CANCEL, 0, 0, 0);
+			dispatchTouchEvent(cancelEvent);
+			cancelEvent.recycle();
 		}
 		component.onDetachFromRoot();
 		component.mParent = null;
@@ -232,6 +240,8 @@ public class GLView
 	public void requestLayout()
 	{
 		mViewFlags |= FLAG_LAYOUT_REQUESTED;
+		mLastHeightSpec = -1;
+		mLastWidthSpec = -1;
 		if (mParent != null)
 		{
 			mParent.requestLayout();
@@ -266,13 +276,13 @@ public class GLView
 		int xoffset = component.mBounds.left - mScrollX;
 		int yoffset = component.mBounds.top - mScrollY;
 
-		canvas.translate(xoffset, yoffset, 0);
+		canvas.translate(xoffset, yoffset);
 
 		CanvasAnimation anim = component.mAnimation;
 		if (anim != null)
 		{
 			canvas.save(anim.getCanvasSaveFlags());
-			if (anim.calculate(canvas.currentAnimationTimeMillis()))
+			if (anim.calculate(AnimationTime.get()))
 			{
 				invalidate();
 			}
@@ -285,7 +295,7 @@ public class GLView
 		component.render(canvas);
 		if (anim != null)
 			canvas.restore();
-		canvas.translate(-xoffset, -yoffset, 0);
+		canvas.translate(-xoffset, -yoffset);
 	}
 
 	protected boolean onTouch(MotionEvent event)
@@ -358,29 +368,16 @@ public class GLView
 		return mPaddings;
 	}
 
-	public void setPaddings(Rect paddings)
-	{
-		mPaddings.set(paddings);
-	}
-
-	public void setPaddings(int left, int top, int right, int bottom)
-	{
-		mPaddings.set(left, top, right, bottom);
-	}
-
+	@SuppressLint("WrongCall")
 	public void layout(int left, int top, int right, int bottom)
 	{
 		boolean sizeChanged = setBounds(left, top, right, bottom);
-		if (sizeChanged)
-		{
-			mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
-			onLayout(true, left, top, right, bottom);
-		}
-		else if ((mViewFlags & FLAG_LAYOUT_REQUESTED) != 0)
-		{
-			mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
-			onLayout(false, left, top, right, bottom);
-		}
+		mViewFlags &= ~FLAG_LAYOUT_REQUESTED;
+		// We call onLayout no matter sizeChanged is true or not because the
+		// orientation may change without changing the size of the View (for
+		// example, rotate the device by 180 degrees), and we want to handle
+		// orientation change in onLayout.
+		onLayout(sizeChanged, left, top, right, bottom);
 	}
 
 	private boolean setBounds(int left, int top, int right, int bottom)
@@ -390,6 +387,7 @@ public class GLView
 		return sizeChanged;
 	}
 
+	@SuppressLint("WrongCall")
 	public void measure(int widthSpec, int heightSpec)
 	{
 		if (widthSpec == mLastWidthSpec && heightSpec == mLastHeightSpec && (mViewFlags & FLAG_LAYOUT_REQUESTED) == 0)
@@ -484,7 +482,7 @@ public class GLView
 		mRoot = null;
 	}
 
-	protected void lockRendering()
+	public void lockRendering()
 	{
 		if (mRoot != null)
 		{
@@ -492,7 +490,7 @@ public class GLView
 		}
 	}
 
-	protected void unlockRendering()
+	public void unlockRendering()
 	{
 		if (mRoot != null)
 		{
@@ -504,7 +502,7 @@ public class GLView
 	// Dump the view hierarchy into log.
 	void dumpTree(String prefix)
 	{
-		Log.v(TAG, prefix + getClass().getSimpleName());
+		Log.d(TAG, prefix + getClass().getSimpleName());
 		for (int i = 0, n = getComponentCount(); i < n; ++i)
 		{
 			getComponent(i).dumpTree(prefix + "....");

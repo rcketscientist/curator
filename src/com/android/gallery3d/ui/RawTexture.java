@@ -17,45 +17,78 @@
 package com.android.gallery3d.ui;
 
 import javax.microedition.khronos.opengles.GL11;
+import javax.microedition.khronos.opengles.GL11Ext;
 
-// RawTexture is used for texture created by glCopyTexImage2D.
-//
-// It will throw RuntimeException in onBind() if used with a different GL
-// context. It is only used internally by copyTexture() in GLCanvas.
-class RawTexture extends BasicTexture
+import android.util.Log;
+
+public class RawTexture extends BasicTexture
 {
+	private static final String TAG = "RawTexture";
 
-	private RawTexture(GLCanvas canvas, int id)
+	private final static int[] sTextureId = new int[1];
+	private final static float[] sCropRect = new float[4];
+
+	private final boolean mOpaque;
+
+	public RawTexture(int width, int height, boolean opaque)
 	{
-		super(canvas, id, STATE_LOADED);
+		mOpaque = opaque;
+		setSize(width, height);
 	}
 
-	public static RawTexture newInstance(GLCanvas canvas)
+	@Override
+	public boolean isOpaque()
 	{
-		int[] textureId = new int[1];
+		return mOpaque;
+	}
+
+	protected void prepare(GLCanvas canvas)
+	{
 		GL11 gl = canvas.getGLInstance();
-		gl.glGenTextures(1, textureId, 0);
-		return new RawTexture(canvas, textureId[0]);
+
+		// Define a vertically flipped crop rectangle for
+		// OES_draw_texture.
+		// The four values in sCropRect are: left, bottom, width, and
+		// height. Negative value of width or height means flip.
+		sCropRect[0] = 0;
+		sCropRect[1] = mHeight;
+		sCropRect[2] = mWidth;
+		sCropRect[3] = -mHeight;
+
+		// Upload the bitmap to a new texture.
+		GLId.glGenTextures(1, sTextureId, 0);
+		gl.glBindTexture(GL11.GL_TEXTURE_2D, sTextureId[0]);
+		gl.glTexParameterfv(GL11.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, sCropRect, 0);
+		gl.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP_TO_EDGE);
+		gl.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP_TO_EDGE);
+		gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+		gl.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+
+		gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, getTextureWidth(), getTextureHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, null);
+
+		mId = sTextureId[0];
+		mState = STATE_LOADED;
+		setAssociatedCanvas(canvas);
 	}
 
 	@Override
 	protected boolean onBind(GLCanvas canvas)
 	{
-		if (mCanvasRef.get() != canvas)
-		{
-			throw new RuntimeException("cannot bind to different canvas");
-		}
-		return true;
-	}
-
-	public boolean isOpaque()
-	{
-		return true;
+		if (isLoaded())
+			return true;
+		Log.w(TAG, "lost the content due to context change");
+		return false;
 	}
 
 	@Override
 	public void yield()
 	{
 		// we cannot free the texture because we have no backup.
+	}
+
+	@Override
+	protected int getTarget()
+	{
+		return GL11.GL_TEXTURE_2D;
 	}
 }

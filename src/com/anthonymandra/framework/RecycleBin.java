@@ -68,7 +68,7 @@ public class RecycleBin
 	public RecycleBin(Context context, String uniqueName, int maxSize)
 	{
 		mDiskCacheSize = maxSize;
-		mDiskCacheDir = Utils.getDiskCacheDir(context, uniqueName);
+		mDiskCacheDir = Util.getDiskCacheDir(context, uniqueName);
 		initDiskCache();
 	}
 
@@ -163,7 +163,7 @@ public class RecycleBin
 				{
 				}
 			}
-			
+
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 			{
@@ -235,16 +235,12 @@ public class RecycleBin
 
 	public static String keyToFile(String key)
 	{
-		return key
-				.replaceAll(pathReplacement, File.separator)
-				.replaceAll(spaceReplacement, " ");
+		return key.replaceAll(pathReplacement, File.separator).replaceAll(spaceReplacement, " ");
 	}
 
 	public static String fileToKey(String file)
 	{
-		return file
-				.replaceAll(File.separator, pathReplacement)
-				.replaceAll(" ", spaceReplacement);
+		return file.replaceAll(File.separator, pathReplacement).replaceAll(" ", spaceReplacement);
 	}
 
 	/**
@@ -323,8 +319,8 @@ public class RecycleBin
 		{
 			return keys;
 		}
-		
-		Set<String> coded = bin.getKeys();	
+
+		Set<String> coded = bin.getKeys();
 		for (String key : coded)
 		{
 			keys.add(keyToFile(key));
@@ -352,23 +348,23 @@ public class RecycleBin
 		{
 			switch ((Integer) params[0])
 			{
-			case MESSAGE_CLEAR:
-				clearCacheInternal();
-				break;
-			case MESSAGE_INIT_DISK_CACHE:
-				initDiskCacheInternal();
-				break;
-			case MESSAGE_FLUSH:
-				flushCacheInternal();
-				break;
-			case MESSAGE_CLOSE:
-				closeCacheInternal();
-				break;
+				case MESSAGE_CLEAR:
+					clearCacheInternal();
+					break;
+				case MESSAGE_INIT_DISK_CACHE:
+					initDiskCacheInternal();
+					break;
+				case MESSAGE_FLUSH:
+					flushCacheInternal();
+					break;
+				case MESSAGE_CLOSE:
+					closeCacheInternal();
+					break;
 			}
 			return null;
 		}
 	}
-	
+
 	private DiskLruCache getDiskCache()
 	{
 		// It's not ideal to possibly call this in a UI thread, but it ensures we won't pull a null after resume
@@ -391,7 +387,7 @@ public class RecycleBin
 					{
 						diskCacheDir.mkdirs();
 					}
-					if (Utils.getUsableSpace(diskCacheDir) > mDiskCacheSize)
+					if (Util.getUsableSpace(diskCacheDir) > mDiskCacheSize)
 					{
 						try
 						{

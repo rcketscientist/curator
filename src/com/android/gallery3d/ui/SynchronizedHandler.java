@@ -19,7 +19,7 @@ package com.android.gallery3d.ui;
 import android.os.Handler;
 import android.os.Message;
 
-import com.android.gallery3d.util.Utils;
+import com.android.gallery3d.common.Utils;
 
 public class SynchronizedHandler extends Handler
 {

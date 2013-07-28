@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
 
-public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener//, OnCancelListener
+public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener// , OnCancelListener
 {
 	private List<String> items;
 	private List<String> selected = new ArrayList<String>();
@@ -43,7 +43,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		super(arg0, arg1, arg2);
 		initialize();
 	}
-	
+
 	private void initialize()
 	{
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, new String[]
@@ -60,25 +60,25 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		else
 			selected.remove(items.get(which));
 	}
-	
+
 	private void savePreference()
 	{
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-		sp.edit().putString(FullSettingsActivity.KEY_CustomKeywords, serializeItems()).commit();		
+		sp.edit().putString(FullSettingsActivity.KEY_CustomKeywords, serializeItems()).commit();
 	}
-	
+
 	private String serializeItems()
 	{
 		String serial = "";
 		for (int i = 0; i < items.size(); i++)
 		{
 			serial += items.get(i);
-			if (i < items.size()-1)
+			if (i < items.size() - 1)
 				serial += delimiter;
 		}
 		return serial;
 	}
-	
+
 	private void parsePreference()
 	{
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -89,7 +89,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		items = new ArrayList<String>();
 		Collections.addAll(items, pref.split(delimiter));
 	}
-	
+
 	private boolean[] getSelectedArray()
 	{
 		boolean[] selection = new boolean[items.size()];
@@ -130,7 +130,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 						addKeyword(value);
 						Collections.sort(items);
 						addSelection(value);
-						savePreference();			
+						savePreference();
 						dialogSelectKeyword.dismiss();
 					}
 				});
@@ -154,9 +154,9 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 			{
 				for (String item : selected)
 				{
-					items.remove(item);			
+					items.remove(item);
 				}
-				
+
 				savePreference();
 				dialog.dismiss();
 			}
@@ -165,12 +165,12 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		dialogSelectKeyword.show();
 		return true;
 	}
-	
+
 	public List<String> getSelected()
 	{
 		return selected;
 	}
-	
+
 	public void setSelected(List<String> keywords)
 	{
 		for (String keyword : keywords)
@@ -179,9 +179,10 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 				addSelection(keyword);
 		}
 	}
-	
+
 	/**
 	 * Ensures keywords are unique
+	 * 
 	 * @param keyword
 	 */
 	private void addKeyword(String keyword)
@@ -189,9 +190,10 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		if (!items.contains(keyword))
 			items.add(keyword);
 	}
-	
+
 	/**
 	 * Ensures selections are unique
+	 * 
 	 * @param keyword
 	 */
 	private void addSelection(String keyword)
@@ -199,7 +201,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		if (!selected.contains(keyword))
 			selected.add(keyword);
 	}
-	
+
 	public void clearSelected()
 	{
 		selected.clear();

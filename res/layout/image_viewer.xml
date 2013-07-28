@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frameLayoutViewer"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
@@ -82,6 +82,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/Name"
                     android:textIsSelectable="false" />
 
@@ -103,6 +104,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/Date"
                     android:textIsSelectable="false" />
 
@@ -135,6 +137,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/model"
                     android:textIsSelectable="false" />
 
@@ -156,6 +159,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/lens"
                     android:textIsSelectable="false" />
 
@@ -177,6 +181,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/driveMode"
                     android:textIsSelectable="false" />
 
@@ -198,6 +203,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/expMode"
                     android:textIsSelectable="false" />
 
@@ -219,6 +225,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/expProgram"
                     android:textIsSelectable="false" />
 
@@ -251,6 +258,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/aperture"
                     android:textIsSelectable="false" />
 
@@ -272,6 +280,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/exposure"
                     android:textIsSelectable="false" />
 
@@ -293,6 +302,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/flash"
                     android:textIsSelectable="false" />
 
@@ -314,6 +324,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/focalLength"
                     android:textIsSelectable="false" />
 
@@ -335,6 +346,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/iso"
                     android:textIsSelectable="false" />
 
@@ -356,6 +368,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/whiteBalance"
                     android:textIsSelectable="false" />
 
@@ -409,6 +422,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/latitude"
                     android:textIsSelectable="false" />
 
@@ -430,6 +444,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/longitude"
                     android:textIsSelectable="false" />
 
@@ -451,6 +466,7 @@
                     style="@style/MetaLabel"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:text="@string/altitude"
                     android:textIsSelectable="false" />
 
@@ -482,4 +498,4 @@
 
     </RelativeLayout>
 
-</FrameLayout>
+</merge>

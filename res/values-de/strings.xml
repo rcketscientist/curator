@@ -46,8 +46,7 @@
 <string name="import1">Importieren</string>
 <string name="all">ALLE</string>
 <string name="selected">AUSGEWÄHLTE</string>
-<string name="renameImages">%1$s Bilder umbenannt</string>
-<string name="exportThumbsFormat">%1$s Vorschauen exportiert</string>
+<string name="renameImages">Bilder umbenannt</string>
 <string name="view">Anzeigen</string>
 <string name="gallery">Galerie</string>
 <string name="viewer">Betrachter</string>
@@ -99,7 +98,7 @@
 <string name="warningNoRecycleBin">Kein Papierkorb vorhanden. Die Dateien werden direkt gelöscht.</string>
 <string name="warningGenericImagesOff">allgemeine Bilder (.jpg) sind in den Einstellungen deaktiviert</string>
 <string name="warningInvalidMeta">ungültige Metadaten</string>
-<string name="warningInvalidLabel">ungültige Bezeichnung "%1$s". Bezeichnungen können in den Einstellungen angepasst werden</string>
+<string name="warningInvalidLabel">ist ein ungültiger Etikett. Bezeichnungen können in den Einstellungen angepasst werden</string>
 <string name="warningLicenseDeny">Lizenz: Viel Spaß mit der Demo</string>
 <string name="warningLicenseAllow">Lizenz: Danke für Ihren Kauf !</string>
 
@@ -174,5 +173,9 @@
 <string name="tutorialSelectModeTitle">Auswahl Modus</string>
 <string name="tutorialSelectBetweenTitle">wähle zwischen</string>
 <string name="tutorialUsbTitle">Suche vorhandene USB Verbindungen</string>
+<string name="tutorialUsb">Durchsuche alle bekannten USB-Geräte. Wenn Dein Gerät nicht erkannt wird, schicke eine mail mit dem mount point, z.B. "/mnt/weird/device/usb"</string>
 
+<string name="unit_mm">mm</string>
+<string name="loading">Lade\u2026</string>
+<string name="no_thumbnail">Keine Thumbnails (Miniaturen)</string>
 </resources>

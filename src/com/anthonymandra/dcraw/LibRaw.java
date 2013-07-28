@@ -47,7 +47,7 @@ public class LibRaw
 	private static native byte[] getThumbFromFile3(String filePath);
 
 	private static native byte[] getThumbFromFile4(String filePath, int[] results);
-	
+
 	private static native byte[] getThumbFromFile5(String filePath, int[] results, String[] exif);
 
 	private static native byte[] getThumbFromBuffer(byte[] buffer);
@@ -87,7 +87,7 @@ public class LibRaw
 		return result;
 	}
 
-	//TODO: Should put this in a 
+	// TODO: Should put this in a
 	public static byte[] getThumb(File file, String[] exif)
 	{
 		int[] results = new int[3];

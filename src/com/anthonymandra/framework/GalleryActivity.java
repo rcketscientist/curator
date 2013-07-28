@@ -46,6 +46,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	private static final String TAG = GalleryActivity.class.getSimpleName();
 
 	public static final String SWAP_BIN_DIR = "swap";
+	public static final int FILE_NOT_FOUND = -1;
 
 	private static final int REQUEST_CODE_SHARE = 0;
 
@@ -98,7 +99,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	}
 
 	@Override
-	public void onDestroy()
+	protected void onDestroy()
 	{
 		super.onDestroy();
 		if (recycleBin != null)
@@ -139,7 +140,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		if (showNative)
 			mVisibleItems.addAll(mNativeImages);
 	}
-	
+
 	protected int findMediaByFilename(String filename)
 	{
 		for (MediaObject raw : mRawImages)
@@ -149,7 +150,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 				return mRawImages.indexOf(raw);
 			}
 		}
-		
+
 		for (MediaObject generic : mNativeImages)
 		{
 			if (generic.getPath().equals(filename))
@@ -157,8 +158,8 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 				return mRawImages.size() + mNativeImages.indexOf(generic);
 			}
 		}
-		
-		return -1;
+
+		return FILE_NOT_FOUND;
 	}
 
 	protected int getImageId(MediaObject media)
@@ -171,7 +172,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		{
 			return mRawImages.size() + mNativeImages.indexOf(media);
 		}
-		return -1;
+		return FILE_NOT_FOUND;
 	}
 
 	protected void clearSubLists()
@@ -188,8 +189,8 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		mCurrentPath = newPath;
 		return processLocalFolder();
 	}
-	
-	protected void setSingeImage(File image)
+
+	protected void setSingleImage(File image)
 	{
 		addFile(image, false);
 	}
@@ -256,7 +257,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	 */
 	protected void createSwapDir()
 	{
-		mSwapDir = Utils.getDiskCacheDir(this, SWAP_BIN_DIR);
+		mSwapDir = Util.getDiskCacheDir(this, SWAP_BIN_DIR);
 		if (!mSwapDir.exists())
 		{
 			mSwapDir.mkdirs();
@@ -379,7 +380,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		finally
@@ -450,12 +450,12 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		// 1. MTP (unsupported)
 		// 2. Recycle is set to off
 		// 3. For some reason the bin is null
-/*		if (itemsToDelete.get(0) instanceof MtpImage)
-		{
-			justDelete = true;
-			message = getString(R.string.warningRecycleMtp);
-		}
-		else */if (!useRecycle)
+//		if (itemsToDelete.get(0) instanceof MtpImage)
+//		{
+//			justDelete = true;
+//			message = getString(R.string.warningRecycleMtp);
+//		}
+		/* else */if (!useRecycle)
 		{
 			justDelete = true;
 			message = getString(R.string.warningDeleteDirect);
@@ -660,7 +660,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 				BufferedInputStream imageData = image.getThumbInputStream();
 				if (imageData == null)
 					return null;
-				File swapFile = getSwapFile(Utils.swapExtention(image.getName(), ".jpg"));
+				File swapFile = getSwapFile(Util.swapExtention(image.getName(), ".jpg"));
 				write(swapFile, imageData);
 				try
 				{
@@ -779,15 +779,13 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			return isNative(file);
 		}
 	}
-	
+
 	protected boolean isNative(File file)
 	{
 		String filename = file.getName();
-		return (filename.toLowerCase(Locale.US).endsWith("jpg") || 
-				filename.toLowerCase(Locale.US).endsWith("jpeg")|| 
-				filename.toLowerCase(Locale.US).endsWith("png") || 
-				filename.toLowerCase(Locale.US).endsWith("bmp") || 
-				filename.toLowerCase(Locale.US).endsWith("gif"));
+		return (filename.toLowerCase(Locale.US).endsWith("jpg") || filename.toLowerCase(Locale.US).endsWith("jpeg")
+				|| filename.toLowerCase(Locale.US).endsWith("png") || filename.toLowerCase(Locale.US).endsWith("bmp") || filename.toLowerCase(Locale.US)
+				.endsWith("gif"));
 	}
 
 	class FileAlphaCompare implements Comparator<File>
