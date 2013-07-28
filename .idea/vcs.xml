@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/Distribution" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/FileManager" vcs="svn" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/amandra-xmp" vcs="Git" />
+  </component>
+</project>
+

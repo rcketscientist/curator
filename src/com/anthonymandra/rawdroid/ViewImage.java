@@ -1,15 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.openintents.intents.FileManagerIntents;
-
 import android.annotation.TargetApi;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
@@ -55,6 +45,16 @@ import com.anthonymandra.framework.MediaObject;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.Utils;
 import com.anthonymandra.widget.HistogramView;
+
+import org.openintents.intents.FileManagerIntents;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ViewImage extends GalleryActivity implements ScaleChangedListener, OnShareTargetSelectedListener, OnSharedPreferenceChangeListener
 {

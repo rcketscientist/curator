@@ -61,9 +61,9 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:smoothScrollbar="true"
-        app:collapsible="true"
-        app:indent_width="10dp"
-        app:indicator_gravity="right|center_vertical" >
+        treeView:collapsible="true"
+        treeView:indent_width="10dp"
+        treeView:indicator_gravity="right|center_vertical" >
     </pl.polidea.treeview.TreeViewList>
 
 </LinearLayout>
