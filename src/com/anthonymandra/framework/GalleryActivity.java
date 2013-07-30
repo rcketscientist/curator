@@ -275,10 +275,13 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			public void run()
 			{
 				final File[] swapFiles = mSwapDir.listFiles();
-				for (File toDelete : swapFiles)
-				{
-					toDelete.delete();
-				}
+                if (swapFiles != null)
+                {
+                    for (File toDelete : swapFiles)
+                    {
+                        toDelete.delete();
+                    }
+                }
 			}
 		}.run();
 	}

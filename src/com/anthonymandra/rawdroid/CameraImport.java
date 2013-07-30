@@ -129,11 +129,11 @@ public class CameraImport extends Activity
 		{
 			mProgressDialog = new ProgressDialog(CameraImport.this);
 			MtpDeviceInfo info = mMtpDevice.getDeviceInfo();
-			if (info != null)
-			{
-				String title = info.getManufacturer() + " " + info.getModel();
-				mProgressDialog.setTitle(title);
-			}
+            String title = "Import";
+            if (info != null)
+                 title = info.getManufacturer() + " " + info.getModel();
+			mProgressDialog = new ProgressDialog(CameraImport.this);
+			mProgressDialog.setTitle(title);
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			mProgressDialog.setIndeterminate(true);
 			mProgressDialog.show();

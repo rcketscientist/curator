@@ -776,7 +776,7 @@ public class TileImageView extends GLView
 			Utils.assertTrue(mTileState == STATE_DECODED);
 
 			// We need to override the width and height, so that we won't
-			// draw beyond the boundaries.
+            // draw beyond the boundaries.
 			int rightEdge = ((mImageWidth - mX) >> mTileLevel) + TILE_BORDER;
 			int bottomEdge = ((mImageHeight - mY) >> mTileLevel) + TILE_BORDER;
 			setSize(Math.min(BITMAP_SIZE, rightEdge), Math.min(BITMAP_SIZE, bottomEdge));
