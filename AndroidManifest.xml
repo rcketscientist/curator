@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.anthonymandra.rawdroid"
-    android:versionCode="97"
-    android:versionName="1.61" >
+    android:versionCode="103"
+    android:versionName="1.6.2" >
 
     <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="17"
+        android:targetSdkVersion="18" />
 
     <uses-feature
         android:name="android.hardware.usb.host"
