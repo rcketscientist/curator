@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="1.3.8"
+             versioncode="101"
+             summary="Bug fixes."
+             date="07/31/2013">
+        <change>Fixed: Various bugs</change>
+    </release>
     <release version="1.37" 
         versioncode="98" 
         summary="Revert to old viewer during troubleshooting.  New viewer is back in beta."

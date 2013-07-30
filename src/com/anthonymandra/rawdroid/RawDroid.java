@@ -625,21 +625,11 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 		}
 
-		String title;
-		if (mSelectedImages.size() > 0)
-		{
-			title = String.format(getString(R.string.exportThumbsFormat), getString(R.string.selected));
-		}
-		else
-		{
-			title = String.format(getString(R.string.exportThumbsFormat), getString(R.string.all));
-		}
-
 		// Construct URI from file name.
 		intent.setData(Uri.fromFile(exportLocation));
 
 		// Set fancy title and button (optional)
-		intent.putExtra(FileManagerIntents.EXTRA_TITLE, title);
+		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
 		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
 
 		try
