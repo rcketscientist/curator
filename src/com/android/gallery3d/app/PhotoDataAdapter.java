@@ -469,12 +469,19 @@ public class PhotoDataAdapter implements ImageModel
 
 	public void switchToNextImage()
 	{
-		moveTo(getCurrentIndex() + 1);
+        if (getCurrentIndex() < mSize - 1)
+		    moveTo(getCurrentIndex() + 1);
+        else    //TODO: Show glow here
+            return;
 	}
 
 	public void switchToPrevImage()
 	{
-		moveTo(getCurrentIndex() - 1);
+        if (getCurrentIndex() > 0)
+		    moveTo(getCurrentIndex() - 1);
+        else    //TODO: Show glow here
+            return;
+
 	}
 
 	public void switchToFirstImage()

@@ -207,6 +207,7 @@ public class PhotoView extends GLView
 	private final MyGestureListener mGestureListener;
 	private final GestureRecognizer mGestureRecognizer;
 	private final PositionController mPositionController;
+    private final PositionController.Listener mPositionListener;
 
 	private Listener mListener;
 	private Model mModel;
@@ -282,45 +283,9 @@ public class PhotoView extends GLView
 		mGestureListener = new MyGestureListener();
 		mGestureRecognizer = new GestureRecognizer(context, mGestureListener);
 
-		mPositionController = new PositionController(context, new PositionController.Listener()
-		{
-			public void invalidate()
-			{
-				PhotoView.this.invalidate();
-			}
+        mPositionListener = new PositionListener();
+		mPositionController = new PositionController(context, mPositionListener);
 
-			public boolean isHoldingDown()
-			{
-				return (mHolding & HOLD_TOUCH_DOWN) != 0;
-			}
-
-			public boolean isHoldingDelete()
-			{
-				return (mHolding & HOLD_DELETE) != 0;
-			}
-
-			public void onPull(int offset, int direction)
-			{
-				mEdgeView.onPull(offset, direction);
-			}
-
-			public void onRelease()
-			{
-				mEdgeView.onRelease();
-			}
-
-			public void onAbsorb(int velocity, int direction)
-			{
-				mEdgeView.onAbsorb(velocity, direction);
-			}
-
-			@Override
-			public void onScaleChanged(float scale)
-			{
-				// Forward it on.
-				mListener.onScaleChanged(scale);
-			}
-		});
 		mVideoPlayIcon = new ResourceTexture(context, android.R.drawable.ic_media_play);// R.drawable.ic_control_play);
 		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++)
 		{
@@ -778,9 +743,10 @@ public class PhotoView extends GLView
 
 			canvas.save(GLCanvas.SAVE_FLAG_MATRIX | GLCanvas.SAVE_FLAG_ALPHA);
 			float filmRatio = mPositionController.getFilmRatio();
-			boolean wantsCardEffect = CARD_EFFECT && !mIsCamera && filmRatio != 1f && !mPictures.get(-1).isCamera()
-					&& !mPositionController.inOpeningAnimation();
-			boolean wantsOffsetEffect = OFFSET_EFFECT && mIsDeletable && filmRatio == 1f && r.centerY() != viewH / 2;
+            //TODO: What does all this mean?
+			boolean wantsCardEffect = false;/*CARD_EFFECT && !mIsCamera && filmRatio != 1f && !mPictures.get(-1).isCamera()
+					&& !mPositionController.inOpeningAnimation();*/
+			boolean wantsOffsetEffect = false;//OFFSET_EFFECT && mIsDeletable && filmRatio == 1f && r.centerY() != viewH / 2;
 			if (wantsCardEffect)
 			{
 				// Calculate the move-out progress value.
@@ -935,7 +901,8 @@ public class PhotoView extends GLView
 			int h = getHeight();
 			if (r.left >= w || r.right <= 0 || r.top >= h || r.bottom <= 0)
 			{
-				mScreenNail.noDraw();
+                if (mScreenNail != null)
+				    mScreenNail.noDraw();
 				return;
 			}
 
@@ -1836,6 +1803,37 @@ public class PhotoView extends GLView
 		return true;
 	}
 
+    /**
+     * Implements a slide animation on demand.  Will animate edge effects for last image.
+     * @return
+     */
+    public void goToNextPicture()
+    {
+        if (mNextBound <= 0)
+        {
+            mPositionListener.onPull(mBounds.right, EdgeView.RIGHT);
+            return;
+        }
+        mModel.switchToNextImage();
+        mPositionController.startHorizontalSlide();
+    }
+
+    /**
+     * Implements a slide animation on demand.  Will animate edge effects for first image.
+     * @return
+     */
+    public void goToPrevPicture()
+    {
+        if (mPrevBound >= 0)
+        {
+            mPositionListener.onPull(mBounds.right, EdgeView.LEFT);
+            return;
+        }
+
+        mModel.switchToPrevImage();
+        mPositionController.startHorizontalSlide();
+    }
+
 	private static int gapToSide(int imageWidth, int viewWidth)
 	{
 		return Math.max(0, (viewWidth - imageWidth) / 2);
@@ -2045,4 +2043,44 @@ public class PhotoView extends GLView
 	{
 		return mPositionController.getPosition(index);
 	}
+
+    private class PositionListener implements PositionController.Listener
+    {
+        public void invalidate()
+        {
+            PhotoView.this.invalidate();
+        }
+
+        public boolean isHoldingDown()
+        {
+            return (mHolding & HOLD_TOUCH_DOWN) != 0;
+        }
+
+        public boolean isHoldingDelete()
+        {
+            return (mHolding & HOLD_DELETE) != 0;
+        }
+
+        public void onPull(int offset, int direction)
+        {
+            mEdgeView.onPull(offset, direction);
+        }
+
+        public void onRelease()
+        {
+            mEdgeView.onRelease();
+        }
+
+        public void onAbsorb(int velocity, int direction)
+        {
+            mEdgeView.onAbsorb(velocity, direction);
+        }
+
+        @Override
+        public void onScaleChanged(float scale)
+        {
+            // Forward it on.
+            mListener.onScaleChanged(scale);
+        }
+    }
 }

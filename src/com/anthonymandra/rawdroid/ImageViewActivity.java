@@ -873,17 +873,20 @@ public class ImageViewActivity extends GalleryActivity implements /* ScaleChange
 		@Override
 		public void onClick(View v)
 		{
-			mModel.switchToPrevImage();
+            mPhotoView.goToPrevPicture();
+//            mPhotoView.slideToPrevPicture();
+//			mModel.switchToPrevImage();
 		}
 	}
 
 	class NextImageClickListener implements View.OnClickListener
 	{
-
 		@Override
 		public void onClick(View v)
 		{
-			mModel.switchToNextImage();
+            mPhotoView.goToNextPicture();
+//            mPhotoView.slideToNextPicture();
+//			mModel.switchToNextImage();
 		}
 	}
 

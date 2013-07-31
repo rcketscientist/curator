@@ -914,7 +914,9 @@ class PositionController
 		}
 		for (int i = -BOX_MAX; i < BOX_MAX; i++)
 		{
-			changed |= mGaps.get(i).advanceAnimation();
+            // TODO: Without 'if' it will crash with rapid image changes...find a better fix
+            if (mGaps.get(i) != null)
+			    changed |= mGaps.get(i).advanceAnimation();
 		}
 		changed |= mFilmRatio.advanceAnimation();
 		if (changed)

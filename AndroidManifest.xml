@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.anthonymandra.rawdroid"
-    android:versionCode="103"
-    android:versionName="1.6.2" >
+    android:versionCode="104"
+    android:versionName="1.6.3" >
 
     <uses-sdk
-        android:minSdkVersion="17"
+        android:minSdkVersion="10"
         android:targetSdkVersion="18" />
 
     <uses-feature
