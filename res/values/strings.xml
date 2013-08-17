@@ -209,5 +209,7 @@
     <string name="unit_mm">mm</string>
     <string name="loading">Loading\u2026</string>
     <string name="no_thumbnail">No thumbnail</string>
+    <string name="deleted">Deleted</string>
+    <string name="undo">UNDO</string>
 
 </resources>

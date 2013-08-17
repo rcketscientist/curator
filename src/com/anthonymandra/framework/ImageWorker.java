@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.ImageView;
 
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
@@ -53,12 +52,12 @@ public abstract class ImageWorker extends CacheManager
 	 * logic). A memory and disk cache will be used if an {@link ImageCache} has been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
 	 * image is found in the memory cache, it is set immediately, otherwise an {@link AsyncTask} will be created to asynchronously load the bitmap.
 	 * 
-	 * @param data
-	 *            The URL of the image to download.
+	 * @param image
+	 *            The raw image to decode
 	 * @param imageView
 	 *            The ImageView to bind the downloaded image to.
 	 */
-	public void loadImage(MediaObject image, LoadingImageView imageView)
+	public void loadImage(RawObject image, LoadingImageView imageView)
 	{
 		imageView.setLoadingSpinner();
 		if (image == null)
@@ -70,7 +69,7 @@ public abstract class ImageWorker extends CacheManager
 
 		if (mImageCache != null)
 		{
-			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getPath()));// String.valueOf(image));
+			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getFilePath()));// String.valueOf(image));
 		}
 
 		if (bitmap != null)
@@ -170,7 +169,7 @@ public abstract class ImageWorker extends CacheManager
 	 * background thread and be long running. For example, you could resize a large bitmap here, or pull down an image from the network.
 	 * 
 	 * @param data
-	 *            The data to identify which image to process, as provided by {@link ImageWorker#loadImage(Object, ImageView)}
+	 *            The data to identify which image to process, as provided by {@link ImageWorker#loadImage(RawObject, com.anthonymandra.widget.LoadingImageView)}
 	 * @return The processed bitmap
 	 */
 	protected abstract Bitmap processBitmap(Object data);
@@ -180,7 +179,7 @@ public abstract class ImageWorker extends CacheManager
 	 */
 	public class BitmapWorkerTask extends AsyncTask<Object, Void, Bitmap>
 	{
-		private MediaObject data;
+		private RawObject data;
 		private final WeakReference<LoadingImageView> imageViewReference;
 
 		public BitmapWorkerTask(LoadingImageView imageView)
@@ -194,8 +193,8 @@ public abstract class ImageWorker extends CacheManager
 		@Override
 		protected Bitmap doInBackground(Object... params)
 		{
-			data = (MediaObject) params[0];
-			final String dataString = String.valueOf(data.getPath());// String.valueOf(data);
+			data = (RawObject) params[0];
+			final String dataString = String.valueOf(data.getFilePath());// String.valueOf(data);
 			Bitmap bitmap = null;
 
 			// Wait here if work is paused and the task is not cancelled

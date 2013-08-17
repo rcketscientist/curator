@@ -17,6 +17,7 @@
         <item name="android:gravity">left</item>
         <item name="android:layout_margin">1dp</item>
         <item name="android:width">100sp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="MetaField" parent="@style/MetaTextAppearance">
@@ -24,7 +25,9 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">left</item>
         <item name="android:layout_margin">1dp</item>
-        <item name="android:maxLength">30</item>
+        <item name="android:width">155sp</item>
+        <item name="android:maxLines">1</item>
+        <!--<item name="android:maxLength">30</item>-->
     </style>
 
     <style name="ButtonText">

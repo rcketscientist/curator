@@ -22,15 +22,16 @@ public class HistogramView extends View
 	private static final int histHeight = 100;
 	private static final int histWidth = 256;
 	private static final int histSpacer = 5;
+    private static final int numGridlines = 4;
 
 	private static final int redBias = 0;
 	private static final int greenBias = 100 + histSpacer;
 	private static final int blueBias = 200 + 2 * histSpacer;
 
-	private int totalHeight = histHeight * 3;
 	private int redStart = histHeight + redBias;
 	private int greenStart = histHeight + greenBias;
 	private int blueStart = histHeight + blueBias;
+    private int totalHeight = blueStart;
 
 	public HistogramView(Context context, AttributeSet attrs)
 	{
@@ -47,22 +48,30 @@ public class HistogramView extends View
 		greenPath.reset();
 		bluePath.reset();
 
-		// Bottom-right corner
-		redPath.moveTo(histWidth, redStart);
-		greenPath.moveTo(histWidth, greenStart);
-		bluePath.moveTo(histWidth, blueStart);
-
-		// Create baseline
-		redPath.lineTo(0f, redStart);
-		greenPath.lineTo(0f, greenStart);
-		bluePath.lineTo(0f, blueStart);
-
 		int width = getWidth();
 		int height = getHeight();
 		Matrix matrix = new Matrix();
-		matrix.postScale(width / histWidth, height / totalHeight);
+		matrix.postScale(width / histWidth, 1);
 
 		int scale = hist.getMaxFreq();
+        int histHeight = (getHeight() - 4) / 3;
+        final int redBias = 0;
+        final int greenBias = 100 + histSpacer;
+        final int blueBias = 200 + 2 * histSpacer;
+
+        int blueStart = height - 1;
+        int greenStart = blueStart - histHeight - 1;
+        int redStart = greenStart - histHeight - 1;
+
+        // Bottom-right corner
+        redPath.moveTo(histWidth, redStart);
+        greenPath.moveTo(histWidth, greenStart);
+        bluePath.moveTo(histWidth, blueStart);
+
+        // Create baseline
+        redPath.lineTo(0f, redStart);
+        greenPath.lineTo(0f, greenStart);
+        bluePath.lineTo(0f, blueStart);
 
 		for (int band = 0; band <= 255; band++)
 		{
@@ -71,9 +80,9 @@ public class HistogramView extends View
 //			greenPath.lineTo(band, greenBias + histHeight - histHeight * (hist.getGreenFreq(band) / (float)hist.getGreenMax()));
 //			bluePath.lineTo(band, blueBias + histHeight - histHeight * (hist.getBlueFreq(band) / (float)hist.getBlueMax()));
 			// All graphs use the same scale (max color)
-			redPath.lineTo(band, redBias + histHeight - histHeight * (hist.getFreqR(band) / (float) scale));
-			greenPath.lineTo(band, greenBias + histHeight - histHeight * (hist.getFreqG(band) / (float) scale));
-			bluePath.lineTo(band, blueBias + histHeight - histHeight * (hist.getFreqB(band) / (float) scale));
+			redPath.lineTo(band, redStart - histHeight * (hist.getFreqR(band) / (float) scale));
+			greenPath.lineTo(band, greenStart - histHeight * (hist.getFreqG(band) / (float) scale));
+			bluePath.lineTo(band, blueStart - histHeight * (hist.getFreqB(band) / (float) scale));
 		}
 
 		redPath.transform(matrix);
@@ -87,6 +96,20 @@ public class HistogramView extends View
 	{
 		super.onDraw(canvas);
 
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+        int spacing = width / 5;
+        p.setStyle(Paint.Style.STROKE);
+        p.setColor(Color.WHITE);
+
+        for (int i = 1; i <= numGridlines; ++i)
+        {
+            int x = i * spacing;
+            canvas.drawLine(x, 0, x, height, p);
+        }
+
+        p.setStyle(Paint.Style.);
+        p.setStyle(Paint.Style.FILL);
 		p.setColor(Color.RED);
 		canvas.drawPath(redPath, p);
 		p.setColor(Color.GREEN);

@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.data;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 
 import android.content.Context;
 import android.net.Uri;
@@ -29,6 +27,8 @@ import com.android.gallery3d.data.BytesBufferPool.BytesBuffer;
 import com.android.gallery3d.util.CacheManager;
 import com.android.gallery3d.util.GalleryUtils;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 public class ImageCacheService
 {
 	@SuppressWarnings("unused")
@@ -37,13 +37,14 @@ public class ImageCacheService
 	private static final String IMAGE_CACHE_FILE = "imgcache";
 	private static final int IMAGE_CACHE_MAX_ENTRIES = 5000;
 	private static final int IMAGE_CACHE_MAX_BYTES = 200 * 1024 * 1024;
-	private static final int IMAGE_CACHE_VERSION = 4;
+    private static final int IMAGE_CACHE_VERSION = 7;
 
 	private BlobCache mCache;
 
-	public ImageCacheService(Context context)
-	{
-		mCache = CacheManager.getCache(context, IMAGE_CACHE_FILE, IMAGE_CACHE_MAX_ENTRIES, IMAGE_CACHE_MAX_BYTES, IMAGE_CACHE_VERSION);
+    public ImageCacheService(Context context) {
+        mCache = CacheManager.getCache(context, IMAGE_CACHE_FILE,
+                IMAGE_CACHE_MAX_ENTRIES, IMAGE_CACHE_MAX_BYTES,
+                IMAGE_CACHE_VERSION);
 	}
 
 	/**
@@ -54,8 +55,7 @@ public class ImageCacheService
 	 * 
 	 * @return true if the image data is found; false if not found.
 	 */
-	public boolean getImageData(Uri uri, int type, BytesBuffer buffer)
-	{
+	public boolean getImageData(Uri uri, int type, BytesBuffer buffer) {
 		byte[] key = makeKey(uri, type);
 		long cacheKey = Utils.crc64Long(key);
 		try
@@ -63,62 +63,58 @@ public class ImageCacheService
 			LookupRequest request = new LookupRequest();
 			request.key = cacheKey;
 			request.buffer = buffer.data;
-			synchronized (mCache)
-			{
-				if (!mCache.lookup(request))
-					return false;
+            synchronized (mCache) {
+                if (!mCache.lookup(request)) return false;
 			}
-			if (isSameKey(key, request.buffer))
-			{
+            if (isSameKey(key, request.buffer)) {
 				buffer.data = request.buffer;
 				buffer.offset = key.length;
 				buffer.length = request.length - buffer.offset;
 				return true;
 			}
-		}
-		catch (IOException ex)
-		{
+        } catch (IOException ex) {
 			// ignore.
 		}
 		return false;
 	}
 
-	public void putImageData(Uri uri, int type, byte[] value)
-	{
+	public void putImageData(Uri uri, int type, byte[] value) {
 		byte[] key = makeKey(uri, type);
 		long cacheKey = Utils.crc64Long(key);
 		ByteBuffer buffer = ByteBuffer.allocate(key.length + value.length);
 		buffer.put(key);
 		buffer.put(value);
-		synchronized (mCache)
-		{
-			try
-			{
+        synchronized (mCache) {
+            try {
 				mCache.insert(cacheKey, buffer.array());
+            } catch (IOException ex) {
+                // ignore.
 			}
-			catch (IOException ex)
-			{
-				// ignore.
+        }
+    }
+    public void clearImageData(Uri path, int type) {
+        byte[] key = makeKey(path, type);
+        long cacheKey = Utils.crc64Long(key);
+        synchronized (mCache) {
+            try {
+                mCache.clearEntry(cacheKey);
+            } catch (IOException ex) {
+                // ignore.
 			}
 		}
 	}
 
-	private static byte[] makeKey(Uri uri, int type)
-	{
+	private static byte[] makeKey(Uri uri, int type) {
 		return GalleryUtils.getBytes(uri.toString() + "+" + type);
 	}
 
-	private static boolean isSameKey(byte[] key, byte[] buffer)
-	{
+    private static boolean isSameKey(byte[] key, byte[] buffer) {
 		int n = key.length;
-		if (buffer.length < n)
-		{
+        if (buffer.length < n) {
 			return false;
 		}
-		for (int i = 0; i < n; ++i)
-		{
-			if (key[i] != buffer[i])
-			{
+        for (int i = 0; i < n; ++i) {
+            if (key[i] != buffer[i]) {
 				return false;
 			}
 		}

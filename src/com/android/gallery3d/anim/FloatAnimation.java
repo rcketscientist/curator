@@ -14,33 +14,27 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.ui;
+package com.android.gallery3d.anim;
 
-import com.android.gallery3d.common.Utils;
+public class FloatAnimation extends Animation {
 
-public class GLPaint
-{
-	private float mLineWidth = 1f;
-	private int mColor = 0;
+    private final float mFrom;
+    private final float mTo;
+    private float mCurrent;
 
-	public void setColor(int color)
-	{
-		mColor = color;
-	}
+    public FloatAnimation(float from, float to, int duration) {
+        mFrom = from;
+        mTo = to;
+        mCurrent = from;
+        setDuration(duration);
+    }
 
-	public int getColor()
-	{
-		return mColor;
-	}
+    @Override
+    protected void onCalculate(float progress) {
+        mCurrent = mFrom + (mTo - mFrom) * progress;
+    }
 
-	public void setLineWidth(float width)
-	{
-		Utils.assertTrue(width >= 0);
-		mLineWidth = width;
-	}
-
-	public float getLineWidth()
-	{
-		return mLineWidth;
-	}
+    public float get() {
+        return mCurrent;
+    }
 }

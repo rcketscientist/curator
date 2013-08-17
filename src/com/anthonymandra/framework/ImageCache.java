@@ -139,7 +139,7 @@ public class ImageCache
 				@Override
 				protected int sizeOf(String key, Bitmap bitmap)
 				{
-					return getBitmapSize(bitmap);
+					return Util.getBitmapSize(bitmap);
 				}
 			};
 		}
@@ -505,23 +505,6 @@ public class ImageCache
 			sb.append(hex);
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Get the size in bytes of a bitmap.
-	 * 
-	 * @param bitmap
-	 * @return size in bytes
-	 */
-	@TargetApi(12)
-	public static int getBitmapSize(Bitmap bitmap)
-	{
-		if (Util.hasHoneycombMR1())
-		{
-			return bitmap.getByteCount();
-		}
-		// Pre HC-MR1
-		return bitmap.getRowBytes() * bitmap.getHeight();
 	}
 
 	/**

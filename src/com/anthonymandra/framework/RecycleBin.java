@@ -73,11 +73,11 @@ public class RecycleBin
 	}
 
 	/**
-	 * {@link RecycleBin#addFile(File)}
+	 * {@link RecycleBin#addFile(RawObject)}
 	 * 
 	 * @param recycledItem
 	 */
-	private void addFileInternal(MediaObject recycledItem)
+	private void addFileInternal(RawObject recycledItem)
 	{
 		if (recycledItem == null)
 		{
@@ -90,7 +90,7 @@ public class RecycleBin
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 			{
-				final String key = fileToKey(recycledItem.getPath());
+				final String key = fileToKey(recycledItem.getFilePath());
 				BufferedOutputStream out = null;
 				BufferedInputStream bis = null;
 				try
@@ -500,10 +500,10 @@ public class RecycleBin
 		}
 	}
 
-	public class AddFileTask extends AsyncTask<MediaObject, Void, Void>
+	public class AddFileTask extends AsyncTask<RawObject, Void, Void>
 	{
 		@Override
-		protected Void doInBackground(MediaObject... params)
+		protected Void doInBackground(RawObject... params)
 		{
 			addFileInternal(params[0]);
 			return null;
@@ -531,7 +531,7 @@ public class RecycleBin
 	 * @param recycledItem
 	 *            File to recycle and delete
 	 */
-	public void addFile(MediaObject recycledItem)
+	public void addFile(RawObject recycledItem)
 	{
 		new AddFileTask().execute(recycledItem);
 	}

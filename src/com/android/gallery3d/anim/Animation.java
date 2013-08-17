@@ -1,8 +1,24 @@
+/*
+ * Copyright (C) 2010 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.android.gallery3d.anim;
 
 import android.view.animation.Interpolator;
 
-import com.android.gallery3d.util.Utils;
+import com.android.gallery3d.common.Utils;
 
 // Animation calculates a value according to the current input time.
 //
@@ -29,58 +45,48 @@ import com.android.gallery3d.util.Utils;
 //
 // The start() method can be called again to restart the Animation.
 //
-abstract public class Animation
-{
-	private static final long ANIMATION_START = -1;
-	private static final long NO_ANIMATION = -2;
+abstract public class Animation {
+    private static final long ANIMATION_START = -1;
+    private static final long NO_ANIMATION = -2;
 
-	private long mStartTime = NO_ANIMATION;
-	private int mDuration;
-	private Interpolator mInterpolator;
+    private long mStartTime = NO_ANIMATION;
+    private int mDuration;
+    private Interpolator mInterpolator;
 
-	public void setInterpolator(Interpolator interpolator)
-	{
-		mInterpolator = interpolator;
-	}
+    public void setInterpolator(Interpolator interpolator) {
+        mInterpolator = interpolator;
+    }
 
-	public void setDuration(int duration)
-	{
-		mDuration = duration;
-	}
+    public void setDuration(int duration) {
+        mDuration = duration;
+    }
 
-	public void start()
-	{
-		mStartTime = ANIMATION_START;
-	}
+    public void start() {
+        mStartTime = ANIMATION_START;
+    }
 
-	public void setStartTime(long time)
-	{
-		mStartTime = time;
-	}
+    public void setStartTime(long time) {
+        mStartTime = time;
+    }
 
-	public boolean isActive()
-	{
-		return mStartTime != NO_ANIMATION;
-	}
+    public boolean isActive() {
+        return mStartTime != NO_ANIMATION;
+    }
 
-	public void forceStop()
-	{
-		mStartTime = NO_ANIMATION;
-	}
-	public boolean calculate(long currentTimeMillis)
-	{
-		if (mStartTime == NO_ANIMATION)
-			return false;
-		if (mStartTime == ANIMATION_START)
-			mStartTime = currentTimeMillis;
-		int elapse = (int) (currentTimeMillis - mStartTime);
-		float x = Utils.clamp((float) elapse / mDuration, 0f, 1f);
-		Interpolator i = mInterpolator;
-		onCalculate(i != null ? i.getInterpolation(x) : x);
-		if (elapse >= mDuration)
-			mStartTime = NO_ANIMATION;
-		return mStartTime != NO_ANIMATION;
-	}
+    public void forceStop() {
+        mStartTime = NO_ANIMATION;
+    }
 
-	abstract protected void onCalculate(float progress);
+    public boolean calculate(long currentTimeMillis) {
+        if (mStartTime == NO_ANIMATION) return false;
+        if (mStartTime == ANIMATION_START) mStartTime = currentTimeMillis;
+        int elapse = (int) (currentTimeMillis - mStartTime);
+        float x = Utils.clamp((float) elapse / mDuration, 0f, 1f);
+        Interpolator i = mInterpolator;
+        onCalculate(i != null ? i.getInterpolation(x) : x);
+        if (elapse >= mDuration) mStartTime = NO_ANIMATION;
+        return mStartTime != NO_ANIMATION;
+    }
+
+    abstract protected void onCalculate(float progress);
 }

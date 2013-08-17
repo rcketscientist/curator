@@ -92,7 +92,7 @@ public class LibRaw
 	{
 		int[] results = new int[3];
 //		String[] exifResult = new String[7];
-//		byte[] result = getThumbFromFile4(file.getPath(), results);
+//		byte[] result = getThumbFromFile4(file.getFilePath(), results);
 		byte[] result = getThumbFromFile5(file.getPath(), results, exif);
 //		exif = exifResult;
 
@@ -101,6 +101,7 @@ public class LibRaw
 
 		if (results[0] == 0)
 		{
+            Log.i(TAG, file.getName() + " is RGB thumb.");
 			int width = results[1];
 			int height = results[2];
 

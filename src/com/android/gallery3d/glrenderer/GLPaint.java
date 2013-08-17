@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package com.android.gallery3d.app;
+package com.android.gallery3d.glrenderer;
 
-import com.android.gallery3d.data.ImageCacheService;
-import com.android.gallery3d.ui.GLRoot;
+import junit.framework.Assert;
 
-public interface GalleryActivity extends GalleryContext
-{
-//    public StateManager getStateManager();
-	public GLRoot getGLRoot();
+public class GLPaint {
+    private float mLineWidth = 1f;
+    private int mColor = 0;
 
-//    public GalleryActionBar getGalleryActionBar();
-	public OrientationManager getOrientationManager();
+    public void setColor(int color) {
+        mColor = color;
+    }
 
-	public TransitionStore getTransitionStore();
+    public int getColor() {
+        return mColor;
+    }
 
-	public ImageCacheService getImageCacheService();
+    public void setLineWidth(float width) {
+        Assert.assertTrue(width >= 0);
+        mLineWidth = width;
+    }
+
+    public float getLineWidth() {
+        return mLineWidth;
+    }
 }

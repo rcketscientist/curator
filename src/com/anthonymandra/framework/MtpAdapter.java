@@ -124,7 +124,7 @@
 ////		o.inSampleSize = 8;
 ////		Bitmap image = BitmapFactory.decodeByteArray(thumb, 0, thumb.length, o);
 //////		File imported = new File(FileManager.getStoragePath() + File.separator + info.getName());
-//////		boolean success = mDevice.importFile(objectHandle, imported.getPath());
+//////		boolean success = mDevice.importFile(objectHandle, imported.getFilePath());
 ////		viewHolder.image.setImageBitmap(image);
 ////		mImageDecoder.loadImage(imported, viewHolder.image);
 ////		imported.delete();

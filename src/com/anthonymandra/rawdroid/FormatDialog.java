@@ -1,5 +1,7 @@
 package com.anthonymandra.rawdroid;
 
+import com.anthonymandra.framework.RawObject;
+
 import java.util.List;
 
 import android.app.Dialog;
@@ -12,25 +14,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.anthonymandra.framework.MediaObject;
-
 public class FormatDialog extends Dialog
 {
-	private List<? extends MediaObject> sourceFiles;
+	private List<? extends RawObject> sourceFiles;
 	private Spinner spinner;
 
 	private Context mContext;
 
 	private ResponseListener responseListener;
 
-	public FormatDialog(Context context, List<? extends MediaObject> sourceFiles)
+	public FormatDialog(Context context, List<? extends RawObject> sourceFiles)
 	{
 		super(context);
 		this.mContext = context;
 		this.sourceFiles = sourceFiles;
 	}
 
-	public FormatDialog(Context context, String title, List<MediaObject> sourceFiles, ResponseListener listener)
+	public FormatDialog(Context context, String title, List<RawObject> sourceFiles, ResponseListener listener)
 	{
 		super(context);
 		setTitle(title);
@@ -79,7 +79,7 @@ public class FormatDialog extends Dialog
 				switch (selected)
 				{
 					case 0:
-						for (MediaObject raw : sourceFiles)
+						for (RawObject raw : sourceFiles)
 						{
 							++counter;
 							String baseName = customName + "-" + String.format(format, counter);
@@ -87,7 +87,7 @@ public class FormatDialog extends Dialog
 						}
 						break;
 					case 1:
-						for (MediaObject raw : sourceFiles)
+						for (RawObject raw : sourceFiles)
 						{
 							++counter;
 							String baseName = customName + " (" + String.format(format, counter) + " of " + total + ")";

@@ -95,7 +95,7 @@ public class Util
 		return new File(cache, uniqueName);
 		// final String cachePath =
 		// return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !isExternalStorageRemovable() ?
-		// getExternalCacheDir(context).getPath() : context.getCacheDir().getPath();
+		// getExternalCacheDir(context).getFilePath() : context.getCacheDir().getFilePath();
 		//
 		// return new File(cachePath, uniqueName);
 	}
@@ -159,7 +159,7 @@ public class Util
 	//
 	// // Before Froyo we need to construct the external cache dir ourselves
 	// final String cacheDir = "/Android/data/" + context.getPackageName() + "/cache/";
-	// return new File(Environment.getExternalStorageDirectory().getPath() + cacheDir);
+	// return new File(Environment.getExternalStorageDirectory().getFilePath() + cacheDir);
 	// }
 
 	/**
@@ -218,7 +218,7 @@ public class Util
 		return numberOfLevels > 0;
 	}
 
-	public static boolean isNativeImage(MediaObject file)
+	public static boolean isNativeImage(RawObject file)
 	{
 		String filename = file.getName();
 		int dotposition = filename.lastIndexOf(".");
@@ -402,6 +402,23 @@ public class Util
 		result = BitmapFactory.decodeByteArray(image, 0, image.length, o);
 		return result;
 	}
+
+    /**
+     * Get the size in bytes of a bitmap.
+     *
+     * @param bitmap
+     * @return size in bytes
+     */
+    @TargetApi(12)
+    public static int getBitmapSize(Bitmap bitmap)
+    {
+        if (Util.hasHoneycombMR1())
+        {
+            return bitmap.getByteCount();
+        }
+        // Pre HC-MR1
+        return bitmap.getRowBytes() * bitmap.getHeight();
+    }
 
 	/**
 	 * Copies a file from source to destination. If copying images see {@link #copy(File, File)}

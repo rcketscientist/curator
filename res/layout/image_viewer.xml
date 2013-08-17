@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/frameLayoutViewer"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
@@ -64,6 +64,15 @@
                 android:src="@android:drawable/ic_menu_always_landscape_portrait" />
         </RelativeLayout>
 
+        <com.anthonymandra.widget.HistogramView
+            android:id="@+id/histogramView1"
+            android:alpha=".75"
+            android:layout_alignLeft="@+id/tableLayoutMeta"
+            android:layout_above="@+id/tableLayoutMeta"
+            android:layout_width="wrap_content"
+            android:background="@drawable/white_border_translucent_black"
+            android:layout_height="200dp" />
+
         <TableLayout
             android:id="@+id/tableLayoutMeta"
             android:layout_width="wrap_content"
@@ -73,7 +82,20 @@
             android:background="@color/Transparent_Black" >
 
             <TableRow
-                android:id="@+id/TableRow01"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_column="0"
+                    android:layout_span="2">
+
+                </TableRow>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/rowName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" >
 
@@ -95,7 +117,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow02"
+                android:id="@+id/rowDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -113,7 +135,8 @@
                     style="@style/MetaField"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textIsSelectable="false" />
+                    android:textIsSelectable="false"
+                    android:text="Oct 18, 2007 1:44:32 PM" />
             </TableRow>
 
             <TableRow
@@ -128,7 +151,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow03"
+                android:id="@+id/rowModel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -150,7 +173,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowLens"
+                android:id="@+id/rowLens"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -172,7 +195,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowDriveMode"
+                android:id="@+id/rowDriveMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -194,7 +217,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowExposureMode"
+                android:id="@+id/rowExposureMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -216,7 +239,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowExposureProgram"
+                android:id="@+id/rowExposureProgram"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -249,7 +272,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow04"
+                android:id="@+id/rowAperture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -271,7 +294,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow05"
+                android:id="@+id/rowExposure"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -293,7 +316,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow06"
+                android:id="@+id/rowFlash"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -315,7 +338,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow07"
+                android:id="@+id/rowFocal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -337,7 +360,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow08"
+                android:id="@+id/rowIso"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -359,7 +382,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow09"
+                android:id="@+id/rowWhiteBalance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -381,7 +404,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/TableRow10"
+                android:id="@+id/rowDimensions"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -413,7 +436,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowLat"
+                android:id="@+id/rowLatitude"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -435,7 +458,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowLon"
+                android:id="@+id/rowLongitude"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -457,7 +480,7 @@
             </TableRow>
 
             <TableRow
-                android:id="@+id/tableRowAlt"
+                android:id="@+id/rowAltitude"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
 
@@ -488,14 +511,6 @@
             android:background="@color/Transparent_Black"
             android:text="0%" />
 
-        <com.anthonymandra.widget.HistogramView
-            android:id="@+id/histogramView1"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:alpha=".75" />
-
     </RelativeLayout>
 
-</merge>
+</FrameLayout>

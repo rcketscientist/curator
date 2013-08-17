@@ -18,6 +18,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.util.Log;
 
+import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
@@ -28,14 +29,13 @@ import com.drew.metadata.xmp.XmpDirectory;
 public class LocalImage extends MetaMedia
 {
 	private static final String TAG = LocalImage.class.getSimpleName();
-	private long mDataVersion = 0;
 	File mImage;
 	File mXmp;
 
 	public LocalImage(File image)
 	{
+        super(Uri.fromFile(image), nextVersionNumber());
 		mImage = image;
-		mDataVersion = ++sVersion;
 	}
 
 	// TEMPORARY to avoid full rewrite during testing
@@ -91,8 +91,13 @@ public class LocalImage extends MetaMedia
 		return mImage.getName();
 	}
 
-	@Override
-	public String getPath()
+    @Override
+    public String getMimeType() {
+        return null;
+    }
+
+    @Override
+	public String getFilePath()
 	{
 		return mImage.getPath();
 	}
@@ -388,24 +393,29 @@ public class LocalImage extends MetaMedia
 	}
 
 	@Override
-	public Job<Bitmap> requestImage(com.android.gallery3d.app.GalleryActivity app, int type)
+	public Job<Bitmap> requestImage(GalleryApp app, int type)
 	{
-		return new LocalImageRequest(app, Uri.fromFile(mImage), type, getThumb());
+		return new LocalImageRequest(app, Uri.fromFile(mImage), type, this);
 	}
 
 	public static class LocalImageRequest extends ImageCacheRequest
 	{
-		private byte[] mImageData;
+        private LocalImage mImage;
 
-		LocalImageRequest(com.android.gallery3d.app.GalleryActivity application, Uri uri, int type, byte[] imageData)
+		LocalImageRequest(GalleryApp application, Uri uri, int type, LocalImage image)
 		{
 			super(application, uri, type, MetaMedia.getTargetSize(type));
-			mImageData = imageData;
+            mImage = image;
 		}
 
 		@Override
 		public Bitmap onDecodeOriginal(JobContext jc, final int type)
 		{
+            byte[] imageData = mImage.getThumb();
+//            notifyAll();    //AJM: This only applies to a wait...do i need to think about this?
+            // It's something I noted in UriImage, which involves downloading,
+            // probably more akin to this raw function than LocalImage
+
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 			int targetSize = MetaMedia.getTargetSize(type);
@@ -424,34 +434,35 @@ public class LocalImage extends MetaMedia
 				// Log.w(TAG, "fail to get exif thumb", t);
 				// }
 				// if (thumbData != null) {
-				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, mImageData, options, targetSize);
+				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData, options, targetSize);
 				if (bitmap != null)
 					return bitmap;
 				// }
 			}
 
-			return DecodeUtils.decodeThumbnail(jc, mImageData, options, targetSize, type);
+			return DecodeUtils.decodeThumbnail(jc, imageData, options, targetSize, type);
 		}
 	}
 
 	@Override
 	public Job<BitmapRegionDecoder> requestLargeImage()
 	{
-		return new LocalLargeImageRequest(getThumb());
+		return new LocalLargeImageRequest(this);
 	}
 
 	public static class LocalLargeImageRequest implements Job<BitmapRegionDecoder>
 	{
-		byte[] mImageData;
+        LocalImage mImage;
 
-		public LocalLargeImageRequest(byte[] imageData)
+		public LocalLargeImageRequest(LocalImage image)
 		{
-			mImageData = imageData;
+			mImage = image;
 		}
 
 		public BitmapRegionDecoder run(JobContext jc)
 		{
-			return DecodeUtils.createBitmapRegionDecoder(jc, mImageData, 0, mImageData.length, false);
+            byte[] imageData = mImage.getThumb();
+			return DecodeUtils.createBitmapRegionDecoder(jc,imageData, 0, imageData.length, false);
 		}
 	}
 

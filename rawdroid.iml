@@ -21,6 +21,7 @@
     <orderEntry type="module" module-name="amandra-treeview" />
     <orderEntry type="module" module-name="amandra-xmp" />
     <orderEntry type="module" module-name="FileManager" />
+    <orderEntry type="library" name="dexedLibs" level="project" />
   </component>
 </module>
 

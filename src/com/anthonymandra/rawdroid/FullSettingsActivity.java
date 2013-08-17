@@ -54,6 +54,24 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static final String KEY_XmpPurple = "prefKeyXmpPurple";
 	public static final String KEY_CustomKeywords = "prefKeyCustomKeywords";
 
+    public static final String KEY_ExifName = "prefKeyName";
+    public static final String KEY_ExifDate = "prefKeyExifDate";
+    public static final String KEY_ExifModel = "prefKeyExifModel";
+    public static final String KEY_ExifIso = "prefKeyExifIso";
+    public static final String KEY_ExifExposure = "prefKeyExifExposure";
+    public static final String KEY_ExifAperture = "prefKeyExifAperture";
+    public static final String KEY_ExifFocal = "prefKeyExifFocal";
+    public static final String KEY_ExifDimensions = "prefKeyExifDimensions";
+    public static final String KEY_ExifAltitude = "prefKeyExifAltitude";
+    public static final String KEY_ExifFlash = "prefKeyExifFlash";
+    public static final String KEY_ExifLatitude = "prefKeyExifLatitude";
+    public static final String KEY_ExifLongitude = "prefKeyExifLongitude";
+    public static final String KEY_ExifWhiteBalance = "prefKeyExifWhiteBalance";
+    public static final String KEY_ExifLens = "prefKeyExifLens";
+    public static final String KEY_ExifDriveMode = "prefKeyExifDriveMode";
+    public static final String KEY_ExifExposureMode = "prefKeyExifExposureMode";
+    public static final String KEY_ExifExposureProgram = "prefKeyExifExposureProgram";
+
 	public static final int defRecycleBin = 50;
 
 	private static final int minRecycleBin = 30;

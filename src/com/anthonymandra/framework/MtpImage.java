@@ -50,7 +50,7 @@ public class MtpImage extends MetaMedia
 	}
 
 	@Override
-	public String getPath()
+	public String getFilePath()
 	{
 		// Ghetto path for mtp so caching can work
 		return mDevice.getDeviceName() + File.separator + mInfo.getStorageId() + File.separator + mObjectHandle + File.separator + mInfo.getName();

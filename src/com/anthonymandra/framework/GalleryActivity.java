@@ -1,19 +1,9 @@
 package com.anthonymandra.framework;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.R;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -29,10 +19,20 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.anthonymandra.rawdroid.FullSettingsActivity;
-import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawdroid.RawDroid;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Activity that handles a recycling bin and UI updates.
@@ -46,6 +46,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	private static final String TAG = GalleryActivity.class.getSimpleName();
 
 	public static final String SWAP_BIN_DIR = "swap";
+    public static final String RECYCLE_BIN_DIR = "recycle";
 	public static final int FILE_NOT_FOUND = -1;
 
 	private static final int REQUEST_CODE_SHARE = 0;
@@ -66,15 +67,19 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	private MetaAlphaCompare metaCompare = new MetaAlphaCompare();
 
 	protected List<File> mFolders = new ArrayList<File>();
-	protected List<MetaMedia> mRawImages = new ArrayList<MetaMedia>();
-	protected List<MetaMedia> mNativeImages = new ArrayList<MetaMedia>();
-	protected List<MetaMedia> mXmpFiles = new ArrayList<MetaMedia>();
-	protected List<MetaMedia> mUnknownFiles = new ArrayList<MetaMedia>();
-	protected List<MetaMedia> mVisibleItems = new ArrayList<MetaMedia>();
+	protected List<MediaItem> mRawImages = new ArrayList<MediaItem>();
+	protected List<MediaItem> mNativeImages = new ArrayList<MediaItem>();
+	protected List<MediaItem> mXmpFiles = new ArrayList<MediaItem>();
+	protected List<MediaItem> mUnknownFiles = new ArrayList<MediaItem>();
+	protected List<MediaItem> mVisibleItems = new ArrayList<MediaItem>();
 
 	protected File mCurrentPath;
 
-	public void onCreate(Bundle savedInstanceState)
+    protected boolean mShowXmp = false;
+    protected boolean mShowUnknown = false;
+    protected boolean mShowNative = false;
+
+	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		mProgressDialog = new ProgressDialog(this);
@@ -83,7 +88,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	}
 
 	@Override
-	public void onResume()
+	protected void onResume()
 	{
 		super.onResume();
 		createSwapDir();
@@ -91,7 +96,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	}
 
 	@Override
-	public void onPause()
+	protected void onPause()
 	{
 		super.onPause();
 		if (recycleBin != null)
@@ -143,17 +148,17 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
 	protected int findMediaByFilename(String filename)
 	{
-		for (MediaObject raw : mRawImages)
+		for (RawObject raw : mRawImages)
 		{
-			if (raw.getPath().equals(filename))
+			if (raw.getFilePath().equals(filename))
 			{
 				return mRawImages.indexOf(raw);
 			}
 		}
 
-		for (MediaObject generic : mNativeImages)
+		for (RawObject generic : mNativeImages)
 		{
-			if (generic.getPath().equals(filename))
+			if (generic.getFilePath().equals(filename))
 			{
 				return mRawImages.size() + mNativeImages.indexOf(generic);
 			}
@@ -162,7 +167,21 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		return FILE_NOT_FOUND;
 	}
 
-	protected int getImageId(MediaObject media)
+    protected int findVisibleByFilename(String filename)
+    {
+        for (RawObject media: mVisibleItems)
+        {
+            if (media.getFilePath().equals(filename))
+            {
+                return mRawImages.indexOf(media);
+            }
+        }
+
+        return FILE_NOT_FOUND;
+    }
+
+
+    protected int getImageId(RawObject media)
 	{
 		if (mRawImages.contains(media))
 		{
@@ -295,7 +314,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 				Integer.toString(FullSettingsActivity.defRecycleBin)));
 		if (useRecycle)
 		{
-			recycleBin = new RecycleBin(this, RawDroid.RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024);
+			recycleBin = new RecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024);
 		}
 	}
 
@@ -404,7 +423,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	protected boolean removeImage(MediaObject toRemove)
+	protected boolean removeImage(RawObject toRemove)
 	{
 		boolean result = false;
 		result = result || mRawImages.remove(toRemove);
@@ -422,15 +441,15 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	 *            file to delete.
 	 * @return true currently (possibly return success later on)
 	 */
-	protected void deleteImage(final MediaObject toDelete)
+	protected void deleteImage(final RawObject toDelete)
 	{
-		List<MediaObject> itemsToDelete = new ArrayList<MediaObject>();
+		List<RawObject> itemsToDelete = new ArrayList<RawObject>();
 		itemsToDelete.add(toDelete);
 		deleteImages(itemsToDelete);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void deleteImages(final List<MediaObject> itemsToDelete)
+	protected void deleteImages(final List<RawObject> itemsToDelete)
 	{
 		if (itemsToDelete.size() == 0)
 		{
@@ -444,7 +463,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		Boolean justDelete = false;
 		String message;
 		long spaceRequired = 0;
-		for (MediaObject toDelete : itemsToDelete)
+		for (RawObject toDelete : itemsToDelete)
 		{
 			spaceRequired += toDelete.getFileSize();
 		}
@@ -516,7 +535,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	 */
 	protected abstract void updateAfterRestore();
 
-	protected class RecycleTask extends AsyncTask<List<MediaObject>, Integer, Boolean> implements OnCancelListener
+	protected class RecycleTask extends AsyncTask<List<RawObject>, Integer, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -526,13 +545,13 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<MediaObject>... params)
+		protected Boolean doInBackground(final List<RawObject>... params)
 		{
-			List<MediaObject> itemsToDelete = params[0];
+			List<RawObject> itemsToDelete = params[0];
 			mProgressDialog.setMax(itemsToDelete.size());
-			final List<MediaObject> removed = new ArrayList<MediaObject>();
+			final List<RawObject> removed = new ArrayList<RawObject>();
 
-			for (MediaObject image : itemsToDelete)
+			for (RawObject image : itemsToDelete)
 			{
 				recycleBin.addFile(image);
 				removeImage(image);
@@ -568,7 +587,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	protected class DeleteTask extends AsyncTask<List<MediaObject>, Integer, Boolean> implements OnCancelListener
+	protected class DeleteTask extends AsyncTask<List<RawObject>, Integer, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -580,13 +599,13 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<MediaObject>... params)
+		protected Boolean doInBackground(final List<RawObject>... params)
 		{
-			List<MediaObject> itemsToDelete = params[0];
+			List<RawObject> itemsToDelete = params[0];
 			mProgressDialog.setMax(itemsToDelete.size());
-			final List<MediaObject> removed = new ArrayList<MediaObject>();
+			final List<RawObject> removed = new ArrayList<RawObject>();
 
-			for (MediaObject image : itemsToDelete)
+			for (RawObject image : itemsToDelete)
 			{
 				if (image.delete())
 				{
@@ -654,11 +673,11 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		protected Intent doInBackground(final Object... params)
 		{
 			Intent shareIntent = (Intent) params[0];
-			List<MediaObject> toShare = (List<MediaObject>) params[1];
+			List<RawObject> toShare = (List<RawObject>) params[1];
 			mProgressDialog.setMax(toShare.size());
 			ArrayList<Uri> arrayUri = new ArrayList<Uri>();
 			int completed = 0;
-			for (MediaObject image : toShare)
+			for (RawObject image : toShare)
 			{
 				BufferedInputStream imageData = image.getThumbInputStream();
 				if (imageData == null)
@@ -725,8 +744,61 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
+    protected int setPathFromIntent()
+    {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        Uri data = getIntent().getData();
+        if (data == null)
+        {
+            finish();
+        }
+
+        File input = new File(data.getPath());
+        if (!input.exists())
+        {
+            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
+            finish();
+        }
+
+        if (isNative(input))
+        {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
+            editor.commit();
+        }
+
+        int indexHint = 0;
+        if (input.isDirectory())
+        {
+            setPath(input);
+        }
+        else
+        {
+            File parent = input.getParentFile();
+            if (parent.exists())
+                setPath(parent);
+            else
+                setSingleImage(input);
+
+            indexHint = findMediaByFilename(input.getPath());
+            if (indexHint == FILE_NOT_FOUND)
+            {
+                indexHint = 0;
+                if (!parent.exists() || parent.listFiles().length > 0)
+                {
+                    Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            }
+        }
+        updateViewerItems();
+
+        return indexHint;
+    }
+
 	@Override
-	public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
+	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
 		switch (requestCode)
 		{
@@ -744,7 +816,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	 * @param itemsToShare
 	 *            Media to convert and share
 	 */
-	public void share(Intent shareIntent, List<MediaObject> itemsToShare)
+	public void share(Intent shareIntent, List<RawObject> itemsToShare)
 	{
 		if (itemsToShare.size() == 0)
 		{
@@ -757,9 +829,9 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	/**
 	 * Single item convenience method (see {@link #share(Intent, List)}
 	 */
-	public void share(Intent shareIntent, MediaObject toShare)
+	public void share(Intent shareIntent, RawObject toShare)
 	{
-		List<MediaObject> share = new ArrayList<MediaObject>();
+		List<RawObject> share = new ArrayList<RawObject>();
 		share.add(toShare);
 		share(shareIntent, share);
 	}
@@ -801,11 +873,11 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	class MetaAlphaCompare implements Comparator<MediaObject>
+	class MetaAlphaCompare implements Comparator<RawObject>
 	{
 		// Comparator interface requires defining compare method.
 		@Override
-		public int compare(MediaObject filea, MediaObject fileb)
+		public int compare(RawObject filea, RawObject fileb)
 		{
 			return filea.getName().compareToIgnoreCase(fileb.getName());
 		}
