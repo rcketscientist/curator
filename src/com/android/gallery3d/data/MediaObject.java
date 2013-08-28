@@ -108,12 +108,12 @@ public abstract class MediaObject implements RawObject, MetaObject {
         throw new UnsupportedOperationException();
     }
 
-//    public Uri getContentUri() {
-//        String className = getClass().getName();
-//        Log.e(TAG, "Class " + className + "should implement getContentUri.");
-//        Log.e(TAG, "The object was created from path: " + getFilePath());
-//        throw new UnsupportedOperationException();
-//    }
+    public Uri getContentUri() {
+        String className = getClass().getName();
+        Log.e(TAG, "Class " + className + "should implement getContentUri.");
+//        Log.e(TAG, "The object was created from path: " + getPath());
+        throw new UnsupportedOperationException();
+    }
 
     public Uri getPlayUri() {
         throw new UnsupportedOperationException();

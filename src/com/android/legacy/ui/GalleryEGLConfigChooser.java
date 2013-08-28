@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.android.gallery3d.ui;
+package com.android.legacy.ui;
+
+import android.opengl.GLSurfaceView.EGLConfigChooser;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
-
-import android.opengl.GLSurfaceView.EGLConfigChooser;
-import android.util.Log;
 
 /*
  * The code is copied/adapted from
@@ -32,10 +32,15 @@ class GalleryEGLConfigChooser implements EGLConfigChooser
 {
 
 	private static final String TAG = "GalleryEGLConfigChooser";
+	private int mStencilBits;
 
 	private final int mConfigSpec[] = new int[]
 	{ EGL10.EGL_RED_SIZE, 5, EGL10.EGL_GREEN_SIZE, 6, EGL10.EGL_BLUE_SIZE, 5, EGL10.EGL_ALPHA_SIZE, 0, EGL10.EGL_NONE };
 
+	public int getStencilBits()
+	{
+		return mStencilBits;
+	}
 
 	public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display)
 	{
@@ -95,6 +100,7 @@ class GalleryEGLConfigChooser implements EGLConfigChooser
 		if (result == null)
 			result = configs[0];
 		egl.eglGetConfigAttrib(display, result, EGL10.EGL_STENCIL_SIZE, value);
+		mStencilBits = value[0];
 		logConfig(egl, display, result);
 		return result;
 	}
@@ -115,6 +121,6 @@ class GalleryEGLConfigChooser implements EGLConfigChooser
 			egl.eglGetConfigAttrib(display, config, ATTR_ID[j], value);
 			sb.append(ATTR_NAME[j] + value[0] + " ");
 		}
-		Log.i(TAG, "Config chosen: " + sb.toString());
+		Log.v(TAG, "Config chosen: " + sb.toString());
 	}
 }

@@ -16,19 +16,19 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.graphics.Rect;
+import android.util.Log;
+import android.widget.Scroller;
+
+import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.ui.PhotoView.Size;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
 import com.android.gallery3d.util.RangeIntArray;
 
-import android.content.Context;
-import android.graphics.Rect;
-import android.widget.Scroller;
-
-class PositionController
-{
-	@SuppressWarnings("unused")
+class PositionController {
 	private static final String TAG = "PositionController";
 
 	public static final int IMAGE_AT_LEFT_EDGE = 1;
@@ -63,15 +63,15 @@ class PositionController
 	// (always 1).
     private static final int ANIM_TIME[] = {
         0,    // ANIM_KIND_SCROLL
-			0, // ANIM_KIND_SCALE
-			SNAPBACK_ANIMATION_TIME, // ANIM_KIND_SNAPBACK
-			400, // ANIM_KIND_SLIDE
-			300, // ANIM_KIND_ZOOM
+        0,    // ANIM_KIND_SCALE
+        SNAPBACK_ANIMATION_TIME,  // ANIM_KIND_SNAPBACK
+        400,  // ANIM_KIND_SLIDE
+        300,  // ANIM_KIND_ZOOM
         300,  // ANIM_KIND_OPENING
-			0, // ANIM_KIND_FLING (the duration is calculated dynamically)
-			0, // ANIM_KIND_FLING_X (see the comment above)
-			0, // ANIM_KIND_DELETE (the duration is calculated dynamically)
-			CAPTURE_ANIMATION_TIME, // ANIM_KIND_CAPTURE
+        0,    // ANIM_KIND_FLING (the duration is calculated dynamically)
+        0,    // ANIM_KIND_FLING_X (see the comment above)
+        0,    // ANIM_KIND_DELETE (the duration is calculated dynamically)
+        CAPTURE_ANIMATION_TIME,  // ANIM_KIND_CAPTURE
 	};
 
 	// We try to scale up the image to fill the screen. But in order not to
@@ -111,11 +111,11 @@ class PositionController
 	private Listener mListener;
 	private volatile Rect mOpenAnimationRect;
 
-	// Use a large enough value, so we won't see the gray shadown in the beginning.
+    // Use a large enough value, so we won't see the gray shadow in the beginning.
 	private int mViewW = 1200;
 	private int mViewH = 1200;
 
-	// A scaling guesture is in progress.
+    // A scaling gesture is in progress.
 	private boolean mInScale;
 	// The focus point of the scaling gesture, relative to the center of the
 	// picture in bitmap pixels.
@@ -179,7 +179,7 @@ class PositionController
     private RangeArray<Gap> mTempGaps =
         new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
 
-	// The output of the PositionController. Available throught getPosition().
+    // The output of the PositionController. Available through getPosition().
 	private RangeArray<Rect> mRects = new RangeArray<Rect>(-BOX_MAX, BOX_MAX);
 
 	// The direction of a new picture should appear. New pictures pop from top
@@ -320,9 +320,9 @@ class PositionController
 		b.mImageW = width;
 		b.mImageH = height;
 
-		// If this is the first time we receive an image size, we change the
-		// scale directly. Otherwise adjust the scales by a ratio, and snapback
-		// will animate the scale into the min/max bounds if necessary.
+        // If this is the first time we receive an image size or we are in fullscreen,
+        // we change the scale directly. Otherwise adjust the scales by a ratio,
+        // and snapback will animate the scale into the min/max bounds if necessary.
         if ((wasViewSize && !isViewSize) || !mFilmMode) {
 			b.mCurrentScale = getMinimalScale(b);
 			b.mAnimationStartTime = NO_ANIMATION;
@@ -808,9 +808,7 @@ class PositionController
             changed |= mBoxes.get(i).advanceAnimation();
         }
         for (int i = -BOX_MAX; i < BOX_MAX; i++) {
-            // TODO: Without 'if' it will crash with rapid image changes...find a better fix
-            //if (mGaps.get(i) != null)
-			    changed |= mGaps.get(i).advanceAnimation();
+			changed |= mGaps.get(i).advanceAnimation();
 		}
 		changed |= mFilmRatio.advanceAnimation();
         if (changed) redraw();
@@ -861,46 +859,40 @@ class PositionController
 		// dumpState();
 	}
 
-//	private void dumpState()
-//	{
-//		for (int i = -BOX_MAX; i < BOX_MAX; i++)
-//		{
-//			Log.d(TAG, "Gap " + i + ": " + mGaps.get(i).mCurrentGap);
-//		}
-//
-//		for (int i = 0; i < 2 * BOX_MAX + 1; i++)
-//		{
-//			dumpRect(CENTER_OUT_INDEX[i]);
-//		}
-//
-//		for (int i = -BOX_MAX; i <= BOX_MAX; i++)
-//		{
-//			for (int j = i + 1; j <= BOX_MAX; j++)
-//			{
-//				if (Rect.intersects(mRects.get(i), mRects.get(j)))
-//				{
-//					Log.d(TAG, "rect " + i + " and rect " + j + "intersects!");
-//				}
-//			}
-//		}
-//	}
+    @SuppressWarnings("unused")
+    private void dumpState() {
+        for (int i = -BOX_MAX; i < BOX_MAX; i++) {
+            Log.d(TAG, "Gap " + i + ": " + mGaps.get(i).mCurrentGap);
+        }
 
-//	private void dumpRect(int i)
-//	{
-//		StringBuilder sb = new StringBuilder();
-//		Rect r = mRects.get(i);
-//		sb.append("Rect " + i + ":");
-//		sb.append("(");
-//		sb.append(r.centerX());
-//		sb.append(",");
-//		sb.append(r.centerY());
-//		sb.append(") [");
-//		sb.append(r.width());
-//		sb.append("x");
-//		sb.append(r.height());
-//		sb.append("]");
-//		Log.d(TAG, sb.toString());
-//	}
+        for (int i = 0; i < 2 * BOX_MAX + 1; i++) {
+            dumpRect(CENTER_OUT_INDEX[i]);
+        }
+
+        for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
+            for (int j = i + 1; j <= BOX_MAX; j++) {
+                if (Rect.intersects(mRects.get(i), mRects.get(j))) {
+                    Log.d(TAG, "rect " + i + " and rect " + j + "intersects!");
+                }
+            }
+        }
+    }
+
+    private void dumpRect(int i) {
+        StringBuilder sb = new StringBuilder();
+        Rect r = mRects.get(i);
+        sb.append("Rect " + i + ":");
+        sb.append("(");
+        sb.append(r.centerX());
+        sb.append(",");
+        sb.append(r.centerY());
+        sb.append(") [");
+        sb.append(r.width());
+        sb.append("x");
+        sb.append(r.height());
+        sb.append("]");
+        Log.d(TAG, sb.toString());
+    }
 
     private void convertBoxToRect(int i) {
         Box b = mBoxes.get(i);
@@ -992,24 +984,20 @@ class PositionController
         g.mAnimationStartTime = NO_ANIMATION;
     }
 
-//	private void debugMoveBox(int fromIndex[])
-//	{
-//		StringBuilder s = new StringBuilder("moveBox:");
-//		for (int i = 0; i < fromIndex.length; i++)
-//		{
-//			int j = fromIndex[i];
-//			if (j == Integer.MAX_VALUE)
-//			{
-//				s.append(" N");
-//			}
-//			else
-//			{
-//				s.append(" ");
-//				s.append(fromIndex[i]);
-//			}
-//		}
-//		Log.d(TAG, s.toString());
-//	}
+    @SuppressWarnings("unused")
+    private void debugMoveBox(int fromIndex[]) {
+        StringBuilder s = new StringBuilder("moveBox:");
+        for (int i = 0; i < fromIndex.length; i++) {
+            int j = fromIndex[i];
+            if (j == Integer.MAX_VALUE) {
+                s.append(" N");
+            } else {
+                s.append(" ");
+                s.append(fromIndex[i]);
+            }
+        }
+        Log.d(TAG, s.toString());
+    }
 
     // Move the boxes: it may indicate focus change, box deleted, box appearing,
     // box reordered, etc.
@@ -1375,9 +1363,9 @@ class PositionController
                 ? b.mCurrentScale : b.mToScale;
     }
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Animatable: an thing which can do animation.
-	// //////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    //  Animatable: an thing which can do animation.
+    ////////////////////////////////////////////////////////////////////////////
     private abstract static class Animatable {
         public long mAnimationStartTime;
         public int mAnimationKind;

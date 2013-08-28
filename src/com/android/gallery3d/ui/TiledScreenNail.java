@@ -20,9 +20,9 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 
 import com.android.gallery3d.common.Utils;
+import com.android.photos.data.GalleryBitmapPool;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.TiledTexture;
-import com.android.photos.data.GalleryBitmapPool;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

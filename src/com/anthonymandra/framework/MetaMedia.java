@@ -1,17 +1,5 @@
 package com.anthonymandra.framework;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Date;
-
-import android.net.Uri;
-import android.util.Log;
-
-import com.android.gallery3d.data.BitmapPool;
-import com.android.gallery3d.data.BytesBufferPool;
 import com.android.gallery3d.data.MediaItem;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -29,6 +17,16 @@ import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 import com.drew.metadata.xmp.XmpWriter;
+
+import android.net.Uri;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
 
 public abstract class MetaMedia extends MediaItem
 {

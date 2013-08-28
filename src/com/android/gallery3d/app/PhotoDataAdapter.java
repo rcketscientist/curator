@@ -307,7 +307,6 @@ public class PhotoDataAdapter implements Model
 
         if (entry == null || entry.screenNailTask != future) {
             if (screenNail != null) screenNail.recycle();
-            Log.i(TAG, "307: screenNail recycle");
             return;
         }
 
@@ -317,27 +316,22 @@ public class PhotoDataAdapter implements Model
         if (entry.screenNail instanceof TiledScreenNail) {
             TiledScreenNail original = (TiledScreenNail) entry.screenNail;
             screenNail = original.combine(screenNail);
-            Log.i(TAG, "317: combine the screenNail");
         }
 
         if (screenNail == null) {
 			entry.failToLoad = true;
-            Log.i(TAG, "322: entry.screenNail failToLoad");
         } else {
 			entry.failToLoad = false;
 			entry.screenNail = screenNail;
-//            try {
-//                if (getCurrentBitmap() != null)
-//                getCurrentBitmap().compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream("/mnt/sdcard/testa/updateScreenNail.jpg"));
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-            Log.i(TAG, "326: Setting entry.screenNail");
 		}
 
 		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
 			if (path.equals(getPath(mCurrentIndex + i))) {
-                if (i == 0) updateTileProvider(entry);
+                if (i == 0)
+                {
+                    uploadScreenNail(0);    //TODO: Fixes gray box issue...why?
+                    updateTileProvider(entry);
+                }
 				mPhotoView.notifyImageChange(i);
 				break;
 			}
@@ -355,13 +349,7 @@ public class PhotoDataAdapter implements Model
 
 		entry.fullImageTask = null;
 		entry.fullImage = future.get();
-//        try {
-//            if (getCurrentBitmap() != null)
-//                getCurrentBitmap().compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream("/mnt/sdcard/testa/updateFullImage.jpg"));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-        Log.i(TAG, "349: Setting entry.fullImage");
+
 		if (entry.fullImage != null) {
 			if (path.equals(getPath(mCurrentIndex))) {
 				updateTileProvider(entry);
@@ -373,7 +361,7 @@ public class PhotoDataAdapter implements Model
 
     @Override
     public void resume() {
-		mIsActive = true;
+        mIsActive = true;
         TiledTexture.prepareResources();
 
 		mActivity.addContentListener(mSourceListener);
@@ -388,7 +376,7 @@ public class PhotoDataAdapter implements Model
 
     @Override
     public void pause() {
-		mIsActive = false;
+        mIsActive = false;
 
 		mReloadTask.terminate();
 		mReloadTask = null;
@@ -508,7 +496,6 @@ public class PhotoDataAdapter implements Model
 		// Create a default ScreenNail if the real one is not available yet,
 		// except for camera that a black screen is better than a gray tile.
         if (entry.screenNail == null && !isCamera(offset)) {
-            Log.i(TAG, "497: entry.screenNail placeholder");
             entry.screenNail = newPlaceholderScreenNail(item);
             if (offset == 0) updateTileProvider(entry);
         }
@@ -642,7 +629,7 @@ public class PhotoDataAdapter implements Model
 
     @Override
 	public void setCurrentPhoto(Uri path, int indexHint) {
-		if (mItemPath == path) return;
+        if (mItemPath == path) return;
 		mItemPath = path;
 		mCurrentIndex = indexHint;
 		updateSlidingWindow();
@@ -780,7 +767,6 @@ public class PhotoDataAdapter implements Model
             // If this is a temporary item, don't try to get its bitmap because
             // it won't be available. We will get its bitmap after a data reload.
             if (isTemporaryItem(mItem)) {
-                Log.i(TAG, "763: Placeholder");
                 return newPlaceholderScreenNail(mItem);
             }
 
@@ -883,7 +869,7 @@ public class PhotoDataAdapter implements Model
 	}
 
 	private void updateImageCache()	{
-		HashSet<Uri> toBeRemoved = new HashSet<Uri>(mImageCache.keySet());
+        HashSet<Uri> toBeRemoved = new HashSet<Uri>(mImageCache.keySet());
         for (int i = mActiveStart; i < mActiveEnd; ++i) {
 			MediaItem item = mData[i % DATA_CACHE_SIZE];
             if (item == null) continue;
@@ -897,7 +883,6 @@ public class PhotoDataAdapter implements Model
                         entry.fullImageTask = null;
                     }
                     entry.fullImage = null;
-                    Log.i(TAG, "887: Clearing entry.fullImage");
 					entry.requestedFullImage = MediaItem.INVALID_DATA_VERSION;
 				}
                 if (entry.requestedScreenNail != item.getDataVersion()) {

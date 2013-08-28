@@ -73,11 +73,11 @@ public class OrientationManager implements OrientationSource {
     public void lockOrientation() {
         if (mOrientationLocked) return;
         mOrientationLocked = true;
-//        if (ApiHelper.HAS_ORIENTATION_LOCK) {
-//            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
-//        } else {
+        if (ApiHelper.HAS_ORIENTATION_LOCK) {
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
+        } else {
             mActivity.setRequestedOrientation(calculateCurrentScreenOrientation());
-//        }
+        }
     }
 
     // Unlock the framework orientation, so it can change when the device

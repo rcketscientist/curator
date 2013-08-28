@@ -19,8 +19,9 @@ package com.android.photos.data;
 import com.anthonymandra.framework.Util;
 
 import android.graphics.Bitmap;
-import android.util.Pools.Pool;
 import android.util.SparseArray;
+
+import android.util.Pools.Pool;
 
 public class SparseArrayBitmapPool {
 

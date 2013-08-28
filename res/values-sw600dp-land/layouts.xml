@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="viewer_layout" type="layout">@layout/viewer_twopane_wide</item>
+    <item name="legacy_layout" type="layout">@layout/legacy_twopane_wide</item>
     <bool name="hasTwoPanes">true</bool>
     <bool name="hasWideXmp">true</bool>
 </resources>

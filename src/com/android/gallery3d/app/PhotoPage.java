@@ -20,11 +20,11 @@ import com.actionbarsherlock.app.ActionBar;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ImageCacheService;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
-import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.rawdroid.R;
 
 import android.annotation.TargetApi;
@@ -472,10 +472,10 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                }
 //            }
 
-        int indexHint = setPathFromIntent();
+        mCurrentIndex = setPathFromIntent();
 
         PhotoDataAdapter pda = new PhotoDataAdapter(
-                this, mPhotoView, mVisibleItems, indexHint,
+                this, mPhotoView, mVisibleItems, mCurrentIndex,
                 -1, false, false);
         mModel = pda;
         mPhotoView.setModel(mModel);
@@ -641,7 +641,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         mNfcPushUris[0] = uri;
     }
 
-    private static Intent createShareIntent(MetaMedia mediaObject) {
+    private static Intent createShareIntent(MediaObject mediaObject) {
 //        int type = mediaObject.getMediaType();
 //        return new Intent(Intent.ACTION_SEND)
 //                .setType(MenuExecutor.getMimeType(type))
@@ -685,7 +685,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     }
 
     private void launchPhotoEditor() {
-//        MetaMedia current = mModel.getMediaItem(0);
+//        MediaItem current = mModel.getMediaItem(0);
 //        if (current == null || (current.getSupportedOperations()
 //                & MediaObject.SUPPORT_EDIT) == 0) {
 //            return;
@@ -810,9 +810,9 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         if (mVisibleItems == null || mCurrentPhoto == null) {
             return false;
         }
-//        if (mCurrentPhoto.getMediaType() != MediaObject.MEDIA_TYPE_IMAGE) {
-//            return false;
-//        }
+        if (mCurrentPhoto.getMediaType() != MediaObject.MEDIA_TYPE_IMAGE) {
+            return false;
+        }
         return true;
     }
 
@@ -821,21 +821,21 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     //////////////////////////////////////////////////////////////////////////
 
     private void showBars() {
-//        if (mShowBars) return;
-//        mShowBars = true;
-//        mOrientationManager.unlockOrientation();
+        if (mShowBars) return;
+        mShowBars = true;
+        mOrientationManager.unlockOrientation();
 //        mActionBar.show();
-//        getGLRoot().setLightsOutMode(false);
+        getGLRoot().setLightsOutMode(false);
 //        refreshHidingMessage();
 //        refreshBottomControlsWhenReady();
     }
 
     private void hideBars() {
-//        if (!mShowBars) return;
-//        mShowBars = false;
+        if (!mShowBars) return;
+        mShowBars = false;
 //        mActionBar.hide();
-//        mActivity.getGLRoot().setLightsOutMode(true);
-//        mHandler.removeMessages(MSG_HIDE_BARS);
+        getGLRoot().setLightsOutMode(true);
+        mHandler.removeMessages(MSG_HIDE_BARS);
 //        refreshBottomControlsWhenReady();
     }
 
@@ -848,7 +848,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 
     private boolean canShowBars() {
         // No bars if we are showing camera preview.
-        if (mCurrentIndex == 0
+        if (/*mAppBridge != null && */mCurrentIndex == 0
                 && !mPhotoView.getFilmMode()) return false;
 
         // No bars if it's not allowed.
@@ -880,8 +880,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         }
     }
 
-//    @Override
-//    public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
 //        if (mShowDetails) {
 //            hideDetails();
 //        } else if (!switchWithCaptureAnimation(-1)) {
@@ -892,10 +892,10 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //            } else if (mTreatBackAsUp) {
 //                onUpPressed();
 //            } else {
-//                super.onBackPressed();
+                super.onBackPressed();
 //            }
 //        }
-//    }
+    }
 
     private void onUpPressed() {
         if ((mStartInFilmstrip)
@@ -936,11 +936,11 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     //////////////////////////////////////////////////////////////////////////
     //  AppBridge.Server interface
     //////////////////////////////////////////////////////////////////////////
-    // Overrides unnneded since we aren't implementing the interface
+    // Overrides unneeded since we aren't implementing the interface
 //    @Override
-    public void setCameraRelativeFrame(Rect frame) {
-        mPhotoView.setCameraRelativeFrame(frame);
-    }
+//    public void setCameraRelativeFrame(Rect frame) {
+//        mPhotoView.setCameraRelativeFrame(frame);
+//    }
 
 //    @Override
     public boolean switchWithCaptureAnimation(int offset) {
@@ -948,31 +948,31 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     }
 
 //    @Override
-    public void setSwipingEnabled(boolean enabled) {
-        mPhotoView.setSwipingEnabled(enabled);
-    }
+//    public void setSwipingEnabled(boolean enabled) {
+//        mPhotoView.setSwipingEnabled(enabled);
+//    }
 
 //    @Override
-    public void notifyScreenNailChanged() {
-        // AJM: This only seems to grab a static screennail, comment for now
-        Log.w(TAG, "PhotoPage.notifyScreenNailChanged() called, but disabled!");
+//    public void notifyScreenNailChanged() {
+//        // AJM: This only seems to grab a static screennail, comment for now
+//        Log.w(TAG, "PhotoPage.notifyScreenNailChanged() called, but disabled!");
 //        mScreenNailItem.setScreenNail(mAppBridge.attachScreenNail());
 //        mScreenNailSet.notifyChange();
-    }
+//    }
 
 //    @Override
-    public void addSecureAlbumItem(boolean isVideo, int id) {
+//    public void addSecureAlbumItem(boolean isVideo, int id) {
 //        mSecureAlbum.addMediaItem(isVideo, id);
-    }
+//    }
 
 //    @Override
-    protected boolean onCreateActionBar(Menu menu) {
+//    protected boolean onCreateActionBar(Menu menu) {
 //        mActionBar.createActionBarMenu(R.menu.photo, menu);
 //        mHaveImageEditor = GalleryUtils.isEditorAvailable(mActivity, "image/*");
 //        updateMenuOperations();
 //        mActionBar.setTitle(mMediaSet != null ? mMediaSet.getName() : "");
-        return true;
-    }
+//        return true;
+//    }
 
 //    private MenuExecutor.ProgressListener mConfirmDialogListener =
 //            new MenuExecutor.ProgressListener() {
@@ -996,8 +996,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        public void onProgressStart() {}
 //    };
 
-    private void switchToGrid() {
-        Log.w(TAG, "PhotoPage.switchToGrid() called, but disabled!");
+//    private void switchToGrid() {
+//        Log.w(TAG, "PhotoPage.switchToGrid() called, but disabled!");
 //        if (mActivity.getStateManager().hasStateClass(AlbumPage.class)) {
 //            onUpPressed();
 //        } else {
@@ -1030,7 +1030,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                mActivity.getStateManager().switchState(this, AlbumPage.class, data);
 //            }
 //        }
-    }
+//    }
 
 //    @Override
 //    protected boolean onItemSelected(MenuItem item) {
@@ -1153,45 +1153,45 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        if (mAppBridge != null) {
 //            if (mAppBridge.onSingleTapUp(x, y)) return;
 //        }
-//
-//        MediaItem item = mModel.getMediaItem(0);
-//        if (item == null || item == mScreenNailItem) {
-//            // item is not ready or it is camera preview, ignore
-//            return;
-//        }
-//
-//        int supported = item.getSupportedOperations();
-//        boolean playVideo = ((supported & MediaItem.SUPPORT_PLAY) != 0);
-//        boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
-//        boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
-//        boolean launchCamera = ((supported & MediaItem.SUPPORT_CAMERA_SHORTCUT) != 0);
-//
-//        if (playVideo) {
-//            // determine if the point is at center (1/6) of the photo view.
-//            // (The position of the "play" icon is at center (1/6) of the photo)
-//            int w = mPhotoView.getWidth();
-//            int h = mPhotoView.getHeight();
-//            playVideo = (Math.abs(x - w / 2) * 12 <= w)
-//                && (Math.abs(y - h / 2) * 12 <= h);
-//        }
-//
-//        if (playVideo) {
+
+        MediaItem item = mModel.getMediaItem(0);
+        if (item == null /*|| item == mScreenNailItem*/) {
+            // item is not ready or it is camera preview, ignore
+            return;
+        }
+
+        int supported = item.getSupportedOperations();
+        boolean playVideo = ((supported & MediaItem.SUPPORT_PLAY) != 0);
+        boolean unlock = ((supported & MediaItem.SUPPORT_UNLOCK) != 0);
+        boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
+        boolean launchCamera = ((supported & MediaItem.SUPPORT_CAMERA_SHORTCUT) != 0);
+
+        if (playVideo) {
+            // determine if the point is at center (1/6) of the photo view.
+            // (The position of the "play" icon is at center (1/6) of the photo)
+            int w = mPhotoView.getWidth();
+            int h = mPhotoView.getHeight();
+            playVideo = (Math.abs(x - w / 2) * 12 <= w)
+                && (Math.abs(y - h / 2) * 12 <= h);
+        }
+
+        if (playVideo) {
 //            if (mSecureAlbum == null) {
 //                playVideo(mActivity, item.getPlayUri(), item.getName());
 //            } else {
 //                mActivity.getStateManager().finishState(this);
 //            }
-//        } else if (goBack) {
-//            onBackPressed();
-//        } else if (unlock) {
+        } else if (goBack) {
+            onBackPressed();
+        } else if (unlock) {
 //            Intent intent = new Intent(mActivity, Gallery.class);
 //            intent.putExtra(Gallery.KEY_DISMISS_KEYGUARD, true);
 //            mActivity.startActivity(intent);
-//        } else if (launchCamera) {
-//            launchCamera();
-//        } else {
-//            toggleBars();
-//        }
+        } else if (launchCamera) {
+            launchCamera();
+        } else {
+            toggleBars();
+        }
     }
 
     @Override
@@ -1330,8 +1330,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
             mModel.pause();
         }
         mPhotoView.pause();
-        mHandler.removeMessages(MSG_HIDE_BARS);
-        mHandler.removeMessages(MSG_REFRESH_BOTTOM_CONTROLS);
+//        mHandler.removeMessages(MSG_HIDE_BARS);
+//        mHandler.removeMessages(MSG_REFRESH_BOTTOM_CONTROLS);
 //        refreshBottomControlsWhenReady();
 //        mActionBar.removeOnMenuVisibilityListener(mMenuVisibilityListener);
 //        if (mShowSpinner) {
@@ -1375,7 +1375,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     }
 
     private void transitionFromAlbumPageIfNeeded() {
-//        TransitionStore transitions = mActivity.getTransitionStore();
+//        TransitionStore transitions = getTransitionStore();
 //
 //        int albumPageTransition = transitions.get(
 //                KEY_ALBUMPAGE_TRANSITION, MSG_ALBUMPAGE_NONE);
@@ -1405,6 +1405,9 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        } else if (albumPageTransition == MSG_ALBUMPAGE_PICKED) {
 //            mPhotoView.setFilmMode(false);
 //        }
+
+        mModel.moveTo(mCurrentIndex);
+        mPhotoView.setFilmMode(false);
     }
 
     @Override
@@ -1421,9 +1424,9 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         getGLRoot().freeze();
         mIsActive = true;
         setContentPane(mRootPane);
-
-        mModel.resume();
         mPhotoView.resume();
+        mModel.resume();
+
 //        mActionBar.setDisplayOptions(
 //                ((mSecureAlbum == null) && (mSetPathString != null)), false);
 //        mActionBar.addOnMenuVisibilityListener(mMenuVisibilityListener);

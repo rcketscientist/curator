@@ -16,6 +16,9 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.view.MotionEvent;
+
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.NinePatchTexture;
@@ -23,9 +26,6 @@ import com.android.gallery3d.glrenderer.ResourceTexture;
 import com.android.gallery3d.glrenderer.StringTexture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.anthonymandra.rawdroid.R;
-
-import android.content.Context;
-import android.view.MotionEvent;
 
 public class UndoBarView extends GLView {
     @SuppressWarnings("unused")

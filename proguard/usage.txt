@@ -609,7 +609,7 @@ com.anthonymandra.rawdroid.RawDroid$ThumbFileFilter
 com.anthonymandra.rawdroid.TouchImageView
 com.anthonymandra.rawdroid.TouchImageView$1
 com.anthonymandra.rawdroid.TouchImageView$ScaleListener
-com.anthonymandra.rawdroid.ViewImage:
+com.anthonymandra.rawdroid.LegacyViewerActivity:
     private static final java.lang.String TAG
     protected static final int REQUEST_CODE_PICK_FILE_OR_DIRECTORY
     public static final java.lang.String KEY_PHOTO_INDEX

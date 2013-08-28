@@ -64,6 +64,10 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
+            android:name=".LegacyViewerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/GalleryTheme"/>
+        <activity
             android:name=".ImageViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/GalleryTheme" >

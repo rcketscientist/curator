@@ -53,6 +53,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static final String KEY_XmpYellow = "prefKeyXmpYellow";
 	public static final String KEY_XmpPurple = "prefKeyXmpPurple";
 	public static final String KEY_CustomKeywords = "prefKeyCustomKeywords";
+    public static final String KEY_UseLegacyViewer = "prefKeyUseLegacyViewer";
 
     public static final String KEY_ExifName = "prefKeyName";
     public static final String KEY_ExifDate = "prefKeyExifDate";

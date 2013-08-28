@@ -135,17 +135,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	protected void updateViewerItems()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean showNative = prefs.getBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-
-		mVisibleItems.clear();
-		mVisibleItems.addAll(mRawImages);
-		if (showNative)
-			mVisibleItems.addAll(mNativeImages);
-	}
-
 	protected int findMediaByFilename(String filename)
 	{
 		for (RawObject raw : mRawImages)
@@ -173,7 +162,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
         {
             if (media.getFilePath().equals(filename))
             {
-                return mRawImages.indexOf(media);
+                return mVisibleItems.indexOf(media);
             }
         }
 
@@ -743,59 +732,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			this.cancel(true);
 		}
 	}
-
-    protected int setPathFromIntent()
-    {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Uri data = getIntent().getData();
-        if (data == null)
-        {
-            finish();
-        }
-
-        File input = new File(data.getPath());
-        if (!input.exists())
-        {
-            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-            finish();
-        }
-
-        if (isNative(input))
-        {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-            editor.commit();
-        }
-
-        int indexHint = 0;
-        if (input.isDirectory())
-        {
-            setPath(input);
-        }
-        else
-        {
-            File parent = input.getParentFile();
-            if (parent.exists())
-                setPath(parent);
-            else
-                setSingleImage(input);
-
-            indexHint = findMediaByFilename(input.getPath());
-            if (indexHint == FILE_NOT_FOUND)
-            {
-                indexHint = 0;
-                if (!parent.exists() || parent.listFiles().length > 0)
-                {
-                    Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            }
-        }
-        updateViewerItems();
-
-        return indexHint;
-    }
 
 	@Override
 	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)

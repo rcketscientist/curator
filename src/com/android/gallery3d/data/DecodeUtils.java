@@ -22,7 +22,6 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.android.photos.data.GalleryBitmapPool;
-import com.anthonymandra.framework.MetaMedia;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
@@ -161,9 +160,11 @@ public class DecodeUtils {
 	}
 
 	/**
-	 * Decodes the bitmap from the given byte array if the image size is larger than the given requirement.
+     * Decodes the bitmap from the given byte array if the image size is larger than the given
+     * requirement.
 	 * 
-	 * Note: The returned image may be resized down. However, both width and height must be larger than the <code>targetSize</code>.
+     * Note: The returned image may be resized down. However, both width and height must be
+     * larger than the <code>targetSize</code>.
 	 */
     public static Bitmap decodeIfBigEnough(JobContext jc, byte[] data,
             Options options, int targetSize) {
@@ -180,6 +181,7 @@ public class DecodeUtils {
                 options.outWidth, options.outHeight, targetSize);
 		options.inJustDecodeBounds = false;
         setOptionsMutable(options);
+
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeByteArray(data, 0, data.length, options));
 	}
@@ -264,13 +266,13 @@ public class DecodeUtils {
 
             Log.w(TAG, "decode fail with a given bitmap, try decode to a new bitmap");
             GalleryBitmapPool.getInstance().put(options.inBitmap);
-
             options.inBitmap = null;
             return decode(jc, data, offset, length, options);
         }
     }
-			// We center-crop the original image as it's micro thumbnail. In this case,
-			// we want to make sure the shorter side >= "targetSize".
+
+    // This is the same as the method above except the source data comes
+    // from a file descriptor instead of a byte array.
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static Bitmap decodeUsingPool(JobContext jc,
             FileDescriptor fileDescriptor, Options options) {
@@ -308,22 +310,19 @@ public class DecodeUtils {
         return GalleryBitmapPool.getInstance().get(options.outWidth, options.outHeight);
     }
 
-    public static Bitmap decodeThumbnail(JobContext jc, byte[] imageData, Options options, int targetSize, int type)
-    {
-        if (options == null)
-            options = new Options();
+    public static Bitmap decodeThumbnail(
+            JobContext jc, byte[] imageData, Options options, int targetSize, int type) {
+        if (options == null) options = new Options();
         jc.setCancelListener(new DecodeCanceller(options));
 
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
-        if (jc.isCancelled())
-            return null;
+        if (jc.isCancelled()) return null;
 
         int w = options.outWidth;
         int h = options.outHeight;
 
-        if (type == MediaItem.TYPE_MICROTHUMBNAIL)
-        {
+        if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
             // We center-crop the original image as it's micro thumbnail. In this case,
             // we want to make sure the shorter side >= "targetSize".
             float scale = (float) targetSize / Math.min(w, h);
@@ -332,31 +331,29 @@ public class DecodeUtils {
             // For an extremely wide image, e.g. 300x30000, we may got OOM when decoding
             // it for TYPE_MICROTHUMBNAIL. So we add a max number of pixels limit here.
             final int MAX_PIXEL_COUNT = 640000; // 400 x 1600
-            if ((w / options.inSampleSize) * (h / options.inSampleSize) > MAX_PIXEL_COUNT)
-            {
-                options.inSampleSize = BitmapUtils.computeSampleSize(FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
+            if ((w / options.inSampleSize) * (h / options.inSampleSize) > MAX_PIXEL_COUNT) {
+                options.inSampleSize = BitmapUtils.computeSampleSize(
+                        FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
             }
-        }
-        else
-        {
+        } else {
             // For screen nail, we only want to keep the longer side >= targetSize.
             float scale = (float) targetSize / Math.max(w, h);
             options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
         }
 
         options.inJustDecodeBounds = false;
+        setOptionsMutable(options);
 
         Bitmap result = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
-        if (result == null)
-            return null;
+        if (result == null) return null;
 
         // We need to resize down if the decoder does not support inSampleSize
         // (For example, GIF images)
-        float scale = (float) targetSize
-                / (type == MediaItem.TYPE_MICROTHUMBNAIL ? Math.min(result.getWidth(), result.getHeight()) : Math.max(result.getWidth(), result.getHeight()));
+        float scale = (float) targetSize / (type == MediaItem.TYPE_MICROTHUMBNAIL
+                ? Math.min(result.getWidth(), result.getHeight())
+                : Math.max(result.getWidth(), result.getHeight()));
 
-        if (scale <= 0.5)
-            result = BitmapUtils.resizeBitmapByScale(result, scale, true);
+        if (scale <= 0.5) result = BitmapUtils.resizeBitmapByScale(result, scale, true);
         return ensureGLCompatibleBitmap(result);
     }
 }

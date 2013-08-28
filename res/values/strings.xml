@@ -92,7 +92,7 @@
     <string name="warningInvalidPath">Path no longer available, restarting...</string>
     <string name="warningNotEnoughSpace">Not enough space to import entire folder.</string>
     <string name="warningSourceEqualsDestination">Cannot import into same directory.</string>
-    <string name="warningDeleteExceedsRecycle">Deleted file exceeds recycle bin size.  Delete permananetly?  (Note: Size can be edited in settings)</string>
+    <string name="warningDeleteExceedsRecycle">Deleted file exceeds recycle bin size.  Delete permanently?  (Note: Size can be edited in settings)</string>
     <string name="warningRecycleMtp">Recycle bin does not support usb at this time.  Delete is permanent.</string>
     <string name="warningDeleteDirect">Files will be deleted directly.</string>
     <string name="warningNoRecycleBin">Recycle bin does not exist. Files will be deleted directly.</string>
@@ -128,6 +128,8 @@
     <string name="prefSummaryImportKeywords">Click to import a tab-delimited keyword file, such as that exported from Lightroom.</string>
     <string name="prefTitleClearGalleryCache">Clear Gallery Cache</string>
     <string name="prefSummaryClearGalleryCache">Click to clear the gallery thumbnail cache.</string>
+    <string name="prefTitleUseLegacyViewer">Use Legacy Viewer</string>
+    <string name="prefSummaryUseLegacyViewer">Check only if you experience issues with the default viewer.\nPlease email me if this is necessary.</string>
     <string name="prefTitleShowNav">Show Navigation</string>
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>

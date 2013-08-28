@@ -16,12 +16,13 @@
 
 package com.android.gallery3d.data;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
+
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.util.ThreadPool.Job;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 
 // MediaItem represents an image or a video item.
@@ -74,6 +75,10 @@ public abstract class MediaItem extends MediaObject {
     public String[] getTags() {
         return null;
     }
+
+//    public Face[] getFaces() {
+//        return null;
+//    }
 
     // The rotation of the full-resolution image. By default, it returns the value of
     // getRotation().

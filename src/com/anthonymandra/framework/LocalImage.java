@@ -3,6 +3,7 @@ package com.anthonymandra.framework;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -415,6 +416,17 @@ public class LocalImage extends MetaMedia
 //            notifyAll();    //AJM: This only applies to a wait...do i need to think about this?
             // It's something I noted in UriImage, which involves downloading,
             // probably more akin to this raw function than LocalImage
+
+//            try {
+//                if (imageData != null) {
+//                    ByteArrayOutputStream os = new ByteArrayOutputStream(imageData.length);
+//                    os.write(imageData);
+//                    FileOutputStream fos = new FileOutputStream("/mnt/sdcard/testa/ActualBytes.jpg");
+//                    os.writeTo(fos);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;

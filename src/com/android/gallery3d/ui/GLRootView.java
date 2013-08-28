@@ -182,6 +182,7 @@ public class GLRootView extends GLSurfaceView
     }
 
     @Override
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void requestRender() {
         if (DEBUG_INVALIDATE) {
             StackTraceElement e = Thread.currentThread().getStackTrace()[4];

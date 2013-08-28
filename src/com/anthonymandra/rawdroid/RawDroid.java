@@ -63,6 +63,7 @@ import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.RawObject;
+import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.LoadingImageView;
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.inscription.ChangeLogDialog;
@@ -74,6 +75,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private static final String TAG = RawDroid.class.getSimpleName();
 
 	public static final String KEY_STARTUP_DIR = "keyStartupDir";
+
 	public static final String LICENSE_RECEIVER = "com.anthonymandra.rawdroid.LicenseResponse";
 	public static final String LICENSE_REQUEST = "com.anthonymandra.rawdroid.LicenseRequest";
 	public static final String PERMISSION = "com.anthonymandra.rawdroid.permission";
@@ -98,6 +100,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	// Request codes
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 2;
 	private static final int REQUEST_EXPORT_THUMB_DIR = 5;
+    private static final int REQUEST_UPDATE_PHOTO = 6;
 
 	// File system objects
 	private ArrayAdapter<SpinnerFile> navAdapter;
@@ -137,6 +140,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+        //TODO: Check the intent that starts us (load proper viewer if needed)
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
@@ -195,7 +199,14 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(this);
 
+        if (!settings.contains(FullSettingsActivity.KEY_UseLegacyViewer))
+        {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean(FullSettingsActivity.KEY_UseLegacyViewer, !Util.hasHoneycomb());
+        }
+
 		String startupDir = getIntent().getStringExtra(KEY_STARTUP_DIR);
+
 		if (startupDir != null)
 		{
 			File startup = new File(startupDir);
@@ -330,7 +341,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		if (mCurrentPath != null && mCurrentPath.exists())
 		{
 			updatePath(mCurrentPath);
-			resetScrollLocation();
 		}
 		else
 		{
@@ -388,8 +398,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					handleExportThumbResult(data.getData().getPath());
 				}
 				break;
+            case REQUEST_UPDATE_PHOTO:
+                if (resultCode == RESULT_OK && data != null)
+                {
+                    handlePhotoUpdate(data.getData());
+                }
 		}
 	}
+
+    private void handlePhotoUpdate(Uri photo)
+    {
+        int index = findMediaByFilename(photo.getPath());
+        if (index > 0)
+            imageGrid.smoothScrollToPosition(index);
+    }
 
 	@SuppressWarnings("unchecked")
 	private void handleImportDirResult(final String destinationPath)
@@ -720,25 +742,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			upOneLevel();
 		}
 	}
-
-	private void resetScrollLocation()
-	{
-		if (imageGrid != null)
-			imageGrid.onRestoreInstanceState(gridState);
-	}
-
-	// private void setPath(String path)
-	// {
-	// File p = new File(path);
-	// if (!p.exists())
-	// {
-	// Toast.makeText(getBaseContext(), R.string.warningInvalidPath, Toast.LENGTH_SHORT).show();
-	// path = startPoint;
-	// }
-	//
-	// this.path = path;
-	// updatePath();
-	// }
 
 	class DirAlphaComparator implements Comparator<File>
 	{
@@ -1185,30 +1188,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			return;
 		}
 
-		int imageIndex = getImageId(media);
-		if (imageIndex != -1)
-		{
-			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
-			editor.commit();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
+        editor.commit();
 
-			Intent data = new Intent(RawDroid.this, ImageViewActivity.class);
-			data.setData(Uri.fromFile(new File(media.getFilePath())));
+        Intent viewer = RawDroid.viewerChooser(this, media.getUri());
+        startActivityForResult(viewer, REQUEST_UPDATE_PHOTO);
 
-			startActivity(data);
-		}
-		else
-		{
-			Log.e(TAG, "Unhandled index: " + imageIndex);
-			// alertRestart();
-		}
 	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
 	{
-		gridState = imageGrid.onSaveInstanceState();
+        //Do nothing
 	}
 
 	@Override
@@ -1603,9 +1596,28 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		if (key == FullSettingsActivity.KEY_ShowXmpFiles || key == FullSettingsActivity.KEY_ShowNativeFiles || key == FullSettingsActivity.KEY_ShowUnknownFiles)
+		if (key.equals(FullSettingsActivity.KEY_ShowXmpFiles)
+                || key.equals(FullSettingsActivity.KEY_ShowNativeFiles)
+                || key.equals(FullSettingsActivity.KEY_ShowUnknownFiles))
 		{
 			updateLocalFiles();
 		}
 	}
+
+    public static Intent viewerChooser(Context context, Uri data)
+    {
+        Intent viewer = new Intent();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
+        {
+            viewer.setClass(context, LegacyViewerActivity.class);
+        }
+        else
+        {
+            viewer.setClass(context, ImageViewActivity.class);
+        }
+
+        viewer.setData(data);
+        return viewer;
+    }
 }

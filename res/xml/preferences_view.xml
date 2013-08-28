@@ -20,6 +20,10 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/viewer" >
         <CheckBoxPreference
+            android:key="prefKeyUseLegacyViewer"
+            android:summary="@string/prefSummaryUseLegacyViewer"
+            android:title="@string/prefTitleUseLegacyViewer" />
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="prefKeyShowImageInterface"
             android:summary="@string/prefSummaryImageInterface"

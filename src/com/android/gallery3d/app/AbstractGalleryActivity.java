@@ -20,13 +20,16 @@ import com.android.gallery3d.anim.StateTransitionAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ImageCacheService;
 import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.glrenderer.RawTexture;
 import com.android.gallery3d.ui.GLRoot;
 import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.ui.GLView;
+import com.android.gallery3d.ui.PreparePageFadeoutTexture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.photos.data.GalleryBitmapPool;
 import com.anthonymandra.framework.GalleryActivity;
+import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.rawdroid.R;
 
 import android.annotation.TargetApi;
@@ -40,7 +43,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-public abstract class AbstractGalleryActivity extends GalleryActivity implements GalleryApp {
+public abstract class AbstractGalleryActivity extends ViewerActivity implements GalleryApp {
     @SuppressWarnings("unused")
     private static final String TAG = "AbstractGalleryActivity";
     private GLRootView mGLRootView;
@@ -199,13 +202,24 @@ public abstract class AbstractGalleryActivity extends GalleryActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-//        mGLRootView.lockRenderThread();
-//        try {
+        mGLRootView.lockRenderThread();
+        try {
 //            getStateManager().resume();
+            // From ActivityState, represents the getStateManager().resume()
+            RawTexture fade = getTransitionStore().get(
+                    PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
+//            mNextTransition = getTransitionStore().get(
+//                    KEY_TRANSITION_IN, StateTransitionAnimation.Transition.None);
+            mNextTransition = StateTransitionAnimation.Transition.PhotoIncoming;
+            if (mNextTransition != StateTransitionAnimation.Transition.None) {
+                mIntroAnimation = new StateTransitionAnimation(mNextTransition, fade);
+                mNextTransition = StateTransitionAnimation.Transition.None;
+            }
 //            getDataManager().resume();
-//        } finally {
-//            mGLRootView.unlockRenderThread();
-//        }
+        } finally {
+            mGLRootView.unlockRenderThread();
+        }
+        setScreenFlags();
         mGLRootView.onResume();
         mOrientationManager.resume();
     }
@@ -215,28 +229,28 @@ public abstract class AbstractGalleryActivity extends GalleryActivity implements
         super.onPause();
         mOrientationManager.pause();
         mGLRootView.onPause();
-//        mGLRootView.lockRenderThread();
+        mGLRootView.lockRenderThread();
 //        try {
 //            getStateManager().pause();
 //            getDataManager().pause();
 //        } finally {
-//            mGLRootView.unlockRenderThread();
+            mGLRootView.unlockRenderThread();
 //        }
         GalleryBitmapPool.getInstance().clear();
         MediaItem.getBytesBufferPool().clear();
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        mGLRootView.lockRenderThread();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mGLRootView.lockRenderThread();
 //        try {
 //            getStateManager().destroy();
 //        } finally {
-//            mGLRootView.unlockRenderThread();
+            mGLRootView.unlockRenderThread();
 //        }
 //        doUnbindBatchService();
-//    }
+    }
 
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -345,6 +359,20 @@ public abstract class AbstractGalleryActivity extends GalleryActivity implements
     // Imported ActivityState Methods
     // //////////////////////////////////////////////////////////////////////////
 
+    protected static final int FLAG_HIDE_ACTION_BAR = 1;
+    protected static final int FLAG_HIDE_STATUS_BAR = 2;
+    protected static final int FLAG_SCREEN_ON_WHEN_PLUGGED = 4;
+    protected static final int FLAG_SCREEN_ON_ALWAYS = 8;
+    protected static final int FLAG_ALLOW_LOCK_WHILE_SCREEN_ON = 16;
+    protected static final int FLAG_SHOW_WHEN_LOCKED = 32;
+
+    protected int mFlags;
+    private boolean mPlugged = false;
+
+    private static final String KEY_TRANSITION_IN = "transition-in";
+
+    private StateTransitionAnimation.Transition mNextTransition =
+            StateTransitionAnimation.Transition.None;
     private StateTransitionAnimation mIntroAnimation;
     private GLView mContentPane;
     protected float[] mBackgroundColor;
@@ -376,6 +404,28 @@ public abstract class AbstractGalleryActivity extends GalleryActivity implements
             }
             return mImageCacheService;
         }
+    }
+
+    private void setScreenFlags() {
+        final Window win = getWindow();
+        final WindowManager.LayoutParams params = win.getAttributes();
+        if ((0 != (mFlags & FLAG_SCREEN_ON_ALWAYS)) ||
+                (mPlugged && 0 != (mFlags & FLAG_SCREEN_ON_WHEN_PLUGGED))) {
+            params.flags |= WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        } else {
+            params.flags &= ~WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+        }
+        if (0 != (mFlags & FLAG_ALLOW_LOCK_WHILE_SCREEN_ON)) {
+            params.flags |= WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON;
+        } else {
+            params.flags &= ~WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON;
+        }
+        if (0 != (mFlags & FLAG_SHOW_WHEN_LOCKED)) {
+            params.flags |= WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        } else {
+            params.flags &= ~WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED;
+        }
+        win.setAttributes(params);
     }
 }
 

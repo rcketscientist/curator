@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.data;
 
-
 import android.content.Context;
 import android.net.Uri;
 
@@ -29,8 +28,8 @@ import com.android.gallery3d.util.GalleryUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-public class ImageCacheService
-{
+
+public class ImageCacheService {
 	@SuppressWarnings("unused")
 	private static final String TAG = "ImageCacheService";
 
@@ -50,16 +49,16 @@ public class ImageCacheService
 	/**
 	 * Gets the cached image data for the given <code>path</code> and <code>type</code>.
 	 * 
-	 * The image data will be stored in <code>buffer.data</code>, started from <code>buffer.offset</code> for <code>buffer.length</code> bytes. If the
+     * The image data will be stored in <code>buffer.data</code>, started from
+     * <code>buffer.offset</code> for <code>buffer.length</code> bytes. If the
 	 * buffer.data is not big enough, a new byte array will be allocated and returned.
 	 * 
 	 * @return true if the image data is found; false if not found.
 	 */
-	public boolean getImageData(Uri uri, int type, BytesBuffer buffer) {
-		byte[] key = makeKey(uri, type);
+	public boolean getImageData(Uri path, int type, BytesBuffer buffer) {
+		byte[] key = makeKey(path, type);
 		long cacheKey = Utils.crc64Long(key);
-		try
-		{
+        try {
 			LookupRequest request = new LookupRequest();
 			request.key = cacheKey;
 			request.buffer = buffer.data;
@@ -78,8 +77,8 @@ public class ImageCacheService
 		return false;
 	}
 
-	public void putImageData(Uri uri, int type, byte[] value) {
-		byte[] key = makeKey(uri, type);
+	public void putImageData(Uri path, int type, byte[] value) {
+		byte[] key = makeKey(path, type);
 		long cacheKey = Utils.crc64Long(key);
 		ByteBuffer buffer = ByteBuffer.allocate(key.length + value.length);
 		buffer.put(key);
@@ -104,8 +103,8 @@ public class ImageCacheService
 		}
 	}
 
-	private static byte[] makeKey(Uri uri, int type) {
-		return GalleryUtils.getBytes(uri.toString() + "+" + type);
+	private static byte[] makeKey(Uri path, int type) {
+		return GalleryUtils.getBytes(path.toString() + "+" + type);
 	}
 
     private static boolean isSameKey(byte[] key, byte[] buffer) {

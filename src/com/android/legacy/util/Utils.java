@@ -1,7 +1,4 @@
-package com.android.gallery3d.util;
-
-import java.io.Closeable;
-import java.nio.charset.Charset;
+package com.android.legacy.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +8,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.DisplayMetrics;
 import android.util.Log;
+
+import java.io.Closeable;
+import java.nio.charset.Charset;
 
 public class Utils
 {

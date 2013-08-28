@@ -38,7 +38,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.util.FloatMath;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 
@@ -442,7 +441,6 @@ public class PhotoView extends GLView {
         if (index == 0) {
             mListener.onCurrentImageUpdated();
         }
-        Log.i(TAG, "454: notifyImageChange");
         mPictures.get(index).reload();
         setPictureSize(index);
         invalidate();
@@ -664,10 +662,6 @@ public class PhotoView extends GLView {
             float filmRatio = mPositionController.getFilmRatio();
             //TODO: What does all this mean?
             // If you set these false you should encounter less errors (from 4.1.1 version)
-//            boolean wantsCardEffect = false;/*CARD_EFFECT && !mIsCamera && filmRatio != 1f && !mPictures.get(-1).isCamera()
-//                    && !mPositionController.inOpeningAnimation();*/
-//            boolean wantsOffsetEffect
-//                    = false;//OFFSET_EFFECT && mIsDeletable && filmRatio == 1f && r.centerY() != viewH / 2;
             boolean wantsCardEffect = CARD_EFFECT && !mIsCamera
                     && filmRatio != 1f && !mPictures.get(-1).isCamera()
                     && !mPositionController.inOpeningAnimation();
@@ -773,6 +767,7 @@ public class PhotoView extends GLView {
         public void reload() {
             // mIsCamera = mModel.isCamera(mIndex);
             mIsPanorama = mModel.isPanorama(mIndex);
+            mIsStaticCamera = mModel.isStaticCamera(mIndex);
             mIsVideo = mModel.isVideo(mIndex);
             mIsDeletable = mModel.isDeletable(mIndex);
             mLoadingState = mModel.getLoadingState(mIndex);
@@ -897,7 +892,6 @@ public class PhotoView extends GLView {
 
     // Draw a gray placeholder in the specified rectangle.
     private void drawPlaceHolder(GLCanvas canvas, Rect r) {
-        Log.i(TAG, "929: Placeholder");
         canvas.fillRect(r.left, r.top, r.width(), r.height(), mPlaceholderColor);
     }
 

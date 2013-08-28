@@ -468,7 +468,7 @@ com.anthonymandra.dcraw.Dcraw: int ExtractThumb(java.lang.String,java.lang.Strin
 com.anthonymandra.rawdroid.RawDroid
 com.anthonymandra.rawdroid.TouchImageView
 com.anthonymandra.rawdroid.TouchImageView: TouchImageView(android.content.Context,android.util.AttributeSet)
-com.anthonymandra.rawdroid.ViewImage
+com.anthonymandra.rawdroid.LegacyViewerActivity
 com.anthonymandra.rawdroid.ZoomableImageView
 com.anthonymandra.rawdroid.ZoomableImageView: ZoomableImageView(android.content.Context,android.util.AttributeSet)
 com.github.droidfu.DroidFu
