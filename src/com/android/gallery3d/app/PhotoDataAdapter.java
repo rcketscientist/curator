@@ -16,25 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapRegionDecoder;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
@@ -51,6 +32,21 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class PhotoDataAdapter implements Model
 {
@@ -463,17 +459,12 @@ public class PhotoDataAdapter implements Model
 	{
         if (getCurrentIndex() < mSize - 1)
 		    moveTo(getCurrentIndex() + 1);
-        else    //TODO: Show glow here
-            return;
 	}
 
 	public void switchToPrevImage()
 	{
         if (getCurrentIndex() > 0)
 		    moveTo(getCurrentIndex() - 1);
-        else    //TODO: Show glow here
-            return;
-
 	}
 
 	public void switchToFirstImage()

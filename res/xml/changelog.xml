@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="1.8.0"
+        versioncode="108"
+        summary="Complete overhaul of the viewer, among a host of UI improvements.
+        For those with issues you can revert to the legacy viewer Settings->View->Use Legacy Viewer.
+        Since I don't receive crash reports for interface glitches if you need to revert the viewer
+        please email me so I am aware of your issue."
+        date="08/30/2013">
+    </release>
     <release version="1.6.4"
              versioncode="106"
              summary="Expand compatibility to 4.0.2."

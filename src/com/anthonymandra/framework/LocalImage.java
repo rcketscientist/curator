@@ -413,20 +413,6 @@ public class LocalImage extends MetaMedia
 		public Bitmap onDecodeOriginal(JobContext jc, final int type)
 		{
             byte[] imageData = mImage.getThumb();
-//            notifyAll();    //AJM: This only applies to a wait...do i need to think about this?
-            // It's something I noted in UriImage, which involves downloading,
-            // probably more akin to this raw function than LocalImage
-
-//            try {
-//                if (imageData != null) {
-//                    ByteArrayOutputStream os = new ByteArrayOutputStream(imageData.length);
-//                    os.write(imageData);
-//                    FileOutputStream fos = new FileOutputStream("/mnt/sdcard/testa/ActualBytes.jpg");
-//                    os.writeTo(fos);
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
 
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.anthonymandra.rawdroid"
-    android:versionCode="106"
-    android:versionName="1.6.4" >
+    android:versionCode="110"
+    android:versionName="1.8.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -64,16 +64,7 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name=".LegacyViewerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/GalleryTheme"/>
-        <activity
-            android:name=".ImageViewActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/GalleryTheme" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".RawDroid" />
+            android:name=".ViewerChooser" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -161,9 +152,21 @@
                 <data android:pathPattern=".*\\.srw" />
                 <data android:pathPattern=".*\\.SRW" />
                 <data android:pathPattern=".*\\.x3f" />
-                <data android:pathPattern=".*\\.X3F" />                
+                <data android:pathPattern=".*\\.X3F" />
                 <data android:host="*" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".LegacyViewerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/GalleryTheme"/>
+        <activity
+            android:name=".ImageViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/GalleryTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RawDroid" />
         </activity>
         <activity android:name=".FullSettingsActivity" />
 

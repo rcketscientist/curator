@@ -186,7 +186,7 @@ public class TiledTexture implements Texture {
                 // time. When scrolling, we need to draw several tiles on the screen
                 // at the same time. It may cause a UI jank even these textures has
                 // been uploaded.
-                if (!hasBeenLoad) next.draw(canvas, 0, 0);
+                if (!hasBeenLoad) next.draw(canvas, 0, 0);  //TODO: AJM: This line generates the upper-left thumb glitch
             }
         }
         return mUploadIndex == mTiles.length;

@@ -433,8 +433,7 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 			}
 			else
 			{
-				HistogramTask ht = new HistogramTask();
-				ht.execute(mScreenNails[INDEX_CURRENT]);
+                updateHistogram(mScreenNails[INDEX_CURRENT]);
 			}
 
 			// Next, the next screen nail if not last image
@@ -509,8 +508,7 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		protected void onPostExecute(Bitmap result)
 		{
 			super.onPostExecute(result);
-			HistogramTask ht = new HistogramTask();
-			ht.execute(result);
+			updateHistogram(result);
 		}
 	}
 

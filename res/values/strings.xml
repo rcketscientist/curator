@@ -7,7 +7,7 @@
     <string name="neutral">Cancel</string>
     <string name="DecodeAll">Decode All</string>
     <string name="file">File</string>
-    <string name="save_as">Save as...</string>
+    <string name="save_as">Save JPEG</string>
     <string name="export">Export</string>
     <string name="wallpaper">Set as wallpaper</string>
     <string name="edit">Edit with...</string>

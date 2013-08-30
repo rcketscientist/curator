@@ -199,12 +199,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(this);
 
-        if (!settings.contains(FullSettingsActivity.KEY_UseLegacyViewer))
-        {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(FullSettingsActivity.KEY_UseLegacyViewer, !Util.hasHoneycomb());
-        }
-
 		String startupDir = getIntent().getStringExtra(KEY_STARTUP_DIR);
 
 		if (startupDir != null)
@@ -1193,7 +1187,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
         editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
         editor.commit();
 
-        Intent viewer = RawDroid.viewerChooser(this, media.getUri());
+        Intent viewer = new Intent(this, ViewerChooser.class);
+        viewer.setData(media.getUri());
         startActivityForResult(viewer, REQUEST_UPDATE_PHOTO);
 
 	}
@@ -1603,21 +1598,4 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			updateLocalFiles();
 		}
 	}
-
-    public static Intent viewerChooser(Context context, Uri data)
-    {
-        Intent viewer = new Intent();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
-        {
-            viewer.setClass(context, LegacyViewerActivity.class);
-        }
-        else
-        {
-            viewer.setClass(context, ImageViewActivity.class);
-        }
-
-        viewer.setData(data);
-        return viewer;
-    }
 }

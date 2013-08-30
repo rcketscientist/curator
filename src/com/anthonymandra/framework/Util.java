@@ -93,38 +93,6 @@ public class Util
 			cache = context.getCacheDir();
 
 		return new File(cache, uniqueName);
-		// final String cachePath =
-		// return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !isExternalStorageRemovable() ?
-		// getExternalCacheDir(context).getFilePath() : context.getCacheDir().getFilePath();
-		//
-		// return new File(cachePath, uniqueName);
-	}
-
-	public static void debugClearCache(Context context)
-	{
-		// Check if media is mounted or storage is built-in, if so, try and use external cache dir
-		// otherwise use internal cache dir
-		File cache = null;
-		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !isExternalStorageRemovable())
-		{
-			cache = context.getExternalCacheDir();
-		}
-		if (cache == null)
-			cache = context.getCacheDir();
-
-		final File oldCache = cache;
-		new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				final File[] swapFiles = oldCache.listFiles();
-				for (File toDelete : swapFiles)
-				{
-					toDelete.delete();
-				}
-			}
-		}.run();
 	}
 
 	/**
@@ -141,26 +109,6 @@ public class Util
 		}
 		return true;
 	}
-
-	// /**
-	// * Get the external app cache directory.
-	// *
-	// * @param context
-	// * The context to use
-	// * @return The external cache dir
-	// */
-	// @TargetApi(8)
-	// public static File getExternalCacheDir(Context context)
-	// {
-	// if (Utils.hasFroyo())
-	// {
-	// return context.getExternalCacheDir();
-	// }
-	//
-	// // Before Froyo we need to construct the external cache dir ourselves
-	// final String cacheDir = "/Android/data/" + context.getPackageName() + "/cache/";
-	// return new File(Environment.getExternalStorageDirectory().getFilePath() + cacheDir);
-	// }
 
 	/**
 	 * Check how much usable space is available at a given path.
@@ -227,63 +175,6 @@ public class Util
 		// Compare against supported android image formats
 		return (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif"));
 	}
-
-	/**
-	 * Calculate an inSampleSize for use in a {@link BitmapFactory.Options} object when decoding bitmaps using the decode* methods from
-	 * {@link BitmapFactory}. This implementation calculates the closest inSampleSize that will result in the final decoded bitmap having a width and
-	 * height equal to or larger than the requested width and height. This implementation does not ensure a power of 2 is returned for inSampleSize
-	 * which can be faster when decoding but results in a larger bitmap which isn't as useful for caching purposes.
-	 * 
-	 * @param options
-	 *            An options object with out* params already populated (run through a decode* method with inJustDecodeBounds==true
-	 * @param reqWidth
-	 *            The requested width of the resulting bitmap
-	 * @param reqHeight
-	 *            The requested height of the resulting bitmap
-	 * @return The value to be used for inSampleSize
-	 */
-	// public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
-	// {
-	// return getLargeSampleSize(options, reqWidth, reqHeight);
-	// // Raw height and width of image
-	// final int height = options.outHeight;
-	// final int width = options.outWidth;
-	// int inSampleSize = 1;
-	//
-	// if (height > reqHeight || width > reqWidth)
-	// {
-	// // if (width > height)
-	// // {
-	// // inSampleSize = Math.round((float) height / (float) reqHeight);
-	// // }
-	// // else
-	// // {
-	// // inSampleSize = Math.round((float) width / (float) reqWidth);
-	// // }
-	// int heightSample = (int) Math.ceil((float) height / (float) reqHeight);
-	// int widthSample = (int) Math.ceil((float) width / (float) reqWidth);
-	// inSampleSize = Math.max(heightSample, widthSample);
-	//
-	// // This offers some additional logic in case the image has a strange
-	// // aspect ratio. For example, a panorama may have a much larger
-	// // width than height. In these cases the total pixels might still
-	// // end up being too large to fit comfortably in memory, so we should
-	// // be more aggressive with sample down the image (=larger
-	// // inSampleSize).
-	//
-	// final float totalPixels = width * height;
-	//
-	// // Anything more than 2x the requested pixels we'll sample down
-	// // further.
-	// final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-	//
-	// while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap)
-	// {
-	// inSampleSize++;
-	// }
-	// }
-	// return inSampleSize;
-	// }
 
 	/**
 	 * Gets an exact sample size, should not be used for large images since certain ratios generate "white images"

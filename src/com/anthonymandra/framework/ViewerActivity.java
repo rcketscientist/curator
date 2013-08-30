@@ -10,6 +10,7 @@ import com.android.gallery3d.data.MediaObject;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.RawDroid;
+import com.anthonymandra.rawdroid.ViewerChooser;
 import com.anthonymandra.rawdroid.XmpFragment;
 import com.anthonymandra.widget.HistogramView;
 
@@ -122,6 +123,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public abstract void goToPrevPicture();
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
+
+    protected HistogramTask mHistogramTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -387,7 +390,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                         .equals("Never"))
                     histView.setVisibility(View.VISIBLE);
                 // navigationPanel.setVisibility(View.VISIBLE);
-                buttonRotate.setVisibility(View.VISIBLE);
+//                buttonRotate.setVisibility(View.VISIBLE);
                 // metaPanel.setVisibility(View.VISIBLE);
                 // histView.setVisibility(View.VISIBLE);
                 getSupportActionBar().show();
@@ -413,8 +416,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 if (!settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic")
                         .equals("Always"))
                     histView.setVisibility(View.INVISIBLE);
-                buttonRotate.setVisibility(View.GONE);
-                // metaPanel.setVisibility(View.GONE);
+//                buttonRotate.setVisibility(View.GONE);
+//                metaPanel.setVisibility(View.GONE);
                 // histView.setVisibility(View.GONE);
                 // imagePanels.setVisibility(View.GONE);
                 getSupportActionBar().hide();
@@ -437,9 +440,16 @@ public abstract class ViewerActivity extends GalleryActivity implements
         if (getCurrentItem() != null)
         {
             new LoadMetadataTask().execute();
-
-            new HistogramTask().execute(getCurrentBitmap());
+            updateHistogram(getCurrentBitmap());
         }
+    }
+
+    protected void updateHistogram(Bitmap bitmap)
+    {
+        if (mHistogramTask != null)
+            mHistogramTask.cancel(true);
+        mHistogramTask = new HistogramTask();
+        mHistogramTask.execute(bitmap);
     }
 
     protected void populateExif()
@@ -546,41 +556,23 @@ public abstract class ViewerActivity extends GalleryActivity implements
             if (input == null || input.isRecycled())
                 return null;
 
-            int width = input.getWidth();
-            int height = input.getHeight();
+            int[] pixels = new int[input.getWidth() * input.getHeight()];
+            input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
 
-            // Kind of arbitrary, reduce the number of pixels processed.
-            int pixelStride = 1;
-            int lineStride = 1;
-            if (width >= 256 && height >= 256)
+            for (int pixel : pixels)
             {
-                pixelStride = width / 256;
-                lineStride = height / 256;
+                if (isCancelled())
+                    return null;
+                result.processPixel(pixel);
             }
 
-            for (int i = 0; i < input.getWidth(); i += pixelStride)// i++)
-            {
-                for (int j = 0; j < input.getHeight(); j += lineStride)// j++)
-                {
-                    try
-                    {
-                        int pixel = input.getPixel(i, j);
-                        result.processPixel(pixel);
-                    }
-                    catch (Exception e)
-                    {
-                        Log.d(TAG, "Histogram: getPixel failed: ", e);
-                        return null;
-                    }
-                }
-            }
             return result;
         }
 
         @Override
         protected void onPostExecute(Histogram result)
         {
-            if (result != null)
+            if (result != null && !isCancelled())
                 histView.updateHistogram(result);
         }
     }
@@ -855,8 +847,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
         else if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
         {
-            Intent viewer = RawDroid.viewerChooser(this, getCurrentItem().getUri());
-            setImageFocus();
+            Intent viewer = new Intent(this, ViewerChooser.class);
+            viewer.setData(getCurrentItem().getUri());
             finish();
             startActivity(viewer);
         }
