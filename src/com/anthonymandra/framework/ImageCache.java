@@ -139,7 +139,7 @@ public class ImageCache
 				@Override
 				protected int sizeOf(String key, Bitmap bitmap)
 				{
-					return getBitmapSize(bitmap);
+					return Util.getBitmapSize(bitmap);
 				}
 			};
 		}
@@ -171,7 +171,7 @@ public class ImageCache
 					{
 						diskCacheDir.mkdirs();
 					}
-					if (Utils.getUsableSpace(diskCacheDir) > mCacheParams.diskCacheSize)
+					if (Util.getUsableSpace(diskCacheDir) > mCacheParams.diskCacheSize)
 					{
 						try
 						{
@@ -437,7 +437,7 @@ public class ImageCache
 
 		public ImageCacheParams(Context context, String uniqueName)
 		{
-			diskCacheDir = Utils.getDiskCacheDir(context, uniqueName);
+			diskCacheDir = Util.getDiskCacheDir(context, uniqueName);
 		}
 
 		public ImageCacheParams(File diskCacheDir)
@@ -505,23 +505,6 @@ public class ImageCache
 			sb.append(hex);
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Get the size in bytes of a bitmap.
-	 * 
-	 * @param bitmap
-	 * @return size in bytes
-	 */
-	@TargetApi(12)
-	public static int getBitmapSize(Bitmap bitmap)
-	{
-		if (Utils.hasHoneycombMR1())
-		{
-			return bitmap.getByteCount();
-		}
-		// Pre HC-MR1
-		return bitmap.getRowBytes() * bitmap.getHeight();
 	}
 
 	/**

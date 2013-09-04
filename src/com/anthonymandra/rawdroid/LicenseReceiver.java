@@ -8,12 +8,12 @@ import android.util.Log;
 public class LicenseReceiver extends BroadcastReceiver
 {
 	private static final String TAG = LicenseReceiver.class.getSimpleName();
-	
+
 	@Override
 	public void onReceive(Context context, Intent intent)
-	{	
+	{
 		int result = intent.getIntExtra(RawDroid.LICENSE_RESULT, RawDroid.LICENSE_ERROR);
-		
+
 		switch (result)
 		{
 			case RawDroid.LICENSE_ALLOW:

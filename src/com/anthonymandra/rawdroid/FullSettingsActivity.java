@@ -24,7 +24,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.anthonymandra.framework.GalleryActivity;
-import com.anthonymandra.framework.Utils;
+import com.anthonymandra.framework.Util;
 
 @SuppressWarnings("deprecation")
 public class FullSettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener
@@ -33,41 +33,60 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static final String PREFS_VIEW = "com.anthonymandra.rawdroid.PREFS_VIEW";
 	public static final String PREFS_METADATA = "com.anthonymandra.rawdroid.PREFS_METADATA";
 	public static final int REQUEST_CODE_PICK_KEYWORD_FILE = 1;
-	
-    public static final String KEY_ShowImageInterface = "prefKeyShowImageInterface";
-    public static final String KEY_ShowNav = "prefKeyShowNav";
-    public static final String KEY_ShowXmpFiles = "prefKeyShowXmpFiles";
-    public static final String KEY_ShowNativeFiles = "prefKeyShowNativeFiles";
-    public static final String KEY_ShowUnknownFiles = "prefKeyShowUnknownFiles";
-    public static final String KEY_RecycleBinSize = "prefKeyRecycleBinSize";
-    public static final String KEY_ComingSoon = "prefKeyComingSoon";
-    public static final String KEY_DeleteConfirmation = "prefKeyDeleteConfirmation";
-    public static final String KEY_UseRecycleBin = "prefKeyUseRecycleBin";
-    public static final String KEY_ImportKeywords = "prefKeyImportKeywords";
-    public static final String KEY_ClearGalleryCache = "prefKeyClearGalleryCache";
-    public static final String KEY_ShowMeta = "prefKeyShowMeta";
-    public static final String KEY_ShowHist = "prefKeyShowHist";
-    public static final String KEY_XmpRed = "prefKeyXmpRed";
-    public static final String KEY_XmpBlue = "prefKeyXmpBlue";
-    public static final String KEY_XmpGreen = "prefKeyXmpGreen";
-    public static final String KEY_XmpYellow = "prefKeyXmpYellow";
-    public static final String KEY_XmpPurple = "prefKeyXmpPurple";
-    public static final String KEY_CustomKeywords = "prefKeyCustomKeywords";
+
+	public static final String KEY_ShowImageInterface = "prefKeyShowImageInterface";
+	public static final String KEY_ShowNav = "prefKeyShowNav";
+	public static final String KEY_ShowXmpFiles = "prefKeyShowXmpFiles";
+	public static final String KEY_ShowNativeFiles = "prefKeyShowNativeFiles";
+	public static final String KEY_ShowUnknownFiles = "prefKeyShowUnknownFiles";
+	public static final String KEY_RecycleBinSize = "prefKeyRecycleBinSize";
+	public static final String KEY_ComingSoon = "prefKeyComingSoon";
+	public static final String KEY_DeleteConfirmation = "prefKeyDeleteConfirmation";
+	public static final String KEY_UseRecycleBin = "prefKeyUseRecycleBin";
+	public static final String KEY_ImportKeywords = "prefKeyImportKeywords";
+	public static final String KEY_ClearGalleryCache = "prefKeyClearGalleryCache";
+	public static final String KEY_ShowMeta = "prefKeyShowMeta";
+	public static final String KEY_ShowHist = "prefKeyShowHist";
+	public static final String KEY_XmpRed = "prefKeyXmpRed";
+	public static final String KEY_XmpBlue = "prefKeyXmpBlue";
+	public static final String KEY_XmpGreen = "prefKeyXmpGreen";
+	public static final String KEY_XmpYellow = "prefKeyXmpYellow";
+	public static final String KEY_XmpPurple = "prefKeyXmpPurple";
+	public static final String KEY_CustomKeywords = "prefKeyCustomKeywords";
+    public static final String KEY_UseLegacyViewer = "prefKeyUseLegacyViewer";
+
+    public static final String KEY_ExifName = "prefKeyName";
+    public static final String KEY_ExifDate = "prefKeyExifDate";
+    public static final String KEY_ExifModel = "prefKeyExifModel";
+    public static final String KEY_ExifIso = "prefKeyExifIso";
+    public static final String KEY_ExifExposure = "prefKeyExifExposure";
+    public static final String KEY_ExifAperture = "prefKeyExifAperture";
+    public static final String KEY_ExifFocal = "prefKeyExifFocal";
+    public static final String KEY_ExifDimensions = "prefKeyExifDimensions";
+    public static final String KEY_ExifAltitude = "prefKeyExifAltitude";
+    public static final String KEY_ExifFlash = "prefKeyExifFlash";
+    public static final String KEY_ExifLatitude = "prefKeyExifLatitude";
+    public static final String KEY_ExifLongitude = "prefKeyExifLongitude";
+    public static final String KEY_ExifWhiteBalance = "prefKeyExifWhiteBalance";
+    public static final String KEY_ExifLens = "prefKeyExifLens";
+    public static final String KEY_ExifDriveMode = "prefKeyExifDriveMode";
+    public static final String KEY_ExifExposureMode = "prefKeyExifExposureMode";
+    public static final String KEY_ExifExposureProgram = "prefKeyExifExposureProgram";
 
 	public static final int defRecycleBin = 50;
 
 	private static final int minRecycleBin = 30;
 	private static final int maxRecycleBin = 500;
-	
+
 	private String[] prefShowOptions;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
-	{     
+	{
 		super.onCreate(savedInstanceState);
-		
+
 		prefShowOptions = getResources().getStringArray(R.array.showOptions);
-		
+
 		String action = getIntent().getAction();
 
 		if (action != null)
@@ -109,7 +128,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 			getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 	}
-	
+
 	@Override
 	public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
@@ -135,7 +154,8 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	}
 
 	/**
-	 * Attachs meta related buttons.  Static to be called via legacy and fragment methods techniques.
+	 * Attachs meta related buttons. Static to be called via legacy and fragment methods techniques.
+	 * 
 	 * @param activity
 	 */
 	private static void attachMetaButtons(final Activity activity, final PreferenceManager manager)
@@ -154,9 +174,10 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			});
 		}
 	}
-	
+
 	/**
-	 * Requests the keyword import intent.  Static to be called via legacy and fragment techniques.	
+	 * Requests the keyword import intent. Static to be called via legacy and fragment techniques.
+	 * 
 	 * @param activity
 	 */
 	private static void requestImportKeywords(Activity activity)
@@ -177,10 +198,10 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			Toast.makeText(activity, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
 	private void handleKeywordResult(final String sourcePath)
 	{
-		if (!Utils.isTabDelimited(sourcePath))
+		if (!Util.isTabDelimited(sourcePath))
 		{
 			Toast.makeText(this, R.string.warningFileWrongFormat, Toast.LENGTH_SHORT).show();
 			return;
@@ -189,7 +210,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		try
 		{
 			BufferedInputStream source = new BufferedInputStream(new FileInputStream(sourcePath));
-			Utils.copy(source, GalleryActivity.getKeywordFile(this));
+			Util.copy(source, GalleryActivity.getKeywordFile(this));
 			Toast.makeText(this, R.string.resultImportSuccessful, Toast.LENGTH_SHORT).show();
 		}
 		catch (IOException e)
@@ -249,7 +270,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			}
 		}
 	}
-	
+
 	private void updateRecycleBin()
 	{
 		EditTextPreference option = (EditTextPreference) getPreferenceManager().findPreference(KEY_RecycleBinSize);
@@ -258,17 +279,17 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class SettingsFragmentMeta extends PreferenceFragment implements OnSharedPreferenceChangeListener
-	{		
+	{
 		@Override
 		public void onCreate(Bundle savedInstanceState)
 		{
 			super.onCreate(savedInstanceState);
-			
+
 			addPreferencesFromResource(R.xml.preferences_metadata);
 			attachMetaButtons(getActivity(), getPreferenceManager());
 			updateXmpColors();
 		}
-		
+
 		@Override
 		public void onResume()
 		{
@@ -282,7 +303,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			super.onPause();
 			getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 		}
-		
+
 		private void updateXmpColors()
 		{
 			SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
@@ -292,31 +313,31 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			updateYellow(sharedPreferences);
 			updatePurple(sharedPreferences);
 		}
-		
+
 		private void updateRed(SharedPreferences sharedPreferences)
 		{
 			Preference showMeta = findPreference(KEY_XmpRed);
 			showMeta.setTitle(sharedPreferences.getString(KEY_XmpRed, "Red"));
 		}
-		
+
 		private void updateBlue(SharedPreferences sharedPreferences)
 		{
 			Preference blue = findPreference(KEY_XmpBlue);
 			blue.setTitle(sharedPreferences.getString(KEY_XmpBlue, "Blue"));
 		}
-		
+
 		private void updateGreen(SharedPreferences sharedPreferences)
 		{
 			Preference green = findPreference(KEY_XmpGreen);
 			green.setTitle(sharedPreferences.getString(KEY_XmpGreen, "Green"));
 		}
-		
+
 		private void updateYellow(SharedPreferences sharedPreferences)
 		{
 			Preference yellow = findPreference(KEY_XmpYellow);
 			yellow.setTitle(sharedPreferences.getString(KEY_XmpYellow, "Yellow"));
 		}
-		
+
 		private void updatePurple(SharedPreferences sharedPreferences)
 		{
 			Preference purple = findPreference(KEY_XmpPurple);
@@ -348,7 +369,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			}
 		}
 	}
-	
+
 	private void updateXmpColors()
 	{
 		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
@@ -358,31 +379,31 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		updateYellow(sharedPreferences);
 		updatePurple(sharedPreferences);
 	}
-	
+
 	private void updateRed(SharedPreferences sharedPreferences)
 	{
 		Preference showMeta = findPreference(KEY_XmpRed);
 		showMeta.setTitle(sharedPreferences.getString(KEY_XmpRed, "Red"));
 	}
-	
+
 	private void updateBlue(SharedPreferences sharedPreferences)
 	{
 		Preference blue = findPreference(KEY_XmpBlue);
 		blue.setTitle(sharedPreferences.getString(KEY_XmpBlue, "Blue"));
 	}
-	
+
 	private void updateGreen(SharedPreferences sharedPreferences)
 	{
 		Preference green = findPreference(KEY_XmpGreen);
 		green.setTitle(sharedPreferences.getString(KEY_XmpGreen, "Green"));
 	}
-	
+
 	private void updateYellow(SharedPreferences sharedPreferences)
 	{
 		Preference yellow = findPreference(KEY_XmpYellow);
 		yellow.setTitle(sharedPreferences.getString(KEY_XmpYellow, "Yellow"));
 	}
-	
+
 	private void updatePurple(SharedPreferences sharedPreferences)
 	{
 		Preference purple = findPreference(KEY_XmpPurple);
@@ -393,18 +414,18 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static class SettingsFragmentView extends PreferenceFragment implements OnSharedPreferenceChangeListener
 	{
 		private String[] prefShowOptions;
-		
+
 		@Override
 		public void onCreate(Bundle savedInstanceState)
 		{
 			super.onCreate(savedInstanceState);
-			
+
 			prefShowOptions = getResources().getStringArray(R.array.showOptions);
-			
+
 			addPreferencesFromResource(R.xml.preferences_view);
 			updateShowOptions();
 		}
-		
+
 		@Override
 		public void onResume()
 		{
@@ -418,7 +439,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			super.onPause();
 			getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 		}
-		
+
 		private void updateShowOptions()
 		{
 			SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
@@ -426,28 +447,28 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			updateShowNav(sharedPreferences);
 			updateShowHist(sharedPreferences);
 		}
-		
+
 		private void updateShowMeta(SharedPreferences sharedPreferences)
 		{
 			Preference showMeta = findPreference(KEY_ShowMeta);
 			showMeta.setSummary(getShowOptionsText(sharedPreferences.getString(KEY_ShowMeta, "Automatic")));
 		}
-		
+
 		private void updateShowNav(SharedPreferences sharedPreferences)
 		{
 			Preference showNav = findPreference(KEY_ShowNav);
 			showNav.setSummary(getShowOptionsText(sharedPreferences.getString(KEY_ShowNav, "Automatic")));
 		}
-		
+
 		private void updateShowHist(SharedPreferences sharedPreferences)
 		{
 			Preference showHist = findPreference(KEY_ShowHist);
 			showHist.setSummary(getShowOptionsText(sharedPreferences.getString(KEY_ShowHist, "Automatic")));
 		}
-		
+
 		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-		{	
+		{
 			if (key.equals(KEY_ShowMeta))
 			{
 				updateShowMeta(sharedPreferences);
@@ -461,7 +482,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 				updateShowHist(sharedPreferences);
 			}
 		}
-		
+
 		private String getShowOptionsText(String result)
 		{
 			if (result.equals("Always"))
@@ -472,13 +493,14 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			{
 				return prefShowOptions[2];
 			}
-			else //Automatic
+			else
+			// Automatic
 			{
 				return prefShowOptions[0];
 			}
 		}
 	}
-	
+
 	private void updateShowOptions()
 	{
 		SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
@@ -486,25 +508,25 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		updateShowNav(sharedPreferences);
 		updateShowHist(sharedPreferences);
 	}
-	
+
 	private void updateShowMeta(SharedPreferences sharedPreferences)
 	{
 		ListPreference showMeta = (ListPreference) findPreference(KEY_ShowMeta);
 		showMeta.setSummary(getShowOptionsText(sharedPreferences.getString(KEY_ShowMeta, "Automatic")));
 	}
-	
+
 	private void updateShowNav(SharedPreferences sharedPreferences)
 	{
 		ListPreference showNav = (ListPreference) findPreference(KEY_ShowNav);
 		showNav.setSummary(getShowOptionsText(sharedPreferences.getString(KEY_ShowNav, "Automatic")));
 	}
-	
+
 	private void updateShowHist(SharedPreferences sharedPreferences)
 	{
 		ListPreference showHist = (ListPreference) findPreference(KEY_ShowHist);
 		showHist.setSummary(getShowOptionsText(sharedPreferences.getString(KEY_ShowHist, "Automatic")));
 	}
-	
+
 	private String getShowOptionsText(String result)
 	{
 		if (result.equals("Always"))
@@ -515,15 +537,16 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		{
 			return prefShowOptions[2];
 		}
-		else //Automatic
+		else
+		// Automatic
 		{
 			return prefShowOptions[0];
 		}
 	}
-	
+
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-	{	
+	{
 		if (key.equals(KEY_RecycleBinSize))
 		{
 			EditTextPreference option = (EditTextPreference) getPreferenceManager().findPreference(KEY_RecycleBinSize);

@@ -47,7 +47,7 @@ public class LibRaw
 	private static native byte[] getThumbFromFile3(String filePath);
 
 	private static native byte[] getThumbFromFile4(String filePath, int[] results);
-	
+
 	private static native byte[] getThumbFromFile5(String filePath, int[] results, String[] exif);
 
 	private static native byte[] getThumbFromBuffer(byte[] buffer);
@@ -87,12 +87,12 @@ public class LibRaw
 		return result;
 	}
 
-	//TODO: Should put this in a 
+	// TODO: Should put this in a
 	public static byte[] getThumb(File file, String[] exif)
 	{
 		int[] results = new int[3];
 //		String[] exifResult = new String[7];
-//		byte[] result = getThumbFromFile4(file.getPath(), results);
+//		byte[] result = getThumbFromFile4(file.getFilePath(), results);
 		byte[] result = getThumbFromFile5(file.getPath(), results, exif);
 //		exif = exifResult;
 
@@ -101,6 +101,7 @@ public class LibRaw
 
 		if (results[0] == 0)
 		{
+            Log.i(TAG, file.getName() + " is RGB thumb.");
 			int width = results[1];
 			int height = results[2];
 

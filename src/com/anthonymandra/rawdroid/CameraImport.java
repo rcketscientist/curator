@@ -33,20 +33,20 @@ import com.anthonymandra.framework.AsyncTask;
 public class CameraImport extends Activity
 {
 	private static final int REQUEST_MTP_IMPORT_DIR = 3;
-	
+
 	private MtpDevice mMtpDevice;
 	private List<Integer> imageHandles = new ArrayList<Integer>();
 	private int requiredSpace;
-//	private ProgressDialog mProgressDialog;
+	// private ProgressDialog mProgressDialog;
 	private File destination;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		requestImportImageLocation();
 	}
-	
+
 	@Override
 	protected void onDestroy()
 	{
@@ -82,16 +82,22 @@ public class CameraImport extends Activity
 			mMtpDevice.open(usbDeviceConnection);
 		}
 	}
-	
+
 	private void getImageFiles()
 	{
 		int[] storageIds = mMtpDevice.getStorageIds();
 		if (storageIds == null)
 		{
-			Toast.makeText(this, "USB Error 04: Failed to access storage.", Toast.LENGTH_SHORT).show();
+			runOnUiThread(new Runnable()
+			{
+				public void run()
+				{
+					Toast.makeText(CameraImport.this, "USB Error 04: Failed to access storage.", Toast.LENGTH_SHORT).show();
+				}
+			});
 			return;
 		}
-		
+
 		requiredSpace = 0;
 		for (int storageId : storageIds)
 		{
@@ -113,13 +119,15 @@ public class CameraImport extends Activity
 			}
 		}
 	}
-	
+
 	protected class FindImagesTask extends AsyncTask<Void, Void, Void>
 	{
 		private ProgressDialog mProgressDialog;
+
 		@Override
 		protected void onPreExecute()
-		{		
+		{
+			mProgressDialog = new ProgressDialog(CameraImport.this);
 			MtpDeviceInfo info = mMtpDevice.getDeviceInfo();
             String title = "Import";
             if (info != null)
@@ -130,7 +138,7 @@ public class CameraImport extends Activity
 			mProgressDialog.setIndeterminate(true);
 			mProgressDialog.show();
 		}
-		
+
 		@Override
 		protected Void doInBackground(Void... params)
 		{
@@ -147,17 +155,17 @@ public class CameraImport extends Activity
 				Toast.makeText(CameraImport.this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
 				finish();
 			}
-			
+
 			ImportTask it = new ImportTask();
 			it.execute();
 		}
 	}
-	
+
 	protected class ImportTask extends AsyncTask<Void, Void, List<String>> implements OnCancelListener
 	{
 		private boolean cancelled;
 		private ProgressDialog mProgressDialog;
-		
+
 		@Override
 		protected void onPreExecute()
 		{
@@ -203,7 +211,7 @@ public class CameraImport extends Activity
 				}
 				Toast.makeText(CameraImport.this, failures, Toast.LENGTH_LONG).show();
 			}
-				
+
 			Intent rawdroid = new Intent(CameraImport.this, RawDroid.class);
 			rawdroid.putExtra(RawDroid.KEY_STARTUP_DIR, destination.getPath());
 			startActivity(rawdroid);
@@ -222,7 +230,7 @@ public class CameraImport extends Activity
 			cancelled = true;
 		}
 	}
-	
+
 	private void requestImportImageLocation()
 	{
 		Intent images = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
@@ -256,7 +264,7 @@ public class CameraImport extends Activity
 			Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
 		}
 	}
-	
+
 	@Override
 	public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
@@ -281,20 +289,20 @@ public class CameraImport extends Activity
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(RawDroid.PREFS_MOST_RECENT_IMPORT, destination.getPath());
 		editor.commit();
-		
+
 		getMtpDevice();
-		
+
 		FindImagesTask fit = new FindImagesTask();
 		fit.execute();
-//		getImageFiles();
-//		
-//		if (destination.getFreeSpace() < requiredSpace)
-//		{
-//			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-//			return;
-//		}
-//		
-//		ImportTask it = new ImportTask(destination);
-//		it.execute(imageHandles);
+		// getImageFiles();
+		//
+		// if (destination.getFreeSpace() < requiredSpace)
+		// {
+		// Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+		// return;
+		// }
+		//
+		// ImportTask it = new ImportTask(destination);
+		// it.execute(imageHandles);
 	}
 }

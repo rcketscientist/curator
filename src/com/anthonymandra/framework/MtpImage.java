@@ -50,7 +50,7 @@ public class MtpImage extends MetaMedia
 	}
 
 	@Override
-	public String getPath()
+	public String getFilePath()
 	{
 		// Ghetto path for mtp so caching can work
 		return mDevice.getDeviceName() + File.separator + mInfo.getStorageId() + File.separator + mObjectHandle + File.separator + mInfo.getName();
@@ -158,7 +158,7 @@ public class MtpImage extends MetaMedia
 		if (imageStream == null)
 			return false;
 		
-		Utils.copy(imageStream, imageDest);
+		Util.copy(imageStream, imageDest);
 		try
 		{
 			imageStream.close();
@@ -177,7 +177,7 @@ public class MtpImage extends MetaMedia
 		BufferedOutputStream thumbStream = null;
 		try
 		{
-			File thumbDest = new File(destination, Utils.swapExtention(getName(), ".jpg"));
+			File thumbDest = new File(destination, Util.swapExtention(getName(), ".jpg"));
 			thumbStream = new BufferedOutputStream(new FileOutputStream(thumbDest));
 			thumbStream.write(getThumb()); // Assumes thumb is already in an image format (jpg at time of coding)
 		}

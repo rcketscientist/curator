@@ -20,7 +20,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +34,7 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.anthonymandra.framework.GalleryActivity;
-import com.anthonymandra.framework.MetaMedia;
+import com.anthonymandra.framework.MetaObject;
 import com.anthonymandra.widget.MultiSpinner;
 
 public class XmpFragment extends SherlockFragment
@@ -45,7 +44,7 @@ public class XmpFragment extends SherlockFragment
 	Set<String> selectedKeywords = new HashSet<String>();
 	RatingBar mRatingBar;
 	TreeAdapter mKeywordAdapter;
-	MetaMedia mMedia;
+	MetaObject mMedia;
 	RadioGroup colorKey;
 	MultiSpinner customKeywords;
 
@@ -75,7 +74,7 @@ public class XmpFragment extends SherlockFragment
 		return view;
 	}
 
-	public static XmpFragment newInstance(MetaMedia media)
+	public static XmpFragment newInstance(MetaObject media)
 	{
 		XmpFragment fragment = new XmpFragment();
 		fragment.initialize(media);
@@ -110,12 +109,12 @@ public class XmpFragment extends SherlockFragment
 		writeCurrentXmp();
 	}
 
-	private void initialize(MetaMedia media)
+	private void initialize(MetaObject media)
 	{
 		mMedia = media;
 	}
 
-	public void setMediaObject(MetaMedia media)
+	public void setMediaObject(MetaObject media)
 	{
 		writeCurrentXmp();
 		clear();

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@+id/frameLayoutSidebar"
+        layout="@layout/legacy_viewer" />
+
+    <FrameLayout
+        android:id="@+id/frameLayoutSidebar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true" >
+
+        <fragment
+            android:id="@+id/fragmentSideBar"
+            android:name="com.anthonymandra.rawdroid.XmpFragment"
+            android:layout_width="300dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            tools:layout="@layout/xmp_fragment_wide" >
+        </fragment>
+    </FrameLayout>
+
+</RelativeLayout>

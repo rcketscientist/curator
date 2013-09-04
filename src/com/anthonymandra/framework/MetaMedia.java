@@ -1,14 +1,6 @@
 package com.anthonymandra.framework;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Date;
-
-import android.util.Log;
-
+import com.android.gallery3d.data.MediaItem;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
@@ -26,7 +18,17 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 import com.drew.metadata.xmp.XmpWriter;
 
-public abstract class MetaMedia implements MediaObject
+import android.net.Uri;
+import android.util.Log;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+
+public abstract class MetaMedia extends MediaItem
 {
 	private static final String TAG = MetaMedia.class.getSimpleName();
 
@@ -45,6 +47,10 @@ public abstract class MetaMedia implements MediaObject
 	protected String shutterLegacy;
 	protected int orientLegacy = 0;
 
+    public MetaMedia(Uri path, long version) {
+        super(path, version);
+    }
+
 	public void clearXmp()
 	{
 		setLabel(null);
@@ -57,8 +63,6 @@ public abstract class MetaMedia implements MediaObject
 	private boolean isLoaded = false;
 
 	public abstract boolean hasXmp();
-
-	public abstract void writeXmp();
 
 	protected void resetXmp()
 	{
@@ -74,7 +78,6 @@ public abstract class MetaMedia implements MediaObject
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -88,7 +91,6 @@ public abstract class MetaMedia implements MediaObject
 		// }
 		// catch (FileNotFoundException e)
 		// {
-		// // TODO Auto-generated catch block
 		// e.printStackTrace();
 		// }
 		new Runnable()
@@ -127,7 +129,7 @@ public abstract class MetaMedia implements MediaObject
 				return getShutterSpeed();
 			}
 		}
-			
+
 		return null;
 	}
 
@@ -256,7 +258,7 @@ public abstract class MetaMedia implements MediaObject
 				return getAperture();
 			}
 		}
-			
+
 		return null;
 	}
 
@@ -280,6 +282,7 @@ public abstract class MetaMedia implements MediaObject
 		return makeLegacy;
 //		return null;
 	}
+
 	public String getModel()
 	{
 		if (mMetadata.containsDirectory(ExifIFD0Directory.class) &&
@@ -291,6 +294,7 @@ public abstract class MetaMedia implements MediaObject
 		return modelLegacy;
 //		return null;
 	}
+
 	public int getOrientation()
 	{
 		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
@@ -460,12 +464,12 @@ public abstract class MetaMedia implements MediaObject
 		}
 		catch (ImageProcessingException e)
 		{
-			Log.e(TAG, "Failed to process file for meta data.", e);
+			Log.w(TAG, "Failed to process file for meta data.", e);
 			return false;
 		}
 		catch (IOException e)
 		{
-			Log.e(TAG, "Failed to open file for meta data.", e);
+			Log.w(TAG, "Failed to open file for meta data.", e);
 			return false;
 		}
 		finally
@@ -514,6 +518,7 @@ public abstract class MetaMedia implements MediaObject
 			}
 		}
 	}
+
 	public int getWidth()
 	{
 		return width;

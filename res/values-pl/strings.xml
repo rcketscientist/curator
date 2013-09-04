@@ -37,7 +37,7 @@
 </string-array>
 
 <string name="Date">Data</string>
-<string name="Name">Imię</string>
+<string name="Name">Nazwa</string>
 <string name="settings">Ustawienia</string>
 <string name="importKeywords">Import słów kluczowych</string>
 <string name="importImages">Import obrazów</string>
@@ -46,8 +46,7 @@
 <string name="import1">Import</string>
 <string name="all">Wszystkie</string>
 <string name="selected">Wybrane</string>
-<string name="renameImages">Zmiana nazwy %1$ obrazów</string>
-<string name="exportThumbsFormat">Eksport %1$ miniatur</string>
+<string name="renameImages">Zmiana nazwy obrazów</string>
 <string name="view">Podgląd</string>
 <string name="gallery">Galeria</string>
 <string name="viewer">Podgląd</string>
@@ -99,12 +98,14 @@
 <string name="warningNoRecycleBin">Kosz nie istnieje. Obrazy będą bezpośrednio kasowane.</string>
 <string name="warningGenericImagesOff">Typowe pliki obrazów (n.p. jpg) zostały wyłączone w ustawieniach.</string>
 <string name="warningInvalidMeta">Błędne metadane (proszę, prześlij wywołujący błąd plik mailem).</string>
-<string name="warningInvalidLabel">Zła etykieta "%1$s", jedyne kolory obsługiwane. Jeżeli sądzisz, że powinny być obsługiwane, napisz o tym do mnie.</string>
+<string name="warningInvalidLabel">Etykieta jest nieprawidłowa. Jeżeli sądzisz, że powinny być obsługiwane, napisz o tym do mnie.</string>
 <string name="warningInvalidSidebar">Boczna belka przestała działać, uruchom ponownie.</string>
 <string name="warningNoUSB">Nie znaleziono nośnika usb. Jeżeli wiesz, że został takowy zamontowany, wyślij maila na adres rawdroid@antonymandra.com z lokalizacją do dodania.</string>
 <string name="warningLicenseError">Niepowodzenie sprawdzania licencji. Domyślnie poprzednie sprawdzenie:</string>
 <string name="warningLicenseDeny">Licencja: dobrej zabawy z wersją demonstracyjną!</string>
 <string name="warningLicenseAllow">Licencja: dziękuję za wsparcie!</string>
+<string name="warningFailedToGetStream">Uwaga: Pobranie strumienia obrazu nie powiodło się. Jeżeli problem będzie się powtarzał, proszę o email:rawdroid@anthonymandra.com</string>
+<string name="warningShareFail">Udostępniani nie może być zakończone.</string>
 
 <!-- Preferences -->
 <string name="prefTitleImageInterface">Automatycznie wyświetl interfejs</string>
@@ -117,11 +118,11 @@
 <string name="prefSummaryDeleteConfirmation">Gdy wyłączone, kasowanie nie wymaga potwierdzenia, nawet gdy przekroczona będzie wielkość kosza.</string>
 <string name="prefTitleUseRecycleBin">Używaj kosza</string>
 <string name="prefSummaryUseRecycleBin">Gdy wyłączony, obrazy będą bezpośrednio kasowane</string>
-<string name="prefTitleShowXmpFiles">Pokarz pliki XMP</string>
+<string name="prefTitleShowXmpFiles">Pokaż pliki XMP</string>
 <string name="prefSummaryShowXmpFiles">Pokazuje towarzyszące pliki xmp w galerii</string>
-<string name="prefTitleShowNativeFiles">Pokarz ogólne obrazy</string>
+<string name="prefTitleShowNativeFiles">Pokaż ogólne obrazy</string>
 <string name="prefSummaryShowNativeFiles">Pokazuje pliki typu jpg, gif, bmp i png.</string>
-<string name="prefTitleShowUnknownFiles">Pokarz nieobsługiwane pliki</string>
+<string name="prefTitleShowUnknownFiles">Pokaż nieobsługiwane pliki</string>
 <string name="prefSummaryShowUnknownFiles">Wskazuje, że RawDroid nie przetwarza.</string>
 <string name="prefTitleImportKeywords">Importuj słowa kluczowe</string>
 <string name="prefSummaryImportKeywords">Kliknij aby importować plik słów kluczowych rozdzielonych znakami tabulacji, tak jak zostały wyeksportowane z programu Lightroom.</string>
@@ -157,6 +158,7 @@
 <string name="clear">Wyczyść</string>
 <string name="write">Zapisz</string>
 <string name="reuse">Użyj ponownie</string>
+<string name="customKeywords">Niestandardowe słowa kluczowe</string>
 <string name="addKeyword">Dodaj słowo kluczowe</string>
 <string name="select">Wybierz</string>
 <string name="directory">Katalog</string>
@@ -199,7 +201,12 @@
 <string name="tutorialMemoryTitle">Problemy z pamięcią</string>
 <string name="tutorialMemory">Jeżeli masz starsze urządzenie, które się zawiesza, to najprawdopodobniej dzieje się tak z powodu ograniczeń pamięci.\nZalecam rootowanie za pomocą "VM Heap Tool" aby dopuścić do wykorzystania większej ilości pamięci.</string>
 <string name="tutorialPath">To aktualna ścieżka. Szybka nawigacja możliwa za pomocą rozwjania.</string>
+<string name="tutorialActionLongPressTitle">Pomoc Listwy Wyboru Operacji</string>
 <string name="tutorialActionLongPress">Aby zobaczyć krótki opis przyciśnij długo pozycje akcji.</string>
 <string name="tutorialUsbTitle">Szukanie zamontowanego USB</string>
+<string name="tutorialUsb">Przeszuka wszystkie znane punkty montowania dla każdego z urządzeń USB. Jeżeli urządzenie nie zostaje znalezione, przyślij mi mailem ścieżkę punktu montowania, np.:"/mnt/weird/device/usb"  </string>
 
+<string name="unit_mm">mm</string>
+<string name="loading">Czytam</string>
+<string name="no_thumbnail">Bez miniatur</string>
 </resources>

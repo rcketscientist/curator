@@ -56,10 +56,7 @@ public class AppRater
 		Dialog dialog = new Dialog(mContext);
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		builder.setMessage(R.string.ratingRequest)
-				.setTitle("Rate " + APP_TITLE)
-				.setIcon(mContext.getApplicationInfo().icon)
-				.setCancelable(false)
+		builder.setMessage(R.string.ratingRequest).setTitle("Rate " + APP_TITLE).setIcon(mContext.getApplicationInfo().icon).setCancelable(false)
 				.setPositiveButton("Rate Now", new DialogInterface.OnClickListener()
 				{
 

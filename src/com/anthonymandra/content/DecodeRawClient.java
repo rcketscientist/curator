@@ -68,7 +68,7 @@ public class DecodeRawClient
 
 		if (!thumbExists(filename))
 		{
-			// Dcraw.ExtractThumb(raw.getPath(), FileManager.getStoragePath().getPath());
+			// Dcraw.ExtractThumb(raw.getFilePath(), FileManager.getStoragePath().getFilePath());
 		}
 
 		// convertThumb(filename); // Convert format if necessary

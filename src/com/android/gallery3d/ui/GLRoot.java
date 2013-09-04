@@ -16,30 +16,38 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.graphics.Matrix;
+
 import com.android.gallery3d.anim.CanvasAnimation;
-import com.android.gallery3d.ui.UploadedTexture.DeadBitmapException;
+import com.android.gallery3d.glrenderer.GLCanvas;
 
-public interface GLRoot
-{
+public interface GLRoot {
 
-	public static interface OnGLIdleListener
-	{
-		public boolean onGLIdle(GLRoot root, GLCanvas canvas) throws DeadBitmapException;
-	}
+    // Listener will be called when GL is idle AND before each frame.
+    // Mainly used for uploading textures.
+    public static interface OnGLIdleListener {
+        public boolean onGLIdle(
+                GLCanvas canvas, boolean renderRequested);
+    }
 
-	public void addOnGLIdleListener(OnGLIdleListener listener);
+    public void addOnGLIdleListener(OnGLIdleListener listener);
+    public void registerLaunchedAnimation(CanvasAnimation animation);
+    public void requestRenderForced();
+    public void requestRender();
+    public void requestLayoutContentPane();
 
-	public void registerLaunchedAnimation(CanvasAnimation animation);
+    public void lockRenderThread();
+    public void unlockRenderThread();
 
-	public void requestRender();
+    public void setContentPane(GLView content);
+    public void setOrientationSource(OrientationSource source);
+    public int getDisplayRotation();
+    public int getCompensation();
+    public Matrix getCompensationMatrix();
+    public void freeze();
+    public void unfreeze();
+    public void setLightsOutMode(boolean enabled);
 
-	public void requestLayoutContentPane();
-
-	public boolean hasStencil();
-
-	public void lockRenderThread();
-
-	public void unlockRenderThread();
-
-	public void setContentPane(GLView content);
+    public Context getContext();
 }

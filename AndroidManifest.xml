@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.anthonymandra.rawdroid"
-    android:versionCode="101"
-    android:versionName="1.3.8" >
+    android:versionCode="110"
+    android:versionName="1.8.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="18" />
 
     <uses-feature
         android:name="android.hardware.usb.host"
@@ -20,6 +20,7 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
+    
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -63,13 +64,7 @@
                 android:resource="@xml/device_filter" />
         </activity>
         <activity
-            android:name=".ViewImage"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
-            android:theme="@style/GalleryTheme" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".RawDroid" />
+            android:name=".ViewerChooser" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -157,9 +152,21 @@
                 <data android:pathPattern=".*\\.srw" />
                 <data android:pathPattern=".*\\.SRW" />
                 <data android:pathPattern=".*\\.x3f" />
-                <data android:pathPattern=".*\\.X3F" />                
+                <data android:pathPattern=".*\\.X3F" />
                 <data android:host="*" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".LegacyViewerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/GalleryTheme"/>
+        <activity
+            android:name=".ImageViewActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/GalleryTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RawDroid" />
         </activity>
         <activity android:name=".FullSettingsActivity" />
 

@@ -1,17 +1,6 @@
 <component name="libraryTable">
   <library name="dexedLibs">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/xmpcore-5.1.2-69f149728efe06d4c86e361ceb065fae.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/oi file manager-0b33e223c5460991d7e608385cfa1a39.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/android-support-v4-fdaaa66e7e82b9a2288c9f78f42b7ae6.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/showcaseview-287f937fbf832cd821c0cc29815fce4e.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/amandra-xmp-e9828d73ac08d0efb902ba8150961036.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/oi distribution library-2dcb02ed43638b8af1f5bc9c38517ab3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/actionbarsherlock-c4d0a53850416c1a4020cd89e578e1e6.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/inscription-5525767126369a4c9969203083c4ad9e.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/nineoldandroids-4e7652d11bb5c7600632248156b4d0ce.jar!/" />
-      <root url="jar://$PROJECT_DIR$/bin/dexedLibs/tree-view-list-android-31c3a31fa510682ead936066c7f4dee2.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>

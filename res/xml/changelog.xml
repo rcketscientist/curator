@@ -1,16 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="1.3.8"
-             versioncode="101"
-             summary="Bug fixes."
-             date="07/31/2013">
-        <change>Fixed: Various bugs</change>
+    <release version="1.8.0"
+        versioncode="108"
+        summary="Complete overhaul of the viewer, among a host of UI improvements.
+        For those with issues you can revert to the legacy viewer Settings->View->Use Legacy Viewer.
+        Since I don't receive crash reports for interface glitches if you need to revert the viewer
+        please email me so I am aware of your issue."
+        date="08/30/2013">
     </release>
-    <release version="1.37" 
-        versioncode="98" 
-        summary="Revert to old viewer during troubleshooting.  New viewer is back in beta."
-        date="06/06/2013">
-        <change>Fixed: Various bugs</change>
+    <release version="1.6.4"
+             versioncode="106"
+             summary="Expand compatibility to 4.0.2."
+             date="08/02/2013">
+        <change>Fixed: File manager loads</change>
+        <change>Added: New viewer support to 4.0.2.</change>
+    </release>
+    <release version="1.6.3"
+             versioncode="104"
+             summary="Navigation bug fixes"
+             date="07/31/2013">
+        <change>Fixed: Navigation bugs</change>
+    </release>
+    <release version="1.6.2"
+             versioncode="102"
+             summary="Incremental release of the new viewer as I work on compatibility."
+             date="07/31/2013">
+        <change>Fixed: minor bugs</change>
+    </release>
+    <release version="1.60" 
+        versioncode="96" 
+        summary="Complete overhaul of image viewer model.  I expect a few bugs, please email me with any issues!"
+        date="05/30/2013">
+        <change>Added: Auto-orientation</change>
+        <change>Added: Support for additional cameras</change>
+        <change>Fixed: New xmp modification model to fix accidental writes</change>
+        <change>Fixed: Decoder no longer hangs on special system files</change>
+        <change>Translations: Thanks Paschalis, Robert, Waldemar!</change>
+    </release>
+    <release version="1.36" 
+        versioncode="90" 
+        summary="Cleanup build in preparation for larger auto-orient rewrite."
+        date="05/16/2013">
+        <change>Fixed: Sharing will now properly exit context mode</change>
+        <change>Fixed: Gmail attachment bug</change>
+        <change>Fixed: Camera import crash</change>
+        <change>Polish: Thanks Marcin!</change>
     </release>
     <release version="1.35" 
         versioncode="89" 

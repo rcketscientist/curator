@@ -3,6 +3,7 @@ package com.anthonymandra.framework;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,12 +13,18 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.net.Uri;
 import android.util.Log;
 
+import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.data.DecodeUtils;
+import com.android.gallery3d.data.ImageCacheRequest;
+import com.android.gallery3d.util.ThreadPool.Job;
+import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.dcraw.LibRaw;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 
 public class LocalImage extends MetaMedia
@@ -28,6 +35,7 @@ public class LocalImage extends MetaMedia
 
 	public LocalImage(File image)
 	{
+        super(Uri.fromFile(image), nextVersionNumber());
 		mImage = image;
 	}
 
@@ -65,7 +73,6 @@ public class LocalImage extends MetaMedia
 				}
 				catch (IOException e)
 				{
-					// TODO Auto-generated catch block
 				}
 			}
 		}
@@ -85,8 +92,13 @@ public class LocalImage extends MetaMedia
 		return mImage.getName();
 	}
 
-	@Override
-	public String getPath()
+    @Override
+    public String getMimeType() {
+        return null;
+    }
+
+    @Override
+	public String getFilePath()
 	{
 		return mImage.getPath();
 	}
@@ -94,6 +106,14 @@ public class LocalImage extends MetaMedia
 	@Override
 	public boolean canDecode()
 	{
+//		Log.d(TAG, mImage.getName());
+//		Log.d(TAG, "canExecute: " + String.valueOf(mImage.canExecute()));
+//		Log.d(TAG, "canRead: " + String.valueOf(mImage.canRead()));
+//		Log.d(TAG, "canWrite: " + String.valueOf(mImage.canWrite()));
+//		Log.d(TAG, "isAbsolute: " + String.valueOf(mImage.isAbsolute()));
+//		Log.d(TAG, "isDirectory: " + String.valueOf(mImage.isDirectory()));
+//		Log.d(TAG, "isFile: " + String.valueOf(mImage.isFile()));
+//		Log.d(TAG, "isHidden: " + String.valueOf(mImage.isHidden()));
 		if (!mImage.isFile())
 			return false;
 		return LibRaw.canDecode(mImage);
@@ -103,7 +123,7 @@ public class LocalImage extends MetaMedia
 	@Override
 	public byte[] getThumb()
 	{
-		if (Utils.isNativeImage(this))
+		if (Util.isNativeImage(this))
 		{
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
@@ -305,7 +325,7 @@ public class LocalImage extends MetaMedia
 			BufferedInputStream xmpStream = getXmpInputStream();
 			if (xmpStream != null)
 			{
-				Utils.copy(xmpStream, xmpDest);
+				Util.copy(xmpStream, xmpDest);
 				try
 				{
 					xmpStream.close();
@@ -326,7 +346,7 @@ public class LocalImage extends MetaMedia
 		if (imageStream == null)
 			return false;
 
-		Utils.copy(imageStream, imageDest);
+		Util.copy(imageStream, imageDest);
 		try
 		{
 			imageStream.close();
@@ -345,11 +365,11 @@ public class LocalImage extends MetaMedia
 		BufferedOutputStream thumbStream = null;
 		try
 		{
-			File thumbDest = new File(destination, Utils.swapExtention(getName(), ".jpg"));
+			File thumbDest = new File(destination, Util.swapExtention(getName(), ".jpg"));
 			thumbStream = new BufferedOutputStream(new FileOutputStream(thumbDest));
 			byte[] thumb = getThumb();
 			if (thumb == null)
-				return false;	
+				return false;
 			thumbStream.write(getThumb()); // Assumes thumb is already in an image format (jpg at time of coding)
 		}
 		catch (IOException e)
@@ -372,4 +392,88 @@ public class LocalImage extends MetaMedia
 		}
 		return true;
 	}
+
+	@Override
+	public Job<Bitmap> requestImage(GalleryApp app, int type)
+	{
+		return new LocalImageRequest(app, Uri.fromFile(mImage), type, this);
+	}
+
+	public static class LocalImageRequest extends ImageCacheRequest
+	{
+        private LocalImage mImage;
+
+		LocalImageRequest(GalleryApp application, Uri uri, int type, LocalImage image)
+		{
+			super(application, uri, type, MetaMedia.getTargetSize(type));
+            mImage = image;
+		}
+
+		@Override
+		public Bitmap onDecodeOriginal(JobContext jc, final int type)
+		{
+            byte[] imageData = mImage.getThumb();
+
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			int targetSize = MetaMedia.getTargetSize(type);
+
+			// try to decode from JPEG EXIF
+			if (type == MetaMedia.TYPE_MICROTHUMBNAIL)
+			{
+				// ExifInterface exif = null;
+				// byte [] thumbData = null;
+				// try {
+				// exif = new ExifInterface(mLocalFilePath);
+				// if (exif != null) {
+				// thumbData = exif.getThumbnail();
+				// }
+				// } catch (Throwable t) {
+				// Log.w(TAG, "fail to get exif thumb", t);
+				// }
+				// if (thumbData != null) {
+				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData, options, targetSize);
+				if (bitmap != null)
+					return bitmap;
+				// }
+			}
+
+			return DecodeUtils.decodeThumbnail(jc, imageData, options, targetSize, type);
+		}
+	}
+
+	@Override
+	public Job<BitmapRegionDecoder> requestLargeImage()
+	{
+		return new LocalLargeImageRequest(this);
+	}
+
+	public static class LocalLargeImageRequest implements Job<BitmapRegionDecoder>
+	{
+        LocalImage mImage;
+
+		public LocalLargeImageRequest(LocalImage image)
+		{
+			mImage = image;
+		}
+
+		public BitmapRegionDecoder run(JobContext jc)
+		{
+            byte[] imageData = mImage.getThumb();
+			return DecodeUtils.createBitmapRegionDecoder(jc,imageData, 0, imageData.length, false);
+		}
+	}
+
+	@Override
+	public Uri getUri()
+	{
+		return Uri.fromFile(mImage);
+	}
+
+	@Override
+	public long getDataVersion()
+	{
+		return mDataVersion;
+	}
+
 }

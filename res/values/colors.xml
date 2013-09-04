@@ -8,4 +8,10 @@
     <color name="grid_state_focused">#777dbcd3</color>
     <color name="brightGreen">#00FF00</color>
 
+    <!-- configuration for photo page -->
+    <color name="photo_background">#1A1A1A</color>
+    <color name="photo_placeholder">#333</color>
+    <color name="default_background">#000</color>
+    <color name="bitmap_screennail_placeholder">#333</color>
+
 </resources>

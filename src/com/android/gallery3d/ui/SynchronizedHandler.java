@@ -19,29 +19,23 @@ package com.android.gallery3d.ui;
 import android.os.Handler;
 import android.os.Message;
 
-import com.android.gallery3d.util.Utils;
+import com.android.gallery3d.common.Utils;
 
-public class SynchronizedHandler extends Handler
-{
+public class SynchronizedHandler extends Handler {
 
-	private final GLRoot mRoot;
+    private final GLRoot mRoot;
 
-	public SynchronizedHandler(GLRoot root)
-	{
-		mRoot = Utils.checkNotNull(root);
-	}
+    public SynchronizedHandler(GLRoot root) {
+        mRoot = Utils.checkNotNull(root);
+    }
 
-	@Override
-	public void dispatchMessage(Message message)
-	{
-		mRoot.lockRenderThread();
-		try
-		{
-			super.dispatchMessage(message);
-		}
-		finally
-		{
-			mRoot.unlockRenderThread();
-		}
-	}
+    @Override
+    public void dispatchMessage(Message message) {
+        mRoot.lockRenderThread();
+        try {
+            super.dispatchMessage(message);
+        } finally {
+            mRoot.unlockRenderThread();
+        }
+    }
 }

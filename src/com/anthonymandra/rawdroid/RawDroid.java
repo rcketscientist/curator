@@ -62,8 +62,8 @@ import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedLis
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
-import com.anthonymandra.framework.MediaObject;
-import com.anthonymandra.framework.Utils;
+import com.anthonymandra.framework.RawObject;
+import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.LoadingImageView;
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.inscription.ChangeLogDialog;
@@ -75,6 +75,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private static final String TAG = RawDroid.class.getSimpleName();
 
 	public static final String KEY_STARTUP_DIR = "keyStartupDir";
+
 	public static final String LICENSE_RECEIVER = "com.anthonymandra.rawdroid.LicenseResponse";
 	public static final String LICENSE_REQUEST = "com.anthonymandra.rawdroid.LicenseRequest";
 	public static final String PERMISSION = "com.anthonymandra.rawdroid.permission";
@@ -91,15 +92,29 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	public static final String PREFS_MOST_RECENT_IMPORT = "mostRecentImport";
 	public static final String PREFS_VERSION_NUMBER = "prefVersionNumber";
 	public static final String IMAGE_CACHE_DIR = "thumbs";
-	public static final String RECYCLE_BIN_DIR = "recycle";
 	public static final String[] USB_LOCATIONS = new String[]
-	{ "/mnt/usb_storage", "/Removable", "/mnt/UsbDriveA", "/mnt/UsbDriveB", "/mnt/UsbDriveC", "/mnt/UsbDriveD", "/mnt/UsbDriveE", "/mnt/UsbDriveF",
-			"/mnt/sda1", "/mnt/sdcard2", "/udisk", "/mnt/extSdCard", Environment.getExternalStorageDirectory().getPath() + "/usbStorage/sda1",
-			Environment.getExternalStorageDirectory().getPath() + "/usbStorage" };
+	{
+            "/mnt/usb_storage",
+            "/Removable",
+            "/mnt/UsbDriveA",
+            "/mnt/UsbDriveB",
+            "/mnt/UsbDriveC",
+            "/mnt/UsbDriveD",
+            "/mnt/UsbDriveE",
+            "/mnt/UsbDriveF",
+			"/mnt/sda1",
+            "/mnt/sdcard2",
+            "/udisk",
+            "/mnt/extSdCard",
+            Environment.getExternalStorageDirectory().getPath() + "/usbStorage/sda1",
+			Environment.getExternalStorageDirectory().getPath() + "/usbStorage",
+            "/mnt/usb",
+            "/storage/usb" };
 
 	// Request codes
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 2;
 	private static final int REQUEST_EXPORT_THUMB_DIR = 5;
+    private static final int REQUEST_UPDATE_PHOTO = 6;
 
 	// File system objects
 	private ArrayAdapter<SpinnerFile> navAdapter;
@@ -115,9 +130,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private int mImageThumbSpacing;
 	private ImageDecoder mImageDecoder;
 	private ImageAdapter imageAdapter;
-	protected ArrayList<MediaObject> mSelectedImages = new ArrayList<MediaObject>();
-	protected List<MediaObject> mItemsForIntent = new ArrayList<MediaObject>();
-	
+	protected ArrayList<RawObject> mSelectedImages = new ArrayList<RawObject>();
+	protected List<RawObject> mItemsForIntent = new ArrayList<RawObject>();
+
 	Dialog formatDialog;
 
 	// Selection support
@@ -139,12 +154,10 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+        //TODO: Check the intent that starts us (load proper viewer if needed)
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
-		
-		//TODO: Clean up bogus cache
-		Utils.debugClearCache(this);
 
 		// checkLicense();
 		checkExpiration(10, 1, 2013);
@@ -201,6 +214,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		settings.registerOnSharedPreferenceChangeListener(this);
 
 		String startupDir = getIntent().getStringExtra(KEY_STARTUP_DIR);
+
 		if (startupDir != null)
 		{
 			File startup = new File(startupDir);
@@ -280,7 +294,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -336,7 +349,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		if (mCurrentPath != null && mCurrentPath.exists())
 		{
 			updatePath(mCurrentPath);
-			resetScrollLocation();
 		}
 		else
 		{
@@ -394,8 +406,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					handleExportThumbResult(data.getData().getPath());
 				}
 				break;
+            case REQUEST_UPDATE_PHOTO:
+                if (resultCode == RESULT_OK && data != null)
+                {
+                    handlePhotoUpdate(data.getData());
+                }
 		}
 	}
+
+    private void handlePhotoUpdate(Uri photo)
+    {
+        int index = findMediaByFilename(photo.getPath());
+        if (index > 0)
+            imageGrid.smoothScrollToPosition(index);
+    }
 
 	@SuppressWarnings("unchecked")
 	private void handleImportDirResult(final String destinationPath)
@@ -427,7 +451,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private long getSelectedImageSize()
 	{
 		long selectionSize = 0;
-		for (MediaObject toImport : mSelectedImages)
+		for (RawObject toImport : mSelectedImages)
 		{
 			selectionSize += toImport.getFileSize();
 		}
@@ -455,9 +479,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<MediaObject> storeSelectionForIntent()
+	private List<RawObject> storeSelectionForIntent()
 	{
-		return mItemsForIntent = (ArrayList<MediaObject>) mSelectedImages.clone();
+		return mItemsForIntent = (ArrayList<RawObject>) mSelectedImages.clone();
 	}
 
 	@Override
@@ -520,7 +544,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		List<MediaObject> filesToShare = new ArrayList<MediaObject>();
+		List<RawObject> filesToShare = new ArrayList<RawObject>();
 		filesToShare.addAll(mSelectedImages);
 		share(intent, filesToShare);
 		mMode.finish();
@@ -555,22 +579,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 //		if (mRawImages.size() > 0 && mRawImages.get(0) instanceof MtpImage)
 //		{
 //			Toast.makeText(this, "Feature not supported for usb host.", Toast.LENGTH_LONG).show();
+//			return;
 //		}
 
-		List<MediaObject> filesToRename = new ArrayList<MediaObject>();
-		String title;
+		List<RawObject> filesToRename = new ArrayList<RawObject>();
 		if (mSelectedImages.size() > 0)
 		{
-			title = String.format(getString(R.string.renameImages), getString(R.string.selected));
 			filesToRename = mSelectedImages;
 		}
 		else
 		{
-			title = String.format(getString(R.string.renameImages), getString(R.string.all));
 			filesToRename.addAll(mRawImages);
 		}
 		// TODO: This should manage raw and jpg
-		new FormatDialog(this, title, filesToRename, new OnResponseListener()).show();
+		new FormatDialog(this, getString(R.string.renameImages), filesToRename, new OnResponseListener()).show();
 	}
 
 	private void requestImportImageLocation()
@@ -692,7 +714,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	{
 		File path = navAdapter.getItem(itemPosition);
 		updatePath(path);
-		// setPath(path.getPath());
+		// setPath(path.getFilePath());
 		return true;
 	}
 
@@ -728,25 +750,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			upOneLevel();
 		}
 	}
-
-	private void resetScrollLocation()
-	{
-		if (imageGrid != null)
-			imageGrid.onRestoreInstanceState(gridState);
-	}
-
-	// private void setPath(String path)
-	// {
-	// File p = new File(path);
-	// if (!p.exists())
-	// {
-	// Toast.makeText(getBaseContext(), R.string.warningInvalidPath, Toast.LENGTH_SHORT).show();
-	// path = startPoint;
-	// }
-	//
-	// this.path = path;
-	// updatePath();
-	// }
 
 	class DirAlphaComparator implements Comparator<File>
 	{
@@ -994,7 +997,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 			else
 			{
-				MediaObject media = getImage(position);
+				RawObject media = getImage(position);
 				if (mRawImages.contains(media) || mNativeImages.contains(media))
 				{
 					viewHolder.filename.setText(media.getName());
@@ -1021,21 +1024,21 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			return view;
 		}
 
-		public MediaObject getImage(int index)
+		public RawObject getImage(int index)
 		{
 			int location = index - mFolders.size();
 			if (location < 0)
 				return null;
 			return mVisibleItems.get(location);
 		}
-		
-		private void addUniqueSelection(MediaObject media)
+
+		private void addUniqueSelection(RawObject media)
 		{
 			if (!mSelectedImages.contains(media))
 				mSelectedImages.add(media);
 		}
 
-		public void addSelection(MediaObject media)
+		public void addSelection(RawObject media)
 		{
 			addUniqueSelection(media);
 			updateSelectedItemsCount();
@@ -1051,7 +1054,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 			if (mSelectedImages.size() > 0)
 			{
-				MediaObject lastSelected = mSelectedImages.get(mSelectedImages.size() - 1);
+				RawObject lastSelected = mSelectedImages.get(mSelectedImages.size() - 1);
 				int lastIndex = mVisibleItems.indexOf(lastSelected);
 
 				// Later selection
@@ -1067,7 +1070,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					startIndex = visibleIndex;
 				}
 			}
-			
+
 			if (endIndex >= mVisibleItems.size())
 				Toast.makeText(RawDroid.this, "Select between indexing failed, if this continues please email me!", Toast.LENGTH_LONG).show();
 
@@ -1080,7 +1083,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			notifyDataSetChanged();
 		}
 
-		public void removeSelection(MediaObject media)
+		public void removeSelection(RawObject media)
 		{
 			mSelectedImages.remove(media);
 			updateSelectedItemsCount();
@@ -1094,12 +1097,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			notifyDataSetChanged();
 		}
 
-		public List<MediaObject> getSelectedItems()
+		public List<RawObject> getSelectedItems()
 		{
 			return mSelectedImages;
 		}
 
-		public void toggleSelection(MediaObject media)
+		public void toggleSelection(RawObject media)
 		{
 			if (media == null)
 				return;
@@ -1149,7 +1152,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		MediaObject media = imageAdapter.getImage(position);
+		RawObject media = imageAdapter.getImage(position);
 
 		if (media == null || media.isDirectory())
 			return false;
@@ -1186,37 +1189,28 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			return;
 		}
 
-		MediaObject media = imageAdapter.getImage(position);
+		RawObject media = imageAdapter.getImage(position);
 		if (multiSelectMode)
 		{
 			imageAdapter.toggleSelection(media);
 			return;
 		}
 
-		int imageIndex = getImageId(media);
-		if (imageIndex != -1)
-		{
-			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
-			editor.commit();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
+        editor.commit();
 
-			Intent data = new Intent(RawDroid.this, ViewImage.class);
-			data.setData(Uri.fromFile(new File(media.getPath())));
+        Intent viewer = new Intent(this, ViewerChooser.class);
+        viewer.setData(media.getUri());
+        startActivityForResult(viewer, REQUEST_UPDATE_PHOTO);
 
-			startActivity(data);
-		}
-		else
-		{
-			Log.e(TAG, "Unhandled index: " + imageIndex);
-			// alertRestart();
-		}
 	}
 
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
 	{
-		gridState = imageGrid.onSaveInstanceState();
+        //Do nothing
 	}
 
 	@Override
@@ -1233,7 +1227,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private class CopyImageTask extends AsyncTask<List<MediaObject>, String, Boolean> implements OnCancelListener
+	private class CopyImageTask extends AsyncTask<List<RawObject>, String, Boolean> implements OnCancelListener
 	{
 		private ProgressDialog importProgress;
 		private File mDestination;
@@ -1257,14 +1251,14 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 
 		@Override
-		protected Boolean doInBackground(List<MediaObject>... params)
+		protected Boolean doInBackground(List<RawObject>... params)
 		{
 			boolean totalSuccess = true;
-			List<MediaObject> copyList = params[0];
+			List<RawObject> copyList = params[0];
 
 			importProgress.setMax(copyList.size());
 
-			for (MediaObject toCopy : copyList)
+			for (RawObject toCopy : copyList)
 			{
 				publishProgress(toCopy.getName());
 				boolean result = toCopy.copy(mDestination);
@@ -1317,7 +1311,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private class CopyThumbTask extends AsyncTask<List<MediaObject>, String, Boolean> implements OnCancelListener
+	private class CopyThumbTask extends AsyncTask<List<RawObject>, String, Boolean> implements OnCancelListener
 	{
 		private ProgressDialog importProgress;
 		private File mDestination;
@@ -1340,12 +1334,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 
 		@Override
-		protected Boolean doInBackground(List<MediaObject>... params)
+		protected Boolean doInBackground(List<RawObject>... params)
 		{
 			boolean totalSuccess = true;
-			List<MediaObject> copyList = params[0];
+			List<RawObject> copyList = params[0];
 			importProgress.setMax(copyList.size());
-			for (MediaObject toExport : copyList)
+			for (RawObject toExport : copyList)
 			{
 				publishProgress(toExport.getName());
 				boolean result = toExport.copyThumb(mDestination);
@@ -1405,7 +1399,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private static enum Tutorials
 	{
-		Connection1, Connection2, Connection3, Connection4, Connection5, Memory, Directory, /*RecentFolder,*/ Usb, LongPressHelp, RecycleBin, LongPressSelect, SelectAll, SelectMode, SelectBetween, Import, Export, Rename, Delete, Share
+		Connection1, Connection2, Connection3, Connection4, Connection5, Memory, Directory, /* RecentFolder, */Usb, LongPressHelp, RecycleBin, LongPressSelect, SelectAll, SelectMode, SelectBetween, Import, Export, Rename, Delete, Share
 	};
 
 	private static final EnumSet<Tutorials> tutorialOrder = EnumSet.allOf(Tutorials.class);
@@ -1516,12 +1510,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 		}
 	}
-	
+
 	protected class SearchTask extends AsyncTask<Void, Void, Void> implements OnCancelListener
 	{
 		boolean cancelled;
 		List<String> imageFolders = new ArrayList<String>();
-		
+
 		@Override
 		protected void onPreExecute()
 		{
@@ -1539,7 +1533,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			search(mount);
 			return null;
 		}
-		
+
 		public void search(File dir)
 		{
 			if (cancelled || dir == null)
@@ -1611,9 +1605,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
-		if (key == FullSettingsActivity.KEY_ShowXmpFiles || 
-			key == FullSettingsActivity.KEY_ShowNativeFiles || 
-			key == FullSettingsActivity.KEY_ShowUnknownFiles)
+		if (key.equals(FullSettingsActivity.KEY_ShowXmpFiles)
+                || key.equals(FullSettingsActivity.KEY_ShowNativeFiles)
+                || key.equals(FullSettingsActivity.KEY_ShowUnknownFiles))
 		{
 			updateLocalFiles();
 		}

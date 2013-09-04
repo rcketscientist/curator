@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayoutViewer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.android.legacy.ui.GLRootView
+        android:id="@+id/gl_root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <include
+        android:id="@+id/navPanel"
+        layout="@layout/nav_panel" />
+
+    <include
+        android:id="@+id/metaPanel"
+        layout="@layout/meta_panel" />
+
+</FrameLayout>

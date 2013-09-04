@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/leftPanel"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true" >
+
+        <ImageButton
+            android:id="@+id/imageButtonRotate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:alpha=".75"
+            android:background="@drawable/button_black"
+            android:src="@android:drawable/ic_menu_always_landscape_portrait"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/leftNavigation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp" >
+
+            <ImageButton
+                android:id="@+id/imageButtonLeftBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:layout_marginBottom="10dp"
+                android:alpha=".75"
+                android:background="@drawable/button_black"
+                android:src="@android:drawable/ic_media_rew" />
+
+            <ImageButton
+                android:id="@+id/imageButtonLeftFwd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:alpha=".75"
+                android:background="@drawable/button_black"
+                android:src="@android:drawable/ic_media_ff" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textViewScale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="@color/Transparent_Black"
+            android:text="0%" />
+    </RelativeLayout>
+
+</RelativeLayout>

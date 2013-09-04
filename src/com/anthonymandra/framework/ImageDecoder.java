@@ -36,11 +36,8 @@ public class ImageDecoder extends ImageResizer
 	/**
 	 * The main processing method. This happens in a background task. In this case we are just sampling down the bitmap and returning it from a
 	 * resource.
-	 * 
-	 * @param resId
-	 * @return
 	 */
-	private Bitmap processBitmap(MediaObject media)
+	private Bitmap processBitmap(RawObject media)
 	{
 		if (BuildConfig.DEBUG)
 		{
@@ -72,6 +69,6 @@ public class ImageDecoder extends ImageResizer
 	@Override
 	protected Bitmap processBitmap(Object data)
 	{
-		return processBitmap((MediaObject) data);
+		return processBitmap((RawObject) data);
 	}
 }

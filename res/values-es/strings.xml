@@ -46,8 +46,7 @@
 <string name="import1">Importar</string>
 <string name="all">TODOS</string>
 <string name="selected">SELECCIONADOS</string>
-<string name="renameImages">Renombrar %1$s imágenes</string>
-<string name="exportThumbsFormat">Exportar %1$s miniaturas</string>
+<string name="renameImages">Renombrar imágenes</string>
 <string name="view">Ver</string>
 <string name="gallery">Galería</string>
 <string name="viewer">Visor</string>
@@ -97,7 +96,7 @@
 <string name="warningNoRecycleBin">No existe papelera. Los archivos serán borrados directamente.</string>
 <string name="warningGenericImagesOff">Las imágenes generales (por ej. jpg) han sido deshabilitadas en la configuración.</string>
 <string name="warningInvalidMeta">Metadatos incorrectos (Por favor adjuntar en un email archivo afectado)</string>
-<string name="warningInvalidLabel">Etiqueta incorrecta "%1$s", solo colores soportados. Si considera que debieran ser soportados, envie un email</string>
+<string name="warningInvalidLabel">es una etiqueta incorrecta. Si considera que debieran ser soportados, envie un email</string>
 <string name="warningInvalidSidebar">La barra de deslizamiento ha quedado incorrecta, por favor abra de nuevo.</string>
 <string name="warningNoUSB">No se encuentra ningún almacenamiento usb. Si el dispositivo está realmente conectado, por favor envie un email a rawdroid@anthonymandra.com con su localización.</string>
 

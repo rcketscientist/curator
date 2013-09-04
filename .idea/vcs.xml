@@ -3,11 +3,15 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/Distribution" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/FileManager" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/Inscription/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../../rawdroid/ShowcaseView/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/amandra-xmp" vcs="Git" />
   </component>
 </project>

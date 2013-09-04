@@ -42,8 +42,7 @@
 <string name="import1">インポート</string>
 <string name="all">全て</string>
 <string name="selected">選択済み</string>
-<string name="renameImages">%1$sの画像をリネーム</string>
-<string name="exportThumbsFormat">%1$sのサムネイルを出力</string>
+<string name="renameImages">の画像をリネーム</string>
 <string name="view">ビュー</string>
 <string name="gallery">ギャラリー</string>
 <string name="viewer">ビューワー</string>
