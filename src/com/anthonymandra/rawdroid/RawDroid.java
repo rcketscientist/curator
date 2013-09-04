@@ -93,9 +93,23 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	public static final String PREFS_VERSION_NUMBER = "prefVersionNumber";
 	public static final String IMAGE_CACHE_DIR = "thumbs";
 	public static final String[] USB_LOCATIONS = new String[]
-	{ "/mnt/usb_storage", "/Removable", "/mnt/UsbDriveA", "/mnt/UsbDriveB", "/mnt/UsbDriveC", "/mnt/UsbDriveD", "/mnt/UsbDriveE", "/mnt/UsbDriveF",
-			"/mnt/sda1", "/mnt/sdcard2", "/udisk", "/mnt/extSdCard", Environment.getExternalStorageDirectory().getPath() + "/usbStorage/sda1",
-			Environment.getExternalStorageDirectory().getPath() + "/usbStorage" };
+	{
+            "/mnt/usb_storage",
+            "/Removable",
+            "/mnt/UsbDriveA",
+            "/mnt/UsbDriveB",
+            "/mnt/UsbDriveC",
+            "/mnt/UsbDriveD",
+            "/mnt/UsbDriveE",
+            "/mnt/UsbDriveF",
+			"/mnt/sda1",
+            "/mnt/sdcard2",
+            "/udisk",
+            "/mnt/extSdCard",
+            Environment.getExternalStorageDirectory().getPath() + "/usbStorage/sda1",
+			Environment.getExternalStorageDirectory().getPath() + "/usbStorage",
+            "/mnt/usb",
+            "/storage/usb" };
 
 	// Request codes
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 2;
