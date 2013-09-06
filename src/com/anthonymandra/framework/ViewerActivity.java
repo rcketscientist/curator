@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -124,7 +125,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
-    protected HistogramTask mHistogramTask;
+//    protected HistogramTask mHistogramTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -437,19 +438,17 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateImageDetails()
     {
-        if (getCurrentItem() != null)
-        {
-            new LoadMetadataTask().execute();
-            updateHistogram(getCurrentBitmap());
-        }
+        new LoadMetadataTask().execute();
+        updateHistogram(getCurrentBitmap());
     }
 
     protected void updateHistogram(Bitmap bitmap)
     {
-        if (mHistogramTask != null)
-            mHistogramTask.cancel(true);
-        mHistogramTask = new HistogramTask();
-        mHistogramTask.execute(bitmap);
+        new HistogramTask().execute(bitmap);
+//        if (mHistogramTask != null)
+//            mHistogramTask.cancel(true);
+//        mHistogramTask = new HistogramTask();
+//        mHistogramTask.execute(bitmap);
     }
 
     protected void populateExif()
@@ -524,7 +523,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
         @Override
         protected Void doInBackground(Void... params)
         {
-            getCurrentItem().readMetadata();
+            MediaItem current = getCurrentItem();
+            if (current != null)
+                current.readMetadata();
             return null;
         }
 
@@ -559,7 +560,10 @@ public abstract class ViewerActivity extends GalleryActivity implements
             int[] pixels = new int[input.getWidth() * input.getHeight()];
             input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
 
+//            int stride = pixels.length / 4095;
+
             for (int pixel : pixels)
+//            for (int pixel = 0; pixel < pixels.length; pixel += stride)
             {
                 if (isCancelled())
                     return null;
@@ -607,6 +611,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
             // No compatible file manager was found.
             Toast.makeText(ViewerActivity.this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateImageDetails();   // For small screens this will fix the meta panel shape
     }
 
     @Override

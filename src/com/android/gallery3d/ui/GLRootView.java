@@ -30,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
+import com.anthonymandra.rawdroid.R;
 import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -41,7 +42,6 @@ import com.android.gallery3d.glrenderer.UploadedTexture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MotionEventHelper;
 import com.android.gallery3d.util.Profile;
-import com.anthonymandra.rawdroid.R;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -362,17 +362,17 @@ public class GLRootView extends GLSurfaceView
         // We put a black cover View in front of the SurfaceView and hide it
         // after the first draw. This prevents the SurfaceView being transparent
         // before the first draw.
-//        if (mFirstDraw) {
-//            mFirstDraw = false;
-//            post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        View root = getRootView();
-//                        View cover = root.findViewById(R.id.gl_root_cover);
-//                        cover.setVisibility(GONE);
-//                    }
-//                });
-//        }
+        if (mFirstDraw) {
+            mFirstDraw = false;
+            post(new Runnable() {
+                    @Override
+                    public void run() {
+                        View root = getRootView();
+                        View cover = root.findViewById(R.id.gl_root_cover);
+                        cover.setVisibility(GONE);
+                    }
+                });
+        }
 
         if (DEBUG_PROFILE_SLOW_ONLY) {
             long t = System.nanoTime();

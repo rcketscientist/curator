@@ -13,26 +13,41 @@ import com.anthonymandra.framework.Histogram;
 
 public class HistogramView extends View
 {
-	Path redPath;
-	Path bluePath;
-	Path greenPath;
+	private Path redPath;
+	private Path bluePath;
+	private Path greenPath;
 
-	Paint p = new Paint();
+	private Paint p = new Paint();
 
-	private static final int histHeight = 100;
-	private static final int histWidth = 256;
-	private static final int histSpacer = 2;
-    private static final int numGridlines = 4;
+    private static final int BORDER_WIDTH = 1;    // Put this in because it was starting before the BORDER_POINTS...seems to be a space but higher creates garble
+	private static final int COLOR_HEIGHT = 100;
+    private static final int COLOR_WIDTH = 256;
+	private static final int HIST_SPACER = 2;
+    private static final int HIST_WIDTH = COLOR_WIDTH + BORDER_WIDTH * 2;
+    private static final int HIST_HEIGHT = COLOR_HEIGHT * 3 + HIST_SPACER * 2 + BORDER_WIDTH * 2;
 
-	private static final int redBias = 0;
-	private static final int greenBias = 100 + histSpacer;
-	private static final int blueBias = 200 + 2 * histSpacer;
-    private static final int borderBias = 1;    // Put this in because it was starting before the border...seems to be a space but higher creates garble
+    private static final int GRIDLINES = 4;
+    private static final int GRID_SPACING = COLOR_WIDTH / 5;
+
+    private static final int BLUE_START = HIST_HEIGHT - BORDER_WIDTH;
+    private static final int GREEN_START = BLUE_START - COLOR_HEIGHT - HIST_SPACER;
+    private static final int RED_START = GREEN_START - COLOR_HEIGHT - HIST_SPACER;
+
+    private static final float[] GRID_POINTS = new float[16 + GRIDLINES * 4];
+    // Only works the first time, disabled for now
+    private static final float[] BORDER_POINTS = new float[]
+            {
+                    0,0, HIST_WIDTH - 1, 0,
+                    HIST_WIDTH - 1, 0, HIST_WIDTH - 1, HIST_HEIGHT - 1,
+                    HIST_WIDTH - 1, HIST_HEIGHT - 1, 0, HIST_HEIGHT - 1,
+                    0, HIST_HEIGHT - 1, 0, 0
+            };
+
+
 
 	public HistogramView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		p.setStyle(Paint.Style.FILL);
 		redPath = new Path();
 		bluePath = new Path();
 		greenPath = new Path();
@@ -40,62 +55,67 @@ public class HistogramView extends View
 
 	public void updateHistogram(Histogram hist)
 	{
-		redPath.reset();
-		greenPath.reset();
-		bluePath.reset();
+        clear();
 
-		int width = getWidth();
-		int height = getHeight();
 		Matrix matrix = new Matrix();
-		matrix.postScale(width / histWidth, 1);
+		matrix.postScale((float)getWidth() / HIST_WIDTH,
+                (float)getHeight() / HIST_HEIGHT);
 
-		int scale = hist.getMaxFreq();
-        int histHeight = (getHeight() - 4 - histSpacer * 2) / 3; // 1 px border requires 4...not sure why (implies 2 px border if you ask me...
-
-        int blueStart = height - 2;
-        int greenStart = blueStart - histHeight - histSpacer;
-        int redStart = greenStart - histHeight  - histSpacer;
+		int max = hist.getMaxFreq();
+        float scale = COLOR_HEIGHT / (float) max;
 
         // Bottom-right corner
-        redPath.moveTo(histWidth, redStart);
-        greenPath.moveTo(histWidth, greenStart);
-        bluePath.moveTo(histWidth, blueStart);
+        redPath.moveTo(HIST_WIDTH - BORDER_WIDTH, RED_START);
+        greenPath.moveTo(HIST_WIDTH - BORDER_WIDTH, GREEN_START);
+        bluePath.moveTo(HIST_WIDTH - BORDER_WIDTH, BLUE_START);
 
-        // Create baseline, bias assumes border
-        redPath.lineTo(borderBias, redStart);
-        greenPath.lineTo(borderBias, greenStart);
-        bluePath.lineTo(borderBias, blueStart);
+        // Create baseline
+        redPath.lineTo(BORDER_WIDTH, RED_START);
+        greenPath.lineTo(BORDER_WIDTH, GREEN_START);
+        bluePath.lineTo(BORDER_WIDTH, BLUE_START);
 
-		for (int band = 0; band < histWidth; band++)
+		for (int band = 0; band < COLOR_WIDTH; band++)
 		{
 			// All graphs use the same scale (max color)
-			redPath.lineTo(band + borderBias, redStart - histHeight * (hist.getFreqR(band) / (float) scale));
-			greenPath.lineTo(band + borderBias, greenStart - histHeight * (hist.getFreqG(band) / (float) scale));
-			bluePath.lineTo(band + borderBias, blueStart - histHeight * (hist.getFreqB(band) / (float) scale));
+			redPath.lineTo(band + BORDER_WIDTH, RED_START - hist.getFreqR(band) * scale);
+			greenPath.lineTo(band + BORDER_WIDTH, GREEN_START - hist.getFreqG(band) * scale);
+			bluePath.lineTo(band + BORDER_WIDTH, BLUE_START - hist.getFreqB(band) * scale);
 		}
+
+        for (int i = 0; i < GRIDLINES * 4; ++i)
+        {
+            int x = (i / 4 + 1) * GRID_SPACING;
+            GRID_POINTS[i] = x;
+            GRID_POINTS[++i] = 0;
+            GRID_POINTS[++i] = x;
+            GRID_POINTS[++i] = HIST_HEIGHT;
+        }
 
 		redPath.transform(matrix);
 		greenPath.transform(matrix);
 		bluePath.transform(matrix);
+        matrix.mapPoints(GRID_POINTS);
+        matrix.mapPoints(BORDER_POINTS);
+
 		invalidate();
 	}
+
+    public void clear()
+    {
+        redPath.reset();
+        greenPath.reset();
+        bluePath.reset();
+    }
 
 	@Override
 	protected void onDraw(Canvas canvas)
 	{
 		super.onDraw(canvas);
 
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        int spacing = width / 5;
         p.setStyle(Paint.Style.STROKE);
         p.setColor(Color.argb(200, 255, 255, 255));
-
-        for (int i = 1; i <= numGridlines; ++i)
-        {
-            int x = i * spacing;
-            canvas.drawLine(x, 0, x, height, p);
-        }
+        canvas.drawLines(GRID_POINTS, p);
+//        canvas.drawLines(BORDER_POINTS, p);
 
         p.setStyle(Paint.Style.FILL);
 		p.setColor(Color.argb(190, 255, 0, 0));

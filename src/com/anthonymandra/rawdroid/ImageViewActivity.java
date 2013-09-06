@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.app.PhotoDataAdapter.DataListener;
 import com.android.gallery3d.app.PhotoPage;
@@ -86,7 +87,16 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 		// deleteToNext();
 	}
 
-	@Override
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // This would stop the auto hide, but currently it can be restarted in the two different calls
+        // Currently goofs up the actionbar
+//        if (autoHide != null)
+//            autoHide.cancel();
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
 	protected void updateAfterRestore()
 	{
 		updateImageSource();
@@ -167,6 +177,6 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 
     @Override
     public void goToFirstPicture() {
-        mModel.switchToFirstImage();
+        mModel.moveTo(0);
     }
 }

@@ -1,11 +1,11 @@
 package com.android.gallery3d.ui;
 
+import android.os.ConditionVariable;
 import com.android.gallery3d.app.AbstractGalleryActivity;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.RawTexture;
 import com.android.gallery3d.ui.GLRoot.OnGLIdleListener;
 
-import android.os.ConditionVariable;
 
 public class PreparePageFadeoutTexture implements OnGLIdleListener {
     private static final long TIMEOUT = 200;

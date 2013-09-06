@@ -16,6 +16,20 @@
 
 package com.android.gallery3d.ui;
 
+import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Message;
+import android.util.FloatMath;
+import android.view.MotionEvent;
+import android.view.View.MeasureSpec;
+import android.view.animation.AccelerateInterpolator;
+
+import com.anthonymandra.rawdroid.R;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -27,19 +41,6 @@ import com.android.gallery3d.glrenderer.StringTexture;
 import com.android.gallery3d.glrenderer.Texture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
-import com.anthonymandra.rawdroid.R;
-
-import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Message;
-import android.util.FloatMath;
-import android.view.MotionEvent;
-import android.view.animation.AccelerateInterpolator;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
@@ -116,9 +117,6 @@ public class PhotoView extends GLView {
         public void setFocusHintDirection(int direction);
         public void setFocusHintPath(Uri path);
 
-        public void switchToNextImage();
-        public void switchToPrevImage();
-        public void switchToFirstImage();
         public MediaItem getCurrentItem();
     }
 
@@ -203,7 +201,7 @@ public class PhotoView extends GLView {
     private StringTexture mNoThumbnailText;
     private TileImageView mTileView;
     private EdgeView mEdgeView;
-    private UndoBarView mUndoBar;
+//    private UndoBarView mUndoBar;
     private Texture mVideoPlayIcon;
 
     private SynchronizedHandler mHandler;
@@ -247,8 +245,6 @@ public class PhotoView extends GLView {
 
     private Context mContext;
 
-    private final PositionController.Listener mPositionListener;
-
     public PhotoView(GalleryApp activity) {
         mTileView = new TileImageView(activity);
         addComponent(mTileView);
@@ -276,9 +272,40 @@ public class PhotoView extends GLView {
         mGestureListener = new MyGestureListener();
         mGestureRecognizer = new GestureRecognizer(mContext, mGestureListener);
 
-        mPositionListener = new PositionListener();
-        mPositionController = new PositionController(mContext, mPositionListener);
+        mPositionController = new PositionController(mContext,
+                new PositionController.Listener() {
 
+            @Override
+            public void invalidate() {
+                PhotoView.this.invalidate();
+            }
+            @Override
+            public boolean isHoldingDown() {
+                return (mHolding & HOLD_TOUCH_DOWN) != 0;
+            }
+            @Override
+            public boolean isHoldingDelete() {
+                return (mHolding & HOLD_DELETE) != 0;
+            }
+            @Override
+            public void onPull(int offset, int direction) {
+                mEdgeView.onPull(offset, direction);
+            }
+            @Override
+            public void onRelease() {
+                mEdgeView.onRelease();
+            }
+            @Override
+            public void onAbsorb(int velocity, int direction) {
+                mEdgeView.onAbsorb(velocity, direction);
+            }
+
+			@Override
+        	public void onScaleChanged(float scale) {
+            	// Forward it on.
+            	mListener.onScaleChanged(scale);
+        	}
+        });
         mVideoPlayIcon = new ResourceTexture(mContext,
                 android.R.drawable.ic_media_play);// R.drawable.ic_control_play);
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; i++) {
@@ -765,7 +792,7 @@ public class PhotoView extends GLView {
 
         @Override
         public void reload() {
-            // mIsCamera = mModel.isCamera(mIndex);
+            mIsCamera = mModel.isCamera(mIndex);
             mIsPanorama = mModel.isPanorama(mIndex);
             mIsStaticCamera = mModel.isStaticCamera(mIndex);
             mIsVideo = mModel.isVideo(mIndex);
@@ -970,14 +997,14 @@ public class PhotoView extends GLView {
                 // If this is a lock screen photo, let the listener handle the
                 // event. Tapping on lock screen photo should take the user
                 // directly to the lock screen.
-//                MediaItem item = mModel.getMediaItem(0);
-//                int supported = 0;
-//                if (item != null) supported = item.getSupportedOperations();
-//                if ((supported & MediaItem.SUPPORT_ACTION) == 0) {
-//                    setFilmMode(false);
-//                    mIgnoreUpEvent = true;
-//                    return true;
-//                }
+                MediaItem item = mModel.getMediaItem(0);
+                int supported = 0;
+                if (item != null) supported = item.getSupportedOperations();
+                if ((supported & MediaItem.SUPPORT_ACTION) == 0) {
+                    setFilmMode(false);
+                    mIgnoreUpEvent = true;
+                    return true;
+                }
             }
 
             if (mListener != null) {
@@ -990,12 +1017,6 @@ public class PhotoView extends GLView {
                 mListener.onSingleTapUp((int) (pts[0] + 0.5f), (int) (pts[1] + 0.5f));
             }
             return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(float x, float y) {
-            mListener.onSingleTapConfirmed();
-            return false;
         }
 
         @Override
@@ -1291,6 +1312,12 @@ public class PhotoView extends GLView {
         public void setSwipingEnabled(boolean enabled) {
             mIgnoreSwipingGesture = !enabled;
         }
+		
+		@Override
+        public boolean onSingleTapConfirmed(float x, float y) {
+            mListener.onSingleTapConfirmed();
+            return false;
+        }
     }
 
     public void setSwipingEnabled(boolean enabled) {
@@ -1364,7 +1391,7 @@ public class PhotoView extends GLView {
         mHandler.removeMessages(MSG_UNDO_BAR_TIMEOUT);
         mUndoBarState = UNDO_BAR_SHOW;
         if(deleteLast) mUndoBarState |= UNDO_BAR_DELETE_LAST;
-        mUndoBar.animateVisibility(GLView.VISIBLE);
+//        mUndoBar.animateVisibility(GLView.VISIBLE);
         mHandler.sendEmptyMessageDelayed(MSG_UNDO_BAR_TIMEOUT, 3000);
         if (mListener != null) mListener.onUndoBarVisibilityChanged(true);
     }
@@ -1372,7 +1399,7 @@ public class PhotoView extends GLView {
     private void hideUndoBar() {
         mHandler.removeMessages(MSG_UNDO_BAR_TIMEOUT);
         mListener.onCommitDeleteImage();
-        mUndoBar.animateVisibility(GLView.INVISIBLE);
+//        mUndoBar.animateVisibility(GLView.INVISIBLE);
         mUndoBarState = 0;
         mUndoIndexHint = Integer.MAX_VALUE;
         mListener.onUndoBarVisibilityChanged(false);
@@ -1621,30 +1648,6 @@ public class PhotoView extends GLView {
     private void switchToFirstImage() {
         mModel.moveTo(0);
     }
-	/**
-     * Implements a slide animation on demand.  Will animate edge effects for last image.
-     */
-    public void goToNextPicture() {
-        if (mNextBound <= 0) {
-            mPositionListener.onPull(mBounds.right, EdgeView.RIGHT);
-            return;
-        }
-        mModel.switchToNextImage();
-        mPositionController.startHorizontalSlide();
-    }
-
-    /**
-     * Implements a slide animation on demand.  Will animate edge effects for first image.
-     */
-    public void goToPrevPicture() {
-        if (mPrevBound >= 0) {
-            mPositionListener.onPull(mBounds.right, EdgeView.LEFT);
-            return;
-        }
-
-        mModel.switchToPrevImage();
-        mPositionController.startHorizontalSlide();
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     //  Opening Animation
@@ -1865,36 +1868,28 @@ public class PhotoView extends GLView {
 //        return effect;
 //    }
 
-    private class PositionListener implements PositionController.Listener {
+	/**
+     * Implements a slide animation on demand.  Will animate edge effects for last image.
+     */
+    public void goToNextPicture() {
+        if (mNextBound <= 0) {
+            mEdgeView.onPull(mBounds.right, EdgeView.RIGHT);
+            return;
+        }
+        switchToNextImage();
+        mPositionController.startHorizontalSlide();
+    }
 
-        public void invalidate() {
-            PhotoView.this.invalidate();
+    /**
+     * Implements a slide animation on demand.  Will animate edge effects for first image.
+     */
+    public void goToPrevPicture() {
+        if (mPrevBound >= 0) {
+            mEdgeView.onPull(mBounds.right, EdgeView.LEFT);
+            return;
         }
 
-        public boolean isHoldingDown() {
-            return (mHolding & HOLD_TOUCH_DOWN) != 0;
-        }
-
-        public boolean isHoldingDelete() {
-            return (mHolding & HOLD_DELETE) != 0;
-        }
-
-        public void onPull(int offset, int direction) {
-            mEdgeView.onPull(offset, direction);
-        }
-
-        public void onRelease() {
-            mEdgeView.onRelease();
-        }
-
-        public void onAbsorb(int velocity, int direction) {
-            mEdgeView.onAbsorb(velocity, direction);
-        }
-
-        @Override
-        public void onScaleChanged(float scale) {
-            // Forward it on.
-            mListener.onScaleChanged(scale);
-        }
+        switchToPrevImage();
+        mPositionController.startHorizontalSlide();
     }
 }

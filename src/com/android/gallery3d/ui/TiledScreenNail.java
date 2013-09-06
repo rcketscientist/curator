@@ -24,9 +24,6 @@ import com.android.photos.data.GalleryBitmapPool;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.TiledTexture;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 // This is a ScreenNail wraps a Bitmap. There are some extra functions:
 //
 // - If we need to draw before the bitmap is available, we draw a rectange of
@@ -59,11 +56,6 @@ public class TiledScreenNail implements ScreenNail {
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
         mBitmap = bitmap;
-        try {
-            mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream("/mnt/sdcard/testa/initialTileBitmap.jpg"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         mTexture = new TiledTexture(bitmap);
     }
 
@@ -110,18 +102,7 @@ public class TiledScreenNail implements ScreenNail {
         if (newer.mTexture != null) {
             if (mBitmap != null) GalleryBitmapPool.getInstance().put(mBitmap);
             if (mTexture != null) mTexture.recycle();
-            try {
-                if (mBitmap != null)
-                    mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream("/mnt/sdcard/testa/oldCombine.jpg"));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
             mBitmap = newer.mBitmap;
-            try {
-                mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream("/mnt/sdcard/testa/newCombine.jpg"));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
             mTexture = newer.mTexture;
             newer.mBitmap = null;
             newer.mTexture = null;

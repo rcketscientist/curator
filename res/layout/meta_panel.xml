@@ -79,17 +79,6 @@
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:layout_span="2"
-                android:background="#FF909090" />
-        </TableRow>
-
-        <TableRow
             android:id="@+id/rowModel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
@@ -197,17 +186,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textIsSelectable="false" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:layout_span="2"
-                android:background="#FF909090" />
         </TableRow>
 
         <TableRow
@@ -361,17 +339,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textIsSelectable="false" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dip"
-                android:layout_span="2"
-                android:background="#FF909090" />
         </TableRow>
 
         <TableRow

@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="1.8.3"
+        versioncode="112"
+        summary="Improved histogram scaling by resolution."
+        date="09/07/2013">
+    <change>Fixed: Legacy viewer portrait crash.</change>
+    <change>Improve: Histogram scaling by resolution.</change>
+    </release>
+    <release version="1.8.2"
+        versioncode="111"
+        summary="Fix for viewer ghosting.  Once again let me know if you still need to switch to the
+        legacy viewer.  Please update your reviews if this fixes issues."
+        date="09/06/2013">
+        <change>Fixed: New viewer ghosting.</change>
+    </release>
     <release version="1.8.0"
         versioncode="108"
         summary="Complete overhaul of the viewer, among a host of UI improvements.

@@ -27,9 +27,6 @@ import com.android.gallery3d.data.BytesBufferPool.BytesBuffer;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-
 public abstract class ImageCacheRequest implements Job<Bitmap> {
 	private static final String TAG = "ImageCacheRequest";
 
@@ -39,7 +36,7 @@ public abstract class ImageCacheRequest implements Job<Bitmap> {
 	private int mTargetSize;
 
 	public ImageCacheRequest(GalleryApp application, 
-		Uri path, int type, int targetSize) {
+			Uri path, int type, int targetSize) {
 		mApplication = application;
 		mPath = path;
 		mType = type;
@@ -70,12 +67,6 @@ public abstract class ImageCacheRequest implements Job<Bitmap> {
                 } else {
                     bitmap = DecodeUtils.decodeUsingPool(jc,
                             buffer.data, buffer.offset, buffer.length, options);
-//                    try {
-//                        if (bitmap != null)
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream("/mnt/sdcard/testa/ScreenNail-Run.jpg"));
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
 				}
                 if (bitmap == null && !jc.isCancelled()) {
                     Log.w(TAG, "decode cached failed " + debugTag());

@@ -73,6 +73,8 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
         mOrientationManager = new OrientationManager(this);
         toggleStatusBarByOrientation();
         getWindow().setBackgroundDrawable(null);
+        mBackgroundColor = GalleryUtils.intColorToFloatARGBArray(
+                getResources().getColor(getBackgroundColorId()));   //AJM: From ActivityState
 //        mPanoramaViewHelper = new PanoramaViewHelper(this);
 //        mPanoramaViewHelper.onCreate();
 //        doBindBatchService();
@@ -202,23 +204,23 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
     @Override
     protected void onResume() {
         super.onResume();
-        mGLRootView.lockRenderThread();
-        try {
+//        mGLRootView.lockRenderThread();
+//        try {
 //            getStateManager().resume();
             // From ActivityState, represents the getStateManager().resume()
-            RawTexture fade = getTransitionStore().get(
-                    PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
+//            RawTexture fade = getTransitionStore().get(
+//                    PreparePageFadeoutTexture.KEY_FADE_TEXTURE);
 //            mNextTransition = getTransitionStore().get(
 //                    KEY_TRANSITION_IN, StateTransitionAnimation.Transition.None);
-            mNextTransition = StateTransitionAnimation.Transition.PhotoIncoming;
-            if (mNextTransition != StateTransitionAnimation.Transition.None) {
-                mIntroAnimation = new StateTransitionAnimation(mNextTransition, fade);
-                mNextTransition = StateTransitionAnimation.Transition.None;
-            }
+//            mNextTransition = StateTransitionAnimation.Transition.PhotoIncoming;
+//            if (mNextTransition != StateTransitionAnimation.Transition.None) {
+//                mIntroAnimation = new StateTransitionAnimation(mNextTransition, fade);
+//                mNextTransition = StateTransitionAnimation.Transition.None;
+//            }
 //            getDataManager().resume();
-        } finally {
-            mGLRootView.unlockRenderThread();
-        }
+//        } finally {
+//            mGLRootView.unlockRenderThread();
+//        }
         setScreenFlags();
         mGLRootView.onResume();
         mOrientationManager.resume();
@@ -229,12 +231,12 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
         super.onPause();
         mOrientationManager.pause();
         mGLRootView.onPause();
-        mGLRootView.lockRenderThread();
+//        mGLRootView.lockRenderThread();
 //        try {
 //            getStateManager().pause();
 //            getDataManager().pause();
 //        } finally {
-            mGLRootView.unlockRenderThread();
+//            mGLRootView.unlockRenderThread();
 //        }
         GalleryBitmapPool.getInstance().clear();
         MediaItem.getBytesBufferPool().clear();
@@ -373,16 +375,16 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
 
     private StateTransitionAnimation.Transition mNextTransition =
             StateTransitionAnimation.Transition.None;
-    private StateTransitionAnimation mIntroAnimation;
+//    private StateTransitionAnimation mIntroAnimation;
     private GLView mContentPane;
     protected float[] mBackgroundColor;
 
     protected void setContentPane(GLView content) {
         mContentPane = content;
-        if (mIntroAnimation != null) {
-            mContentPane.setIntroAnimation(mIntroAnimation);
-            mIntroAnimation = null;
-        }
+//        if (mIntroAnimation != null) {
+//            mContentPane.setIntroAnimation(mIntroAnimation);
+//            mIntroAnimation = null;
+//        }
         mContentPane.setBackgroundColor(getBackgroundColor());
         getGLRoot().setContentPane(mContentPane);
     }

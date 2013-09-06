@@ -48,25 +48,22 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class PhotoDataAdapter implements Model
-{
-	@SuppressWarnings("unused")
-	private static final String TAG = "PhotoDataAdapter";
-	
-	private static final int INDEX_NOT_FOUND = -1;
+public class PhotoDataAdapter implements Model {
+    @SuppressWarnings("unused")
+    private static final String TAG = "PhotoDataAdapter";
 
-	private static final int MSG_LOAD_START = 1;
-	private static final int MSG_LOAD_FINISH = 2;
-	private static final int MSG_RUN_OBJECT = 3;
-	private static final int MSG_UPDATE_IMAGE_REQUESTS = 4;
+    private static final int MSG_LOAD_START = 1;
+    private static final int MSG_LOAD_FINISH = 2;
+    private static final int MSG_RUN_OBJECT = 3;
+    private static final int MSG_UPDATE_IMAGE_REQUESTS = 4;
 
     private static final int MIN_LOAD_COUNT = 16;
     private static final int DATA_CACHE_SIZE = 256;
-	private static final int SCREEN_NAIL_MAX = PhotoView.SCREEN_NAIL_MAX;
-	private static final int IMAGE_CACHE_SIZE = 2 * SCREEN_NAIL_MAX + 1;
+    private static final int SCREEN_NAIL_MAX = PhotoView.SCREEN_NAIL_MAX;
+    private static final int IMAGE_CACHE_SIZE = 2 * SCREEN_NAIL_MAX + 1;
 
-	private static final int BIT_SCREEN_NAIL = 1;
-	private static final int BIT_FULL_IMAGE = 2;
+    private static final int BIT_SCREEN_NAIL = 1;
+    private static final int BIT_FULL_IMAGE = 2;
 
     // sImageFetchSeq is the fetching sequence for images.
     // We want to fetch the current screennail first (offset = 0), the next
@@ -99,101 +96,99 @@ public class PhotoDataAdapter implements Model
         sImageFetchSeq[k++] = new ImageFetch(-1, BIT_FULL_IMAGE);
     }
 
-	private final TileImageViewAdapter mTileProvider = new TileImageViewAdapter();
+    private final TileImageViewAdapter mTileProvider = new TileImageViewAdapter();
 
-	// PhotoDataAdapter caches MediaItems (data) and ImageEntries (image).
-	//
-	// The MediaItems are stored in the mData array, which has DATA_CACHE_SIZE
-	// entries. The valid index range are [mContentStart, mContentEnd). We keep
-	// mContentEnd - mContentStart <= DATA_CACHE_SIZE, so we can use
-	// (i % DATA_CACHE_SIZE) as index to the array.
-	//
-	// The valid MediaItem window size (mContentEnd - mContentStart) may be
-	// smaller than DATA_CACHE_SIZE because we only update the window and reload
-	// the MediaItems when there are significant changes to the window position
-	// (>= MIN_LOAD_COUNT).
-	private final MediaItem mData[] = new MediaItem[DATA_CACHE_SIZE];
-	private int mContentStart = 0;
-	private int mContentEnd = 0;
+    // PhotoDataAdapter caches MediaItems (data) and ImageEntries (image).
+    //
+    // The MediaItems are stored in the mData array, which has DATA_CACHE_SIZE
+    // entries. The valid index range are [mContentStart, mContentEnd). We keep
+    // mContentEnd - mContentStart <= DATA_CACHE_SIZE, so we can use
+    // (i % DATA_CACHE_SIZE) as index to the array.
+    //
+    // The valid MediaItem window size (mContentEnd - mContentStart) may be
+    // smaller than DATA_CACHE_SIZE because we only update the window and reload
+    // the MediaItems when there are significant changes to the window position
+    // (>= MIN_LOAD_COUNT).
+    private final MediaItem mData[] = new MediaItem[DATA_CACHE_SIZE];
+    private int mContentStart = 0;
+    private int mContentEnd = 0;
 
-	// The ImageCache is a Path-to-ImageEntry map. It only holds the
-	// ImageEntries in the range of [mActiveStart, mActiveEnd). We also keep
-	// mActiveEnd - mActiveStart <= IMAGE_CACHE_SIZE. Besides, the
-	// [mActiveStart, mActiveEnd) range must be contained within
-	// the [mContentStart, mContentEnd) range.
-	private HashMap<Uri, ImageEntry> mImageCache =
+    // The ImageCache is a Path-to-ImageEntry map. It only holds the
+    // ImageEntries in the range of [mActiveStart, mActiveEnd).  We also keep
+    // mActiveEnd - mActiveStart <= IMAGE_CACHE_SIZE.  Besides, the
+    // [mActiveStart, mActiveEnd) range must be contained within
+    // the [mContentStart, mContentEnd) range.
+    private HashMap<Uri, ImageEntry> mImageCache =
             new HashMap<Uri, ImageEntry>();
-	private int mActiveStart = 0;
-	private int mActiveEnd = 0;
+    private int mActiveStart = 0;
+    private int mActiveEnd = 0;
 
-	// mCurrentIndex is the "center" image the user is viewing. The change of
-	// mCurrentIndex triggers the data loading and image loading.
-	private int mCurrentIndex;
+    // mCurrentIndex is the "center" image the user is viewing. The change of
+    // mCurrentIndex triggers the data loading and image loading.
+    private int mCurrentIndex;
 
-	// mChanges keeps the version number (of MediaItem) about the images. If any
-	// of the version number changes, we notify the view. This is used after a
-	// database reload or mCurrentIndex changes.
-	private final long mChanges[] = new long[IMAGE_CACHE_SIZE];
-	// mPaths keeps the corresponding Path (of MediaItem) for the images. This
-	// is used to determine the item movement.
-	private final Uri mPaths[] = new Uri[IMAGE_CACHE_SIZE];
+    // mChanges keeps the version number (of MediaItem) about the images. If any
+    // of the version number changes, we notify the view. This is used after a
+    // database reload or mCurrentIndex changes.
+    private final long mChanges[] = new long[IMAGE_CACHE_SIZE];
+    // mPaths keeps the corresponding Path (of MediaItem) for the images. This
+    // is used to determine the item movement.
+    private final Uri mPaths[] = new Uri[IMAGE_CACHE_SIZE];
 
-	private final Handler mMainHandler;
-	private final ThreadPool mThreadPool;
+    private final Handler mMainHandler;
+    private final ThreadPool mThreadPool;
 
-	private final PhotoView mPhotoView;
-	private final List<MediaItem> mSource;
-	private final GalleryApp mActivity;
-	private ReloadTask mReloadTask;
+    private final PhotoView mPhotoView;
+    private final List<MediaItem> mSource;
+    private ReloadTask mReloadTask;
 
-	private long mSourceVersion = MediaItem.INVALID_DATA_VERSION;
-	private long mMediaVersion = 0;
-	private int mSize = 0;
-	private Uri mItemPath;
+    private long mSourceVersion = MediaObject.INVALID_DATA_VERSION;
+    private int mSize = 0;
+    private Uri mItemPath;
     private int mCameraIndex;
     private boolean mIsPanorama;
     private boolean mIsStaticCamera;
-	private boolean mIsActive;
-	private boolean mNeedFullImage;
-	private int mFocusHintDirection = FOCUS_HINT_NEXT;
-	private Uri mFocusHintPath = null;
+    private boolean mIsActive;
+    private boolean mNeedFullImage;
+    private int mFocusHintDirection = FOCUS_HINT_NEXT;
+    private Uri mFocusHintPath = null;
 
     public interface DataListener extends LoadingListener {
-		public void onPhotoChanged(int index, Uri path);
-	}
+        public void onPhotoChanged(int index, Uri path);
+    }
 
-	private DataListener mDataListener;
+    private DataListener mDataListener;
 
-	private final SourceListener mSourceListener = new SourceListener();
+    private final SourceListener mSourceListener = new SourceListener();
     private final TiledTexture.Uploader mUploader;
 
-	// The path of the current viewing item will be stored in mItemPath.
-	// If mItemPath is not null, mCurrentIndex is only a hint for where we
-	// can find the item. If mItemPath is null, then we use the mCurrentIndex to
-	// find the image being viewed. cameraIndex is the index of the camera
-	// preview. If cameraIndex < 0, there is no camera preview.
-	public PhotoDataAdapter(GalleryApp activity, PhotoView view,
-		List<MediaItem> mediaSet, int indexHint, int cameraIndex,
+    // The path of the current viewing item will be stored in mItemPath.
+    // If mItemPath is not null, mCurrentIndex is only a hint for where we
+    // can find the item. If mItemPath is null, then we use the mCurrentIndex to
+    // find the image being viewed. cameraIndex is the index of the camera
+    // preview. If cameraIndex < 0, there is no camera preview.
+    public PhotoDataAdapter(GalleryApp activity, PhotoView view,
+        List<MediaItem> mediaSet, int indexHint, int cameraIndex,
             boolean isPanorama, boolean isStaticCamera) {
 		mActivity = activity;
-		mSource = Utils.checkNotNull(mediaSet);
+        mSource = Utils.checkNotNull(mediaSet);
 		mSize = mSource.size();
-		mPhotoView = Utils.checkNotNull(view);
-		mItemPath = mediaSet.get(indexHint).getUri();
-		mCurrentIndex = indexHint;
+        mPhotoView = Utils.checkNotNull(view);
+        mItemPath = mediaSet.get(indexHint).getUri();
+        mCurrentIndex = indexHint;
         mCameraIndex = cameraIndex;
         mIsPanorama = isPanorama;
         mIsStaticCamera = isStaticCamera;
-		mThreadPool = activity.getThreadPool();
-		mNeedFullImage = true;
+        mThreadPool = activity.getThreadPool();
+        mNeedFullImage = true;
 
-		Arrays.fill(mChanges, MediaItem.INVALID_DATA_VERSION);
+        Arrays.fill(mChanges, MediaObject.INVALID_DATA_VERSION);
 
         mUploader = new TiledTexture.Uploader(activity.getGLRoot());
 
         mMainHandler = new SynchronizedHandler(activity.getGLRoot()) {
             @SuppressWarnings("unchecked")
-			@Override
+            @Override
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_RUN_OBJECT:
@@ -216,12 +211,12 @@ public class PhotoDataAdapter implements Model
                         return;
                     }
                     default: throw new AssertionError();
-				}
-			}
-		};
+                }
+            }
+        };
 
-		updateSlidingWindow();
-	}
+        updateSlidingWindow();
+    }
 
     private MediaItem getItemInternal(int index) {
         if (index < 0 || index >= mSize) return null;
@@ -237,11 +232,11 @@ public class PhotoDataAdapter implements Model
         return item.getDataVersion();
     }
 
-	private Uri getPath(int index) {
-		MediaItem item = getItemInternal(index);
-		if (item == null) return null;
-		return item.getUri();
-	}
+    private Uri getPath(int index) {
+        MediaItem item = getItemInternal(index);
+        if (item == null) return null;
+        return item.getUri();
+    }
 
     private void fireDataChange() {
         // First check if data actually changed.
@@ -262,8 +257,8 @@ public class PhotoDataAdapter implements Model
         final int N = IMAGE_CACHE_SIZE;
         int fromIndex[] = new int[N];
 
-		// Remember the old path array.
-		Uri oldPaths[] = new Uri[N];
+        // Remember the old path array.
+        Uri oldPaths[] = new Uri[N];
         System.arraycopy(mPaths, 0, oldPaths, 0, N);
 
         // Update the mPaths array.
@@ -273,14 +268,14 @@ public class PhotoDataAdapter implements Model
 
         // Calculate the fromIndex array.
         for (int i = 0; i < N; i++) {
-			Uri p = mPaths[i];
-			if (p == null) {
-				fromIndex[i] = Integer.MAX_VALUE;
-				continue;
-			}
+            Uri p = mPaths[i];
+            if (p == null) {
+                fromIndex[i] = Integer.MAX_VALUE;
+                continue;
+            }
 
-			// Try to find the same path in the old array
-			int j;
+            // Try to find the same path in the old array
+            int j;
             for (j = 0; j < N; j++) {
                 if (oldPaths[j] == p) {
                     break;
@@ -297,9 +292,9 @@ public class PhotoDataAdapter implements Model
         mDataListener = listener;
     }
 
-	private void updateScreenNail(Uri path, Future<ScreenNail> future) {
-		ImageEntry entry = mImageCache.get(path);
-		ScreenNail screenNail = future.get();
+    private void updateScreenNail(Uri path, Future<ScreenNail> future) {
+        ImageEntry entry = mImageCache.get(path);
+        ScreenNail screenNail = future.get();
 
         if (entry == null || entry.screenNailTask != future) {
             if (screenNail != null) screenNail.recycle();
@@ -315,69 +310,65 @@ public class PhotoDataAdapter implements Model
         }
 
         if (screenNail == null) {
-			entry.failToLoad = true;
+            entry.failToLoad = true;
         } else {
-			entry.failToLoad = false;
-			entry.screenNail = screenNail;
-		}
+            entry.failToLoad = false;
+            entry.screenNail = screenNail;
+        }
 
-		for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
+        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
 			if (path.equals(getPath(mCurrentIndex + i))) {
-                if (i == 0)
-                {
-                    uploadScreenNail(0);    //TODO: Fixes gray box issue...why?
-                    updateTileProvider(entry);
-                }
-				mPhotoView.notifyImageChange(i);
-				break;
-			}
-		}
-		updateImageRequests();
-	}
+                if (i == 0) updateTileProvider(entry);
+                mPhotoView.notifyImageChange(i);
+                break;
+            }
+        }
+        updateImageRequests();
+        updateScreenNailUploadQueue();
+    }
 
-	private void updateFullImage(Uri path, Future<BitmapRegionDecoder> future) {
-		ImageEntry entry = mImageCache.get(path);
+    private void updateFullImage(Uri path, Future<BitmapRegionDecoder> future) {
+        ImageEntry entry = mImageCache.get(path);
         if (entry == null || entry.fullImageTask != future) {
             BitmapRegionDecoder fullImage = future.get();
             if (fullImage != null) fullImage.recycle();
             return;
         }
 
-		entry.fullImageTask = null;
-		entry.fullImage = future.get();
-
-		if (entry.fullImage != null) {
-			if (path.equals(getPath(mCurrentIndex))) {
-				updateTileProvider(entry);
+        entry.fullImageTask = null;
+        entry.fullImage = future.get();
+        if (entry.fullImage != null) {
+            if (path.equals(getPath(mCurrentIndex))) {
+                updateTileProvider(entry);
                 mPhotoView.notifyImageChange(0);
-			}
-		}
-		updateImageRequests();
-	}
+            }
+        }
+        updateImageRequests();
+    }
 
     @Override
     public void resume() {
         mIsActive = true;
         TiledTexture.prepareResources();
 
-		mActivity.addContentListener(mSourceListener);
-		updateImageCache();
-		updateImageRequests();
+        mActivity.addContentListener(mSourceListener);
+        updateImageCache();
+        updateImageRequests();
 
-		mReloadTask = new ReloadTask();
-		mReloadTask.start();
+        mReloadTask = new ReloadTask();
+        mReloadTask.start();
 
-		fireDataChange();
-	}
+        fireDataChange();
+    }
 
     @Override
     public void pause() {
         mIsActive = false;
 
-		mReloadTask.terminate();
-		mReloadTask = null;
+        mReloadTask.terminate();
+        mReloadTask = null;
 
-		mActivity.removeContentListener(mSourceListener);
+        mActivity.removeContentListener(mSourceListener);
 
         for (ImageEntry entry : mImageCache.values()) {
             if (entry.fullImageTask != null) entry.fullImageTask.cancel();
@@ -391,7 +382,7 @@ public class PhotoDataAdapter implements Model
         TiledTexture.freeResources();
     }
 
-	private MediaItem getItem(int index) {
+    private MediaItem getItem(int index) {
         if (index < 0 || index >= mSize || !mIsActive) return null;
         Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
@@ -403,15 +394,15 @@ public class PhotoDataAdapter implements Model
 
     private void updateCurrentIndex(int index) {
         if (mCurrentIndex == index) return;
-		mCurrentIndex = index;
-		updateSlidingWindow();
+        mCurrentIndex = index;
+        updateSlidingWindow();
 
-		MediaItem item = mData[index % DATA_CACHE_SIZE];
-		mItemPath = item == null ? null : item.getUri();
+        MediaItem item = mData[index % DATA_CACHE_SIZE];
+        mItemPath = item == null ? null : item.getUri();
 
-		updateImageCache();
-		updateImageRequests();
-		updateTileProvider();
+        updateImageCache();
+        updateImageRequests();
+        updateTileProvider();
 
         if (mDataListener != null) {
             mDataListener.onPhotoChanged(index, mItemPath);
@@ -434,7 +425,7 @@ public class PhotoDataAdapter implements Model
         if (s instanceof TiledScreenNail) {
             TiledTexture t = ((TiledScreenNail) s).getTexture();
             if (t != null && !t.isReady()) mUploader.addTexture(t);
-		}
+        }
     }
 
     private void updateScreenNailUploadQueue() {
@@ -451,74 +442,53 @@ public class PhotoDataAdapter implements Model
         updateCurrentIndex(index);
     }
 
-	// //////////////////////////////////////////////////////////////////////////
-	// Focus switching
-	// //////////////////////////////////////////////////////////////////////////
-
-	public void switchToNextImage()
-	{
-        if (getCurrentIndex() < mSize - 1)
-		    moveTo(getCurrentIndex() + 1);
-	}
-
-	public void switchToPrevImage()
-	{
-        if (getCurrentIndex() > 0)
-		    moveTo(getCurrentIndex() - 1);
-	}
-
-	public void switchToFirstImage()
-	{
-		moveTo(0);
-	}
-
-	@Override
+    @Override
     public ScreenNail getScreenNail(int offset) {
         int index = mCurrentIndex + offset;
         if (index < 0 || index >= mSize || !mIsActive) return null;
         Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
-		MediaItem item = getItem(index);
+        MediaItem item = getItem(index);
         if (item == null) return null;
 
         ImageEntry entry = mImageCache.get(item.getUri());
         if (entry == null) return null;
 
-		// Create a default ScreenNail if the real one is not available yet,
-		// except for camera that a black screen is better than a gray tile.
+        // Create a default ScreenNail if the real one is not available yet,
+        // except for camera that a black screen is better than a gray tile.
         if (entry.screenNail == null && !isCamera(offset)) {
             entry.screenNail = newPlaceholderScreenNail(item);
             if (offset == 0) updateTileProvider(entry);
         }
 
-		return entry.screenNail;
-	}
+        return entry.screenNail;
+    }
 
-	@Override
-	public void getImageSize(int offset, PhotoView.Size size) {
-		MediaItem item = getItem(mCurrentIndex + offset);
+    @Override
+    public void getImageSize(int offset, PhotoView.Size size) {
+        MediaItem item = getItem(mCurrentIndex + offset);
         if (item == null) {
             size.width = 0;
             size.height = 0;
         } else {
-			size.width = item.getWidth();
-			size.height = item.getHeight();
+            size.width = item.getWidth();
+            size.height = item.getHeight();
 //			size.width = item.getThumbWidth();
 //			size.height = item.getThumbHeight();
-		}
-	}
+        }
+    }
 
-	@Override
+    @Override
     public int getImageRotation(int offset) {
-		MediaItem item = getItem(mCurrentIndex + offset);
-		return (item == null) ? 0 : item.getFullImageRotation();
-	}
+        MediaItem item = getItem(mCurrentIndex + offset);
+        return (item == null) ? 0 : item.getFullImageRotation();
+    }
 
-	@Override
-	public void setNeedFullImage(boolean enabled) {
-		mNeedFullImage = enabled;
-		mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
-	}
+    @Override
+    public void setNeedFullImage(boolean enabled) {
+        mNeedFullImage = enabled;
+        mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
+    }
 
     @Override
     public boolean isCamera(int offset) {
@@ -1102,8 +1072,8 @@ public class PhotoDataAdapter implements Model
                 mDirty = false;
                 UpdateInfo info = executeAndWait(new GetUpdateInfo());
 				updateLoading(true);
-				long version = mMediaVersion;
-                if (info.version != version) {
+//                long version = mSource.reload();
+                if (info.version != mMediaVersion) {
 					info.reloadContent = true;
 					info.size = mSource.size();
 				}
@@ -1160,6 +1130,7 @@ public class PhotoDataAdapter implements Model
 		}
 
         public synchronized void notifyDirty() {
+            ++mMediaVersion;
             mDirty = true;
             notifyAll();
         }
@@ -1214,4 +1185,9 @@ public class PhotoDataAdapter implements Model
 			return INDEX_NOT_FOUND;
 		}
 	}
+
+    // AJM: Additional items
+    private static final int INDEX_NOT_FOUND = -1;
+    private final GalleryApp mActivity;
+    private long mMediaVersion = 0;
 }
