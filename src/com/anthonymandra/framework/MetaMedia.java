@@ -84,15 +84,6 @@ public abstract class MetaMedia extends MediaItem
 
 	protected void writeXmp(final OutputStream os)
 	{
-		// try
-		// {
-		//
-		// XmpWriter.write(new FileOutputStream("/sdcard/test.txt"), mMetadata);
-		// }
-		// catch (FileNotFoundException e)
-		// {
-		// e.printStackTrace();
-		// }
 		new Runnable()
 		{
 			@Override

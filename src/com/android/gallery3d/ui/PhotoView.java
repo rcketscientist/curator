@@ -988,12 +988,14 @@ public class PhotoView extends GLView {
                     return true;
                 }
             }
+
             // We do this in addition to onUp() because we want the snapback of
             // setFilmMode to happen.
             mHolding &= ~HOLD_TOUCH_DOWN;
 
             if (mFilmMode && !mDownInScrolling) {
                 switchToHitPicture((int) (x + 0.5f), (int) (y + 0.5f));
+
                 // If this is a lock screen photo, let the listener handle the
                 // event. Tapping on lock screen photo should take the user
                 // directly to the lock screen.
@@ -1325,14 +1327,14 @@ public class PhotoView extends GLView {
     }
 
     private void updateActionBar() {
-        boolean isCamera = mPictures.get(0).isCamera();
-        if (isCamera && !mFilmMode) {
-            // Move into camera in page mode, lock
-            mListener.onActionBarAllowed(false);
-        } else {
-            mListener.onActionBarAllowed(true);
-            if (mFilmMode) mListener.onActionBarWanted();
-        }
+//        boolean isCamera = mPictures.get(0).isCamera();
+//        if (isCamera && !mFilmMode) {
+//            // Move into camera in page mode, lock
+//            mListener.onActionBarAllowed(false);
+//        } else {
+//            mListener.onActionBarAllowed(true);
+//            if (mFilmMode) mListener.onActionBarWanted();
+//        }
     }
 
     public void setFilmMode(boolean enabled) {

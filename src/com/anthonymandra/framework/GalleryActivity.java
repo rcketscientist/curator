@@ -9,20 +9,28 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -75,13 +83,12 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
 	protected File mCurrentPath;
 
-    protected boolean mShowXmp = false;
-    protected boolean mShowUnknown = false;
-    protected boolean mShowNative = false;
+    protected LicenseManager mLicenseManager;
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+        mLicenseManager = new LicenseManager(this, new Handler());
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		// mProgressDialog.setCanceledOnTouchOutside(true);
@@ -91,6 +98,9 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	protected void onResume()
 	{
 		super.onResume();
+        mLicenseManager.forceLicenseCheck();
+        mLicenseManager.checkLicense();
+        mLicenseManager.registerObserver();
 		createSwapDir();
 		createRecycleBin();
 	}
@@ -99,6 +109,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	protected void onPause()
 	{
 		super.onPause();
+        mLicenseManager.unregisterObserver();
 		if (recycleBin != null)
 			recycleBin.flushCache();
 	}
@@ -107,10 +118,10 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	protected void onDestroy()
 	{
 		super.onDestroy();
+        clearSwapDir();
 		if (recycleBin != null)
 			recycleBin.closeCache();
 		recycleBin = null;
-		clearSwapDir();
 	}
 
 	protected void updateGalleryItems()
@@ -666,13 +677,43 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			mProgressDialog.setMax(toShare.size());
 			ArrayList<Uri> arrayUri = new ArrayList<Uri>();
 			int completed = 0;
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(GalleryActivity.this);
+            boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+            String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+            int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+            String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
+            watermarkAlpha = (int)(255 * ((float)watermarkAlpha / 100));
+
 			for (RawObject image : toShare)
 			{
-				BufferedInputStream imageData = image.getThumbInputStream();
+                if (isCancelled())
+                    return null;
+
+                BufferedInputStream imageData = image.getThumbInputStream();
 				if (imageData == null)
 					return null;
-				File swapFile = getSwapFile(Util.swapExtention(image.getName(), ".jpg"));
-				write(swapFile, imageData);
+
+                File swapFile = getSwapFile(Util.swapExtention(image.getName(), ".jpg"));
+                Bitmap bmp = BitmapFactory.decodeStream(imageData);
+
+                if (!mLicenseManager.isLicensed())
+                {
+                    bmp = Util.addWatermark(GalleryActivity.this, bmp);
+                }
+                else if (showWatermark)
+                {
+                    bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                }
+
+                try {
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
 				try
 				{
 					imageData.close();
@@ -682,7 +723,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 					e.printStackTrace();
 				}
 				publishProgress(++completed);
-				arrayUri.add(Uri.fromFile(swapFile));
+                arrayUri.add(Uri.parse("content://" + SwapProvider.AUTHORITY + "/" + swapFile.getName()));
 			}
 
 			if (arrayUri.size() == 0)
@@ -739,7 +780,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		switch (requestCode)
 		{
 			case REQUEST_CODE_SHARE:
-				clearSwapDir();
+//				clearSwapDir();
 				break;
 		}
 	}

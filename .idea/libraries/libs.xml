@@ -5,6 +5,8 @@
       <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

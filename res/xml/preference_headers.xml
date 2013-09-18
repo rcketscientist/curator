@@ -11,4 +11,12 @@
         android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentView"
         android:title="@string/view" />
 
+    <header
+        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentWatermark"
+        android:title="@string/watermark" />
+
+    <header
+        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentLicense"
+        android:title="@string/license" />
+
 </preference-headers>

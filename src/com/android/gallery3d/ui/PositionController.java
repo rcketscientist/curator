@@ -805,16 +805,21 @@ class PositionController {
         boolean changed = false;
         changed |= mPlatform.advanceAnimation();
         for (int i = -BOX_MAX; i <= BOX_MAX; i++) {
-            changed |= mBoxes.get(i).advanceAnimation();
+            if (mBoxes.get(i) != null)   //TODO: AJM: java.lang.NullPointerException (v1.9.1)
+                changed |= mBoxes.get(i).advanceAnimation();
         }
         for (int i = -BOX_MAX; i < BOX_MAX; i++) {
-			changed |= mGaps.get(i).advanceAnimation();
+            if (mGaps.get(i) != null)   //TODO: AJM: java.lang.NullPointerException (v1.9.0)
+			    changed |= mGaps.get(i).advanceAnimation();
 		}
 		changed |= mFilmRatio.advanceAnimation();
         if (changed) redraw();
 	}
 
     public boolean inOpeningAnimation() {
+        //TODO: AJM: java.lang.NullPointerException (v1.9.1)
+        if (mBoxes.get(0) == null)
+            return false;
         return (mPlatform.mAnimationKind == ANIM_KIND_OPENING &&
                 mPlatform.mAnimationStartTime != NO_ANIMATION) ||
                (mBoxes.get(0).mAnimationKind == ANIM_KIND_OPENING &&
@@ -1194,6 +1199,9 @@ class PositionController {
 
     public boolean isCenter() {
         Box b = mBoxes.get(0);
+        //TODO: AJM: java.lang.NullPointerException (v1.8.4)
+        if (b == null)
+            return true;
         return mPlatform.mCurrentX == mPlatform.mDefaultX
             && b.mCurrentY == 0;
     }
@@ -1210,7 +1218,10 @@ class PositionController {
 
     public float getImageScale() {
         Box b = mBoxes.get(0);
-        return b.mCurrentScale;
+        if (b != null)
+            return b.mCurrentScale;
+        else
+            return -1;
     }
 
     public int getImageAtEdges() {

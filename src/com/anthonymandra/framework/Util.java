@@ -29,9 +29,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+
+import com.anthonymandra.rawdroid.R;
 
 /**
  * Class containing some static utility methods.
@@ -349,4 +354,76 @@ public class Util
 		}
 		return true;
 	}
+
+    public static Bitmap addWatermark(Context context, Bitmap src)
+    {
+        int width = src.getWidth();
+        int height = src.getHeight();
+        Bitmap result = Bitmap.createBitmap(width, height, src.getConfig());
+
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(src, 0, 0, null);
+        int id = R.drawable.watermark1024;
+        if (width < 3072)
+            id = R.drawable.watermark512;
+        else if (width < 1536)
+            id = R.drawable.watermark256;
+        else if (width < 768)
+            id = R.drawable.watermark128;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id);
+        canvas.drawBitmap(watermark, width/4*3, height/4*3, null);
+
+        return result;
+    }
+
+    public static Bitmap addCustomWatermark(Bitmap src, String watermark, int alpha,
+            int size, String location)
+    {
+        int w = src.getWidth();
+        int h = src.getHeight();
+        Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
+
+        int x = 0, y = 0;
+
+        // We center the text in their respective quadrants
+        if (location.equals("Center"))
+        {
+            x = w/2;
+            y = h/2;
+        }
+        else if (location.equals("Lower Left"))
+        {
+            x = w/4;
+            y = h/4*3;
+        }
+        else if (location.equals("Lower Right"))
+        {
+            x = w/4*3;
+            y = h/4*3;
+        }
+        else if (location.equals("Upper Left"))
+        {
+            x = w/4;
+            y = h/4;
+        }
+        else if (location.equals("Upper Right"))
+        {
+            x = w/4*3;
+            y = h/4;
+        }
+
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(src, 0, 0, null);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setShadowLayer(1, 1, 1, Color.BLACK);
+        paint.setAlpha(alpha);
+        paint.setTextSize(size);
+        paint.setAntiAlias(true);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(watermark, x, y, paint);
+
+        return result;
+    }
 }

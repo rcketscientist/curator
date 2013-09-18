@@ -1,28 +1,22 @@
 package com.anthonymandra.rawdroid;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import org.openintents.intents.FileManagerIntents;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.database.ContentObservable;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
@@ -30,6 +24,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -68,6 +63,21 @@ import com.anthonymandra.widget.LoadingImageView;
 import com.github.espiandev.showcaseview.ShowcaseView;
 import com.inscription.ChangeLogDialog;
 import com.inscription.WhatsNewDialog;
+
+import org.openintents.intents.FileManagerIntents;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class RawDroid extends GalleryActivity implements OnNavigationListener, OnItemClickListener, OnItemLongClickListener, OnScrollListener,
 		OnShareTargetSelectedListener, OnSharedPreferenceChangeListener
@@ -159,8 +169,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
 
-		// checkLicense();
-		checkExpiration(10, 1, 2013);
+//		checkExpiration(10, 1, 2013);
 
 		AppRater.app_launched(this);
 
@@ -344,7 +353,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 		// Launch what's new dialog (will only be shown once)
 		final WhatsNewDialog whatsNewDialog = new WhatsNewDialog(this);
-		whatsNewDialog.show();
+		whatsNewDialog.show(!mLicenseManager.isLicensed());
 
 		if (mCurrentPath != null && mCurrentPath.exists())
 		{
@@ -534,7 +543,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				return true;
 			case R.id.galleryAbout:
 				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
-				changeLogDialog.show();
+				changeLogDialog.show(!mLicenseManager.isLicensed());
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -1339,19 +1348,63 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			boolean totalSuccess = true;
 			List<RawObject> copyList = params[0];
 			importProgress.setMax(copyList.size());
+
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
+            boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+            String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+            int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+            String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
 			for (RawObject toExport : copyList)
 			{
 				publishProgress(toExport.getName());
-				boolean result = toExport.copyThumb(mDestination);
-				if (!result)
-				{
-					Log.e(TAG, "Error copying " + toExport.getFileSize());
-					failed.add(toExport.getName());
-					totalSuccess = false;
-				}
+
+                BufferedInputStream imageData = toExport.getThumbInputStream();
+                if (imageData == null)
+                {
+                    failed.add(toExport.getName());
+                    continue;
+                }
+
+                Bitmap bmp = BitmapFactory.decodeStream(imageData);
+
+                if (!mLicenseManager.isLicensed())
+                {
+                    bmp = Util.addWatermark(RawDroid.this, bmp);
+                }
+                else if (showWatermark)
+                {
+                    bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                }
+
+                try {
+                    File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(thumbDest));
+                } catch (FileNotFoundException e) {
+                    failed.add(toExport.getName());
+                    e.printStackTrace();
+                }
+
+                try
+                {
+                    imageData.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
+//				boolean result = toExport.copyThumb(mDestination);
+//				if (!result)
+//				{
+//					Log.e(TAG, "Error copying " + toExport.getFileSize());
+//					failed.add(toExport.getName());
+//					totalSuccess = false;
+//				}
 				publishProgress();
 			}
-			return totalSuccess;
+			return true; //not used.
 		}
 
 		@Override
@@ -1586,14 +1639,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		{
 			this.cancel(true);
 		}
-	}
-
-	private void checkLicense()
-	{
-		Log.i(TAG, "Request License");
-		Intent i = new Intent();
-		i.setAction(LICENSE_REQUEST);
-		sendBroadcast(i, PERMISSION);
 	}
 
 	private void closeTutorial()

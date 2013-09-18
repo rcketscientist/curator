@@ -821,29 +821,29 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     //////////////////////////////////////////////////////////////////////////
 
     private void showBars() {
-        if (mShowBars) return;
-        mShowBars = true;
-        mOrientationManager.unlockOrientation();
+//        if (mShowBars) return;
+//        mShowBars = true;
+//        mOrientationManager.unlockOrientation();
 //        mActionBar.show();
-        getGLRoot().setLightsOutMode(false);
+//        getGLRoot().setLightsOutMode(false);
 //        refreshHidingMessage();
 //        refreshBottomControlsWhenReady();
     }
 
     private void hideBars() {
-        if (!mShowBars) return;
-        mShowBars = false;
+//        if (!mShowBars) return;
+//        mShowBars = false;
 //        mActionBar.hide();
-        getGLRoot().setLightsOutMode(true);
-        mHandler.removeMessages(MSG_HIDE_BARS);
+//        getGLRoot().setLightsOutMode(true);
+//        mHandler.removeMessages(MSG_HIDE_BARS);
 //        refreshBottomControlsWhenReady();
     }
 
     private void refreshHidingMessage() {
-        mHandler.removeMessages(MSG_HIDE_BARS);
-        if (!mIsMenuVisible && !mPhotoView.getFilmMode()) {
-            mHandler.sendEmptyMessageDelayed(MSG_HIDE_BARS, HIDE_BARS_TIMEOUT);
-        }
+//        mHandler.removeMessages(MSG_HIDE_BARS);
+//        if (!mIsMenuVisible && !mPhotoView.getFilmMode()) {
+//            mHandler.sendEmptyMessageDelayed(MSG_HIDE_BARS, HIDE_BARS_TIMEOUT);
+//        }
     }
 
     private boolean canShowBars() {
@@ -867,17 +867,17 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     }
 
     private void toggleBars() {
-        if (mShowBars) {
-            hideBars();
-        } else {
-            if (canShowBars()) showBars();
-        }
+//        if (mShowBars) {
+//            hideBars();
+//        } else {
+//            if (canShowBars()) showBars();
+//        }
     }
 
     private void updateBars() {
-        if (!canShowBars()) {
-            hideBars();
-        }
+//        if (!canShowBars()) {
+//            hideBars();
+//        }
     }
 
     @Override
@@ -1196,13 +1196,13 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 
     @Override
     public void onActionBarAllowed(boolean allowed) {
-        mActionBarAllowed = allowed;
-        mHandler.sendEmptyMessage(MSG_UPDATE_ACTION_BAR);
+//        mActionBarAllowed = allowed;
+//        mHandler.sendEmptyMessage(MSG_UPDATE_ACTION_BAR);
     }
 
     @Override
     public void onActionBarWanted() {
-        mHandler.sendEmptyMessage(MSG_WANT_BARS);
+//        mHandler.sendEmptyMessage(MSG_WANT_BARS);
     }
 
     @Override

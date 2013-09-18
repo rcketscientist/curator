@@ -38,6 +38,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,7 +175,14 @@ public class PhotoDataAdapter implements Model {
         mSource = Utils.checkNotNull(mediaSet);
 		mSize = mSource.size();
         mPhotoView = Utils.checkNotNull(view);
-        mItemPath = mediaSet.get(indexHint).getUri();
+        try {
+            mItemPath = mediaSet.get(indexHint).getUri();
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(mActivity.getAndroidContext(), "Please email about how you're opening Rawdroid.  I cannot trace this error.  Thanks!", Toast.LENGTH_LONG).show();
+            throw new IndexOutOfBoundsException(e.getMessage());
+        }
         mCurrentIndex = indexHint;
         mCameraIndex = cameraIndex;
         mIsPanorama = isPanorama;
@@ -277,7 +285,7 @@ public class PhotoDataAdapter implements Model {
             // Try to find the same path in the old array
             int j;
             for (j = 0; j < N; j++) {
-                if (oldPaths[j] == p) {
+                if (p.equals(oldPaths[j])) {
                     break;
                 }
             }
@@ -1119,8 +1127,14 @@ public class PhotoDataAdapter implements Model {
                 }
 
                 // Don't change index if mSize == 0
-                if (mSize > 0) {
-                    if (index >= mSize) index = mSize - 1;
+//                if (mSize > 0) {
+//                    if (index >= mSize) index = mSize - 1;
+//                }
+                // AJM: UpdateContent controls mSize which is called after this. Therefore
+                // we weren't moving backwards on a last delete.  Changing to mSource.size
+                // keeps the previous check current
+                if (mSource.size() > 0) {
+                    if (index >= mSource.size()) index = mSource.size() - 1;
                 }
 
                 info.indexHint = index;
@@ -1163,6 +1177,8 @@ public class PhotoDataAdapter implements Model {
 
 		private int findIndexInSource(Uri path, int hint)
 		{
+            if (!mSource.contains(hint))
+                return INDEX_NOT_FOUND;
 			if (mSource.get(hint).getUri().equals(path))
 				return hint;
 
@@ -1171,7 +1187,7 @@ public class PhotoDataAdapter implements Model {
 				if (mSource.get(i).getUri().equals(path))
 					return i;
 			}
-			return -1;
+			return INDEX_NOT_FOUND;
 		}
 
 		private int findIndexOfPathInCache(UpdateInfo info, Uri path) {

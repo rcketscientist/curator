@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <Preference
+        android:key="prefKeyLicense"
+        android:title="@string/unlicensed"
+        android:summary="@string/buypro" />
+    <Preference
+        android:key="prefKeyManualLicense"
+        android:title="@string/prefTitleManualLicense"
+        android:summary="@string/prefSummaryManualLicense" />
+    <Preference
+        android:key="prefKeyContact"
+        android:title="@string/prefTitleContact"
+        android:summary="@string/prefSummaryContact" />
+</PreferenceScreen>

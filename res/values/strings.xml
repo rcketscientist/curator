@@ -54,8 +54,9 @@
     <string name="storage">Storage</string>
     <string name="firstImage">First Image</string>
     <string name="lastImage">Last Image</string>
-    <string name="licensed">licensed</string>
-    <string name="unlicensed">unlicensed</string>
+    <string name="licensed">Licensed</string>
+    <string name="unlicensed">Unlicensed</string>
+    <string name="error">Error</string>
 
     <!-- Error Messages -->
     <string name="errorKeywordRequired">Invalid keyword file</string>
@@ -133,13 +134,37 @@
     <string name="prefTitleShowNav">Show Navigation</string>
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>
+    <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Please try later.  Sorry.</string>
+    <string name="prefSummaryNoProvider">Could not access server.  Is Rawdroid Pro installed?</string>
+    <string name="prefSummaryLicense">All features are available.  Thank you for your support!</string>
+    <string name="prefTitleManualLicense">Check License</string>
+    <string name="prefSummaryManualLicense">Click to manually check the license.  Requires an internet connection.</string>
+    <string name="prefTitleEnableWatermark">Enable Watermark</string>
+    <string name="prefSummaryEnableWatermark">Enable to place watermark on exported photos.</string>
+    <string name="prefTitleWatermarkText">Watermark Text</string>
+    <string name="prefTitleWatermarkSize">Watermark Size</string>
+    <string name="prefSummaryWatermarkSize">This is the pixel size of the text as opposed to a font size.\nFor large images this should be > 100.</string>
+    <string name="prefTitleWatermarkLocation">Location of Watermark</string>
+    <string name="prefTitleWatermarkAlpha">Watermark Transparency</string>
+    <string name="prefTitleContact">Contact</string>
+    <string name="prefSummaryContact">Click to send me an email.</string>
+
+    <string name="buypro">Click here to upgrade to Rawdroid Pro to unlock features and improve speed!</string>
     
     <string-array name="showOptions">
         <item>Automatic</item>
         <item>Always</item>
         <item>Never</item>
     </string-array>
-    
+
+    <string-array name="watermarkLocations">
+        <item>Center</item>
+        <item>Lower Left</item>
+        <item>Lower Right</item>
+        <item>Upper Left</item>
+        <item>Upper Right</item>
+    </string-array>
+
     <string name="clearCache">Clear Thumbnail Cache</string>
     <string name="cacheCleared">Gallery image cache cleared.</string>
     <string name="accessRecycle">Access Recycle Bin</string>
@@ -213,5 +238,7 @@
     <string name="no_thumbnail">No thumbnail</string>
     <string name="deleted">Deleted</string>
     <string name="undo">UNDO</string>
+    <string name="license">License</string>
+    <string name="watermark">Watermark ( Pro )</string>
 
 </resources>

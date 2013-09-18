@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -42,6 +43,7 @@ import android.widget.Toast;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Timer;
@@ -125,7 +127,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
-//    protected HistogramTask mHistogramTask;
+    protected HistogramTask mHistogramTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +145,16 @@ public abstract class ViewerActivity extends GalleryActivity implements
         setDisplayMetrics();
         attachButtons();
         setActionBar();
+        setWatermark();
+    }
+
+    protected void setWatermark()
+    {
+        View watermark = findViewById(R.id.watermark);
+        if (mLicenseManager.isLicensed())
+            watermark.setVisibility(View.INVISIBLE);
+        else
+            watermark.setVisibility(View.VISIBLE);
     }
 
     protected void setDisplayMetrics()
@@ -189,19 +201,20 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 setPath(parent);
             else
                 setSingleImage(input);
+        }
 
-            indexHint = findMediaByFilename(input.getPath());
-            if (indexHint == FILE_NOT_FOUND)
+        updateViewerItems();
+
+        indexHint = findVisibleByFilename(input.getPath());
+        if (indexHint == FILE_NOT_FOUND)
+        {
+            indexHint = 0;
+            if (mVisibleItems.size() == 0)
             {
-                indexHint = 0;
-                if (!parent.exists() || parent.listFiles().length > 0)
-                {
-                    Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-                    finish();
-                }
+                Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
+                finish();
             }
         }
-        updateViewerItems();
 
         return indexHint;
     }
@@ -438,25 +451,23 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateImageDetails()
     {
-        new LoadMetadataTask().execute();
+        new LoadMetadataTask().execute(getCurrentItem());
         updateHistogram(getCurrentBitmap());
     }
 
     protected void updateHistogram(Bitmap bitmap)
     {
-        new HistogramTask().execute(bitmap);
-//        if (mHistogramTask != null)
-//            mHistogramTask.cancel(true);
-//        mHistogramTask = new HistogramTask();
-//        mHistogramTask.execute(bitmap);
+//        new HistogramTask().execute(bitmap);
+        if (mHistogramTask != null)
+            mHistogramTask.cancel(true);
+        mHistogramTask = new HistogramTask();
+        mHistogramTask.execute(bitmap);
     }
 
-    protected void populateExif()
+    protected void populateExif(MediaItem meta)
     {
         if (autoHide != null)
             autoHide.cancel();
-
-        MediaItem meta = getCurrentItem();
 
         if (metaDate == null || meta == null)
         {
@@ -518,21 +529,21 @@ public abstract class ViewerActivity extends GalleryActivity implements
      * @author amand_000
      *
      */
-    public class LoadMetadataTask extends AsyncTask<Void, Void, Void>
+    public class LoadMetadataTask extends AsyncTask<MediaItem, Void, MediaItem>
     {
         @Override
-        protected Void doInBackground(Void... params)
+        protected MediaItem doInBackground(MediaItem... params)
         {
-            MediaItem current = getCurrentItem();
+            MediaItem current = params[0];
             if (current != null)
                 current.readMetadata();
-            return null;
+            return current;
         }
 
         @Override
-        protected void onPostExecute(Void result)
+        protected void onPostExecute(MediaItem result)
         {
-            populateExif();
+            populateExif(result);
 
             if (PreferenceManager.getDefaultSharedPreferences(ViewerActivity.this).getBoolean(FullSettingsActivity.KEY_ShowImageInterface,
                     RawDroid.PREFS_AUTO_INTERFACE_DEFAULT))
@@ -541,12 +552,18 @@ public abstract class ViewerActivity extends GalleryActivity implements
             }
 
             if (xmpFrag != null && xmpFrag.isAdded())
-                xmpFrag.setMediaObject(getCurrentItem());
+                xmpFrag.setMediaObject(result);
         }
     }
 
     public class HistogramTask extends AsyncTask<Bitmap, Void, Histogram>
     {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            histView.clear();
+        }
+
         // http://zerocool.is-a-geek.net/?p=269
         @Override
         protected Histogram doInBackground(Bitmap... params)
@@ -558,17 +575,26 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 return null;
 
             int[] pixels = new int[input.getWidth() * input.getHeight()];
-            input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
-
-//            int stride = pixels.length / 4095;
-
-            for (int pixel : pixels)
-//            for (int pixel = 0; pixel < pixels.length; pixel += stride)
+            try
             {
-                if (isCancelled())
-                    return null;
-                result.processPixel(pixel);
+                input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
+                for (int pixel : pixels)
+//              for (int pixel = 0; pixel < pixels.length; pixel += stride)
+                {
+                    if (isCancelled())
+                        return null;
+                    result.processPixel(pixel);
+                }
             }
+            catch(IllegalStateException e)
+            {
+                Toast.makeText(ViewerActivity.this,
+                        "Memory Error: Histogram failed due to recycled image.  Try swapping slower or using Legacy Viewer.",
+                        Toast.LENGTH_SHORT);
+                e.printStackTrace();
+                return null;
+            }
+//            int stride = pixels.length / 4095;
 
             return result;
         }
@@ -593,7 +619,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
             startPath = "";
         }
 
-        File saveFile = new File(startPath + File.separator + media.getName());
+        File saveFile = new File(
+                Util.swapExtention(startPath + File.separator + media.getName(), ".jpg"));
 
         // Construct URI from file name.
         intent.setData(Uri.fromFile(saveFile));
@@ -692,7 +719,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
             return;
         }
-        File swapFile = getSwapFile(Util.swapExtention(media.getName(), "jpg"));
+        File swapFile = getSwapFile(Util.swapExtention(media.getName(), ".jpg"));
         write(swapFile, imageData);
         try
         {
@@ -704,7 +731,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
 
         Intent action = new Intent(Intent.ACTION_EDIT);
-        action.setDataAndType(Uri.fromFile(swapFile), "image/*");
+        action.setType("image/jpeg");
+
+//        action.setDataAndType(Uri.fromFile(swapFile), "image/*");
+        action.setDataAndType(Uri.parse("content://" + SwapProvider.AUTHORITY + "/" + swapFile.getName()), "image/*");
+        action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
     }
@@ -726,34 +757,46 @@ public abstract class ViewerActivity extends GalleryActivity implements
                     editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, dest.getParent());
                     editor.commit();
 
+                    boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+                    String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
+                    int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+                    int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+                    String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
                     MediaItem source = getCurrentItem();
-                    BufferedOutputStream bos = null;
+
+                    BufferedInputStream imageData = source.getThumbInputStream();
+                    if (imageData == null)
+                    {
+                        Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
+
+                    if (!mLicenseManager.isLicensed())
+                    {
+                        bmp = Util.addWatermark(ViewerActivity.this, bmp);
+                    }
+                    else if (showWatermark)
+                    {
+                        bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                    }
+
+                    try {
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(dest));
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(this, R.string.save_fail, Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+
                     try
                     {
-                        bos = new BufferedOutputStream(new FileOutputStream(dest));
-                        byte[] thumb = source.getThumb();
-                        if (thumb == null)
-                        {
-                            Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        bos.write(thumb); // Assumes thumb is already in an image format (jpg at time of coding)
+                        imageData.close();
                     }
                     catch (IOException e)
                     {
-                        Toast.makeText(this, R.string.save_fail, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    finally
-                    {
-                        if (bos != null)
-                            try
-                            {
-                                bos.close();
-                            }
-                            catch (IOException e)
-                            {
-                            }
+                        e.printStackTrace();
                     }
 
                     Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
@@ -761,10 +804,10 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 break;
             case REQUEST_CODE_EDIT:
                 // This doesn't seem to return a result.
-                // if (resultCode == RESULT_OK)
-                // {
-                // String test = "";
-                // }
+//                if (resultCode == RESULT_OK)
+//                {
+//                    Log.d(TAG, data.getDataString());
+//                }
         }
     }
 
@@ -834,12 +877,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         setMetaVisibility();
+        MediaItem media = getCurrentItem();
 
         if (key.equals(FullSettingsActivity.KEY_ShowNativeFiles))
         {
             updateViewerItems();
-
-            MediaItem media = getCurrentItem();
 
             // If current images are native and viewing is turned off finish activity
             if (media == null || !sharedPreferences.getBoolean(key, true) && isNative(new File(media.getFilePath())))
@@ -858,7 +900,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         else if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
         {
             Intent viewer = new Intent(this, ViewerChooser.class);
-            viewer.setData(getCurrentItem().getUri());
+            viewer.setData(media.getUri());
             finish();
             startActivity(viewer);
         }
@@ -866,8 +908,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void setImageFocus()
     {
+        MediaItem current = getCurrentItem();
+        if (current == null)
+            return;
+
         Intent data = new Intent();
-        data.setData(getCurrentItem().getUri());
+        data.setData(current.getUri());
         setResult(RESULT_OK, data);
     }
 

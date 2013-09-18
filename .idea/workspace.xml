@@ -1,0 +1,1257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AndroidLayoutPreviewToolWindow">
+    <option name="state">
+      <GlobalState />
+    </option>
+  </component>
+  <component name="AndroidLayouts">
+    <shared>
+      <config>
+        <target>android-18</target>
+      </config>
+    </shared>
+    <layouts>
+      <layout url="file://$PROJECT_DIR$/res/layout/legacy_viewer.xml">
+        <config>
+          <device>4in WVGA (Nexus S)</device>
+          <theme>@android:style/Theme</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/res/layout/meta_panel.xml">
+        <config>
+          <device>Nexus One</device>
+          <theme>@android:style/Theme.Holo</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/res/layout/nav_panel.xml">
+        <config>
+          <device>Galaxy Nexus</device>
+          <state>Landscape</state>
+          <theme>@android:style/Theme.Holo</theme>
+        </config>
+      </layout>
+    </layouts>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" readonly="true" id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark1024.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark128.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark256.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark512.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark_old.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseApp.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/widget/SeekBarPreference.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/xml/preferences_license.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/xml/preferences_watermark.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\10x12x16bit-CMYK.psd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\16color-10x10.bmp" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\24bpp-10x10.bmp" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\256color-10x10.bmp" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\8x4x8bit-Grayscale.psd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app1.0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app1.1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app2" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.appe" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\crash01.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\crash01.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\dotnet-256x256-alpha-palette.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\gimp-8x12-greyscale-alpha-time-background.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\iccDataInvalid1.jpg.app2" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\invalid-iCCP-missing-adler32-checksum.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\iptc1.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\iptc2-photoshop6.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\manuallyAddedThumbnail.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\manuallyAddedThumbnail.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\manuallyAddedThumbnail.jpg.com" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\mspaint-10x10.gif" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\mspaint-8x10.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.app0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.appe" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2a.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2b.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2b.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2b.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\noExif.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\noExif.jpg.app0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\noExif.jpg.com" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-16colorpalette.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-32colors-alpha.gif" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgb24-all-metadata.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgb24-interlaced.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgb24.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgba32-interlaced.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgba32.png" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\recursiveDirectories.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\repeatedOrientationTagWithDifferentValues.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg.com" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg.sof0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType1.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app1.0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app1.1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app4.0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app4.1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.app0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.app2" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.appe" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExif.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExif.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExif.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app1.0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app1.1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app2" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.appe" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withIptc.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withIptcExifGps.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withIptcPhotoshop6.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withPanasonicFaces.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withPanasonicFaces.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedRGBThumbnail.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedRGBThumbnail.jpg.app1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedRGBThumbnail.jpg.com" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail2.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail3.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail4.jpg" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.app1.0" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.app1.1" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.app2" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.appd" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\jpeg\JpegMetadataReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\jpeg\JpegSegmentDataTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\jpeg\JpegSegmentReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\png\PngChunkReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\png\PngChunkTypeTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\png\PngMetadataReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\ByteArrayReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\CompoundExceptionTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\GeoLocationTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\NullOutputStreamTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RandomAccessFileReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RandomAccessStreamReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RandomAccessTestBase.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RationalTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\SequentialAccessTestBase.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\SequentialByteArrayReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\StreamReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\StringUtilTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\AgeTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\DirectoryTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\MetadataTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\MockDirectory.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\adobe\AdobeJpegReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\bmp\BmpReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\CanonMakernoteDescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifDirectoryTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifIFD0DescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifInteropDescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifSubIFDDescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifThumbnailDescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\NikonType1MakernoteTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\NikonType2MakernoteTest1.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\NikonType2MakernoteTest2.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\PanasonicMakernoteDescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\SonyType1MakernoteTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\SonyType6MakernoteTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\gif\GifReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\icc\IccReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\iptc\IptcReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jfif\JfifReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegComponentTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegDescriptorTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegDirectoryTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\photoshop\PsdReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\xmp\XmpReaderTest.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\testing\TestHelper.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Distribution/.classpath" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/.classpath" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/FileManager/.classpath" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/.classpath" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryApp.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryApp.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryContext.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryContext.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/LegacyViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/LegacyViewerActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PositionController.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PositionController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/README.md" afterPath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/sample/src/com/github/espiandev/showcaseview/sample/SampleActivity.java" afterPath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/sample/src/com/github/espiandev/showcaseview/sample/SampleActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/ui/TileImageView.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/ui/TileImageView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/arrays.xml" afterPath="$PROJECT_DIR$/res/values/arrays.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/changelog.xml" afterPath="$PROJECT_DIR$/res/xml/changelog.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/libs.xml" afterPath="$PROJECT_DIR$/.idea/libraries/libs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/metadata-extractor.iml" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/metadata-extractor.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/nav_panel.xml" afterPath="$PROJECT_DIR$/res/layout/nav_panel.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preference_headers.xml" afterPath="$PROJECT_DIR$/res/xml/preference_headers.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preference_headers_legacy.xml" afterPath="$PROJECT_DIR$/res/xml/preference_headers_legacy.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences_view.xml" afterPath="$PROJECT_DIR$/res/xml/preferences_view.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/demos/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/demos/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/fragments/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/fragments/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Distribution/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/FileManager/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/changelog/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/changelog/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/whatsnewdialog/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/whatsnewdialog/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/sample/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/sample/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values-zh-rCN/strings.xml" afterPath="$PROJECT_DIR$/res/values-zh-rCN/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\junit-4.11-src.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/junit-4.11-src.jar" />
+      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\junit-4.11.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/junit-4.11.jar" />
+      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\xmpcore-5.1.2-sources.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2-sources.jar" />
+      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\xmpcore-5.1.2.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2.jar" />
+    </list>
+    <ignored path="rawdroid.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+    <option name="PARALLEL_COMPILATION" value="true" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint>
+        <option name="NOTIFY_CAUGHT" value="true" />
+        <option name="NOTIFY_UNCAUGHT" value="true" />
+        <option name="ENABLED" value="false" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </breakpoint_any>
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" line="1117" class="com.android.gallery3d.app.PhotoDataAdapter.ReloadTask" package="com.android.gallery3d.app">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/preference/PreferenceActivity.java" line="594" class="android.preference.PreferenceActivity" package="android.preference">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" line="545" class="com.anthonymandra.rawdroid.RawDroid" package="com.anthonymandra.rawdroid">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" line="123" class="com.anthonymandra.rawdroid.ImageViewActivity" package="com.anthonymandra.rawdroid">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" line="133" class="com.anthonymandra.rawdroid.ImageViewActivity" package="com.anthonymandra.rawdroid">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
+    <breakpoint_rules />
+    <ui_properties />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="rawdroid" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="PhotoDataAdapter.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="329" column="40" selection-start="12651" selection-end="12651" vertical-scroll-proportion="0.0" vertical-offset="4077" max-vertical-offset="19890">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ViewerActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="519" column="25" selection-start="20012" selection-end="20012" vertical-scroll-proportion="0.0" vertical-offset="7722" max-vertical-offset="14807">
+              <folding>
+                <element signature="e#23397#23424#0" expanded="true" />
+                <element signature="e#23489#23513#0" expanded="true" />
+                <element signature="e#23764#23783#0" expanded="true" />
+                <element signature="e#25754#25758#0" expanded="true" />
+                <element signature="e#26325#26329#0" expanded="true" />
+                <element signature="e#27089#27128#0" expanded="true" />
+                <element signature="e#28718#28722#0" expanded="true" />
+                <element signature="e#29522#29526#0" expanded="true" />
+                <element signature="e#29922#29926#0" expanded="true" />
+                <element signature="e#30629#30648#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="43" column="34" selection-start="1617" selection-end="1617" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4199">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="changelog.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/xml/changelog.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="28" selection-start="666" selection-end="666" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3910">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UploadedTexture.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="146" column="44" selection-start="4631" selection-end="4631" vertical-scroll-proportion="0.0" vertical-offset="1755" max-vertical-offset="4828">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MetaMedia.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="431" column="19" selection-start="12469" selection-end="12469" vertical-scroll-proportion="0.0" vertical-offset="6464" max-vertical-offset="8959">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ImageViewActivity.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="165" column="29" selection-start="4215" selection-end="4215" vertical-scroll-proportion="0.52871287" vertical-offset="1948" max-vertical-offset="2958">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PhotoPage.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="513" column="16" selection-start="22797" selection-end="22797" vertical-scroll-proportion="0.0" vertical-offset="7681" max-vertical-offset="25840">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PhotoView.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="466" column="16" selection-start="18079" selection-end="18079" vertical-scroll-proportion="-11.576923" vertical-offset="6975" max-vertical-offset="31705">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="GenerateSignedApkSettings">
+    <option name="KEY_STORE_PATH" value="D:\proj\clean\rawdroid\key\my-release-key.keystore" />
+    <option name="KEY_ALIAS" value="alias_name" />
+    <option name="REMEMBER_PASSWORDS" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitLogSettings">
+    <option name="myDateState">
+      <MyDateState />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryApp.java" />
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/ui/TileImageView.java" />
+        <option value="$PROJECT_DIR$/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
+        <option value="$PROJECT_DIR$/res/layout/nav_panel.xml" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java" />
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/ui/PositionController.java" />
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
+        <option value="$PROJECT_DIR$/res/xml/changelog.xml" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" />
+        <option value="$PROJECT_DIR$/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="2576" />
+    <option name="height" value="1576" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>Android Lint</id>
+          </State>
+          <State>
+            <id>Error handling</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Abstraction issues</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid_pro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid_pro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroidpro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid_pro" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="xml" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="rawdroid" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="values" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="SHOW_ALL_PROCESSES" value="false" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="OverrideImplement.combined" value="true" />
+    <property name="options.splitter.main.proportions" value="0.18732782" />
+    <property name="recentsLimit" value="5" />
+    <property name="MemberChooser.sorted" value="false" />
+    <property name="ExportedApkPath" value="D:\proj\clean\rawdroid\rawdroid.apk" />
+    <property name="ExportedModule" value="rawdroid" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2-sources.jar!/" />
+    <property name="DEBUGGABLE_DEVICE" value="R32CA07MXHK" />
+    <property name="DEBUGGABLE_PROCESS" value="com.anthonymandra.rawdroid" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="OverrideImplement.overriding.sorted" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="FullScreen" value="false" />
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="options.splitter.details.proportions" value="0.34441602" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="AndroidIncludeSystemProguardFile" value="true" />
+    <property name="AndroidProguardConfigPath" value="D:\proj\clean\rawdroid_pro\proguard-project.txt" />
+    <property name="options.lastSelected" value="editor.preferences.appearance" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="AndroidRunProguardForReleaseBuild" value="false" />
+    <property name="restartRequiresConfirmation" value="true" />
+    <property name="options.searchVisible" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\proj\clean\rawdroid\res\xml" />
+      <recent name="D:\proj\clean\rawdroid\res\drawable" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\proj\clean\rawdroid\res\drawable-ldpi" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Android Application.rawdroid">
+    <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
+      <module name="" />
+      <option name="TESTING_TYPE" value="0" />
+      <option name="INSTRUMENTATION_RUNNER_CLASS" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TARGET_SELECTION_MODE" value="EMULATOR" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="rawdroid" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="rawdroid" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="rawdroid" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <RunnerSettings RunnerId="AndroidDebugRunner" />
+      <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="rawdroid_pro" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="rawdroid_pro" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="do_nothing" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <RunnerSettings RunnerId="AndroidDebugRunner" />
+      <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="NotePad" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="NotePad" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <RunnerSettings RunnerId="AndroidDebugRunner" />
+      <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="photomate2" type="AndroidRunConfigurationType" factoryName="Android Application">
+      <module name="photomate2" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="DEPLOY" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
+      <option name="PREFERRED_AVD" value="" />
+      <option name="USE_COMMAND_LINE" value="true" />
+      <option name="COMMAND_LINE" value="" />
+      <option name="WIPE_USER_DATA" value="false" />
+      <option name="DISABLE_BOOT_ANIMATION" value="false" />
+      <option name="NETWORK_SPEED" value="full" />
+      <option name="NETWORK_LATENCY" value="none" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <method />
+    </configuration>
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="Android Application.rawdroid" />
+      <item index="1" class="java.lang.String" itemvalue="Android Application.rawdroid_pro" />
+      <item index="2" class="java.lang.String" itemvalue="Android Application.NotePad" />
+      <item index="3" class="java.lang.String" itemvalue="Android Application.photomate2" />
+    </list>
+    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+    </configuration>
+    <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
+      <Host>localhost</Host>
+      <Port>5050</Port>
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SliceManager">
+    <option name="analysisUIOptions">
+      <AnalysisUIOptions />
+    </option>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value="ALPHA_COMPARATOR,SHOW_FIELDS" />
+  </component>
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="true" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <configuration useDefault="false">C:\Users\amand_000\AppData\Roaming\Subversion</configuration>
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="SvnFileUrlMappingImpl">
+    <option name="myMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\proj\rawdroid\Distribution" />
+          <option name="myCopyRoot" value="D:\proj\rawdroid\Distribution" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\proj\rawdroid\FileManager" />
+          <option name="myCopyRoot" value="D:\proj\rawdroid\FileManager" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+    <option name="myMoreRealMappingRoots">
+      <list>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\proj\rawdroid\Distribution" />
+          <option name="myCopyRoot" value="D:\proj\rawdroid\Distribution" />
+        </SvnCopyRootSimple>
+        <SvnCopyRootSimple>
+          <option name="myVcsRoot" value="D:\proj\rawdroid\FileManager" />
+          <option name="myCopyRoot" value="D:\proj\rawdroid\FileManager" />
+        </SvnCopyRootSimple>
+      </list>
+    </option>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="" />
+      <created>1378359489788</created>
+      <updated>1378359489788</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView" selected-index="0">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="2576" height="1576" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.6732394" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3274648" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.49084508" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39915374" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32863188" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4133803" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1487669" sideWeight="0.7295775" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15075576" sideWeight="0.7295775" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27042255" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39915374" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32863188" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15075576" sideWeight="0.72605634" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27394366" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.6732394" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22676057" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40915492" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17820206" sideWeight="0.72605634" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="373" column="66" selection-start="10435" selection-end="10435" vertical-scroll-proportion="0.0" vertical-offset="5631" max-vertical-offset="7395">
+          <folding>
+            <element signature="e#0#11810#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="50" column="22" selection-start="1487" selection-end="1487" vertical-scroll-proportion="0.21065675" vertical-offset="0" max-vertical-offset="13345">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/graphics/Bitmap.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="202" column="16" selection-start="6601" selection-end="6601" vertical-scroll-proportion="0.0" vertical-offset="2724" max-vertical-offset="24446">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/Histogram.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="16" selection-start="813" selection-end="813" vertical-scroll-proportion="0.0" vertical-offset="405" max-vertical-offset="1581">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/widget/HistogramView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="13" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0" vertical-offset="918" max-vertical-offset="2125">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="513" column="16" selection-start="22797" selection-end="22797" vertical-scroll-proportion="0.0" vertical-offset="7681" max-vertical-offset="25840">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="329" column="40" selection-start="12651" selection-end="12651" vertical-scroll-proportion="0.0" vertical-offset="4077" max-vertical-offset="19890">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="466" column="16" selection-start="18079" selection-end="18079" vertical-scroll-proportion="-11.576923" vertical-offset="6975" max-vertical-offset="31705">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="19" selection-start="190" selection-end="190" vertical-scroll-proportion="0.18514852" vertical-offset="0" max-vertical-offset="1547">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="431" column="19" selection-start="12469" selection-end="12469" vertical-scroll-proportion="0.0" vertical-offset="6464" max-vertical-offset="8959">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="519" column="25" selection-start="20012" selection-end="20012" vertical-scroll-proportion="0.0" vertical-offset="7722" max-vertical-offset="14807">
+          <folding>
+            <element signature="e#23397#23424#0" expanded="true" />
+            <element signature="e#23489#23513#0" expanded="true" />
+            <element signature="e#23764#23783#0" expanded="true" />
+            <element signature="e#25754#25758#0" expanded="true" />
+            <element signature="e#26325#26329#0" expanded="true" />
+            <element signature="e#27089#27128#0" expanded="true" />
+            <element signature="e#28718#28722#0" expanded="true" />
+            <element signature="e#29522#29526#0" expanded="true" />
+            <element signature="e#29922#29926#0" expanded="true" />
+            <element signature="e#30629#30648#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="34" selection-start="1617" selection-end="1617" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4199">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/xml/changelog.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="28" selection-start="666" selection-end="666" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3910">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="146" column="44" selection-start="4631" selection-end="4631" vertical-scroll-proportion="0.0" vertical-offset="1755" max-vertical-offset="4828">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/Model.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="18" selection-start="387" selection-end="387" vertical-scroll-proportion="0.2019802" vertical-offset="0" max-vertical-offset="1010">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="165" column="29" selection-start="4215" selection-end="4215" vertical-scroll-proportion="0.52871287" vertical-offset="1948" max-vertical-offset="2958">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>Android</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>Android 4.3 Platform</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>rawdroid_pro</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>dexedLibs</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
+

@@ -144,8 +144,10 @@ public abstract class UploadedTexture extends BasicTexture {
     }
 
     private void freeBitmap() {
-        Assert.assertTrue(mBitmap != null);
-        onFreeBitmap(mBitmap);
+        //TODO: AJM Assertion error (v1.9.0)
+//        Assert.assertTrue(mBitmap != null);
+        if (mBitmap != null)
+            onFreeBitmap(mBitmap);
         mBitmap = null;
     }
 

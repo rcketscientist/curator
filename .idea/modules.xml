@@ -10,7 +10,9 @@
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/ShowcaseView.iml" filepath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/ShowcaseView.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/amandra-treeview/amandra-treeview.iml" filepath="$PROJECT_DIR$/../../rawdroid/amandra-treeview/amandra-treeview.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" filepath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" />
+      <module fileurl="file://$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/license.iml" filepath="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/license.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../rawdroid_pro/rawdroid_pro.iml" filepath="$PROJECT_DIR$/../rawdroid_pro/rawdroid_pro.iml" />
     </modules>
   </component>
 </project>

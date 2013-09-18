@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../rawdroid_pro" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library" vcs="svn" />
     <mapping directory="$PROJECT_DIR$/../../rawdroid/Distribution" vcs="svn" />

@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.data.DecodeUtils;
@@ -278,7 +279,10 @@ public class LocalImage extends MetaMedia
 	public void writeXmp()
 	{
 		OutputStream os = getXmpOutputStream();
-		writeXmp(os);
+        if (os == null)
+            return;
+
+        writeXmp(os);
 		try
 		{
 			if (os != null)

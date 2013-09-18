@@ -118,7 +118,7 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		if (raw == null)
 			return;
 
-		new LoadMetadataTask().execute();
+		new LoadMetadataTask().execute(raw);
 	}
 
     @Override

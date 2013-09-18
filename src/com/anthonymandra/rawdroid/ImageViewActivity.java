@@ -7,6 +7,7 @@ import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
+import com.anthonymandra.framework.LicenseManager;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -178,5 +179,10 @@ public class ImageViewActivity extends PhotoPage implements DataListener
     @Override
     public void goToFirstPicture() {
         mModel.moveTo(0);
+    }
+
+    @Override
+    public LicenseManager getLicenseManager() {
+        return mLicenseManager;
     }
 }

@@ -1,5 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="1.9.2"
+        versioncode="116"
+        summary="Viewer fixes. There are still some crashes I can't reproduce or trace. Please email me with details if you're experiencing crashes."
+        date="09/18/2013">
+        <change>Fixed: Viewer swipe animation</change>
+        <change>Fixed: Filmstrip (fully zoom out to quickly browse images)</change>
+        <change>Update: Cancel histogram on image change to reduce memory/improve browsing</change>
+        <change>Italian: Thanks gerlos!</change>
+        <change>Japanese: Thanks hiroyuki!</change>
+    </release>
+    <release version="1.9.1"
+        versioncode="115"
+        summary="Add custom watermark to export and save.  Bug fixes"
+        date="09/15/2013">
+        <change>Updated: Custom watermark for export and save (Pro)</change>
+        <change>Fixed: Viewer bugs.</change>
+    </release>
+    <release version="1.9.0"
+        versioncode="114"
+        summary="Added custom watermarks for pro users.  Integrated license server (must have Pro installed).
+        The initial license check requires an internet connection then it will be cached for a period.
+        The Google license server is something of a black box so let me know if you've purchased pro, but
+        aren't being registered."
+        date="09/13/2013">
+        <change>Added: Custom watermark (Pro)</change>
+        <change>Updated: Watermark for demo users.</change>
+        <change>Updated: Share intent permissions (email, g+, etc).</change>
+        <change>Fixed: Viewer bugs.</change>
+        <change>Chinese: Thanks Xiaoyu!</change>
+    </release>
+    <release version="1.8.4"
+        versioncode="113"
+        summary="Bug fixes."
+        date="09/08/2013">
+        <change>Fixed: Action bar auto-hide goes out of sync.</change>
+        <change>Fixed: Crash on deleting last image in new viewer.</change>
+        <change>Fixed: Crash on importing empty data into viewer.</change>
+        <change>Fixed: Import crash on orientation change.</change>
+    </release>
     <release version="1.8.3"
         versioncode="112"
         summary="Improved histogram scaling by resolution."

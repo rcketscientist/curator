@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:key="prefKeyEnableWatermark"
+        android:defaultValue="false"
+        android:title="@string/prefTitleEnableWatermark"
+        android:summary="@string/prefSummaryEnableWatermark" />
+    <EditTextPreference
+        android:key="prefKeyWatermarkText"
+        android:title="@string/prefTitleWatermarkText" />
+    <com.anthonymandra.widget.SeekBarPreference
+        android:key="prefKeyWatermarkSize"
+        android:title="@string/prefTitleWatermarkSize"
+        android:defaultValue="150"
+        android:max="600" />
+    <com.anthonymandra.widget.SeekBarPreference
+        android:key="prefKeyWatermarkAlpha"
+        android:title="@string/prefTitleWatermarkAlpha"
+        android:defaultValue="75"
+        android:max="100" />
+    <ListPreference
+        android:defaultValue="Center"
+        android:key="prefKeyWatermarkLocation"
+        android:title="@string/prefTitleWatermarkLocation"
+        android:entries="@array/watermarkLocations"
+        android:entryValues="@array/watermarkLocationsValues" />
+
+</PreferenceScreen>
