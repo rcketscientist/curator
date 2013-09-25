@@ -1,6 +1,3 @@
-[submodule "libraries/Distribution"]
-	path = libraries/Distribution
-	url = https://github.com/openintents/distribution.git
 [submodule "libraries/FileManager"]
 	path = libraries/FileManager
 	url = https://github.com/openintents/filemanager.git
