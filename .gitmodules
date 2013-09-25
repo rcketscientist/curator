@@ -1,9 +1,15 @@
+[submodule "libraries/Distribution"]
+	path = libraries/Distribution
+	url = https://github.com/rcketscientist/distribution.git
 [submodule "libraries/FileManager"]
 	path = libraries/FileManager
-	url = https://github.com/openintents/filemanager.git
+	url = https://github.com/rcketscientist/filemanager.git
 [submodule "libraries/MetaDataExtractor"]
 	path = libraries/MetaDataExtractor
 	url = https://AMandra@code.google.com/r/amandra-xmp/
 [submodule "libraries/ShowcaseView"]
 	path = libraries/ShowcaseView
-	url = https://github.com/Espiandev/ShowcaseView.git
+	url = https://github.com/rcketscientist/ShowcaseView.git
+[submodule "libraries/Inscription"]
+	path = libraries/Inscription
+	url = https://github.com/rcketscientist/Inscription.git
