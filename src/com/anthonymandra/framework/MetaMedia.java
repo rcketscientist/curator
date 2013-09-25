@@ -1,5 +1,6 @@
 package com.anthonymandra.framework;
 
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -26,6 +27,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class MetaMedia extends MediaItem
@@ -46,6 +48,9 @@ public abstract class MetaMedia extends MediaItem
 	protected String isoLegacy;
 	protected String shutterLegacy;
 	protected int orientLegacy = 0;
+
+    protected SimpleDateFormat mExifFormatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+    protected SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
 
     public MetaMedia(Uri path, long version) {
         super(path, version);
@@ -322,6 +327,12 @@ public abstract class MetaMedia extends MediaItem
 				return 90;
 			case 8:
 				return 270;
+            case 90:
+                return 90;
+            case 180:
+                return 180;
+            case 270:
+                return 270;
 			default:
 				return 0;
 		}
@@ -447,7 +458,7 @@ public abstract class MetaMedia extends MediaItem
 	private boolean readMeta()
 	{
 		// Metadata
-		InputStream raw = getImageInputStream();
+		InputStream raw = getImage();
 		try
 		{
 			mMetadata = ImageMetadataReader.readMetadata(raw);
@@ -463,17 +474,14 @@ public abstract class MetaMedia extends MediaItem
 			Log.w(TAG, "Failed to open file for meta data.", e);
 			return false;
 		}
+        catch (Exception e)
+        {
+            Log.w(TAG, "Unknown meta data error.", e);
+            return false;
+        }
 		finally
 		{
-			try
-			{
-				if (raw != null)
-					raw.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+            Utils.closeSilently(raw);
 		}
 	}
 

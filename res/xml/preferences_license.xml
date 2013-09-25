@@ -12,4 +12,7 @@
         android:key="prefKeyContact"
         android:title="@string/prefTitleContact"
         android:summary="@string/prefSummaryContact" />
+    <Preference
+        android:title="@string/chinaBuyProTitle"
+        android:summary="@string/chinaBuyProSummary" />
 </PreferenceScreen>

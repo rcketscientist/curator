@@ -65,19 +65,19 @@ public class CameraImport extends Activity
 			if (usbManager == null)
 			{
 				Toast.makeText(this, "USB Error 01: Failed to access bus.", Toast.LENGTH_SHORT).show();
-				return;
+				finish();
 			}
 			UsbDeviceConnection usbDeviceConnection = usbManager.openDevice(device);
 			if (usbDeviceConnection == null)
 			{
 				Toast.makeText(this, "USB Error 02: Failed to open device.", Toast.LENGTH_SHORT).show();
-				return;
+                finish();
 			}
 			mMtpDevice = new MtpDevice(device);
 			if (mMtpDevice == null)
 			{
 				Toast.makeText(this, "USB Error 03: Failed to create connection.", Toast.LENGTH_SHORT).show();
-				return;
+                finish();
 			}
 			mMtpDevice.open(usbDeviceConnection);
 		}

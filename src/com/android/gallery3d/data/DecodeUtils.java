@@ -33,8 +33,10 @@ import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class DecodeUtils {
@@ -185,6 +187,33 @@ public class DecodeUtils {
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeByteArray(data, 0, data.length, options));
 	}
+
+    /**
+     * Decodes the bitmap from the given byte array if the image size is larger than the given
+     * requirement.
+     *
+     * Note: The returned image may be resized down. However, both width and height must be
+     * larger than the <code>targetSize</code>.
+     */
+    public static Bitmap decodeIfBigEnough(JobContext jc, InputStream data,
+                                           Options options, int targetSize) {
+        if (options == null) options = new Options();
+        jc.setCancelListener(new DecodeCanceller(options));
+
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(data, null, options);
+        if (jc.isCancelled()) return null;
+        if (options.outWidth < targetSize || options.outHeight < targetSize) {
+            return null;
+        }
+        options.inSampleSize = BitmapUtils.computeSampleSizeLarger(
+                options.outWidth, options.outHeight, targetSize);
+        options.inJustDecodeBounds = false;
+        setOptionsMutable(options);
+
+        return ensureGLCompatibleBitmap(
+                BitmapFactory.decodeStream(data, null, options));
+    }
 
 	// TODO: This function should not be called directly from
 	// DecodeUtils.requestDecode(...), since we don't have the knowledge
@@ -345,6 +374,65 @@ public class DecodeUtils {
         setOptionsMutable(options);
 
         Bitmap result = BitmapFactory.decodeByteArray(imageData, 0, imageData.length, options);
+        if (result == null) return null;
+
+        // We need to resize down if the decoder does not support inSampleSize
+        // (For example, GIF images)
+        float scale = (float) targetSize / (type == MediaItem.TYPE_MICROTHUMBNAIL
+                ? Math.min(result.getWidth(), result.getHeight())
+                : Math.max(result.getWidth(), result.getHeight()));
+
+        if (scale <= 0.5) result = BitmapUtils.resizeBitmapByScale(result, scale, true);
+        return ensureGLCompatibleBitmap(result);
+    }
+
+    public static Bitmap decodeThumbnail(
+            JobContext jc, InputStream imageData, Options options, int targetSize, int type) {
+        imageData.mark(0);
+        if (options == null) options = new Options();
+        jc.setCancelListener(new DecodeCanceller(options));
+
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(imageData, null, options);
+        if (jc.isCancelled()) return null;
+
+        int w = options.outWidth;
+        int h = options.outHeight;
+
+        if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
+            // We center-crop the original image as it's micro thumbnail. In this case,
+            // we want to make sure the shorter side >= "targetSize".
+            float scale = (float) targetSize / Math.min(w, h);
+            options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
+
+            // For an extremely wide image, e.g. 300x30000, we may got OOM when decoding
+            // it for TYPE_MICROTHUMBNAIL. So we add a max number of pixels limit here.
+            final int MAX_PIXEL_COUNT = 640000; // 400 x 1600
+            if ((w / options.inSampleSize) * (h / options.inSampleSize) > MAX_PIXEL_COUNT) {
+                options.inSampleSize = BitmapUtils.computeSampleSize(
+                        FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
+            }
+        } else {
+            // For screen nail, we only want to keep the longer side >= targetSize.
+            float scale = (float) targetSize / Math.max(w, h);
+            options.inSampleSize = BitmapUtils.computeSampleSizeLarger(scale);
+        }
+
+        options.inJustDecodeBounds = false;
+        setOptionsMutable(options);
+
+        try {
+            // TODO: This works, but is there a better way?
+            if (imageData instanceof FileInputStream)
+                ((FileInputStream)imageData).getChannel().position(0);
+            else
+                imageData.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        Bitmap result = BitmapFactory.decodeStream(imageData, null, options);
         if (result == null) return null;
 
         // We need to resize down if the decoder does not support inSampleSize

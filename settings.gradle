@@ -1,0 +1,4 @@
+//include ':app'
+include ':libraries:ShowcaseView:library'
+include ':libraries:Distribution'
+include ':libraries:FileManager:FileManager'

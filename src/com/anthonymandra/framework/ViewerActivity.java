@@ -1,10 +1,12 @@
 package com.anthonymandra.framework;
 
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.ActionProvider;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.ShareActionProvider;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.data.MediaObject;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -42,10 +44,12 @@ import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -53,8 +57,7 @@ import java.util.TimerTask;
  * Created by amand_000 on 8/27/13.
  */
 public abstract class ViewerActivity extends GalleryActivity implements
-        ShareActionProvider.OnShareTargetSelectedListener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener {
 
     private static final String TAG = ViewerActivity.class.getSimpleName();
 
@@ -114,8 +117,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected boolean isInterfaceHidden;
 
-    protected ShareActionProvider mShareProvider;
-
     public static int displayWidth;
     public static int displayHeight;
 
@@ -136,6 +137,13 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
         super.onCreate(savedInstanceState);
         mImageIndex = setPathFromIntent();
+
+        if (mImageIndex == -1)
+        {
+            Toast.makeText(this, "Unable to locate imported image, restarting...", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, RawDroid.class));
+            finish();
+        }
     }
 
     protected void initialize()
@@ -325,7 +333,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         int actionBarHeight = 0;
         // Calculate ActionBar height
         TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(R.attr.actionBarSize, tv, true))
+        if (getTheme().resolveAttribute(com.actionbarsherlock.R.attr.actionBarSize, tv, true))
         {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
@@ -364,6 +372,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 setRequestedOrientation(orientation);
             }
         });
+    }
+
+    @Override
+    public void onSubUiVisibilityChanged(boolean isVisible) {
+        if (isVisible && autoHide != null)
+            autoHide.cancel();
     }
 
     class PreviousImageClickListener implements View.OnClickListener
@@ -654,19 +668,17 @@ public abstract class ViewerActivity extends GalleryActivity implements
         if (actionItem != null)
         {
             mShareProvider = (ShareActionProvider) actionItem.getActionProvider();
-            mShareProvider.setOnShareTargetSelectedListener(this);
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("image/jpeg");
-            mShareProvider.setShareIntent(shareIntent);
+            mShareProvider.setShareIntent(mShareIntent);
+            mShareProvider.setSubUiVisibilityListener(this);
         }
         return true;
     }
 
     @Override
-    public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
-    {
-        share(intent, getCurrentItem());
-        return true;
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (autoHide != null)
+            autoHide.cancel();
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -713,28 +725,20 @@ public abstract class ViewerActivity extends GalleryActivity implements
     private void editImage()
     {
         MediaItem media = getCurrentItem();
-        BufferedInputStream imageData = media.getThumbInputStream();
-        if (imageData == null)
-        {
-            Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
-            return;
-        }
-        File swapFile = getSwapFile(Util.swapExtention(media.getName(), ".jpg"));
-        write(swapFile, imageData);
-        try
-        {
-            imageData.close();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+//        BufferedInputStream imageData = media.getThumbInputStream();
+//        if (imageData == null)
+//        {
+//            Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
+//            return;
+//        }
+
+//        Utils.closeSilently(imageData);
 
         Intent action = new Intent(Intent.ACTION_EDIT);
         action.setType("image/jpeg");
 
 //        action.setDataAndType(Uri.fromFile(swapFile), "image/*");
-        action.setDataAndType(Uri.parse("content://" + SwapProvider.AUTHORITY + "/" + swapFile.getName()), "image/*");
+        action.setDataAndType(media.getSwapUri(), "image/*");
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
@@ -751,55 +755,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 if (resultCode == RESULT_OK && data != null)
                 {
                     File dest = new File(data.getData().getPath());
-
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, dest.getParent());
-                    editor.commit();
-
-                    boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
-                    String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
-                    int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-                    int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
-                    String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-
-                    MediaItem source = getCurrentItem();
-
-                    BufferedInputStream imageData = source.getThumbInputStream();
-                    if (imageData == null)
-                    {
-                        Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
-
-                    if (!mLicenseManager.isLicensed())
-                    {
-                        bmp = Util.addWatermark(ViewerActivity.this, bmp);
-                    }
-                    else if (showWatermark)
-                    {
-                        bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                    }
-
-                    try {
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(dest));
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(this, R.string.save_fail, Toast.LENGTH_SHORT).show();
-                        e.printStackTrace();
-                    }
-
-                    try
-                    {
-                        imageData.close();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-
-                    Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
+                    handleSaveImage(dest);
                 }
                 break;
             case REQUEST_CODE_EDIT:
@@ -811,17 +767,71 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
     }
 
-    private void setWallpaper()
+    private void handleSaveImage(File dest)
     {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, dest.getParent());
+        editor.commit();
+
+        boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+        String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
+        int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+        int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+        String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
+        MediaItem source = getCurrentItem();
+
+        InputStream imageData = source.getThumb();
+        if (imageData == null)
+        {
+            Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         try
         {
-            byte[] imageData = getCurrentItem().getThumb();
-            WallpaperManager.getInstance(this).setBitmap(Util.createBitmapToSize(imageData, displayWidth, displayHeight));
+            Bitmap bmp = BitmapFactory.decodeStream(imageData);
+
+            if (!mLicenseManager.isLicensed())
+            {
+                bmp = Util.addWatermark(ViewerActivity.this, bmp);
+            }
+            else if (showWatermark)
+            {
+                bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+            }
+
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(dest));
+        }
+        catch(Exception e)
+        {
+            Toast.makeText(this, R.string.save_fail, Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+        finally {
+            Utils.closeSilently(imageData);
+        }
+
+        Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
+    }
+
+    private void setWallpaper()
+    {
+        InputStream imageData = getCurrentItem().getThumb();
+        try
+        {
+            WallpaperManager.getInstance(this).setBitmap(Util.createBitmapToSize(
+                    imageData, displayWidth, displayHeight));
         }
         catch (Exception e)
         {
             Log.e(TAG, e.toString());
             Toast.makeText(ViewerActivity.this, R.string.resultWallpaperFailed, Toast.LENGTH_SHORT).show();
+        }
+        finally
+        {
+            Utils.closeSilently(imageData);
         }
     }
 

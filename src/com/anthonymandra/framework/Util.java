@@ -18,20 +18,26 @@ package com.anthonymandra.framework;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
@@ -283,6 +289,18 @@ public class Util
 		BitmapFactory.decodeStream(data, null, o);
 		o.inSampleSize = Util.getExactSampleSize(o, width, height);
 		o.inJustDecodeBounds = false;
+
+        try {
+            // TODO: This works, but is there a better way?
+            if (data instanceof FileInputStream)
+                ((FileInputStream)data).getChannel().position(0);
+            else
+                data.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
 		result = BitmapFactory.decodeStream(data, null, o);
 		return result;
 	}
@@ -371,7 +389,7 @@ public class Util
         else if (width < 768)
             id = R.drawable.watermark128;
         Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id);
-        canvas.drawBitmap(watermark, width/4*3, height/4*3, null);
+        canvas.drawBitmap(watermark, width/4*3 - watermark.getWidth(), height/4*3, null);
 
         return result;
     }
@@ -425,5 +443,39 @@ public class Util
         canvas.drawText(watermark, x, y, paint);
 
         return result;
+    }
+
+    /**
+     * Returns intent that  opens app in Google Play or Amazon Appstore
+     * @param context
+     * @param packageName
+     * @return null if no market available, otherwise intent
+     */
+    public static Intent getStoreIntent(Context context, String packageName)
+    {
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        String url = "market://details?id=" + packageName;
+        i.setData(Uri.parse(url));
+
+        if (isIntentAvailable(context, i))
+        {
+            return i;
+        }
+
+        i.setData(Uri.parse("http://www.amazon.com/gp/mas/dl/android?p=" + packageName));
+        if (isIntentAvailable(context, i))
+        {
+            return i;
+        }
+        return null;
+
+    }
+
+    public static boolean isIntentAvailable(Context context, Intent intent) {
+        final PackageManager packageManager = context.getPackageManager();
+        List<ResolveInfo> list =
+                packageManager.queryIntentActivities(intent,
+                        PackageManager.MATCH_DEFAULT_ONLY);
+        return list.size() > 0;
     }
 }

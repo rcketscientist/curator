@@ -26,9 +26,12 @@ import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawdroid.RawDroid;
+import com.anthonymandra.rawdroid.ViewerChooser;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Rect;
@@ -40,8 +43,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 public abstract class PhotoPage extends AbstractGalleryActivity implements
         PhotoView.Listener, GalleryApp, PhotoDataAdapter.DataListener/*,ShareActionProvider.OnShareTargetSelectedListener,*/
@@ -473,6 +478,12 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //            }
 
         mCurrentIndex = setPathFromIntent();
+        if (mCurrentIndex == -1)
+        {
+            Toast.makeText(this, "Unable to locate imported image, restarting...", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, RawDroid.class));
+            finish();
+        }
 
         PhotoDataAdapter pda = new PhotoDataAdapter(
                 this, mPhotoView, mVisibleItems, mCurrentIndex,
@@ -508,6 +519,16 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                }
 //            }
 //        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateImageDetails();   // For small screens this will fix the meta panel shape
+        if(xmpFrag!=null) {
+            getSupportFragmentManager().beginTransaction().remove(xmpFrag).commit();
+        }
+        setContentView(R.layout.viewer_layout);
     }
 
     @Override

@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="1.9.3"
+        versioncode="117"
+        summary="Viewer fixes. There are still some crashes I can't reproduce or trace. Please email me with details if you're experiencing crashes."
+        date="09/18/2013">
+        <change>Updated: Share action processing</change>
+        <change>Fixed: Auto-hide will no longer cancel menu</change>
+    </release>
     <release version="1.9.2"
         versioncode="116"
         summary="Viewer fixes. There are still some crashes I can't reproduce or trace. Please email me with details if you're experiencing crashes."

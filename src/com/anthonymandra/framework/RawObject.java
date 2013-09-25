@@ -3,7 +3,9 @@ package com.anthonymandra.framework;
 import android.net.Uri;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by amand_000 on 8/9/13.
@@ -22,13 +24,9 @@ public interface RawObject {
 
     public boolean canDecode();
 
-    public byte[] getImage();
+    public InputStream getImage();
 
-    public byte[] getThumb();
-
-    public BufferedInputStream getThumbInputStream();
-
-    public BufferedInputStream getImageInputStream();
+    public InputStream getThumb();
 
     public long getFileSize();
 
@@ -37,4 +35,6 @@ public interface RawObject {
     public boolean copy(File destination);
 
     public boolean copyThumb(File destination);
+
+    public Uri getSwapUri();
 }

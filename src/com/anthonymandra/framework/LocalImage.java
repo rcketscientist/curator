@@ -9,18 +9,24 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.InputMismatchException;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.gallery3d.app.GalleryApp;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
@@ -47,37 +53,15 @@ public class LocalImage extends MetaMedia
 	}
 
 	@Override
-	public byte[] getImage()
+	public InputStream getImage()
 	{
-		BufferedInputStream bis = null;
 		try
 		{
-			bis = getImageInputStream();
-			if (bis == null)
-				return null;
-			byte[] imageData = new byte[bis.available()];
-			bis.read(imageData);
-			return imageData;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return null;
-		}
-		finally
-		{
-			if (bis != null)
-			{
-				try
-				{
-					bis.close();
-				}
-				catch (IOException e)
-				{
-				}
-			}
-		}
-	}
+            return new FileInputStream(mImage);
+		} catch (FileNotFoundException e) {
+            return null;
+        }
+    }
 
 	@Override
 	public boolean delete()
@@ -122,7 +106,7 @@ public class LocalImage extends MetaMedia
 
 	@SuppressLint("SimpleDateFormat")
 	@Override
-	public byte[] getThumb()
+	public InputStream getThumb()
 	{
 		if (Util.isNativeImage(this))
 		{
@@ -133,18 +117,35 @@ public class LocalImage extends MetaMedia
 			thumbHeight = o.outHeight;
 			width = o.outWidth;
 			height = o.outHeight;
-			
+
+            try {
+                ExifInterface ei = new ExifInterface(getFilePath());
+                makeLegacy = ei.getAttribute(ExifInterface.TAG_MAKE);
+                modelLegacy = ei.getAttribute(ExifInterface.TAG_MODEL);
+                apertureLegacy = ei.getAttribute(ExifInterface.TAG_APERTURE);
+                focalLegacy = ei.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+                isoLegacy = ei.getAttribute(ExifInterface.TAG_ISO);
+                shutterLegacy = ei.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+                try
+                {
+                    dateLegacy = mExifFormatter.parse(ei.getAttribute(ExifInterface.TAG_DATETIME));
+                }
+                catch (Exception e)
+                {
+                    Log.d(TAG, "Date exif parse failed:", e);
+                }
+                orientLegacy = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 			return getImage();
 		}
 
-		// byte[] image = getImage();
-		// if (image == null)
-		// return image;
-
 		String[] exif = new String[12];
-		byte[] image = LibRaw.getThumb(mImage, exif);
-//		ExifIFD0Directory exifDir = mMetadata.getOrCreateDirectory(ExifIFD0Directory.class);
-//		ExifSubIFDDirectory exifSubDir = mMetadata.getOrCreateDirectory(ExifSubIFDDirectory.class);
+		InputStream image = LibRaw.getThumb(mImage, exif);
+
 		try
 		{
 			setThumbHeight(Integer.parseInt(exif[8]));
@@ -166,8 +167,7 @@ public class LocalImage extends MetaMedia
 		
 		try
 		{
-			SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
-			dateLegacy = sdf.parse(exif[6].trim());
+			dateLegacy = mLibrawFormatter.parse(exif[6].trim());
 		}
 		catch (Exception e)
 		{
@@ -187,33 +187,11 @@ public class LocalImage extends MetaMedia
 	}
 
 	@Override
-	public BufferedInputStream getThumbInputStream()
-	{
-		byte[] thumb = getThumb();
-		if (thumb == null)
-			return null;
-		return new BufferedInputStream(new ByteArrayInputStream(thumb));
-	}
-
-	@Override
 	public BufferedOutputStream getXmpOutputStream()
 	{
 		try
 		{
 			return new BufferedOutputStream(new FileOutputStream(getXmpFile()));
-		}
-		catch (FileNotFoundException e)
-		{
-			return null;
-		}
-	}
-
-	@Override
-	public BufferedInputStream getImageInputStream()
-	{
-		try
-		{
-			return new BufferedInputStream(new FileInputStream(mImage));
 		}
 		catch (FileNotFoundException e)
 		{
@@ -330,13 +308,7 @@ public class LocalImage extends MetaMedia
 			if (xmpStream != null)
 			{
 				Util.copy(xmpStream, xmpDest);
-				try
-				{
-					xmpStream.close();
-				}
-				catch (IOException e)
-				{
-				}
+                Utils.closeSilently(xmpStream);
 			}
 		}
 
@@ -346,19 +318,12 @@ public class LocalImage extends MetaMedia
 		}
 
 		File imageDest = new File(destination, mImage.getName());
-		BufferedInputStream imageStream = getImageInputStream();
+        InputStream imageStream = getImage();
 		if (imageStream == null)
 			return false;
 
 		Util.copy(imageStream, imageDest);
-		try
-		{
-			imageStream.close();
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
+        Utils.closeSilently(imageStream);
 
 		return true;
 	}
@@ -366,15 +331,15 @@ public class LocalImage extends MetaMedia
 	@Override
 	public boolean copyThumb(File destination)
 	{
-		BufferedOutputStream thumbStream = null;
+		BufferedOutputStream destStream = null;
+        InputStream thumb = null;
 		try
 		{
 			File thumbDest = new File(destination, Util.swapExtention(getName(), ".jpg"));
-			thumbStream = new BufferedOutputStream(new FileOutputStream(thumbDest));
-			byte[] thumb = getThumb();
-			if (thumb == null)
-				return false;
-			thumbStream.write(getThumb()); // Assumes thumb is already in an image format (jpg at time of coding)
+			destStream = new BufferedOutputStream(new FileOutputStream(thumbDest));
+
+            thumb = getThumb();
+            Util.copy(thumb, thumbDest);
 		}
 		catch (IOException e)
 		{
@@ -382,22 +347,19 @@ public class LocalImage extends MetaMedia
 		}
 		finally
 		{
-			try
-			{
-				if (thumbStream != null)
-				{
-					thumbStream.close();
-				}
-			}
-			catch (IOException e)
-			{
-				return false;
-			}
+            Utils.closeSilently(destStream);
+            Utils.closeSilently(thumb);
 		}
 		return true;
 	}
 
-	@Override
+    @Override
+    public Uri getSwapUri() {
+        return Uri.parse("content://" + SwapProvider.AUTHORITY + "/" + Util.swapExtention(mImage.getName(), ".jpg")
+            + "#" + mImage.getPath());
+    }
+
+    @Override
 	public Job<Bitmap> requestImage(GalleryApp app, int type)
 	{
 		return new LocalImageRequest(app, Uri.fromFile(mImage), type, this);
@@ -416,33 +378,39 @@ public class LocalImage extends MetaMedia
 		@Override
 		public Bitmap onDecodeOriginal(JobContext jc, final int type)
 		{
-            byte[] imageData = mImage.getThumb();
+            InputStream imageData = mImage.getThumb();
+            try
+            {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                int targetSize = MetaMedia.getTargetSize(type);
 
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-			int targetSize = MetaMedia.getTargetSize(type);
+                // try to decode from JPEG EXIF
+                if (type == MetaMedia.TYPE_MICROTHUMBNAIL)
+                {
+                    // ExifInterface exif = null;
+                    // byte [] thumbData = null;
+                    // try {
+                    // exif = new ExifInterface(mLocalFilePath);
+                    // if (exif != null) {
+                    // thumbData = exif.getThumbnail();
+                    // }
+                    // } catch (Throwable t) {
+                    // Log.w(TAG, "fail to get exif thumb", t);
+                    // }
+                    // if (thumbData != null) {
+                    Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData, options, targetSize);
+                    if (bitmap != null)
+                        return bitmap;
+                    // }
+                }
 
-			// try to decode from JPEG EXIF
-			if (type == MetaMedia.TYPE_MICROTHUMBNAIL)
-			{
-				// ExifInterface exif = null;
-				// byte [] thumbData = null;
-				// try {
-				// exif = new ExifInterface(mLocalFilePath);
-				// if (exif != null) {
-				// thumbData = exif.getThumbnail();
-				// }
-				// } catch (Throwable t) {
-				// Log.w(TAG, "fail to get exif thumb", t);
-				// }
-				// if (thumbData != null) {
-				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData, options, targetSize);
-				if (bitmap != null)
-					return bitmap;
-				// }
-			}
-
-			return DecodeUtils.decodeThumbnail(jc, imageData, options, targetSize, type);
+                return DecodeUtils.decodeThumbnail(jc, imageData, options, targetSize, type);
+            }
+            finally
+            {
+                Utils.closeSilently(imageData);
+            }
 		}
 	}
 
@@ -463,8 +431,16 @@ public class LocalImage extends MetaMedia
 
 		public BitmapRegionDecoder run(JobContext jc)
 		{
-            byte[] imageData = mImage.getThumb();
-			return DecodeUtils.createBitmapRegionDecoder(jc,imageData, 0, imageData.length, false);
+            InputStream imageData = mImage.getThumb();
+            try
+            {
+			    BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc, imageData, false);
+                return brd;
+            }
+            finally
+            {
+                Utils.closeSilently(imageData);
+            }
 		}
 	}
 

@@ -4,7 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.BuildConfig;
+
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class ImageDecoder extends ImageResizer
 {
@@ -44,26 +49,25 @@ public class ImageDecoder extends ImageResizer
 			Log.d(TAG, "processBitmap - " + media.getName());
 		}
 
-//		// Image for folders
-//		if (media.isDirectory())
-//		{
-//			return mFolderBitmap;
-//		}
-//
-		byte[] imageData = media.getThumb();
+        InputStream imageData = media.getThumb();
 		if (imageData == null)
 		{
 			return null;
 		}
-//		if (imageData == null || imageData.length == 0)
-//		{
-//			return mUnknownBitmap;
-//		}
 
-		Bitmap b = decodeSampledBitmapFromByteArray(imageData, mImageWidth, mImageHeight);
-		imageData = null;
-
-		return b;
+        try
+        {
+		    Bitmap b = decodeSampledBitmapFromInputStream(imageData, mImageWidth, mImageHeight);
+            return b;
+        }
+        catch(Exception e)
+        {
+            return null;
+        }
+        finally
+        {
+            Utils.closeSilently(imageData);
+        }
 	}
 
 	@Override

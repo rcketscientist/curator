@@ -2,24 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <excludeFromCompile>
-      <directory url="file://$PROJECT_DIR$/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/amandra-treeview/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/Distribution/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/FileManager/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/gen" includeSubdirectories="true" />
-      <directory url="file://$PROJECT_DIR$/../../rawdroid/Inscription/library/gen" includeSubdirectories="true" />
-      <file url="file://$PROJECT_DIR$/src/com/anthonymandra/content/DecodeRawClient.java" />
-      <file url="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MtpImage.java" />
-      <file url="file://$PROJECT_DIR$/src/com/anthonymandra/content/RawRequestTask.java" />
-      <directory url="file://$PROJECT_DIR$/src/com/anthonymandra/content" includeSubdirectories="true" />
-      <file url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpWriter.java" />
-      <file url="file://$PROJECT_DIR$/src/com/anthonymandra/framework/FileHandler.java" />
-      <file url="file://$PROJECT_DIR$/src/com/anthonymandra/framework/FileHandlerFactory.java" />
-    </excludeFromCompile>
     <resourceExtensions />
     <wildcardResourcePatterns>
       <entry name="!?*.java" />

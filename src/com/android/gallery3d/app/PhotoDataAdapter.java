@@ -175,14 +175,6 @@ public class PhotoDataAdapter implements Model {
         mSource = Utils.checkNotNull(mediaSet);
 		mSize = mSource.size();
         mPhotoView = Utils.checkNotNull(view);
-        try {
-            mItemPath = mediaSet.get(indexHint).getUri();
-        }
-        catch(Exception e)
-        {
-            Toast.makeText(mActivity.getAndroidContext(), "Please email about how you're opening Rawdroid.  I cannot trace this error.  Thanks!", Toast.LENGTH_LONG).show();
-            throw new IndexOutOfBoundsException(e.getMessage());
-        }
         mCurrentIndex = indexHint;
         mCameraIndex = cameraIndex;
         mIsPanorama = isPanorama;

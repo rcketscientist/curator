@@ -16,7 +16,18 @@ public class LicenseManager extends ContentObserver {
     private static Context mContext;
 
     private static LicenseState licenseState = LicenseState.Unlicensed;
-    public static enum LicenseState { Licensed, Unlicensed, NoResponse, NoProvider, Error };
+
+    public static final int LICENSED = 0x100;
+    public static final int UNLICENSED = 0x101;
+    public static final int ERROR = 0x102;
+    public static final int MODIFIED = 0x103;
+
+    // TODO: Remove eventually
+    public static final int OLD_LICENSED = 1;
+    public static final int OLD_UNLICENSED = 0;
+    public static final int OLD_ERROR = 2;
+
+    public static enum LicenseState { Licensed, Unlicensed, NoResponse, NoProvider, Error, Modified };
     private static final String LICENSE_AUTHORITY = "content://com.anthonymandra.rawdroidpro.LicenseProvider";
 
     public LicenseManager(Context context, Handler handler)
@@ -58,9 +69,17 @@ public class LicenseManager extends ContentObserver {
             Log.d(TAG, "" + result);
             switch (result)
             {
-                case 0: licenseState = LicenseState.Unlicensed; break;
-                case 1: licenseState = LicenseState.Licensed; break;
-                case 2: licenseState = licenseState.Error; break;
+                case OLD_UNLICENSED:
+                case UNLICENSED:
+                    licenseState = LicenseState.Unlicensed; break;
+                case LICENSED:
+                case OLD_LICENSED:
+                    licenseState = LicenseState.Licensed; break;
+                case ERROR:
+                case OLD_ERROR:
+                    licenseState = licenseState.Error; break;
+                case MODIFIED:
+                    licenseState = licenseState.Modified; break;
                 default: licenseState = licenseState.NoResponse;
             }
         }

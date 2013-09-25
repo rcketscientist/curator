@@ -33,23 +33,26 @@
       </layout>
     </layouts>
   </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark1024.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark128.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark256.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark512.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/drawable/watermark_old.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/Distribution" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/FileManager" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/ShowcaseView" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitmodules" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseApp.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/widget/SeekBarPreference.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/xml/preferences_license.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/xml/preferences_watermark.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/values/china.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../rawdroid_pro_amz/rawdroid_pro_amz.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/settings.gradle" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/rawdroid.iml" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\src\com\anthonymandra\rawdroid\PPMFile.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\src\com\anthonymandra\rawdroid\PPMtoBMP.java" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\rawdroid\ActionBarSherlock\library\test\com\actionbarsherlock\internal\ManifestParsingTest.java" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\10x12x16bit-CMYK.psd" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\16color-10x10.bmp" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\24bpp-10x10.bmp" afterPath="" />
@@ -185,37 +188,40 @@
       <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\photoshop\PsdReaderTest.java" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\xmp\XmpReaderTest.java" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\testing\TestHelper.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/libs/android-support-v4.jar" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/libs/android-support-v4.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Distribution/.classpath" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/.classpath" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/FileManager/.classpath" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/src/com/actionbarsherlock/widget/ActivityChooserModel.java" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/src/com/actionbarsherlock/widget/ActivityChooserModel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../rawdroid_pro_amz/AndroidManifest.xml" afterPath="$PROJECT_DIR$/../rawdroid_pro_amz/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/AppRater.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/AppRater.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/data/DecodeUtils.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/data/DecodeUtils.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryApp.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryApp.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryContext.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryContext.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageDecoder.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageDecoder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageResizer.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageResizer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/LegacyViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/LegacyViewerActivity.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../rawdroid_pro/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" afterPath="$PROJECT_DIR$/../rawdroid_pro/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../rawdroid_pro_amz/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" afterPath="$PROJECT_DIR$/../rawdroid_pro_amz/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PositionController.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/ui/PositionController.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/README.md" afterPath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/RawObject.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/RawObject.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/RecycleBin.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/RecycleBin.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/sample/src/com/github/espiandev/showcaseview/sample/SampleActivity.java" afterPath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/sample/src/com/github/espiandev/showcaseview/sample/SampleActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/ui/TileImageView.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/ui/TileImageView.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/arrays.xml" afterPath="$PROJECT_DIR$/res/values/arrays.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/changelog.xml" afterPath="$PROJECT_DIR$/res/xml/changelog.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/libs.xml" afterPath="$PROJECT_DIR$/.idea/libraries/libs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/metadata-extractor.iml" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/metadata-extractor.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/layout/nav_panel.xml" afterPath="$PROJECT_DIR$/res/layout/nav_panel.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preference_headers.xml" afterPath="$PROJECT_DIR$/res/xml/preference_headers.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preference_headers_legacy.xml" afterPath="$PROJECT_DIR$/res/xml/preference_headers_legacy.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences_view.xml" afterPath="$PROJECT_DIR$/res/xml/preferences_view.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences_license.xml" afterPath="$PROJECT_DIR$/res/xml/preferences_license.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/demos/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/demos/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/fragments/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/fragments/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Distribution/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/project.properties" />
@@ -225,8 +231,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/sample/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/sample/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values-zh-rCN/strings.xml" afterPath="$PROJECT_DIR$/res/values-zh-rCN/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\junit-4.11-src.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/junit-4.11-src.jar" />
       <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\junit-4.11.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/junit-4.11.jar" />
       <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\xmpcore-5.1.2-sources.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2-sources.jar" />
@@ -241,6 +245,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="Commander">
+    <leftPanel />
+    <rightPanel />
+    <splitter proportion="0.5" />
+  </component>
   <component name="CompilerWorkspaceConfiguration">
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
     <option name="PARALLEL_COMPILATION" value="true" />
@@ -252,6 +261,53 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" line="1109" class="com.android.gallery3d.app.PhotoDataAdapter.ReloadTask" package="com.android.gallery3d.app">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/preference/PreferenceActivity.java" line="594" class="android.preference.PreferenceActivity" package="android.preference">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" line="69" class="com.anthonymandra.framework.SwapProvider" package="com.anthonymandra.framework">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
@@ -289,83 +345,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
-    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint url="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" line="1117" class="com.android.gallery3d.app.PhotoDataAdapter.ReloadTask" package="com.android.gallery3d.app">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/preference/PreferenceActivity.java" line="594" class="android.preference.PreferenceActivity" package="android.preference">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" line="545" class="com.anthonymandra.rawdroid.RawDroid" package="com.anthonymandra.rawdroid">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" line="123" class="com.anthonymandra.rawdroid.ImageViewActivity" package="com.anthonymandra.rawdroid">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" line="133" class="com.anthonymandra.rawdroid.ImageViewActivity" package="com.anthonymandra.rawdroid">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -375,75 +354,73 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="PhotoDataAdapter.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="329" column="40" selection-start="12651" selection-end="12651" vertical-scroll-proportion="0.0" vertical-offset="4077" max-vertical-offset="19890">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ViewerActivity.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="519" column="25" selection-start="20012" selection-end="20012" vertical-scroll-proportion="0.0" vertical-offset="7722" max-vertical-offset="14807">
-              <folding>
-                <element signature="e#23397#23424#0" expanded="true" />
-                <element signature="e#23489#23513#0" expanded="true" />
-                <element signature="e#23764#23783#0" expanded="true" />
-                <element signature="e#25754#25758#0" expanded="true" />
-                <element signature="e#26325#26329#0" expanded="true" />
-                <element signature="e#27089#27128#0" expanded="true" />
-                <element signature="e#28718#28722#0" expanded="true" />
-                <element signature="e#29522#29526#0" expanded="true" />
-                <element signature="e#29922#29926#0" expanded="true" />
-                <element signature="e#30629#30648#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="34" selection-start="1617" selection-end="1617" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4199">
+            <state line="815" column="19" selection-start="29906" selection-end="29977" vertical-scroll-proportion="0.0" vertical-offset="13855" max-vertical-offset="16116">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="changelog.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/xml/changelog.xml">
+      <file leaf-file-name="build.gradle" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="28" selection-start="666" selection-end="666" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3910">
+            <state line="15" column="23" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UploadedTexture.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java">
+      <file leaf-file-name="GalleryActivity.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="146" column="44" selection-start="4631" selection-end="4631" vertical-scroll-proportion="0.0" vertical-offset="1755" max-vertical-offset="4828">
+            <state line="667" column="0" selection-start="16792" selection-end="16792" vertical-scroll-proportion="0.0" vertical-offset="9550" max-vertical-offset="11254">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MetaMedia.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="CameraImport.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="130" column="0" selection-start="3540" selection-end="3540" vertical-scroll-proportion="0.0" vertical-offset="1356" max-vertical-offset="4811">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ExifReader.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/Source/com/drew/metadata/exif/ExifReader.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="654" column="0" selection-start="36785" selection-end="36785" vertical-scroll-proportion="0.0" vertical-offset="9754" max-vertical-offset="11288">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MetaMedia.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="431" column="19" selection-start="12469" selection-end="12469" vertical-scroll-proportion="0.0" vertical-offset="6464" max-vertical-offset="8959">
+            <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.71457696" vertical-offset="6881" max-vertical-offset="9061">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ImageViewActivity.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java">
+      <file leaf-file-name="settings.gradle" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/settings.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="165" column="29" selection-start="4215" selection-end="4215" vertical-scroll-proportion="0.52871287" vertical-offset="1948" max-vertical-offset="2958">
+            <state line="3" column="44" selection-start="137" selection-end="137" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="styles.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="60" column="0" selection-start="2525" selection-end="2525" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="1292">
               <folding />
             </state>
           </provider>
@@ -452,16 +429,16 @@
       <file leaf-file-name="PhotoPage.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="513" column="16" selection-start="22797" selection-end="22797" vertical-scroll-proportion="0.0" vertical-offset="7681" max-vertical-offset="25840">
+            <state line="530" column="0" selection-start="23551" selection-end="23551" vertical-scroll-proportion="0.0" vertical-offset="9010" max-vertical-offset="26979">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PhotoView.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java">
+      <file leaf-file-name="XmpFragment.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="466" column="16" selection-start="18079" selection-end="18079" vertical-scroll-proportion="-11.576923" vertical-offset="6975" max-vertical-offset="31705">
+            <state line="69" column="12" selection-start="2132" selection-end="2132" vertical-scroll-proportion="0.0" vertical-offset="1173" max-vertical-offset="8789">
               <folding />
             </state>
           </provider>
@@ -487,33 +464,426 @@
       <MyDateState />
     </option>
   </component>
+  <component name="GradleLocalSettings">
+    <option name="tasksExpandState">
+      <map>
+        <entry key="" value="true" />
+      </map>
+    </option>
+    <option name="availableProjects">
+      <map>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="FileManager" />
+              <option name="path" value="$PROJECT_DIR$/libraries/FileManager" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="FileManager" />
+                <option name="path" value="$PROJECT_DIR$/libraries/FileManager" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+        <entry>
+          <key>
+            <ExternalProjectPojo>
+              <option name="name" value="rawdroid" />
+              <option name="path" value="$PROJECT_DIR$" />
+            </ExternalProjectPojo>
+          </key>
+          <value>
+            <list>
+              <ExternalProjectPojo>
+                <option name="name" value="rawdroid" />
+                <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="ShowcaseView" />
+                <option name="path" value="$PROJECT_DIR$/libraries/ShowcaseView" />
+              </ExternalProjectPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="availableTasks">
+      <map>
+        <entry key="$PROJECT_DIR$">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the Android dependencies of the project" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="androidDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all variants of all applications and secondary packages." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="assemble" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Debug builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="assembleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Release builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="assembleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="assembleTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileTestAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="compileTestRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks on currently connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="connectedCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs the tests for Build 'Debug' on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="connectedInstrumentTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks using Device Providers and Test Servers." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="deviceCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="dexDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="dexRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="dexTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateDebugBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateReleaseBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateTestBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="generateTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="installDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="installTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs lint on all variants." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="lint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="lintDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="lintRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="lintTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeDebugAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeTestAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="mergeTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="packageDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="packageRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="packageTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="preBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="preDebugBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="preReleaseBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="preTestBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare com.actionbarsherlock:actionbarsherlock:4.4.0" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareComActionbarsherlockActionbarsherlock440Library" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareReleaseDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareTestDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processDebugJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processDebugManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processReleaseJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processReleaseManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processTestJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="processTestTestManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Initializes a new Gradle build. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="setupBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the signing info for each variant" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="signingReport" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstall all applications." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="uninstallAll" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="uninstallDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Release build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="uninstallRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="uninstallTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="validateDebugSigning" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/libraries/FileManager">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Generates a Gradle build file. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
+                <option name="name" value="generateBuildFile" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Generates a Gradle settings file. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
+                <option name="name" value="generateSettingsFile" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Initializes a new Gradle build. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
+                <option name="name" value="setupBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Generates Gradle wrapper files. [incubating]" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
+                <option name="name" value="setupWrapper" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="modificationStamps">
+      <map>
+        <entry key="$PROJECT_DIR$" value="1380027255125" />
+      </map>
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/android/gallery3d/app/GalleryApp.java" />
-        <option value="$PROJECT_DIR$/src/com/android/gallery3d/ui/TileImageView.java" />
+        <option value="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/src/com/google/android/vending/licensing/LicenseCheckerCallback.java" />
+        <option value="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/src/com/google/android/vending/licensing/ServerManagedPolicy.java" />
+        <option value="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/src/com/google/android/vending/licensing/LicenseValidator.java" />
+        <option value="$PROJECT_DIR$/../LicenseConstants/src/com/anthonymandra/licenseconstants/LicenseConstants.java" />
+        <option value="$PROJECT_DIR$/../rawdroid_pro/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" />
+        <option value="$PROJECT_DIR$/../rawdroid_pro_amz/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
-        <option value="$PROJECT_DIR$/res/layout/nav_panel.xml" />
-        <option value="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
-        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
-        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
-        <option value="$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java" />
-        <option value="$PROJECT_DIR$/src/com/android/gallery3d/ui/PositionController.java" />
-        <option value="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" />
-        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
-        <option value="$PROJECT_DIR$/res/xml/changelog.xml" />
-        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" />
+        <option value="$PROJECT_DIR$/../../rawdroid/Inscription/library/src/com/inscription/ChangeLogDialog.java" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/AppRater.java" />
         <option value="$PROJECT_DIR$/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java" />
+        <option value="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" />
+        <option value="$PROJECT_DIR$/settings.gradle" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="2576" />
-    <option name="height" value="1576" />
+    <option name="width" value="1280" />
+    <option name="height" value="1560" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -537,7 +907,7 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
     <OptionsSetting value="true" id="Checkout" />
@@ -563,6 +933,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -577,136 +948,23 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid_pro" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
               <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid_pro" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroidpro" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid_pro" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="xml" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="res" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="values" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="Modules" />
-    <property name="SHOW_ALL_PROCESSES" value="false" />
-    <property name="project.structure.proportion" value="0.15" />
-    <property name="OverrideImplement.combined" value="true" />
-    <property name="options.splitter.main.proportions" value="0.18732782" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="ExportedApkPath" value="D:\proj\clean\rawdroid\rawdroid.apk" />
-    <property name="ExportedModule" value="rawdroid" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2-sources.jar!/" />
-    <property name="DEBUGGABLE_DEVICE" value="R32CA07MXHK" />
-    <property name="DEBUGGABLE_PROCESS" value="com.anthonymandra.rawdroid" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="OverrideImplement.overriding.sorted" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
-    <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.splitter.details.proportions" value="0.34441602" />
-    <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="AndroidIncludeSystemProguardFile" value="true" />
-    <property name="AndroidProguardConfigPath" value="D:\proj\clean\rawdroid_pro\proguard-project.txt" />
-    <property name="options.lastSelected" value="editor.preferences.appearance" />
-    <property name="project.structure.side.proportion" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
-    <property name="AndroidRunProguardForReleaseBuild" value="false" />
-    <property name="restartRequiresConfirmation" value="true" />
-    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -717,7 +975,81 @@
       <recent name="D:\proj\clean\rawdroid\res\drawable-ldpi" />
     </key>
   </component>
-  <component name="RunManager" selected="Android Application.rawdroid">
+  <component name="RunManager" selected="Groovy.build (4)">
+    <configuration default="false" name="build" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
+      <module name="rawdroid" />
+      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="build (1)" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
+      <module name="rawdroid" />
+      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="build (2)" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
+      <module name="rawdroid" />
+      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="build (3)" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
+      <module name="rawdroid" />
+      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="false" name="build (4)" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
+      <module name="rawdroid" />
+      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method>
+        <option name="Make" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
+      <module name="" />
+      <setting name="path" value="" />
+      <setting name="vmparams" value="" />
+      <setting name="params" value="" />
+      <setting name="workDir" value="file://$PROJECT_DIR$" />
+      <setting name="debug" value="false" />
+      <method />
+    </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
       <module name="" />
       <option name="TESTING_TYPE" value="0" />
@@ -755,6 +1087,33 @@
       <option name="VM_PARAMETERS" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="SUITE_NAME" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="GROUP_NAME" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="OUTPUT_DIRECTORY" />
+      <option name="ANNOTATION_TYPE" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="moduleWithDependencies" />
+      </option>
+      <option name="USE_DEFAULT_REPORTERS" value="false" />
+      <option name="PROPERTIES_FILE" />
+      <envs />
+      <properties />
+      <listeners />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -877,18 +1236,26 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <method />
     </configuration>
-    <list size="4">
+    <list size="9">
       <item index="0" class="java.lang.String" itemvalue="Android Application.rawdroid" />
       <item index="1" class="java.lang.String" itemvalue="Android Application.rawdroid_pro" />
       <item index="2" class="java.lang.String" itemvalue="Android Application.NotePad" />
       <item index="3" class="java.lang.String" itemvalue="Android Application.photomate2" />
+      <item index="4" class="java.lang.String" itemvalue="Groovy.build" />
+      <item index="5" class="java.lang.String" itemvalue="Groovy.build (1)" />
+      <item index="6" class="java.lang.String" itemvalue="Groovy.build (2)" />
+      <item index="7" class="java.lang.String" itemvalue="Groovy.build (3)" />
+      <item index="8" class="java.lang.String" itemvalue="Groovy.build (4)" />
     </list>
-    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-    </configuration>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Groovy.build (4)" />
+        <item index="1" class="java.lang.String" itemvalue="Groovy.build (3)" />
+        <item index="2" class="java.lang.String" itemvalue="Groovy.build (2)" />
+        <item index="3" class="java.lang.String" itemvalue="Groovy.build (1)" />
+        <item index="4" class="java.lang.String" itemvalue="Groovy.build" />
+      </list>
+    </recent_temporary>
     <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
     </configuration>
@@ -980,64 +1347,37 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="2576" height="1576" extended-state="6" />
+    <frame x="0" y="0" width="1280" height="1560" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.6732394" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.321831" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3274648" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.49084508" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39915374" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27183098" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2724679" sideWeight="0.41625616" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32863188" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4133803" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32816902" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46830985" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1487669" sideWeight="0.7295775" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15075576" sideWeight="0.7295775" order="3" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27042255" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2676519" sideWeight="0.6577975" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27339903" sideWeight="0.7275321" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2724679" sideWeight="0.5837439" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.5316901" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2810271" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3422025" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
     </layout>
-    <layout-to-restore>
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39915374" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32863188" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15075576" sideWeight="0.72605634" order="3" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27394366" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.6732394" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22676057" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32676056" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40915492" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17820206" sideWeight="0.72605634" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -1051,128 +1391,117 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java">
+    <entry file="file://$PROJECT_DIR$/res/layout/image_viewer.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="373" column="66" selection-start="10435" selection-end="10435" vertical-scroll-proportion="0.0" vertical-offset="5631" max-vertical-offset="7395">
-          <folding>
-            <element signature="e#0#11810#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="704" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java">
+    <entry file="file://$PROJECT_DIR$/res/layout/viewer_twopane_narrow.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="22" selection-start="1487" selection-end="1487" vertical-scroll-proportion="0.21065675" vertical-offset="0" max-vertical-offset="13345">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="704">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/graphics/Bitmap.java">
+    <entry file="file://$PROJECT_DIR$/res/layout/viewer_twopane_wide.xml">
+      <provider editor-type-id="android-designer">
+        <state />
+      </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state line="202" column="16" selection-start="6601" selection-end="6601" vertical-scroll-proportion="0.0" vertical-offset="2724" max-vertical-offset="24446">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="704">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/Histogram.java">
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="16" selection-start="813" selection-end="813" vertical-scroll-proportion="0.0" vertical-offset="405" max-vertical-offset="1581">
+        <state line="364" column="0" selection-start="8352" selection-end="8352" vertical-scroll-proportion="0.0" vertical-offset="5401" max-vertical-offset="7361">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/widget/HistogramView.java">
+    <entry file="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/android/support/v4/app/FragmentActivity.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="13" selection-start="344" selection-end="344" vertical-scroll-proportion="0.0" vertical-offset="918" max-vertical-offset="2125">
-          <folding />
-        </state>
+        <state line="88" column="50" selection-start="3790" selection-end="3790" vertical-scroll-proportion="0.40284842" vertical-offset="1083" max-vertical-offset="2091" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="513" column="16" selection-start="22797" selection-end="22797" vertical-scroll-proportion="0.0" vertical-offset="7681" max-vertical-offset="25840">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="329" column="40" selection-start="12651" selection-end="12651" vertical-scroll-proportion="0.0" vertical-offset="4077" max-vertical-offset="19890">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/ui/PhotoView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="466" column="16" selection-start="18079" selection-end="18079" vertical-scroll-proportion="-11.576923" vertical-offset="6975" max-vertical-offset="31705">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="19" selection-start="190" selection-end="190" vertical-scroll-proportion="0.18514852" vertical-offset="0" max-vertical-offset="1547">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="431" column="19" selection-start="12469" selection-end="12469" vertical-scroll-proportion="0.0" vertical-offset="6464" max-vertical-offset="8959">
+        <state line="530" column="0" selection-start="23551" selection-end="23551" vertical-scroll-proportion="0.0" vertical-offset="7951" max-vertical-offset="26112">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="519" column="25" selection-start="20012" selection-end="20012" vertical-scroll-proportion="0.0" vertical-offset="7722" max-vertical-offset="14807">
-          <folding>
-            <element signature="e#23397#23424#0" expanded="true" />
-            <element signature="e#23489#23513#0" expanded="true" />
-            <element signature="e#23764#23783#0" expanded="true" />
-            <element signature="e#25754#25758#0" expanded="true" />
-            <element signature="e#26325#26329#0" expanded="true" />
-            <element signature="e#27089#27128#0" expanded="true" />
-            <element signature="e#28718#28722#0" expanded="true" />
-            <element signature="e#29522#29526#0" expanded="true" />
-            <element signature="e#29922#29926#0" expanded="true" />
-            <element signature="e#30629#30648#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/AndroidManifest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="34" selection-start="1617" selection-end="1617" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4199">
+        <state line="815" column="19" selection-start="29906" selection-end="29977" vertical-scroll-proportion="0.0" vertical-offset="12005" max-vertical-offset="14909">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/xml/changelog.xml">
+    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/widget/Toast.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="28" selection-start="666" selection-end="666" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3910">
+        <state line="265" column="5" selection-start="8127" selection-end="8359" vertical-scroll-proportion="0.38207045" vertical-offset="3654" max-vertical-offset="6919" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="60" column="0" selection-start="2525" selection-end="2525" vertical-scroll-proportion="0.0" vertical-offset="361" max-vertical-offset="1292">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/glrenderer/UploadedTexture.java">
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="146" column="44" selection-start="4631" selection-end="4631" vertical-scroll-proportion="0.0" vertical-offset="1755" max-vertical-offset="4828">
+        <state line="69" column="12" selection-start="2132" selection-end="2132" vertical-scroll-proportion="0.0" vertical-offset="1173" max-vertical-offset="7939">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/Model.java">
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="18" selection-start="387" selection-end="387" vertical-scroll-proportion="0.2019802" vertical-offset="0" max-vertical-offset="1010">
+        <state line="3" column="44" selection-start="137" selection-end="137" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java">
+    <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="165" column="29" selection-start="4215" selection-end="4215" vertical-scroll-proportion="0.52871287" vertical-offset="1948" max-vertical-offset="2958">
+        <state line="15" column="23" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="667" column="0" selection-start="16792" selection-end="16792" vertical-scroll-proportion="0.0" vertical-offset="9550" max-vertical-offset="11254">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="130" column="0" selection-start="3540" selection-end="3540" vertical-scroll-proportion="0.0" vertical-offset="1356" max-vertical-offset="4811">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/Source/com/drew/metadata/exif/ExifReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="654" column="0" selection-start="36785" selection-end="36785" vertical-scroll-proportion="0.0" vertical-offset="9754" max-vertical-offset="11288">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.71457696" vertical-offset="6881" max-vertical-offset="9061">
           <folding />
         </state>
       </provider>
@@ -1217,7 +1546,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>Android 4.3 Platform</last-edited>
+          <last-edited>1.7</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1229,7 +1558,20 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>rawdroid_pro</last-edited>
+          <last-edited>rawdroid</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.7</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1241,7 +1583,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>dexedLibs</last-edited>
+          <last-edited>android-support-v4</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

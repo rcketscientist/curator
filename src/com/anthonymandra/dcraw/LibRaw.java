@@ -1,17 +1,20 @@
 package com.anthonymandra.dcraw;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Color;
+import android.util.Log;
+
+import com.android.gallery3d.common.Utils;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.Color;
-import android.util.Log;
 
 public class LibRaw
 {
@@ -87,66 +90,65 @@ public class LibRaw
 		return result;
 	}
 
-	// TODO: Should put this in a
-	public static byte[] getThumb(File file, String[] exif)
+	public static InputStream getThumb(File file, String[] exif)
 	{
 		int[] results = new int[3];
-//		String[] exifResult = new String[7];
-//		byte[] result = getThumbFromFile4(file.getFilePath(), results);
-		byte[] result = getThumbFromFile5(file.getPath(), results, exif);
-//		exif = exifResult;
+		final byte[] result = getThumbFromFile5(file.getPath(), results, exif);
 
 		if (result == null)
 			return null;
 
 		if (results[0] == 0)
 		{
-            Log.i(TAG, file.getName() + " is RGB thumb.");
-			int width = results[1];
-			int height = results[2];
+            BufferedInputStream reader = new BufferedInputStream(new ByteArrayInputStream(result));
+            ByteArrayOutputStream byteStream = null;
 
-			BufferedInputStream reader = new BufferedInputStream(new ByteArrayInputStream(result));
+            try
+            {
+                Log.i(TAG, file.getName() + " is RGB thumb.");
+                int width = results[1];
+                int height = results[2];
 
-			int[] colors = new int[width * height];
+                final int[] colors = new int[width * height];
 
-			// Read in the pixels
-			for (int y = 0; y < height; y++)
-			{
-				for (int x = 0; x < width; x++)
-				{
-					try
-					{
-						int r = reader.read();
-						int g = reader.read();
-						int b = reader.read();
-						colors[y * width + x] = Color.rgb(r, g, b);
-					}
-					catch (IOException e)
-					{
-						return null;
-					}
-				}
-			}
+                // Read in the pixels
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        try
+                        {
+                            int r = reader.read();
+                            int g = reader.read();
+                            int b = reader.read();
+                            colors[y * width + x] = Color.rgb(r, g, b);
+                        }
+                        catch (IOException e)
+                        {
+                            return null;
+                        }
+                    }
+                }
 
-			Bitmap bmp = Bitmap.createBitmap(colors, width, height, Bitmap.Config.ARGB_8888);
-			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			bmp.compress(CompressFormat.JPEG, 100, byteStream);
-			byte[] resultBytes = byteStream.toByteArray();
-			try
-			{
-				byteStream.close();
-				reader.close();
-			}
-			catch (IOException e)
-			{
-				return null;
-			}
-
-			return resultBytes;
+                Bitmap bmp = Bitmap.createBitmap(colors, width, height, Bitmap.Config.ARGB_8888);
+                byteStream = new ByteArrayOutputStream();
+                bmp.compress(CompressFormat.JPEG, 100, byteStream);
+                final byte[] resultBytes = byteStream.toByteArray();
+                return new ByteArrayInputStream(resultBytes);
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+                return null;
+            }
+            finally {
+                Utils.closeSilently(byteStream);
+                Utils.closeSilently(reader);
+            }
 		}
 		else
 		{
-			return result;
+            return new ByteArrayInputStream(result);
 		}
 	}
 
@@ -163,9 +165,7 @@ public class LibRaw
 				int r = rgb[subpixel++];
 				int g = rgb[subpixel++];
 				int b = rgb[subpixel++];
-				// colors[y * width + x] = Color.rgb(r, g, b);
 				colors[y * width + x] = Color.rgb(g, b, r);
-				// colors[y * width + x] = (0xFF << 24) | (r << 16) | (g << 8) | b;
 			}
 		}
 

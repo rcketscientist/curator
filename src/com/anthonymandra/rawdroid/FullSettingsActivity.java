@@ -274,9 +274,13 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
     private static void requestBuyPro()
     {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("market://details?id=com.anthonymandra.rawdroidpro"));
-        mActivity.startActivity(intent);
+        Intent store = Util.getStoreIntent(mActivity, "com.anthonymandra.rawdroidpro");
+        if (store != null)
+            mActivity.startActivity(store);
+
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.setData(Uri.parse("market://details?id=com.anthonymandra.rawdroidpro"));
+//        mActivity.startActivity(intent);
     }
 
 	/**
@@ -642,6 +646,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
             case Error: license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError)); break;
             case Licensed: license.setSummary(mActivity.getString(R.string.prefSummaryLicense)); break;
             case Unlicensed: license.setSummary(mActivity.getString(R.string.buypro)); break;
+            case Modified: license.setSummary(R.string.prefSummaryLicenseModified); break;
             default: license.setSummary(mActivity.getString(R.string.prefSummaryNoProvider) + "\n" +
                     mActivity.getString(R.string.buypro));
         }

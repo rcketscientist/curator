@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
+import com.anthonymandra.framework.Util;
+
 public class AppRater
 {
 	private final static String APP_TITLE = "Rawdroid";
@@ -65,7 +67,9 @@ public class AppRater
 					{
 						editor.putBoolean("dontshowagain", true);
 						editor.commit();
-						mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + APP_PNAME)));
+                        Intent store = Util.getStoreIntent(mContext, APP_PNAME);
+                        if (store != null)
+                            mContext.startActivity(store);
 						dialog.dismiss();
 					}
 				}).setNeutralButton("Later", new DialogInterface.OnClickListener()

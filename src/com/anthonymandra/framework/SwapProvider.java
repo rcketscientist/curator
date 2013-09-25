@@ -2,19 +2,31 @@ package com.anthonymandra.framework;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.android.gallery3d.common.Utils;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by amand_000 on 9/12/13.
  */
-public class SwapProvider extends ContentProvider{
+public class SwapProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = SwapProvider.class.getSimpleName();
 
     // The authority is the symbolic name for the provider class
@@ -22,6 +34,12 @@ public class SwapProvider extends ContentProvider{
 
     // UriMatcher used to match against incoming requests
     private UriMatcher uriMatcher;
+    private static boolean mShowWatermark;
+    private static String mWatermarkText;
+    private static int mWatermarkAlpha;
+    private static int mWatermarkSize;
+    private static String mWatermarkLocation;
+    private static LicenseManager mLicenseManager;
 
     @Override
     public boolean onCreate() {
@@ -31,6 +49,10 @@ public class SwapProvider extends ContentProvider{
         // 'content://com.anthonymandra.rawdroid.swapprovider/*'
         // and return 1 in the case that the incoming Uri matches this pattern
         uriMatcher.addURI(AUTHORITY, "*", 1);
+        updateWatermark();
+        mLicenseManager = new LicenseManager(getContext(), new Handler());
+
+        PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
 
         return true;
     }
@@ -47,20 +69,59 @@ public class SwapProvider extends ContentProvider{
             // If it returns 1 - then it matches the Uri defined in onCreate
             case 1:
 
-                // The desired file name is specified by the last segment of the path
-                // E.g. 'content://com....provider/Test.jpg'
-                File swapFile = new File(Util.getDiskCacheDir(getContext(), GalleryActivity.SWAP_BIN_DIR), uri.getLastPathSegment());
+                LocalImage image = new LocalImage(new File(uri.getFragment()));
+                File swapFile = new File(Util.getDiskCacheDir(getContext(),
+                        GalleryActivity.SWAP_BIN_DIR),
+                        uri.getLastPathSegment());
+
+                InputStream imageData = image.getThumb();
+                if (imageData == null)
+                    return null;
+
+                try
+                {
+                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
+
+                    if (!mLicenseManager.isLicensed())
+                    {
+                        bmp = Util.addWatermark(getContext(), bmp);
+                    }
+                    else if (mShowWatermark)
+                    {
+                        bmp = Util.addCustomWatermark(bmp, mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+                    }
+
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
+
+                    ParcelFileDescriptor pfd = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
+                    return pfd;
+                }
+                catch(Exception e){  }
+                finally {
+                    Utils.closeSilently(imageData);
+                }
+
+
 
                 // Create & return a ParcelFileDescriptor pointing to the file
                 // Note: I don't care what mode they ask for - they're only getting read only
-                ParcelFileDescriptor pfd = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
-                return pfd;
+
 
             // Otherwise unrecognised Uri
             default:
                 Log.v(TAG, "Unsupported uri: '" + uri + "'.");
                 throw new FileNotFoundException("Unsupported uri: " + uri.toString());
         }
+    }
+
+    private void updateWatermark()
+    {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mShowWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+        mWatermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+        mWatermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+        mWatermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+        mWatermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
     }
 
     // //////////////////////////////////////////////////////////////
@@ -92,5 +153,18 @@ public class SwapProvider extends ContentProvider{
     public Cursor query(Uri uri, String[] projection, String s, String[] as1,
                         String s1) {
         return null;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        if (key.equals(FullSettingsActivity.KEY_WatermarkText) ||
+                key.equals(FullSettingsActivity.KEY_WatermarkAlpha) ||
+                key.equals(FullSettingsActivity.KEY_WatermarkSize) ||
+                key.equals(FullSettingsActivity.KEY_WatermarkLocation) ||
+                key.equals(FullSettingsActivity.KEY_EnableWatermark))
+        {
+            updateWatermark();
+        }
     }
 }

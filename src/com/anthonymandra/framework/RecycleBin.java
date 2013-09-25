@@ -104,7 +104,7 @@ public class RecycleBin
 					if (editor != null)
 					{
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
-						bis = recycledItem.getImageInputStream();
+						bis = new BufferedInputStream(recycledItem.getImage());
 						byte[] buffer = new byte[bis.available()];
 						bis.read(buffer);
 						out.write(buffer);

@@ -1,6 +1,8 @@
 package com.anthonymandra.framework;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.widget.ShareActionProvider;
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -85,6 +88,9 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
     protected LicenseManager mLicenseManager;
 
+    protected ShareActionProvider mShareProvider;
+    protected Intent mShareIntent;
+
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -92,6 +98,8 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		// mProgressDialog.setCanceledOnTouchOutside(true);
+        mShareIntent = new Intent(Intent.ACTION_SEND);
+        mShareIntent.setType("image/jpeg");
 	}
 
 	@Override
@@ -658,122 +666,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	};
 
-	protected class ShareTask extends AsyncTask<Object, Integer, Intent> implements OnCancelListener
-	{
-		@Override
-		protected void onPreExecute()
-		{
-			mProgressDialog.setTitle(R.string.convertingFiles);
-			mProgressDialog.setOnCancelListener(this);
-			mProgressDialog.show();
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		protected Intent doInBackground(final Object... params)
-		{
-			Intent shareIntent = (Intent) params[0];
-			List<RawObject> toShare = (List<RawObject>) params[1];
-			mProgressDialog.setMax(toShare.size());
-			ArrayList<Uri> arrayUri = new ArrayList<Uri>();
-			int completed = 0;
-
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(GalleryActivity.this);
-            boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
-            String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
-            int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
-            String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-
-            watermarkAlpha = (int)(255 * ((float)watermarkAlpha / 100));
-
-			for (RawObject image : toShare)
-			{
-                if (isCancelled())
-                    return null;
-
-                BufferedInputStream imageData = image.getThumbInputStream();
-				if (imageData == null)
-					return null;
-
-                File swapFile = getSwapFile(Util.swapExtention(image.getName(), ".jpg"));
-                Bitmap bmp = BitmapFactory.decodeStream(imageData);
-
-                if (!mLicenseManager.isLicensed())
-                {
-                    bmp = Util.addWatermark(GalleryActivity.this, bmp);
-                }
-                else if (showWatermark)
-                {
-                    bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                }
-
-                try {
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-				try
-				{
-					imageData.close();
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-				publishProgress(++completed);
-                arrayUri.add(Uri.parse("content://" + SwapProvider.AUTHORITY + "/" + swapFile.getName()));
-			}
-
-			if (arrayUri.size() == 0)
-			{
-				return null;
-			}
-			else if (arrayUri.size() > 1)
-			{
-				shareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayUri);
-			}
-			else
-			{
-				shareIntent.putExtra(Intent.EXTRA_STREAM, arrayUri.get(0));
-			}
-
-			return shareIntent;
-		}
-
-		@Override
-		protected void onPostExecute(Intent result)
-		{
-			mProgressDialog.dismiss();
-			if (result == null)
-			{
-				Toast.makeText(GalleryActivity.this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
-				return;
-			}
-			startActivityForResult(result, REQUEST_CODE_SHARE);
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values)
-		{
-			mProgressDialog.setProgress(values[0]);
-			// setSupportProgress(values[0]);
-		}
-
-		@Override
-		protected void onCancelled()
-		{
-			clearSwapDir();
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			this.cancel(true);
-		}
-	}
-
 	@Override
 	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
@@ -785,33 +677,21 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	/**
-	 * Converts images to jpeg format for sharing and executes given share intent.
-	 * 
-	 * @param shareIntent
-	 *            Share intent to populate and execute
-	 * @param itemsToShare
-	 *            Media to convert and share
-	 */
-	public void share(Intent shareIntent, List<RawObject> itemsToShare)
-	{
-		if (itemsToShare.size() == 0)
-		{
-			Toast.makeText(this, R.string.warningNoItemsSelected, Toast.LENGTH_SHORT).show();
-			return;
-		}
-		new ShareTask().execute(shareIntent, itemsToShare);
-	}
+    protected void setShareUri(Uri share)
+    {
+        mShareIntent.setAction(Intent.ACTION_SEND);
+        mShareIntent.putExtra(Intent.EXTRA_STREAM, share);
+        if (mShareProvider != null)
+            mShareProvider.setShareIntent(mShareIntent);
+    }
 
-	/**
-	 * Single item convenience method (see {@link #share(Intent, List)}
-	 */
-	public void share(Intent shareIntent, RawObject toShare)
-	{
-		List<RawObject> share = new ArrayList<RawObject>();
-		share.add(toShare);
-		share(shareIntent, share);
-	}
+    protected void setShareUri(ArrayList<Uri> shares)
+    {
+        mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        mShareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, shares);
+        if (mShareProvider != null)
+            mShareProvider.setShareIntent(mShareIntent);
+    }
 
 	class XmpFilter implements FileFilter
 	{

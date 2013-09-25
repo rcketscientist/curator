@@ -5,16 +5,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.database.ContentObservable;
-import android.database.ContentObserver;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbConstants;
@@ -24,7 +20,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -54,6 +49,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
@@ -68,11 +64,13 @@ import org.openintents.intents.FileManagerIntents;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -155,16 +153,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private ActionMode mMode;
 
-	private ShareActionProvider mShareProvider;
-	private Intent mShareIntent;
-
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-        //TODO: Check the intent that starts us (load proper viewer if needed)
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
@@ -201,6 +195,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
 
 		getKeywords();
 
@@ -215,9 +211,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		navAdapter = new ArrayAdapter<SpinnerFile>(context, R.layout.sherlock_spinner_item, new ArrayList<SpinnerFile>());
 		navAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
 		getSupportActionBar().setListNavigationCallbacks(navAdapter, this);
-
-		mShareIntent = new Intent(Intent.ACTION_SEND);
-		mShareIntent.setType("image/jpeg");
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(this);
@@ -553,18 +546,15 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		List<RawObject> filesToShare = new ArrayList<RawObject>();
-		filesToShare.addAll(mSelectedImages);
-		share(intent, filesToShare);
-		mMode.finish();
-		return true;
+		mMode.finish(); // end the contextual action bar and multi-select mode
+		return false;
 	}
 
 	private void selectAll()
 	{
 		startContextualActionBar();
 		mSelectedImages.addAll(mVisibleItems);
-		updateSelectedItemsCount();
+		updateSelection();
 		imageAdapter.notifyDataSetChanged();
 	}
 
@@ -585,12 +575,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void requestRename()
 	{
-//		if (mRawImages.size() > 0 && mRawImages.get(0) instanceof MtpImage)
-//		{
-//			Toast.makeText(this, "Feature not supported for usb host.", Toast.LENGTH_LONG).show();
-//			return;
-//		}
-
 		List<RawObject> filesToRename = new ArrayList<RawObject>();
 		if (mSelectedImages.size() > 0)
 		{
@@ -855,8 +839,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			{
 				mShareProvider = (ShareActionProvider) actionItem.getActionProvider();
 				mShareProvider.setOnShareTargetSelectedListener(RawDroid.this);
-				mShareIntent = new Intent(Intent.ACTION_SEND);
-				mShareIntent.setType("image/jpeg");
 				mShareProvider.setShareIntent(mShareIntent);
 			}
 
@@ -902,23 +884,29 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		// clearSwapDir();
 	}
 
-	public void updateSelectedItemsCount()
+	public void updateSelection()
 	{
+        ArrayList<Uri> arrayUri = new ArrayList<Uri>();
+        for (RawObject selection : mSelectedImages)
+        {
+            arrayUri.add(selection.getSwapUri());
+        }
+
 		if (mMode != null)
 		{
 			mMode.setTitle(mSelectedImages.size() + " selected");
 		}
-		if (mSelectedImages.size() > 1)
+        if (mSelectedImages.size() == 0)
+        {
+            return;
+        }
+		else if (mSelectedImages.size() > 1)
 		{
-			mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-			if (mShareProvider != null)
-				mShareProvider.setShareIntent(mShareIntent);
+            setShareUri(arrayUri);
 		}
 		else
 		{
-			mShareIntent.setAction(Intent.ACTION_SEND);
-			if (mShareProvider != null)
-				mShareProvider.setShareIntent(mShareIntent);
+            setShareUri(arrayUri.get(0));
 		}
 	}
 
@@ -1050,7 +1038,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		public void addSelection(RawObject media)
 		{
 			addUniqueSelection(media);
-			updateSelectedItemsCount();
+			updateSelection();
 			notifyDataSetChanged();
 		}
 
@@ -1088,21 +1076,21 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				addUniqueSelection(mVisibleItems.get(i));
 			}
 
-			updateSelectedItemsCount();
+			updateSelection();
 			notifyDataSetChanged();
 		}
 
 		public void removeSelection(RawObject media)
 		{
 			mSelectedImages.remove(media);
-			updateSelectedItemsCount();
+			updateSelection();
 			notifyDataSetChanged();
 		}
 
 		public void clearSelection()
 		{
 			mSelectedImages.clear();
-			updateSelectedItemsCount();
+			updateSelection();
 			notifyDataSetChanged();
 		}
 
@@ -1360,48 +1348,42 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			{
 				publishProgress(toExport.getName());
 
-                BufferedInputStream imageData = toExport.getThumbInputStream();
+                InputStream imageData = toExport.getThumb();
                 if (imageData == null)
                 {
                     failed.add(toExport.getName());
                     continue;
                 }
 
-                Bitmap bmp = BitmapFactory.decodeStream(imageData);
-
-                if (!mLicenseManager.isLicensed())
-                {
-                    bmp = Util.addWatermark(RawDroid.this, bmp);
-                }
-                else if (showWatermark)
-                {
-                    bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                }
-
-                try {
-                    File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(thumbDest));
-                } catch (FileNotFoundException e) {
-                    failed.add(toExport.getName());
-                    e.printStackTrace();
-                }
-
                 try
                 {
-                    imageData.close();
+                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
+
+                    if (!mLicenseManager.isLicensed())
+                    {
+                        bmp = Util.addWatermark(RawDroid.this, bmp);
+                    }
+                    else if (showWatermark)
+                    {
+                        bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                    }
+
+                    try {
+                        File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(thumbDest));
+                    } catch (FileNotFoundException e) {
+                        failed.add(toExport.getName());
+                        e.printStackTrace();
+                    }
                 }
-                catch (IOException e)
+                catch(Exception e)
                 {
                     e.printStackTrace();
                 }
+                finally {
+                    Utils.closeSilently(imageData);
+                }
 
-//				boolean result = toExport.copyThumb(mDestination);
-//				if (!result)
-//				{
-//					Log.e(TAG, "Error copying " + toExport.getFileSize());
-//					failed.add(toExport.getName());
-//					totalSuccess = false;
-//				}
 				publishProgress();
 			}
 			return true; //not used.

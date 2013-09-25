@@ -12,6 +12,7 @@ import com.anthonymandra.framework.LicenseManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,62 +41,10 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 	}
 
 	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-	}
-
-	@Override
-	public void onResume()
-	{
-		super.onResume();
-	}
-
-	@Override
-	public void onPause()
-	{
-		super.onPause();
-	}
-
-	@Override
 	protected void updateAfterDelete()
 	{
 		updateImageSource();
-		// updateViewerItems();
-		// if (mVisibleItems.size() == 0)
-		// {
-		// onBackPressed();
-		// }
-		//
-		// if (mCurrentIndex >= mVisibleItems.size())
-		// {
-		// swap out the deleted image
-		// previousImage();
-		// previous();
-		// mCurrentIndex = mVisibleItems.size() -1;
-		// mModel.setCurrentPhoto(getCurrentImage().getUri(), mCurrentIndex);
-		// }
-		// else
-		// {
-		// swap out the deleted image
-		// com.android.gallery3d.util.Utils.swap(screenNails, INDEX_CURRENT, INDEX_PREVIOUS);
-		// then tap the existing next functionality by stepping back index
-		// decrementImageIndex();
-		// next();
-		// TODO: this will fail!
-		// mModel.setCurrentPhoto(getCurrentImage().getUri(), mCurrentIndex);
-		// }
-		// deleteToNext();
 	}
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // This would stop the auto hide, but currently it can be restarted in the two different calls
-        // Currently goofs up the actionbar
-//        if (autoHide != null)
-//            autoHide.cancel();
-        return super.onPrepareOptionsMenu(menu);
-    }
 
     @Override
 	protected void updateAfterRestore()
@@ -122,6 +71,7 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 	public void onCurrentImageUpdated()
 	{
         super.onCurrentImageUpdated();
+        setShareUri(getCurrentItem().getSwapUri());
 		updateImageDetails();
 	}
 

@@ -17,6 +17,8 @@
 package com.anthonymandra.framework;
 
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.Context;
@@ -245,6 +247,17 @@ public class ImageResizer extends ImageWorker
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
 
-		return BitmapFactory.decodeStream(data, null, options);
+        try {
+            // TODO: This works, but is there a better way?
+            if (data instanceof FileInputStream)
+                ((FileInputStream)data).getChannel().position(0);
+            else
+                data.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return BitmapFactory.decodeStream(data, null, options);
 	}
 }

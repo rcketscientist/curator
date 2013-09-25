@@ -2,17 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/ActionBarSherlock.iml" filepath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/ActionBarSherlock.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" filepath="$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/Inscription/library/Inscription.iml" filepath="$PROJECT_DIR$/../../rawdroid/Inscription/library/Inscription.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/NineOldAndroids.iml" filepath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/NineOldAndroids.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/ShowcaseView.iml" filepath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/ShowcaseView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libraries/ShowcaseView/ShowcaseView.iml" filepath="$PROJECT_DIR$/libraries/ShowcaseView/ShowcaseView.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/amandra-treeview/amandra-treeview.iml" filepath="$PROJECT_DIR$/../../rawdroid/amandra-treeview/amandra-treeview.iml" />
       <module fileurl="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" filepath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" />
-      <module fileurl="file://$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/license.iml" filepath="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/license.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/Inscription/library/ins.iml" filepath="$PROJECT_DIR$/../../rawdroid/Inscription/library/ins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/noa.iml" filepath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library/noa.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../rawdroid_pro/rawdroid_pro.iml" filepath="$PROJECT_DIR$/../rawdroid_pro/rawdroid_pro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/show.iml" filepath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/library/show.iml" />
     </modules>
   </component>
 </project>

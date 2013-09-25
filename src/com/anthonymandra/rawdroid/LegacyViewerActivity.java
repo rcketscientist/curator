@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.android.legacy.ui.GLCanvas;
 import com.android.legacy.ui.GLRootView;
@@ -13,13 +14,17 @@ import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class LegacyViewerActivity extends ViewerActivity implements ScaleChangedListener
 {
@@ -414,6 +419,7 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		public void requestNextImageWithMeta()
 		{
 			// mImageViewer.setRotation(0);
+            setShareUri(getCurrentItem().getSwapUri());
 			loadExif();
 			requestNextImage();
 		}
@@ -521,11 +527,22 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		{
 			mIndex = (Integer) params[0];
             MediaItem mMedia = (MediaItem) params[1];
-			byte[] imageData = mMedia.getThumb();
+            InputStream imageData = mMedia.getThumb();
 			if (imageData == null)
 				return null;
-			return Util.createBitmapLarge(imageData, LegacyViewerActivity.displayWidth, LegacyViewerActivity.displayHeight, true);
-		}
+            try
+            {
+                Bitmap image =  Util.createBitmapLarge(imageData,
+                        LegacyViewerActivity.displayWidth,
+                        LegacyViewerActivity.displayHeight,
+                        true);
+                return image;
+            }
+            finally
+            {
+                Utils.closeSilently(imageData);
+            }
+        }
 
 		@Override
 		protected void onPostExecute(Bitmap result)
@@ -545,18 +562,23 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		{
 			mIndex = (Integer) params[0];
             MediaItem mMedia = (MediaItem) params[1];
-			byte[] imageData = mMedia.getThumb();
-			if (imageData == null)
-				return null;
 
-			try
-			{
-				return BitmapRegionDecoder.newInstance(imageData, 0, imageData.length, false);
-			}
-			catch (IOException e)
-			{
-				return null;
-			}
+            InputStream imageData = mMedia.getThumb();
+            if (imageData == null)
+                return null;
+            try
+            {
+                BitmapRegionDecoder brd = BitmapRegionDecoder.newInstance(imageData, false);
+                return brd;
+            }
+            catch (IOException e)
+            {
+                return null;
+            }
+            finally
+            {
+                Utils.closeSilently(imageData);
+            }
 		}
 
 		@Override
