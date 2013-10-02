@@ -32,6 +32,7 @@ public class ImageViewActivity extends PhotoPage implements DataListener
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+    	mContentView = R.layout.viewer_layout;
 		super.onCreate(savedInstanceState);
 
         initialize();
@@ -39,7 +40,7 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
 	}
-
+    
 	@Override
 	protected void updateAfterDelete()
 	{

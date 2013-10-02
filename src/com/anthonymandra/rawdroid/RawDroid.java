@@ -1482,7 +1482,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					tutorial.setText(R.string.tutorialMemoryTitle, R.string.tutorialMemory);
 					break;
 				case Directory: // Directory
-					tutorial.setShowcaseItem(ShowcaseView.ITEM_TITLE_OR_SPINNER, 1, RawDroid.this);
+					tutorial.setShowcaseItem(ShowcaseView.ITEM_SPINNER, 1, RawDroid.this);
 					tutorial.setText(R.string.directory, R.string.tutorialPath);
 					break;
 //				case RecentFolder: // Recent Folder
@@ -1521,23 +1521,23 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					tutorial.setText(R.string.tutorialSelectBetweenTitle, R.string.tutorialSelectBetween);
 					break;
 				case Import: // Import
-					tutorial.setShowcaseContextItem(R.id.galleryImportImages, RawDroid.this);
+					tutorial.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.galleryImportImages, RawDroid.this);
 					tutorial.setText(R.string.importImages, R.string.tutorialImport);
 					break;
 				case Export: // Export
-					tutorial.setShowcaseContextItem(R.id.galleryExportThumbs, RawDroid.this);
+					tutorial.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.galleryExportThumbs, RawDroid.this);
 					tutorial.setText(R.string.exportThumbnails, R.string.tutorialExport);
 					break;
 				case Rename: // Rename
-					tutorial.setShowcaseContextItem(R.id.galleryRename, RawDroid.this);
+					tutorial.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.galleryRename, RawDroid.this);
 					tutorial.setText(R.string.rename, R.string.tutorialRename);
 					break;
 				case Delete: // Delete
-					tutorial.setShowcaseContextItem(R.id.gallery_delete, RawDroid.this);
+					tutorial.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.gallery_delete, RawDroid.this);
 					tutorial.setText(R.string.delete, R.string.tutorialDelete);
 					break;
 				case Share: // Share
-					tutorial.setShowcaseContextItem(R.id.galleryShare, RawDroid.this);
+					tutorial.setShowcaseItem(ShowcaseView.ITEM_ACTION_ITEM, R.id.galleryShare, RawDroid.this);
 					tutorial.setText(R.string.shareWith, R.string.tutorialShare);
 					break;
 				default: // We're done

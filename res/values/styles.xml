@@ -52,9 +52,9 @@
     </style>
 
     <style name="GalleryShowcaseTheme" parent="@style/ShowcaseView.Light">
-        <item name="backgroundColor">#B4FFFFFF</item>
-        <item name="titleTextColor">#ffbb33</item>
-        <item name="detailTextColor">#000000</item>
+        <item name="sv_backgroundColor">#B4FFFFFF</item>
+        <item name="sv_titleTextColor">#ffbb33</item>
+        <item name="sv_detailTextColor">#000000</item>
        <!--  <item name="backgroundColor">#33ffbb33</item> -->
     </style>
 

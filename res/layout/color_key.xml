@@ -11,41 +11,41 @@
 
         <RadioButton
             android:id="@+id/radioBlue"
-            android:layout_width="50dp"
+            android:layout_width="46dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:background="@drawable/button_blue"
             android:button="@null" />
 
         <RadioButton
             android:id="@+id/radioRed"
-            android:layout_width="50dp"
+            android:layout_width="46dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:background="@drawable/button_red"
             android:button="@null" />
 
         <RadioButton
             android:id="@+id/radioGreen"
-            android:layout_width="50dp"
+            android:layout_width="46dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:background="@drawable/button_green"
             android:button="@null" />
 
         <RadioButton
             android:id="@+id/radioYellow"
-            android:layout_width="50dp"
+            android:layout_width="46dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:background="@drawable/button_yellow"
             android:button="@null" />
 
         <RadioButton
             android:id="@+id/radioPurple"
-            android:layout_width="50dp"
+            android:layout_width="46dp"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="2dp"
             android:background="@drawable/button_purple"
             android:button="@null" />
     </RadioGroup>

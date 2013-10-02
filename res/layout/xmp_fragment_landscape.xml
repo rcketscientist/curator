@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:treeView="http://schemas.android.com/apk/lib/pl.polidea.treeview"
-    xmlns:app="http://schemas.android.com/apk/res/com.anthonymandra.rawdroid"
     android:id="@+id/RelativeLayout1"
-    android:layout_width="match_parent"
+    android:layout_width="256dp"
     android:layout_height="match_parent"
     android:background="@color/Transparent_Black"
     android:orientation="vertical" >

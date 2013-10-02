@@ -1,9 +1,9 @@
 [submodule "libraries/Distribution"]
 	path = libraries/Distribution
-	url = https://github.com/rcketscientist/distribution.git
+	url = https://github.com/rcketscientist/oi-distribution-library.git
 [submodule "libraries/FileManager"]
 	path = libraries/FileManager
-	url = https://github.com/rcketscientist/filemanager.git
+	url = https://github.com/rcketscientist/oi-filemanager-library.git
 [submodule "libraries/MetaDataExtractor"]
 	path = libraries/MetaDataExtractor
 	url = https://AMandra@code.google.com/r/amandra-xmp/
@@ -13,3 +13,9 @@
 [submodule "libraries/Inscription"]
 	path = libraries/Inscription
 	url = https://github.com/rcketscientist/Inscription.git
+[submodule "libraries/ActionBarSherlock"]
+	path = libraries/ActionBarSherlock
+	url = https://github.com/JakeWharton/ActionBarSherlock.git
+[submodule "libraries/NineOldAndroids"]
+	path = libraries/NineOldAndroids
+	url = https://github.com/JakeWharton/NineOldAndroids.git

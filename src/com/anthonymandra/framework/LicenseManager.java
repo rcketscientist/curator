@@ -61,32 +61,41 @@ public class LicenseManager extends ContentObserver {
 
     protected void checkLicense()
     {
-        Cursor license = mContext.getContentResolver().query(Uri.parse(LICENSE_AUTHORITY), null, null, null, null);
-
-        if (license != null && license.moveToFirst())
-        {
-            int result = license.getInt(1);
-            Log.d(TAG, "" + result);
-            switch (result)
-            {
-                case OLD_UNLICENSED:
-                case UNLICENSED:
-                    licenseState = LicenseState.Unlicensed; break;
-                case LICENSED:
-                case OLD_LICENSED:
-                    licenseState = LicenseState.Licensed; break;
-                case ERROR:
-                case OLD_ERROR:
-                    licenseState = licenseState.Error; break;
-                case MODIFIED:
-                    licenseState = licenseState.Modified; break;
-                default: licenseState = licenseState.NoResponse;
-            }
-        }
-        else
-        {
-            licenseState = LicenseState.NoProvider;
-        }
+    	Cursor license = null;
+    	try
+    	{
+	        license = mContext.getContentResolver().query(Uri.parse(LICENSE_AUTHORITY), null, null, null, null);
+	
+	        if (license != null && license.moveToFirst())
+	        {
+	            int result = license.getInt(1);
+	            Log.d(TAG, "" + result);
+	            switch (result)
+	            {
+	                case OLD_UNLICENSED:
+	                case UNLICENSED:
+	                    licenseState = LicenseState.Unlicensed; break;
+	                case LICENSED:
+	                case OLD_LICENSED:
+	                    licenseState = LicenseState.Licensed; break;
+	                case ERROR:
+	                case OLD_ERROR:
+	                    licenseState = licenseState.Error; break;
+	                case MODIFIED:
+	                    licenseState = licenseState.Modified; break;
+	                default: licenseState = licenseState.NoResponse;
+	            }
+	        }
+	        else
+	        {
+	            licenseState = LicenseState.NoProvider;
+	        }
+    	}
+    	finally
+    	{
+    		if (license != null)
+    			license.close();
+    	}
 
         Log.d(TAG, licenseState.toString());
     }

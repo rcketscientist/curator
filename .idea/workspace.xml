@@ -37,204 +37,39 @@
     <option name="TOOL_WINDOW_LOG_LEVEL" value="ERROR" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" readonly="true" id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/Distribution" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/FileManager" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/ShowcaseView" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitmodules" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/Distribution.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/FileManager.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/amandra-xmp.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/res/values/china.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../rawdroid_pro_amz/rawdroid_pro_amz.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/settings.gradle" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rawdroid.iml" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\src\com\anthonymandra\rawdroid\PPMFile.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\src\com\anthonymandra\rawdroid\PPMtoBMP.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\ActionBarSherlock\library\test\com\actionbarsherlock\internal\ManifestParsingTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\10x12x16bit-CMYK.psd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\16color-10x10.bmp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\24bpp-10x10.bmp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\256color-10x10.bmp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\8x4x8bit-Grayscale.psd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app1.0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app1.1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.app2" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\adobeJpeg1.jpg.appe" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\crash01.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\crash01.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\dotnet-256x256-alpha-palette.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\gimp-8x12-greyscale-alpha-time-background.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\iccDataInvalid1.jpg.app2" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\invalid-iCCP-missing-adler32-checksum.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\iptc1.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\iptc2-photoshop6.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\manuallyAddedThumbnail.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\manuallyAddedThumbnail.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\manuallyAddedThumbnail.jpg.com" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\mspaint-10x10.gif" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\mspaint-8x10.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.app0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType1.jpg.appe" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2a.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2b.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2b.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\nikonMakernoteType2b.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\noExif.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\noExif.jpg.app0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\noExif.jpg.com" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-16colorpalette.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-32colors-alpha.gif" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgb24-all-metadata.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgb24-interlaced.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgb24.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgba32-interlaced.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\photoshop-8x12-rgba32.png" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\recursiveDirectories.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\repeatedOrientationTagWithDifferentValues.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg.com" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\simple.jpg.sof0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType1.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app1.0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app1.1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app4.0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\sonyType6.jpg.app4.1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.app0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.app2" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\windowsXpFields.jpg.appe" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExif.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExif.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExif.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app1.0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app1.1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.app2" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withExifAndIptc.jpg.appe" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withIptc.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withIptcExifGps.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withIptcPhotoshop6.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withPanasonicFaces.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withPanasonicFaces.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedRGBThumbnail.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedRGBThumbnail.jpg.app1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedRGBThumbnail.jpg.com" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail2.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail3.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withUncompressedYCbCrThumbnail4.jpg" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.app1.0" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.app1.1" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.app2" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\Data\withXmpAndIptc.jpg.appd" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\jpeg\JpegMetadataReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\jpeg\JpegSegmentDataTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\jpeg\JpegSegmentReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\png\PngChunkReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\png\PngChunkTypeTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\imaging\png\PngMetadataReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\ByteArrayReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\CompoundExceptionTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\GeoLocationTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\NullOutputStreamTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RandomAccessFileReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RandomAccessStreamReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RandomAccessTestBase.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\RationalTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\SequentialAccessTestBase.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\SequentialByteArrayReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\StreamReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\lang\StringUtilTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\AgeTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\DirectoryTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\MetadataTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\MockDirectory.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\adobe\AdobeJpegReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\bmp\BmpReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\CanonMakernoteDescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifDirectoryTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifIFD0DescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifInteropDescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifSubIFDDescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\ExifThumbnailDescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\NikonType1MakernoteTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\NikonType2MakernoteTest1.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\NikonType2MakernoteTest2.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\PanasonicMakernoteDescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\SonyType1MakernoteTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\exif\SonyType6MakernoteTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\gif\GifReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\icc\IccReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\iptc\IptcReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jfif\JfifReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegComponentTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegDescriptorTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegDirectoryTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\jpeg\JpegReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\photoshop\PsdReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\metadata\xmp\XmpReaderTest.java" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\rawdroid\amandra-xmp\Tests\com\drew\testing\TestHelper.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/libs/android-support-v4.jar" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/libs/android-support-v4.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Distribution/.classpath" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/FileManager/.classpath" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/src/com/actionbarsherlock/widget/ActivityChooserModel.java" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/src/com/actionbarsherlock/widget/ActivityChooserModel.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../rawdroid_pro_amz/AndroidManifest.xml" afterPath="$PROJECT_DIR$/../rawdroid_pro_amz/AndroidManifest.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/AppRater.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/AppRater.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/data/DecodeUtils.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/data/DecodeUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageDecoder.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageDecoder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageResizer.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageResizer.java" />
+    <list default="true" id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/NineOldAndroids" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/rawdroid.iml" />
+      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\libraries\ActionBarSherlock\actionbarsherlock\libs\android-support-v4.jar" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\libraries\MetaDataExtractor\metadata-extractor.iml" afterPath="" />
+      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\viewerupgrade.iml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Distribution" afterPath="$PROJECT_DIR$/libraries/Distribution" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/FileManager" afterPath="$PROJECT_DIR$/libraries/FileManager" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription" afterPath="$PROJECT_DIR$/libraries/Inscription" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/MetaDataExtractor" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView" afterPath="$PROJECT_DIR$/libraries/ShowcaseView" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Distribution/.classpath" afterPath="$PROJECT_DIR$/libraries/Distribution/.classpath" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/MetaDataExtractor/.gitignore" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitmodules" afterPath="$PROJECT_DIR$/.gitmodules" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.project" afterPath="$PROJECT_DIR$/.project" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/LegacyViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/LegacyViewerActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../rawdroid_pro/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" afterPath="$PROJECT_DIR$/../rawdroid_pro/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../rawdroid_pro_amz/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" afterPath="$PROJECT_DIR$/../rawdroid_pro_amz/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" afterPath="$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/README.md" afterPath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/RawObject.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/RawObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/RecycleBin.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/RecycleBin.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/sample/src/com/github/espiandev/showcaseview/sample/SampleActivity.java" afterPath="$PROJECT_DIR$/../../rawdroid/ShowcaseView/sample/src/com/github/espiandev/showcaseview/sample/SampleActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/changelog.xml" afterPath="$PROJECT_DIR$/res/xml/changelog.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/metadata-extractor.iml" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/metadata-extractor.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences_license.xml" afterPath="$PROJECT_DIR$/res/xml/preferences_license.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/library/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/demos/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/demos/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/fragments/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock/samples/fragments/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Distribution/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Distribution/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/FileManager/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/FileManager/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/changelog/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/changelog/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/whatsnewdialog/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/Inscription/samples/whatsnewdialog/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/sample/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/sample/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/project.properties" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
-      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\junit-4.11-src.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/junit-4.11-src.jar" />
-      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\junit-4.11.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/junit-4.11.jar" />
-      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\xmpcore-5.1.2-sources.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2-sources.jar" />
-      <change type="MOVED" beforePath="D:\proj\rawdroid\amandra-xmp\Libraries\xmpcore-5.1.2.jar" afterPath="$PROJECT_DIR$/../../rawdroid/amandra-xmp/libs/xmpcore-5.1.2.jar" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/build.gradle" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" afterPath="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/project.properties" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription/library/project.properties" afterPath="$PROJECT_DIR$/libraries/Inscription/library/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/NineOldAndroids/library/project.properties" afterPath="$PROJECT_DIR$/libraries/NineOldAndroids/library/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView/library/project.properties" afterPath="$PROJECT_DIR$/libraries/ShowcaseView/library/project.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription/library/res/values-ru/strings.xml" afterPath="$PROJECT_DIR$/libraries/Inscription/library/res/values-ru/strings.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/styles.xml" afterPath="$PROJECT_DIR$/res/values/styles.xml" />
     </list>
     <ignored path="rawdroid.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -261,54 +96,6 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
-    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
-      <breakpoint url="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" line="1109" class="com.android.gallery3d.app.PhotoDataAdapter.ReloadTask" package="com.android.gallery3d.app">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/preference/PreferenceActivity.java" line="594" class="android.preference.PreferenceActivity" package="android.preference">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" line="69" class="com.anthonymandra.framework.SwapProvider" package="com.anthonymandra.framework">
-        <option name="ENABLED" value="true" />
-        <option name="LOG_ENABLED" value="false" />
-        <option name="LOG_EXPRESSION_ENABLED" value="false" />
-        <option name="REMOVE_AFTER_HIT" value="false" />
-        <option name="SUSPEND_POLICY" value="SuspendAll" />
-        <option name="SUSPEND" value="true" />
-        <option name="COUNT_FILTER_ENABLED" value="false" />
-        <option name="COUNT_FILTER" value="0" />
-        <option name="CONDITION_ENABLED" value="true" />
-        <option name="CLASS_FILTERS_ENABLED" value="false" />
-        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
-        <option name="CONDITION" value="" />
-        <option name="LOG_MESSAGE" value="" />
-      </breakpoint>
-    </line_breakpoints>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -345,6 +132,24 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </breakpoint_any>
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints default_suspend_policy="SuspendAll" default_condition_enabled="true">
+      <breakpoint url="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoDataAdapter.java" line="1109" class="com.android.gallery3d.app.PhotoDataAdapter.ReloadTask" package="com.android.gallery3d.app">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="REMOVE_AFTER_HIT" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -354,91 +159,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ViewerActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java">
+      <file leaf-file-name="MetaMedia.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="815" column="19" selection-start="29906" selection-end="29977" vertical-scroll-proportion="0.0" vertical-offset="13855" max-vertical-offset="16116">
+            <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="8143" max-vertical-offset="9622">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="RawDroid.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="76" column="35" selection-start="2902" selection-end="2902" vertical-scroll-proportion="0.59289175" vertical-offset="925" max-vertical-offset="28016">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="build.gradle" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
+        <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="23" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GalleryActivity.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="667" column="0" selection-start="16792" selection-end="16792" vertical-scroll-proportion="0.0" vertical-offset="9550" max-vertical-offset="11254">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="CameraImport.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="130" column="0" selection-start="3540" selection-end="3540" vertical-scroll-proportion="0.0" vertical-offset="1356" max-vertical-offset="4811">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ExifReader.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/Source/com/drew/metadata/exif/ExifReader.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="654" column="0" selection-start="36785" selection-end="36785" vertical-scroll-proportion="0.0" vertical-offset="9754" max-vertical-offset="11288">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MetaMedia.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.71457696" vertical-offset="6881" max-vertical-offset="9061">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="settings.gradle" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/settings.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="44" selection-start="137" selection-end="137" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="styles.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="60" column="0" selection-start="2525" selection-end="2525" vertical-scroll-proportion="0.0" vertical-offset="1020" max-vertical-offset="1292">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PhotoPage.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="530" column="0" selection-start="23551" selection-end="23551" vertical-scroll-proportion="0.0" vertical-offset="9010" max-vertical-offset="26979">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="XmpFragment.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpFragment.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="69" column="12" selection-start="2132" selection-end="2132" vertical-scroll-proportion="0.0" vertical-offset="1173" max-vertical-offset="8789">
+            <state line="16" column="0" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="595">
               <folding />
             </state>
           </provider>
@@ -468,26 +210,13 @@
     <option name="tasksExpandState">
       <map>
         <entry key="" value="true" />
+        <entry key="DistributionLibrary/" value="false" />
+        <entry key="FileManager-FileManager/rawdroid/" value="false" />
+        <entry key="rawdroid/" value="false" />
       </map>
     </option>
     <option name="availableProjects">
       <map>
-        <entry>
-          <key>
-            <ExternalProjectPojo>
-              <option name="name" value="FileManager" />
-              <option name="path" value="$PROJECT_DIR$/libraries/FileManager" />
-            </ExternalProjectPojo>
-          </key>
-          <value>
-            <list>
-              <ExternalProjectPojo>
-                <option name="name" value="FileManager" />
-                <option name="path" value="$PROJECT_DIR$/libraries/FileManager" />
-              </ExternalProjectPojo>
-            </list>
-          </value>
-        </entry>
         <entry>
           <key>
             <ExternalProjectPojo>
@@ -498,8 +227,40 @@
           <value>
             <list>
               <ExternalProjectPojo>
+                <option name="name" value="FileManager-FileManager" />
+                <option name="path" value="$PROJECT_DIR$/libraries/FileManager/FileManager" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="NineOldAndroids-library" />
+                <option name="path" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="actionbarsherlock" />
+                <option name="path" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="ShowcaseView-library" />
+                <option name="path" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="library" />
+                <option name="path" value="$PROJECT_DIR$/libraries/Inscription/library" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="ActionBarSherlock" />
+                <option name="path" value="$PROJECT_DIR$/libraries/ActionBarSherlock" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="DistributionLibrary" />
+                <option name="path" value="$PROJECT_DIR$/libraries/Distribution/DistributionLibrary" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
                 <option name="name" value="rawdroid" />
                 <option name="path" value="$PROJECT_DIR$" />
+              </ExternalProjectPojo>
+              <ExternalProjectPojo>
+                <option name="name" value="MetaDataExtractor" />
+                <option name="path" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
               </ExternalProjectPojo>
               <ExternalProjectPojo>
                 <option name="name" value="ShowcaseView" />
@@ -736,13 +497,43 @@
                 <option name="name" value="preTestBuild" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Prepare com.actionbarsherlock:actionbarsherlock:4.4.0" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="prepareComActionbarsherlockActionbarsherlock440Library" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries.ActionBarSherlock:actionbarsherlock:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesActionBarSherlockActionbarsherlockUnspecifiedLibrary" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries.Distribution:DistributionLibrary:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesDistributionDistributionLibraryUnspecifiedLibrary" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries.FileManager:FileManager:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesFileManagerFileManagerUnspecifiedLibrary" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries.Inscription:library:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesInscriptionLibraryUnspecifiedLibrary" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries:MetaDataExtractor:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesMetaDataExtractorUnspecifiedLibrary" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries.NineOldAndroids:library:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesNineOldAndroidsLibraryUnspecifiedLibrary" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Prepare rawdroid.libraries.ShowcaseView:library:unspecified" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
+                <option name="name" value="prepareRawdroidLibrariesShowcaseViewLibraryUnspecifiedLibrary" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
@@ -789,11 +580,6 @@
                 <option name="name" value="processTestTestManifest" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Initializes a new Gradle build. [incubating]" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="setupBuild" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
                 <option name="description" value="Displays the signing info for each variant" />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="signingReport" />
@@ -825,28 +611,1692 @@
             </list>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/libraries/FileManager">
+        <entry key="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock">
           <value>
             <list>
               <ExternalTaskPojo>
-                <option name="description" value="Generates a Gradle build file. [incubating]" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
-                <option name="name" value="generateBuildFile" />
+                <option name="description" value="Displays the Android dependencies of the project" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="androidDependencies" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Generates a Gradle settings file. [incubating]" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
-                <option name="name" value="generateSettingsFile" />
+                <option name="description" value="Assembles all variants of all applications and secondary packages." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="assemble" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Initializes a new Gradle build. [incubating]" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
-                <option name="name" value="setupBuild" />
+                <option name="description" value="Assembles all Debug builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="assembleDebug" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
-                <option name="description" value="Generates Gradle wrapper files. [incubating]" />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/FileManager" />
-                <option name="name" value="setupWrapper" />
+                <option name="description" value="Assembles all Release builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="assembleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="assembleTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Debug." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="bundleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Release." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="bundleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileTestAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="compileTestRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks on currently connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="connectedCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs the tests for Build 'Debug' on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="connectedInstrumentTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="copyDebugLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="copyReleaseLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks using Device Providers and Test Servers." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="deviceCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="dexTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="generateDebugBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="generateReleaseBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="generateReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="generateTestBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="generateTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="installTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs lint on all variants." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="lint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="lintDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="lintRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="lintTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeDebugAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeDebugProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeReleaseProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeTestAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="mergeTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageDebugJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageDebugLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageReleaseJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageReleaseLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="packageTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="preBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="preDebugBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="preReleaseBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="preTestBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="prepareReleaseDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="prepareTestDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processDebugJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processDebugManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processReleaseJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processReleaseManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processTestJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="processTestTestManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the signing info for each variant" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="signingReport" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstall all applications." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="uninstallAll" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="uninstallTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock" />
+                <option name="name" value="validateDebugSigning" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/libraries/Inscription/library">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the Android dependencies of the project" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="androidDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all variants of all applications and secondary packages." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="assemble" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Debug builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="assembleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Release builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="assembleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="assembleTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Debug." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="bundleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Release." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="bundleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileTestAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="compileTestRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks on currently connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="connectedCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs the tests for Build 'Debug' on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="connectedInstrumentTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="copyDebugLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="copyReleaseLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks using Device Providers and Test Servers." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="deviceCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="dexTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="generateDebugBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="generateReleaseBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="generateReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="generateTestBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="generateTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="installTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs lint on all variants." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="lint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="lintDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="lintRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="lintTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeDebugAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeDebugProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeReleaseProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeTestAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="mergeTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageDebugJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageDebugLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageReleaseJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageReleaseLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="packageTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="preBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="preDebugBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="preReleaseBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="preTestBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="prepareReleaseDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="prepareTestDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processDebugJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processDebugManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processReleaseJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processReleaseManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processTestJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="processTestTestManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the signing info for each variant" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="signingReport" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstall all applications." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="uninstallAll" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="uninstallTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/Inscription/library" />
+                <option name="name" value="validateDebugSigning" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/libraries/MetaDataExtractor">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the Android dependencies of the project" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="androidDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all variants of all applications and secondary packages." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="assemble" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Debug builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="assembleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Release builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="assembleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="assembleTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Debug." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="bundleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Release." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="bundleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileTestAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="compileTestRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks on currently connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="connectedCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs the tests for Build 'Debug' on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="connectedInstrumentTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="copyDebugLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="copyReleaseLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks using Device Providers and Test Servers." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="deviceCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="dexTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="generateDebugBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="generateReleaseBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="generateReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="generateTestBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="generateTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="installTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs lint on all variants." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="lint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="lintDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="lintRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="lintTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeDebugAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeDebugProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeReleaseProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeTestAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="mergeTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageDebugJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageDebugLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageReleaseJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageReleaseLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="packageTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="preBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="preDebugBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="preReleaseBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="preTestBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="prepareReleaseDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="prepareTestDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processDebugJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processDebugManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processReleaseJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processReleaseManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processTestJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="processTestTestManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the signing info for each variant" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="signingReport" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstall all applications." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="uninstallAll" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="uninstallTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/MetaDataExtractor" />
+                <option name="name" value="validateDebugSigning" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/libraries/NineOldAndroids/library">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the Android dependencies of the project" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="androidDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all variants of all applications and secondary packages." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="assemble" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Debug builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="assembleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Release builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="assembleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="assembleTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Debug." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="bundleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Release." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="bundleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileTestAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="compileTestRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks on currently connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="connectedCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs the tests for Build 'Debug' on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="connectedInstrumentTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="copyDebugLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="copyReleaseLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks using Device Providers and Test Servers." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="deviceCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="dexTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="generateDebugBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="generateReleaseBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="generateReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="generateTestBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="generateTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="installTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs lint on all variants." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="lint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="lintDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="lintRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="lintTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeDebugAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeDebugProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeReleaseProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeTestAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="mergeTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageDebugJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageDebugLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageReleaseJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageReleaseLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="packageTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="preBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="preDebugBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="preReleaseBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="preTestBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="prepareReleaseDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="prepareTestDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processDebugJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processDebugManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processReleaseJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processReleaseManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processTestJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="processTestTestManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the signing info for each variant" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="signingReport" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstall all applications." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="uninstallAll" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="uninstallTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/NineOldAndroids/library" />
+                <option name="name" value="validateDebugSigning" />
+              </ExternalTaskPojo>
+            </list>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/libraries/ShowcaseView/library">
+          <value>
+            <list>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the Android dependencies of the project" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="androidDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all variants of all applications and secondary packages." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="assemble" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Debug builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="assembleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles all Release builds" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="assembleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="assembleTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="build" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects that depend on it." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="buildDependents" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles and tests this project and all projects it depends on." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="buildNeeded" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Debug." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="bundleDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Assembles a bundle containing the library in Release." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="bundleRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all checks." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="check" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Deletes the build directory." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="clean" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileTestAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="compileTestRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks on currently connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="connectedCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs and runs the tests for Build 'Debug' on connected devices." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="connectedInstrumentTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="copyDebugLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="copyReleaseLint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs all device checks using Device Providers and Test Servers." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="deviceCheck" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="dexTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="generateDebugBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="generateDebugSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="generateReleaseBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="generateReleaseSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="generateTestBuildConfig" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="generateTestSources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Installs the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="installTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Runs lint on all variants." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="lint" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="lintDebug" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="lintRelease" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="lintTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeDebugAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeDebugProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeReleaseAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeReleaseProguardFiles" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeTestAssets" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="mergeTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageDebugAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageDebugJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageDebugLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageDebugRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageReleaseAidl" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageReleaseJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageReleaseLocalJar" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageReleaseRenderscript" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="packageTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="preBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="preDebugBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="preReleaseBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="preTestBuild" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="prepareDebugDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="prepareReleaseDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="prepareTestDependencies" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processDebugJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processDebugManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processDebugResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processReleaseJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processReleaseManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processReleaseResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processTestJavaRes" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processTestResources" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="processTestTestManifest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Displays the signing info for each variant" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="signingReport" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstall all applications." />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="uninstallAll" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="description" value="Uninstalls the Test build for the Debug build" />
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="uninstallTest" />
+              </ExternalTaskPojo>
+              <ExternalTaskPojo>
+                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$/libraries/ShowcaseView/library" />
+                <option name="name" value="validateDebugSigning" />
               </ExternalTaskPojo>
             </list>
           </value>
@@ -855,18 +2305,13 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="1380027255125" />
+        <entry key="$PROJECT_DIR$" value="1380155551572" />
       </map>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/src/com/google/android/vending/licensing/LicenseCheckerCallback.java" />
-        <option value="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/src/com/google/android/vending/licensing/ServerManagedPolicy.java" />
-        <option value="$APPLICATION_HOME_DIR$/sdk/extras/google/play_licensing/library/src/com/google/android/vending/licensing/LicenseValidator.java" />
-        <option value="$PROJECT_DIR$/../LicenseConstants/src/com/anthonymandra/licenseconstants/LicenseConstants.java" />
-        <option value="$PROJECT_DIR$/../rawdroid_pro/src/com/anthonymandra/rawdroidpro/LicenseProvider.java" />
         <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/LicenseManager.java" />
         <option value="$PROJECT_DIR$/../rawdroid_pro_amz/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/res/values/strings.xml" />
@@ -878,12 +2323,19 @@
         <option value="$PROJECT_DIR$/settings.gradle" />
         <option value="$PROJECT_DIR$/build.gradle" />
         <option value="$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java" />
+        <option value="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" />
+        <option value="$PROJECT_DIR$/libraries/FileManager/FileManager/res/values/strings.xml" />
+        <option value="$PROJECT_DIR$/libraries/MetaDataExtractor/build/bundles/debug/AndroidManifest.xml" />
+        <option value="$PROJECT_DIR$/build/source/buildConfig/debug/com/anthonymandra/rawdroid/BuildConfig.java" />
+        <option value="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="width" value="1280" />
-    <option name="height" value="1560" />
+    <option name="x" value="171" />
+    <option name="y" value="280" />
+    <option name="width" value="1536" />
+    <option name="height" value="1064" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -896,12 +2348,36 @@
             <id>Android Lint</id>
           </State>
           <State>
-            <id>Error handling</id>
+            <id>Control flow issues</id>
+          </State>
+          <State>
+            <id>Declaration redundancy</id>
+          </State>
+          <State>
+            <id>Groovy</id>
+          </State>
+          <State>
+            <id>Initialization issues</id>
+          </State>
+          <State>
+            <id>Internationalization issues</id>
+          </State>
+          <State>
+            <id>Maven</id>
+          </State>
+          <State>
+            <id>Properties Files</id>
+          </State>
+          <State>
+            <id>Validity issuesGroovy</id>
+          </State>
+          <State>
+            <id>XML</id>
           </State>
         </expanded-state>
         <selected-state>
           <State>
-            <id>Abstraction issues</id>
+            <id>AndroidLintDuplicateDefinition</id>
           </State>
         </selected-state>
       </profile-state>
@@ -921,7 +2397,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+    <navigator proportions="" version="1" splitterProportion="0.5">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -932,39 +2408,24 @@
       <autoscrollFromSource />
       <sortByType />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="GoToClass.toSaveIncludeLibraries" value="false" />
-    <property name="recentsLimit" value="5" />
     <property name="MemberChooser.sorted" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="recentsLimit" value="5" />
+    <property name="FullScreen" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -975,20 +2436,7 @@
       <recent name="D:\proj\clean\rawdroid\res\drawable-ldpi" />
     </key>
   </component>
-  <component name="RunManager" selected="Groovy.build (4)">
-    <configuration default="false" name="build" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
-      <module name="rawdroid" />
-      <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="" />
-      <setting name="workDir" value="file://$PROJECT_DIR$" />
-      <setting name="debug" value="false" />
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" enabled="false" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="Gradle.rawdroid:libraries:FileManager:FileManager [compileTest]">
     <configuration default="false" name="build (1)" type="GroovyScriptRunConfiguration" factoryName="Groovy" temporary="true">
       <module name="rawdroid" />
       <setting name="path" value="file://$PROJECT_DIR$/build.gradle" />
@@ -1041,6 +2489,24 @@
         <option name="Make" enabled="false" />
       </method>
     </configuration>
+    <configuration default="false" name="rawdroid:libraries:FileManager:FileManager [compileTest]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/FileManager/FileManager" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="compileTest" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <RunnerSettings RunnerId="ExternalSystemTaskRunner" />
+      <ConfigurationWrapper RunnerId="ExternalSystemTaskRunner" />
+      <method />
+    </configuration>
     <configuration default="true" type="GroovyScriptRunConfiguration" factoryName="Groovy">
       <module name="" />
       <setting name="path" value="" />
@@ -1066,6 +2532,7 @@
       <option name="NETWORK_SPEED" value="full" />
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -1074,6 +2541,20 @@
       <option name="SHMEM_ADDRESS" value="javadebug" />
       <option name="HOST" value="localhost" />
       <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+    <configuration default="true" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="externalProjectPath" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
       <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
@@ -1164,6 +2645,7 @@
       <option name="NETWORK_SPEED" value="full" />
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <configuration default="false" name="rawdroid" type="AndroidRunConfigurationType" factoryName="Android Application">
@@ -1180,6 +2662,7 @@
       <option name="NETWORK_SPEED" value="full" />
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <RunnerSettings RunnerId="AndroidDebugRunner" />
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
       <method />
@@ -1198,6 +2681,7 @@
       <option name="NETWORK_SPEED" value="full" />
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <RunnerSettings RunnerId="AndroidDebugRunner" />
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
       <method />
@@ -1216,6 +2700,7 @@
       <option name="NETWORK_SPEED" value="full" />
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <RunnerSettings RunnerId="AndroidDebugRunner" />
       <ConfigurationWrapper RunnerId="AndroidDebugRunner" />
       <method />
@@ -1234,6 +2719,7 @@
       <option name="NETWORK_SPEED" value="full" />
       <option name="NETWORK_LATENCY" value="none" />
       <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <method />
     </configuration>
     <list size="9">
@@ -1241,19 +2727,19 @@
       <item index="1" class="java.lang.String" itemvalue="Android Application.rawdroid_pro" />
       <item index="2" class="java.lang.String" itemvalue="Android Application.NotePad" />
       <item index="3" class="java.lang.String" itemvalue="Android Application.photomate2" />
-      <item index="4" class="java.lang.String" itemvalue="Groovy.build" />
-      <item index="5" class="java.lang.String" itemvalue="Groovy.build (1)" />
-      <item index="6" class="java.lang.String" itemvalue="Groovy.build (2)" />
-      <item index="7" class="java.lang.String" itemvalue="Groovy.build (3)" />
-      <item index="8" class="java.lang.String" itemvalue="Groovy.build (4)" />
+      <item index="4" class="java.lang.String" itemvalue="Groovy.build (1)" />
+      <item index="5" class="java.lang.String" itemvalue="Groovy.build (2)" />
+      <item index="6" class="java.lang.String" itemvalue="Groovy.build (3)" />
+      <item index="7" class="java.lang.String" itemvalue="Groovy.build (4)" />
+      <item index="8" class="java.lang.String" itemvalue="Gradle.rawdroid:libraries:FileManager:FileManager [compileTest]" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Groovy.build (4)" />
-        <item index="1" class="java.lang.String" itemvalue="Groovy.build (3)" />
-        <item index="2" class="java.lang.String" itemvalue="Groovy.build (2)" />
-        <item index="3" class="java.lang.String" itemvalue="Groovy.build (1)" />
-        <item index="4" class="java.lang.String" itemvalue="Groovy.build" />
+        <item index="0" class="java.lang.String" itemvalue="Gradle.rawdroid:libraries:FileManager:FileManager [compileTest]" />
+        <item index="1" class="java.lang.String" itemvalue="Groovy.build (4)" />
+        <item index="2" class="java.lang.String" itemvalue="Groovy.build (3)" />
+        <item index="3" class="java.lang.String" itemvalue="Groovy.build (2)" />
+        <item index="4" class="java.lang.String" itemvalue="Groovy.build (1)" />
       </list>
     </recent_temporary>
     <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
@@ -1292,32 +2778,6 @@
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
     <supportedVersion>125</supportedVersion>
   </component>
-  <component name="SvnFileUrlMappingImpl">
-    <option name="myMappingRoots">
-      <list>
-        <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\proj\rawdroid\Distribution" />
-          <option name="myCopyRoot" value="D:\proj\rawdroid\Distribution" />
-        </SvnCopyRootSimple>
-        <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\proj\rawdroid\FileManager" />
-          <option name="myCopyRoot" value="D:\proj\rawdroid\FileManager" />
-        </SvnCopyRootSimple>
-      </list>
-    </option>
-    <option name="myMoreRealMappingRoots">
-      <list>
-        <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\proj\rawdroid\Distribution" />
-          <option name="myCopyRoot" value="D:\proj\rawdroid\Distribution" />
-        </SvnCopyRootSimple>
-        <SvnCopyRootSimple>
-          <option name="myVcsRoot" value="D:\proj\rawdroid\FileManager" />
-          <option name="myCopyRoot" value="D:\proj\rawdroid\FileManager" />
-        </SvnCopyRootSimple>
-      </list>
-    </option>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="" />
@@ -1347,35 +2807,35 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="1560" extended-state="1" />
+    <frame x="171" y="280" width="1536" height="1064" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.321831" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Problems" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32087448" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27183098" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2724679" sideWeight="0.41625616" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2753304" sideWeight="0.50135684" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32816902" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46830985" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20206842" sideWeight="0.67912555" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2676519" sideWeight="0.6577975" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27339903" sideWeight="0.7275321" order="3" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2724679" sideWeight="0.5837439" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="combo" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13161466" sideWeight="0.7246696" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27221438" sideWeight="0.5835322" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32895783" sideWeight="0.5316901" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2810271" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3422025" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28062677" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2753304" sideWeight="0.49864316" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1391,117 +2851,95 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/res/layout/image_viewer.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="704" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/viewer_twopane_narrow.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="704">
+        <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9622">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/res/layout/viewer_twopane_wide.xml">
-      <provider editor-type-id="android-designer">
-        <state />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="704">
+        <state line="76" column="35" selection-start="2902" selection-end="2902" vertical-scroll-proportion="0.0" vertical-offset="925" max-vertical-offset="28016">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java">
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="364" column="0" selection-start="8352" selection-end="8352" vertical-scroll-proportion="0.0" vertical-offset="5401" max-vertical-offset="7361">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/android/support/v4/app/FragmentActivity.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="88" column="50" selection-start="3790" selection-end="3790" vertical-scroll-proportion="0.40284842" vertical-offset="1083" max-vertical-offset="2091" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/android/gallery3d/app/PhotoPage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="530" column="0" selection-start="23551" selection-end="23551" vertical-scroll-proportion="0.0" vertical-offset="7951" max-vertical-offset="26112">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="815" column="19" selection-start="29906" selection-end="29977" vertical-scroll-proportion="0.0" vertical-offset="12005" max-vertical-offset="14909">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/sdk/sources/android-18/android/widget/Toast.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="265" column="5" selection-start="8127" selection-end="8359" vertical-scroll-proportion="0.38207045" vertical-offset="3654" max-vertical-offset="6919" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/res/values/styles.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="0" selection-start="2525" selection-end="2525" vertical-scroll-proportion="0.0" vertical-offset="361" max-vertical-offset="1292">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpFragment.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="69" column="12" selection-start="2132" selection-end="2132" vertical-scroll-proportion="0.0" vertical-offset="1173" max-vertical-offset="7939">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="44" selection-start="137" selection-end="137" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="153">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="23" selection-start="235" selection-end="235" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1139">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="667" column="0" selection-start="16792" selection-end="16792" vertical-scroll-proportion="0.0" vertical-offset="9550" max-vertical-offset="11254">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/CameraImport.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="0" selection-start="3540" selection-end="3540" vertical-scroll-proportion="0.0" vertical-offset="1356" max-vertical-offset="4811">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/Source/com/drew/metadata/exif/ExifReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="654" column="0" selection-start="36785" selection-end="36785" vertical-scroll-proportion="0.0" vertical-offset="9754" max-vertical-offset="11288">
+        <state line="16" column="0" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="595">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.71457696" vertical-offset="6881" max-vertical-offset="9061">
+        <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9622">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="35" selection-start="2902" selection-end="2902" vertical-scroll-proportion="0.0" vertical-offset="925" max-vertical-offset="28016">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="595">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/Inscription/library/src/com/inscription/WhatsNewDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="18" selection-start="987" selection-end="987" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="952" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../rawdroid/amandra-xmp/Source/com/drew/metadata/exif/ExifReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="654" column="0" selection-start="36785" selection-end="36785" vertical-scroll-proportion="11.544359" vertical-offset="0" max-vertical-offset="11288" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="7743" max-vertical-offset="9146">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="353" selection-end="353" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="595">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/local.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1001" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1001" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/source/buildConfig/debug/com/anthonymandra/rawdroid/BuildConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1001" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.project">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="27" selection-start="25" selection-end="27" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="1411" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="76" column="35" selection-start="2902" selection-end="2902" vertical-scroll-proportion="0.59289175" vertical-offset="925" max-vertical-offset="28016">
           <folding />
         </state>
       </provider>

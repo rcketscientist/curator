@@ -1,4 +1,27 @@
-//include ':app'
-include ':libraries:ShowcaseView:library'
-include ':libraries:Distribution'
+include ':libraries:Distribution:DistributionLibrary'
+//include ':DistributionLibrary'
+//project(':DistributionLibrary').projectDir = new File(settingsDir, 'libraries/Distribution/DistributionLibrary')
+
+include ':libraries:NineOldAndroids:library'
+//include ':NineOldAndroids'
+//project(':NineOldAndroids').projectDir = new File(settingsDir, 'libraries/NineOldAndroids/library')
+
+include ':libraries:ActionBarSherlock:actionbarsherlock'
+//include ':ActionBarSherlock'
+//project(':ActionBarSherlock').projectDir = new File(settingsDir, 'libraries/ActionBarSherlock/actionbarsherlock')
+
+include ':libraries:Inscription:library'
+//include ':Inscription'
+//project(':Inscription').projectDir = new File(settingsDir, 'libraries/Inscription/library')
+
+include ':libraries:MetaDataExtractor'
+//include ':MetaDataExtractor'
+//project(':MetaDataExtractor').projectDir = new File(settingsDir, 'libraries/MetaDataExtractor')
+
 include ':libraries:FileManager:FileManager'
+//include ':FileManager'
+//project(':FileManager').projectDir = new File(settingsDir, 'libraries/FileManager/FileManager')
+
+include ':libraries:ShowcaseView:library'
+//include ':ShowcaseView'
+//project(':ShowcaseView').projectDir = new File(settingsDir, 'libraries/ShowcaseView/library')

@@ -1,19 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="Git" />
+    <mapping directory="" vcs="" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ActionBarSherlock" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Distribution" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
@@ -22,30 +89,120 @@
     <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/FileManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/Inscription" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/MetaDataExtractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/NineOldAndroids" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../rawdroid_pro" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../rawdroid_pro_amz" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/ActionBarSherlock" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/Distribution" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/FileManager" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/Inscription" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/Inscription/library" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/NineOldAndroids" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/NineOldAndroids/library" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/ShowcaseView" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/ShowcaseView/library" vcs="svn" />
-    <mapping directory="$PROJECT_DIR$/../../rawdroid/amandra-xmp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/libraries/_ShowcaseView" vcs="Git" />
   </component>
 </project>
 

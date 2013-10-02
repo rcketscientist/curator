@@ -158,6 +158,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 
     private ImageCacheService mImageCacheService;
     private GLRootView mGLRootView;
+    
+    protected int mContentView;
 
     private final MyMenuVisibilityListener mMenuVisibilityListener =
             new MyMenuVisibilityListener();
@@ -263,7 +265,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        mActionBar = mActivity.getGalleryActionBar();
 //        mSelectionManager = new SelectionManager(mActivity, false);
 //        mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
-        setContentView(R.layout.viewer_layout);
+        setContentView(mContentView);
 
         mPhotoView = new PhotoView(this);
         mPhotoView.setListener(this);
@@ -519,16 +521,6 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                }
 //            }
 //        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        updateImageDetails();   // For small screens this will fix the meta panel shape
-        if(xmpFrag!=null) {
-            getSupportFragmentManager().beginTransaction().remove(xmpFrag).commit();
-        }
-        setContentView(R.layout.viewer_layout);
     }
 
     @Override
@@ -901,8 +893,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        }
     }
 
-    @Override
-    public void onBackPressed() {
+//    @Override
+//    public void onBackPressed() {
 //        if (mShowDetails) {
 //            hideDetails();
 //        } else if (!switchWithCaptureAnimation(-1)) {
@@ -913,10 +905,10 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //            } else if (mTreatBackAsUp) {
 //                onUpPressed();
 //            } else {
-                super.onBackPressed();
+//                super.onBackPressed();
 //            }
 //        }
-    }
+//    }
 
     private void onUpPressed() {
         if ((mStartInFilmstrip)
@@ -1228,9 +1220,9 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 
     @Override
     public void onFullScreenChanged(boolean full) {
-        Message m = mHandler.obtainMessage(
-                MSG_ON_FULL_SCREEN_CHANGED, full ? 1 : 0, 0);
-        m.sendToTarget();
+//        Message m = mHandler.obtainMessage(
+//                MSG_ON_FULL_SCREEN_CHANGED, full ? 1 : 0, 0);
+//        m.sendToTarget();
     }
 
     // How we do delete/undo:
@@ -1379,12 +1371,12 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                mActionBar.disableAlbumModeMenu(true);
 //            }
 //        }
-        if (enabled) {
-            mHandler.removeMessages(MSG_HIDE_BARS);
+//        if (enabled) {
+//            mHandler.removeMessages(MSG_HIDE_BARS);
 //            UsageStatistics.onContentViewChanged(
 //                    UsageStatistics.COMPONENT_GALLERY, "FilmstripPage");
-        } else {
-            refreshHidingMessage();
+//        } else {
+//            refreshHidingMessage();
 //            if (mAppBridge == null || mCurrentIndex > 0) {
 //                UsageStatistics.onContentViewChanged(
 //                        UsageStatistics.COMPONENT_GALLERY, "SinglePhotoPage");
@@ -1392,7 +1384,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                UsageStatistics.onContentViewChanged(
 //                        UsageStatistics.COMPONENT_CAMERA, "Unknown"); // TODO
 //            }
-        }
+//        }
     }
 
     private void transitionFromAlbumPageIfNeeded() {
@@ -1401,7 +1393,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        int albumPageTransition = transitions.get(
 //                KEY_ALBUMPAGE_TRANSITION, MSG_ALBUMPAGE_NONE);
 //
-//        if (albumPageTransition == MSG_ALBUMPAGE_NONE && mAppBridge != null
+//        if (albumPageTransition == MSG_ALBUMPAGE_NONE /*&& mAppBridge != null*/
 //                && mRecenterCameraOnResume) {
 //            // Generally, resuming the PhotoPage when in Camera should
 //            // reset to the capture mode to allow quick photo taking
@@ -1414,7 +1406,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //                    // Account for preview/placeholder being the first item
 //                    resumeIndex++;
 //                }
-//                if (resumeIndex < mMediaSet.getMediaItemCount()) {
+//                if (resumeIndex < mVisibleItems.size()) {
 //                    mCurrentIndex = resumeIndex;
 //                    mModel.moveTo(mCurrentIndex);
 //                }
@@ -1422,11 +1414,11 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        }
 //
 //        if (albumPageTransition == MSG_ALBUMPAGE_RESUMED) {
-//            mPhotoView.setFilmMode(mStartInFilmstrip || mAppBridge != null);
+//            mPhotoView.setFilmMode(mStartInFilmstrip /*|| mAppBridge != null*/);
 //        } else if (albumPageTransition == MSG_ALBUMPAGE_PICKED) {
 //            mPhotoView.setFilmMode(false);
 //        }
-
+        
         mModel.moveTo(mCurrentIndex);
         mPhotoView.setFilmMode(false);
     }

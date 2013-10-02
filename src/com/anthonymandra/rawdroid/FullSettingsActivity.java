@@ -331,11 +331,11 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		{
 			BufferedInputStream source = new BufferedInputStream(new FileInputStream(sourcePath));
 			Util.copy(source, GalleryActivity.getKeywordFile(this));
-			Toast.makeText(this, R.string.resultImportSuccessful, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show();
 		}
 		catch (IOException e)
 		{
-			Toast.makeText(this, R.string.resultImportFailed, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
 			return;
 		}
 	}

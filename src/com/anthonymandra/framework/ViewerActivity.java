@@ -1,24 +1,13 @@
 package com.anthonymandra.framework;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.ActionProvider;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.actionbarsherlock.widget.ShareActionProvider;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
-import com.anthonymandra.rawdroid.FullSettingsActivity;
-import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawdroid.RawDroid;
-import com.anthonymandra.rawdroid.ViewerChooser;
-import com.anthonymandra.rawdroid.XmpFragment;
-import com.anthonymandra.widget.HistogramView;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.openintents.intents.FileManagerIntents;
 
-import android.annotation.TargetApi;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -30,6 +19,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,16 +32,20 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Timer;
-import java.util.TimerTask;
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.ActionProvider;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
+import com.actionbarsherlock.widget.ShareActionProvider;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawdroid.RawDroid;
+import com.anthonymandra.rawdroid.ViewerChooser;
+import com.anthonymandra.rawdroid.XmpFragment;
+import com.anthonymandra.widget.HistogramView;
 
 /**
  * Created by amand_000 on 8/27/13.
@@ -113,6 +107,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected Timer autoHide;
 
+    protected boolean showSidebar = false;
     protected XmpFragment xmpFrag;
 
     protected boolean isInterfaceHidden;
@@ -229,8 +224,14 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     @Override
     public void onBackPressed() {
-        setImageFocus();
-        super.onBackPressed();
+    	if (showSidebar)
+    	{
+    		hideSidebar();
+    		return;
+    	}
+
+    	setImageFocus();
+    	super.onBackPressed();
     }
 
     protected void setMetaVisibility()
@@ -318,12 +319,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
         rowDriveMode = (TableRow) findViewById(R.id.rowDriveMode);
         rowExposureMode = (TableRow) findViewById(R.id.rowExposureMode);
         rowExposureProgram = (TableRow) findViewById(R.id.rowExposureProgram);
-
-        if (getResources().getBoolean(R.bool.hasTwoPanes))
-        {
-            xmpFrag = (XmpFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentSideBar);
-            hideSidebar();
-        }
+        
+        loadXmpPanel();
     }
 
     protected void setActionBar()
@@ -338,7 +335,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
 
-        final View sideBarWrapper = findViewById(R.id.frameLayoutSidebar);
+//        final View sideBarWrapper = findViewById(R.id.frameLayoutSidebar);
+        final View sideBarWrapper = findViewById(R.id.xmpRightContainer);
         if (sideBarWrapper != null) // Portrait doesn't require the wrapper
         {
             ((ViewGroup.MarginLayoutParams) sideBarWrapper.getLayoutParams()).setMargins(0, actionBarHeight, 0, 0);
@@ -407,20 +405,21 @@ public abstract class ViewerActivity extends GalleryActivity implements
         {
             public void run()
             {
-                // imagePanels.setVisibility(View.VISIBLE);
                 if (!settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic")
                         .equals("Never"))
+                {
                     navigationPanel.setVisibility(View.VISIBLE);
+                }
                 if (!settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic")
                         .equals("Never"))
+                {
                     metaPanel.setVisibility(View.VISIBLE);
+                }
                 if (!settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic")
                         .equals("Never"))
+                {
                     histView.setVisibility(View.VISIBLE);
-                // navigationPanel.setVisibility(View.VISIBLE);
-//                buttonRotate.setVisibility(View.VISIBLE);
-                // metaPanel.setVisibility(View.VISIBLE);
-                // histView.setVisibility(View.VISIBLE);
+                }
                 getSupportActionBar().show();
             }
         });
@@ -434,20 +433,21 @@ public abstract class ViewerActivity extends GalleryActivity implements
         {
             public void run()
             {
-
                 if (!settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic")
                         .equals("Always"))
+                {
                     navigationPanel.setVisibility(View.INVISIBLE);
+                }
                 if (!settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic")
                         .equals("Always"))
+                {
                     metaPanel.setVisibility(View.INVISIBLE);
+                }
                 if (!settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic")
                         .equals("Always"))
+                {
                     histView.setVisibility(View.INVISIBLE);
-//                buttonRotate.setVisibility(View.GONE);
-//                metaPanel.setVisibility(View.GONE);
-                // histView.setVisibility(View.GONE);
-                // imagePanels.setVisibility(View.GONE);
+                }
                 getSupportActionBar().hide();
             }
         });
@@ -471,7 +471,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateHistogram(Bitmap bitmap)
     {
-//        new HistogramTask().execute(bitmap);
         if (mHistogramTask != null)
             mHistogramTask.cancel(true);
         mHistogramTask = new HistogramTask();
@@ -515,6 +514,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     private void hideSidebar()
     {
+    	showSidebar = false;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.hide(xmpFrag);
         transaction.commit();
@@ -522,9 +522,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     private void showSidebar()
     {
+    	showSidebar = true;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.show(xmpFrag);
-        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -657,6 +657,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        loadXmpPanel();                       
         updateImageDetails();   // For small screens this will fix the meta panel shape
     }
 
@@ -715,6 +716,45 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 return super.onOptionsItemSelected(item);
         }
     }
+    
+    private void loadXmpPanel()
+    {
+    	if (xmpFrag != null)
+    	{
+	        FragmentManager fm = getSupportFragmentManager();
+	        FragmentTransaction ft = fm.beginTransaction();
+	        ft.remove(getSupportFragmentManager().findFragmentByTag(XmpFragment.FRAGMENT_TAG));
+	        ft.commit();
+	        fm.executePendingTransactions();
+    	}
+    	
+    	xmpFrag = new XmpFragment();
+    	int container;
+    	boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        if (isPortrait)
+        {
+        	container = R.id.xmpBottomContainer;
+        }
+        else
+        {
+        	container = R.id.xmpRightContainer;
+        }
+         
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(container, xmpFrag, XmpFragment.FRAGMENT_TAG);      
+        ft.commit();
+        fm.executePendingTransactions();
+        
+        if (showSidebar)
+        {
+        	showSidebar();
+        }
+        else
+        {
+        	hideSidebar();
+        }
+    }
 
     private void startSettings()
     {
@@ -725,19 +765,10 @@ public abstract class ViewerActivity extends GalleryActivity implements
     private void editImage()
     {
         MediaItem media = getCurrentItem();
-//        BufferedInputStream imageData = media.getThumbInputStream();
-//        if (imageData == null)
-//        {
-//            Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
-//            return;
-//        }
-
-//        Utils.closeSilently(imageData);
 
         Intent action = new Intent(Intent.ACTION_EDIT);
         action.setType("image/jpeg");
 
-//        action.setDataAndType(Uri.fromFile(swapFile), "image/*");
         action.setDataAndType(media.getSwapUri(), "image/*");
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
@@ -866,7 +897,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 xmpFrag = XmpFragment.newInstance((MetaMedia) getCurrentItem());
                 transaction.add(R.id.frameLayoutViewer, xmpFrag);
-                transaction.addToBackStack(null);
                 transaction.commit();
             }
         }

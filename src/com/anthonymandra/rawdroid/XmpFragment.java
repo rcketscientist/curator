@@ -17,6 +17,7 @@ import pl.polidea.treeview.TreeStateManager;
 import pl.polidea.treeview.TreeViewList;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,6 +41,7 @@ import com.anthonymandra.widget.MultiSpinner;
 public class XmpFragment extends SherlockFragment
 {
 	private static final String TAG = XmpFragment.class.getSimpleName();
+	public static final String FRAGMENT_TAG = "XmpFragment";
 	
 	Set<String> selectedKeywords = new HashSet<String>();
 	RatingBar mRatingBar;
@@ -63,14 +65,16 @@ public class XmpFragment extends SherlockFragment
 	{
 		// Inflate the layout for this fragment
 		View view;
-		if (getResources().getBoolean(R.bool.hasWideXmp))
+		boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+		if (isPortrait)
 		{
-			view = inflater.inflate(R.layout.xmp_fragment_wide, container, false);
+			view = inflater.inflate(R.layout.xmp_fragment_portrait, container, false);
 		}
 		else
 		{
-			view = inflater.inflate(R.layout.xmp_fragment_narrow, container, false);
+			view = inflater.inflate(R.layout.xmp_fragment_landscape, container, false);
 		}
+		
 		return view;
 	}
 

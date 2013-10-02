@@ -8,15 +8,22 @@
     <include
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/fragmentSideBar"
+        android:layout_toLeftOf="@+id/xmpRightContainer"
+        android:layout_above="@+id/xmpBottomContainer"
         layout="@layout/legacy_viewer" />
 
-    <fragment
-        android:id="@+id/fragmentSideBar"
-        android:name="com.anthonymandra.rawdroid.XmpFragment"
+   	<FrameLayout
+   	    android:id="@+id/xmpRightContainer"
         android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"  >
+   	</FrameLayout>
+   	
+   	<FrameLayout
+   	    android:id="@+id/xmpBottomContainer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        tools:layout="@layout/xmp_fragment_narrow" />
+        android:layout_alignParentBottom="true"  >
+   	</FrameLayout>
 
 </RelativeLayout>

@@ -201,7 +201,9 @@ public class CameraImport extends Activity
 		@Override
 		protected void onPostExecute(List<String> failed)
 		{
-			mProgressDialog.dismiss();
+			if(mProgressDialog != null && mProgressDialog.isShowing())
+				mProgressDialog.dismiss();
+
 			if (failed.size() > 0)
 			{
 				String failures = "Failed files: ";

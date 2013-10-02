@@ -71,7 +71,7 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
         super.onCreate(savedInstanceState);
         GalleryUtils.initialize(this);  // AJM: From GalleryAppImpl
         mOrientationManager = new OrientationManager(this);
-        toggleStatusBarByOrientation();
+//        toggleStatusBarByOrientation();
         getWindow().setBackgroundDrawable(null);
         mBackgroundColor = GalleryUtils.intColorToFloatARGBArray(
                 getResources().getColor(getBackgroundColorId()));   //AJM: From ActivityState
@@ -91,14 +91,14 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration config) {
-        super.onConfigurationChanged(config);
+//    @Override
+//    public void onConfigurationChanged(Configuration config) {
+//        super.onConfigurationChanged(config);
 //        mStateManager.onConfigurationChange(config);
 //        getGalleryActionBar().onConfigurationChanged();
-        invalidateOptionsMenu();
-        toggleStatusBarByOrientation();
-    }
+//        invalidateOptionsMenu();  //INcorrectly throwing API 11 error...
+//        toggleStatusBarByOrientation();
+//    }
 
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
@@ -221,7 +221,7 @@ public abstract class AbstractGalleryActivity extends ViewerActivity implements 
 //        } finally {
 //            mGLRootView.unlockRenderThread();
 //        }
-        setScreenFlags();
+//        setScreenFlags();
         mGLRootView.onResume();
         mOrientationManager.resume();
     }
