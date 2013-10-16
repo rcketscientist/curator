@@ -31,6 +31,7 @@ LOCAL_CXXFLAGS += -I$(SYSROOT)/usr/lib/include/libraw -pthread -w
 LOCAL_MODULE     := libraw_r                                    				# name of your module
 # libraries to link against
 LOCAL_LDLIBS     += -L$(SYSROOT)/usr/lib -lstdc++								# lstdc++ is auto-linked
+#LOCAL_LDLIBS    += -ljpeg
 #LOCAL_LDLIBS     += -L$(MYDROID)/out/target/product/generic/system/lib/ -ljpeg	# ljpeg is for DNG jpg
 
 #core libraw
@@ -63,9 +64,33 @@ LOCAL_SRC_FILES += src/libraw_datastream.cpp
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/libraw
 LOCAL_MODULE    := libraw
-LOCAL_LDLIBS     += -L$(SYSROOT)/usr/lib -llog
+
+LOCAL_CFLAGS    := \
+#  -D__ANDROID__ \
+#  -DO3D_NO_CANVAS \
+#  -DO3D_NO_GPU2D \
+#  -DO3D_NO_IPC \
+#  -DO3D_NO_ARCHIVE_REQUEST \
+#  -DO3D_NO_FILE_REQUEST \
+#  -DO3D_PLUGIN_VERSION=\"0.1.43.0\" \
+#  -I$(LOCAL_PATH)/../third_party/stlport/stlport \
+  -I$(LOCAL_PATH)/../third_party/libjpeg \
+#  -I$(LOCAL_PATH)/../third_party/libpng \
+#  -I$(LOCAL_PATH)/../third_party/chromium \
+#  -I$(LOCAL_PATH)/../third_party \
+#  -I$(LOCAL_PATH)/.. \
+  
+LOCAL_LDLIBS    += -L$(SYSROOT)/usr/lib -llog
+#LOCAL_LDLIBS    += -ljpeg
+#LOCAL_LDLIBS     += -L$(MYDROID)/out/target/product/generic/system/lib/ -ljpeg
 LOCAL_SRC_FILES := libraw.cpp
+
+LOCAL_STATIC_LIBRARIES := libjpeg 
 LOCAL_SHARED_LIBRARIES := libraw_r
+
 include $(BUILD_SHARED_LIBRARY)
+
+include $(LOCAL_PATH)/libjpeg/Android.mk
