@@ -16,6 +16,7 @@
 
 package com.anthonymandra.framework;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -41,7 +43,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.util.Log;
 
+import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.R;
 
 /**
@@ -49,7 +53,7 @@ import com.anthonymandra.rawdroid.R;
  */
 public class Util
 {
-
+	private static final String TAG = Util.class.getSimpleName();
 	public static boolean hasFroyo()
 	{
 		// Can use static final constants like FROYO, declared in later versions
@@ -372,8 +376,8 @@ public class Util
 		}
 		return true;
 	}
-
-    public static Bitmap addWatermark(Context context, Bitmap src)
+	
+    public static Bitmap addWatermark2(Context context, Bitmap src)
     {
         int width = src.getWidth();
         int height = src.getHeight();
@@ -388,10 +392,135 @@ public class Util
             id = R.drawable.watermark256;
         else if (width < 768)
             id = R.drawable.watermark128;
-        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id);
-        canvas.drawBitmap(watermark, width/4*3 - watermark.getWidth(), height/4*3, null);
+        Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
+        watermark.setDensity(result.getDensity());
+        canvas.drawBitmap(watermark, width/4*3, height/4*3, null);
 
         return result;
+    }
+    
+    public static Bitmap addWatermark(Context context, File file, Bitmap src)
+    {
+        int width = src.getWidth();
+        int height = src.getHeight();
+                
+        int id = R.drawable.watermark1024;
+        if (width < 3072)
+            id = R.drawable.watermark512;
+        else if (width < 1536)
+            id = R.drawable.watermark256;
+        else if (width < 768)
+            id = R.drawable.watermark128;
+        
+        
+        BitmapFactory.Options o = new Options();
+        o.inScaled = false;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
+               
+        int startX = width/4*3;
+        int startY = height/4*3;
+        
+        int watermarkWidth = watermark.getWidth();
+        int watermarkHeight = watermark.getHeight();
+        
+        int pixels = watermarkWidth * watermarkHeight;
+        int[] source = new int[width * height];
+        int[] mark = new int[pixels];
+        
+        watermark.getPixels(mark, 0, watermarkWidth, 0, 0, watermarkWidth, watermarkHeight);
+        src.getPixels(source, 0, width, 0, 0, width, height);
+        
+        int i = 0;
+        for (int y = startY; y < startY + watermarkHeight; ++y)
+        {
+        	for (int x = startX; x < startX + watermarkWidth; ++x)
+        	{
+        		int index = y * width + x;
+        		// Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
+        		// Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
+        		float opacity = Color.alpha(mark[i]) / 510f; 
+        		source[index] = Color.argb(
+        				Color.alpha(source[index]),
+        				Math.min(Color.red(source[index]) 	+ (int)(Color.red(mark[i]) 	* opacity), 255),
+        				Math.min(Color.green(source[index]) + (int)(Color.green(mark[i])* opacity), 255),
+        				Math.min(Color.blue(source[index]) 	+ (int)(Color.blue(mark[i]) * opacity), 255));
+        		++i;
+        	}
+        }
+        
+//        src.setPixels(source, 0, width, 0, 0, width, height);
+
+        return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
+    }
+    
+    public static Bitmap getWatermark(Context context, int srcWidth)
+    {
+        int id = R.drawable.watermark1024;
+        if (srcWidth < 3072)
+            id = R.drawable.watermark512;
+        else if (srcWidth < 1536)
+            id = R.drawable.watermark256;
+        else if (srcWidth < 768)
+            id = R.drawable.watermark128;
+        
+        BitmapFactory.Options o = new Options();
+        o.inScaled = false;
+        return BitmapFactory.decodeResource(context.getResources(), id, o);
+    }
+
+    public static Bitmap addWatermark(Context context, Bitmap src)
+    {
+        int width = src.getWidth();
+        int height = src.getHeight();
+                
+        int id = R.drawable.watermark1024;
+        if (width < 3072)
+            id = R.drawable.watermark512;
+        else if (width < 1536)
+            id = R.drawable.watermark256;
+        else if (width < 768)
+            id = R.drawable.watermark128;
+        
+        BitmapFactory.Options o = new Options();
+        o.inScaled = false;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
+               
+        int startX = width/4*3;
+        int startY = height/4*3;
+        
+        int watermarkWidth = watermark.getWidth();
+        int watermarkHeight = watermark.getHeight();
+        
+        int pixels = watermarkWidth * watermarkHeight;
+        int[] source = new int[width * height];
+        int[] mark = new int[pixels];
+        
+        watermark.getPixels(mark, 0, watermarkWidth, 0, 0, watermarkWidth, watermarkHeight);
+        src.getPixels(source, 0, width, 0, 0, width, height);
+        
+        int i = 0;
+        for (int y = startY; y < startY + watermarkHeight; ++y)
+        {
+        	for (int x = startX; x < startX + watermarkWidth; ++x)
+        	{
+        		int index = y * width + x;
+        		// Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
+        		// Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
+        		float opacity = Color.alpha(mark[i]) / 510f; 
+        		source[index] = Color.argb(
+        				Color.alpha(source[index]),
+        				Math.min(Color.red(source[index]) 	+ (int)(Color.red(mark[i]) 	* opacity), 255),
+        				Math.min(Color.green(source[index]) + (int)(Color.green(mark[i])* opacity), 255),
+        				Math.min(Color.blue(source[index]) 	+ (int)(Color.blue(mark[i]) * opacity), 255));
+        		++i;
+        	}
+        }
+        
+//        src.setPixels(source, 0, width, 0, 0, width, height);
+
+        return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
     }
 
     public static Bitmap addCustomWatermark(Bitmap src, String watermark, int alpha,
@@ -478,4 +607,38 @@ public class Util
                         PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
     }
+    
+	public static void write(File destination, InputStream is)
+	{
+		BufferedOutputStream bos = null;
+		byte[] data = null;
+		try
+		{
+			bos = new BufferedOutputStream(new FileOutputStream(destination));
+			data = new byte[is.available()];
+			is.read(data);
+			bos.write(data);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (bos != null)
+				{
+					bos.close();
+				}
+				if (is != null)
+				{
+					is.close();
+				}
+			}
+			catch (IOException e)
+			{
+			}
+		}
+	}
 }

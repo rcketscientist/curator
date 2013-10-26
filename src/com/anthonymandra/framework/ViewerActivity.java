@@ -719,6 +719,10 @@ public abstract class ViewerActivity extends GalleryActivity implements
     
     private void loadXmpPanel()
     {
+        if (!getResources().getBoolean(R.bool.hasTwoPanes))
+        {
+        	return;
+        }
     	if (xmpFrag != null)
     	{
 	        FragmentManager fm = getSupportFragmentManager();
@@ -897,6 +901,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 xmpFrag = XmpFragment.newInstance((MetaMedia) getCurrentItem());
                 transaction.add(R.id.frameLayoutViewer, xmpFrag);
+                transaction.addToBackStack(null);
                 transaction.commit();
             }
         }

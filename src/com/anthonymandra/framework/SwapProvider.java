@@ -68,46 +68,48 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
             // If it returns 1 - then it matches the Uri defined in onCreate
             case 1:
-
-                LocalImage image = new LocalImage(new File(uri.getFragment()));
+               
                 File swapFile = new File(Util.getDiskCacheDir(getContext(),
                         GalleryActivity.SWAP_BIN_DIR),
                         uri.getLastPathSegment());
-
-                InputStream imageData = image.getThumb();
-                if (imageData == null)
-                    return null;
-
-                try
+                        
+                // Don't keep recreating the swap file
+                // Some receivers may call multiple times
+                if (!swapFile.exists())
                 {
-                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
+                	LocalImage image = new LocalImage(new File(uri.getFragment()));
+	                InputStream imageData = image.getThumb();
+	                if (imageData == null)
+	                    return null;
 
-                    if (!mLicenseManager.isLicensed())
-                    {
-                        bmp = Util.addWatermark(getContext(), bmp);
-                    }
-                    else if (mShowWatermark)
-                    {
-                        bmp = Util.addCustomWatermark(bmp, mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
-                    }
-
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
-
-                    ParcelFileDescriptor pfd = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
-                    return pfd;
+	                try
+	                {	                   
+	                    if (!mLicenseManager.isLicensed())
+	                    {
+	                    	Bitmap bmp = BitmapFactory.decodeStream(imageData);
+	                        bmp = Util.addWatermark(getContext(), bmp);
+	                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
+	                    }
+	                    else if (mShowWatermark)
+	                    {
+	                    	Bitmap bmp = BitmapFactory.decodeStream(imageData);
+	                        bmp = Util.addCustomWatermark(bmp, mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+	                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
+	                    }
+	                    else
+	                    {
+	                    	Util.write(swapFile, imageData);
+	                    }
+	                }
+	                catch(Exception e){  }
+	                finally {
+	                    Utils.closeSilently(imageData);
+	                }
                 }
-                catch(Exception e){  }
-                finally {
-                    Utils.closeSilently(imageData);
-                }
 
+                ParcelFileDescriptor pfd = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
+                return pfd;            
 
-
-                // Create & return a ParcelFileDescriptor pointing to the file
-                // Note: I don't care what mode they ask for - they're only getting read only
-
-
-            // Otherwise unrecognised Uri
             default:
                 Log.v(TAG, "Unsupported uri: '" + uri + "'.");
                 throw new FileNotFoundException("Unsupported uri: " + uri.toString());

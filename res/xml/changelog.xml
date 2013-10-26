@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="1.9.3"
-        versioncode="117"
-        summary="Viewer fixes. There are still some crashes I can't reproduce or trace. Please email me with details if you're experiencing crashes."
+    <release version="1.9.4"
+        versioncode="118"
+        summary="Viewer orientation fixes and memory improvements."
         date="09/18/2013">
-        <change>Updated: Share action processing</change>
-        <change>Fixed: Auto-hide will no longer cancel menu</change>
+        <change>Fixed: XMP Panel orientation</change>      
+        <change>Fixed: Preprocess jpeg meta to orient image</change>
+        <change>Improved: Orientation handling</change>
+        <change>Improved: Memory management in gallery</change>
     </release>
     <release version="1.9.2"
         versioncode="116"

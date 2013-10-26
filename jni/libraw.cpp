@@ -1,13 +1,13 @@
 #include <string.h>
 #include <jni.h>
-
-#include "libraw/libraw.h"
-
 #include <android/log.h>
+#include <algorithm>
+
+#include <libraw/libraw.h>
 
 extern "C" 
 {
-	#include "jpeglib.h";
+	#include <jpeglib.h>
 	// Can decode
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes);
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromFile(JNIEnv* env, jclass clazz, jstring filePath);
@@ -15,6 +15,7 @@ extern "C"
 	// Return thumb bitmap
     JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat);
 	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbWithWatermark(JNIEnv* env, jclass clazz, jstring filePath, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality);
 
 	// Write thumb (native format)
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jstring destination);
@@ -36,8 +37,13 @@ void setExif(JNIEnv* env, libraw_data_t imgdata, jobjectArray exif);
 jintArray getColors(JNIEnv* env, libraw_processed_image_t *raw);
 jobject createBitmapRegionDecoder(JNIEnv* env, libraw_processed_image_t *raw, int quality, jobject config, jobject compressFormat);
 jbyteArray createBitmap(JNIEnv* env, libraw_processed_image_t *raw, int quality, jobject config, jobject compressFormat);
+jbyteArray createJpeg(JNIEnv* env, unsigned char* data, int width, int height, int quality);
+jbyteArray createJpeg(JNIEnv* env, libraw_processed_image_t *raw, int quality, jobject config, jobject compressFormat);
+unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, int height);
+unsigned char clamp(unsigned char a, unsigned char b);
 
 jbyteArray getThumb(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+jbyteArray getThumbWithWatermark(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality);
 
 jbyteArray getRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
 jbyteArray getHalfRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
@@ -207,6 +213,22 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromFil
 	return thumb;
 }
 
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbWithWatermark(JNIEnv* env, jclass clazz, jstring filePath, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality)
+{
+	LibRaw* rawProcessor = new LibRaw();
+
+	const char *str= env->GetStringUTFChars(filePath,0);
+	int result = rawProcessor->open_file(str);
+	env->ReleaseStringUTFChars(filePath, str);
+	if (result != LIBRAW_SUCCESS)
+		return NULL;
+
+	jbyteArray thumb = getThumbWithWatermark(env, rawProcessor, watermark, margins, waterWidth, waterHeight, quality);
+	rawProcessor->recycle();
+	free(rawProcessor);
+	return thumb;
+}
+
 JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getRawFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat)
 {
 	LibRaw* rawProcessor = new LibRaw();
@@ -260,6 +282,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFromFil
 {
 	LibRaw* rawProcessor = new LibRaw();
 
+	rawProcessor->imgdata.params.use_rawspeed = 1;
 	const char *str= env->GetStringUTFChars(filePath,0);
 	int result = rawProcessor->open_file(str);
 	env->ReleaseStringUTFChars(filePath, str);
@@ -268,7 +291,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFromFil
 
 	jbyteArray bmp = getRawImage(env, rawProcessor, quality, config, compressFormat);
 	rawProcessor->recycle();
-
+	free(rawProcessor);
 	return bmp;
 }
 
@@ -284,7 +307,7 @@ JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoderFrom
 
 	jobject regionDecoder = getHalfRawDecoder(env, rawProcessor, quality, config, compressFormat);
 	rawProcessor->recycle();
-
+	free(rawProcessor);
 	return regionDecoder;
 }
 
@@ -378,7 +401,11 @@ jbyteArray getThumb(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int qu
 
 	if (image->type == LIBRAW_IMAGE_BITMAP)
 	{
-		thumb = createBitmap(env, image, quality, config, compressFormat);
+//		thumb = createBitmap(env, image, quality, config, compressFormat);
+		__android_log_write(ANDROID_LOG_INFO, "JNI", "thumb rgb");
+//		thumb = createJpeg(env, image->data, rawProcessor->imgdata.sizes.width, rawProcessor->imgdata.sizes.height, quality);
+		thumb = createJpeg(env, image->data, image->width, image->height, quality);
+		__android_log_write(ANDROID_LOG_INFO, "JNI", "thumb jpeg");
 	}
 	else
 	{
@@ -387,6 +414,128 @@ jbyteArray getThumb(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int qu
 	}
 	rawProcessor->dcraw_clear_mem(image);
 	return thumb;
+}
+
+jbyteArray getThumbWithWatermark(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality)
+{
+	int* margin = env->GetIntArrayElements(margins, 0);
+	int top = margin[0];
+	int left = margin[1];
+	int bottom = margin[2];
+	int right = margin[3];
+	int startX, startY;
+	int result;
+
+	result = rawProcessor->unpack_thumb();
+	if (result != LIBRAW_SUCCESS)
+	{
+		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
+		return NULL;
+	}
+	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_thumb(&result);
+	if (result != LIBRAW_SUCCESS)
+	{
+		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
+		return NULL;
+	}
+
+	int width = rawProcessor->imgdata.thumbnail.twidth;
+	int height = rawProcessor->imgdata.thumbnail.theight;
+	__android_log_print(ANDROID_LOG_INFO, "JNI", "width:%d hieght:%d", width, height);
+
+	if ((top > 0 && bottom > 0))
+		return NULL;
+	if ((right > 0 && left > 0))
+		return NULL;
+
+	if (left > 0)
+		startX = left;
+	else if (right > 0)
+	{
+		startX = width - right - waterWidth;
+	}
+	else
+	{
+		startX = width / 2 - waterWidth / 2;	//center
+	}
+
+	if (top > 0)
+		startY = top;
+	else if (bottom > 0)
+	{
+		startY = height - bottom - waterHeight;
+	}
+	else
+	{
+		startY = height / 2 - waterHeight / 2;	//center
+	}
+
+	unsigned char* pixels;
+	bool jpeg = image->type == LIBRAW_IMAGE_JPEG;
+	if (jpeg)
+	{
+		pixels = readJpeg(env, image, width, height);
+	}
+	else
+	{
+		pixels = image->data;
+	}
+
+	jsize len = env->GetArrayLength(watermark);
+	unsigned char* watermarkPixels = (unsigned char*)env->GetByteArrayElements(watermark, 0);
+
+    int delta = (startY * width + startX) * 3;
+    int rowStride = width * 3;
+    int waterStride = waterWidth * 3;
+    int i = 0;
+    for (int y = 0; y < waterHeight; y++)
+    {
+    	int x = 0;
+    	while(x < waterStride)
+    	{
+    		// Applying a 50% opacity (1 bit right shift) on top of the given opacity.
+    		// Somewhat arbitrary, but looks the same as the canvas method.
+    		// Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
+    		// Format is rgba (premultiplied) for some reason.
+//    		__android_log_print(ANDROID_LOG_INFO, "JNI", "r:%d, g:%d, b:%d, a:%d\n-r:%d, g:%d, b:%d, a:%d",
+//    				watermarkPixels[i] >> 1,
+//    				watermarkPixels[i+1] >> 1,
+//    				watermarkPixels[i+2] >> 1,
+//    				watermarkPixels[i+3] >> 1,
+//    				pixels[delta + x] + avoidOverflow(watermarkPixels[i] >> 1),
+//    				pixels[delta + x+1] + avoidOverflow(watermarkPixels[i+1] >> 1),
+//    				pixels[delta + x+2] + avoidOverflow(watermarkPixels[i+2] >> 1),
+//    				pixels[delta + x+3] + avoidOverflow(watermarkPixels[i+3] >> 1));
+
+//    		if (watermarkPixels[i+1] != watermarkPixels[i+2])
+//    			__android_log_print(ANDROID_LOG_INFO, "JNI", "r:%d", watermarkPixels[i]);
+    		pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //r
+    		pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //g
+    		pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //b
+    		i++; //a
+//    		pixels[delta + x++] += watermarkPixels[i++] >> 1; //r
+//    		pixels[delta + x++] += watermarkPixels[i++] >> 1; //g
+//    		pixels[delta + x++] += watermarkPixels[i++] >> 1; //b
+    	}
+    	delta += rowStride;
+    }
+
+    __android_log_write(ANDROID_LOG_INFO, "JNI", "finish loop");
+//    jbyteArray thumb = createJpeg(env, pixels, rawProcessor->imgdata.sizes.width, rawProcessor->imgdata.sizes.height, quality);
+    jbyteArray thumb = createJpeg(env, pixels, width, height, quality);
+    __android_log_write(ANDROID_LOG_INFO, "JNI", "jpeg_created");
+
+	rawProcessor->dcraw_clear_mem(image);
+
+    if (pixels)
+    	free(pixels);
+    return thumb;
+}
+
+unsigned char clamp(unsigned char a, unsigned char b)
+{
+	int result = a + b;
+	return result < 255 ? result : 255;
 }
 
 jobject getRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat)
@@ -425,14 +574,17 @@ jbyteArray getRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject c
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
 
+	if (rawProcessor->imgdata.process_warnings & LIBRAW_WARN_RAWSPEED_PROCESSED)
+		__android_log_print(ANDROID_LOG_INFO, "JNI", "process = %d", result);
 	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_image(&result);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
 
-	jbyteArray bmp = createBitmap(env, image, quality, config, compressFormat);
+//	jbyteArray imageData = createJpeg(env, image->data, rawProcessor->imgdata.sizes.width, rawProcessor->imgdata.sizes.height, quality);
+	jbyteArray imageData = createJpeg(env, image->data, image->width, image->height, quality);
 
 	rawProcessor->dcraw_clear_mem(image);
-	return bmp;
+	return imageData;
 }
 
 jbyteArray getHalfRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat)
@@ -512,11 +664,184 @@ jbyteArray createBitmap(JNIEnv* env, libraw_processed_image_t *raw, int quality,
 	return (jbyteArray) env->CallObjectMethod(byteArrayOutputStream, JNI_IDS.byteArrayOutputStream_toByteArray);
 }
 
+unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, int height)
+{
+	// http://sourceforge.net/p/libjpeg-turbo/code/HEAD/tree/trunk/example.c#l109
+	// http://stackoverflow.com/questions/5616216/need-help-in-reading-jpeg-file-using-libjpeg
+
+	struct jpeg_decompress_struct cinfo;
+	struct jpeg_error_mgr jerr;
+	int row_stride;		/* physical row width in output buffer */
+
+	cinfo.err = jpeg_std_error(&jerr);
+
+	/* Now we can initialize the JPEG decompression object. */
+	jpeg_create_decompress(&cinfo);
+
+
+	/* Step 2: specify data source (eg, a file) */
+	jpeg_mem_src(&cinfo, raw->data, raw->data_size);
+
+	/* Step 3: read file parameters with jpeg_read_header() */
+	(void) jpeg_read_header(&cinfo, TRUE);
+
+	/* Step 4: set parameters for decompression */
+
+	/* In this example, we don't need to change any of the defaults set by
+	* jpeg_read_header(), so we do nothing here.
+	*/
+
+	/* Step 5: Start decompressor */
+
+	(void) jpeg_start_decompress(&cinfo);
+	/* We can ignore the return value since suspension is not possible
+	* with the stdio data source.
+	*/
+
+	/* We may need to do some setup of our own at this point before reading
+	* the data.  After jpeg_start_decompress() we have the correct scaled
+	* output image dimensions available, as well as the output colormap
+	* if we asked for color quantization.
+	* In this example, we need to make an output work buffer of the right size.
+	*/
+	/* JSAMPLEs per row in output buffer */
+	__android_log_print(ANDROID_LOG_INFO, "JNI", "cinfo.width=%d", cinfo.output_width);
+	__android_log_print(ANDROID_LOG_INFO, "JNI", "width=%d", width);
+	__android_log_print(ANDROID_LOG_INFO, "JNI", "comp=%d", cinfo.output_components);
+	__android_log_write(ANDROID_LOG_INFO, "JNI", "Made it to read lines");
+//	row_stride = cinfo.output_width * cinfo.output_components;
+	row_stride = width * cinfo.output_components;
+//	row_stride += (8-(row_stride%8));
+//	row_stride += 60;
+	JSAMPROW rowData;
+	unsigned char* imageData = new unsigned char[height * row_stride];
+//	unsigned char* imageData = new unsigned char[height * row_stride];
+	/* Step 6: while (scan lines remain to be read) */
+	/*           jpeg_read_scanlines(...); */
+
+	/* Here we use the library's state variable cinfo.output_scanline as the
+	* loop counter, so that we don't have to keep track ourselves.
+	*/
+	__android_log_write(ANDROID_LOG_INFO, "JNI", "Made it to read lines");
+	int row = 0;
+	while (cinfo.output_scanline < cinfo.output_height)
+	{
+		rowData = imageData + (row * row_stride);
+		jpeg_read_scanlines(&cinfo, &rowData, 1);
+		++row;
+	}
+
+	/* Step 7: Finish decompression */
+
+	(void) jpeg_finish_decompress(&cinfo);
+	/* We can ignore the return value since suspension is not possible
+	* with the stdio data source.
+	*/
+
+	/* Step 8: Release JPEG decompression object */
+
+	/* This is an important step since it will release a good deal of memory. */
+	jpeg_destroy_decompress(&cinfo);
+
+	/* At this point you may want to check to see whether any corrupt-data
+	* warnings occurred (test whether jerr.pub.num_warnings is nonzero).
+	*/
+
+	/* And we're done! */
+	return imageData;
+}
+
+jbyteArray createJpeg(JNIEnv* env, unsigned char data[], int width, int height, int quality)
+{
+	struct jpeg_compress_struct cinfo;
+	struct jpeg_error_mgr jerr;
+
+	JSAMPROW row_pointer[1];	/* pointer to JSAMPLE row[s] */
+	int row_stride;				/* physical row width in image buffer */
+
+	cinfo.err = jpeg_std_error(&jerr);
+	jpeg_create_compress(&cinfo);
+
+	unsigned char* mem = NULL;
+	unsigned long mem_size = 0;
+	jpeg_mem_dest(&cinfo, &mem, &mem_size);
+//	__android_log_print(ANDROID_LOG_INFO, "JNI", "width = %d", width);
+//	__android_log_print(ANDROID_LOG_INFO, "JNI", "height = %d", height);
+//	__android_log_print(ANDROID_LOG_INFO, "JNI", "mem_size = %d", mem_size);
+
+	cinfo.image_width = width; 	/* image width and height, in pixels */
+	cinfo.image_height = height;
+	cinfo.input_components = 3;			/* # of color components per pixel */
+	cinfo.in_color_space = JCS_RGB; 	/* colorspace of input image */
+
+	/* Now use the library's routine to set default compression parameters.
+	* (You must set at least cinfo.in_color_space before calling this,
+	* since the defaults depend on the source color space.)
+	*/
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "defaults");
+	jpeg_set_defaults(&cinfo);
+	/* Now you can set any non-default parameters you wish to.
+	* Here we just illustrate the use of quality (quantization table) scaling:
+	*/
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "quality");
+	jpeg_set_quality(&cinfo, quality, TRUE /* limit to baseline-JPEG values */);
+
+	/* Step 4: Start compressor */
+
+	/* TRUE ensures that we will write a complete interchange-JPEG file.
+	* Pass TRUE unless you are very sure of what you're doing.
+	*/
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "compress");
+	jpeg_start_compress(&cinfo, TRUE);
+
+	/* Step 5: while (scan lines remain to be written) */
+	/*           jpeg_write_scanlines(...); */
+
+	/* Here we use the library's state variable cinfo.next_scanline as the
+	* loop counter, so that we don't have to keep track ourselves.
+	* To keep things simple, we pass one scanline per call; you can pass
+	* more if you wish, though.
+	*/
+	row_stride = cinfo.image_width * 3;	/* JSAMPLEs per row in image_buffer */
+
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "loop");
+	while (cinfo.next_scanline < cinfo.image_height)
+	{
+		/* jpeg_write_scanlines expects an array of pointers to scanlines.
+		 * Here the array is only one element long, but you could pass
+		 * more than one scanline at a time if that's more convenient.
+		 */
+		row_pointer[0] = & data[cinfo.next_scanline * row_stride];
+		(void) jpeg_write_scanlines(&cinfo, row_pointer, 1);
+	}
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "finish loop");
+
+	/* Step 6: Finish compression */
+
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "finish compress");
+	jpeg_finish_compress(&cinfo);
+
+	/* Step 7: release JPEG compression object */
+
+	/* This is an important step since it will release a good deal of memory. */
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "destroy");
+	jpeg_destroy_compress(&cinfo);
+
+//	__android_log_write(ANDROID_LOG_INFO, "JNI", "byteArray");
+	jbyteArray imageData = env->NewByteArray(mem_size);
+	env->SetByteArrayRegion(imageData, 0, mem_size, (jbyte *) mem);
+	if (mem)
+		free(mem);
+
+	return imageData;
+}
+
 jobject createBitmapRegionDecoder(JNIEnv* env, libraw_processed_image_t *raw, int quality, jobject config, jobject compressFormat)
 {
 	if (!JNI_IDS.cached) cacheJniIds(env);
 
-	jbyteArray image = createBitmap(env, raw, quality, config, compressFormat);
+//	jbyteArray image = createBitmap(env, raw, quality, config, compressFormat);
+	jbyteArray image = createJpeg(env, raw->data, raw->width, raw->height, quality);
 	jsize len = env->GetArrayLength(image);
 
 	jobject regionDecoder = env->CallObjectMethod(JNI_IDS.bitmapRegionDecoder, JNI_IDS.bitmapRegionDecoder_newInstance, image, 0, len, JNI_FALSE);

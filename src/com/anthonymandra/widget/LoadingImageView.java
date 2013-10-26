@@ -1,7 +1,5 @@
 package com.anthonymandra.widget;
 
-import java.lang.ref.WeakReference;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -12,13 +10,9 @@ import android.widget.ImageView.ScaleType;
 import android.widget.ProgressBar;
 import android.widget.ViewSwitcher;
 
-import com.anthonymandra.framework.ImageWorker.BitmapWorkerTask;
-
 public class LoadingImageView extends ViewSwitcher
 {
 	private ProgressBar loadingSpinner;
-	private WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
-
 	private ImageView imageView;
 
 	private static final int PROGRESS_VIEW = 0;
@@ -73,15 +67,18 @@ public class LoadingImageView extends ViewSwitcher
 	public void setImageResource(int resId)
 	{
 		imageView.setImageResource(resId);
-		bitmapWorkerTaskReference = null;
 		setDisplayedChild(IMAGE_VIEW);
 	}
 
 	public void setImageBitmap(Bitmap b)
 	{
 		imageView.setImageBitmap(b);
-		bitmapWorkerTaskReference = null;
 		setDisplayedChild(IMAGE_VIEW);
+	}
+	
+	public void setImageDrawable(Drawable drawable)
+	{
+		imageView.setImageDrawable(drawable);
 	}
 
 	public Drawable getDrawable()
@@ -96,19 +93,11 @@ public class LoadingImageView extends ViewSwitcher
 
 	public void setLoadingSpinner()
 	{
-		bitmapWorkerTaskReference = null;
 		setDisplayedChild(PROGRESS_VIEW);
 	}
-
-	public void setBitmapWorkerTask(BitmapWorkerTask task)
+	
+	public ImageView getImageView()
 	{
-		bitmapWorkerTaskReference = new WeakReference<BitmapWorkerTask>(task);
-	}
-
-	public BitmapWorkerTask getBitmapWorkerTask()
-	{
-		if (bitmapWorkerTaskReference != null)
-			return bitmapWorkerTaskReference.get();
-		return null;
+		return imageView;
 	}
 }

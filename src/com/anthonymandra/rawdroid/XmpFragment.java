@@ -66,7 +66,9 @@ public class XmpFragment extends SherlockFragment
 		// Inflate the layout for this fragment
 		View view;
 		boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-		if (isPortrait)
+		isPortrait = isPortrait && getResources().getBoolean(R.bool.hasTwoPanes) || !isPortrait && !getResources().getBoolean(R.bool.hasTwoPanes);// Single pane devices use the opposite bar full screen
+		
+		if (isPortrait)	// Single pane devices use the opposite bar full screen
 		{
 			view = inflater.inflate(R.layout.xmp_fragment_portrait, container, false);
 		}

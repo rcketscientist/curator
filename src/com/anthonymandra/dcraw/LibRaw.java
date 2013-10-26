@@ -2,7 +2,10 @@ package com.anthonymandra.dcraw;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
+import android.graphics.Rect;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
@@ -11,8 +14,11 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Timer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -42,28 +48,30 @@ public class LibRaw
 
 	private static native boolean canDecodeFromFile(String filePath);
 
-	// Get thumb bitmap
-	private static native byte[] getThumbFromFile(String filePath);
-
-	private static native Object getThumbFromFile2(String filePath);
-
-	private static native byte[] getThumbFromFile3(String filePath);
-
-	private static native byte[] getThumbFromFile4(String filePath, int[] results);
-
-	private static native byte[] getThumbFromFile5(String filePath, int[] results, String[] exif);
-
-	private static native byte[] getThumbFromBuffer(byte[] buffer);
+	/**
+	 * Gets the thumbnail from a raw image.  Thumbnail will be returned as a jpeg.  In the case of a 
+	 * thumbnail that is in rgb format it will be converted using {@link config}, {@link quality}, and {@link format}.
+	 * @param filePath Path to the file
+	 * @param exif Array will be populated with exif information
+	 * @param quality Quality at which to compress an rgb thumbnail
+	 * @param config Configuration of the generated bitmap
+	 * @param compressFormat Format of  the compression
+	 * @return Thumbnail image data in jpeg format
+	 */
+	private static native byte[] getThumbFromFile(String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native byte[] getThumbWithWatermark(String filePath, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
+	private static native byte[] getThumbFromBuffer(byte[] buffer, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
 	// Write thumb
-	public static native int writeThumbFromBuffer(byte[] buffer, String destination);
-
+	public static native boolean writeThumbFromBuffer(byte[] buffer, String destination);
 	public static native boolean writeThumbFromFile(String source, String destination);
 
 	// Get raw bitmap
-	private static native Object getRawFromFile(String filePath);
-
-	private static native Object getRawFromBuffer(byte[] buffer);
+	private static native byte[] getHalfImageFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native BitmapRegionDecoder getHalfDecoderFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native byte[] getImageFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);		// For testing
+	private static native BitmapRegionDecoder getDecoderFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native BitmapRegionDecoder getRawFromBuffer(byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
 	// Write raw tiff
 	public static native boolean writeRawFromBuffer(byte[] buffer, String destination);
@@ -84,91 +92,65 @@ public class LibRaw
 		return canDecodeFromFile(file.getPath());
 	}
 
-	public static byte[] getThumb(byte[] buffer)
+	public static byte[] getThumb(byte[] buffer, String[] exif)
 	{
-		byte[] result = getThumbFromBuffer(buffer);
-		return result;
+		return getThumbFromBuffer(buffer, exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+	}
+	
+	public static byte[] getThumbWithWatermark(File file, byte[] watermark, Margins margins, int waterWidth, int waterHeight)
+	{
+		long start = System.currentTimeMillis();
+		byte[] image = getThumbWithWatermark(file.getPath(), watermark, margins.getArray(), waterWidth, waterHeight);
+		Log.d(TAG, "DB: WaterThumb took " + (System.currentTimeMillis() - start) + "ms");
+		return image;
 	}
 
-	public static InputStream getThumb(File file, String[] exif)
-	{
-		int[] results = new int[3];
-		final byte[] result = getThumbFromFile5(file.getPath(), results, exif);
-
-		if (result == null)
-			return null;
-
-		if (results[0] == 0)
-		{
-            BufferedInputStream reader = new BufferedInputStream(new ByteArrayInputStream(result));
-            ByteArrayOutputStream byteStream = null;
-
-            try
-            {
-                Log.i(TAG, file.getName() + " is RGB thumb.");
-                int width = results[1];
-                int height = results[2];
-
-                final int[] colors = new int[width * height];
-
-                // Read in the pixels
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        try
-                        {
-                            int r = reader.read();
-                            int g = reader.read();
-                            int b = reader.read();
-                            colors[y * width + x] = Color.rgb(r, g, b);
-                        }
-                        catch (IOException e)
-                        {
-                            return null;
-                        }
-                    }
-                }
-
-                Bitmap bmp = Bitmap.createBitmap(colors, width, height, Bitmap.Config.ARGB_8888);
-                byteStream = new ByteArrayOutputStream();
-                bmp.compress(CompressFormat.JPEG, 100, byteStream);
-                final byte[] resultBytes = byteStream.toByteArray();
-                return new ByteArrayInputStream(resultBytes);
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-            finally {
-                Utils.closeSilently(byteStream);
-                Utils.closeSilently(reader);
-            }
-		}
-		else
-		{
-            return new ByteArrayInputStream(result);
-		}
+	public static byte[] getThumb(File file, String[] exif)
+	{	
+//		for (StackTraceElement ste : new Throwable().getStackTrace()) {
+//		Log.d(TAG, "DB: " + ste.toString());
+//	}
+		
+//		long start = System.currentTimeMillis();
+//		byte[] image = getHalfImageFromFile(file.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+//		Log.d(TAG, "DB: Half raw took " + (System.currentTimeMillis() - start) + "ms");
+		
+//		long start = System.currentTimeMillis();
+//		byte[] image = getImageFromFile(file.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+//		Log.d(TAG, "DB: Full raw took " + (System.currentTimeMillis() - start) + "ms");
+		
+		long start = System.currentTimeMillis();
+		byte[] image = getThumbFromFile(file.getPath(), exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+		Log.d(TAG, "DB: Thumbnail took " + (System.currentTimeMillis() - start) + "ms");
+		
+		return image;
 	}
-
-	// Converts an rgb bitmap of width and height to an int array of colors
-	static int[] getColors(byte[] rgb, int width, int height)
+	
+	public static class Margins
 	{
-		int subpixel = 0;
-		int[] colors = new int[height * width];
-
-		for (int y = 0; y < height; y++)
+		int left = -1;
+		int right = -1;
+		int top = -1;
+		int bottom = -1;
+		
+		public static Margins Center = new Margins();
+		
+		/**
+		 * Defaults to center
+		 */
+		private Margins() {}
+		
+		public Margins(int top, int left, int bottom, int right)
 		{
-			for (int x = 0; x < width; x++)
-			{
-				int r = rgb[subpixel++];
-				int g = rgb[subpixel++];
-				int b = rgb[subpixel++];
-				colors[y * width + x] = Color.rgb(g, b, r);
-			}
+			this.top = top;
+			this.left = left;
+			this.bottom = bottom;
+			this.right = right;
 		}
-
-		return colors;
+		
+		public int[] getArray()
+		{
+			return new int[] { top, left, bottom, right };
+		}
 	}
 }

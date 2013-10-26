@@ -27,6 +27,7 @@ public interface RawObject {
     public InputStream getImage();
 
     public InputStream getThumb();
+	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight);
 
     public long getFileSize();
 
@@ -37,4 +38,6 @@ public interface RawObject {
     public boolean copyThumb(File destination);
 
     public Uri getSwapUri();
+
+
 }

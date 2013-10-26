@@ -22,6 +22,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.util.Log;
+import android.widget.ImageView;
 
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
@@ -36,6 +41,7 @@ public abstract class ImageWorker extends CacheManager
 	private static final String TAG = ImageWorker.class.getSimpleName();
 	// private static final int FADE_IN_TIME = 200;
 
+	//TODO: Should i not store these?
 	protected Bitmap mFolderBitmap;
 	protected Bitmap mUnknownBitmap;
 	// private boolean mFadeInBitmap = true;
@@ -47,7 +53,7 @@ public abstract class ImageWorker extends CacheManager
 		mResources = context.getResources();
 	}
 
-	/**
+	/**d
 	 * Load an image specified by the data parameter into an ImageView (override {@link ImageWorker#processBitmap(Object)} to define the processing
 	 * logic). A memory and disk cache will be used if an {@link ImageCache} has been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
 	 * image is found in the memory cache, it is set immediately, otherwise an {@link AsyncTask} will be created to asynchronously load the bitmap.
@@ -77,10 +83,13 @@ public abstract class ImageWorker extends CacheManager
 			// Bitmap found in memory cache
 			imageView.setImageBitmap(bitmap);
 		}
-		else
+		else if (cancelPotentialWork(image, imageView))
 		{
+			Log.d(TAG, "DB:" + "Task created");
 			final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-			imageView.setBitmapWorkerTask(task);
+            final AsyncDrawable asyncDrawable =
+                    new AsyncDrawable(mResources, null/*mLoadingBitmap*/, task);
+            imageView.setImageDrawable(asyncDrawable);
 
 			// NOTE: This uses a custom version of AsyncTask that has been pulled from the
 			// framework and slightly modified. Refer to the docs at the top of the class
@@ -114,7 +123,7 @@ public abstract class ImageWorker extends CacheManager
 	 */
 	public static void cancelWork(LoadingImageView imageView)
 	{
-		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView.getImageView());
 		if (bitmapWorkerTask != null)
 		{
 			bitmapWorkerTask.cancel(true);
@@ -125,15 +134,26 @@ public abstract class ImageWorker extends CacheManager
 	 * Returns true if the current work has been canceled or if there was no work in progress on this image view. Returns false if the work in
 	 * progress deals with the same data. The work is not stopped in that case.
 	 */
-	public static boolean cancelPotentialWork(Object data, LoadingImageView imageView)
+	public static boolean cancelPotentialWork(RawObject data, LoadingImageView imageView)
 	{
-		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView.getImageView());
 
+//		for (StackTraceElement ste : new Throwable().getStackTrace()) {
+//			Log.d(TAG, "DB: " + ste.toString());
+//		}
+		
+		Log.d(TAG, "DB:" + "null =  " + (bitmapWorkerTask == null));
 		if (bitmapWorkerTask != null)
 		{
-			final Object bitmapData = bitmapWorkerTask.data;
-			if (bitmapData == null || !bitmapData.equals(data))
+			final RawObject bitmapData = bitmapWorkerTask.data;
+			if (bitmapData != null)
+				Log.d(TAG, "DB:" + "current =  " + bitmapData.getUri());
+			else
+				Log.d(TAG, "DB:" + "bitmapData =  null");
+			Log.d(TAG, "DB:" + "request =  " + data.getUri());
+			if (bitmapData == null || !bitmapData.getUri().equals(data.getUri()))
 			{
+				Log.d(TAG, "DB:" + "cancel");
 				bitmapWorkerTask.cancel(true);
 			}
 			else
@@ -145,24 +165,21 @@ public abstract class ImageWorker extends CacheManager
 		return true;
 	}
 
-	/**
-	 * @param imageView
-	 *            Any imageView
-	 * @return Retrieve the currently active work task (if any) associated with this imageView. null if there is no such task.
-	 */
-	private static BitmapWorkerTask getBitmapWorkerTask(LoadingImageView imageView)
-	{
-		if (imageView != null)
-		{
-			// final Drawable drawable = imageView.getDrawable();
-			// if (drawable instanceof AsyncDrawable)
-			// {
-			// final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-			return imageView.getBitmapWorkerTask();
-			// }
-		}
-		return null;
-	}
+    /**
+     * @param imageView Any imageView
+     * @return Retrieve the currently active work task (if any) associated with this imageView.
+     * null if there is no such task.
+     */
+    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+        if (imageView != null) {
+            final Drawable drawable = imageView.getDrawable();
+            if (drawable instanceof AsyncDrawable) {
+                final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+                return asyncDrawable.getBitmapWorkerTask();
+            }
+        }
+        return null;
+    }
 
 	/**
 	 * Subclasses should override this to define any processing or work that must happen to produce the final bitmap. This will be executed in a
@@ -285,7 +302,7 @@ public abstract class ImageWorker extends CacheManager
 		private LoadingImageView getAttachedImageView()
 		{
 			final LoadingImageView imageView = imageViewReference.get();
-			final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
+			final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView.getImageView());
 
 			if (this == bitmapWorkerTask)
 			{
@@ -295,6 +312,26 @@ public abstract class ImageWorker extends CacheManager
 			return null;
 		}
 	}
+	
+    /**
+     * A custom Drawable that will be attached to the imageView while the work is in progress.
+     * Contains a reference to the actual worker task, so that it can be stopped if a new binding is
+     * required, and makes sure that only the last started worker process can bind its result,
+     * independently of the finish order.
+     */
+    private static class AsyncDrawable extends BitmapDrawable {
+        private final WeakReference<BitmapWorkerTask> bitmapWorkerTaskReference;
+
+        public AsyncDrawable(Resources res, Bitmap bitmap, BitmapWorkerTask bitmapWorkerTask) {
+            super(res, bitmap);
+            bitmapWorkerTaskReference =
+                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
+        }
+
+        public BitmapWorkerTask getBitmapWorkerTask() {
+            return bitmapWorkerTaskReference.get();
+        }
+    }
 
 	/**
 	 * Called when the processing is complete and the final bitmap should be set on the ImageView.

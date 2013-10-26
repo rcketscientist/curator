@@ -3,7 +3,7 @@ package com.anthonymandra.framework;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,10 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.InputMismatchException;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -23,7 +20,6 @@ import android.graphics.BitmapRegionDecoder;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
@@ -32,6 +28,7 @@ import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.dcraw.LibRaw;
+import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.drew.metadata.xmp.XmpDirectory;
 
 public class LocalImage extends MetaMedia
@@ -53,7 +50,7 @@ public class LocalImage extends MetaMedia
 	}
 
 	@Override
-	public InputStream getImage()
+	public FileInputStream getImage()
 	{
 		try
 		{
@@ -103,6 +100,38 @@ public class LocalImage extends MetaMedia
 			return false;
 		return LibRaw.canDecode(mImage);
 	}
+	
+	@Override
+	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight)
+	{
+		if (Util.isNativeImage(this))
+		{
+			byte[] dst = new byte[(int)mImage.length()];
+			DataInputStream dis = null;
+			try {
+				dis = new DataInputStream(new FileInputStream(mImage));
+				dis.readFully(dst);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			finally
+			{
+				try {
+					dis.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+        int startX = thumbWidth/4*3;
+        int startY = thumbHeight/4*3;
+		return LibRaw.getThumbWithWatermark(mImage, watermark, Margins.Center, waterWidth, waterHeight);	
+	}
 
 	@SuppressLint("SimpleDateFormat")
 	@Override
@@ -144,7 +173,13 @@ public class LocalImage extends MetaMedia
 		}
 
 		String[] exif = new String[12];
-		InputStream image = LibRaw.getThumb(mImage, exif);
+		
+		InputStream image = null;
+		byte[] imageData = LibRaw.getThumb(mImage, exif);
+		if (imageData != null)
+		{
+			image = new ByteArrayInputStream(imageData);
+		}
 
 		try
 		{

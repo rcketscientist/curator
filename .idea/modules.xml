@@ -2,14 +2,13 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/libraries/ActionBarSherlock/ActionBarSherlock.iml" filepath="$PROJECT_DIR$/libraries/ActionBarSherlock/ActionBarSherlock.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/Distribution/DistributionLibrary/DistributionLibrary.iml" filepath="$PROJECT_DIR$/libraries/Distribution/DistributionLibrary/DistributionLibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/FileManager/FileManager/FileManager-FileManager.iml" filepath="$PROJECT_DIR$/libraries/FileManager/FileManager/FileManager-FileManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libraries/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/libraries/Distribution/Distribution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libraries/FileManager/FileManager.iml" filepath="$PROJECT_DIR$/libraries/FileManager/FileManager.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" filepath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/NineOldAndroids/library/NineOldAndroids-library.iml" filepath="$PROJECT_DIR$/libraries/NineOldAndroids/library/NineOldAndroids-library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/ShowcaseView/ShowcaseView.iml" filepath="$PROJECT_DIR$/libraries/ShowcaseView/ShowcaseView.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/ShowcaseView/library/ShowcaseView-library.iml" filepath="$PROJECT_DIR$/libraries/ShowcaseView/library/ShowcaseView-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libraries/amandra-treeview/amandra-treeview.iml" filepath="$PROJECT_DIR$/libraries/amandra-treeview/amandra-treeview.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/Inscription/library/library.iml" filepath="$PROJECT_DIR$/libraries/Inscription/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
     </modules>

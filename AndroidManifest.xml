@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.anthonymandra.rawdroid"
-    android:versionCode="117"
+    android:versionCode="119"
     android:versionName="1.9.4" >
 
     <uses-sdk
@@ -37,6 +37,7 @@
         android:xlargeScreens="true" />
 
     <application
+        android:debuggable="true"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"

@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
@@ -50,6 +51,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
@@ -66,11 +68,14 @@ import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -138,8 +143,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private int mImageThumbSpacing;
 	private ImageDecoder mImageDecoder;
 	private ImageAdapter imageAdapter;
-	protected ArrayList<RawObject> mSelectedImages = new ArrayList<RawObject>();
-	protected List<RawObject> mItemsForIntent = new ArrayList<RawObject>();
+	protected ArrayList<MediaItem> mSelectedImages = new ArrayList<MediaItem>();
+	protected List<MediaItem> mItemsForIntent = new ArrayList<MediaItem>();
 
 	Dialog formatDialog;
 
@@ -200,7 +205,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 		getKeywords();
 
-		imageAdapter = new ImageAdapter(this, mImageDecoder, displayWidth, mImageThumbSize, mImageThumbSpacing);
+		imageAdapter = new ImageAdapter(this);
 		imageGrid.setAdapter(imageAdapter);
 
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -481,9 +486,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<RawObject> storeSelectionForIntent()
+	private List<MediaItem> storeSelectionForIntent()
 	{
-		return mItemsForIntent = (ArrayList<RawObject>) mSelectedImages.clone();
+		return mItemsForIntent = (ArrayList<MediaItem>) mSelectedImages.clone();
 	}
 
 	@Override
@@ -575,7 +580,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void requestRename()
 	{
-		List<RawObject> filesToRename = new ArrayList<RawObject>();
+		List<MediaItem> filesToRename = new ArrayList<MediaItem>();
 		if (mSelectedImages.size() > 0)
 		{
 			filesToRename = mSelectedImages;
@@ -912,30 +917,23 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	public class ImageAdapter extends BaseAdapter
 	{
-		private Context mContext;
+		private LayoutInflater mInflater;
 		protected int mItemHeight = 0;
 		protected int mNumColumns = 0;
 		protected GridView.LayoutParams mImageViewLayoutParams;
-		protected ImageDecoder mImageDecoder;
 
-		public ImageAdapter(Context c)
-		{
-			mContext = c;
-		}
-
-		public ImageAdapter(Context c, ImageDecoder cache, int viewWidth, int thumbSize, int thumbSpacing)
+		public ImageAdapter(Context context)
 		{
 			super();
-			mContext = c;
-			mImageDecoder = cache;
+			mInflater = LayoutInflater.from(context);
 			mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
 			if (getNumColumns() == 0)
 			{
-				final int numColumns = (int) Math.floor(viewWidth / (thumbSize + thumbSpacing));
+				final int numColumns = (int) Math.floor(displayWidth / (mImageThumbSize + mImageThumbSpacing));
 				if (numColumns > 0)
 				{
-					final int columnWidth = (viewWidth / numColumns) - thumbSpacing;
+					final int columnWidth = (displayWidth / numColumns) - mImageThumbSpacing;
 					setNumColumns(numColumns);
 					setItemHeight(columnWidth);
 				}
@@ -967,10 +965,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			View view;
 			ViewHolder viewHolder;
 			if (convertView == null)
-			{
-				LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				// view = inflater.inflate(R.layout.fileview, root)
-				view = inflater.inflate(R.layout.fileview, parent, false);
+			{			
+				view = mInflater.inflate(R.layout.fileview, parent, false);
 				viewHolder = new ViewHolder();
 				viewHolder.filename = (TextView) view.findViewById(R.id.filenameView);
 				viewHolder.image = (LoadingImageView) view.findViewById(R.id.webImageView);
@@ -1013,15 +1009,15 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 
 			// Check the height matches our calculated column width
-			if (view.getLayoutParams().height != mItemHeight)
-			{
-				view.setLayoutParams(mImageViewLayoutParams);
-			}
+//			if (view.getLayoutParams().height != mItemHeight)
+//			{
+//				view.setLayoutParams(mImageViewLayoutParams);
+//			}
 
 			return view;
 		}
 
-		public RawObject getImage(int index)
+		public MediaItem getImage(int index)
 		{
 			int location = index - mFolders.size();
 			if (location < 0)
@@ -1029,13 +1025,13 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			return mVisibleItems.get(location);
 		}
 
-		private void addUniqueSelection(RawObject media)
+		private void addUniqueSelection(MediaItem media)
 		{
 			if (!mSelectedImages.contains(media))
 				mSelectedImages.add(media);
 		}
 
-		public void addSelection(RawObject media)
+		public void addSelection(MediaItem media)
 		{
 			addUniqueSelection(media);
 			updateSelection();
@@ -1094,12 +1090,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			notifyDataSetChanged();
 		}
 
-		public List<RawObject> getSelectedItems()
+		public List<MediaItem> getSelectedItems()
 		{
 			return mSelectedImages;
 		}
 
-		public void toggleSelection(RawObject media)
+		public void toggleSelection(MediaItem media)
 		{
 			if (media == null)
 				return;
@@ -1149,7 +1145,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
 	{
-		RawObject media = imageAdapter.getImage(position);
+		MediaItem media = imageAdapter.getImage(position);
 
 		if (media == null || media.isDirectory())
 			return false;
@@ -1186,7 +1182,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			return;
 		}
 
-		RawObject media = imageAdapter.getImage(position);
+		MediaItem media = imageAdapter.getImage(position);
 		if (multiSelectMode)
 		{
 			imageAdapter.toggleSelection(media);
@@ -1224,7 +1220,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private class CopyImageTask extends AsyncTask<List<RawObject>, String, Boolean> implements OnCancelListener
+	private class CopyImageTask extends AsyncTask<List<MediaItem>, String, Boolean> implements OnCancelListener
 	{
 		private ProgressDialog importProgress;
 		private File mDestination;
@@ -1248,10 +1244,10 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 
 		@Override
-		protected Boolean doInBackground(List<RawObject>... params)
+		protected Boolean doInBackground(List<MediaItem>... params)
 		{
 			boolean totalSuccess = true;
-			List<RawObject> copyList = params[0];
+			List<MediaItem> copyList = params[0];
 
 			importProgress.setMax(copyList.size());
 
@@ -1308,7 +1304,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private class CopyThumbTask extends AsyncTask<List<RawObject>, String, Boolean> implements OnCancelListener
+	private class CopyThumbTask extends AsyncTask<List<MediaItem>, String, Boolean> implements OnCancelListener
 	{
 		private ProgressDialog importProgress;
 		private File mDestination;
@@ -1331,10 +1327,10 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 
 		@Override
-		protected Boolean doInBackground(List<RawObject>... params)
+		protected Boolean doInBackground(List<MediaItem>... params)
 		{
 			boolean totalSuccess = true;
-			List<RawObject> copyList = params[0];
+			List<MediaItem> copyList = params[0];
 			importProgress.setMax(copyList.size());
 
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
@@ -1343,44 +1339,104 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
             int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
             String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+            Bitmap watermark = Util.getWatermark(RawDroid.this, copyList.get(0).getWidth());
+            Log.d(TAG, "Config: " + watermark.getConfig());
+            ByteBuffer dst = ByteBuffer.allocate(Util.getBitmapSize(watermark));
+            int[] pixels = new int[watermark.getWidth() * watermark.getHeight()];
+            watermark.getPixels(pixels, 0, watermark.getWidth(), 0, 0, watermark.getWidth(), watermark.getHeight());
+            dst.order(ByteOrder.nativeOrder());
+            watermark.copyPixelsToBuffer(dst);
+            byte[] waterData = dst.array();
+            watermark.recycle();
+            
+            Log.d(TAG, "DB: 88/2 = " + (88 >> 1));
+//            try {
+//				FileWriter fw = new FileWriter("/sdcard/test.csv");
+//				fw.write("color, pixels, buffer\n");
+//	            int index = 0;
+//	            for (int pixel : pixels)
+//	            {
+//	            	fw.write("a" + "," + Color.alpha(pixel) + "," + waterData[index++] + "\n");
+//	            	fw.write("r" + "," + Color.red(pixel) + "," + waterData[index++] + "\n");
+//	            	fw.write("g" + "," + Color.green(pixel) + "," + waterData[index++] + "\n");
+//	            	fw.write("b" + "," + Color.blue(pixel) + "," + waterData[index++] + "\n");
+//	            }
+//	            fw.flush();
+//	            fw.close();
+//			} catch (IOException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+
+            int width = watermark.getWidth();
+            int height = watermark.getHeight();
+            
 
 			for (RawObject toExport : copyList)
 			{
 				publishProgress(toExport.getName());
+				File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
 
-                InputStream imageData = toExport.getThumb();
-                if (imageData == null)
+                if (!mLicenseManager.isLicensed())
                 {
-                    failed.add(toExport.getName());
-                    continue;
-                }
-
-                try
-                {
-                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
-
-                    if (!mLicenseManager.isLicensed())
+                	byte[] output = toExport.getThumbWithWatermark(waterData, width, height);
+                    if (output == null)
                     {
-                        bmp = Util.addWatermark(RawDroid.this, bmp);
-                    }
-                    else if (showWatermark)
-                    {
-                        bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                    }
-
-                    try {
-                        File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(thumbDest));
-                    } catch (FileNotFoundException e) {
                         failed.add(toExport.getName());
-                        e.printStackTrace();
+                        continue;
+                    }
+                	FileOutputStream fos = null;
+					try {
+						fos = new FileOutputStream(thumbDest);
+						fos.write(output);
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						failed.add(toExport.getName());
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						failed.add(toExport.getName());
+						e.printStackTrace();
+					}
+					finally
+					{
+						Utils.closeSilently(fos);
+					}
+                	
+//                        bmp = Util.addWatermark(RawDroid.this, bmp);
+                }
+                else if (showWatermark)
+                {
+                    InputStream imageData = toExport.getThumb();
+                    if (imageData == null)
+                    {
+                        failed.add(toExport.getName());
+                        continue;
+                    }
+                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
+                    bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                    try {
+						bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(thumbDest));
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						failed.add(toExport.getName());
+						e.printStackTrace();
+					}
+                    finally
+                    {
+                    	Utils.closeSilently(imageData);
                     }
                 }
-                catch(Exception e)
+                else
                 {
-                    e.printStackTrace();
-                }
-                finally {
+                    InputStream imageData = toExport.getThumb();
+                    if (imageData == null)
+                    {
+                        failed.add(toExport.getName());
+                        continue;
+                    }
+                    
+                    Util.write(thumbDest, imageData);
                     Utils.closeSilently(imageData);
                 }
 

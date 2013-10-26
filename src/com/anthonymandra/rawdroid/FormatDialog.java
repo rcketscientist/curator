@@ -30,7 +30,7 @@ public class FormatDialog extends Dialog
 		this.sourceFiles = sourceFiles;
 	}
 
-	public FormatDialog(Context context, String title, List<RawObject> sourceFiles, ResponseListener listener)
+	public FormatDialog(Context context, String title, List<? extends RawObject> sourceFiles, ResponseListener listener)
 	{
 		super(context);
 		setTitle(title);

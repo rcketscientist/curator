@@ -135,7 +135,7 @@
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>
     <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Please try later.  Sorry.</string>
-    <string name="prefSummaryLicenseModified">License server was modified!  This likely means you attempted to crack RawDroid Pro.  If this was unintentional please reinstall RawDroid Pro.</string>
+    <string name="prefSummaryLicenseModified">License service was modified!  If this was unintentional please check for malicious software and reinstall RawDroid Pro.</string>
     <string name="prefSummaryNoProvider">Could not access server.  Is Rawdroid Pro installed?</string>
     <string name="prefSummaryLicense">All features are available.  Thank you for your support!</string>
     <string name="prefTitleManualLicense">Check License</string>

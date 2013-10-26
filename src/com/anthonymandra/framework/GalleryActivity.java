@@ -361,7 +361,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 				{
 					File toRestore = new File(filename);
 					BufferedInputStream restore = new BufferedInputStream(recycleBin.getFile(filename));
-					write(toRestore, restore);
+					Util.write(toRestore, restore);
 					addFile(toRestore, true);
 				}
 				// Ideally just update the sub lists on each restore.
@@ -397,40 +397,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		return new File(context.getFilesDir().getAbsolutePath(), "keywords.txt");
 	}
 
-	protected void write(File destination, InputStream is)
-	{
-		BufferedOutputStream bos = null;
-		byte[] data = null;
-		try
-		{
-			bos = new BufferedOutputStream(new FileOutputStream(destination));
-			data = new byte[is.available()];
-			is.read(data);
-			bos.write(data);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				if (bos != null)
-				{
-					bos.close();
-				}
-				if (is != null)
-				{
-					is.close();
-				}
-			}
-			catch (IOException e)
-			{
-			}
-		}
-	}
-
 	protected boolean removeImage(RawObject toRemove)
 	{
 		boolean result = false;
@@ -449,15 +415,15 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	 *            file to delete.
 	 * @return true currently (possibly return success later on)
 	 */
-	protected void deleteImage(final RawObject toDelete)
+	protected void deleteImage(final MediaItem toDelete)
 	{
-		List<RawObject> itemsToDelete = new ArrayList<RawObject>();
+		List<MediaItem> itemsToDelete = new ArrayList<MediaItem>();
 		itemsToDelete.add(toDelete);
 		deleteImages(itemsToDelete);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void deleteImages(final List<RawObject> itemsToDelete)
+	protected void deleteImages(final List<MediaItem> itemsToDelete)
 	{
 		if (itemsToDelete.size() == 0)
 		{
@@ -543,7 +509,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	 */
 	protected abstract void updateAfterRestore();
 
-	protected class RecycleTask extends AsyncTask<List<RawObject>, Integer, Boolean> implements OnCancelListener
+	protected class RecycleTask extends AsyncTask<List<MediaItem>, Integer, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -553,9 +519,9 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<RawObject>... params)
+		protected Boolean doInBackground(final List<MediaItem>... params)
 		{
-			List<RawObject> itemsToDelete = params[0];
+			List<MediaItem> itemsToDelete = params[0];
 			mProgressDialog.setMax(itemsToDelete.size());
 			final List<RawObject> removed = new ArrayList<RawObject>();
 
@@ -595,7 +561,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	protected class DeleteTask extends AsyncTask<List<RawObject>, Integer, Boolean> implements OnCancelListener
+	protected class DeleteTask extends AsyncTask<List<MediaItem>, Integer, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -607,9 +573,9 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<RawObject>... params)
+		protected Boolean doInBackground(final List<MediaItem>... params)
 		{
-			List<RawObject> itemsToDelete = params[0];
+			List<MediaItem> itemsToDelete = params[0];
 			mProgressDialog.setMax(itemsToDelete.size());
 			final List<RawObject> removed = new ArrayList<RawObject>();
 

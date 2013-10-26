@@ -1,26 +1,18 @@
 package com.anthonymandra.rawdroid;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
-import com.android.gallery3d.app.PhotoDataAdapter.DataListener;
-import com.android.gallery3d.app.PhotoPage;
-import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
-import com.anthonymandra.framework.LicenseManager;
+import java.util.WeakHashMap;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
 
-import java.io.File;
-import java.util.WeakHashMap;
+import com.android.gallery3d.app.PhotoDataAdapter.DataListener;
+import com.android.gallery3d.app.PhotoPage;
+import com.android.gallery3d.data.ContentListener;
+import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.framework.LicenseManager;
 
 public class ImageViewActivity extends PhotoPage implements DataListener
 {
