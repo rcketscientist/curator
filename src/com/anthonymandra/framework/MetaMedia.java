@@ -443,22 +443,21 @@ public abstract class MetaMedia extends MediaItem
 	public boolean readMetadata()
 	{
 		// Avoid reloading
-		if (isLoaded)
+		if (!isLoaded)
 		{
-			return true;
+			boolean metaResult = readMeta();
+			boolean xmpResult = readXmp();
+			boolean result = metaResult && xmpResult;
+			isLoaded = result;
 		}
 
-		boolean metaResult = readMeta();
-		boolean xmpResult = readXmp();
-		boolean result = metaResult && xmpResult;
-		isLoaded = result;
-		return result;
+		return isLoaded;
 	}
 
 	private boolean readMeta()
 	{
 		// Metadata
-		InputStream raw = getImage();
+		InputStream raw = getImageStream();
 		try
 		{
 			mMetadata = ImageMetadataReader.readMetadata(raw);

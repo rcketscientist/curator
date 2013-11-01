@@ -149,6 +149,10 @@
     <string name="prefTitleWatermarkAlpha">Watermark Transparency</string>
     <string name="prefTitleContact">Contact</string>
     <string name="prefSummaryContact">Click to send me an email.</string>
+    <string name="prefSummaryLeftMargin">Distance from left edge of image to left edge of watermark.</string>
+    <string name="prefSummaryRightMargin">Distance from right edge of image to right edge of watermark.</string>
+    <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark.</string>
+    <string name="prefSummaryBottomMargin">Distance from bottom edge of image to bottom edge of watermark.</string>
 
     <string name="buypro">Click here to upgrade to Rawdroid Pro to unlock features and improve speed!</string>
     
@@ -203,6 +207,18 @@
     <string name="cyan">Cyan</string>
     <string name="purple">Purple</string>
     <string name="yellow">Yellow</string>
+    
+    <!-- Locations -->
+    <string name="margins">Margins</string>
+    <string name="center">Center</string>
+	<string name="lowerLeft">Lower Left</string>
+	<string name="lowerRight">Lower Right</string>
+	<string name="upperLeft">Upper Left</string>
+	<string name="upperRight">Upper Right</string>
+    <string name="top">Top</string>
+    <string name="bottom">Bottom</string>
+    <string name="right">Right</string>
+    <string name="left">Left</string>
     
     <!-- Tutorials -->
     <string name="tutorialSelect">Long press any image to enter selection mode.</string>

@@ -52,6 +52,7 @@ import com.actionbarsherlock.widget.ShareActionProvider;
 import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
@@ -65,6 +66,7 @@ import com.inscription.WhatsNewDialog;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -153,8 +155,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	public static File keywords;
 
-	private int displayWidth;
-	private int displayHeight;
+	private int mDisplayWidth;
+	private int mDisplayHeight;
 
 	private ActionMode mMode;
 
@@ -175,8 +177,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-		displayWidth = metrics.widthPixels;
-		displayHeight = metrics.heightPixels;
+		mDisplayWidth = metrics.widthPixels;
+		mDisplayHeight = metrics.heightPixels;
 
 		imageGrid = ((GridView) findViewById(R.id.gridview));
 		imageGrid.setOnScrollListener(this);
@@ -930,10 +932,10 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 			if (getNumColumns() == 0)
 			{
-				final int numColumns = (int) Math.floor(displayWidth / (mImageThumbSize + mImageThumbSpacing));
+				final int numColumns = (int) Math.floor(mDisplayWidth / (mImageThumbSize + mImageThumbSpacing));
 				if (numColumns > 0)
 				{
-					final int columnWidth = (displayWidth / numColumns) - mImageThumbSpacing;
+					final int columnWidth = (mDisplayWidth / numColumns) - mImageThumbSpacing;
 					setNumColumns(numColumns);
 					setItemHeight(columnWidth);
 				}
@@ -990,11 +992,17 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			}
 			else
 			{
-				RawObject media = getImage(position);
+				final MediaItem media = getImage(position);
 				if (mRawImages.contains(media) || mNativeImages.contains(media))
 				{
 					viewHolder.filename.setText(media.getName());
 					mImageDecoder.loadImage(media, viewHolder.image);
+//					new Thread(new Runnable() {						
+//						@Override
+//						public void run() {
+//							media.readMetadata();	//TODO: This should be handled by a provider						
+//						}
+//					}).start();			
 				}
 				else
 				{
@@ -1329,117 +1337,59 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		@Override
 		protected Boolean doInBackground(List<MediaItem>... params)
 		{
-			boolean totalSuccess = true;
 			List<MediaItem> copyList = params[0];
 			importProgress.setMax(copyList.size());
-
+			
             SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
             boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
             String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
             int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
             int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
             String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-            Bitmap watermark = Util.getWatermark(RawDroid.this, copyList.get(0).getWidth());
-            Log.d(TAG, "Config: " + watermark.getConfig());
-            ByteBuffer dst = ByteBuffer.allocate(Util.getBitmapSize(watermark));
-            int[] pixels = new int[watermark.getWidth() * watermark.getHeight()];
-            watermark.getPixels(pixels, 0, watermark.getWidth(), 0, 0, watermark.getWidth(), watermark.getHeight());
-            dst.order(ByteOrder.nativeOrder());
-            watermark.copyPixelsToBuffer(dst);
-            byte[] waterData = dst.array();
-            watermark.recycle();
+            Margins margins = new Margins(pref);
             
-            Log.d(TAG, "DB: 88/2 = " + (88 >> 1));
-//            try {
-//				FileWriter fw = new FileWriter("/sdcard/test.csv");
-//				fw.write("color, pixels, buffer\n");
-//	            int index = 0;
-//	            for (int pixel : pixels)
-//	            {
-//	            	fw.write("a" + "," + Color.alpha(pixel) + "," + waterData[index++] + "\n");
-//	            	fw.write("r" + "," + Color.red(pixel) + "," + waterData[index++] + "\n");
-//	            	fw.write("g" + "," + Color.green(pixel) + "," + waterData[index++] + "\n");
-//	            	fw.write("b" + "," + Color.blue(pixel) + "," + waterData[index++] + "\n");
-//	            }
-//	            fw.flush();
-//	            fw.close();
-//			} catch (IOException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-
-            int width = watermark.getWidth();
-            int height = watermark.getHeight();
-            
-
+            Bitmap watermark;
+            byte[] waterData = null;
+            boolean processWatermark = false;
+            int waterWidth = 0, waterHeight = 0;
+            		
+            if (!mLicenseManager.isLicensed())
+            {
+            	processWatermark = true;
+                watermark = Util.getDemoWatermark(RawDroid.this, copyList.get(0).getThumbWidth());
+                waterData = Util.getBitmapBytes(watermark);
+                waterWidth = watermark.getWidth();
+                waterHeight = watermark.getHeight();
+                margins = Margins.LowerRight;
+            }
+            else if (showWatermark)
+            {
+            	processWatermark = true;
+                watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                waterData = Util.getBitmapBytes(watermark);
+                waterWidth = watermark.getWidth();
+                waterHeight = watermark.getHeight();
+            }             
+          
 			for (RawObject toExport : copyList)
 			{
 				publishProgress(toExport.getName());
 				File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
 
-                if (!mLicenseManager.isLicensed())
-                {
-                	byte[] output = toExport.getThumbWithWatermark(waterData, width, height);
-                    if (output == null)
-                    {
-                        failed.add(toExport.getName());
-                        continue;
-                    }
-                	FileOutputStream fos = null;
-					try {
-						fos = new FileOutputStream(thumbDest);
-						fos.write(output);
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						failed.add(toExport.getName());
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						failed.add(toExport.getName());
-						e.printStackTrace();
-					}
-					finally
-					{
-						Utils.closeSilently(fos);
-					}
-                	
-//                        bmp = Util.addWatermark(RawDroid.this, bmp);
-                }
-                else if (showWatermark)
-                {
-                    InputStream imageData = toExport.getThumb();
-                    if (imageData == null)
-                    {
-                        failed.add(toExport.getName());
-                        continue;
-                    }
-                    Bitmap bmp = BitmapFactory.decodeStream(imageData);
-                    bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                    try {
-						bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(thumbDest));
-					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
-						failed.add(toExport.getName());
-						e.printStackTrace();
-					}
-                    finally
-                    {
-                    	Utils.closeSilently(imageData);
-                    }
-                }
+				boolean success;
+				if (processWatermark)
+				{
+					success = toExport.writeThumbWatermark(thumbDest, waterData, waterWidth, waterHeight, margins);
+
+				}
                 else
                 {
-                    InputStream imageData = toExport.getThumb();
-                    if (imageData == null)
-                    {
-                        failed.add(toExport.getName());
-                        continue;
-                    }
-                    
-                    Util.write(thumbDest, imageData);
-                    Utils.closeSilently(imageData);
-                }
+                	success = toExport.writeThumb(thumbDest);          
+                }				
 
+				if (!success)
+					failed.add(toExport.getName());
+					
 				publishProgress();
 			}
 			return true; //not used.
@@ -1456,6 +1406,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				{
 					failures += fail + ", ";
 				}
+				failures += "\nIf you are watermarking, check settings/sizes!";
 				Toast.makeText(RawDroid.this, failures, Toast.LENGTH_LONG).show();
 			}
 			importProgress.dismiss();
@@ -1484,7 +1435,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	public void runTutorial()
 	{
 		ShowcaseView.ConfigOptions co = new ShowcaseView.ConfigOptions();
-		tutorial = ShowcaseView.insertShowcaseView(displayWidth - 50, displayHeight - 30, this, R.string.tutorial, R.string.tutorialStart, co);
+		tutorial = ShowcaseView.insertShowcaseView(mDisplayWidth - 50, mDisplayHeight - 30, this, R.string.tutorial, R.string.tutorialStart, co);
 		tutorial.overrideButtonClick(new TutorialClickListener());
 	}
 
@@ -1514,27 +1465,27 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			{
 			// Even if I'm just changing the text it won't work unless I change the view
 				case Connection1: // Connection
-					tutorial.setShowcasePosition(displayWidth - 49, displayHeight - 30);
+					tutorial.setShowcasePosition(mDisplayWidth - 49, mDisplayHeight - 30);
 					tutorial.setText(R.string.tutorialConnectTitle, R.string.tutorialConnect1);
 					break;
 				case Connection2: // Connection
-					tutorial.setShowcasePosition(displayWidth - 50, displayHeight - 30);
+					tutorial.setShowcasePosition(mDisplayWidth - 50, mDisplayHeight - 30);
 					tutorial.setText(R.string.tutorialConnectTitle, R.string.tutorialConnect2);
 					break;
 				case Connection3: // Connection
-					tutorial.setShowcasePosition(displayWidth - 49, displayHeight - 30);
+					tutorial.setShowcasePosition(mDisplayWidth - 49, mDisplayHeight - 30);
 					tutorial.setText(R.string.tutorialConnectTitle, R.string.tutorialConnect3);
 					break;
 				case Connection4: // Connection
-					tutorial.setShowcasePosition(displayWidth - 50, displayHeight - 30);
+					tutorial.setShowcasePosition(mDisplayWidth - 50, mDisplayHeight - 30);
 					tutorial.setText(R.string.tutorialConnectTitle, R.string.tutorialConnect4);
 					break;
 				case Connection5: // Connection
-					tutorial.setShowcasePosition(displayWidth - 49, displayHeight - 30);
+					tutorial.setShowcasePosition(mDisplayWidth - 49, mDisplayHeight - 30);
 					tutorial.setText(R.string.tutorialConnectTitle, R.string.tutorialConnect5);
 					break;
 				case Memory: // Memory
-					tutorial.setShowcasePosition(displayWidth - 50, displayHeight - 30);
+					tutorial.setShowcasePosition(mDisplayWidth - 50, mDisplayHeight - 30);
 					tutorial.setText(R.string.tutorialMemoryTitle, R.string.tutorialMemory);
 					break;
 				case Directory: // Directory

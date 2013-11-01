@@ -12,9 +12,12 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.RawDroid;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,6 +25,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by amand_000 on 9/12/13.
@@ -39,6 +44,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     private static int mWatermarkAlpha;
     private static int mWatermarkSize;
     private static String mWatermarkLocation;
+    private static Margins mMargins;
     private static LicenseManager mLicenseManager;
 
     @Override
@@ -78,33 +84,48 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 if (!swapFile.exists())
                 {
                 	LocalImage image = new LocalImage(new File(uri.getFragment()));
-	                InputStream imageData = image.getThumb();
+	                byte[] imageData = image.getThumb();
 	                if (imageData == null)
 	                    return null;
 
-	                try
-	                {	                   
-	                    if (!mLicenseManager.isLicensed())
-	                    {
-	                    	Bitmap bmp = BitmapFactory.decodeStream(imageData);
-	                        bmp = Util.addWatermark(getContext(), bmp);
-	                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
-	                    }
-	                    else if (mShowWatermark)
-	                    {
-	                    	Bitmap bmp = BitmapFactory.decodeStream(imageData);
-	                        bmp = Util.addCustomWatermark(bmp, mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
-	                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(swapFile));
-	                    }
-	                    else
-	                    {
-	                    	Util.write(swapFile, imageData);
-	                    }
+	                Bitmap watermark;
+	                byte[] waterData = null;
+	                boolean processWatermark = false;
+	                int waterWidth = 0, waterHeight = 0;
+	                Margins margin = null;
+	                
+	                if (!mLicenseManager.isLicensed())
+	                {
+	                	processWatermark = true;
+	                    watermark = Util.getDemoWatermark(getContext(), image.getWidth());
+	                    waterData = Util.getBitmapBytes(watermark);
+	                    waterWidth = watermark.getWidth();
+	                    waterHeight = watermark.getHeight();
+	                    margin = Margins.LowerRight;
+
 	                }
-	                catch(Exception e){  }
-	                finally {
-	                    Utils.closeSilently(imageData);
+	                else if (mShowWatermark)
+	                {
+	                	processWatermark = true;
+	                    watermark = Util.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+	                    waterData = Util.getBitmapBytes(watermark);
+	                    waterWidth = watermark.getWidth();
+	                    waterHeight = watermark.getHeight();
+	                    margin = mMargins;
 	                }
+	                
+	                boolean success;
+					if (processWatermark)
+					{
+						success = image.writeThumbWatermark(swapFile, waterData, waterWidth, waterHeight, margin);
+					}
+					else
+					{
+						success = image.writeThumb(swapFile);	
+					}
+					
+					if (!success)
+						Toast.makeText(getContext(), "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
                 }
 
                 ParcelFileDescriptor pfd = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
@@ -124,6 +145,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         mWatermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
         mWatermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
         mWatermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+        mMargins = new Margins(pref);
     }
 
     // //////////////////////////////////////////////////////////////

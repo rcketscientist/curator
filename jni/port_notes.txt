@@ -1,0 +1,24 @@
+1.	internal/dcraw_common.cpp, src/libraw.cxx
+-Insert:
+#include <swab.h>
+
+2.	internal/defines.h, src/libraw_datastream.cpp
+Wrap existing include with extern "C":
+extern "C"
+{
+#include <jpeglib.h>		/* Decode compressed Kodak DC120 photos */
+}
+
+2.	internal/defines.h, src/libraw_datastream.cpp
+Wrap existing include with extern "C":
+extern "C"
+{
+#include <jpeglib.h>
+}
+
+3.	internal/demosaic_packs.cpp
+Wrap existing include with extern "C":
+extern "C"
+{
+#include <dcraw_foveon.c>
+}

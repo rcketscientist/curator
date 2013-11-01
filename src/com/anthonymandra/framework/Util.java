@@ -20,12 +20,15 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.util.List;
 
 import android.annotation.TargetApi;
@@ -45,6 +48,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.R;
 
@@ -352,7 +356,7 @@ public class Util
 		OutputStream out = null;
 		try
 		{
-			out = new FileOutputStream(destination);
+			out = new BufferedOutputStream(new FileOutputStream(destination));
 			while ((len = source.read(buf)) > 0)
 			{
 				out.write(buf, 0, len);
@@ -373,6 +377,31 @@ public class Util
 			{
 				return false;
 			}
+		}
+		return true;
+	}
+	
+	public static boolean copy(File source, File destination)
+	{
+		FileChannel in = null;
+		FileChannel out = null;
+		try {
+			in = new FileInputStream(source).getChannel();
+			out = new FileOutputStream(destination).getChannel();
+			in.transferTo(0, in.size(), out);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		finally
+		{
+			if (in != null)
+				Utils.closeSilently(in);
+			if (out != null)
+				Utils.closeSilently(out);
 		}
 		return true;
 	}
@@ -455,20 +484,29 @@ public class Util
         return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
     }
     
-    public static Bitmap getWatermark(Context context, int srcWidth)
+    public static Bitmap getDemoWatermark(Context context, int srcWidth)
     {
         int id = R.drawable.watermark1024;
-        if (srcWidth < 3072)
-            id = R.drawable.watermark512;
+        if (srcWidth < 768)
+            id = R.drawable.watermark128;
         else if (srcWidth < 1536)
             id = R.drawable.watermark256;
-        else if (srcWidth < 768)
-            id = R.drawable.watermark128;
+        else if (srcWidth < 3072)
+            id = R.drawable.watermark512;
         
         BitmapFactory.Options o = new Options();
         o.inScaled = false;
         return BitmapFactory.decodeResource(context.getResources(), id, o);
     }
+    
+	public static byte[] getBitmapBytes(Bitmap src)
+	{
+        ByteBuffer dst = ByteBuffer.allocate(Util.getBitmapSize(src));
+        dst.order(ByteOrder.nativeOrder());
+        src.copyPixelsToBuffer(dst);
+        byte[] srcData = dst.array();
+        return srcData;
+	}
 
     public static Bitmap addWatermark(Context context, Bitmap src)
     {
@@ -572,6 +610,27 @@ public class Util
         canvas.drawText(watermark, x, y, paint);
 
         return result;
+    }
+    
+    public static Bitmap getWatermarkText(String text, int alpha, int size, String location)
+    {
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setShadowLayer(1, 1, 1, Color.BLACK);
+        paint.setAlpha(alpha);
+        paint.setTextSize(size);
+        paint.setAntiAlias(true);
+        paint.setTextAlign(Paint.Align.CENTER);
+        
+        int width = (int) (paint.measureText(text) + 0.5f); // round
+        float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
+        int height = (int) (baseline + paint.descent() + 0.5f);
+        
+        Bitmap watermark = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(watermark);
+        canvas.drawText(text, 0, baseline, paint);
+
+        return watermark;
     }
 
     /**

@@ -24,5 +24,14 @@
         android:title="@string/prefTitleWatermarkLocation"
         android:entries="@array/watermarkLocations"
         android:entryValues="@array/watermarkLocationsValues" />
+    <PreferenceCategory android:title="@string/margins" />
+    <EditTextPreference
+        android:key="prefKeyWatermarkTopMargin" />
+    <EditTextPreference
+        android:key="prefKeyWatermarkBottomMargin" />
+    <EditTextPreference
+        android:key="prefKeyWatermarkLeftMargin" />
+    <EditTextPreference
+        android:key="prefKeyWatermarkRightMargin" />
 
 </PreferenceScreen>

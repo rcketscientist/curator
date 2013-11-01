@@ -527,21 +527,15 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		{
 			mIndex = (Integer) params[0];
             MediaItem mMedia = (MediaItem) params[1];
-            InputStream imageData = mMedia.getThumb();
+            byte[] imageData = mMedia.getThumb();
 			if (imageData == null)
 				return null;
-            try
-            {
-                Bitmap image =  Util.createBitmapLarge(imageData,
-                        LegacyViewerActivity.displayWidth,
-                        LegacyViewerActivity.displayHeight,
-                        true);
-                return image;
-            }
-            finally
-            {
-                Utils.closeSilently(imageData);
-            }
+
+            Bitmap image =  Util.createBitmapLarge(imageData,
+                    LegacyViewerActivity.displayWidth,
+                    LegacyViewerActivity.displayHeight,
+                    true);
+            return image;
         }
 
 		@Override
@@ -563,22 +557,17 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 			mIndex = (Integer) params[0];
             MediaItem mMedia = (MediaItem) params[1];
 
-            InputStream imageData = mMedia.getThumb();
+            byte[] imageData = mMedia.getThumb();
             if (imageData == null)
                 return null;
-            try
-            {
-                BitmapRegionDecoder brd = BitmapRegionDecoder.newInstance(imageData, false);
-                return brd;
-            }
-            catch (IOException e)
-            {
-                return null;
-            }
-            finally
-            {
-                Utils.closeSilently(imageData);
-            }
+
+			BitmapRegionDecoder brd = null;
+			try {
+				brd = BitmapRegionDecoder.newInstance(imageData, 0, imageData.length, false);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return brd;         
 		}
 
 		@Override

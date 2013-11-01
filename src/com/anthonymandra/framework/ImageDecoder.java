@@ -49,25 +49,14 @@ public class ImageDecoder extends ImageResizer
 			Log.d(TAG, "processBitmap - " + media.getName());
 		}
 
-        InputStream imageData = media.getThumb();
+        byte[] imageData = media.getThumb();
 		if (imageData == null)
 		{
 			return null;
 		}
 
-        try
-        {
-		    Bitmap b = decodeSampledBitmapFromInputStream(imageData, mImageWidth, mImageHeight);
-            return b;
-        }
-        catch(Exception e)
-        {
-            return null;
-        }
-        finally
-        {
-            Utils.closeSilently(imageData);
-        }
+	    Bitmap b = decodeSampledBitmapFromByteArray(imageData, mImageWidth, mImageHeight);
+        return b;
 	}
 
 	@Override

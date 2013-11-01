@@ -11,6 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
@@ -31,82 +34,88 @@ import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.drew.metadata.xmp.XmpDirectory;
 
-public class LocalImage extends MetaMedia
-{
+public class LocalImage extends MetaMedia {
 	private static final String TAG = LocalImage.class.getSimpleName();
 	File mImage;
 	File mXmp;
 
-	public LocalImage(File image)
-	{
-        super(Uri.fromFile(image), nextVersionNumber());
+	public LocalImage(File image) {
+		super(Uri.fromFile(image), nextVersionNumber());
 		mImage = image;
 	}
 
 	// TEMPORARY to avoid full rewrite during testing
-	public File getFile()
-	{
+	public File getFile() {
 		return mImage;
 	}
 
 	@Override
-	public FileInputStream getImage()
-	{
-		try
-		{
-            return new FileInputStream(mImage);
-		} catch (FileNotFoundException e) {
-            return null;
-        }
-    }
+	public byte[] getImage() {
+
+		byte[] dst = new byte[(int) mImage.length()];
+		DataInputStream dis = null;
+		try {
+			dis = new DataInputStream(new FileInputStream(mImage));
+			dis.readFully(dst);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			try {
+				dis.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		return dst;
+	}
 
 	@Override
-	public boolean delete()
-	{
+	public boolean delete() {
 		if (hasXmp())
 			getXmpFile().delete();
 		return mImage.delete();
 	}
 
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return mImage.getName();
 	}
 
-    @Override
-    public String getMimeType() {
-        return null;
-    }
+	@Override
+	public String getMimeType() {
+		return null;
+	}
 
-    @Override
-	public String getFilePath()
-	{
+	@Override
+	public String getFilePath() {
 		return mImage.getPath();
 	}
 
 	@Override
-	public boolean canDecode()
-	{
-//		Log.d(TAG, mImage.getName());
-//		Log.d(TAG, "canExecute: " + String.valueOf(mImage.canExecute()));
-//		Log.d(TAG, "canRead: " + String.valueOf(mImage.canRead()));
-//		Log.d(TAG, "canWrite: " + String.valueOf(mImage.canWrite()));
-//		Log.d(TAG, "isAbsolute: " + String.valueOf(mImage.isAbsolute()));
-//		Log.d(TAG, "isDirectory: " + String.valueOf(mImage.isDirectory()));
-//		Log.d(TAG, "isFile: " + String.valueOf(mImage.isFile()));
-//		Log.d(TAG, "isHidden: " + String.valueOf(mImage.isHidden()));
+	public boolean canDecode() {
+		// Log.d(TAG, mImage.getName());
+		// Log.d(TAG, "canExecute: " + String.valueOf(mImage.canExecute()));
+		// Log.d(TAG, "canRead: " + String.valueOf(mImage.canRead()));
+		// Log.d(TAG, "canWrite: " + String.valueOf(mImage.canWrite()));
+		// Log.d(TAG, "isAbsolute: " + String.valueOf(mImage.isAbsolute()));
+		// Log.d(TAG, "isDirectory: " + String.valueOf(mImage.isDirectory()));
+		// Log.d(TAG, "isFile: " + String.valueOf(mImage.isFile()));
+		// Log.d(TAG, "isHidden: " + String.valueOf(mImage.isHidden()));
 		if (!mImage.isFile())
 			return false;
 		return LibRaw.canDecode(mImage);
 	}
-	
+
 	@Override
-	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight)
-	{
-		if (Util.isNativeImage(this))
-		{
-			byte[] dst = new byte[(int)mImage.length()];
+	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
+			int waterHeight, Margins margins) {
+		if (Util.isNativeImage(this)) {
+			byte[] dst = new byte[(int) mImage.length()];
 			DataInputStream dis = null;
 			try {
 				dis = new DataInputStream(new FileInputStream(mImage));
@@ -117,9 +126,7 @@ public class LocalImage extends MetaMedia
 			} catch (IOException e) {
 				e.printStackTrace();
 				return null;
-			}
-			finally
-			{
+			} finally {
 				try {
 					dis.close();
 				} catch (IOException e1) {
@@ -128,17 +135,15 @@ public class LocalImage extends MetaMedia
 				}
 			}
 		}
-        int startX = thumbWidth/4*3;
-        int startY = thumbHeight/4*3;
-		return LibRaw.getThumbWithWatermark(mImage, watermark, Margins.Center, waterWidth, waterHeight);	
+
+		return LibRaw.getThumbWithWatermark(mImage, watermark, margins,
+				waterWidth, waterHeight);
 	}
 
 	@SuppressLint("SimpleDateFormat")
 	@Override
-	public InputStream getThumb()
-	{
-		if (Util.isNativeImage(this))
-		{
+	public byte[] getThumb() {
+		if (Util.isNativeImage(this)) {
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(mImage.getPath(), o);
@@ -147,114 +152,95 @@ public class LocalImage extends MetaMedia
 			width = o.outWidth;
 			height = o.outHeight;
 
-            try {
-                ExifInterface ei = new ExifInterface(getFilePath());
-                makeLegacy = ei.getAttribute(ExifInterface.TAG_MAKE);
-                modelLegacy = ei.getAttribute(ExifInterface.TAG_MODEL);
-                apertureLegacy = ei.getAttribute(ExifInterface.TAG_APERTURE);
-                focalLegacy = ei.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
-                isoLegacy = ei.getAttribute(ExifInterface.TAG_ISO);
-                shutterLegacy = ei.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-                try
-                {
-                    dateLegacy = mExifFormatter.parse(ei.getAttribute(ExifInterface.TAG_DATETIME));
-                }
-                catch (Exception e)
-                {
-                    Log.d(TAG, "Date exif parse failed:", e);
-                }
-                orientLegacy = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+			try {
+				ExifInterface ei = new ExifInterface(getFilePath());
+				makeLegacy = ei.getAttribute(ExifInterface.TAG_MAKE);
+				modelLegacy = ei.getAttribute(ExifInterface.TAG_MODEL);
+				apertureLegacy = ei.getAttribute(ExifInterface.TAG_APERTURE);
+				focalLegacy = ei.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
+				isoLegacy = ei.getAttribute(ExifInterface.TAG_ISO);
+				shutterLegacy = ei
+						.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+				SimpleDateFormat sdf = new SimpleDateFormat(
+						"yyyy:MM:dd HH:mm:ss");
+				try {
+					dateLegacy = mExifFormatter.parse(ei
+							.getAttribute(ExifInterface.TAG_DATETIME));
+				} catch (Exception e) {
+					Log.d(TAG, "Date exif parse failed:", e);
+				}
+				orientLegacy = ei.getAttributeInt(
+						ExifInterface.TAG_ORIENTATION, 0);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 			return getImage();
 		}
 
 		String[] exif = new String[12];
-		
-		InputStream image = null;
-		byte[] imageData = LibRaw.getThumb(mImage, exif);
-		if (imageData != null)
-		{
-			image = new ByteArrayInputStream(imageData);
-		}
 
-		try
-		{
+		byte[] imageData = LibRaw.getThumb(mImage, exif);
+
+		try {
 			setThumbHeight(Integer.parseInt(exif[8]));
 			setThumbWidth(Integer.parseInt(exif[9]));
 			setHeight(Integer.parseInt(exif[10]));
 			setWidth(Integer.parseInt(exif[11]));
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			Log.d(TAG, "Dimensions exif parse failed:", e);
 		}
-		
+
 		makeLegacy = exif[0];
 		modelLegacy = exif[1];
 		apertureLegacy = exif[2];
 		focalLegacy = exif[3];
 		isoLegacy = exif[4];
 		shutterLegacy = exif[5];
-		
-		try
-		{
+
+		try {
 			dateLegacy = mLibrawFormatter.parse(exif[6].trim());
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			Log.d(TAG, "Date exif parse failed:", e);
 		}
-		
-		try
-		{
+
+		try {
 			orientLegacy = Integer.parseInt(exif[7]);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			Log.d(TAG, "Orientation exif parse failed:", e);
 		}
-		
-		return image;
+
+		return imageData;
 	}
 
 	@Override
-	public BufferedOutputStream getXmpOutputStream()
-	{
-		try
-		{
+	public BufferedOutputStream getXmpOutputStream() {
+		try {
 			return new BufferedOutputStream(new FileOutputStream(getXmpFile()));
-		}
-		catch (FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			return null;
 		}
 	}
 
 	@Override
-	public long getFileSize()
-	{
+	public long getFileSize() {
 		return mImage.length();
 	}
 
 	@Override
-	public boolean rename(String baseName)
-	{
+	public boolean rename(String baseName) {
 		Boolean imageSuccess = true;
 		Boolean xmpSuccess = true;
 
 		String filename = getName();
-		String ext = filename.substring(filename.lastIndexOf("."), filename.length());
+		String ext = filename.substring(filename.lastIndexOf("."),
+				filename.length());
 
 		String rename = baseName + ext;
 		File renameFile = new File(mImage.getParent() + File.separator + rename);
 		mImage.renameTo(renameFile);
 
-		if (hasXmpFile())
-		{
+		if (hasXmpFile()) {
 			rename = baseName + ".xmp";
 			File renameXmp = new File(mImage.getParent(), rename);
 			xmpSuccess = getXmpFile().renameTo(renameXmp);
@@ -262,25 +248,21 @@ public class LocalImage extends MetaMedia
 		return imageSuccess && xmpSuccess;
 	}
 
-	public boolean hasXmp()
-	{
+	public boolean hasXmp() {
 		return hasXmpFile() || mMetadata.containsDirectory(XmpDirectory.class);
 	}
 
-	private boolean hasXmpFile()
-	{
+	private boolean hasXmpFile() {
 		return getXmpFile().exists();
 	}
 
-	private File getXmpFile()
-	{
+	private File getXmpFile() {
 		if (mXmp != null)
 			return mXmp;
 
 		String name = mImage.getName();
 		int pos = name.lastIndexOf(".");
-		if (pos > 0)
-		{
+		if (pos > 0) {
 			name = name.substring(0, pos);
 		}
 		name += ".xmp";
@@ -289,206 +271,186 @@ public class LocalImage extends MetaMedia
 		return mXmp;
 	}
 
-	public void writeXmp()
-	{
+	public void writeXmp() {
 		OutputStream os = getXmpOutputStream();
-        if (os == null)
-            return;
+		if (os == null)
+			return;
 
-        writeXmp(os);
-		try
-		{
-			if (os != null)
-			{
+		writeXmp(os);
+		try {
+			if (os != null) {
 				os.close();
 			}
-		}
-		catch (IOException e1)
-		{
+		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
 	}
 
 	@Override
-	protected BufferedInputStream getXmpInputStream()
-	{
+	protected BufferedInputStream getXmpInputStream() {
 		if (!hasXmpFile())
 			return null;
 
-		try
-		{
+		try {
 			return new BufferedInputStream(new FileInputStream(getXmpFile()));
-		}
-		catch (FileNotFoundException e)
-		{
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	@Override
-	public boolean isDirectory()
-	{
+	public boolean isDirectory() {
 		return mImage.isDirectory();
 	}
 
 	@Override
-	public boolean copy(File destination)
-	{
-		if (mXmp != null)
-		{
+	public boolean copy(File destination) {
+		if (mXmp != null) {
 			File xmpDest = new File(destination, mXmp.getName());
 			BufferedInputStream xmpStream = getXmpInputStream();
-			if (xmpStream != null)
-			{
+			if (xmpStream != null) {
 				Util.copy(xmpStream, xmpDest);
-                Utils.closeSilently(xmpStream);
+				Utils.closeSilently(xmpStream);
 			}
 		}
 
-		if (mImage == null)
-		{
+		if (mImage == null) {
 			return false;
 		}
 
-		File imageDest = new File(destination, mImage.getName());
-        InputStream imageStream = getImage();
-		if (imageStream == null)
-			return false;
-
-		Util.copy(imageStream, imageDest);
-        Utils.closeSilently(imageStream);
-
-		return true;
+		return Util.copy(mImage, new File(destination, mImage.getName()));
 	}
 
 	@Override
-	public boolean copyThumb(File destination)
-	{
-		BufferedOutputStream destStream = null;
-        InputStream thumb = null;
-		try
-		{
-			File thumbDest = new File(destination, Util.swapExtention(getName(), ".jpg"));
-			destStream = new BufferedOutputStream(new FileOutputStream(thumbDest));
-
-            thumb = getThumb();
-            Util.copy(thumb, thumbDest);
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
-		finally
-		{
-            Utils.closeSilently(destStream);
-            Utils.closeSilently(thumb);
-		}
-		return true;
+	public Uri getSwapUri() {
+		return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
+				+ Util.swapExtention(mImage.getName(), ".jpg") + "#"
+				+ mImage.getPath());
 	}
 
-    @Override
-    public Uri getSwapUri() {
-        return Uri.parse("content://" + SwapProvider.AUTHORITY + "/" + Util.swapExtention(mImage.getName(), ".jpg")
-            + "#" + mImage.getPath());
-    }
-
-    @Override
-	public Job<Bitmap> requestImage(GalleryApp app, int type)
-	{
+	@Override
+	public Job<Bitmap> requestImage(GalleryApp app, int type) {
 		return new LocalImageRequest(app, Uri.fromFile(mImage), type, this);
 	}
 
-	public static class LocalImageRequest extends ImageCacheRequest
-	{
-        private LocalImage mImage;
+	public static class LocalImageRequest extends ImageCacheRequest {
+		private LocalImage mImage;
 
-		LocalImageRequest(GalleryApp application, Uri uri, int type, LocalImage image)
-		{
+		LocalImageRequest(GalleryApp application, Uri uri, int type,
+				LocalImage image) {
 			super(application, uri, type, MetaMedia.getTargetSize(type));
-            mImage = image;
-		}
-
-		@Override
-		public Bitmap onDecodeOriginal(JobContext jc, final int type)
-		{
-            InputStream imageData = mImage.getThumb();
-            try
-            {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                int targetSize = MetaMedia.getTargetSize(type);
-
-                // try to decode from JPEG EXIF
-                if (type == MetaMedia.TYPE_MICROTHUMBNAIL)
-                {
-                    // ExifInterface exif = null;
-                    // byte [] thumbData = null;
-                    // try {
-                    // exif = new ExifInterface(mLocalFilePath);
-                    // if (exif != null) {
-                    // thumbData = exif.getThumbnail();
-                    // }
-                    // } catch (Throwable t) {
-                    // Log.w(TAG, "fail to get exif thumb", t);
-                    // }
-                    // if (thumbData != null) {
-                    Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData, options, targetSize);
-                    if (bitmap != null)
-                        return bitmap;
-                    // }
-                }
-
-                return DecodeUtils.decodeThumbnail(jc, imageData, options, targetSize, type);
-            }
-            finally
-            {
-                Utils.closeSilently(imageData);
-            }
-		}
-	}
-
-	@Override
-	public Job<BitmapRegionDecoder> requestLargeImage()
-	{
-		return new LocalLargeImageRequest(this);
-	}
-
-	public static class LocalLargeImageRequest implements Job<BitmapRegionDecoder>
-	{
-        LocalImage mImage;
-
-		public LocalLargeImageRequest(LocalImage image)
-		{
 			mImage = image;
 		}
 
-		public BitmapRegionDecoder run(JobContext jc)
-		{
-            InputStream imageData = mImage.getThumb();
-            try
-            {
-			    BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc, imageData, false);
-                return brd;
-            }
-            finally
-            {
-                Utils.closeSilently(imageData);
-            }
+		@Override
+		public Bitmap onDecodeOriginal(JobContext jc, final int type) {
+			byte[] imageData = mImage.getThumb();
+
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			int targetSize = MetaMedia.getTargetSize(type);
+
+			// try to decode from JPEG EXIF
+			if (type == MetaMedia.TYPE_MICROTHUMBNAIL) {
+				// ExifInterface exif = null;
+				// byte [] thumbData = null;
+				// try {
+				// exif = new ExifInterface(mLocalFilePath);
+				// if (exif != null) {
+				// thumbData = exif.getThumbnail();
+				// }
+				// } catch (Throwable t) {
+				// Log.w(TAG, "fail to get exif thumb", t);
+				// }
+				// if (thumbData != null) {
+				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData,
+						options, targetSize);
+				if (bitmap != null)
+					return bitmap;
+				// }
+			}
+
+			return DecodeUtils.decodeThumbnail(jc, imageData, options,
+					targetSize, type);
 		}
 	}
 
 	@Override
-	public Uri getUri()
-	{
+	public Job<BitmapRegionDecoder> requestLargeImage() {
+		return new LocalLargeImageRequest(this);
+	}
+
+	public static class LocalLargeImageRequest implements
+			Job<BitmapRegionDecoder> {
+		LocalImage mImage;
+
+		public LocalLargeImageRequest(LocalImage image) {
+			mImage = image;
+		}
+
+		public BitmapRegionDecoder run(JobContext jc) {
+			byte[] imageData = mImage.getThumb();
+			BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc,
+					imageData, 0, imageData.length, false);
+			return brd;
+		}
+	}
+
+	@Override
+	public Uri getUri() {
 		return Uri.fromFile(mImage);
 	}
 
 	@Override
-	public long getDataVersion()
-	{
+	public long getDataVersion() {
 		return mDataVersion;
+	}
+
+	@Override
+	public InputStream getImageStream() {
+		try {
+			return new FileInputStream(mImage);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private boolean writeThumb(byte[] source, File destination) {
+		if (source == null) {
+			return false;
+		}
+		FileChannel out = null;
+		try {
+			out = new FileOutputStream(destination).getChannel();
+			out.write(ByteBuffer.wrap(source));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			Utils.closeSilently(out);
+		}
+		return true;
+	}
+
+	@Override
+	public boolean writeThumb(File destination) {
+		return LibRaw.writeThumbFromFile(mImage.getPath(), destination.getPath(), 100);
+//		return writeThumb(getThumb(), destination);
+	}
+
+	@Override
+	public boolean writeThumbWatermark(File destination, byte[] waterMap,
+			int waterWidth, int waterHeight, Margins waterMargins) {
+		return LibRaw.writeThumbWatermark(mImage.getPath(), destination.getPath(), waterMap, waterMargins.getArray(), waterWidth, waterHeight, 100);
+//		return writeThumb(
+//				getThumbWithWatermark(waterMap, waterWidth, waterHeight,
+//						waterMargins), destination);
 	}
 
 }

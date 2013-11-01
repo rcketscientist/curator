@@ -13,7 +13,16 @@ include $(CLEAR_VARS)
 # RawSpeed Support
 #LOCAL_CFLAGS+=-pthread -DUSE_RAWSPEED -I../RawSpeed -I/usr/local/include/libxml2
 #LDADD+=-L../RawSpeed/RawSpeed -lrawspeed -L/usr/local/include -ljpeg -lxml2
-#RAWSPEED_DATA=../RawSpeed/data/cameras.xml
+#LOCAL_CFLAGS+=-DUSE_RAWSPEED
+#LOCAL_C_INCLUDES += $(LOCAL_PATH)/../RawSpeed/
+#LOCAL_C_INCLUDES += $(LOCAL_PATH)/../libxml2/
+#LOCAL_C_INCLUDES += $(LOCAL_PATH)/../libxml2/include
+#LOCAL_C_INCLUDES += $(LOCAL_PATH)/../libiconv/include
+#LOCAL_STATIC_LIBRARIES += \
+#	libxml2 \
+#	libiconv
+
+RAWSPEED_DATA=$(LOCAL_PATH)/../RawSpeed/data/cameras.xml
 
 # Jasper support for RedCine
 #CFLAGS+=-DUSE_JASPER -I/usr/local/include
@@ -21,7 +30,7 @@ include $(CLEAR_VARS)
 
 # JPEG support for DNG
 LOCAL_CFLAGS+=-DUSE_JPEG
-LOCAL_STATIC_LIBRARIES := libjpeg_static
+LOCAL_STATIC_LIBRARIES+=libjpeg_static
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../libjpeg
 
 # LIBJPEG8:

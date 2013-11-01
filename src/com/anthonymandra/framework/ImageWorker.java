@@ -24,9 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.util.Log;
-import android.widget.ImageView;
 
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
@@ -73,10 +71,10 @@ public abstract class ImageWorker extends CacheManager
 
 		Bitmap bitmap = null;
 
-		if (mImageCache != null)
-		{
-			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getFilePath()));// String.valueOf(image));
-		}
+//		if (mImageCache != null)
+//		{
+//			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getFilePath()));// String.valueOf(image));
+//		}
 
 		if (bitmap != null)
 		{
@@ -123,7 +121,7 @@ public abstract class ImageWorker extends CacheManager
 	 */
 	public static void cancelWork(LoadingImageView imageView)
 	{
-		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView.getImageView());
+		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 		if (bitmapWorkerTask != null)
 		{
 			bitmapWorkerTask.cancel(true);
@@ -136,7 +134,7 @@ public abstract class ImageWorker extends CacheManager
 	 */
 	public static boolean cancelPotentialWork(RawObject data, LoadingImageView imageView)
 	{
-		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView.getImageView());
+		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
 //		for (StackTraceElement ste : new Throwable().getStackTrace()) {
 //			Log.d(TAG, "DB: " + ste.toString());
@@ -170,7 +168,7 @@ public abstract class ImageWorker extends CacheManager
      * @return Retrieve the currently active work task (if any) associated with this imageView.
      * null if there is no such task.
      */
-    private static BitmapWorkerTask getBitmapWorkerTask(ImageView imageView) {
+    private static BitmapWorkerTask getBitmapWorkerTask(LoadingImageView imageView) {
         if (imageView != null) {
             final Drawable drawable = imageView.getDrawable();
             if (drawable instanceof AsyncDrawable) {
@@ -302,7 +300,7 @@ public abstract class ImageWorker extends CacheManager
 		private LoadingImageView getAttachedImageView()
 		{
 			final LoadingImageView imageView = imageViewReference.get();
-			final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView.getImageView());
+			final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
 			if (this == bitmapWorkerTask)
 			{

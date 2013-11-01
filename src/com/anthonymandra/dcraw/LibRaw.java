@@ -1,14 +1,18 @@
 package com.anthonymandra.dcraw;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -63,8 +67,9 @@ public class LibRaw
 	private static native byte[] getThumbFromBuffer(byte[] buffer, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
 	// Write thumb
-	public static native boolean writeThumbFromBuffer(byte[] buffer, String destination);
-	public static native boolean writeThumbFromFile(String source, String destination);
+	public static native boolean writeThumbFromBuffer(byte[] buffer, String destination, int quality);
+	public static native boolean writeThumbFromFile(String source, String destination, int quality);
+	public static native boolean writeThumbWatermark(String filePath, String destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight, int quality);
 
 	// Get raw bitmap
 	private static native byte[] getHalfImageFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
@@ -75,7 +80,6 @@ public class LibRaw
 
 	// Write raw tiff
 	public static native boolean writeRawFromBuffer(byte[] buffer, String destination);
-
 	public static native boolean writeRawFromFile(String source, String destination);
 
 	public static boolean canDecode(byte[] buffer)
@@ -126,6 +130,16 @@ public class LibRaw
 		return image;
 	}
 	
+//	public static boolean writeThumb(File source, File destination, int quality)
+//	{
+//		return writeThumbFromFile(source, destination, quality);
+//	}
+//	
+//	public static boolean writeThumbWatermark(File source, File destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight, int quality)
+//	{
+//		return writeThumbWatermark(source.getPath(), destination, watermark, margins, waterWidth, waterHeight, quality);
+//	}
+	
 	public static class Margins
 	{
 		int left = -1;
@@ -134,11 +148,21 @@ public class LibRaw
 		int bottom = -1;
 		
 		public static Margins Center = new Margins();
+		public static Margins LowerRight = new Margins(0, 0, 100, 100);
+
 		
 		/**
 		 * Defaults to center
 		 */
 		private Margins() {}
+		
+		public Margins(SharedPreferences pref)
+		{
+			top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
+			bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
+			right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
+			left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));			
+		}
 		
 		public Margins(int top, int left, int bottom, int right)
 		{

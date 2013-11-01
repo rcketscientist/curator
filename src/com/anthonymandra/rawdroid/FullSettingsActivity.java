@@ -91,6 +91,10 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
     public static final String KEY_WatermarkSize = "prefKeyWatermarkSize";
     public static final String KEY_WatermarkLocation = "prefKeyWatermarkLocation";
     public static final String KEY_WatermarkAlpha = "prefKeyWatermarkAlpha";
+    public static final String KEY_WatermarkTopMargin = "prefKeyWatermarkTopMargin";
+    public static final String KEY_WatermarkBottomMargin = "prefKeyWatermarkBottomMargin";
+    public static final String KEY_WatermarkLeftMargin = "prefKeyWatermarkLeftMargin";
+    public static final String KEY_WatermarkRightMargin = "prefKeyWatermarkRightMargin";
 
 	public static final int defRecycleBin = 50;
 
@@ -733,7 +737,72 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
     private static void updateWatermarkLocation()
     {
         ListPreference location = (ListPreference) mPreferenceManager.findPreference(KEY_WatermarkLocation);
-        location.setSummary(translateWatermarkLocations(
-                mPreferenceManager.getSharedPreferences().getString(KEY_WatermarkLocation, "Center")));
+        String position = mPreferenceManager.getSharedPreferences().getString(KEY_WatermarkLocation, "Center");
+        location.setSummary(translateWatermarkLocations(position));
+    	EditTextPreference top = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkTopMargin);
+    	EditTextPreference bottom = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkBottomMargin);
+    	EditTextPreference right = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkLeftMargin);
+    	EditTextPreference left = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkRightMargin);
+        
+        if (position.equals(mActivity.getString(R.string.upperLeft)))
+		{
+        	top.setText("0");
+        	top.setEnabled(true);
+        	left.setText("0");
+        	left.setEnabled(true);
+        	
+        	bottom.setText("-1");
+        	bottom.setEnabled(false);
+        	right.setText("-1");
+        	right.setEnabled(false);
+		}
+        else if (position.equals(mActivity.getString(R.string.upperRight)))
+		{
+        	top.setText("0");
+        	top.setEnabled(true);
+        	right.setText("0");
+        	right.setEnabled(true);
+        	
+        	bottom.setText("-1");
+        	bottom.setEnabled(false);
+        	left.setText("-1");
+        	left.setEnabled(false);
+		}
+        else if (position.equals(mActivity.getString(R.string.lowerLeft)))
+		{
+        	bottom.setText("0");
+        	bottom.setEnabled(true);
+        	left.setText("0");
+        	left.setEnabled(true);
+        	
+        	top.setText("-1");
+        	top.setEnabled(false);
+        	right.setText("-1");
+        	right.setEnabled(false);
+		}
+        else if (position.equals(mActivity.getString(R.string.lowerRight)))
+		{
+        	bottom.setText("0");
+        	bottom.setEnabled(true);
+        	right.setText("0");
+        	right.setEnabled(true);
+        	
+        	top.setText("-1");
+        	top.setEnabled(false);
+        	left.setText("-1");
+        	left.setEnabled(false);
+		}
+        else //center
+		{
+        	top.setText("-1");
+        	top.setEnabled(false);
+        	bottom.setText("-1");
+        	bottom.setEnabled(false);
+        	
+        	left.setText("-1");
+        	left.setEnabled(false);
+        	right.setText("-1");
+        	right.setEnabled(false);
+		}
     }
 }

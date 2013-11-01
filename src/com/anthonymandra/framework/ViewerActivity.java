@@ -40,6 +40,7 @@ import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.RawDroid;
@@ -814,60 +815,61 @@ public abstract class ViewerActivity extends GalleryActivity implements
         int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
         int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
         String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+        Margins margins = new Margins(settings);
 
         MediaItem source = getCurrentItem();
 
-        InputStream imageData = source.getThumb();
-        if (imageData == null)
+        Bitmap watermark;
+        byte[] waterData = null;
+        boolean processWatermark = false;
+        int waterWidth = 0, waterHeight = 0;
+        if (!mLicenseManager.isLicensed())
         {
-            Toast.makeText(this, R.string.warningFailedToGetStream, Toast.LENGTH_LONG).show();
-            return;
+        	processWatermark = true;
+            watermark = Util.getDemoWatermark(this, source.getWidth());
+            waterData = Util.getBitmapBytes(watermark);
+            waterWidth = watermark.getWidth();
+            waterHeight = watermark.getHeight();
+            margins = Margins.LowerRight;
         }
-
-        try
+        else if (showWatermark)
         {
-            Bitmap bmp = BitmapFactory.decodeStream(imageData);
-
-            if (!mLicenseManager.isLicensed())
-            {
-                bmp = Util.addWatermark(ViewerActivity.this, bmp);
-            }
-            else if (showWatermark)
-            {
-                bmp = Util.addCustomWatermark(bmp, watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-            }
-
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(dest));
-        }
-        catch(Exception e)
+        	processWatermark = true;
+            watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+            waterData = Util.getBitmapBytes(watermark);
+            waterWidth = watermark.getWidth();
+            waterHeight = watermark.getHeight();
+        }      
+        
+        boolean success;
+		if (processWatermark)
+		{
+			success = source.writeThumbWatermark(dest, waterData, waterWidth, waterHeight, margins);
+		}
+        else
         {
-            Toast.makeText(this, R.string.save_fail, Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
-        finally {
-            Utils.closeSilently(imageData);
-        }
-
-        Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
+        	success = source.writeThumb(dest);          
+        }	
+		
+		if (!success)
+			Toast.makeText(this, "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
+		else
+			Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
     }
 
     private void setWallpaper()
     {
-        InputStream imageData = getCurrentItem().getThumb();
-        try
-        {
-            WallpaperManager.getInstance(this).setBitmap(Util.createBitmapToSize(
-                    imageData, displayWidth, displayHeight));
-        }
-        catch (Exception e)
-        {
-            Log.e(TAG, e.toString());
-            Toast.makeText(ViewerActivity.this, R.string.resultWallpaperFailed, Toast.LENGTH_SHORT).show();
-        }
-        finally
-        {
-            Utils.closeSilently(imageData);
-        }
+    	byte[] imageData = getCurrentItem().getThumb();
+		try
+		{
+		    WallpaperManager.getInstance(this).setBitmap(Util.createBitmapToSize(
+		            imageData, displayWidth, displayHeight));
+		}
+		catch (Exception e)
+		{
+		    Log.e(TAG, e.toString());
+		    Toast.makeText(ViewerActivity.this, R.string.resultWallpaperFailed, Toast.LENGTH_SHORT).show();
+		}
     }
 
     private void tagImage()
