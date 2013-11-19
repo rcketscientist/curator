@@ -135,8 +135,8 @@
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>
     <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Please try later.  Sorry.</string>
-    <string name="prefSummaryLicenseModified">License service was modified!  If this was unintentional please check for malicious software and reinstall RawDroid Pro.</string>
-    <string name="prefSummaryNoProvider">Could not access server.  Is Rawdroid Pro installed?</string>
+    <string name="prefSummaryLicenseModified">License service was modified!  Uninstall malicious software or any apps that modify or crack software and reinstall RawDroid Pro.</string>
+    <string name="prefSummaryNoProvider">Could not access service.  Is Rawdroid Pro installed?</string>
     <string name="prefSummaryLicense">All features are available.  Thank you for your support!</string>
     <string name="prefTitleManualLicense">Check License</string>
     <string name="prefSummaryManualLicense">Click to manually check the license.  Requires an internet connection.</string>
@@ -149,6 +149,10 @@
     <string name="prefTitleWatermarkAlpha">Watermark Transparency</string>
     <string name="prefTitleContact">Contact</string>
     <string name="prefSummaryContact">Click to send me an email.</string>
+    <string name="prefTitleLeftMargin">Left</string>
+    <string name="prefTitleRightMargin">Right</string>
+    <string name="prefTitleTopMargin">Top</string>
+    <string name="prefTitleBottomMargin">Bottom</string>
     <string name="prefSummaryLeftMargin">Distance from left edge of image to left edge of watermark.</string>
     <string name="prefSummaryRightMargin">Distance from right edge of image to right edge of watermark.</string>
     <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark.</string>
@@ -199,6 +203,9 @@
     <string name="search">Search</string>
     <string name="experimental">(Experimental)</string>
     <string name="imageFolders">Folders Containing Raw Images</string>
+    
+    <string name="welcomeTitle">Welcome to RawDroid!</string>
+    <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf this is your first time please consider running the tutorial by going to the Help menu item.\n\nIf you have any issues you can submit a bug report or email me at Settings > Contact.\n\nIf your images are not processed please email me an example image.</string>
     
     <!-- Colors for xmp -->
     <string name="red">Red</string>

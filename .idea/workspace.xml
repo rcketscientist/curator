@@ -40,46 +40,6 @@
     <list default="true" id="8e2db8d7-c10d-4893-a927-28d8c1089a92" name="Default" comment="">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/Distribution/Distribution.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/FileManager/FileManager.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/libraries/amandra-treeview/amandra-treeview.iml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\CA_correct_RT.cc" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw_alloc.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw_const.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw_datastream.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw_internal.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw_types.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\LibRaw\libraw_version.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\Note_AJM.txt" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\afd_interpolate_pl.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\ahd_interpolate_mod.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\ahd_partial_interpolate.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\amaze_demosaic_RT.cc" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\cfa_impulse_gauss.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\cfa_linedn_new.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\dcraw.exe" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\dcraw\dcraw.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\dcraw_foveon.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\es_median_filter.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\green_equi.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\dcb_demosaicing.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\dcraw_common.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\dcraw_fileio.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\defines.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\demosaic_packs.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\libraw_bytebuffer.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\libraw_internal_funcs.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\var_defines.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\internal\wf_filtering.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\lmmse_interpolate.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\median_filter_new.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\refinement.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\shrtdct_float.c" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\src\libraw_c_api.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\src\libraw_cxx.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\src\libraw_datastream.cpp" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\swab.h" afterPath="" />
-      <change type="DELETED" beforePath="D:\proj\clean\rawdroid\jni\vcd_interpolate.c" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\clean\rawdroid\libraries\ActionBarSherlock\actionbarsherlock-fest\build.gradle" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\clean\rawdroid\libraries\ActionBarSherlock\actionbarsherlock-i18n\build.gradle" afterPath="" />
       <change type="DELETED" beforePath="D:\proj\clean\rawdroid\libraries\ActionBarSherlock\actionbarsherlock\libs\android-support-v4.jar" afterPath="" />
@@ -100,40 +60,28 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/NineOldAndroids" afterPath="$PROJECT_DIR$/libraries/NineOldAndroids" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView" afterPath="$PROJECT_DIR$/libraries/ShowcaseView" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Distribution/.classpath" afterPath="$PROJECT_DIR$/libraries/Distribution/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.project" afterPath="$PROJECT_DIR$/.project" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/Android.mk" afterPath="$PROJECT_DIR$/jni/Android.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/LibRaw/Android.mk" afterPath="$PROJECT_DIR$/jni/LibRaw/Android.mk" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/libjpeg/Android.mk" afterPath="$PROJECT_DIR$/jni/libjpeg/Android.mk" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/Application.mk" afterPath="$PROJECT_DIR$/jni/Application.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FormatDialog.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FormatDialog.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/ImageViewActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageWorker.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ImageWorker.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/widget/LoadingImageView.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/widget/LoadingImageView.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/RawObject.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/RawObject.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/SwapProvider.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/content/RawImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/content/RawImage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/ViewerActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpFragment.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/XmpFragment.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/build.gradle" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" afterPath="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/changelog.xml" afterPath="$PROJECT_DIR$/res/xml/changelog.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/libraw.cpp" afterPath="$PROJECT_DIR$/jni/libraw.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences_watermark.xml" afterPath="$PROJECT_DIR$/res/xml/preferences_watermark.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/project.properties" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription/library/project.properties" afterPath="$PROJECT_DIR$/libraries/Inscription/library/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/NineOldAndroids/library/project.properties" afterPath="$PROJECT_DIR$/libraries/NineOldAndroids/library/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView/library/project.properties" afterPath="$PROJECT_DIR$/libraries/ShowcaseView/library/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/rawdroid.iml" afterPath="$PROJECT_DIR$/rawdroid.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription/library/res/values-ru/strings.xml" afterPath="$PROJECT_DIR$/libraries/Inscription/library/res/values-ru/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rawdroid.iws" />
@@ -210,7 +158,7 @@
       <file leaf-file-name="MetaMedia.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="8143" max-vertical-offset="9622">
+            <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="8126" max-vertical-offset="9605">
               <folding />
             </state>
           </provider>
@@ -219,7 +167,7 @@
       <file leaf-file-name="RawDroid.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="79" column="35" selection-start="3007" selection-end="3007" vertical-scroll-proportion="0.0" vertical-offset="976" max-vertical-offset="28509">
+            <state line="83" column="35" selection-start="3149" selection-end="3149" vertical-scroll-proportion="0.0" vertical-offset="1044" max-vertical-offset="27965">
               <folding />
             </state>
           </provider>
@@ -228,9 +176,13 @@
       <file leaf-file-name="XmpDirectory.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.6786758" vertical-offset="493" max-vertical-offset="8041">
+            <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-0.319802" vertical-offset="1513" max-vertical-offset="8041">
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#3665#3682#0" expanded="true" />
+                <element signature="e#3772#3789#0" expanded="true" />
+                <element signature="e#3881#3898#0" expanded="true" />
+                <element signature="e#3981#3997#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -3161,8 +3113,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -3183,6 +3133,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3412,6 +3364,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
@@ -3430,6 +3383,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
@@ -3450,6 +3404,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="MODE" value="do_nothing" />
       <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
@@ -3470,6 +3425,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
@@ -3490,6 +3446,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="DEPLOY" value="true" />
+      <option name="ARTIFACT_NAME" value="" />
       <option name="TARGET_SELECTION_MODE" value="USB_DEVICE" />
       <option name="USE_LAST_SELECTED_DEVICE" value="false" />
       <option name="PREFERRED_AVD" value="" />
@@ -3596,17 +3553,19 @@
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27183098" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27178425" sideWeight="0.50164205" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27144867" sideWeight="0.50164205" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32816902" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46830985" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20206842" sideWeight="0.67912555" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2676519" sideWeight="0.6577975" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.09864757" sideWeight="0.72467905" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.09864757" sideWeight="0.72467905" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27221438" sideWeight="0.5835322" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
@@ -3617,6 +3576,11 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27532098" sideWeight="0.49835795" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
     </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USERS">
+      <collection />
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -3630,6 +3594,40 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9605">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="83" column="35" selection-start="3149" selection-end="3149" vertical-scroll-proportion="0.0" vertical-offset="1044" max-vertical-offset="27965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3665#3682#0" expanded="true" />
+            <element signature="e#3772#3789#0" expanded="true" />
+            <element signature="e#3881#3898#0" expanded="true" />
+            <element signature="e#3981#3997#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="404" selection-end="404" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9622">
@@ -3684,7 +3682,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="479" column="25" selection-start="13627" selection-end="13627" vertical-scroll-proportion="0.0" vertical-offset="7743" max-vertical-offset="9146">
+        <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="8126" max-vertical-offset="9605">
           <folding />
         </state>
       </provider>
@@ -3718,16 +3716,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="35" selection-start="3007" selection-end="3007" vertical-scroll-proportion="0.0" vertical-offset="976" max-vertical-offset="28509">
+        <state line="83" column="35" selection-start="3149" selection-end="3149" vertical-scroll-proportion="0.0" vertical-offset="1044" max-vertical-offset="27965">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.6786758" vertical-offset="493" max-vertical-offset="8041">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-0.319802" vertical-offset="1513" max-vertical-offset="8041">
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#3665#3682#0" expanded="true" />
+            <element signature="e#3772#3789#0" expanded="true" />
+            <element signature="e#3881#3898#0" expanded="true" />
+            <element signature="e#3981#3997#0" expanded="true" />
           </folding>
         </state>
       </provider>

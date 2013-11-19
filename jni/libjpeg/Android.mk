@@ -55,7 +55,7 @@ ifeq ($(strip $(TARGET_ARCH)),mips)
   endif
 endif
 
-LOCAL_MODULE := libjpeg_static
+LOCAL_MODULE := libjpeg
 
 include $(BUILD_STATIC_LIBRARY)
 

@@ -568,6 +568,13 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
         {
             updateWatermarkLocation();
         }
+        else if (key.equals(KEY_WatermarkTopMargin) ||
+        		key.equals(KEY_WatermarkBottomMargin) ||
+        		key.equals(KEY_WatermarkLeftMargin) ||
+        		key.equals(KEY_WatermarkRightMargin))
+        {
+        	updateWatermarkMargins();
+        }        		
         else if (key.equals(KEY_WatermarkSize))
         {
             updateWatermarkSize();
@@ -694,6 +701,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
     {
         updateWatermarkEnabled();
         updateWatermarkLocation();
+        updateWatermarkMargins();
         updateWatermarkAlpha();
         updateWatermarkSize();
         updateWatermarkText();
@@ -733,6 +741,25 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
             enableWatermark.setChecked(mPreferenceManager.getSharedPreferences().getBoolean(KEY_EnableWatermark, false));
         }
     }
+    
+    private static void updateWatermarkMargins()
+    {
+    	EditTextPreference top = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkTopMargin);
+    	EditTextPreference bottom = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkBottomMargin);
+    	EditTextPreference left = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkLeftMargin);
+    	EditTextPreference right = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkRightMargin);
+    	
+    	// Clean up disabled (-1) values
+    	String topValue = top.getText().equals("-1") ? "" : ": " + top.getText();
+    	String bottomValue = bottom.getText().equals("-1") ? "" : ": " + bottom.getText();
+    	String rightValue = right.getText().equals("-1") ? "" : ": " + right.getText();
+    	String leftValue = left.getText().equals("-1") ? "" : ": " + left.getText(); 	    	
+    	
+    	top.setTitle(mActivity.getString(R.string.prefTitleTopMargin) + topValue);
+    	bottom.setTitle(mActivity.getString(R.string.prefTitleBottomMargin) + bottomValue);
+    	left.setTitle(mActivity.getString(R.string.prefTitleLeftMargin) + leftValue);
+    	right.setTitle(mActivity.getString(R.string.prefTitleRightMargin) + rightValue);
+    }
 
     private static void updateWatermarkLocation()
     {
@@ -741,8 +768,8 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
         location.setSummary(translateWatermarkLocations(position));
     	EditTextPreference top = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkTopMargin);
     	EditTextPreference bottom = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkBottomMargin);
-    	EditTextPreference right = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkLeftMargin);
-    	EditTextPreference left = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkRightMargin);
+    	EditTextPreference left = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkLeftMargin);
+    	EditTextPreference right = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkRightMargin);
         
         if (position.equals(mActivity.getString(R.string.upperLeft)))
 		{

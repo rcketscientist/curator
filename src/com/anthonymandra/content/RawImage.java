@@ -56,7 +56,7 @@ public class RawImage
 		public static final String FLASH = "flash";
 		public static final String FOCAL_LENGTH = "focal_length";
 		public static final String ISO = "iso";
-		public static final String WHITE_BALANCE = "wb";
+		public static final String WHITE_BALANCE = "white_balance";
 		public static final String HEIGHT = "height";
 		public static final String WIDTH = "width";
 		public static final String LATITUDE = "latitude";
@@ -64,9 +64,9 @@ public class RawImage
 		public static final String ALTITUDE = "altitude";
 
 		public static final String MEDIA_ID = "media_id";
-		/**
-		 * Name of the thumb data column.????
-		 */
-		public static final String _DATA = "_data";
+//		/**
+//		 * Name of the thumb data column.????
+//		 */
+//		public static final String _DATA = "_data";
 	}
 }

@@ -194,6 +194,12 @@ public class Util
 		// Compare against supported android image formats
 		return (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif"));
 	}
+	
+	public static boolean isTiffImage(File file)
+	{
+		String filename = file.getName().toLowerCase();
+		return (filename.endsWith(".tif") || filename.endsWith(".tiff"));
+	}
 
 	/**
 	 * Gets an exact sample size, should not be used for large images since certain ratios generate "white images"
@@ -486,13 +492,15 @@ public class Util
     
     public static Bitmap getDemoWatermark(Context context, int srcWidth)
     {
-        int id = R.drawable.watermark1024;
-        if (srcWidth < 768)
-            id = R.drawable.watermark128;
-        else if (srcWidth < 1536)
-            id = R.drawable.watermark256;
-        else if (srcWidth < 3072)
-            id = R.drawable.watermark512;
+        int id;
+        if (srcWidth > 5120)
+        	id = R.drawable.watermark1024;
+        else if (srcWidth > 2560)
+        	id = R.drawable.watermark512;
+        else if (srcWidth >  1280)
+        	id = R.drawable.watermark256;
+        else
+        	id = R.drawable.watermark128;
         
         BitmapFactory.Options o = new Options();
         o.inScaled = false;
@@ -620,7 +628,7 @@ public class Util
         paint.setAlpha(alpha);
         paint.setTextSize(size);
         paint.setAntiAlias(true);
-        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextAlign(Paint.Align.LEFT);
         
         int width = (int) (paint.measureText(text) + 0.5f); // round
         float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative

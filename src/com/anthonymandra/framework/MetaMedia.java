@@ -2,6 +2,7 @@ package com.anthonymandra.framework;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.content.Meta;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
@@ -19,6 +20,9 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 import com.drew.metadata.xmp.XmpWriter;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 
@@ -34,6 +38,7 @@ public abstract class MetaMedia extends MediaItem
 {
 	private static final String TAG = MetaMedia.class.getSimpleName();
 
+	protected boolean metaLoaded = false;
 	protected Metadata mMetadata = new Metadata();
 	protected int width;
 	protected int height;
@@ -51,9 +56,11 @@ public abstract class MetaMedia extends MediaItem
 
     protected SimpleDateFormat mExifFormatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
     protected SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
+    protected Context mContext;
 
-    public MetaMedia(Uri path, long version) {
+    public MetaMedia(Context context, Uri path, long version) {
         super(path, version);
+        mContext = context;
     }
 
 	public void clearXmp()
@@ -461,6 +468,7 @@ public abstract class MetaMedia extends MediaItem
 		try
 		{
 			mMetadata = ImageMetadataReader.readMetadata(raw);
+			putContent();
 			return true;
 		}
 		catch (ImageProcessingException e)
@@ -482,6 +490,63 @@ public abstract class MetaMedia extends MediaItem
 		{
             Utils.closeSilently(raw);
 		}
+	}
+	
+	protected void putContent()
+	{
+		final ContentValues cv = new ContentValues();
+		cv.put(Meta.Data.ALTITUDE, getAltitude());
+		cv.put(Meta.Data.APERTURE, getAperture());
+		cv.put(Meta.Data.EXPOSURE, getExposure());
+		cv.put(Meta.Data.FLASH, getFlash());
+		cv.put(Meta.Data.FOCAL_LENGTH, getFocalLength());
+		cv.put(Meta.Data.HEIGHT, height);
+		cv.put(Meta.Data.ISO, getIso());
+		cv.put(Meta.Data.LATITUDE, getLatitude());
+		cv.put(Meta.Data.LONGITUDE, getLongitude());
+		cv.put(Meta.Data.MODEL, getModel());
+		cv.put(Meta.Data.NAME, getName());
+		cv.put(Meta.Data.ORIENTATION, getOrientation());
+		cv.put(Meta.Data.TIMESTAMP, getDateTime());
+		cv.put(Meta.Data.WHITE_BALANCE, getWhiteBalance());
+		cv.put(Meta.Data.WIDTH, width);
+		cv.put(Meta.Data.URI, getUri().toString());
+		cv.put(Meta.Data.THUMB_HEIGHT, thumbHeight);
+		cv.put(Meta.Data.THUMB_WIDTH, thumbWidth);		
+		
+		new Thread(new Runnable() {			
+			@Override
+			public void run() {
+				mContext.getContentResolver().insert(Meta.Data.CONTENT_URI, cv);				
+			}
+		}).start();
+		
+	}
+	
+	protected void getContent()
+	{
+		Cursor meta = mContext.getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "='" + getUri() + "'", null, null);
+		if (meta == null || !meta.moveToNext())
+		{
+			return;
+		}
+		
+		setContent(meta);
+	}
+	
+	protected void setContent(Cursor meta)
+	{
+		width = meta.getInt(Meta.WIDTH_COLUMN);
+		height = meta.getInt(Meta.HEIGHT_COLUMN);
+		thumbWidth = meta.getInt(Meta.THUMB_WIDTH_COLUMN);
+		thumbHeight = meta.getInt(Meta.THUMB_HEIGHT_COLUMN);
+		orientLegacy = meta.getInt(Meta.ORIENTATION_COLUMN);
+		apertureLegacy = meta.getString(Meta.APERTURE_COLUMN);
+		shutterLegacy = meta.getString(Meta.EXPOSURE_COLUMN);		
+		focalLegacy = meta.getString(Meta.FOCAL_LENGTH_COLUMN);		
+		isoLegacy = meta.getString(Meta.ISO_COLUMN);		
+		modelLegacy = meta.getString(Meta.MODEL_COLUMN);		
+		makeLegacy = meta.getString(Meta.MAKE_COLUMN);				
 	}
 
 	private boolean readXmp()
@@ -519,6 +584,7 @@ public abstract class MetaMedia extends MediaItem
 
 	public int getWidth()
 	{
+		checkMetaLoaded();
 		return width;
 	}
 
@@ -529,6 +595,7 @@ public abstract class MetaMedia extends MediaItem
 
 	public int getHeight()
 	{
+		checkMetaLoaded();
 		return height;
 	}
 
@@ -539,6 +606,7 @@ public abstract class MetaMedia extends MediaItem
 
 	public int getThumbWidth()
 	{
+		checkMetaLoaded();
 		return thumbWidth;
 	}
 
@@ -549,11 +617,20 @@ public abstract class MetaMedia extends MediaItem
 
 	public int getThumbHeight()
 	{
+		checkMetaLoaded();
 		return thumbHeight;
 	}
 
 	public void setThumbHeight(int thumbHeight)
 	{
 		this.thumbHeight = thumbHeight;
+	}
+	
+	protected void checkMetaLoaded()
+	{
+		if (!metaLoaded)
+		{
+			getContent();
+		}
 	}
 }

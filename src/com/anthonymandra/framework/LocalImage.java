@@ -2,7 +2,7 @@ package com.anthonymandra.framework;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,11 +13,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel;
 import java.text.SimpleDateFormat;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.media.ExifInterface;
@@ -32,6 +33,7 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.dcraw.LibRaw.Margins;
+import com.anthonymandra.dcraw.TiffDecoder;
 import com.drew.metadata.xmp.XmpDirectory;
 
 public class LocalImage extends MetaMedia {
@@ -39,8 +41,8 @@ public class LocalImage extends MetaMedia {
 	File mImage;
 	File mXmp;
 
-	public LocalImage(File image) {
-		super(Uri.fromFile(image), nextVersionNumber());
+	public LocalImage(Context context, File image) {
+		super(context, Uri.fromFile(image), nextVersionNumber());
 		mImage = image;
 	}
 
@@ -152,15 +154,14 @@ public class LocalImage extends MetaMedia {
 			width = o.outWidth;
 			height = o.outHeight;
 
-			try {
+			try {			
 				ExifInterface ei = new ExifInterface(getFilePath());
 				makeLegacy = ei.getAttribute(ExifInterface.TAG_MAKE);
 				modelLegacy = ei.getAttribute(ExifInterface.TAG_MODEL);
 				apertureLegacy = ei.getAttribute(ExifInterface.TAG_APERTURE);
 				focalLegacy = ei.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
 				isoLegacy = ei.getAttribute(ExifInterface.TAG_ISO);
-				shutterLegacy = ei
-						.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+				shutterLegacy = ei.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
 				SimpleDateFormat sdf = new SimpleDateFormat(
 						"yyyy:MM:dd HH:mm:ss");
 				try {
@@ -176,6 +177,21 @@ public class LocalImage extends MetaMedia {
 			}
 
 			return getImage();
+		}
+		
+		else if (Util.isTiffImage(mImage))
+		{
+			int[] dim = new int[2];
+//			int[] imageData = TiffDecoder.getThumb(mImage.getPath(), dim);
+			int[] imageData = TiffDecoder.getImage(mImage.getPath(), dim);
+			width = dim[0];
+			thumbWidth = width;
+			height = dim[1];
+			thumbHeight = height;		
+			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bmp.compress(CompressFormat.JPEG, 100, baos);
+			return baos.toByteArray();
 		}
 
 		String[] exif = new String[12];
@@ -209,6 +225,8 @@ public class LocalImage extends MetaMedia {
 		} catch (Exception e) {
 			Log.d(TAG, "Orientation exif parse failed:", e);
 		}
+		
+		putContent();
 
 		return imageData;
 	}

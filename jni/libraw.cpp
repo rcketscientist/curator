@@ -2,6 +2,8 @@
 #include <jni.h>
 #include <android/log.h>
 #include <algorithm>
+#include <vector>
+#include <dirent.h>
 
 #include <libraw/libraw.h>
 
@@ -11,6 +13,7 @@ extern "C"
 	// Can decode
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes);
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromFile(JNIEnv* env, jclass clazz, jstring filePath);
+	JNIEXPORT jobjectArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeDirectory(JNIEnv* env, jclass clazz, jstring directory);
 	
 	// Return thumb bitmap
     JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat);
@@ -170,7 +173,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromFile
 	LibRaw RawProcessor;
 	
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = RawProcessor.open_file(str);
+	int result = RawProcessor.open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	RawProcessor.recycle();
 
@@ -179,6 +182,50 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromFile
 	
 	return JNI_FALSE;
 }
+
+using namespace std;
+// This processes a whole folder but didn't prove to be a significant improvement.  1000 files (~15s individual vs. 14.4 here)
+JNIEXPORT jobjectArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeDirectory(JNIEnv* env, jclass clazz, jstring directory)
+{
+	LibRaw RawProcessor;
+	DIR *dir;
+	struct dirent *ent;
+	const char *str = env->GetStringUTFChars(directory,0);
+	string path = string(str);
+	env->ReleaseStringUTFChars(directory, str);
+
+    int numRaw = 0;
+    vector<string> rawFiles = vector<string>();
+    int result;
+	if ((dir = opendir (str)) != NULL)
+	{
+		while ((ent = readdir (dir)) != NULL)
+		{
+			string p = path + "/" + ent->d_name;
+//			__android_log_print(ANDROID_LOG_INFO, "JNI", "file = %s", p.c_str());
+			result = RawProcessor.open_file(p.c_str(), 0);
+			if (result == 0)
+				rawFiles.push_back(p);
+			RawProcessor.recycle();
+		}
+		closedir (dir);
+	}
+	else
+	{
+		return NULL;
+	}
+
+	jobjectArray raw = (jobjectArray)env->NewObjectArray(rawFiles.size(), env->FindClass("java/lang/String"), env->NewStringUTF(""));
+	for(int i = 0; i < rawFiles.size(); i++)
+	{
+//		__android_log_print(ANDROID_LOG_INFO, "JNI", "raw = %s", rawFiles[i].c_str());
+		jstring r = env->NewStringUTF(rawFiles[i].c_str());
+		env->SetObjectArrayElement(raw, i, r);
+		env->DeleteLocalRef(r);
+	}
+	return raw;
+}
+
 
 JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat)
 {
@@ -210,7 +257,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromFil
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str);
+	int result = rawProcessor->open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -240,7 +287,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbWithWat
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str);
+	int result = rawProcessor->open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -283,7 +330,7 @@ JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getDecoderFromFile
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str);
+	int result = rawProcessor->open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -299,7 +346,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfImageFro
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str);
+	int result = rawProcessor->open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -316,7 +363,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFromFil
 
 	rawProcessor->imgdata.params.use_rawspeed = 1;
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str);
+	int result = rawProcessor->open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -332,7 +379,7 @@ JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoderFrom
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str);
+	int result = rawProcessor->open_file(str, 0);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -371,7 +418,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromFil
 	const char *input = env->GetStringUTFChars(filePath,0);
 	const char *output = env->GetStringUTFChars(destination, 0);
 
-	int result = rawProcessor->open_file(input);
+	int result = rawProcessor->open_file(input, 0);
 	env->ReleaseStringUTFChars(filePath, input);
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;
@@ -390,7 +437,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbWaterma
 	const char *input = env->GetStringUTFChars(filePath,0);
 	const char *output = env->GetStringUTFChars(destination, 0);
 
-	int result = rawProcessor->open_file(input);
+	int result = rawProcessor->open_file(input, 0);
 	env->ReleaseStringUTFChars(filePath, input);
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;
@@ -408,7 +455,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRawFromFile(
 	const char *output = env->GetStringUTFChars(destination, 0);
 
 	const char *input= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(input);
+	int result = rawProcessor->open_file(input, 0);
 	env->ReleaseStringUTFChars(filePath, input);
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;
@@ -519,11 +566,11 @@ jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned lo
 	if ((right > 0 && left > 0))
 		return JNI_FALSE;
 
-	if (left > 0)
+	if (left >= 0)
 	{
 		startX = left;
 	}
-	else if (right > 0)
+	else if (right >= 0)
 	{
 		startX = width - right - waterWidth;
 	}
@@ -536,11 +583,11 @@ jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned lo
 		startX = 0;
 	}
 
-	if (top > 0)
+	if (top >= 0)
 	{
 		startY = top;
 	}
-	else if (bottom > 0)
+	else if (bottom >= 0)
 	{
 		startY = height - bottom - waterHeight;
 	}
@@ -918,8 +965,8 @@ void createJpeg(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpeg
 	* To keep things simple, we pass one scanline per call; you can pass
 	* more if you wish, though.
 	*/
-	row_stride = cinfo.image_width * 3;	/* JSAMPLEs per row in image_buffer */
-
+//	row_stride = cinfo.image_width * cinfo.in_color_space;	/* JSAMPLEs per row in image_buffer */
+	row_stride = cinfo.image_width * 3;
 	while (cinfo.next_scanline < cinfo.image_height)
 	{
 		/* jpeg_write_scanlines expects an array of pointers to scanlines.

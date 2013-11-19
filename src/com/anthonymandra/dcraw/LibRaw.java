@@ -38,6 +38,10 @@ public class LibRaw
 		try
 		{
 			Log.i("JNI", "Trying to load libraw.so");
+//			System.loadLibrary("stlport_shared");
+//			System.loadLibrary("iconv");
+//			System.loadLibrary("gnustl_shared");
+//			System.loadLibrary("libjpeg");
 			System.loadLibrary("raw_r");
 			System.loadLibrary("raw");
 		}
@@ -49,8 +53,8 @@ public class LibRaw
 
 	// Can decode
 	private static native boolean canDecodeFromBuffer(byte[] buffer);
-
 	private static native boolean canDecodeFromFile(String filePath);
+	public static native String[] canDecodeDirectory(String directory);
 
 	/**
 	 * Gets the thumbnail from a raw image.  Thumbnail will be returned as a jpeg.  In the case of a 
@@ -109,6 +113,8 @@ public class LibRaw
 		return image;
 	}
 
+	private static int sum = 0;
+	private static int entries = 0;
 	public static byte[] getThumb(File file, String[] exif)
 	{	
 //		for (StackTraceElement ste : new Throwable().getStackTrace()) {
@@ -125,7 +131,11 @@ public class LibRaw
 		
 		long start = System.currentTimeMillis();
 		byte[] image = getThumbFromFile(file.getPath(), exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
-		Log.d(TAG, "DB: Thumbnail took " + (System.currentTimeMillis() - start) + "ms");
+//		Log.d(TAG, "DB: Thumbnail took " + (System.currentTimeMillis() - start) + "ms");
+		sum += System.currentTimeMillis() - start;
+		entries++;
+		
+		Log.d(TAG, "DB: Thumbnail avg = " + sum / entries + "ms");
 		
 		return image;
 	}

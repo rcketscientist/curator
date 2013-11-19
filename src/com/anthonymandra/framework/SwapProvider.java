@@ -1,6 +1,7 @@
 package com.anthonymandra.framework;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.RawDroid;
@@ -31,7 +33,7 @@ import java.nio.channels.FileChannel;
 /**
  * Created by amand_000 on 9/12/13.
  */
-public class SwapProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SwapProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener  {
     private static final String TAG = SwapProvider.class.getSimpleName();
 
     // The authority is the symbolic name for the provider class
@@ -59,7 +61,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         mLicenseManager = new LicenseManager(getContext(), new Handler());
 
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
-
         return true;
     }
 
@@ -83,7 +84,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 // Some receivers may call multiple times
                 if (!swapFile.exists())
                 {
-                	LocalImage image = new LocalImage(new File(uri.getFragment()));
+                	LocalImage image = new LocalImage(getContext(), new File(uri.getFragment()));
 	                byte[] imageData = image.getThumb();
 	                if (imageData == null)
 	                    return null;

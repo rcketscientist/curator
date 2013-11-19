@@ -4,6 +4,8 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.content.Meta;
+import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
 
@@ -11,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -67,11 +70,12 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
 	protected ProgressDialog mProgressDialog;
 
-	private static final String[] IMAGE_EXT = new String[]
+	private static final String[] RAW_EXT = new String[]
 	{ ".3fr", ".ari", ".arw", ".bay", ".crw", ".cr2", ".cap", ".dcs", ".dcr", ".dng", ".drf", ".eip", ".erf", ".fff", ".iiq", ".k25", ".kdc", ".mdc", ".mef",
 			".mos", ".mrw", ".nef", ".nrw", ".obm", ".orf", ".pef", ".ptx", ".pxn", ".r3d", ".raf", ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf", ".srw",
-			".x3f" };
+			".tif", ".tiff", ".x3f" };
 
+	protected RawFilter rawFilter = new RawFilter();
 	private XmpFilter xmpFilter = new XmpFilter();
 	private NativeFilter nativeFilter = new NativeFilter();
 	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
@@ -90,6 +94,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
     protected ShareActionProvider mShareProvider;
     protected Intent mShareIntent;
+    protected ContentProviderClient mMetaProvider;
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -100,6 +105,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		// mProgressDialog.setCanceledOnTouchOutside(true);
         mShareIntent = new Intent(Intent.ACTION_SEND);
         mShareIntent.setType("image/jpeg");
+        mMetaProvider = getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
 	}
 
 	@Override
@@ -130,6 +136,8 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		if (recycleBin != null)
 			recycleBin.closeCache();
 		recycleBin = null;
+		if (mMetaProvider != null)
+			mMetaProvider.release();
 	}
 
 	protected void updateGalleryItems()
@@ -230,13 +238,52 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 
 		clearSubLists();
-
-		File[] sortedFiles = mCurrentPath.listFiles();
-		Arrays.sort(sortedFiles, alphaCompare);
-		for (File file : sortedFiles)
+		
+//		File[] sortedFiles = mCurrentPath.listFiles();
+//		Arrays.sort(sortedFiles, alphaCompare);
+//		
+//		for (File file: sortedFiles)
+//		{
+//			if (file.isDirectory())
+//			{
+//				mFolders.add(file);
+//			}
+//		}
+		
+		for (File file : mCurrentPath.listFiles())
 		{
-			addFile(file, false);
+			if (rawFilter.accept(file))
+			{
+				mRawImages.add(new LocalImage(this, file));
+			}
+			else if (nativeFilter.accept(file))
+			{
+				mNativeImages.add(new LocalImage(this, file));
+			}
+			else if (xmpFilter.accept(file))
+			{
+				mXmpFiles.add(new LocalImage(this, file));
+			}
+			else if (file.isDirectory())
+			{
+				mFolders.add(file);
+			}
+			else
+			{
+				mUnknownFiles.add(new LocalImage(this, file));
+			}
 		}
+		
+		Collections.sort(mFolders, alphaCompare);
+		Collections.sort(mRawImages, metaCompare);
+		Collections.sort(mNativeImages, metaCompare);
+		Collections.sort(mXmpFiles, metaCompare);
+		Collections.sort(mUnknownFiles, metaCompare);
+		
+//		for (File file : sortedFiles)
+//		{
+//			addFile(file, false);
+//		}
 		return true;
 	}
 
@@ -248,7 +295,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			return;
 		}
 
-		LocalImage media = new LocalImage(file);
+		LocalImage media = new LocalImage(this, file);
 
 		if (xmpFilter.accept(file))
 		{
@@ -617,21 +664,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-	protected FilenameFilter imageFilter = new FilenameFilter()
-	{
-		@SuppressLint("DefaultLocale")
-		@Override
-		public boolean accept(File dir, String filename)
-		{
-			for (String ext : IMAGE_EXT)
-			{
-				if (filename.toLowerCase().endsWith(ext.toLowerCase()))
-					return true;
-			}
-			return false;
-		}
-	};
-
 	@Override
 	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
@@ -666,6 +698,21 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		{
 			String filename = file.getName();
 			return filename.toLowerCase(Locale.US).endsWith(".xmp");
+		}
+	}
+	
+	class RawFilter implements FileFilter
+	{
+		@SuppressLint("DefaultLocale")
+		@Override
+		public boolean accept(File file)
+		{
+			for (String ext : RAW_EXT)
+			{
+				if (file.getName().toLowerCase().endsWith(ext.toLowerCase()))
+					return true;
+			}
+			return false;
 		}
 	}
 

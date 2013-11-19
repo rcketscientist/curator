@@ -26,12 +26,24 @@
         android:entryValues="@array/watermarkLocationsValues" />
     <PreferenceCategory android:title="@string/margins" />
     <EditTextPreference
-        android:key="prefKeyWatermarkTopMargin" />
+        android:key="prefKeyWatermarkTopMargin"
+        android:title="@string/prefTitleTopMargin"
+        android:summary="@string/prefSummaryTopMargin"
+        android:inputType="number" />
     <EditTextPreference
-        android:key="prefKeyWatermarkBottomMargin" />
+        android:key="prefKeyWatermarkBottomMargin"
+        android:title="@string/prefTitleBottomMargin"
+        android:summary="@string/prefSummaryBottomMargin"
+        android:inputType="number" />
     <EditTextPreference
-        android:key="prefKeyWatermarkLeftMargin" />
+        android:key="prefKeyWatermarkLeftMargin"
+        android:title="@string/prefTitleLeftMargin"
+        android:summary="@string/prefSummaryLeftMargin"
+        android:inputType="number" />
     <EditTextPreference
-        android:key="prefKeyWatermarkRightMargin" />
+        android:key="prefKeyWatermarkRightMargin"
+        android:title="@string/prefTitleRightMargin"
+        android:summary="@string/prefSummaryRightMargin"
+        android:inputType="number" />
 
 </PreferenceScreen>

@@ -170,7 +170,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
 
-//		checkExpiration(10, 1, 2013);
+		doFirstRun();
 
 		AppRater.app_launched(this);
 
@@ -238,29 +238,19 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private void checkExpiration(int month, int day, int year)
+	private void doFirstRun()
 	{
-		// Convert to zero-base
-		month--;
-		day--;
-
-		// get the current date
-		GregorianCalendar currentDate = new GregorianCalendar();
-		GregorianCalendar expiration = new GregorianCalendar(year, month, day); // Month is zero-based!
-
-		// Set expiration for full featured demo
-		if (currentDate.after(expiration))
-		{
-			new AlertDialog.Builder(this).setIcon(R.drawable.icon).setTitle("This demo is out of date, please update!")
-					.setPositiveButton("OK", new DialogInterface.OnClickListener()
-					{
-						@Override
-						public void onClick(DialogInterface dialog, int which)
-						{
-							finish();
-						}
-					}).show();
-		}
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        if (settings.getBoolean("isFirstRun", true)) 
+        {
+			AlertDialog.Builder builder = new AlertDialog.Builder(RawDroid.this);
+			builder.setTitle(R.string.welcomeTitle);
+			builder.setMessage(R.string.welcomeMessage);
+			builder.show();
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putBoolean("isFirstRun", false);
+            editor.commit();
+        }
 	}
 
 	private void getKeywords()
@@ -585,7 +575,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		List<MediaItem> filesToRename = new ArrayList<MediaItem>();
 		if (mSelectedImages.size() > 0)
 		{
-			filesToRename = mSelectedImages;
+			filesToRename = storeSelectionForIntent();
 		}
 		else
 		{
@@ -1584,7 +1574,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				return;
 
 			// Results in root pass
-			File[] matches = dir.listFiles(imageFilter);
+			File[] matches = dir.listFiles(rawFilter);
 			if (matches != null && matches.length > 0)
 				imageFolders.add(dir.getPath());
 
