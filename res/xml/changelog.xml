@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="2.5.0 (Beta)"
-        versioncode="120"
+    <release version="2.5.1 (Beta)"
+        versioncode="121"
         summary="This is a beta release.  Please inform me of any bugs.  This release contains a LARGE number of major improvements and builds the foundation for a more versatile app."
         date="11/19/2013">
         <change>Added: Metadata database.  Faster lookups and will allow for filtering/searching in the future.</change>      
@@ -12,6 +12,7 @@
         <change>Improved: Massive speed boost, many users can expect 50-100% improved load times.</change>
         <change>Updated: Support for additional cameras.</change>
         <change>Fixed: Large folder load delay.</change>
+        <change>Fixed: Initial crash accessing watermark settings.</change>
         <change>Fixed: Various minor bugs.</change>
     </release>
     <release version="1.9.4"

@@ -750,15 +750,29 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
     	EditTextPreference right = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkRightMargin);
     	
     	// Clean up disabled (-1) values
-    	String topValue = top.getText().equals("-1") ? "" : ": " + top.getText();
-    	String bottomValue = bottom.getText().equals("-1") ? "" : ": " + bottom.getText();
-    	String rightValue = right.getText().equals("-1") ? "" : ": " + right.getText();
-    	String leftValue = left.getText().equals("-1") ? "" : ": " + left.getText(); 	    	
+    	if (top.getText() != null)
+    	{
+    		String topValue = top.getText().equals("-1") ? "" : ": " + top.getText();
+    		top.setTitle(mActivity.getString(R.string.prefTitleTopMargin) + topValue);
+    	}
     	
-    	top.setTitle(mActivity.getString(R.string.prefTitleTopMargin) + topValue);
-    	bottom.setTitle(mActivity.getString(R.string.prefTitleBottomMargin) + bottomValue);
-    	left.setTitle(mActivity.getString(R.string.prefTitleLeftMargin) + leftValue);
-    	right.setTitle(mActivity.getString(R.string.prefTitleRightMargin) + rightValue);
+    	if (bottom.getText() != null)
+    	{
+    		String bottomValue = bottom.getText().equals("-1") ? "" : ": " + bottom.getText();
+    		bottom.setTitle(mActivity.getString(R.string.prefTitleBottomMargin) + bottomValue);
+    	}
+    	
+    	if (left.getText() != null)
+    	{
+    		String leftValue = left.getText().equals("-1") ? "" : ": " + left.getText(); 	    	
+    		left.setTitle(mActivity.getString(R.string.prefTitleLeftMargin) + leftValue);
+    	}
+    	
+    	if (right.getText() != null)
+    	{
+    		String rightValue = right.getText().equals("-1") ? "" : ": " + right.getText();
+    		right.setTitle(mActivity.getString(R.string.prefTitleRightMargin) + rightValue);
+    	}
     }
 
     private static void updateWatermarkLocation()
