@@ -23,6 +23,7 @@ import com.drew.metadata.xmp.XmpWriter;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.util.Log;
 
@@ -525,7 +526,8 @@ public abstract class MetaMedia extends MediaItem
 	
 	protected void getContent()
 	{
-		Cursor meta = mContext.getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "='" + getUri() + "'", null, null);
+		String[] selection = new String[]{ getUri().toString() };
+		Cursor meta = mContext.getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "=?", selection, null);
 		if (meta == null || !meta.moveToNext())
 		{
 			return;

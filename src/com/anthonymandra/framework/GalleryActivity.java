@@ -264,7 +264,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			{
 				mXmpFiles.add(new LocalImage(this, file));
 			}
-			else if (file.isDirectory())
+			else if (file.isDirectory() && !file.isHidden() && file.canRead())
 			{
 				mFolders.add(file);
 			}

@@ -1584,7 +1584,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				if (f == null)
 					continue;
 
-				if (f.isDirectory() && f.canRead())
+				if (f.isDirectory() && f.canRead() && !f.isHidden())
 					search(f);
 			}
 		}
