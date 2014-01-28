@@ -124,7 +124,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             Environment.getExternalStorageDirectory().getPath() + "/usbStorage/sda1",
 			Environment.getExternalStorageDirectory().getPath() + "/usbStorage",
             "/mnt/usb",
-            "/storage/usb" };
+            "/storage/usb",
+            "/dev/bus/usb/001/002" };
 
 	// Request codes
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 2;
@@ -243,7 +244,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         if (settings.getBoolean("isFirstRun", true)) 
         {
-			AlertDialog.Builder builder = new AlertDialog.Builder(RawDroid.this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.welcomeTitle);
 			builder.setMessage(R.string.welcomeMessage);
 			builder.show();
@@ -427,14 +428,14 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 		if (destination.equals(mCurrentPath))
 		{
-			Toast.makeText(RawDroid.this, R.string.warningSourceEqualsDestination, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.warningSourceEqualsDestination, Toast.LENGTH_LONG).show();
 			return;
 		}
 
 		long importSize = getSelectedImageSize();
 		if (destination.getFreeSpace() < importSize)
 		{
-			Toast.makeText(RawDroid.this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
 			return;
 		}
 
@@ -464,7 +465,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		long importSize = getSelectedImageSize();
 		if (destination.getFreeSpace() < importSize)
 		{
-			Toast.makeText(RawDroid.this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
 			return;
 		}
 
@@ -617,7 +618,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		catch (ActivityNotFoundException e)
 		{
 			// No compatible file manager was found.
-			Toast.makeText(RawDroid.this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
 		}
 	}
 

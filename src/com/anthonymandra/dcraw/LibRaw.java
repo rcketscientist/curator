@@ -31,7 +31,7 @@ public class LibRaw
 	private static final String TAG = "LibRaw";
 	private static final int numThreads = 4;
 
-	public static final Executor EXECUTOR = Executors.newFixedThreadPool(numThreads);
+	public static final Executor EXECUTOR = Executors./*newCachedThreadPool();*/newFixedThreadPool(numThreads);
 
 	static
 	{

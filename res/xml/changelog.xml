@@ -15,6 +15,7 @@
         <change>Fixed: Initial crash accessing watermark settings.</change>
         <change>Fixed: Crash with folders containing apostrophe.</change>
         <change>Fixed: Hidden/System folders are no longer shown.</change>
+        <change>Fixed: Batch rename bug.</change>
         <change>Fixed: Various minor bugs.</change>
     </release>
     <release version="1.9.4"

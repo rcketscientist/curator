@@ -622,6 +622,9 @@ public class Util
     
     public static Bitmap getWatermarkText(String text, int alpha, int size, String location)
     {
+    	if (text.isEmpty())
+    		return null;
+    	
         Paint paint = new Paint();
         paint.setColor(Color.WHITE);
         paint.setShadowLayer(1, 1, 1, Color.BLACK);

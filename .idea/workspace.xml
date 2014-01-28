@@ -60,28 +60,16 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/NineOldAndroids" afterPath="$PROJECT_DIR$/libraries/NineOldAndroids" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView" afterPath="$PROJECT_DIR$/libraries/ShowcaseView" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Distribution/.classpath" afterPath="$PROJECT_DIR$/libraries/Distribution/.classpath" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/Android.mk" afterPath="$PROJECT_DIR$/jni/Android.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/LibRaw/Android.mk" afterPath="$PROJECT_DIR$/jni/LibRaw/Android.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/libjpeg/Android.mk" afterPath="$PROJECT_DIR$/jni/libjpeg/Android.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/Application.mk" afterPath="$PROJECT_DIR$/jni/Application.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/FullSettingsActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/GalleryActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/dcraw/LibRaw.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/LocalImage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" afterPath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/content/RawImage.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/content/RawImage.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" afterPath="$PROJECT_DIR$/src/com/anthonymandra/framework/Util.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/build.gradle" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" afterPath="$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jni/libraw.cpp" afterPath="$PROJECT_DIR$/jni/libraw.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/preferences_watermark.xml" afterPath="$PROJECT_DIR$/res/xml/preferences_watermark.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/xml/changelog.xml" afterPath="$PROJECT_DIR$/res/xml/changelog.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/project.properties" afterPath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription/library/project.properties" afterPath="$PROJECT_DIR$/libraries/Inscription/library/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/NineOldAndroids/library/project.properties" afterPath="$PROJECT_DIR$/libraries/NineOldAndroids/library/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/ShowcaseView/library/project.properties" afterPath="$PROJECT_DIR$/libraries/ShowcaseView/library/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/libraries/Inscription/library/res/values-ru/strings.xml" afterPath="$PROJECT_DIR$/libraries/Inscription/library/res/values-ru/strings.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/res/values/strings.xml" afterPath="$PROJECT_DIR$/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="rawdroid.iws" />
@@ -158,7 +146,7 @@
       <file leaf-file-name="MetaMedia.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="8126" max-vertical-offset="9605">
+            <state line="487" column="25" selection-start="13937" selection-end="13937" vertical-scroll-proportion="0.0" vertical-offset="8279" max-vertical-offset="10948">
               <folding />
             </state>
           </provider>
@@ -167,7 +155,7 @@
       <file leaf-file-name="RawDroid.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="83" column="35" selection-start="3149" selection-end="3149" vertical-scroll-proportion="0.0" vertical-offset="1044" max-vertical-offset="27965">
+            <state line="84" column="22" selection-start="3172" selection-end="3172" vertical-scroll-proportion="0.0" vertical-offset="1061" max-vertical-offset="27965">
               <folding />
             </state>
           </provider>
@@ -176,13 +164,9 @@
       <file leaf-file-name="XmpDirectory.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-0.319802" vertical-offset="1513" max-vertical-offset="8041">
+            <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-0.31948566" vertical-offset="1513" max-vertical-offset="8041">
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#3665#3682#0" expanded="true" />
-                <element signature="e#3772#3789#0" expanded="true" />
-                <element signature="e#3881#3898#0" expanded="true" />
-                <element signature="e#3981#3997#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -3121,20 +3105,10 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="rawdroid" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -3147,7 +3121,7 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="options.lastSelected" value="reference.settingsdialog.project.gradle" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -3285,6 +3259,19 @@
       </ExternalSystemSettings>
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
@@ -3310,19 +3297,6 @@
       <envs />
       <properties />
       <listeners />
-      <method />
-    </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
       <method />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -3554,18 +3528,18 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32887325" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27183098" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27144867" sideWeight="0.50164205" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27074543" sideWeight="0.50164205" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32816902" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
-      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46830985" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20206842" sideWeight="0.67912555" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32957748" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2676519" sideWeight="0.6577975" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.09864757" sideWeight="0.72467905" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.09864757" sideWeight="0.72467905" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27221438" sideWeight="0.5835322" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
@@ -3596,6 +3570,126 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
       <provider selected="true" editor-type-id="text-editor">
+        <state line="487" column="25" selection-start="13937" selection-end="13937" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10948">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="22" selection-start="3172" selection-end="3172" vertical-scroll-proportion="0.0" vertical-offset="1061" max-vertical-offset="27965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="404" selection-end="404" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="487" column="25" selection-start="13937" selection-end="13937" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10948">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="22" selection-start="3172" selection-end="3172" vertical-scroll-proportion="0.0" vertical-offset="1061" max-vertical-offset="27965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="404" selection-end="404" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="487" column="25" selection-start="13937" selection-end="13937" vertical-scroll-proportion="0.0" vertical-offset="8279" max-vertical-offset="10948">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="22" selection-start="3172" selection-end="3172" vertical-scroll-proportion="0.0" vertical-offset="1061" max-vertical-offset="27965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="404" selection-end="404" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="487" column="25" selection-start="13937" selection-end="13937" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10948">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="84" column="22" selection-start="3172" selection-end="3172" vertical-scroll-proportion="0.0" vertical-offset="1061" max-vertical-offset="27965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="404" selection-end="404" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
         <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9605">
           <folding />
         </state>
@@ -3613,10 +3707,36 @@
         <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3665#3682#0" expanded="true" />
-            <element signature="e#3772#3789#0" expanded="true" />
-            <element signature="e#3881#3898#0" expanded="true" />
-            <element signature="e#3981#3997#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/ShowcaseView/library/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="0" selection-start="404" selection-end="404" vertical-scroll-proportion="0.0" vertical-offset="272" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="9605">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="83" column="35" selection-start="3149" selection-end="3149" vertical-scroll-proportion="0.0" vertical-offset="1044" max-vertical-offset="27965">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="0.0" vertical-offset="1513" max-vertical-offset="8041">
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3682,7 +3802,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/framework/MetaMedia.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="478" column="25" selection-start="13624" selection-end="13624" vertical-scroll-proportion="0.0" vertical-offset="8126" max-vertical-offset="9605">
+        <state line="487" column="25" selection-start="13937" selection-end="13937" vertical-scroll-proportion="0.0" vertical-offset="8279" max-vertical-offset="10948">
           <folding />
         </state>
       </provider>
@@ -3716,20 +3836,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/anthonymandra/rawdroid/RawDroid.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="35" selection-start="3149" selection-end="3149" vertical-scroll-proportion="0.0" vertical-offset="1044" max-vertical-offset="27965">
+        <state line="84" column="22" selection-start="3172" selection-end="3172" vertical-scroll-proportion="0.0" vertical-offset="1061" max-vertical-offset="27965">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/libraries/MetaDataExtractor/Source/com/drew/metadata/xmp/XmpDirectory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-0.319802" vertical-offset="1513" max-vertical-offset="8041">
+        <state line="89" column="52" selection-start="3364" selection-end="3364" vertical-scroll-proportion="-0.31948566" vertical-offset="1513" max-vertical-offset="8041">
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#3665#3682#0" expanded="true" />
-            <element signature="e#3772#3789#0" expanded="true" />
-            <element signature="e#3881#3898#0" expanded="true" />
-            <element signature="e#3981#3997#0" expanded="true" />
           </folding>
         </state>
       </provider>
