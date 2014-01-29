@@ -11,3 +11,4 @@
 /.gradle
 local.properties
 /local.properties
+/rawDroid/*.iml
