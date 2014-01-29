@@ -2,15 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/libraries/Distribution/Distribution.iml" filepath="$PROJECT_DIR$/libraries/Distribution/Distribution.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/FileManager/FileManager.iml" filepath="$PROJECT_DIR$/libraries/FileManager/FileManager.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" filepath="$PROJECT_DIR$/libraries/MetaDataExtractor/MetaDataExtractor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/NineOldAndroids/library/NineOldAndroids-library.iml" filepath="$PROJECT_DIR$/libraries/NineOldAndroids/library/NineOldAndroids-library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/ShowcaseView/library/ShowcaseView-library.iml" filepath="$PROJECT_DIR$/libraries/ShowcaseView/library/ShowcaseView-library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/libraries/ActionBarSherlock/actionbarsherlock/actionbarsherlock.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/amandra-treeview/amandra-treeview.iml" filepath="$PROJECT_DIR$/libraries/amandra-treeview/amandra-treeview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libraries/Inscription/library/library.iml" filepath="$PROJECT_DIR$/libraries/Inscription/library/library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/inscription/inscription.iml" filepath="$PROJECT_DIR$/inscription/inscription.iml" />
+      <module fileurl="file://$PROJECT_DIR$/showcaseView/library/library.iml" filepath="$PROJECT_DIR$/showcaseView/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/metaDataExtractor/metaDataExtractor.iml" filepath="$PROJECT_DIR$/metaDataExtractor/metaDataExtractor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oIDistributionLibrary/oIDistributionLibrary.iml" filepath="$PROJECT_DIR$/oIDistributionLibrary/oIDistributionLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oIFileManager/oIFileManager.iml" filepath="$PROJECT_DIR$/oIFileManager/oIFileManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawDroid/rawDroid.iml" filepath="$PROJECT_DIR$/rawDroid/rawDroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/showcaseView/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/showcaseView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/test2.iml" filepath="$PROJECT_DIR$/test2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/treeviewlistandroid/treeviewlistandroid.iml" filepath="$PROJECT_DIR$/treeviewlistandroid/treeviewlistandroid.iml" />
     </modules>
   </component>
 </project>

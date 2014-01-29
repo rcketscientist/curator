@@ -7,3 +7,7 @@
 /libs/armeabi-v7a
 /out
 /obj
+/.idea
+/.gradle
+local.properties
+/local.properties
