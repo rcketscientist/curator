@@ -5876,6 +5876,7 @@ com.anthonymandra.rawdroid.R$string: int positive
 com.anthonymandra.rawdroid.R$string: int prefSummaryAlwaysShowNav
 com.anthonymandra.rawdroid.R$string: int prefSummaryBottomMargin
 com.anthonymandra.rawdroid.R$string: int prefSummaryClearGalleryCache
+com.anthonymandra.rawdroid.R$string: int prefSummaryContact
 com.anthonymandra.rawdroid.R$string: int prefSummaryDeleteConfirmation
 com.anthonymandra.rawdroid.R$string: int prefSummaryEnableWatermark
 com.anthonymandra.rawdroid.R$string: int prefSummaryImageInterface
@@ -5926,8 +5927,6 @@ com.anthonymandra.rawdroid.R$string: int preference_advanced_features
 com.anthonymandra.rawdroid.R$string: int preference_mediascan_summary_off
 com.anthonymandra.rawdroid.R$string: int preference_mediascan_summary_on
 com.anthonymandra.rawdroid.R$string: int preference_mediascan_title
-com.anthonymandra.rawdroid.R$string: int provider_authority_meta
-com.anthonymandra.rawdroid.R$string: int provider_authority_swap
 com.anthonymandra.rawdroid.R$string: int purple
 com.anthonymandra.rawdroid.R$string: int ratingRequest
 com.anthonymandra.rawdroid.R$string: int really_delete
