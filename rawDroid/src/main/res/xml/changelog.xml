@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="2.5.2 (Beta)"
-        versioncode="122"
-        summary="This is a beta release.  Please inform me of any bugs.  This release contains a LARGE number of major improvements and builds the foundation for a more versatile app."
-        date="11/19/2013">
+    <release version="2.5.5"
+        versioncode="25400"
+        summary="This is a significant overhaul of much of the infrastructure which will build the foundation for a much more versatile app.  Rawdroid Demo and Rawdroid Pro are now separate apps, if you are a Pro user please uninstall the Demo and upgrade Pro."
+        date="2/19/2014 (11/19/2013 Beta)">
         <change>Added: Metadata database.  Faster lookups and will allow for filtering/searching in the future.</change>      
         <change>Added: Native watermarking.  Watermarking is completely custom now with reduced memory overhead and significant speed improvements.</change>
         <change>Added: Native JPEG read/write.  Working around Android's implementation reduces memory and greatly improves speed.</change>
@@ -11,6 +11,8 @@
         <change>Added: TIFF read support.  You can now read TIFF images; write support in the future.</change>
         <change>Improved: Massive speed boost, many users can expect 50-100% improved load times.</change>
         <change>Updated: Support for additional cameras.</change>
+        <change>Fixed: Settings security flaw.</change>
+        <change>Fixed: Fix stack trace mapping.</change>
         <change>Fixed: Large folder load delay.</change>
         <change>Fixed: Initial crash accessing watermark settings.</change>
         <change>Fixed: Crash with folders containing apostrophe.</change>

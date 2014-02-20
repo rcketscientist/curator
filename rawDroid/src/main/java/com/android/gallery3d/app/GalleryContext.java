@@ -21,10 +21,9 @@ import android.content.res.Resources;
 import android.os.Looper;
 
 import com.android.gallery3d.util.ThreadPool;
-import com.anthonymandra.framework.LicenseApp;
 //import com.android.gallery3d.data.DataManager;
 
-public interface GalleryContext extends LicenseApp
+public interface GalleryContext
 {
 	public Context getAndroidContext();
 

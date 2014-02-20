@@ -19,40 +19,45 @@
         android:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
     <item
-        android:id="@+id/galleryClearCache"
-        android:icon="@android:drawable/ic_menu_report_image"
-        android:orderInCategory="13"
-        android:showAsAction="never"
-        android:title="@string/clearCache"/>
-<!--     <item
-        android:id="@+id/galleryRecentFolder"
-        android:icon="@drawable/recent_folder"
-        android:orderInCategory="10"
-        android:showAsAction="ifRoom"
-        android:title="@string/lastUsedFolder"/> -->
-    <item
         android:id="@+id/gallerySearch"
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="10"
         android:showAsAction="ifRoom"
         android:title="Search"/>
+    <item android:title="@string/help"
+        android:orderInCategory="20">
+        <menu>
+            <item
+                android:id="@+id/galleryContact"
+                android:icon="@android:drawable/ic_menu_send"
+                android:orderInCategory="31"
+                android:showAsAction="never"
+                android:title="@string/contact"/>
+            <item
+                android:id="@+id/galleryClearCache"
+                android:icon="@android:drawable/ic_menu_report_image"
+                android:orderInCategory="32"
+                android:showAsAction="never"
+                android:title="@string/clearCache"/>
+            <item
+                android:id="@+id/galleryTutorial"
+                android:icon="@android:drawable/ic_menu_help"
+                android:orderInCategory="33"
+                android:showAsAction="never"
+                android:title="@string/tutorial"/>
+            <item
+                android:id="@+id/galleryAbout"
+                android:icon="@android:drawable/ic_menu_search"
+                android:orderInCategory="34"
+                android:showAsAction="never"
+                android:title="@string/about"/>
+        </menu>
+    </item>
     <item
         android:id="@+id/gallerySettings"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:orderInCategory="20"
-        android:showAsAction="never"
-        android:title="@string/settings"/>
-    <item
-        android:id="@+id/galleryHelp"
-        android:icon="@android:drawable/ic_menu_help"
         android:orderInCategory="21"
         android:showAsAction="never"
-        android:title="@string/help"/>
-    <item
-        android:id="@+id/galleryAbout"
-        android:icon="@android:drawable/ic_menu_zoom"
-        android:orderInCategory="22"
-        android:showAsAction="never"
-        android:title="@string/about"/>
+        android:title="@string/settings"/>
 
 </menu>

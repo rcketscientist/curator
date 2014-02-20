@@ -1,15 +1,31 @@
 apply plugin: 'android'
 
+def versionMajor = 2
+def versionMinor = 5
+def versionPatch = 5
+def versionBuild = 0
+
 android {
-    compileSdkVersion 18
-    buildToolsVersion "19.0.0"
+    compileSdkVersion 19
+    buildToolsVersion "19"
 
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 19
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "")
 
         ndk {
             moduleName "libraw"
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../key/my-release-key.keystore")
+            storePassword "***REMOVED***"
+            keyAlias "alias_name"
+            keyPassword "***REMOVED***"
         }
     }
 
@@ -17,11 +33,45 @@ android {
         release {
             runProguard true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
+//        debug {
+//            runProguard true
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
+//        }
     }
 
     sourceSets.main {
         jni.srcDirs = [] //disable automatic ndk-build call (currently broken for windows)
+    }
+
+    productFlavors {
+        // These fields handle flavorized authorities for providers
+        final FIELD_META = "PROVIDER_AUTHORITY_META"
+        final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
+        final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
+        final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
+
+        final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
+        final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
+
+        demo {
+            packageName "com.anthonymandra.rawdroid"
+            buildConfigField "String", FIELD_META, PROVIDER_META
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
+        }
+
+        pro {
+            packageName "com.anthonymandra.rawdroidpro"
+            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+        }
+
+        proAmazon {
+            packageName "com.anthonymandra.rawdroidpro"
+            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+        }
     }
 }
 
@@ -31,14 +81,10 @@ dependencies {
     compile project(':treeviewlistandroid')
     compile project(':metaDataExtractor')
     compile project(':oIFileManager')
+//	compile project(':play_licensing:library')
     compile 'com.android.support:support-v4:+'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 //    compile files('libs/jcifs-1.3.17.jar')
 //    compile files('libs/xmpcore-5.1.2.jar')
-}
-
-// Disable manifest merger
-android.applicationVariants.all { variant ->
-    variant.processResources.manifestFile = file('src/main/AndroidManifest.xml')
-    variant.processManifest.enabled=false
+    proCompile project(':play_licensing:library')
 }

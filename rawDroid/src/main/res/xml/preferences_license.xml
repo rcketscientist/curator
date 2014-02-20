@@ -10,7 +10,7 @@
         android:summary="@string/prefSummaryManualLicense" />
     <Preference
         android:key="prefKeyContact"
-        android:title="@string/prefTitleContact"
+        android:title="@string/contact"
         android:summary="@string/prefSummaryContact" />
     <Preference
         android:title="@string/chinaBuyProTitle"

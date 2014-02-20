@@ -10,14 +10,13 @@ import org.openintents.intents.FileManagerIntents;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -28,7 +27,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.anthonymandra.framework.GalleryActivity;
-import com.anthonymandra.framework.LicenseManager;
+import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.SeekBarPreference;
 
@@ -105,20 +104,30 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
     private static String[] prefWatermarkLocations;
 
     private static Activity mActivity;
-    private static SettingsLicenseManager mLicenseManager;
     private static PreferenceManager mPreferenceManager;
+
+    private static Handler licenseHandler;
 
     public enum WatermarkLocations
     {
         Center, LowerLeft, LowerRight, UpperLeft, UpperRight
     }
 
+    @Override
+    protected boolean isValidFragment (String fragmentName) {
+        return
+        SettingFragment.class.getName().equals(fragmentName) ||
+        SettingsFragmentLicense.class.getName().equals(fragmentName) ||
+        SettingsFragmentMeta.class.getName().equals(fragmentName) ||
+        SettingsFragmentStorage.class.getName().equals(fragmentName) ||
+        SettingsFragmentView.class.getName().equals(fragmentName) ||
+        SettingsFragmentWatermark.class.getName().equals(fragmentName);
+    }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        mLicenseManager = new SettingsLicenseManager(this, new Handler());
         mPreferenceManager = getPreferenceManager();
         mActivity = this;
         prefShowOptions = getResources().getStringArray(R.array.showOptions);
@@ -164,8 +173,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	protected void onResume()
 	{
 		super.onResume();
-        mLicenseManager.initialize();
-        mLicenseManager.registerObserver();
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 			getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
@@ -174,7 +181,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	protected void onPause()
 	{
 		super.onPause();
-        mLicenseManager.unregisterObserver();
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
 			getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 	}
@@ -236,7 +242,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
                 @Override
                 public boolean onPreferenceClick(Preference arg0)
                 {
-                    requestLicenseCheck();
+                    LicenseManager.getLicense(mActivity.getBaseContext(), licenseHandler);
                     Preference check = (Preference) mPreferenceManager.findPreference(KEY_ManualLicense);
                     check.setTitle(mActivity.getString(R.string.prefTitleManualLicense) + " (Request Sent)");
                     return true;
@@ -257,23 +263,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
                 }
             });
         }
-
-        Preference license = (Preference) mPreferenceManager.findPreference(KEY_license);
-        if (license != null)
-        {
-            license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
-            {
-                @Override
-                public boolean onPreferenceClick(Preference arg0)
-                {
-                    if (!mLicenseManager.isLicensed())
-                    {
-                        requestBuyPro();
-                    }
-                    return true;
-                }
-            });
-        }
     }
 
     private static void requestBuyPro()
@@ -281,10 +270,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
         Intent store = Util.getStoreIntent(mActivity, "com.anthonymandra.rawdroidpro");
         if (store != null)
             mActivity.startActivity(store);
-
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setData(Uri.parse("market://details?id=com.anthonymandra.rawdroidpro"));
-//        mActivity.startActivity(intent);
     }
 
 	/**
@@ -308,11 +293,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			Toast.makeText(mActivity, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
 		}
 	}
-
-    private static void requestLicenseCheck()
-    {
-        mLicenseManager.forceLicenseCheck();
-    }
 
     private static void requestEmail()
     {
@@ -634,49 +614,75 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
         {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences_license);
+
+            licenseHandler = new Handler()
+            {
+                @Override
+                public void handleMessage(Message msg) {
+                    License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+                    updateLicense(state);
+                }
+            };
         }
 
         @Override
         public void onResume() {
             super.onResume();
             mPreferenceManager = getPreferenceManager();
-            updateLicense();
+            LicenseManager.getLicense(mActivity.getBaseContext(), licenseHandler);
             attachLicenseButtons();
         }
     }
 
-    private static void updateLicense()
+    private static void updateLicense(License.LicenseState state)
     {
-        LicenseManager.LicenseState licenseState = mLicenseManager.getLicenseState();
         Preference license = (Preference) mPreferenceManager.findPreference(KEY_license);
         Preference check = (Preference) mPreferenceManager.findPreference(KEY_ManualLicense);
+
+        // This might happen if the user switches tabs quickly while looking up license
+        if (check == null || license == null)
+            return;
+
         check.setTitle(mActivity.getString(R.string.prefTitleManualLicense));
-        license.setTitle(licenseState.toString());
-        switch (licenseState)
+        license.setTitle(state.toString());
+        switch (state)
         {
-            case Error: license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError)); break;
-            case Licensed: license.setSummary(mActivity.getString(R.string.prefSummaryLicense)); break;
-            case Unlicensed: license.setSummary(mActivity.getString(R.string.buypro)); break;
-            case Modified: license.setSummary(R.string.prefSummaryLicenseModified); break;
-            default: license.setSummary(mActivity.getString(R.string.prefSummaryNoProvider) + "\n" +
+            case error:
+                license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError));
+                setBuyButton();
+                break;
+            case pro: license.setSummary(mActivity.getString(R.string.prefSummaryLicense));
+                break;
+            case demo: license.setSummary(mActivity.getString(R.string.buypro));
+                setBuyButton();
+                break;
+            case modified_0x000:
+            case modified_0x001:
+            case modified_0x002:
+            case modified_0x003:
+                license.setSummary(R.string.prefSummaryLicenseModified);
+                setBuyButton();
+                break;
+            default: license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError) + "\n" +
                     mActivity.getString(R.string.buypro));
+                setBuyButton();
         }
     }
 
-    /**
-     * Allow settings to update on license change
-     */
-    private class SettingsLicenseManager extends LicenseManager
+    private static void setBuyButton()
     {
-        public SettingsLicenseManager(Context context, Handler handler)
+        Preference license = (Preference) mPreferenceManager.findPreference(KEY_license);
+        if (license != null)
         {
-            super(context, handler);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            super.onChange(selfChange);
-            updateLicense();
+            license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+            {
+                @Override
+                public boolean onPreferenceClick(Preference arg0)
+                {
+                    requestBuyPro();
+                    return true;
+                }
+            });
         }
     }
 
@@ -729,7 +735,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
     private static void updateWatermarkEnabled()
     {
-        boolean isLicensed = mLicenseManager.isLicensed();
+        boolean isLicensed = Constants.VariantCode > 8 && LicenseManager.getLastResponse() == License.LicenseState.pro;
         CheckBoxPreference enableWatermark = (CheckBoxPreference) mPreferenceManager.findPreference(KEY_EnableWatermark);
         enableWatermark.setEnabled(isLicensed);
         if (!isLicensed)

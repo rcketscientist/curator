@@ -29,6 +29,7 @@
     <string name="save_fail">Save failed</string>
     <string name="decode_locked">Decoder has frozen, restart required. Use "Recent" to jump back to this folder.  If this continues please email rawdroid@anthonymandra.com.</string>
     <string name="no_filemanager_installed">No file manager</string>
+    <string name="contact">Contact</string>
 
     <string-array name="format_array">
         <item>Custom Name - Sequence</item>
@@ -102,9 +103,6 @@
     <string name="warningInvalidLabel">is an invalid label.  Labels can be customized in settings.</string>
     <string name="warningInvalidSidebar">Sidebar instance has become invalid, please reopen.</string>
     <string name="warningNoUSB">No usb media found.  If you know the device is mounted, please email rawdroid@anthonymandra.com with the location for addition.</string>
-    <string name="warningLicenseError">License check failed.  Default to previous check: </string>
-    <string name="warningLicenseDeny">License: Enjoy the demo! </string>
-    <string name="warningLicenseAllow">License: Thank you for your support! </string>
     <string name="warningFailedToGetStream">Warning: Failed to get image stream.  If this continues please email:rawdroid@anthonymandra.com</string>
     <string name="warningShareFail">Share could not be completed.</string>
 
@@ -134,9 +132,8 @@
     <string name="prefTitleShowNav">Show Navigation</string>
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>
-    <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Please try later.  Sorry.</string>
-    <string name="prefSummaryLicenseModified">License service was modified!  Uninstall malicious software or any apps that modify or crack software and reinstall RawDroid Pro.</string>
-    <string name="prefSummaryNoProvider">Could not access service.  Is Rawdroid Pro installed?</string>
+    <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Make sure you are connected and try again later.</string>
+    <string name="prefSummaryLicenseModified">Application was modified!  Uninstall apps designed to crack licensing.  There are also reports of some ad blocking software making modifications.  You may need to reinstall afterwards.</string>
     <string name="prefSummaryLicense">All features are available.  Thank you for your support!</string>
     <string name="prefTitleManualLicense">Check License</string>
     <string name="prefSummaryManualLicense">Click to manually check the license.  Requires an internet connection.</string>
@@ -147,7 +144,6 @@
     <string name="prefSummaryWatermarkSize">This is the pixel size of the text as opposed to a font size.\nFor large images this should be > 100.</string>
     <string name="prefTitleWatermarkLocation">Location of Watermark</string>
     <string name="prefTitleWatermarkAlpha">Watermark Transparency</string>
-    <string name="prefTitleContact">Contact</string>
     <string name="prefSummaryContact">Click to send me an email.</string>
     <string name="prefTitleLeftMargin">Left</string>
     <string name="prefTitleRightMargin">Right</string>
@@ -205,7 +201,7 @@
     <string name="imageFolders">Folders Containing Raw Images</string>
     
     <string name="welcomeTitle">Welcome to RawDroid!</string>
-    <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf this is your first time please consider running the tutorial by going to the Help menu item.\n\nIf you have any issues you can submit a bug report or email me at Settings > Contact.\n\nIf your images are not processed please email me an example image.</string>
+    <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf this is your first time please consider running the tutorial by going to the Help menu item.\n\nIf you have any issues you can submit a bug report or email me via the menu.\n\nIf your images are not processed please email me an example image.</string>
     
     <!-- Colors for xmp -->
     <string name="red">Red</string>

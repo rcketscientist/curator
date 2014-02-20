@@ -18,7 +18,10 @@ import android.widget.Toast;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
+import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.RawDroid;
 
 import java.io.BufferedInputStream;
@@ -37,7 +40,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     private static final String TAG = SwapProvider.class.getSimpleName();
 
     // The authority is the symbolic name for the provider class
-    public static final String AUTHORITY = "com.anthonymandra.rawdroid.SwapProvider";
+    public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_SWAP;
 
     // UriMatcher used to match against incoming requests
     private UriMatcher uriMatcher;
@@ -47,7 +50,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     private static int mWatermarkSize;
     private static String mWatermarkLocation;
     private static Margins mMargins;
-    private static LicenseManager mLicenseManager;
 
     @Override
     public boolean onCreate() {
@@ -58,7 +60,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         // and return 1 in the case that the incoming Uri matches this pattern
         uriMatcher.addURI(AUTHORITY, "*", 1);
         updateWatermark();
-        mLicenseManager = new LicenseManager(getContext(), new Handler());
 
         PreferenceManager.getDefaultSharedPreferences(getContext()).registerOnSharedPreferenceChangeListener(this);
         return true;
@@ -94,8 +95,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 	                boolean processWatermark = false;
 	                int waterWidth = 0, waterHeight = 0;
 	                Margins margin = null;
-	                
-	                if (!mLicenseManager.isLicensed())
+
+                    if (Constants.VariantCode > 8 && LicenseManager.getLastResponse() != License.LicenseState.pro)
 	                {
 	                	processWatermark = true;
 	                    watermark = Util.getDemoWatermark(getContext(), image.getWidth());

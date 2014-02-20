@@ -11,4 +11,8 @@
 /.gradle
 local.properties
 /local.properties
-/rawDroid/*.iml
+*.iml
+/gradle/.gradle
+/gradle/gradle
+/gradle/gradlew.bat
+/gradle/gradlew

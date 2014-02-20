@@ -1,8 +1,6 @@
 package com.anthonymandra.framework;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,9 +13,10 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -38,10 +37,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 import com.actionbarsherlock.widget.ShareActionProvider;
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.dcraw.LibRaw.Margins;
+import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.RawDroid;
 import com.anthonymandra.rawdroid.ViewerChooser;
@@ -140,6 +140,17 @@ public abstract class ViewerActivity extends GalleryActivity implements
             startActivity(new Intent(this, RawDroid.class));
             finish();
         }
+
+        licenseHandler = new ViewerLicenseHandler();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (Constants.VariantCode <= 16)
+        {
+            setWatermark(true);
+        }
     }
 
     protected void initialize()
@@ -149,13 +160,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
         setDisplayMetrics();
         attachButtons();
         setActionBar();
-        setWatermark();
     }
 
-    protected void setWatermark()
+    protected void setWatermark(boolean demo)
     {
         View watermark = findViewById(R.id.watermark);
-        if (mLicenseManager.isLicensed())
+        if (!demo)
             watermark.setVisibility(View.INVISIBLE);
         else
             watermark.setVisibility(View.VISIBLE);
@@ -486,7 +496,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         if (metaDate == null || meta == null)
         {
             Toast.makeText(this,
-                    "Could not access metadata views, please email rawdroid@anthonymandra.com!",
+                    "Could not access metadata views, please email me!",
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -665,7 +675,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getSupportMenuInflater().inflate(R.menu.full_options, menu);
+        getSupportMenuInflater().inflate(R.menu.viewer_options, menu);
         MenuItem actionItem = menu.findItem(R.id.viewShare);
         if (actionItem != null)
         {
@@ -823,7 +833,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         byte[] waterData = null;
         boolean processWatermark = false;
         int waterWidth = 0, waterHeight = 0;
-        if (!mLicenseManager.isLicensed())
+        if (Constants.VariantCode > 8 && LicenseManager.getLastResponse() != License.LicenseState.pro)
         {
         	processWatermark = true;
             watermark = Util.getDemoWatermark(this, source.getWidth());
@@ -975,5 +985,15 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 zoomLevel.setText(zoom);
             }
         });
+    }
+
+    protected class ViewerLicenseHandler extends LicenseHandler
+    {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+            setWatermark(state != License.LicenseState.pro);
+        }
     }
 }

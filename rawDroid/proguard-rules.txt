@@ -1,5 +1,9 @@
+-keepattributes SourceFile,LineNumberTable
+
 -dontwarn com.actionbarsherlock.internal.**
 -injar libs/xmpcore-5.1.2.jar
 
 -keep class com.actionbarsherlock.** { *; }
 -keep interface com.actionbarsherlock.** { *; }
+
+-keep class com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragment** { *; }

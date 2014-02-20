@@ -12,7 +12,6 @@ import com.android.gallery3d.app.PhotoDataAdapter.DataListener;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
-import com.anthonymandra.framework.LicenseManager;
 
 public class ImageViewActivity extends PhotoPage implements DataListener
 {
@@ -122,10 +121,5 @@ public class ImageViewActivity extends PhotoPage implements DataListener
     @Override
     public void goToFirstPicture() {
         mModel.moveTo(0);
-    }
-
-    @Override
-    public LicenseManager getLicenseManager() {
-        return mLicenseManager;
     }
 }

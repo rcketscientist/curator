@@ -6,7 +6,9 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
+import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 
 import android.annotation.SuppressLint;
@@ -25,8 +27,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -90,16 +94,14 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
 	protected File mCurrentPath;
 
-    protected LicenseManager mLicenseManager;
-
     protected ShareActionProvider mShareProvider;
     protected Intent mShareIntent;
     protected ContentProviderClient mMetaProvider;
+    protected Handler licenseHandler;
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        mLicenseManager = new LicenseManager(this, new Handler());
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		// mProgressDialog.setCanceledOnTouchOutside(true);
@@ -112,9 +114,7 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	protected void onResume()
 	{
 		super.onResume();
-        mLicenseManager.forceLicenseCheck();
-        mLicenseManager.checkLicense();
-        mLicenseManager.registerObserver();
+        LicenseManager.getLicense(getBaseContext(), licenseHandler);
 		createSwapDir();
 		createRecycleBin();
 	}
@@ -123,7 +123,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 	protected void onPause()
 	{
 		super.onPause();
-        mLicenseManager.unregisterObserver();
 		if (recycleBin != null)
 			recycleBin.flushCache();
 	}
@@ -546,6 +545,32 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
+    protected void requestWebIntent()
+    {
+        Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("http://www.novoda.com"));
+        startActivity(viewIntent);
+    }
+
+    protected void requestEmailIntent()
+    {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","rawdroid@anthonymandra.com", null));
+
+        StringBuilder body = new StringBuilder();
+        body.append("Variant:   " + BuildConfig.FLAVOR).append("\n");
+        body.append("Version:   " + BuildConfig.VERSION_NAME).append("\n");
+        body.append("Make:      " + Build.MANUFACTURER).append("\n");
+        body.append("Model:     " + Build.MODEL).append("\n");
+        body.append("ABI:       " + Build.CPU_ABI).append("\n");
+        body.append("Android:   " + Build.DISPLAY).append("\n");
+        body.append("SDK:       " + Build.VERSION.SDK_INT).append("\n\n");
+        body.append("---Please don't remove this data---").append("\n\n");
+
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Help Request");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+    }
+
 	/**
 	 * Updates the UI after a delete.
 	 */
@@ -752,4 +777,21 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			return filea.getName().compareToIgnoreCase(fileb.getName());
 		}
 	}
+
+    public class LicenseHandler extends Handler{
+
+        @Override
+        public void handleMessage(Message msg) {
+            License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+            if (state.toString().startsWith("modified"))
+            {
+                for (int i=0; i < 3; i++)
+                    Toast.makeText(GalleryActivity.this, "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+            }
+            else if (state == License.LicenseState.error)
+            {
+                Toast.makeText(GalleryActivity.this, "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }

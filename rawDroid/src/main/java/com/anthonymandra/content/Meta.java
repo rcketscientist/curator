@@ -1,7 +1,11 @@
 package com.anthonymandra.content;
 
+import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
+
+import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.rawdroid.R;
 
 public class Meta
 {
@@ -27,7 +31,7 @@ public class Meta
 	public static final int THUMB_HEIGHT_COLUMN = 19;
 	public static final int THUMB_WIDTH_COLUMN = 20;
 
-	public static final String AUTHORITY = "com.anthonymandra.content.MetaProvider";
+	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_META;
 
 	public static final class Data implements BaseColumns
 	{

@@ -19,7 +19,6 @@ package com.android.gallery3d.app;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.ImageCacheService;
 import com.android.gallery3d.ui.GLRoot;
-import com.anthonymandra.framework.LicenseManager;
 
 public interface GalleryApp extends GalleryContext
 {
@@ -34,6 +33,4 @@ public interface GalleryApp extends GalleryContext
 
     public void addContentListener(ContentListener listener);
     public void removeContentListener(ContentListener listener);
-
-    public LicenseManager getLicenseManager();
 }
