@@ -7,7 +7,7 @@
 <string name="neutral">キャンセル</string>
 <string name="DecodeAll">全てデコード</string>
 <string name="file">ファイル</string>
-<string name="save_as">変換して保存</string>
+<string name="save_as">JPEGで保存</string>
 <string name="export">出力</string>
 <string name="wallpaper">壁紙に設定</string>
 <string name="edit">編集</string>
@@ -42,7 +42,7 @@
 <string name="import1">インポート</string>
 <string name="all">全て</string>
 <string name="selected">選択済み</string>
-<string name="renameImages">の画像をリネーム</string>
+<string name="renameImages">画像をリネーム</string>
 <string name="view">ビュー</string>
 <string name="gallery">ギャラリー</string>
 <string name="viewer">ビューワー</string>
@@ -52,6 +52,7 @@
 <string name="lastImage">最後の画像</string>
 <string name="licensed">ライセンスあり</string>
 <string name="unlicensed">ライセンスなし</string>
+<string name="error">エラー</string>
 
 <!-- Error Messages -->
 <string name="errorKeywordRequired">ロードされたキーワードファイルが必要です。</string>
@@ -85,6 +86,7 @@
 <string name="warningNoFolderDecoded">フォルダーをまだデコードしていません。</string>
 <string name="warningFileWrongFormat">ファイルが正しい形式ではありません。</string>
 <string name="warningNoItemsSelected">何も選択されていません。</string>
+<string name="warningInvalidPath">パスが取得できませんでした。再起動中です。</string>
 <string name="warningNotEnoughSpace">フォルダ全体をインポートする容量がありません。</string>
 <string name="warningSourceEqualsDestination">同じディレクトリにインポートできません。</string>
 <string name="warningDeleteExceedsRecycle">削除されたファイルはゴミ箱のサイズを超えています。完全に削除しますか？(注: ゴミ箱のサイズは設定で変更できます。)</string>
@@ -93,7 +95,9 @@
 <string name="warningNoRecycleBin">ゴミ箱が存在しません。ファイルは直接削除されます。</string>
 <string name="warningGenericImagesOff">一般的な画像(例:JPG)は設定で無効になっています。</string>
 <string name="warningInvalidMeta">無効なメタデータ。(問題のファイルをメールしてください。)</string>
+<string name="warningInvalidLabel">は無効なラベルです。ラベルは設定から変更できます。</string>
 <string name="warningInvalidSidebar">サイドバーのインスタンスが無効になりました。もう一度開いてください。</string>
+<string name="warningNoUSB">USBメディアが見つかりません。デバイスがマウントされている場合rawdroid@anthonymandra.comまでご連絡ください。</string>
 <string name="warningLicenseError">ライセンスの確認を失敗しました。前回確認した状態に設定します:</string>
 <string name="warningLicenseDeny">ライセンス: デモ版をお楽しみください！</string>
 <string name="warningLicenseAllow">ライセンス: ご支持いただきありがとうございます！</string>
@@ -121,14 +125,39 @@
 <string name="prefSummaryImportKeywords">Lightroomから出力したタブ区切りのキーワードファイルをインポートします。</string>
 <string name="prefTitleClearGalleryCache">ギャラリーのキャッシュを削除</string>
 <string name="prefSummaryClearGalleryCache">クリックでギャラリーのキャッシュを削除します。</string>
+<string name="prefTitleUseLegacyViewer">旧ビューワーを使用</string>
+<string name="prefSummaryUseLegacyViewer">デフォルトのビューワーに問題がある場合のみチェックを入れてください。これが必要な場合はメールで知らせてください。</string>
 <string name="prefTitleShowNav">「送り」「戻し」ボタンの表示</string>
 <string name="prefTitleShowMeta">メタデータの表示</string>
 <string name="prefTitleShowHist">ヒストグラムの表示</string>
+<string name="prefSummaryLicenseError">Googleサーバーとの通信にエラーが発生しました。申し訳ありませんが、後ほど再試行してください。</string>
+<string name="prefSummaryNoProvider">サーパにアクセスできませんでした。Rawdroid proがインストールされていますか？</string>
+<string name="prefSummaryLicense">全ての機能が利用できます。ご支援に感謝します！</string>
+<string name="prefTitleManualLicense">ライセンスチェック</string>
+<string name="prefSummaryManualLicense">手動でライセンスを確認する場合にクリックします。インターネット接続が必要です。</string>
+<string name="prefTitleEnableWatermark">ウォーターマーク(透かし)を利用する</string>
+<string name="prefSummaryEnableWatermark">出力画像にウォーターマークを配置する</string>
+<string name="prefTitleWatermarkText">透かしテキスト</string>
+<string name="prefTitleWatermarkSize">透かしテキストサイズ</string>
+<string name="prefTitleWatermarkLocation">透かしの位置</string>
+<string name="prefTitleWatermarkAlpha">透かしの透明度</string>
+<string name="prefTitleContact">お問合せ</string>
+<string name="prefSummaryContact">クリックしてメールを送ってください。</string>
+
+<string name="buypro">機能のロックを解除し速度向上するために、クリックしてRawdroid Proにアップグレードしてください。</string>
 
 <string-array name="showOptions">
 <item>自動</item>
 <item>常時</item>
 <item>なし</item>
+</string-array>
+
+<string-array name="watermarkLocations">
+<item>中央</item>
+<item>左下</item>
+<item>右下</item>
+<item>左上</item>
+<item>右上</item>
 </string-array>
 
 <string name="clearCache">サムネイルのキャッシュを削除</string>
@@ -187,9 +216,9 @@
 <string name="tutorialConnectTitle">画像にアクセスするには</string>
 <string name="tutorialConnect1">データにアクセスするには3つの方法があります。:</string>
 <string name="tutorialConnect2">1. 最も早い方法: PCを介して端末に画像を送信する。理想的な方法ではありません。</string>
-<string name="tutorialConnect3">2. 早い方法: メディアカードリーダーとOTGケーブルを利用してメディアカードを接続する。シングルフォーマットのカードリーダーが最適です。\n注: 一部の端末はrootをとっている必要があります。私のnexus機がそうでした。"StickMount"を使用して接続しています。詳細はwebサイトをご覧ください。</string>
+<string name="tutorialConnect3">2. 早い方法: メディアカードリーダーとOTGケーブルを利用してメディアカードを接続する。シングルフォーマットのカードリーダーが最適です。\n注: 一部の端末はrootをとっている必要があります。私のnexus機がそうでした。"StickMount"を使用して接続しています。訳者はNexus Media Importerを使用しています。\n詳細はwebサイトをご覧ください。</string>
 <string name="tutorialConnect3a">注: 一部の端末はrootをとっている必要があります。私のnexus機がそうでした。"StickMount"を使用して接続しています。詳細はwebサイトをご覧ください。</string>
-<string name="tutorialConnect4">3. 遅い方法: OTGケーブルを使用してカメラと接続する。スピードについて現在取り組み中です。(近日中更新)</string>
+<string name="tutorialConnect4">3. 遅い方法: OTGケーブルを使用してカメラと接続する。\nandroidの制限により、カメラに書き込むことはできません。端末に画像をインポートするものです。\n端末には十分なストレージ容量が必要です。さらに詳しくはwebサイトをご覧ください。</string>
 <string name="tutorialConnect5">4. 最終的にはネットワークのサポートを追加する予定です。</string>
 <string name="tutorialMemoryTitle">メモリの問題</string>
 <string name="tutorialMemory">古い端末を使用していてクラッシュが起る場合、恐らくメモリの制限によるものです。メモリを多く使えるようにする為"VM Heap Tool"を利用する事をおすすめします。</string>
@@ -198,5 +227,13 @@
 <string name="tutorialActionLongPress">長押しで簡単な説明を参照</string>
 <string name="tutorialUsbTitle">USBマウント探索</string>
 <string name="tutorialUsb">任意のUSB機器の既知のマウントポイントを探索します。もし機器が見つからない場合はマウントポイントをメールしてください。(例: "/mnt/weird/device/usb")</string>
+
+<string name="unit_mm">mm</string>
+<string name="loading">ロード中\u2026</string>
+<string name="no_thumbnail">サムネイルがありません</string>
+<string name="deleted">削除済み</string>
+<string name="undo">元に戻す</string>
+<string name="license">ライセンス</string>
+<string name="watermark">ウォーターマーク(Pro)</string>
 
 </resources>

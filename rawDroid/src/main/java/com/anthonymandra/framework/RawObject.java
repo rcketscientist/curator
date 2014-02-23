@@ -24,6 +24,7 @@ public interface RawObject {
 
     public Uri getUri();
 
+    @Deprecated
     public boolean canDecode();
 
     public InputStream getImageStream();

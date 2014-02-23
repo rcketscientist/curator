@@ -8311,11 +8311,9 @@ com.anthonymandra.dcraw.LibRaw -> com.anthonymandra.dcraw.LibRaw:
     java.util.concurrent.Executor EXECUTOR -> a
     int sum -> b
     int entries -> c
-    boolean canDecodeFromFile(java.lang.String) -> canDecodeFromFile
     byte[] getThumbFromFile(java.lang.String,java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat) -> getThumbFromFile
-    boolean writeThumbFromFile(java.lang.String,java.lang.String,int) -> writeThumbFromFile
+    boolean writeThumb(java.lang.String,java.lang.String,int) -> writeThumb
     boolean writeThumbWatermark(java.lang.String,java.lang.String,byte[],int[],int,int,int) -> writeThumbWatermark
-    100:100:boolean canDecode(java.io.File) -> a
     132:140:byte[] getThumb(java.io.File,java.lang.String[]) -> a
 com.anthonymandra.dcraw.LibRaw$Margins -> com.anthonymandra.dcraw.a:
     int left -> a
@@ -8520,78 +8518,80 @@ com.anthonymandra.framework.GalleryActivity -> com.anthonymandra.framework.t:
     187:195:int findVisibleByFilename(java.lang.String) -> b
     223:224:boolean setPath(java.io.File) -> a
     229:230:void setSingleImage(java.io.File) -> b
-    291:326:void addFile(java.io.File,boolean) -> a
-    377:427:void showRecycleBin() -> m
-    443:443:java.io.File getKeywordFile(android.content.Context) -> a
-    448:454:boolean removeImage(com.anthonymandra.framework.RawObject) -> a
-    466:469:void deleteImage(com.android.gallery3d.data.MediaItem) -> a
-    474:546:void deleteImages(java.util.List) -> a
+    234:254:void addFileInternal(java.io.File) -> d
+    258:263:void sortCollections() -> d
+    286:290:void addFile(java.io.File,boolean) -> a
+    341:391:void showRecycleBin() -> m
+    407:407:java.io.File getKeywordFile(android.content.Context) -> a
+    412:418:boolean removeImage(com.anthonymandra.framework.RawObject) -> a
+    430:433:void deleteImage(com.android.gallery3d.data.MediaItem) -> a
+    438:510:void deleteImages(java.util.List) -> a
     void updateAfterDelete() -> n
     void updateAfterRestore() -> o
-    695:695:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    705:709:void setShareUri(android.net.Uri) -> a
-    713:717:void setShareUri(java.util.ArrayList) -> a
-    755:756:boolean isNative(java.io.File) -> c
+    659:659:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    669:673:void setShareUri(android.net.Uri) -> a
+    677:681:void setShareUri(java.util.ArrayList) -> a
+    719:720:boolean isNative(java.io.File) -> c
     61:61:java.lang.String[] access$000() -> p
 com.anthonymandra.framework.GalleryActivity$1 -> com.anthonymandra.framework.u:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    350:358:void run() -> run
+    314:322:void run() -> run
 com.anthonymandra.framework.GalleryActivity$2 -> com.anthonymandra.framework.v:
     java.util.List val$filesToRestore -> a
     java.util.List val$keys -> b
     com.anthonymandra.framework.GalleryActivity this$0 -> c
-    421:425:void onClick(android.content.DialogInterface,int,boolean) -> onClick
+    385:389:void onClick(android.content.DialogInterface,int,boolean) -> onClick
 com.anthonymandra.framework.GalleryActivity$3 -> com.anthonymandra.framework.w:
     java.util.List val$filesToRestore -> a
     com.anthonymandra.framework.GalleryActivity this$0 -> b
-    406:415:void onClick(android.content.DialogInterface,int) -> onClick
+    370:379:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.framework.GalleryActivity$4 -> com.anthonymandra.framework.x:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    400:400:void onClick(android.content.DialogInterface,int) -> onClick
+    364:364:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.framework.GalleryActivity$5 -> com.anthonymandra.framework.y:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    390:391:void onClick(android.content.DialogInterface,int) -> onClick
+    354:355:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.framework.GalleryActivity$6 -> com.anthonymandra.framework.z:
     java.util.List val$itemsToDelete -> a
     com.anthonymandra.framework.GalleryActivity this$0 -> b
-    533:534:void onClick(android.content.DialogInterface,int) -> onClick
+    497:498:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.framework.GalleryActivity$7 -> com.anthonymandra.framework.aa:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    527:527:void onClick(android.content.DialogInterface,int) -> onClick
+    491:491:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.framework.GalleryActivity$DeleteTask -> com.anthonymandra.framework.ab:
     com.anthonymandra.framework.GalleryActivity this$0 -> f
-    641:645:void onPreExecute() -> a
-    682:683:void onCancelled() -> b
-    688:689:void onCancel(android.content.DialogInterface) -> onCancel
-    636:636:void onProgressUpdate(java.lang.Object[]) -> b
-    636:636:void onPostExecute(java.lang.Object) -> a
-    636:636:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    605:609:void onPreExecute() -> a
+    646:647:void onCancelled() -> b
+    652:653:void onCancel(android.content.DialogInterface) -> onCancel
+    600:600:void onProgressUpdate(java.lang.Object[]) -> b
+    600:600:void onPostExecute(java.lang.Object) -> a
+    600:600:java.lang.Object doInBackground(java.lang.Object[]) -> a
 com.anthonymandra.framework.GalleryActivity$FileAlphaCompare -> com.anthonymandra.framework.ac:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    761:761:int compare(java.lang.Object,java.lang.Object) -> compare
+    725:725:int compare(java.lang.Object,java.lang.Object) -> compare
 com.anthonymandra.framework.GalleryActivity$LicenseHandler -> com.anthonymandra.framework.ad:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    785:795:void handleMessage(android.os.Message) -> handleMessage
+    749:759:void handleMessage(android.os.Message) -> handleMessage
 com.anthonymandra.framework.GalleryActivity$MetaAlphaCompare -> com.anthonymandra.framework.ae:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    771:771:int compare(java.lang.Object,java.lang.Object) -> compare
+    735:735:int compare(java.lang.Object,java.lang.Object) -> compare
 com.anthonymandra.framework.GalleryActivity$NativeFilter -> com.anthonymandra.framework.af:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    749:749:boolean accept(java.io.File) -> accept
+    713:713:boolean accept(java.io.File) -> accept
 com.anthonymandra.framework.GalleryActivity$RawFilter -> com.anthonymandra.framework.ag:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    735:740:boolean accept(java.io.File) -> accept
+    699:704:boolean accept(java.io.File) -> accept
 com.anthonymandra.framework.GalleryActivity$RecycleTask -> com.anthonymandra.framework.ah:
     com.anthonymandra.framework.GalleryActivity this$0 -> f
-    589:591:void onPreExecute() -> a
-    626:627:void onCancelled() -> b
-    632:633:void onCancel(android.content.DialogInterface) -> onCancel
-    584:584:void onProgressUpdate(java.lang.Object[]) -> b
-    584:584:void onPostExecute(java.lang.Object) -> a
-    584:584:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    553:555:void onPreExecute() -> a
+    590:591:void onCancelled() -> b
+    596:597:void onCancel(android.content.DialogInterface) -> onCancel
+    548:548:void onProgressUpdate(java.lang.Object[]) -> b
+    548:548:void onPostExecute(java.lang.Object) -> a
+    548:548:java.lang.Object doInBackground(java.lang.Object[]) -> a
 com.anthonymandra.framework.GalleryActivity$XmpFilter -> com.anthonymandra.framework.ai:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
-    724:725:boolean accept(java.io.File) -> accept
+    688:689:boolean accept(java.io.File) -> accept
 com.anthonymandra.framework.Histogram -> com.anthonymandra.framework.aj:
     java.lang.String TAG -> a
     int[] red -> b
@@ -8693,30 +8693,29 @@ com.anthonymandra.framework.LocalImage -> com.anthonymandra.framework.av:
     81:83:boolean delete() -> l
     88:88:java.lang.String getName() -> b
     98:98:java.lang.String getFilePath() -> e
-    111:113:boolean canDecode() -> m
-    148:231:byte[] getThumb() -> n
-    237:239:java.io.BufferedOutputStream getXmpOutputStream() -> o
-    245:245:long getFileSize() -> p
-    250:266:boolean rename(java.lang.String) -> a
-    278:289:java.io.File getXmpFile() -> S
-    293:306:void writeXmp() -> q
-    310:317:java.io.BufferedInputStream getXmpInputStream() -> r
-    323:323:boolean isDirectory() -> s
-    328:341:boolean copy(java.io.File) -> a
-    346:346:android.net.Uri getSwapUri() -> t
-    353:353:com.android.gallery3d.util.ThreadPool$Job requestImage$550c2875(com.android.gallery3d.app.GalleryApp) -> a
-    400:400:com.android.gallery3d.util.ThreadPool$Job requestLargeImage() -> a
-    421:421:android.net.Uri getUri() -> u
-    426:426:long getDataVersion() -> i
-    432:435:java.io.InputStream getImageStream() -> v
-    461:461:boolean writeThumb(java.io.File) -> b
+    149:232:byte[] getThumb() -> m
+    238:240:java.io.BufferedOutputStream getXmpOutputStream() -> n
+    246:246:long getFileSize() -> o
+    251:267:boolean rename(java.lang.String) -> a
+    279:290:java.io.File getXmpFile() -> R
+    294:307:void writeXmp() -> p
+    311:318:java.io.BufferedInputStream getXmpInputStream() -> q
+    324:324:boolean isDirectory() -> r
+    329:342:boolean copy(java.io.File) -> a
+    347:347:android.net.Uri getSwapUri() -> s
+    354:354:com.android.gallery3d.util.ThreadPool$Job requestImage$550c2875(com.android.gallery3d.app.GalleryApp) -> a
+    401:401:com.android.gallery3d.util.ThreadPool$Job requestLargeImage() -> a
+    422:422:android.net.Uri getUri() -> t
+    427:427:long getDataVersion() -> i
+    433:436:java.io.InputStream getImageStream() -> u
+    462:462:boolean writeThumb(java.io.File) -> b
     468:468:boolean writeThumbWatermark(java.io.File,byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins) -> a
 com.anthonymandra.framework.LocalImage$LocalImageRequest -> com.anthonymandra.framework.aw:
     com.anthonymandra.framework.LocalImage mImage -> b
-    367:393:android.graphics.Bitmap onDecodeOriginal(com.android.gallery3d.util.ThreadPool$JobContext,int) -> a
+    368:394:android.graphics.Bitmap onDecodeOriginal(com.android.gallery3d.util.ThreadPool$JobContext,int) -> a
 com.anthonymandra.framework.LocalImage$LocalLargeImageRequest -> com.anthonymandra.framework.ax:
     com.anthonymandra.framework.LocalImage mImage -> a
-    403:403:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
+    404:404:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
 com.anthonymandra.framework.MetaMedia -> com.anthonymandra.framework.ay:
     java.lang.String TAG -> c
     boolean metaLoaded -> e
@@ -8737,43 +8736,43 @@ com.anthonymandra.framework.MetaMedia -> com.anthonymandra.framework.ay:
     java.text.SimpleDateFormat mLibrawFormatter -> t
     android.content.Context mContext -> u
     boolean isLoaded -> d
-    69:74:void clearXmp() -> w
-    113:118:java.lang.String getAperture() -> m
-    124:137:java.lang.String getExposure() -> x
-    156:162:java.lang.String getFocalLength() -> y
-    168:170:java.lang.String getFlash() -> z
-    186:196:java.lang.String getWhiteBalance() -> A
-    201:203:java.lang.String getExposureProgram() -> B
-    208:210:java.lang.String getExposureMode() -> C
-    222:228:java.lang.String getLensModel() -> D
-    233:237:java.lang.String getDriveMode() -> E
-    242:247:java.lang.String getIso() -> F
-    253:266:java.lang.String getFNumber() -> G
-    271:275:java.lang.String getDateTime() -> H
-    292:298:java.lang.String getModel() -> I
+    69:74:void clearXmp() -> v
+    113:118:java.lang.String getAperture() -> R
+    124:137:java.lang.String getExposure() -> w
+    156:162:java.lang.String getFocalLength() -> x
+    168:170:java.lang.String getFlash() -> y
+    186:196:java.lang.String getWhiteBalance() -> z
+    201:203:java.lang.String getExposureProgram() -> A
+    208:210:java.lang.String getExposureMode() -> B
+    222:228:java.lang.String getLensModel() -> C
+    233:237:java.lang.String getDriveMode() -> D
+    242:247:java.lang.String getIso() -> E
+    253:266:java.lang.String getFNumber() -> F
+    271:275:java.lang.String getDateTime() -> G
+    292:298:java.lang.String getModel() -> H
     304:315:int getOrientation() -> S
     322:322:int getFullImageRotation() -> c
     327:345:int getRotation() -> d
-    351:353:java.lang.String getAltitude() -> J
-    358:360:java.lang.String getLatitude() -> K
-    365:367:java.lang.String getLongitude() -> L
-    372:387:double getRating() -> M
-    392:394:java.lang.String getLabel() -> N
-    399:401:java.lang.String[] getSubject() -> O
+    351:353:java.lang.String getAltitude() -> I
+    358:360:java.lang.String getLatitude() -> J
+    365:367:java.lang.String getLongitude() -> K
+    372:387:double getRating() -> L
+    392:394:java.lang.String getLabel() -> M
+    399:401:java.lang.String[] getSubject() -> N
     406:416:void setRating(double) -> a
     420:431:void setLabel(java.lang.String) -> b
     435:445:void setSubject(java.lang.String[]) -> a
-    java.io.BufferedInputStream getXmpInputStream() -> r
-    java.io.BufferedOutputStream getXmpOutputStream() -> o
-    454:462:boolean readMetadata() -> P
+    java.io.BufferedInputStream getXmpInputStream() -> q
+    java.io.BufferedOutputStream getXmpOutputStream() -> n
+    454:462:boolean readMetadata() -> O
     468:488:boolean readMeta() -> T
-    498:525:void putContent() -> Q
+    498:525:void putContent() -> P
     556:583:boolean readXmp() -> U
     589:590:int getWidth() -> f
     595:596:void setWidth(int) -> b
     600:601:int getHeight() -> g
     606:607:void setHeight(int) -> c
-    611:612:int getThumbWidth() -> R
+    611:612:int getThumbWidth() -> Q
     617:618:void setThumbWidth(int) -> d
     628:629:void setThumbHeight(int) -> e
     633:637:void checkMetaLoaded() -> V
@@ -8786,44 +8785,44 @@ com.anthonymandra.framework.MetaMedia$2 -> com.anthonymandra.framework.ba:
     com.anthonymandra.framework.MetaMedia this$0 -> b
     521:522:void run() -> run
 com.anthonymandra.framework.MetaObject -> com.anthonymandra.framework.bb:
-    void clearXmp() -> w
-    void writeXmp() -> q
-    boolean readMetadata() -> P
-    java.lang.String getExposure() -> x
-    java.lang.String getFocalLength() -> y
-    java.lang.String getFlash() -> z
-    java.lang.String getWhiteBalance() -> A
-    java.lang.String getExposureProgram() -> B
-    java.lang.String getExposureMode() -> C
-    java.lang.String getLensModel() -> D
-    java.lang.String getDriveMode() -> E
-    java.lang.String getIso() -> F
-    java.lang.String getFNumber() -> G
-    java.lang.String getDateTime() -> H
-    java.lang.String getModel() -> I
-    java.lang.String getAltitude() -> J
-    java.lang.String getLatitude() -> K
-    java.lang.String getLongitude() -> L
-    double getRating() -> M
-    java.lang.String getLabel() -> N
-    java.lang.String[] getSubject() -> O
+    void clearXmp() -> v
+    void writeXmp() -> p
+    boolean readMetadata() -> O
+    java.lang.String getExposure() -> w
+    java.lang.String getFocalLength() -> x
+    java.lang.String getFlash() -> y
+    java.lang.String getWhiteBalance() -> z
+    java.lang.String getExposureProgram() -> A
+    java.lang.String getExposureMode() -> B
+    java.lang.String getLensModel() -> C
+    java.lang.String getDriveMode() -> D
+    java.lang.String getIso() -> E
+    java.lang.String getFNumber() -> F
+    java.lang.String getDateTime() -> G
+    java.lang.String getModel() -> H
+    java.lang.String getAltitude() -> I
+    java.lang.String getLatitude() -> J
+    java.lang.String getLongitude() -> K
+    double getRating() -> L
+    java.lang.String getLabel() -> M
+    java.lang.String[] getSubject() -> N
     void setRating(double) -> a
     void setLabel(java.lang.String) -> b
     void setSubject(java.lang.String[]) -> a
-    int getThumbWidth() -> R
+    int getThumbWidth() -> Q
 com.anthonymandra.framework.RawObject -> com.anthonymandra.framework.bc:
-    boolean isDirectory() -> s
+    boolean isDirectory() -> r
     boolean delete() -> l
     java.lang.String getName() -> b
     java.lang.String getFilePath() -> e
-    android.net.Uri getUri() -> u
-    java.io.InputStream getImageStream() -> v
+    android.net.Uri getUri() -> t
+    java.io.InputStream getImageStream() -> u
     byte[] getImage() -> k
-    byte[] getThumb() -> n
-    long getFileSize() -> p
+    byte[] getThumb() -> m
+    long getFileSize() -> o
     boolean rename(java.lang.String) -> a
     boolean copy(java.io.File) -> a
-    android.net.Uri getSwapUri() -> t
+    android.net.Uri getSwapUri() -> s
     boolean writeThumb(java.io.File) -> b
     boolean writeThumbWatermark(java.io.File,byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins) -> a
 com.anthonymandra.framework.RecycleBin -> com.anthonymandra.framework.bd:

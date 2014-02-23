@@ -98,6 +98,7 @@ public class LocalImage extends MetaMedia {
 		return mImage.getPath();
 	}
 
+    @Deprecated
 	@Override
 	public boolean canDecode() {
 		// Log.d(TAG, mImage.getName());
@@ -458,17 +459,13 @@ public class LocalImage extends MetaMedia {
 
 	@Override
 	public boolean writeThumb(File destination) {
-		return LibRaw.writeThumbFromFile(mImage.getPath(), destination.getPath(), 100);
-//		return writeThumb(getThumb(), destination);
+		return LibRaw.writeThumb(mImage.getPath(), destination.getPath(), 100);
 	}
 
 	@Override
 	public boolean writeThumbWatermark(File destination, byte[] waterMap,
 			int waterWidth, int waterHeight, Margins waterMargins) {
 		return LibRaw.writeThumbWatermark(mImage.getPath(), destination.getPath(), waterMap, waterMargins.getArray(), waterWidth, waterHeight, 100);
-//		return writeThumb(
-//				getThumbWithWatermark(waterMap, waterWidth, waterHeight,
-//						waterMargins), destination);
 	}
 
 }

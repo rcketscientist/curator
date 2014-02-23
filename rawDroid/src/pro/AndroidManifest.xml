@@ -2,12 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
+		<uses-permission android:name="com.android.vending.CHECK_LICENSE" />
+		
         <!--Separating providers allows flavorized authorities-->
         <provider
             android:name="com.anthonymandra.content.MetaProvider"
             android:authorities="com.anthonymandra.content.MetaProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="true">
         </provider>
 
         <provider

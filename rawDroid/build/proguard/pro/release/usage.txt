@@ -2379,6 +2379,7 @@ com.anthonymandra.dcraw.LibRaw:
     private static final int numThreads
 ====    29:153:public LibRaw()
 ====    private static native boolean canDecodeFromBuffer(byte[])
+====    private static native boolean canDecodeFromFile(java.lang.String)
 ====    public static native java.lang.String[] canDecodeDirectory(java.lang.String)
 ====    private static native byte[] getThumbWithWatermark(java.lang.String,byte[],int[],int,int)
 ====    private static native byte[] getThumbFromBuffer(byte[],java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
@@ -2391,6 +2392,7 @@ com.anthonymandra.dcraw.LibRaw:
 ====    public static native boolean writeRawFromBuffer(byte[],java.lang.String)
 ====    public static native boolean writeRawFromFile(java.lang.String,java.lang.String)
 ====    91:95:public static boolean canDecode(byte[])
+====    100:100:public static boolean canDecode(java.io.File)
 ====    105:105:public static byte[] getThumb(byte[],java.lang.String[])
 ====    110:113:public static byte[] getThumbWithWatermark(java.io.File,byte[],com.anthonymandra.dcraw.LibRaw$Margins,int,int)
 com.anthonymandra.dcraw.TiffDecoder:
@@ -2455,8 +2457,8 @@ com.anthonymandra.framework.GalleryActivity:
     public static final int FILE_NOT_FOUND
     private static final int REQUEST_CODE_SHARE
 ====    201:209:protected int getImageId(com.anthonymandra.framework.RawObject)
-====    438:438:protected java.io.File getSwapFile(java.lang.String)
-====    550:552:protected void requestWebIntent()
+====    402:402:protected java.io.File getSwapFile(java.lang.String)
+====    514:516:protected void requestWebIntent()
 com.anthonymandra.framework.Histogram:
 ====    72:72:public int getMaxFreqR()
 ====    77:77:public int getMaxFreqG()
@@ -2492,8 +2494,9 @@ com.anthonymandra.framework.License:
 com.anthonymandra.framework.LocalImage:
 ====    51:51:public java.io.File getFile()
 ====    93:93:public java.lang.String getMimeType()
-====    119:141:public byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
-====    440:456:private boolean writeThumb(byte[],java.io.File)
+====    112:114:public boolean canDecode()
+====    120:142:public byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
+====    441:457:private boolean writeThumb(byte[],java.io.File)
 com.anthonymandra.framework.LongSparseArray
 com.anthonymandra.framework.MetaMedia:
 ====    public abstract boolean hasXmp()

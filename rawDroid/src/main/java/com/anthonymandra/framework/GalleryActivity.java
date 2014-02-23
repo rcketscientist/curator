@@ -229,6 +229,39 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		addFile(image, false);
 	}
 
+    private void addFileInternal(File file)
+    {
+        if (rawFilter.accept(file))
+        {
+            mRawImages.add(new LocalImage(this, file));
+        }
+        else if (nativeFilter.accept(file))
+        {
+            mNativeImages.add(new LocalImage(this, file));
+        }
+        else if (xmpFilter.accept(file))
+        {
+            mXmpFiles.add(new LocalImage(this, file));
+        }
+        else if (file.isDirectory() && !file.isHidden() && file.canRead())
+        {
+            mFolders.add(file);
+        }
+        else
+        {
+            mUnknownFiles.add(new LocalImage(this, file));
+        }
+    }
+
+    private void sortCollections()
+    {
+        Collections.sort(mFolders, alphaCompare);
+        Collections.sort(mRawImages, metaCompare);
+        Collections.sort(mNativeImages, metaCompare);
+        Collections.sort(mXmpFiles, metaCompare);
+        Collections.sort(mUnknownFiles, metaCompare);
+    }
+
 	protected boolean processLocalFolder()
 	{
 		if (!mCurrentPath.exists() || !mCurrentPath.isDirectory() || mCurrentPath.listFiles() == null)
@@ -238,91 +271,22 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 
 		clearSubLists();
 		
-//		File[] sortedFiles = mCurrentPath.listFiles();
-//		Arrays.sort(sortedFiles, alphaCompare);
-//		
-//		for (File file: sortedFiles)
-//		{
-//			if (file.isDirectory())
-//			{
-//				mFolders.add(file);
-//			}
-//		}
-		
 		for (File file : mCurrentPath.listFiles())
 		{
-			if (rawFilter.accept(file))
-			{
-				mRawImages.add(new LocalImage(this, file));
-			}
-			else if (nativeFilter.accept(file))
-			{
-				mNativeImages.add(new LocalImage(this, file));
-			}
-			else if (xmpFilter.accept(file))
-			{
-				mXmpFiles.add(new LocalImage(this, file));
-			}
-			else if (file.isDirectory() && !file.isHidden() && file.canRead())
-			{
-				mFolders.add(file);
-			}
-			else
-			{
-				mUnknownFiles.add(new LocalImage(this, file));
-			}
+            addFileInternal(file);
 		}
-		
-		Collections.sort(mFolders, alphaCompare);
-		Collections.sort(mRawImages, metaCompare);
-		Collections.sort(mNativeImages, metaCompare);
-		Collections.sort(mXmpFiles, metaCompare);
-		Collections.sort(mUnknownFiles, metaCompare);
-		
-//		for (File file : sortedFiles)
-//		{
-//			addFile(file, false);
-//		}
+
+        sortCollections();
+
 		return true;
 	}
 
 	protected void addFile(File file, boolean sort)
 	{
-		if (file.isDirectory())
-		{
-			mFolders.add(file);
-			return;
-		}
+        addFileInternal(file);
 
-		LocalImage media = new LocalImage(this, file);
-
-		if (xmpFilter.accept(file))
-		{
-			mXmpFiles.add(media);
-			if (sort)
-				Collections.sort(mXmpFiles, metaCompare);
-		}
-		if (nativeFilter.accept(file))
-		{
-			mNativeImages.add(media);
-			if (sort)
-				Collections.sort(mNativeImages, metaCompare);
-		}
-		else
-		{
-			if (media.canDecode())
-			{
-				mRawImages.add(media);
-				if (sort)
-					Collections.sort(mRawImages, metaCompare);
-			}
-			else
-			{
-				mUnknownFiles.add(media);
-				if (sort)
-					Collections.sort(mUnknownFiles, metaCompare);
-			}
-		}
+        if (sort)
+            sortCollections();
 	}
 
 	/**

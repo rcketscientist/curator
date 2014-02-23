@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 def versionMajor = 2
 def versionMinor = 5
-def versionPatch = 5
+def versionPatch = 7
 def versionBuild = 0
 
 android {

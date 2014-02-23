@@ -72,7 +72,7 @@ public class LibRaw
 
 	// Write thumb
 	public static native boolean writeThumbFromBuffer(byte[] buffer, String destination, int quality);
-	public static native boolean writeThumbFromFile(String source, String destination, int quality);
+	public static native boolean writeThumb(String source, String destination, int quality);
 	public static native boolean writeThumbWatermark(String filePath, String destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight, int quality);
 
 	// Get raw bitmap

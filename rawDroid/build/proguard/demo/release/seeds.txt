@@ -4961,7 +4961,7 @@ com.anthonymandra.dcraw.LibRaw: byte[] getThumbFromFile(java.lang.String,java.la
 com.anthonymandra.dcraw.LibRaw: byte[] getThumbWithWatermark(java.lang.String,byte[],int[],int,int)
 com.anthonymandra.dcraw.LibRaw: byte[] getThumbFromBuffer(byte[],java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
 com.anthonymandra.dcraw.LibRaw: boolean writeThumbFromBuffer(byte[],java.lang.String,int)
-com.anthonymandra.dcraw.LibRaw: boolean writeThumbFromFile(java.lang.String,java.lang.String,int)
+com.anthonymandra.dcraw.LibRaw: boolean writeThumb(java.lang.String,java.lang.String,int)
 com.anthonymandra.dcraw.LibRaw: boolean writeThumbWatermark(java.lang.String,java.lang.String,byte[],int[],int,int,int)
 com.anthonymandra.dcraw.LibRaw: byte[] getHalfImageFromFile(java.lang.String,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
 com.anthonymandra.dcraw.LibRaw: android.graphics.BitmapRegionDecoder getHalfDecoderFromFile(java.lang.String,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
@@ -5739,7 +5739,6 @@ com.anthonymandra.rawdroid.R$string: int driveMode
 com.anthonymandra.rawdroid.R$string: int edit
 com.anthonymandra.rawdroid.R$string: int emptyRecycleBin
 com.anthonymandra.rawdroid.R$string: int error
-com.anthonymandra.rawdroid.R$string: int errorFileOpenM
 com.anthonymandra.rawdroid.R$string: int errorKeywordRequired
 com.anthonymandra.rawdroid.R$string: int error_copying_file
 com.anthonymandra.rawdroid.R$string: int error_creating_new_folder
@@ -5886,6 +5885,7 @@ com.anthonymandra.rawdroid.R$string: int prefSummaryLicense
 com.anthonymandra.rawdroid.R$string: int prefSummaryLicenseError
 com.anthonymandra.rawdroid.R$string: int prefSummaryLicenseModified
 com.anthonymandra.rawdroid.R$string: int prefSummaryManualLicense
+com.anthonymandra.rawdroid.R$string: int prefSummaryNoProvider
 com.anthonymandra.rawdroid.R$string: int prefSummaryRecycleBin
 com.anthonymandra.rawdroid.R$string: int prefSummaryRightMargin
 com.anthonymandra.rawdroid.R$string: int prefSummaryShowNativeFiles
@@ -5899,6 +5899,7 @@ com.anthonymandra.rawdroid.R$string: int prefTitleAlwaysShowNav
 com.anthonymandra.rawdroid.R$string: int prefTitleBottomMargin
 com.anthonymandra.rawdroid.R$string: int prefTitleClearGalleryCache
 com.anthonymandra.rawdroid.R$string: int prefTitleComingSoon
+com.anthonymandra.rawdroid.R$string: int prefTitleContact
 com.anthonymandra.rawdroid.R$string: int prefTitleDeleteConfirmation
 com.anthonymandra.rawdroid.R$string: int prefTitleEnableWatermark
 com.anthonymandra.rawdroid.R$string: int prefTitleFilter
@@ -5909,12 +5910,10 @@ com.anthonymandra.rawdroid.R$string: int prefTitleManualLicense
 com.anthonymandra.rawdroid.R$string: int prefTitleRecycleBin
 com.anthonymandra.rawdroid.R$string: int prefTitleRightMargin
 com.anthonymandra.rawdroid.R$string: int prefTitleShowHist
-com.anthonymandra.rawdroid.R$string: int prefTitleShowJpg
 com.anthonymandra.rawdroid.R$string: int prefTitleShowMeta
 com.anthonymandra.rawdroid.R$string: int prefTitleShowNativeFiles
 com.anthonymandra.rawdroid.R$string: int prefTitleShowNav
 com.anthonymandra.rawdroid.R$string: int prefTitleShowUnknownFiles
-com.anthonymandra.rawdroid.R$string: int prefTitleShowXmp
 com.anthonymandra.rawdroid.R$string: int prefTitleShowXmpFiles
 com.anthonymandra.rawdroid.R$string: int prefTitleTopMargin
 com.anthonymandra.rawdroid.R$string: int prefTitleUseLegacyViewer
@@ -5950,7 +5949,6 @@ com.anthonymandra.rawdroid.R$string: int save_success
 com.anthonymandra.rawdroid.R$string: int search
 com.anthonymandra.rawdroid.R$string: int select
 com.anthonymandra.rawdroid.R$string: int selectAll
-com.anthonymandra.rawdroid.R$string: int selectKeywords
 com.anthonymandra.rawdroid.R$string: int selected
 com.anthonymandra.rawdroid.R$string: int send_not_available
 com.anthonymandra.rawdroid.R$string: int settings
@@ -5997,8 +5995,6 @@ com.anthonymandra.rawdroid.R$string: int upperLeft
 com.anthonymandra.rawdroid.R$string: int upperRight
 com.anthonymandra.rawdroid.R$string: int usb
 com.anthonymandra.rawdroid.R$string: int view
-com.anthonymandra.rawdroid.R$string: int view_crop
-com.anthonymandra.rawdroid.R$string: int view_decode
 com.anthonymandra.rawdroid.R$string: int view_tag
 com.anthonymandra.rawdroid.R$string: int viewer
 com.anthonymandra.rawdroid.R$string: int wallpaper

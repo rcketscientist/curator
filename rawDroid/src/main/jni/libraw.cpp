@@ -22,7 +22,7 @@ extern "C"
 
 	// Write thumb (native format)
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jstring destination, int quality);
-	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromFile(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, int quality);
+	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumb(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, int quality);
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbWatermark(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality);
 
 	// Return raw bitmap
@@ -56,7 +56,7 @@ jobject getRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject co
 
 jboolean writeRaw(JNIEnv* env, LibRaw* rawProcessor, const char* destination);
 jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, const char* destination, int quality);
-jboolean writeThumbWatermark(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality, const char* destination);
+jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality, const char* destination);
 
 typedef struct ID_CACHE
 {
@@ -234,8 +234,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuf
 
 	jsize len = env->GetArrayLength(bufferBytes);
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
-
 	result = rawProcessor->open_buffer(buffer, len);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
 
@@ -397,21 +397,19 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromBuf
 	
 	jsize len = env->GetArrayLength(bufferBytes);
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
-
 	int result = rawProcessor->open_buffer(buffer, len);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
 	if (LIBRAW_FATAL_ERROR(result))
 		return JNI_FALSE;
 
 	jboolean success = writeThumb(env, rawProcessor, output, quality);
 	env->ReleaseStringUTFChars(destination, output);
-	
-	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
 
 	rawProcessor->recycle();
 	return success;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromFile(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, int quality)
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumb(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, int quality)
 {
 	LibRaw* rawProcessor = new LibRaw();
 
@@ -442,7 +440,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbWaterma
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;
 
-	jboolean success = writeThumbWatermark(env, rawProcessor, watermark, margins, waterWidth, waterHeight, quality, output);
+	jboolean success = writeThumb(env, rawProcessor, watermark, margins, waterWidth, waterHeight, quality, output);
 	env->ReleaseStringUTFChars(destination, output);
 
 	rawProcessor->recycle();
@@ -474,15 +472,15 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRawFromBuffe
 
 	jsize len = env->GetArrayLength(bufferBytes);
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
-
 	int result = rawProcessor->open_buffer(buffer, len);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
+
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;
 
 	jboolean success = writeRaw(env, rawProcessor, output);
 	env->ReleaseStringUTFChars(destination, output);
 
-	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
 	rawProcessor->recycle();
 	return success;
 }
@@ -527,6 +525,7 @@ jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJp
 //	fclose(copy);
 
 	rawProcessor->dcraw_clear_mem(image);
+	return JNI_TRUE;
 }
 
 jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality)
@@ -536,6 +535,8 @@ jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned lo
 	int left = margin[1];
 	int bottom = margin[2];
 	int right = margin[3];
+	env->ReleaseIntArrayElements(margins, margin, JNI_ABORT);
+
 	int startX, startY;
 	int result;
 
@@ -631,6 +632,8 @@ jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned lo
     	delta += rowStride;
     }
 
+    env->ReleaseByteArrayElements(watermark, (jbyte *)watermarkPixels, JNI_ABORT);
+
 	createJpeg(env, outJpeg, outJpegSize, pixels, width, height, quality);
 
 	if (jpeg && pixels)
@@ -714,46 +717,48 @@ jobject getHalfRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobjec
 
 jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, const char* destination, int quality)
 {
-	int result = rawProcessor->unpack_thumb();
-	if (result != LIBRAW_SUCCESS)
-		return JNI_FALSE;
-
-	unsigned char* jpeg;
-	unsigned long jpegSize;
-	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, NULL, NULL);
-
-	if(!destination)
-		return JNI_FALSE;
-
-	FILE *tfp = fopen(destination,"wb");
-
-	if(!tfp)
-		return JNI_FALSE;
-
-	if(!jpeg)
-	{
-		fclose(tfp);
-		return JNI_FALSE;
-	}
-
-	try
-	{
-		fwrite(jpeg, 0, jpegSize, tfp);
-		fclose(tfp);
-	}
-	catch(...)
-	{
-		fclose(tfp);
-	}
-
-	return JNI_TRUE;
+	return writeThumb(env, rawProcessor, NULL, NULL, 0, 0, quality, destination);
+//
+//	unsigned char* jpeg = NULL;
+//	unsigned long jpegSize = 0;
+//	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, NULL, NULL);
+//
+//	if(!destination)
+//		return JNI_FALSE;
+//
+//	FILE *tfp = fopen(destination,"wb");
+//
+//	if(!tfp)
+//		return JNI_FALSE;
+//
+//	if(!jpeg)
+//	{
+//		fclose(tfp);
+//		return JNI_FALSE;
+//	}
+//
+//	try
+//	{
+//		fwrite(jpeg, sizeof(char), jpegSize, tfp);
+//		fclose(tfp);
+//	}
+//	catch(...)
+//	{
+//		fclose(tfp);
+//	}
+//
+//	return JNI_TRUE;
 }
 
-jboolean writeThumbWatermark(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality, const char* destination)
+jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality, const char* destination)
 {
 	unsigned char* jpeg = NULL;
 	unsigned long jpegSize = 0;
-	jboolean success = getThumbWithWatermark(env, &jpeg, &jpegSize, rawProcessor, watermark, margins, waterWidth, waterHeight, quality);
+	jboolean success;
+	if (watermark == NULL)
+		success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, NULL, NULL);
+	else
+		success = getThumbWithWatermark(env, &jpeg, &jpegSize, rawProcessor, watermark, margins, waterWidth, waterHeight, quality);
 
 	if(!destination)
 		return JNI_FALSE;
@@ -778,13 +783,6 @@ jboolean writeThumbWatermark(JNIEnv* env, LibRaw* rawProcessor, jbyteArray water
 	{
 		fclose(tfp);
 	}
-
-	//	FILE *orig = fopen("/sdcard/original.jpg","wb");
-	//	FILE *copy = fopen("/sdcard/copy.jpg","wb");
-	//	fwrite(image->data, sizeof(char), image->data_size, orig);
-	//	fwrite(*outJpeg, sizeof(char), *outJpegSize, copy);
-	//	fclose(orig);
-	//	fclose(copy);
 
 	return JNI_TRUE;
 }

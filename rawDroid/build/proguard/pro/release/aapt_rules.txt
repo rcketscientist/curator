@@ -64,10 +64,10 @@
 # view res/layout/legacy_viewer.xml #generated:7
 -keep class com.android.legacy.ui.GLRootView { <init>(...); }
 
-# view AndroidManifest.xml #generated:136
+# view AndroidManifest.xml #generated:137
 -keep class com.anthonymandra.content.MetaProvider { <init>(...); }
 
-# view AndroidManifest.xml #generated:139
+# view AndroidManifest.xml #generated:140
 -keep class com.anthonymandra.framework.SwapProvider { <init>(...); }
 
 # view AndroidManifest.xml #generated:29
@@ -102,16 +102,16 @@
 # view res/xml/preferences_watermark.xml #generated:16
 -keep class com.anthonymandra.widget.SeekBarPreference { <init>(...); }
 
-# view AndroidManifest.xml #generated:192
+# view AndroidManifest.xml #generated:193
 -keep class org.openintents.distribution.EulaActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:190
+# view AndroidManifest.xml #generated:191
 -keep class org.openintents.distribution.NewVersionActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:144
+# view AndroidManifest.xml #generated:145
 -keep class org.openintents.filemanager.FileManagerActivity { <init>(...); }
 
-# view AndroidManifest.xml #generated:183
+# view AndroidManifest.xml #generated:184
 -keep class org.openintents.filemanager.PreferenceActivity { <init>(...); }
 
 # view res/layout/main_demo.xml #generated:7

@@ -1383,7 +1383,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             boolean processWatermark = false;
             int waterWidth = 0, waterHeight = 0;
             		
-            if (Constants.VariantCode > 8 && LicenseManager.getLastResponse() != License.LicenseState.pro)
+            if (Constants.VariantCode <= 8 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
             	processWatermark = true;
                 watermark = Util.getDemoWatermark(RawDroid.this, copyList.get(0).getThumbWidth());

@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="2.5.7"
+        versioncode="25700"
+        summary="Export/share patch"
+        date="2/23/2014">
+        <change>Fixed: Export/share bug</change>
+    </release>
+    <release version="2.5.6"
+        versioncode="25600"
+        summary="Unknown image patch (x86).  There were a number of device specific bugs and a fix for share/save will be out shortly."
+        date="2/23/2014">
+        <change>Fixed: Unknown images on certain architectures.</change>
+    </release>
     <release version="2.5.5"
         versioncode="25400"
         summary="This is a significant overhaul of much of the infrastructure which will build the foundation for a much more versatile app.  Rawdroid Demo and Rawdroid Pro are now separate apps, if you are a Pro user please uninstall the Demo and upgrade Pro."
