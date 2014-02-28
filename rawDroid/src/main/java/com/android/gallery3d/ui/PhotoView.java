@@ -26,10 +26,8 @@ import android.os.Build;
 import android.os.Message;
 import android.util.FloatMath;
 import android.view.MotionEvent;
-import android.view.View.MeasureSpec;
 import android.view.animation.AccelerateInterpolator;
 
-import com.anthonymandra.rawdroid.R;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -41,6 +39,7 @@ import com.android.gallery3d.glrenderer.StringTexture;
 import com.android.gallery3d.glrenderer.Texture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.RangeArray;
+import com.anthonymandra.rawdroid.R;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")

@@ -16,13 +16,6 @@
 
 package com.android.gallery3d.util;
 
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.ui.TiledScreenNail;
-import com.android.gallery3d.util.ThreadPool.CancelListener;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-import com.anthonymandra.framework.MetaMedia;
-import com.anthonymandra.rawdroid.R;
-
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -38,6 +31,12 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
+
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.ui.TiledScreenNail;
+import com.android.gallery3d.util.ThreadPool.CancelListener;
+import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.anthonymandra.rawdroid.R;
 
 import java.io.File;
 import java.util.Arrays;

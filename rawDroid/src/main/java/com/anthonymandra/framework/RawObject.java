@@ -2,12 +2,10 @@ package com.anthonymandra.framework;
 
 import android.net.Uri;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
+import com.anthonymandra.dcraw.LibRaw.Margins;
+
 import java.io.File;
 import java.io.InputStream;
-
-import com.anthonymandra.dcraw.LibRaw.Margins;
 
 /**
  * Created by amand_000 on 8/9/13.

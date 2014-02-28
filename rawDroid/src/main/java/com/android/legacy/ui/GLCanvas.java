@@ -16,9 +16,9 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
-
 import android.graphics.RectF;
+
+import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
 
 import javax.microedition.khronos.opengles.GL11;
 

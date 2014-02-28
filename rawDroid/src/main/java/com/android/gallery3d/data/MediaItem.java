@@ -18,12 +18,11 @@ package com.android.gallery3d.data;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
+import android.net.Uri;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.ui.ScreenNail;
 import com.android.gallery3d.util.ThreadPool.Job;
-
-import android.net.Uri;
 
 // MediaItem represents an image or a video item.
 public abstract class MediaItem extends MediaObject {

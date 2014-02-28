@@ -16,6 +16,14 @@
 
 package com.anthonymandra.framework;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
+
+import com.android.gallery3d.common.Utils;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -24,12 +32,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
 
 /**
  * This class holds our bitmap caches (memory and disk).
@@ -119,20 +121,8 @@ public class RecycleBin
 				}
 				finally
 				{
-					try
-					{
-						if (bis != null)
-						{
-							bis.close();
-						}
-						if (out != null)
-						{
-							out.close();
-						}
-					}
-					catch (IOException e)
-					{
-					}
+                    Utils.closeSilently(bis);
+                    Utils.closeSilently(out);
 				}
 			}
 		}
@@ -179,16 +169,7 @@ public class RecycleBin
 				}
 				finally
 				{
-					try
-					{
-						if (inputStream != null)
-						{
-							inputStream.close();
-						}
-					}
-					catch (IOException e)
-					{
-					}
+                    Utils.closeSilently(inputStream);
 				}
 			}
 			return null;

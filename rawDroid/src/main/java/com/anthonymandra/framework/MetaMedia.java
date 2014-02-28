@@ -1,5 +1,11 @@
 package com.anthonymandra.framework;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.util.Log;
+
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
@@ -19,13 +25,6 @@ import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 import com.drew.metadata.xmp.XmpWriter;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.net.Uri;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -83,16 +82,7 @@ public abstract class MetaMedia extends MediaItem
 		XmpWriter.write(bos, mMetadata);
 		mMetadata = new Metadata();
 		readXmp();
-
-		try
-		{
-			if (bos != null)
-				bos.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+        Utils.closeSilently(bos);
 	}
 
 	protected void writeXmp(final OutputStream os)
@@ -572,15 +562,7 @@ public abstract class MetaMedia extends MediaItem
 		}
 		finally
 		{
-			try
-			{
-				if (xmp != null)
-					xmp.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+            Utils.closeSilently(xmp);
 		}
 	}
 

@@ -3,16 +3,14 @@ package com.anthonymandra.rawdroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 
 import com.anthonymandra.framework.License;
+import com.anthonymandra.rawdroid.BuildConfig;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.LicenseChecker;
 import com.google.android.vending.licensing.LicenseCheckerCallback;
@@ -126,13 +124,13 @@ public class LicenseManager extends License {
                 return;
 
             }
-//            else if (scuttle(g, a))
-//            {
-//                LicenseState state = LicenseState.modified_0x003;
-//                settings.edit().putString("license_modified", state.toString());
-//                updateLicense(state);
-//                return;
-//            }
+            else if (!BuildConfig.DEBUG && scuttle(g, a))
+            {
+                LicenseState state = LicenseState.modified_0x003;
+                settings.edit().putString("license_modified", state.toString());
+                updateLicense(state);
+                return;
+            }
 
         } catch (ValidationException e) {
             e.printStackTrace();

@@ -1,37 +1,26 @@
 package com.anthonymandra.framework;
 
 import android.content.ContentProvider;
-import android.content.ContentProviderClient;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.gallery3d.common.Utils;
-import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
-import com.anthonymandra.rawdroid.RawDroid;
+import com.anthonymandra.rawdroid.R;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 
 /**
  * Created by amand_000 on 9/12/13.
@@ -96,7 +85,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 	                int waterWidth = 0, waterHeight = 0;
 	                Margins margin = null;
 
-                    if (Constants.VariantCode > 8 && LicenseManager.getLastResponse() != License.LicenseState.pro)
+                    if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
 	                {
 	                	processWatermark = true;
 	                    watermark = Util.getDemoWatermark(getContext(), image.getWidth());
@@ -109,11 +98,19 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 	                else if (mShowWatermark)
 	                {
 	                	processWatermark = true;
-	                    watermark = Util.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
-	                    waterData = Util.getBitmapBytes(watermark);
-	                    waterWidth = watermark.getWidth();
-	                    waterHeight = watermark.getHeight();
-	                    margin = mMargins;
+                        if (mWatermarkText.isEmpty())
+                        {
+                            Toast.makeText(getContext(), R.string.warningBlankWatermark, Toast.LENGTH_LONG);
+                            processWatermark = false;
+                        }
+                        else
+                        {
+	                        watermark = Util.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+                            waterData = Util.getBitmapBytes(watermark);
+                            waterWidth = watermark.getWidth();
+                            waterHeight = watermark.getHeight();
+                            margin = mMargins;
+                        }
 	                }
 	                
 	                boolean success;
@@ -145,7 +142,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         mShowWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
         mWatermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
         mWatermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-        mWatermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+        mWatermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
         mWatermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
         mMargins = new Margins(pref);
     }

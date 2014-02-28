@@ -1,8 +1,5 @@
 package com.anthonymandra.content;
 
-import java.io.FileNotFoundException;
-import java.util.Locale;
-
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -19,6 +16,9 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 
 import com.anthonymandra.content.Meta.Data;
+
+import java.io.FileNotFoundException;
+import java.util.Locale;
 
 public class MetaProvider extends ContentProvider
 {

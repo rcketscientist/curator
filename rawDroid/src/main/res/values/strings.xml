@@ -105,6 +105,7 @@
     <string name="warningNoUSB">No usb media found.  If you know the device is mounted, please email rawdroid@anthonymandra.com with the location for addition.</string>
     <string name="warningFailedToGetStream">Warning: Failed to get image stream.  If this continues please email:rawdroid@anthonymandra.com</string>
     <string name="warningShareFail">Share could not be completed.</string>
+    <string name="warningBlankWatermark">You tried to apply an empty watermark.  Please add text.</string>
 
     <!-- Preferences -->
     <string name="prefTitleImageInterface">Automatically display interface</string>

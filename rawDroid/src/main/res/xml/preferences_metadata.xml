@@ -66,6 +66,10 @@
             android:title="@string/expProgram"
             android:defaultValue="false" />
         <CheckBoxPreference
+            android:key="prefKeyExifFocal"
+            android:title="@string/focalLength"
+            android:defaultValue="true" />
+        <CheckBoxPreference
             android:key="prefKeyExifFlash"
             android:title="@string/flash"
             android:defaultValue="false" />

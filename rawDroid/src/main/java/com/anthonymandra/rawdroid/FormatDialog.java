@@ -1,9 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import com.anthonymandra.framework.RawObject;
-
-import java.util.List;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.anthonymandra.framework.RawObject;
+
+import java.util.List;
 
 public class FormatDialog extends Dialog
 {

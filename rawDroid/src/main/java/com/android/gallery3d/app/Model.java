@@ -1,9 +1,9 @@
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.ui.PhotoView;
-
 import android.graphics.Bitmap;
 import android.net.Uri;
+
+import com.android.gallery3d.ui.PhotoView;
 
 /**
  * Created by amand_000 on 8/14/13.

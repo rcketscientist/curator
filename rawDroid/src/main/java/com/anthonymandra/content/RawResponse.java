@@ -1,8 +1,7 @@
 package com.anthonymandra.content;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
+import android.content.Context;
+import android.util.Log;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -13,8 +12,9 @@ import org.apache.http.StatusLine;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.params.HttpParams;
 
-import android.content.Context;
-import android.util.Log;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Locale;
 
 public class RawResponse implements HttpResponse
 {

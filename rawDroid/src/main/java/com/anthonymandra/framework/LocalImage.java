@@ -1,20 +1,5 @@
 package com.anthonymandra.framework;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -36,6 +21,21 @@ import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.dcraw.TiffDecoder;
 import com.drew.metadata.xmp.XmpDirectory;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+
 public class LocalImage extends MetaMedia {
 	private static final String TAG = LocalImage.class.getSimpleName();
 	File mImage;
@@ -53,28 +53,35 @@ public class LocalImage extends MetaMedia {
 
 	@Override
 	public byte[] getImage() {
-
-		byte[] dst = new byte[(int) mImage.length()];
-		DataInputStream dis = null;
-		try {
-			dis = new DataInputStream(new FileInputStream(mImage));
-			dis.readFully(dst);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-			return null;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			try {
-				dis.close();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-		return dst;
+        return getImageBytes();
 	}
+
+    private byte[] getImageBytes()
+    {
+        byte[] dst = new byte[(int) mImage.length()];
+        DataInputStream dis = null;
+        try {
+            dis = new DataInputStream(new FileInputStream(mImage));
+            dis.readFully(dst);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            Utils.closeSilently(dis);
+        }
+        return dst;
+    }
+
+    @Override
+    public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
+                                        int waterHeight, Margins margins) {
+        if (Util.isNativeImage(this)) {
+            return getImageBytes();
+        }
+
+        return LibRaw.getThumbWithWatermark(mImage, watermark, margins,
+                waterWidth, waterHeight);
+    }
 
 	@Override
 	public boolean delete() {
@@ -112,35 +119,6 @@ public class LocalImage extends MetaMedia {
 		if (!mImage.isFile())
 			return false;
 		return LibRaw.canDecode(mImage);
-	}
-
-	@Override
-	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
-			int waterHeight, Margins margins) {
-		if (Util.isNativeImage(this)) {
-			byte[] dst = new byte[(int) mImage.length()];
-			DataInputStream dis = null;
-			try {
-				dis = new DataInputStream(new FileInputStream(mImage));
-				dis.readFully(dst);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			} finally {
-				try {
-					dis.close();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
-
-		return LibRaw.getThumbWithWatermark(mImage, watermark, margins,
-				waterWidth, waterHeight);
 	}
 
 	@SuppressLint("SimpleDateFormat")
@@ -296,14 +274,7 @@ public class LocalImage extends MetaMedia {
 			return;
 
 		writeXmp(os);
-		try {
-			if (os != null) {
-				os.close();
-			}
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
+        Utils.closeSilently(os);
 	}
 
 	@Override

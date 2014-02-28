@@ -16,6 +16,20 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.CreateBeamUrisCallback;
+import android.nfc.NfcEvent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.widget.Toast;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ImageCacheService;
@@ -25,28 +39,7 @@ import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
-import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.RawDroid;
-import com.anthonymandra.rawdroid.ViewerChooser;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Rect;
-import android.net.Uri;
-import android.nfc.NfcAdapter;
-import android.nfc.NfcAdapter.CreateBeamUrisCallback;
-import android.nfc.NfcEvent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemClock;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.Menu;
-import android.widget.Toast;
 
 public abstract class PhotoPage extends AbstractGalleryActivity implements
         PhotoView.Listener, GalleryApp, PhotoDataAdapter.DataListener/*,ShareActionProvider.OnShareTargetSelectedListener,*/

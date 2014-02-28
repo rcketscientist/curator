@@ -1,20 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
-import pl.polidea.treeview.AbstractTreeViewAdapter;
-import pl.polidea.treeview.InMemoryTreeStateManager;
-import pl.polidea.treeview.TreeBuilder;
-import pl.polidea.treeview.TreeNodeInfo;
-import pl.polidea.treeview.TreeStateManager;
-import pl.polidea.treeview.TreeViewList;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -34,9 +19,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.MetaObject;
 import com.anthonymandra.widget.MultiSpinner;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import pl.polidea.treeview.AbstractTreeViewAdapter;
+import pl.polidea.treeview.InMemoryTreeStateManager;
+import pl.polidea.treeview.TreeBuilder;
+import pl.polidea.treeview.TreeNodeInfo;
+import pl.polidea.treeview.TreeStateManager;
+import pl.polidea.treeview.TreeViewList;
 
 public class XmpFragment extends SherlockFragment
 {
@@ -353,15 +355,7 @@ public class XmpFragment extends SherlockFragment
 		}
 		finally
 		{
-			try
-			{
-				if (readbuffer != null)
-					readbuffer.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+            Utils.closeSilently(readbuffer);
 		}
 
 		manager.collapseChildren(null);

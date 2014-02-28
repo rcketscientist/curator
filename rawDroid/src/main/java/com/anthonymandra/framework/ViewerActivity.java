@@ -1,11 +1,5 @@
 package com.anthonymandra.framework;
 
-import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.openintents.intents.FileManagerIntents;
-
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -15,7 +9,6 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
@@ -47,6 +40,12 @@ import com.anthonymandra.rawdroid.RawDroid;
 import com.anthonymandra.rawdroid.ViewerChooser;
 import com.anthonymandra.rawdroid.XmpFragment;
 import com.anthonymandra.widget.HistogramView;
+
+import org.openintents.intents.FileManagerIntents;
+
+import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by amand_000 on 8/27/13.
@@ -147,7 +146,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (Constants.VariantCode <= 16)
+        if (Constants.VariantCode < 12)
         {
             setWatermark(true);
         }
@@ -823,7 +822,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
         String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
         int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-        int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+        int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
         String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
         Margins margins = new Margins(settings);
 
@@ -844,12 +843,20 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
         else if (showWatermark)
         {
-        	processWatermark = true;
-            watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-            waterData = Util.getBitmapBytes(watermark);
-            waterWidth = watermark.getWidth();
-            waterHeight = watermark.getHeight();
-        }      
+            processWatermark = true;
+            if (watermarkText.isEmpty())
+            {
+                Toast.makeText(this, R.string.warningBlankWatermark, Toast.LENGTH_LONG);
+                processWatermark = false;
+            }
+            else
+            {
+                watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                waterData = Util.getBitmapBytes(watermark);
+                waterWidth = watermark.getWidth();
+                waterHeight = watermark.getHeight();
+            }
+        }
         
         boolean success;
 		if (processWatermark)

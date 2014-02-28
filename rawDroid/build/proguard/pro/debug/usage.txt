@@ -1404,12 +1404,12 @@ com.android.gallery3d.app.AbstractGalleryActivity:
     protected static final int FLAG_SHOW_WHEN_LOCKED
     protected int mFlags
     private static final java.lang.String KEY_TRANSITION_IN
-====    190:191:private static void setAlertDialogIconAttribute(android.app.AlertDialog$Builder)
-====    299:300:protected void disableToggleStatusBar()
-====    304:312:private void toggleStatusBarByOrientation()
-====    315:315:public com.android.gallery3d.app.TransitionStore getTransitionStore()
-====    323:323:protected boolean isFullscreen()
-====    412:431:private void setScreenFlags()
+====    187:188:private static void setAlertDialogIconAttribute(android.app.AlertDialog$Builder)
+====    296:297:protected void disableToggleStatusBar()
+====    301:309:private void toggleStatusBarByOrientation()
+====    312:312:public com.android.gallery3d.app.TransitionStore getTransitionStore()
+====    320:320:protected boolean isFullscreen()
+====    409:428:private void setScreenFlags()
 com.android.gallery3d.app.GalleryApp:
 ====    public abstract com.android.gallery3d.app.TransitionStore getTransitionStore()
 com.android.gallery3d.app.GalleryContext:
@@ -1436,8 +1436,8 @@ com.android.gallery3d.app.PhotoDataAdapter:
     private static final int BIT_SCREEN_NAIL
     private static final int BIT_FULL_IMAGE
     private static final int INDEX_NOT_FOUND
-====    593:605:public void setCurrentPhoto(android.net.Uri,int)
-====    620:621:public void setFocusHintPath(android.net.Uri)
+====    592:604:public void setCurrentPhoto(android.net.Uri,int)
+====    619:620:public void setFocusHintPath(android.net.Uri)
 com.android.gallery3d.app.PhotoPage:
     private static final java.lang.String TAG
     private static final int MSG_HIDE_BARS
@@ -1490,24 +1490,24 @@ com.android.gallery3d.app.PhotoPage:
     private boolean mDeleteIsFocus
     private com.android.gallery3d.data.ImageCacheService mImageCacheService
     private com.android.gallery3d.ui.GLRootView mGLRootView
-====    639:651:private void setupNfcBeamPush()
-====    654:655:private void setNfcBeamPushUri(android.net.Uri)
-====    663:663:private static android.content.Intent createShareIntent(com.android.gallery3d.data.MediaObject)
-====    671:671:private static android.content.Intent createSharePanoramaIntent(android.net.Uri)
-====    675:677:private void overrideTransitionToEditor()
-====    691:691:private void launchTinyPlanet()
-====    720:720:private void launchPhotoEditor()
-====    742:742:private void launchSimpleEditor()
-====    823:829:private boolean canDoSlideShow()
-====    914:923:private void onUpPressed()
-====    947:947:private void setResult()
-====    960:960:public boolean switchWithCaptureAnimation(int)
-====    1145:1145:private void hideDetails()
-====    1159:1159:private void showDetails()
-====    1250:1250:public void onUndoDeleteImage()
-====    1270:1270:public void playVideo(android.app.Activity,android.net.Uri,java.lang.String)
-====    1289:1289:private void setCurrentPhotoByIntent(android.content.Intent)
-====    51:51:static synthetic android.net.Uri[] access$1500(com.android.gallery3d.app.PhotoPage)
+====    632:644:private void setupNfcBeamPush()
+====    647:648:private void setNfcBeamPushUri(android.net.Uri)
+====    656:656:private static android.content.Intent createShareIntent(com.android.gallery3d.data.MediaObject)
+====    664:664:private static android.content.Intent createSharePanoramaIntent(android.net.Uri)
+====    668:670:private void overrideTransitionToEditor()
+====    684:684:private void launchTinyPlanet()
+====    713:713:private void launchPhotoEditor()
+====    735:735:private void launchSimpleEditor()
+====    816:822:private boolean canDoSlideShow()
+====    907:916:private void onUpPressed()
+====    940:940:private void setResult()
+====    953:953:public boolean switchWithCaptureAnimation(int)
+====    1138:1138:private void hideDetails()
+====    1152:1152:private void showDetails()
+====    1243:1243:public void onUndoDeleteImage()
+====    1263:1263:public void playVideo(android.app.Activity,android.net.Uri,java.lang.String)
+====    1282:1282:private void setCurrentPhotoByIntent(android.content.Intent)
+====    44:44:static synthetic android.net.Uri[] access$1500(com.android.gallery3d.app.PhotoPage)
 com.android.gallery3d.app.PhotoPage$3
 com.android.gallery3d.app.TransitionStore:
 ====    25:26:public void put(java.lang.Object,java.lang.Object)
@@ -1588,19 +1588,19 @@ com.android.gallery3d.data.BytesBufferPool$BytesBuffer:
 ====    41:59:public void readFrom(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor)
 com.android.gallery3d.data.DecodeUtils:
     private static final java.lang.String TAG
-====    42:45:public DecodeUtils()
-====    64:67:public static android.graphics.Bitmap decode(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
-====    73:78:public static void decodeBounds(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
-====    81:81:public static android.graphics.Bitmap decode(com.android.gallery3d.util.ThreadPool$JobContext,byte[],android.graphics.BitmapFactory$Options)
-====    104:113:public static android.graphics.Bitmap decodeThumbnail(com.android.gallery3d.util.ThreadPool$JobContext,java.lang.String,android.graphics.BitmapFactory$Options,int,int)
-====    119:161:public static android.graphics.Bitmap decodeThumbnail(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options,int,int)
-====    200:214:public static android.graphics.Bitmap decodeIfBigEnough(com.android.gallery3d.util.ThreadPool$JobContext,java.io.InputStream,android.graphics.BitmapFactory$Options,int)
-====    249:252:public static android.graphics.BitmapRegionDecoder createBitmapRegionDecoder(com.android.gallery3d.util.ThreadPool$JobContext,java.lang.String,boolean)
-====    259:262:public static android.graphics.BitmapRegionDecoder createBitmapRegionDecoder(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,boolean)
-====    269:274:public static android.graphics.BitmapRegionDecoder createBitmapRegionDecoder(com.android.gallery3d.util.ThreadPool$JobContext,java.io.InputStream,boolean)
-====    308:326:public static android.graphics.Bitmap decodeUsingPool(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
-====    338:339:private static android.graphics.Bitmap findCachedBitmap(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
-====    391:445:public static android.graphics.Bitmap decodeThumbnail(com.android.gallery3d.util.ThreadPool$JobContext,java.io.InputStream,android.graphics.BitmapFactory$Options,int,int)
+====    41:44:public DecodeUtils()
+====    63:66:public static android.graphics.Bitmap decode(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
+====    72:77:public static void decodeBounds(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
+====    80:80:public static android.graphics.Bitmap decode(com.android.gallery3d.util.ThreadPool$JobContext,byte[],android.graphics.BitmapFactory$Options)
+====    103:112:public static android.graphics.Bitmap decodeThumbnail(com.android.gallery3d.util.ThreadPool$JobContext,java.lang.String,android.graphics.BitmapFactory$Options,int,int)
+====    118:160:public static android.graphics.Bitmap decodeThumbnail(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options,int,int)
+====    199:213:public static android.graphics.Bitmap decodeIfBigEnough(com.android.gallery3d.util.ThreadPool$JobContext,java.io.InputStream,android.graphics.BitmapFactory$Options,int)
+====    248:251:public static android.graphics.BitmapRegionDecoder createBitmapRegionDecoder(com.android.gallery3d.util.ThreadPool$JobContext,java.lang.String,boolean)
+====    258:261:public static android.graphics.BitmapRegionDecoder createBitmapRegionDecoder(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,boolean)
+====    268:273:public static android.graphics.BitmapRegionDecoder createBitmapRegionDecoder(com.android.gallery3d.util.ThreadPool$JobContext,java.io.InputStream,boolean)
+====    307:325:public static android.graphics.Bitmap decodeUsingPool(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
+====    337:338:private static android.graphics.Bitmap findCachedBitmap(com.android.gallery3d.util.ThreadPool$JobContext,java.io.FileDescriptor,android.graphics.BitmapFactory$Options)
+====    390:444:public static android.graphics.Bitmap decodeThumbnail(com.android.gallery3d.util.ThreadPool$JobContext,java.io.InputStream,android.graphics.BitmapFactory$Options,int,int)
 com.android.gallery3d.data.ImageCacheRequest:
     private static final java.lang.String TAG
 com.android.gallery3d.data.ImageCacheService:
@@ -1621,12 +1621,12 @@ com.android.gallery3d.data.MediaItem:
     private static final int BYTESBUFFE_POOL_SIZE
     private static final int BYTESBUFFER_SIZE
     public static final double INVALID_LATLNG
-====    63:63:public long getDateInMs()
-====    71:73:public void getLatLong(double[])
-====    76:76:public java.lang.String[] getTags()
-====    94:94:public long getSize()
+====    62:62:public long getDateInMs()
+====    70:72:public void getLatLong(double[])
+====    75:75:public java.lang.String[] getTags()
+====    93:93:public long getSize()
 ====    public abstract java.lang.String getMimeType()
-====    111:111:public com.android.gallery3d.ui.ScreenNail getScreenNail()
+====    110:110:public com.android.gallery3d.ui.ScreenNail getScreenNail()
 com.android.gallery3d.data.MediaObject:
     private static final java.lang.String TAG
     public static final long INVALID_DATA_VERSION
@@ -1861,7 +1861,7 @@ com.android.gallery3d.ui.EdgeEffect:
     private static final float PULL_DISTANCE_ALPHA_GLOW_FACTOR
     private static final int VELOCITY_EDGE_FACTOR
     private static final int VELOCITY_GLOW_FACTOR
-====    171:172:public void finish()
+====    170:171:public void finish()
 com.android.gallery3d.ui.EdgeView:
     private static final java.lang.String TAG
     public static final int INVALID_DIRECTION
@@ -1954,20 +1954,20 @@ com.android.gallery3d.ui.PhotoView:
     private static final int UNDO_BAR_TOUCHED
     private static final int UNDO_BAR_FULL_CAMERA
     private static final int UNDO_BAR_DELETE_LAST
-====    463:463:public boolean isDeleting()
-====    549:555:public void setCameraRelativeFrame(android.graphics.Rect)
-====    1326:1327:public void setSwipingEnabled(boolean)
-====    1375:1377:public void resetToFirstPicture()
-====    1393:1399:private void showUndoBar(boolean)
-====    1431:1431:public boolean canUndo()
-====    1639:1640:public void switchToImage(int)
-====    1651:1652:private void switchToFirstImage()
-====    1659:1660:public void setOpenAnimationRect(android.graphics.Rect)
-====    1667:1673:public boolean switchWithCaptureAnimation(int)
-====    1678:1706:private boolean switchWithCaptureAnimationLocked(int)
-====    1828:1828:public android.graphics.Rect getPhotoRect(int)
+====    462:462:public boolean isDeleting()
+====    548:554:public void setCameraRelativeFrame(android.graphics.Rect)
+====    1325:1326:public void setSwipingEnabled(boolean)
+====    1374:1376:public void resetToFirstPicture()
+====    1392:1398:private void showUndoBar(boolean)
+====    1430:1430:public boolean canUndo()
+====    1638:1639:public void switchToImage(int)
+====    1650:1651:private void switchToFirstImage()
+====    1658:1659:public void setOpenAnimationRect(android.graphics.Rect)
+====    1666:1672:public boolean switchWithCaptureAnimation(int)
+====    1677:1705:private boolean switchWithCaptureAnimationLocked(int)
+====    1827:1827:public android.graphics.Rect getPhotoRect(int)
 com.android.gallery3d.ui.PhotoView$1:
-====    296:297:public void onRelease()
+====    295:296:public void onRelease()
 com.android.gallery3d.ui.PhotoView$Listener:
 ====    public abstract void onUndoDeleteImage()
 com.android.gallery3d.ui.PhotoView$Model:
@@ -1978,7 +1978,7 @@ com.android.gallery3d.ui.PhotoView$Model:
     public static final int FOCUS_HINT_PREVIOUS
 ====    public abstract void setFocusHintPath(android.net.Uri)
 com.android.gallery3d.ui.PhotoView$MyGestureListener:
-====    1315:1316:public void setSwipingEnabled(boolean)
+====    1314:1315:public void setSwipingEnabled(boolean)
 com.android.gallery3d.ui.PositionController:
     private static final java.lang.String TAG
     public static final int IMAGE_AT_LEFT_EDGE
@@ -2010,11 +2010,11 @@ com.android.gallery3d.ui.PositionController:
     private static final int BOX_MAX
     private static final int DEFAULT_DELETE_ANIMATION_DURATION
     private static final int MAX_DELETE_ANIMATION_DURATION
-====    231:232:public void setOpenAnimationRect(android.graphics.Rect)
-====    552:562:public void startCaptureAnimationSlide(int)
-====    869:884:private void dumpState()
-====    887:900:private void dumpRect(int)
-====    994:1005:private void debugMoveBox(int[])
+====    230:231:public void setOpenAnimationRect(android.graphics.Rect)
+====    551:561:public void startCaptureAnimationSlide(int)
+====    868:883:private void dumpState()
+====    886:899:private void dumpRect(int)
+====    993:1004:private void debugMoveBox(int[])
 com.android.gallery3d.ui.PositionController$Listener:
 ====    public abstract void onRelease()
 com.android.gallery3d.ui.PreparePageFadeoutTexture
@@ -2068,25 +2068,25 @@ com.android.gallery3d.util.GalleryUtils:
     private static volatile boolean sWarned
     private static final double RAD_PER_DEG
     private static final double EARTH_RADIUS_METERS
-====    46:46:public GalleryUtils()
-====    109:109:public static int meterToPixel(float)
-====    133:139:public static void assertNotInRenderThread()
-====    146:164:public static double fastDistanceMeters(double,double,double,double)
-====    169:172:public static double accurateDistanceMeters(double,double,double,double)
-====    178:178:public static final double toMile(double)
-====    183:192:public static void fakeBusy(com.android.gallery3d.util.ThreadPool$JobContext,int)
-====    211:211:public static boolean isEditorAvailable(android.content.Context,java.lang.String)
-====    226:226:public static boolean isAnyCameraAvailable(android.content.Context)
-====    230:238:public static boolean isCameraAvailable(android.content.Context)
-====    242:246:public static void startCameraActivity(android.content.Context)
-====    257:257:public static boolean isValidLocation(double,double)
-====    264:264:public static java.lang.String formatLatitudeLongitude(java.lang.String,double,double)
-====    273:287:public static void showOnMap(android.content.Context,double,double)
-====    296:301:public static void setViewPointMatrix(float[],float,float,float)
-====    304:304:public static int getBucketId(java.lang.String)
-====    310:324:public static java.lang.String searchDirForPath(java.io.File,int)
-====    377:389:public static boolean hasSpaceForSize(long)
-====    393:396:public static boolean isPanorama(com.android.gallery3d.data.MediaItem)
+====    45:45:public GalleryUtils()
+====    108:108:public static int meterToPixel(float)
+====    132:138:public static void assertNotInRenderThread()
+====    145:163:public static double fastDistanceMeters(double,double,double,double)
+====    168:171:public static double accurateDistanceMeters(double,double,double,double)
+====    177:177:public static final double toMile(double)
+====    182:191:public static void fakeBusy(com.android.gallery3d.util.ThreadPool$JobContext,int)
+====    210:210:public static boolean isEditorAvailable(android.content.Context,java.lang.String)
+====    225:225:public static boolean isAnyCameraAvailable(android.content.Context)
+====    229:237:public static boolean isCameraAvailable(android.content.Context)
+====    241:245:public static void startCameraActivity(android.content.Context)
+====    256:256:public static boolean isValidLocation(double,double)
+====    263:263:public static java.lang.String formatLatitudeLongitude(java.lang.String,double,double)
+====    272:286:public static void showOnMap(android.content.Context,double,double)
+====    295:300:public static void setViewPointMatrix(float[],float,float,float)
+====    303:303:public static int getBucketId(java.lang.String)
+====    309:323:public static java.lang.String searchDirForPath(java.io.File,int)
+====    376:388:public static boolean hasSpaceForSize(long)
+====    392:395:public static boolean isPanorama(com.android.gallery3d.data.MediaItem)
 com.android.gallery3d.util.GalleryUtils$1
 com.android.gallery3d.util.IntArray:
     private static final int INIT_CAPACITY
@@ -2312,9 +2312,9 @@ com.android.photos.data.GalleryBitmapPool:
 ====    92:96:public synchronized int getSize()
 com.android.photos.data.SparseArrayBitmapPool:
     private static final int BITMAPS_TO_KEEP_AFTER_UNNEEDED_HINT
-====    51:53:public synchronized void setCapacity(int)
-====    97:97:public synchronized int getCapacity()
-====    101:101:public synchronized int getSize()
+====    50:52:public synchronized void setCapacity(int)
+====    96:96:public synchronized int getCapacity()
+====    100:100:public synchronized int getSize()
 com.anthonymandra.content.Meta:
     public static final int ID_COLUMN
     public static final int NAME_COLUMN
@@ -2338,7 +2338,7 @@ com.anthonymandra.content.Meta:
     public static final int THUMB_HEIGHT_COLUMN
     public static final int THUMB_WIDTH_COLUMN
     public static final java.lang.String AUTHORITY
-====    10:36:public Meta()
+====    8:34:public Meta()
 com.anthonymandra.content.Meta$Data:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_META_TYPE
@@ -2364,7 +2364,7 @@ com.anthonymandra.content.Meta$Data:
     public static final java.lang.String THUMB_WIDTH
     public static final java.lang.String MEDIA_ID
     public static final java.lang.String _DATA
-====    36:36:public Meta$Data()
+====    34:34:public Meta$Data()
 com.anthonymandra.content.MetaProvider:
     public static final java.lang.String DATABASE_NAME
     public static final java.lang.String META_TABLE_NAME
@@ -2377,8 +2377,9 @@ com.anthonymandra.content.ResponseHandler
 com.anthonymandra.dcraw.LibRaw:
     private static final java.lang.String TAG
     private static final int numThreads
-====    29:153:public LibRaw()
+====    14:138:public LibRaw()
 ====    private static native boolean canDecodeFromBuffer(byte[])
+====    private static native boolean canDecodeFromFile(java.lang.String)
 ====    public static native java.lang.String[] canDecodeDirectory(java.lang.String)
 ====    private static native byte[] getThumbWithWatermark(java.lang.String,byte[],int[],int,int)
 ====    private static native byte[] getThumbFromBuffer(byte[],java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
@@ -2390,9 +2391,10 @@ com.anthonymandra.dcraw.LibRaw:
 ====    private static native android.graphics.BitmapRegionDecoder getRawFromBuffer(byte[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
 ====    public static native boolean writeRawFromBuffer(byte[],java.lang.String)
 ====    public static native boolean writeRawFromFile(java.lang.String,java.lang.String)
-====    91:95:public static boolean canDecode(byte[])
-====    105:105:public static byte[] getThumb(byte[],java.lang.String[])
-====    110:113:public static byte[] getThumbWithWatermark(java.io.File,byte[],com.anthonymandra.dcraw.LibRaw$Margins,int,int)
+====    76:80:public static boolean canDecode(byte[])
+====    85:85:public static boolean canDecode(java.io.File)
+====    90:90:public static byte[] getThumb(byte[],java.lang.String[])
+====    95:98:public static byte[] getThumbWithWatermark(java.io.File,byte[],com.anthonymandra.dcraw.LibRaw$Margins,int,int)
 com.anthonymandra.dcraw.TiffDecoder:
 ====    17:17:public TiffDecoder()
 ====    public static native int[] getThumb(java.lang.String,int[])
@@ -2454,9 +2456,9 @@ com.anthonymandra.framework.GalleryActivity:
     public static final java.lang.String RECYCLE_BIN_DIR
     public static final int FILE_NOT_FOUND
     private static final int REQUEST_CODE_SHARE
-====    201:209:protected int getImageId(com.anthonymandra.framework.RawObject)
-====    438:438:protected java.io.File getSwapFile(java.lang.String)
-====    550:552:protected void requestWebIntent()
+====    185:193:protected int getImageId(com.anthonymandra.framework.RawObject)
+====    386:386:protected java.io.File getSwapFile(java.lang.String)
+====    498:500:protected void requestWebIntent()
 com.anthonymandra.framework.Histogram:
 ====    72:72:public int getMaxFreqR()
 ====    77:77:public int getMaxFreqG()
@@ -2471,13 +2473,13 @@ com.anthonymandra.framework.ImageCache:
     private static final boolean DEFAULT_DISK_CACHE_ENABLED
     private static final boolean DEFAULT_CLEAR_DISK_CACHE_ON_START
     private static final boolean DEFAULT_INIT_DISK_CACHE_ON_CREATE
-====    65:90:public ImageCache(android.content.Context,java.lang.String)
-====    274:282:public android.graphics.Bitmap getBitmapFromMemCache(java.lang.String)
+====    64:89:public ImageCache(android.content.Context,java.lang.String)
+====    273:281:public android.graphics.Bitmap getBitmapFromMemCache(java.lang.String)
 com.anthonymandra.framework.ImageCache$ImageCacheParams:
-====    428:446:public ImageCache$ImageCacheParams(java.io.File)
+====    427:445:public ImageCache$ImageCacheParams(java.io.File)
 com.anthonymandra.framework.ImageDecoder:
     private static final java.lang.String TAG
-====    27:28:public ImageDecoder(android.content.Context,int,int)
+====    22:23:public ImageDecoder(android.content.Context,int,int)
 com.anthonymandra.framework.ImageResizer:
     private static final java.lang.String TAG
 ====    51:53:public ImageResizer(android.content.Context,int,int)
@@ -2491,17 +2493,18 @@ com.anthonymandra.framework.License:
     public static final java.lang.String KEY_LICENSE_RESPONSE
 com.anthonymandra.framework.LocalImage:
 ====    51:51:public java.io.File getFile()
-====    93:93:public java.lang.String getMimeType()
-====    119:141:public byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
-====    440:456:private boolean writeThumb(byte[],java.io.File)
+====    82:86:public byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
+====    104:104:public java.lang.String getMimeType()
+====    123:125:public boolean canDecode()
+====    423:439:private boolean writeThumb(byte[],java.io.File)
 com.anthonymandra.framework.LongSparseArray
 com.anthonymandra.framework.MetaMedia:
 ====    public abstract boolean hasXmp()
-====    142:144:public java.lang.String getImageHeight()
-====    149:151:public java.lang.String getImageWidth()
-====    215:217:public java.lang.String getLensMake()
-====    280:286:public java.lang.String getMake()
-====    622:623:public int getThumbHeight()
+====    141:143:public java.lang.String getImageHeight()
+====    148:150:public java.lang.String getImageWidth()
+====    214:216:public java.lang.String getLensMake()
+====    279:285:public java.lang.String getMake()
+====    621:622:public int getThumbHeight()
 com.anthonymandra.framework.MetaObject:
 ====    public abstract java.lang.String getAperture()
 ====    public abstract java.lang.String getImageHeight()
@@ -2540,15 +2543,15 @@ com.anthonymandra.framework.RecycleBin$RetainFragment
 com.anthonymandra.framework.SwapProvider:
     public static final java.lang.String AUTHORITY
 com.anthonymandra.framework.Util:
-====    65:65:public static boolean hasFroyo()
-====    85:85:public static boolean hasIceCreamSandwich()
-====    90:90:public static boolean hasJellyBean()
-====    287:295:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
-====    300:319:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
-====    417:436:public static android.graphics.Bitmap addWatermark2(android.content.Context,android.graphics.Bitmap)
-====    441:490:public static android.graphics.Bitmap addWatermark(android.content.Context,java.io.File,android.graphics.Bitmap)
-====    521:569:public static android.graphics.Bitmap addWatermark(android.content.Context,android.graphics.Bitmap)
-====    575:620:public static android.graphics.Bitmap addCustomWatermark(android.graphics.Bitmap,java.lang.String,int,int,java.lang.String)
+====    63:63:public static boolean hasFroyo()
+====    83:83:public static boolean hasIceCreamSandwich()
+====    88:88:public static boolean hasJellyBean()
+====    285:293:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
+====    298:317:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
+====    415:434:public static android.graphics.Bitmap addWatermark2(android.content.Context,android.graphics.Bitmap)
+====    439:488:public static android.graphics.Bitmap addWatermark(android.content.Context,java.io.File,android.graphics.Bitmap)
+====    519:567:public static android.graphics.Bitmap addWatermark(android.content.Context,android.graphics.Bitmap)
+====    573:618:public static android.graphics.Bitmap addCustomWatermark(android.graphics.Bitmap,java.lang.String,int,int,java.lang.String)
 com.anthonymandra.framework.ViewerActivity:
     protected static final int REQUEST_CODE_PICK_FILE_OR_DIRECTORY
     protected static final int REQUEST_CODE_KEYWORDS
@@ -2559,7 +2562,7 @@ com.anthonymandra.rawdroid.AppRater:
     private static final java.lang.String PREF_NAME
     private static final int DAYS_UNTIL_PROMPT
     private static final int LAUNCHES_UNTIL_PROMPT
-====    13:13:public AppRater()
+====    12:12:public AppRater()
 com.anthonymandra.rawdroid.BuildConfig:
     public static final java.lang.String PACKAGE_NAME
     public static final java.lang.String BUILD_TYPE
@@ -2638,9 +2641,9 @@ com.anthonymandra.rawdroid.FullSettingsActivity$WatermarkLocations
 com.anthonymandra.rawdroid.ImageModel
 com.anthonymandra.rawdroid.LegacyViewerActivity:
     private boolean isInterfaceHidden
-====    502:503:public void deleteToPrevious()
+====    497:498:public void deleteToPrevious()
 com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel:
-====    344:361:public void deleteToPrevious()
+====    339:356:public void deleteToPrevious()
 com.anthonymandra.rawdroid.LicenseManager:
     private static final java.lang.String BASE64_PUBLIC_KEY
     private static final int mySignatureHash
@@ -2651,7 +2654,7 @@ com.anthonymandra.rawdroid.LicenseManager:
     private static final java.lang.String amzn
     private static final java.lang.String firstInstall
     private static final long trialPeriod
-====    203:216:public static boolean scuttle(java.lang.String,java.lang.String)
+====    200:213:public static boolean scuttle(java.lang.String,java.lang.String)
 com.anthonymandra.rawdroid.LicenseReceiver
 com.anthonymandra.rawdroid.ParentChild:
 ====    16:16:public java.lang.Object getParent()
@@ -2692,10 +2695,10 @@ com.anthonymandra.rawdroid.RawDroid:
     private static final int REQUEST_UPDATE_PHOTO
     private android.os.Parcelable gridState
     android.app.Dialog formatDialog
-====    825:834:public static boolean isCamera(android.hardware.usb.UsbDevice)
+====    826:835:public static boolean isCamera(android.hardware.usb.UsbDevice)
 com.anthonymandra.rawdroid.RawDroid$DirAlphaComparator
 com.anthonymandra.rawdroid.RawDroid$ImageAdapter:
-====    1133:1133:public java.util.List getSelectedItems()
+====    1134:1134:public java.util.List getSelectedItems()
 com.anthonymandra.rawdroid.RawDroid$TutorialView
 com.anthonymandra.rawdroid.XmpFragment:
     public static final java.lang.String FRAGMENT_TAG

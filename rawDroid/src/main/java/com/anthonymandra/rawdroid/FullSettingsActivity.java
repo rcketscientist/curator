@@ -1,12 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.List;
-
-import org.openintents.intents.FileManagerIntents;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -30,6 +23,13 @@ import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.SeekBarPreference;
+
+import org.openintents.intents.FileManagerIntents;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class FullSettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener

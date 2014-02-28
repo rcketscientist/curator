@@ -16,10 +16,6 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.anim.CanvasAnimation;
-import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
-import com.android.legacy.util.Utils;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
@@ -30,6 +26,10 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import com.android.legacy.anim.CanvasAnimation;
+import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
+import com.android.legacy.util.Utils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

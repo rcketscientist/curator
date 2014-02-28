@@ -1,14 +1,12 @@
 package com.anthonymandra.rawdroid;
 
-import com.anthonymandra.framework.Util;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import com.anthonymandra.framework.Util;
 
 /**
  * Created by amand_000 on 8/29/13.

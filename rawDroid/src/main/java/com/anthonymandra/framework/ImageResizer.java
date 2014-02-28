@@ -16,11 +16,6 @@
 
 package com.anthonymandra.framework;
 
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -28,6 +23,11 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.anthonymandra.rawdroid.BuildConfig;
+
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A simple subclass of {@link ImageWorker} that resizes images from resources given a target width and height. Useful for when the input images might

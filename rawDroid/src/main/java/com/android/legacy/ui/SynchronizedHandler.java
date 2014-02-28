@@ -16,10 +16,10 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.util.Utils;
-
 import android.os.Handler;
 import android.os.Message;
+
+import com.android.legacy.util.Utils;
 
 public class SynchronizedHandler extends Handler
 {

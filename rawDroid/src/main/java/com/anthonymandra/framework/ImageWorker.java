@@ -16,8 +16,6 @@
 
 package com.anthonymandra.framework;
 
-import java.lang.ref.WeakReference;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -28,6 +26,8 @@ import android.util.Log;
 
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
+
+import java.lang.ref.WeakReference;
 
 /**
  * This class wraps up completing some arbitrary long running work when loading a bitmap to an ImageView. It handles things like using a memory and

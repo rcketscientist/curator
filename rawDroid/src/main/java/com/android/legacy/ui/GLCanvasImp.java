@@ -16,15 +16,15 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
-import com.android.legacy.util.IntArray;
-import com.android.legacy.util.Utils;
-
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.opengl.GLU;
 import android.opengl.Matrix;
 import android.util.Log;
+
+import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
+import com.android.legacy.util.IntArray;
+import com.android.legacy.util.Utils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

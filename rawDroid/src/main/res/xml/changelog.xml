@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="2.5.8"
+        versioncode="25800"
+        summary="Minor fixes"
+        date="2/28/2014">
+        <change>Added: Focal Length in meta settings</change>
+        <change>Fixed: Crash when setting blank watermark</change>
+        <change>Fixed: Tutorial crash with hardware menu button</change>
+    </release>
     <release version="2.5.7"
         versioncode="25700"
         summary="Export/share patch"

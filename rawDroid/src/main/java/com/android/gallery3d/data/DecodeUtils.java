@@ -16,13 +16,6 @@
 
 package com.android.gallery3d.data;
 
-import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.common.BitmapUtils;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.util.ThreadPool.CancelListener;
-import com.android.gallery3d.util.ThreadPool.JobContext;
-import com.android.photos.data.GalleryBitmapPool;
-
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -33,7 +26,13 @@ import android.os.Build;
 import android.util.FloatMath;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
+import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.common.BitmapUtils;
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.util.ThreadPool.CancelListener;
+import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.android.photos.data.GalleryBitmapPool;
+
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;

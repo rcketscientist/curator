@@ -4,12 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.BuildConfig;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 public class ImageDecoder extends ImageResizer
 {

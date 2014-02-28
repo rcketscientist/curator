@@ -21,7 +21,6 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.widget.Scroller;
 
-import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.ui.PhotoView.Size;
 import com.android.gallery3d.util.GalleryUtils;

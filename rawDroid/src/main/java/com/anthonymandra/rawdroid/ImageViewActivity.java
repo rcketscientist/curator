@@ -1,7 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import java.util.WeakHashMap;
-
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,6 +10,8 @@ import com.android.gallery3d.app.PhotoDataAdapter.DataListener;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
+
+import java.util.WeakHashMap;
 
 public class ImageViewActivity extends PhotoPage implements DataListener
 {

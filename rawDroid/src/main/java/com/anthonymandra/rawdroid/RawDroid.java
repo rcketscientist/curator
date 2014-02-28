@@ -20,8 +20,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
@@ -245,6 +243,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void doFirstRun()
 	{
+        if (Constants.VariantCode > 9)
+            return;
+
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         if (settings.getBoolean("isFirstRun", true)) 
         {
@@ -1374,7 +1375,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
             String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
             int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 12);
+            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
             String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
             Margins margins = new Margins(pref);
             
@@ -1383,7 +1384,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             boolean processWatermark = false;
             int waterWidth = 0, waterHeight = 0;
             		
-            if (Constants.VariantCode <= 8 || LicenseManager.getLastResponse() != License.LicenseState.pro)
+            if (Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
             	processWatermark = true;
                 watermark = Util.getDemoWatermark(RawDroid.this, copyList.get(0).getThumbWidth());
@@ -1394,12 +1395,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             }
             else if (showWatermark)
             {
-            	processWatermark = true;
-                watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                waterData = Util.getBitmapBytes(watermark);
-                waterWidth = watermark.getWidth();
-                waterHeight = watermark.getHeight();
-            }             
+                processWatermark = true;
+                if (watermarkText.isEmpty())
+                {
+                    Toast.makeText(RawDroid.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG);
+                    processWatermark = false;
+                }
+                else
+                {
+                    watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                    waterData = Util.getBitmapBytes(watermark);
+                    waterWidth = watermark.getWidth();
+                    waterHeight = watermark.getHeight();
+                }
+            }
           
 			for (RawObject toExport : copyList)
 			{

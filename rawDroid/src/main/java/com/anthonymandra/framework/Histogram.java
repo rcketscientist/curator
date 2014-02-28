@@ -1,8 +1,8 @@
 package com.anthonymandra.framework;
 
-import java.util.Arrays;
-
 import android.graphics.Color;
+
+import java.util.Arrays;
 
 public class Histogram
 {

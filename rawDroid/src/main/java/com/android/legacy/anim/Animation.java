@@ -1,8 +1,8 @@
 package com.android.legacy.anim;
 
-import com.android.legacy.util.Utils;
-
 import android.view.animation.Interpolator;
+
+import com.android.legacy.util.Utils;
 
 // Animation calculates a value according to the current input time.
 //

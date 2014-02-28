@@ -159,7 +159,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromBuff
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
 	
 	int result = RawProcessor.open_buffer(buffer, len);
-	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
 	RawProcessor.recycle();
 
 	if (result == 0)
@@ -235,7 +235,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuf
 	jsize len = env->GetArrayLength(bufferBytes);
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
 	result = rawProcessor->open_buffer(buffer, len);
-	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
 
@@ -398,7 +398,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromBuf
 	jsize len = env->GetArrayLength(bufferBytes);
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
 	int result = rawProcessor->open_buffer(buffer, len);
-	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
 	if (LIBRAW_FATAL_ERROR(result))
 		return JNI_FALSE;
 
@@ -473,7 +473,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRawFromBuffe
 	jsize len = env->GetArrayLength(bufferBytes);
 	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
 	int result = rawProcessor->open_buffer(buffer, len);
-	env->ReleaseByteArrayElements(bufferBytes, buffer, 0);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
 
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;

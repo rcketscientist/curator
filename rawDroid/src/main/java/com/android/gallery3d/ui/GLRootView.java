@@ -30,7 +30,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 
-import com.anthonymandra.rawdroid.R;
 import com.android.gallery3d.anim.CanvasAnimation;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
@@ -42,6 +41,7 @@ import com.android.gallery3d.glrenderer.UploadedTexture;
 import com.android.gallery3d.util.GalleryUtils;
 import com.android.gallery3d.util.MotionEventHelper;
 import com.android.gallery3d.util.Profile;
+import com.anthonymandra.rawdroid.R;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

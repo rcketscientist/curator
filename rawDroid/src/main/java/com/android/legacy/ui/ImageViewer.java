@@ -16,10 +16,6 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
-import com.android.legacy.util.Utils;
-import com.anthonymandra.rawdroid.LegacyViewerActivity;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -34,6 +30,10 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+
+import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
+import com.android.legacy.util.Utils;
+import com.anthonymandra.rawdroid.LegacyViewerActivity;
 
 import java.util.HashMap;
 import java.util.Iterator;

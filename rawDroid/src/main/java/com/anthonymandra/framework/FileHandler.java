@@ -1,11 +1,11 @@
 package com.anthonymandra.framework;
 
-import java.io.IOException;
-
 import android.content.ContentValues;
 import android.net.Uri;
 
 import com.anthonymandra.content.ResponseHandler;
+
+import java.io.IOException;
 
 public class FileHandler implements ResponseHandler
 {

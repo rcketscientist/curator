@@ -1,11 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.openintents.intents.FileManagerIntents;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -28,6 +22,12 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.anthonymandra.framework.AsyncTask;
+
+import org.openintents.intents.FileManagerIntents;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class CameraImport extends Activity

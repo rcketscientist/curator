@@ -1,9 +1,9 @@
 package com.anthonymandra.content;
 
-import java.io.IOException;
-
 import android.content.ContentValues;
 import android.net.Uri;
+
+import java.io.IOException;
 
 /**
  * Enables custom handling of HttpResponse and the entities they contain.

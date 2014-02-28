@@ -5998,6 +5998,7 @@ com.anthonymandra.rawdroid.R$string: int view
 com.anthonymandra.rawdroid.R$string: int view_tag
 com.anthonymandra.rawdroid.R$string: int viewer
 com.anthonymandra.rawdroid.R$string: int wallpaper
+com.anthonymandra.rawdroid.R$string: int warningBlankWatermark
 com.anthonymandra.rawdroid.R$string: int warningDeleteDirect
 com.anthonymandra.rawdroid.R$string: int warningDeleteExceedsRecycle
 com.anthonymandra.rawdroid.R$string: int warningFailedToGetStream

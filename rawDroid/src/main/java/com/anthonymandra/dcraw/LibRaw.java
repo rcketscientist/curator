@@ -2,27 +2,12 @@ package com.anthonymandra.dcraw;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapRegionDecoder;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.preference.PreferenceManager;
-import android.text.format.Time;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Timer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

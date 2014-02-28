@@ -1,13 +1,5 @@
 package com.anthonymandra.framework;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Handler;
-import android.util.Log;
-
 /**
  * Created by amand_000 on 9/10/13.
  */

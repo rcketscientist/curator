@@ -1,52 +1,36 @@
 package com.anthonymandra.framework;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.widget.ShareActionProvider;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.MediaItem;
-import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw;
-import com.anthonymandra.rawdroid.BuildConfig;
-import com.anthonymandra.rawdroid.FullSettingsActivity;
-import com.anthonymandra.rawdroid.LicenseManager;
-import com.anthonymandra.rawdroid.R;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.widget.ShareActionProvider;
+import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.LicenseManager;
+import com.anthonymandra.rawdroid.R;
+
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -530,7 +514,6 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
         body.append("SDK:       " + Build.VERSION.SDK_INT).append("\n\n");
         body.append("---Please don't remove this data---").append("\n\n");
 
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Help Request");
         emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
         startActivity(Intent.createChooser(emailIntent, "Send email..."));
     }

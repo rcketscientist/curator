@@ -16,21 +16,6 @@
 
 package com.anthonymandra.framework;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.FileChannel;
-import java.util.List;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -46,11 +31,24 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
-import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
-import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.R;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.util.List;
 
 /**
  * Class containing some static utility methods.
@@ -172,15 +170,7 @@ public class Util
 		}
 		finally
 		{
-			try
-			{
-				if (readbuffer != null)
-					readbuffer.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+            Utils.closeSilently(readbuffer);
 		}
 		return numberOfLevels > 0;
 	}
@@ -695,20 +685,8 @@ public class Util
 		}
 		finally
 		{
-			try
-			{
-				if (bos != null)
-				{
-					bos.close();
-				}
-				if (is != null)
-				{
-					is.close();
-				}
-			}
-			catch (IOException e)
-			{
-			}
+            Utils.closeSilently(bos);
+            Utils.closeSilently(is);
 		}
 	}
 }

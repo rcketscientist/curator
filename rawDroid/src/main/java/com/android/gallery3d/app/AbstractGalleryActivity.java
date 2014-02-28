@@ -16,22 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import com.android.gallery3d.anim.StateTransitionAnimation;
-import com.android.gallery3d.common.ApiHelper;
-import com.android.gallery3d.data.ImageCacheService;
-import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.glrenderer.RawTexture;
-import com.android.gallery3d.ui.GLRoot;
-import com.android.gallery3d.ui.GLRootView;
-import com.android.gallery3d.ui.GLView;
-import com.android.gallery3d.ui.PreparePageFadeoutTexture;
-import com.android.gallery3d.util.GalleryUtils;
-import com.android.gallery3d.util.ThreadPool;
-import com.android.photos.data.GalleryBitmapPool;
-import com.anthonymandra.framework.GalleryActivity;
-import com.anthonymandra.framework.ViewerActivity;
-import com.anthonymandra.rawdroid.R;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -42,6 +26,19 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.android.gallery3d.anim.StateTransitionAnimation;
+import com.android.gallery3d.common.ApiHelper;
+import com.android.gallery3d.data.ImageCacheService;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.ui.GLRoot;
+import com.android.gallery3d.ui.GLRootView;
+import com.android.gallery3d.ui.GLView;
+import com.android.gallery3d.util.GalleryUtils;
+import com.android.gallery3d.util.ThreadPool;
+import com.android.photos.data.GalleryBitmapPool;
+import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.rawdroid.R;
 
 public abstract class AbstractGalleryActivity extends ViewerActivity implements GalleryApp {
     @SuppressWarnings("unused")

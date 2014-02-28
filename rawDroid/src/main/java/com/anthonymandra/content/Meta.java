@@ -1,11 +1,9 @@
 package com.anthonymandra.content;
 
-import android.content.Context;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.anthonymandra.rawdroid.BuildConfig;
-import com.anthonymandra.rawdroid.R;
 
 public class Meta
 {

@@ -16,10 +16,10 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.util.Utils;
-
 import android.graphics.Bitmap;
 import android.opengl.GLUtils;
+
+import com.android.legacy.util.Utils;
 
 import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;

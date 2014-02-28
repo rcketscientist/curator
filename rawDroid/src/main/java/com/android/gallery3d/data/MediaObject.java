@@ -16,11 +16,11 @@
 
 package com.android.gallery3d.data;
 
-import com.anthonymandra.framework.MetaObject;
-import com.anthonymandra.framework.RawObject;
-
 import android.net.Uri;
 import android.util.Log;
+
+import com.anthonymandra.framework.MetaObject;
+import com.anthonymandra.framework.RawObject;
 
 public abstract class MediaObject implements RawObject, MetaObject {
     @SuppressWarnings("unused")

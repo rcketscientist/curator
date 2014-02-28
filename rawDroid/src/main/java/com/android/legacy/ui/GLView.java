@@ -16,14 +16,14 @@
 
 package com.android.legacy.ui;
 
-import com.android.legacy.anim.CanvasAnimation;
-import com.android.legacy.util.Utils;
-
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import com.android.legacy.anim.CanvasAnimation;
+import com.android.legacy.util.Utils;
 
 import java.util.ArrayList;
 

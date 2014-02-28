@@ -1,10 +1,5 @@
 package com.anthonymandra.widget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,6 +13,11 @@ import android.widget.Spinner;
 
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener// , OnCancelListener
 {

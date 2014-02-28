@@ -1,20 +1,11 @@
 package com.anthonymandra.rawdroid;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.ContentObserver;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
-import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.License;
-import com.anthonymandra.rawdroid.Constants;
-
-import java.lang.Boolean;
 
 /**
  * Created by amand_000 on 9/10/13.

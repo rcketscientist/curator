@@ -1,6 +1,12 @@
 package com.anthonymandra.rawdroid;
 
-import com.android.gallery3d.common.Utils;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
+
 import com.android.gallery3d.data.MediaItem;
 import com.android.legacy.ui.GLCanvas;
 import com.android.legacy.ui.GLRootView;
@@ -13,18 +19,7 @@ import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapRegionDecoder;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.widget.Toast;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class LegacyViewerActivity extends ViewerActivity implements ScaleChangedListener
 {
