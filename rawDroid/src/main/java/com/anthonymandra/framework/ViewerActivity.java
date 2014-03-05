@@ -527,7 +527,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     	showSidebar = false;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.hide(xmpFrag);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     private void showSidebar()
@@ -535,7 +535,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     	showSidebar = true;
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.show(xmpFrag);
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
     class AutoHideMetaTask extends TimerTask
@@ -738,7 +738,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 	        FragmentManager fm = getSupportFragmentManager();
 	        FragmentTransaction ft = fm.beginTransaction();
 	        ft.remove(getSupportFragmentManager().findFragmentByTag(XmpFragment.FRAGMENT_TAG));
-	        ft.commit();
+	        ft.commitAllowingStateLoss();
 	        fm.executePendingTransactions();
     	}
     	
@@ -757,7 +757,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(container, xmpFrag, XmpFragment.FRAGMENT_TAG);      
-        ft.commit();
+        ft.commitAllowingStateLoss();
         fm.executePendingTransactions();
         
         if (showSidebar)
@@ -921,7 +921,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 xmpFrag = XmpFragment.newInstance((MetaMedia) getCurrentItem());
                 transaction.add(R.id.frameLayoutViewer, xmpFrag);
                 transaction.addToBackStack(null);
-                transaction.commit();
+                transaction.commitAllowingStateLoss();
             }
         }
     }

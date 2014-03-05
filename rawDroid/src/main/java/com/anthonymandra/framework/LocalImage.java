@@ -56,6 +56,12 @@ public class LocalImage extends MetaMedia {
         return getImageBytes();
 	}
 
+    /* Error prone */
+    @Override
+    public boolean moveImage(File location) {
+        return mImage.renameTo(location);
+    }
+
     private byte[] getImageBytes()
     {
         byte[] dst = new byte[(int) mImage.length()];

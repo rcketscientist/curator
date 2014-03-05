@@ -27,6 +27,7 @@ import com.android.gallery3d.common.Utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -105,8 +106,16 @@ public class RecycleBin
 					final DiskLruCache.Editor editor = bin.edit(key);
 					if (editor != null)
 					{
+                        bis = new BufferedInputStream(new FileInputStream(recycledItem.getFilePath()));
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
-						out.write(recycledItem.getImage());
+
+                        byte[] buffer = new byte[1024];
+
+                        int length;
+                        //copy the file content in bytes
+                        while ((length = bis.read(buffer)) > 0){
+                            out.write(buffer, 0, length);
+                        }
 						editor.commit();
 						recycledItem.delete();
 					}

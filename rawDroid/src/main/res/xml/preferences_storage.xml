@@ -18,6 +18,7 @@
             android:defaultValue="@integer/defRecycleBinSize"
             android:dependency="prefKeyUseRecycleBin"
             android:key="prefKeyRecycleBinSize"
+            android:inputType="number"
             android:numeric="integer"
             android:summary="@string/prefSummaryRecycleBin"
             android:title="@string/prefTitleRecycleBin" />
@@ -26,7 +27,6 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="prefKeyDeleteConfirmation"
-            android:numeric="integer"
             android:summary="@string/prefSummaryDeleteConfirmation"
             android:title="@string/prefTitleDeleteConfirmation" />
     </PreferenceCategory>

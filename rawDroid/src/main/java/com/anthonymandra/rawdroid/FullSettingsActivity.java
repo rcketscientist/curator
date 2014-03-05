@@ -496,8 +496,16 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
     {
         if (key.equals(KEY_RecycleBinSize))
         {
+            int value;
             EditTextPreference option = (EditTextPreference) mPreferenceManager.findPreference(KEY_RecycleBinSize);
-            int value = Integer.parseInt(option.getText());
+            try
+            {
+                value = Integer.parseInt(option.getText());
+            }
+            catch (NumberFormatException e)
+            {
+                value = 0;
+            }
             if (value < minRecycleBin)
             {
                 option.setText(String.valueOf(minRecycleBin));

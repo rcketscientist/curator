@@ -788,6 +788,15 @@ public final class DiskLruCache implements Closeable {
             }
         }
 
+        public File newFileLocation(int index){
+            synchronized (DiskLruCache.this) {
+                if (entry.currentEditor != this) {
+                    throw new IllegalStateException();
+                }
+                return entry.getDirtyFile(index);
+            }
+        }
+
         /**
          * Sets the value at {@code index} to {@code value}.
          */

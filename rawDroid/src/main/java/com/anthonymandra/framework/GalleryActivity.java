@@ -312,8 +312,16 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Boolean useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true);
-		int binSizeMb = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(FullSettingsActivity.KEY_RecycleBinSize,
+        int binSizeMb;
+        try
+        {
+		    binSizeMb = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(FullSettingsActivity.KEY_RecycleBinSize,
 				Integer.toString(FullSettingsActivity.defRecycleBin)));
+        }
+        catch (NumberFormatException e)
+        {
+            binSizeMb = 0;
+        }
 		if (useRecycle)
 		{
 			recycleBin = new RecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024);

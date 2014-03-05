@@ -28,6 +28,8 @@ public interface RawObject {
     public InputStream getImageStream();
     public byte[] getImage();
 
+    public boolean moveImage(File location);
+
     public byte[] getThumb();
 	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, Margins margins);
 

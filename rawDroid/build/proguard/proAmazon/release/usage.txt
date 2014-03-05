@@ -2445,7 +2445,8 @@ com.anthonymandra.framework.DiskLruCache:
 com.anthonymandra.framework.DiskLruCache$Editor:
 ====    755:763:public java.io.InputStream newInputStream(int)
 ====    771:772:public java.lang.String getString(int)
-====    795:802:public void set(int,java.lang.String)
+====    792:797:public java.io.File newFileLocation(int)
+====    804:811:public void set(int,java.lang.String)
 com.anthonymandra.framework.DiskLruCache$Snapshot:
 ====    715:715:public com.anthonymandra.framework.DiskLruCache$Editor edit()
 ====    729:729:public java.lang.String getString(int)
@@ -2457,8 +2458,8 @@ com.anthonymandra.framework.GalleryActivity:
     public static final int FILE_NOT_FOUND
     private static final int REQUEST_CODE_SHARE
 ====    185:193:protected int getImageId(com.anthonymandra.framework.RawObject)
-====    386:386:protected java.io.File getSwapFile(java.lang.String)
-====    498:500:protected void requestWebIntent()
+====    394:394:protected java.io.File getSwapFile(java.lang.String)
+====    506:508:protected void requestWebIntent()
 com.anthonymandra.framework.Histogram:
 ====    72:72:public int getMaxFreqR()
 ====    77:77:public int getMaxFreqG()
@@ -2493,10 +2494,11 @@ com.anthonymandra.framework.License:
     public static final java.lang.String KEY_LICENSE_RESPONSE
 com.anthonymandra.framework.LocalImage:
 ====    51:51:public java.io.File getFile()
-====    78:82:public byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
-====    100:100:public java.lang.String getMimeType()
-====    119:121:public boolean canDecode()
-====    412:428:private boolean writeThumb(byte[],java.io.File)
+====    62:62:public boolean moveImage(java.io.File)
+====    84:88:public byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
+====    106:106:public java.lang.String getMimeType()
+====    125:127:public boolean canDecode()
+====    418:434:private boolean writeThumb(byte[],java.io.File)
 com.anthonymandra.framework.LongSparseArray
 com.anthonymandra.framework.MetaMedia:
 ====    public abstract boolean hasXmp()
@@ -2522,6 +2524,8 @@ com.anthonymandra.framework.MetaObject:
 ====    public abstract void setThumbHeight(int)
 com.anthonymandra.framework.RawObject:
 ====    public abstract boolean canDecode()
+====    public abstract byte[] getImage()
+====    public abstract boolean moveImage(java.io.File)
 ====    public abstract byte[] getThumbWithWatermark(byte[],int,int,com.anthonymandra.dcraw.LibRaw$Margins)
 com.anthonymandra.framework.RecycleBin:
     private static final java.lang.String pathReplacement
@@ -2534,10 +2538,10 @@ com.anthonymandra.framework.RecycleBin:
     private static final int MESSAGE_CLOSE
     private static final int DEFAULT_DISK_CACHE_SIZE
     private static final int DISK_CACHE_INDEX
-====    234:243:public static com.anthonymandra.framework.RecycleBin$RetainFragment findOrCreateRetainFragment(android.support.v4.app.FragmentManager)
-====    470:479:protected void removeFileInternal(java.lang.String)
-====    519:520:public void removeFile(java.lang.String)
-====    539:540:public void setOnImageUpdateListener(com.anthonymandra.framework.ImageUpdateListener)
+====    243:252:public static com.anthonymandra.framework.RecycleBin$RetainFragment findOrCreateRetainFragment(android.support.v4.app.FragmentManager)
+====    479:488:protected void removeFileInternal(java.lang.String)
+====    528:529:public void removeFile(java.lang.String)
+====    548:549:public void setOnImageUpdateListener(com.anthonymandra.framework.ImageUpdateListener)
 com.anthonymandra.framework.RecycleBin$RemoveFileTask
 com.anthonymandra.framework.RecycleBin$RetainFragment
 com.anthonymandra.framework.SwapProvider:
