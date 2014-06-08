@@ -16,6 +16,3 @@
 [submodule "treeviewlistandroid"]
 	path = treeviewlistandroid
 	url = https://github.com/rcketscientist/tree-view-list-android.git
-[submodule "play_licensing"]
-	path = play_licensing
-	url = https://rcketscientist@bitbucket.org/rcketscientist/licensing.git
