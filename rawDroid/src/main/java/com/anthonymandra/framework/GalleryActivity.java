@@ -90,7 +90,9 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		// mProgressDialog.setCanceledOnTouchOutside(true);
         mShareIntent = new Intent(Intent.ACTION_SEND);
-        mShareIntent.setType("image/jpeg");
+        mShareIntent.setType("image/*");
+        mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         mMetaProvider = getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
 	}
 
@@ -587,6 +589,59 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 			this.cancel(true);
 		}
 	}
+
+    protected class IndexTask extends AsyncTask<List<MediaItem>, Void, Void> implements OnCancelListener
+    {
+        private int currentItem;
+        public ProgressDialog indexDialog;
+
+        @Override
+        protected void onPreExecute()
+        {
+            indexDialog.setTitle(R.string.indexing);
+            indexDialog.setMessage(getString(R.string.indexingSummary));
+        }
+
+        @Override
+        protected Void doInBackground(final List<MediaItem>... params)
+        {
+            List<MediaItem> itemsToIndex = params[0];
+            int count = 1;
+            int total = itemsToIndex.size();
+            for (MediaItem image : itemsToIndex)
+            {
+                image.readMetadata();
+                publishProgress();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            mProgressDialog.dismiss();
+            updateAfterDelete();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values)
+        {
+            indexDialog.incrementProgressBy(1);
+        }
+
+        @Override
+        protected void onCancelled()
+        {
+//            updateAfterDelete();
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog)
+        {
+            // Need to cancel onPause()?
+//            this.cancel(true);
+        }
+    }
 
 	protected class DeleteTask extends AsyncTask<List<MediaItem>, Integer, Boolean> implements OnCancelListener
 	{

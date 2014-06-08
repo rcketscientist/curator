@@ -200,6 +200,8 @@
     <string name="search">Search</string>
     <string name="experimental">(Experimental)</string>
     <string name="imageFolders">Folders Containing Raw Images</string>
+    <string name="indexing">Indexing Images</string>
+    <string name="indexingSummary">Search requires indexing images</string>
     
     <string name="welcomeTitle">Welcome to RawDroid!</string>
     <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf this is your first time please consider running the tutorial by going to the Help menu item.\n\nIf you have any issues you can submit a bug report or email me via the menu.\n\nIf your images are not processed please email me an example image.</string>
