@@ -6,17 +6,15 @@ def versionPatch = 9
 def versionBuild = 0
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "19.1.0"
 
-    useOldManifestMerger true //the new one causes tons of manifest errors
+//    useOldManifestMerger true //the new one causes tons of manifest errors
 
     defaultConfig {
-        minSdkVersion 10
-        targetSdkVersion 19
-        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        minSdkVersion 11    // Changed for showcaseview, 10 is 0.17% of users
+        targetSdkVersion 21
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "")
-
         ndk {
             moduleName "libraw"
         }
@@ -33,14 +31,10 @@ android {
 
     buildTypes {
         release {
-            runProguard true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
         }
-//        debug {
-//            runProguard true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-//        }
     }
 
     sourceSets.main {
@@ -53,24 +47,20 @@ android {
         final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
         final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
         final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
-
         final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
         final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
-
         demo {
-            packageName "com.anthonymandra.rawdroid"
+            applicationId 'com.anthonymandra.rawdroid'
             buildConfigField "String", FIELD_META, PROVIDER_META
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
         }
-
         pro {
-            packageName "com.anthonymandra.rawdroidpro"
+            applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
         }
-
         proAmazon {
-            packageName "com.anthonymandra.rawdroidpro"
+            applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
         }
@@ -83,9 +73,11 @@ dependencies {
     compile project(':treeviewlistandroid')
     compile project(':metaDataExtractor')
     compile project(':oIFileManager')
-    compile 'com.android.support:support-v4:+'
+//    compile project(':fileManager:FileManager')
+    compile 'com.android.support:support-v4:20.+'
+    //Changed for Android-L ('com.android.support:support-v4:+')
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
 //    compile files('libs/jcifs-1.3.17.jar')
 //    compile files('libs/xmpcore-5.1.2.jar')
-//    proCompile project(':play_licensing:library')
+    //    proCompile project(':play_licensing:library')
 }

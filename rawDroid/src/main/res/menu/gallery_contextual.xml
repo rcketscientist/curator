@@ -14,11 +14,11 @@
         android:showAsAction="ifRoom"
         android:title="@string/exportThumbnails"/>
     <item
-        android:id="@+id/galleryImportImages"
+        android:id="@+id/galleryMoveImages"
         android:icon="@drawable/import_images"
         android:orderInCategory="3"
         android:showAsAction="ifRoom"
-        android:title="@string/importImages"/>
+        android:title="@string/moveImages"/>
     <item
         android:id="@+id/galleryRename"
         android:icon="@android:drawable/ic_menu_edit"

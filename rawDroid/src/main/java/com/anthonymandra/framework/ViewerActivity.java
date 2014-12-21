@@ -785,6 +785,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
         action.setDataAndType(media.getSwapUri(), "image/*");
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
     }

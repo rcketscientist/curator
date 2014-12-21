@@ -16,3 +16,6 @@
 [submodule "treeviewlistandroid"]
 	path = treeviewlistandroid
 	url = https://github.com/rcketscientist/tree-view-list-android.git
+[submodule "fileManager"]
+	path = fileManager
+	url = https://github.com/rcketscientist/filemanager.git

@@ -42,6 +42,7 @@
     <string name="settings">Settings</string>
     <string name="importKeywords">Import Keywords</string>
     <string name="importImages">Import Images</string>
+    <string name="moveImages">Move Images</string>
     <string name="chooseDestination">Choose Destination</string>
     <string name="choosefile">Choose File</string>
     <string name="import1">Import</string>
@@ -225,10 +226,55 @@
     <string name="bottom">Bottom</string>
     <string name="right">Right</string>
     <string name="left">Left</string>
+    <string name="next">Next</string>
     
     <!-- Tutorials -->
+    <string name="tutorialWelcomeTitle">Welcome to the Rawdroid Tutorial</string>
+    <string name="tutorialWelcomeText">The tutorial is interactive and can be advanced by clicking the next button.</string>
+    <string name="tutorialNavDisabled">Navigation is disabled during the tutorial</string>
+    <string name="tutorialViewerDisabled">Viewer is disabled during the tutorial</string>
+
+    <string name="tutorialConnectTitle">How to Connect Images</string>
+    <string name="tutorialConnectText1">There are three main ways to access your images in Rawdroid.</string>
+    <string name="tutorialConnectText2">Insert an SD card directly into your device.  Not all devices have an sd slot, and obviously not all cameras store on SD.</string>
+    <string name="tutorialConnectText3">Alternatively you can connect the camera directly.  Just like on your PC this method is slow.  Due to limitations in Android we cannot write to cameras, so this will import images to your device.\nYour device must have enough storage.  More details on the website.</string>
+    <string name="tutorialConnectText4">Finally you can connect your media card with a card reader and OTG cable.  This is the best way to use Rawdroid.  It is far faster than importing.  A single format card reader is best.\n\ta. Some devices will require root.  Unfortunately my nexus did.  There are more details on this case on the website.</string>
+    <string name="tutorialConnectText5">(Future addition) Eventually I will be adding network support.</string>
+
+    <string name="tutorialFindTitle">How Do I Find My Images</string>
+    <string name="tutorialFindUSBText">You can connect an external reader via a USB OTG cable. \'Find USB\' will attempt to find the mounted media.</string>
+    <string name="tutorialFindImportText">If you import from the camera it should take you to the destination when complete.</string>
+    <string name="tutorialFindPathText">Finally if needed you can also navigate manually much like a file explorer.  Try clicking \'tutorial\'.  That messy path is where the tutorial is temporarily stored.  You can use this to help navigate to your images.  When in doubt start at \'\\mnt\'</string>
+    <string name="tutorialRecentFolderText">If you always use the same location Rawdroid should attempt to automatically open it on startup.</string>
+    <string name="tutorialFindImagesText">You can quickly use \'Search\' to find any folders with images on your device.</string>
+
+    <string name="tutorialSelectTitle">How to Select Images</string>
+    <string name="tutorialSingleSelectText">You can begin selecting images at any time by LONG pressing on an image for two seconds. Try it on image 1.</string>
+    <string name="tutorialMultiSelectText">You can add images to the selection by QUICKLY pressing on them.  Try that on image 3.</string>
+    <string name="tutorialMultiSelectText2">You have now selected just images 1 and 3.</string>
+    <string name="tutorialSelectAllText">You can quickly select all with this button.  Try that now.</string>
+    <string name="tutorialExitSelectionText">You can exit the selection mode by clicking the check.  Try that now.</string>
+    <string name="tutorialSelectBetweenText1">You can also select a range of images by long pressing on the beginning and end image.  Enter selection mode by LONG pressing on image 2.</string>
+    <string name="tutorialSelectBetweenText2">Now LONG press again on image 4.</string>
+    <string name="tutorialSelectBetweenText3">You have selected images 2 and 3 and 4.</string>
+
+    <string name="tutorialRenameTitle">Rename Images</string>
+    <string name="tutorialRenameText">Press this button to rename selected images within a few templates (more coming soon).</string>
+    <string name="tutorialMoveTitle">Move Images</string>
+    <string name="tutorialMoveText">This will move selected images to a new location.  This can be used to import, export, or simply organize images.</string>
+    <string name="tutorialExportTitle">Export Thumbnails</string>
+    <string name="tutorialExportText">This will export a compressed jpeg thumbnail of the selected images to a desired location.</string>
+    <string name="tutorialShareTitle">Share a JPEG</string>
+    <string name="tutorialShareText">This will convert the selected images to jpeg and share with another app.</string>
+
+    <string name="tutorialRecycleTitle">How to Recover Images</string>
+    <string name="tutorialRecycleText">If enabled in settings deleted images will be kept in a recycling bin.  The bin has a limited size and will permanently delete the oldest images when it is full.  You can recover images with this button.</string>
+
+    <string name="tutorialActionbarHelpTitle">Action Bar Help</string>
+    <string name="tutorialActionbarHelpText">If you forget what an icon does you can always long-press it for the title.  Press this icon for two seconds now.</string>
+
     <string name="tutorialSelect">Long press any image to enter selection mode.</string>
-    <string name="tutorialSelectAll">Alternatively, Select All.</string>
+    <string name="tutorialSelectAll">You can also select all images with this button.  Try that now.</string>
     <string name="tutorialRecycle">This will open the recycling bin allowing you to restore deleted items.</string>
     <string name="tutorialRecentFolder">This will go to the most recently decoded folder.</string>
     <string name="tutorialShare">This will share the selected files with the given application.</string>
@@ -240,8 +286,7 @@
     <string name="tutorialRename">This will rename all selected files with a selected template.</string>
     <string name="tutorialImport">This will import selected images to a new destination.</string>
     <string name="tutorialExport">This will export selected images as a compressed jpeg thumbnail.</string>
-    <string name="tutorialStart">Welcome to the Rawdroid tutorial!\nI appreciate any feedback, sometimes it is hard to explain an intimate subject to the uninitiated :).</string>
-    <string name="tutorialConnectTitle">How to Connect Images</string>
+    <string name="tutorialStart">Welcome to the Rawdroid tutorial!\n   .</string>
     <string name="tutorialConnect1">There are three ways to access data:</string>
     <string name="tutorialConnect2">1. Fastest: Transfer images to your device via PC connection.  Obviously not an ideal use.</string>
     <string name="tutorialConnect3">2. Fast: Connect your media card with a card reader and OTG cable.  A single format card reader is best.\n\ta. Some devices will require root.  My nexus did.  I use "StickMount" to connect.  More details on the website.</string>
