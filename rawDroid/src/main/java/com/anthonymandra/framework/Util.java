@@ -88,6 +88,16 @@ public class Util
 		return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
 	}
 
+    public static boolean hasKitkat()
+    {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
+
+    public static boolean hasLollipop()
+    {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+    }
+
 	/**
 	 * Get a usable cache directory (external if available, internal otherwise).
 	 * 

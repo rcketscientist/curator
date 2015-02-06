@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -126,7 +127,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             "/storage/USBstorage4",
             "/storage/USBstorage5",
             "/storage/USBstorage6",
-            "/storage/usbdisk"
+            "/storage/usbdisk",
+            "/storage/usbdisk1",
+            "/storage/usbdisk2"
     };
 
 	// Request codes
@@ -252,19 +255,26 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void doFirstRun()
 	{
-        if (Constants.VariantCode > 9)
-            return;
-
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        if (settings.getBoolean("isFirstRun", true)) 
+        if (settings.getBoolean("isFirstRun", true))
         {
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.welcomeTitle);
-			builder.setMessage(R.string.welcomeMessage);
-			builder.show();
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("isFirstRun", false);
             editor.commit();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.welcomeTitle);
+
+            if (Constants.VariantCode > 9)
+            {
+                builder.setMessage(R.string.welcomeMessage);
+            }
+            else
+            {
+                builder.setMessage(R.string.welcomeTutorial);
+            }
+
+            builder.show();
         }
 	}
 
@@ -290,7 +300,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
     private void doProCheck()
     {
         final String p = "com.anthonymandra.rawdroidpro";
-        if (!BuildConfig.PACKAGE_NAME.equals(p) && packageExists(p))
+        if (!BuildConfig.APPLICATION_ID.equals(p) && packageExists(p))
         {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Please use Rawdroid Pro!");
@@ -452,7 +462,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			case REQUEST_EXPORT_THUMB_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleExportThumbResult(data.getData().getPath());
+                    handleExportThumbResult(data.getData().getPath());
+//					handleExportThumbResult(data);
 				}
 				break;
             case REQUEST_UPDATE_PHOTO:
@@ -474,6 +485,10 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private void handleImportDirResult(final String destinationPath)
 	{
 		File destination = new File(destinationPath);
+        if (!destination.canWrite())
+        {
+            showWriteAccessError();
+        }
 
 		if (destination.equals(mCurrentPath))
 		{
@@ -507,25 +522,82 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		return selectionSize;
 	}
 
+    @SuppressWarnings("unchecked")
+    private void handleExportThumbResult(final String destinationPath)
+    {
+        File destination = new File(destinationPath);
+        if (!destination.canWrite())
+        {
+            showWriteAccessError();
+        }
+
+        long importSize = getSelectedImageSize();
+        if (destination.getFreeSpace() < importSize)
+        {
+            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, destination.getPath());
+        editor.commit();
+
+        CopyThumbTask ct = new CopyThumbTask(destination);
+        ct.execute(mItemsForIntent);
+    }
+
+    private void showWriteAccessError()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle(R.string.warningAccessError);
+        if (Util.hasKitkat())
+        {
+            alert.setMessage(R.string.warningWriteDisabledKitKat);
+        }
+        else
+        {
+            alert.setMessage(R.string.warningWriteDisabled);
+        }
+        alert.show();
+    }
+
+    // TODO: Partial attempt to implement SAF, but intent entirely unweildy.  To support 5.0 in future, just request permission for extCard root initially
 	@SuppressWarnings("unchecked")
-	private void handleExportThumbResult(final String destinationPath)
-	{
-		File destination = new File(destinationPath);
-		long importSize = getSelectedImageSize();
-		if (destination.getFreeSpace() < importSize)
-		{
-			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-			return;
-		}
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, destination.getPath());
-		editor.commit();
-
-		CopyThumbTask ct = new CopyThumbTask(destination);
-		ct.execute(mItemsForIntent);
-	}
+//	private void handleExportThumbResult(Intent data)
+//	{
+//        //TODO: DocumentFile supposedly has high overhead, but avoiding a massive filesystem rewrite for now
+//        DocumentFile destination;
+//        long freeSpace = 0;
+//        String destPath = null;
+//        if (!Util.hasLollipop())
+//        {
+//            destPath = data.getData().getPath();
+////            File dest = new File(destPath);
+////            freeSpace = dest.getFreeSpace();
+//        }
+//        else
+//        {
+//            destPath = data.getData().getPath();
+////            destination = DocumentFile.fromTreeUri(this, data.getData());
+//        }
+//
+////		File destination = new File(destinationPath);
+////		long importSize = getSelectedImageSize();
+////		if (freeSpace < importSize)
+////		{
+////			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+////			return;
+////		}
+//
+//		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//		SharedPreferences.Editor editor = settings.edit();
+//		editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, destPath);
+//		editor.commit();
+//
+//		CopyThumbTask ct = new CopyThumbTask(new File(destPath));
+//		ct.execute(mItemsForIntent);
+//	}
 
 	@SuppressWarnings("unchecked")
 	private List<MediaItem> storeSelectionForIntent()
@@ -639,32 +711,41 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void requestImportImageLocation()
 	{
-		Intent images = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+        Intent intent;
+//        if (Util.hasLollipop())
+//        {
+//            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+//            startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
+//        }
+//        else
+//        {
+            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
 
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
-		File importLocation = mCurrentPath;
-		if (recentImport != null)
-		{
-			importLocation = new File(recentImport);
-			if (!importLocation.exists())
-			{
-				importLocation = mCurrentPath;
-			}
-		}
-		if (importLocation == null)
-			importLocation = START_PATH;
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
+            File importLocation = mCurrentPath;
+            if (recentImport != null)
+            {
+                importLocation = new File(recentImport);
+                if (!importLocation.exists())
+                {
+                    importLocation = mCurrentPath;
+                }
+            }
+            if (importLocation == null)
+                importLocation = START_PATH;
 
-		// Construct URI from file name.
-		images.setData(Uri.fromFile(importLocation));
+            // Construct URI from file name.
+            intent.setData(Uri.fromFile(importLocation));
 
-		// Set fancy title and button (optional)
-		images.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
-		images.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
+            // Set fancy title and button (optional)
+            intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
+            intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
+//        }
 
 		try
 		{
-			startActivityForResult(images, REQUEST_MOUNTED_IMPORT_DIR);
+			startActivityForResult(intent, REQUEST_MOUNTED_IMPORT_DIR);
 		}
 		catch (ActivityNotFoundException e)
 		{
@@ -673,39 +754,48 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private void requestExportThumbLocation()
-	{
-		Intent intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentExport = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
+    private void requestExportThumbLocation()
+    {
+        Intent intent;
+//        if (Util.hasLollipop())
+//        {
+//            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+//            startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
+//        }
+//        else
+//        {
+            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            String recentExport = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
 
-		File exportLocation = mCurrentPath;
-		if (recentExport != null)
-		{
-			exportLocation = new File(recentExport);
-			if (!exportLocation.exists())
-			{
-				exportLocation = mCurrentPath;
-			}
-		}
+            File exportLocation = mCurrentPath;
+            if (recentExport != null)
+            {
+                exportLocation = new File(recentExport);
+                if (!exportLocation.exists())
+                {
+                    exportLocation = mCurrentPath;
+                }
+            }
 
-		// Construct URI from file name.
-		intent.setData(Uri.fromFile(exportLocation));
+            // Construct URI from file name.
+            intent.setData(Uri.fromFile(exportLocation));
 
-		// Set fancy title and button (optional)
-		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
-		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
+            // Set fancy title and button (optional)
+            intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
+            intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
+//        }
 
-		try
-		{
-			startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
-		}
-		catch (ActivityNotFoundException e)
-		{
-			// No compatible file manager was found.
-			Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
-		}
-	}
+        try
+        {
+            startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
+        }
+        catch (ActivityNotFoundException e)
+        {
+            // No compatible file manager was found.
+            Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
+        }
+    }
 
 	private void requestSettings()
 	{
@@ -1442,7 +1532,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				if (processWatermark)
 				{
 					success = toExport.writeThumbWatermark(thumbDest, waterData, waterWidth, waterHeight, margins);
-
 				}
                 else
                 {

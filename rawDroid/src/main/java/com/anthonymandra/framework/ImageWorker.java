@@ -83,7 +83,7 @@ public abstract class ImageWorker extends CacheManager
 		}
 		else if (cancelPotentialWork(image, imageView))
 		{
-			Log.d(TAG, "DB:" + "Task created");
+//			Log.d(TAG, "DB:" + "Task created");
 			final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
             final AsyncDrawable asyncDrawable =
                     new AsyncDrawable(mResources, null/*mLoadingBitmap*/, task);
@@ -140,18 +140,18 @@ public abstract class ImageWorker extends CacheManager
 //			Log.d(TAG, "DB: " + ste.toString());
 //		}
 		
-		Log.d(TAG, "DB:" + "null =  " + (bitmapWorkerTask == null));
+//		Log.d(TAG, "DB:" + "null =  " + (bitmapWorkerTask == null));
 		if (bitmapWorkerTask != null)
 		{
 			final RawObject bitmapData = bitmapWorkerTask.data;
-			if (bitmapData != null)
-				Log.d(TAG, "DB:" + "current =  " + bitmapData.getUri());
-			else
-				Log.d(TAG, "DB:" + "bitmapData =  null");
-			Log.d(TAG, "DB:" + "request =  " + data.getUri());
+//			if (bitmapData != null)
+//				Log.d(TAG, "DB:" + "current =  " + bitmapData.getUri());
+//			else
+//				Log.d(TAG, "DB:" + "bitmapData =  null");
+//			Log.d(TAG, "DB:" + "request =  " + data.getUri());
 			if (bitmapData == null || !bitmapData.getUri().equals(data.getUri()))
 			{
-				Log.d(TAG, "DB:" + "cancel");
+//				Log.d(TAG, "DB:" + "cancel");
 				bitmapWorkerTask.cancel(true);
 			}
 			else

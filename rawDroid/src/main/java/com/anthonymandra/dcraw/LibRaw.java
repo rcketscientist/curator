@@ -51,19 +51,31 @@ public class LibRaw
 	 * @param compressFormat Format of  the compression
 	 * @return Thumbnail image data in jpeg format
 	 */
-	private static native byte[] getThumbFromFile(String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
-	private static native byte[] getThumbWithWatermark(String filePath, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
-	private static native byte[] getThumbFromBuffer(byte[] buffer, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native byte[] getThumbFile
+        (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native byte[] getThumbFileWatermark
+        (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
+	private static native byte[] getThumbBuffer
+        (byte[] buffer, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
 	// Write thumb
-	public static native boolean writeThumbFromBuffer(byte[] buffer, String destination, int quality);
-	public static native boolean writeThumb(String source, String destination, int quality);
-	public static native boolean writeThumbWatermark(String filePath, String destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight, int quality);
+	public static native boolean writeThumbBuffer
+        (byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, String destination);
+	public static native boolean writeThumbFile
+        (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, String destination);
+	public static native boolean writeThumbFileWatermark
+        (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, String destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
 
 	// Get raw bitmap
-	private static native byte[] getHalfImageFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
-	private static native BitmapRegionDecoder getHalfDecoderFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
-	private static native byte[] getImageFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);		// For testing
+    private static native byte[] getImageFile
+        (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+    private static native byte[] getImageFileWatermark
+        (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
+    private static native byte[] getHalfImageFile
+        (String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+
+    // For future testing:
+    private static native BitmapRegionDecoder getHalfDecoder(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 	private static native BitmapRegionDecoder getDecoderFromFile(String filePath, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 	private static native BitmapRegionDecoder getRawFromBuffer(byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
@@ -87,13 +99,13 @@ public class LibRaw
 
 	public static byte[] getThumb(byte[] buffer, String[] exif)
 	{
-		return getThumbFromBuffer(buffer, exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+		return getThumbBuffer(buffer, exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 	}
 	
 	public static byte[] getThumbWithWatermark(File file, byte[] watermark, Margins margins, int waterWidth, int waterHeight)
 	{
 		long start = System.currentTimeMillis();
-		byte[] image = getThumbWithWatermark(file.getPath(), watermark, margins.getArray(), waterWidth, waterHeight);
+		byte[] image = getThumbFileWatermark(file.getPath(), null, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, watermark, margins.getArray(), waterWidth, waterHeight);
 		Log.d(TAG, "DB: WaterThumb took " + (System.currentTimeMillis() - start) + "ms");
 		return image;
 	}
@@ -115,7 +127,7 @@ public class LibRaw
 //		Log.d(TAG, "DB: Full raw took " + (System.currentTimeMillis() - start) + "ms");
 		
 		long start = System.currentTimeMillis();
-		byte[] image = getThumbFromFile(file.getPath(), exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+		byte[] image = getThumbFile(file.getPath(), exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Thumbnail took " + (System.currentTimeMillis() - start) + "ms");
 		sum += System.currentTimeMillis() - start;
 		entries++;

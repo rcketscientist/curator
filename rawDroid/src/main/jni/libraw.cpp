@@ -7,28 +7,39 @@
 
 #include <libraw/libraw.h>
 
-extern "C" 
+extern "C"
 {
 	#include <jpeglib.h>
 	// Can decode
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes);
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromFile(JNIEnv* env, jclass clazz, jstring filePath);
 	JNIEXPORT jobjectArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeDirectory(JNIEnv* env, jclass clazz, jstring directory);
-	
+
 	// Return thumb bitmap
-    JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat);
-    JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
-	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbWithWatermark(JNIEnv* env, jclass clazz, jstring filePath, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality);
+    JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbBuffer
+        (JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+    JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFile
+        (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFileWatermark
+	    (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
 	// Write thumb (native format)
-	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jstring destination, int quality);
-	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumb(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, int quality);
-	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbWatermark(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality);
+    JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbBuffer
+        (JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat, jstring destination);
+	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFile
+	    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, jstring destination);
+	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFileWatermark
+	    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, jstring destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
 	// Return raw bitmap
-	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfImageFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
-	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
-	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoderFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFile
+	    (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+    JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFileWatermark
+        (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfImageFile
+	    (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+
+	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoder(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
 	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getRawFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat);
 	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getDecoderFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
 
@@ -45,18 +56,26 @@ void createJpeg(JNIEnv* env, unsigned char** outJpeg, unsigned long* outJpegSize
 unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, int height);
 unsigned char clamp(unsigned char a, unsigned char b);
 
-jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat);
-jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality);
+jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
-jbyteArray getRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
-jbyteArray getHalfRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
+jboolean insertWatermark(JNIEnv* env, unsigned char* pixels, int imageWidth, int imageHeight, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+
+jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+jboolean getRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+jboolean getHalfRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat);
 
 jobject getHalfRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
 jobject getRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
 
 jboolean writeRaw(JNIEnv* env, LibRaw* rawProcessor, const char* destination);
-jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, const char* destination, int quality);
-jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality, const char* destination);
+jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat, jstring destination);
+jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, jstring destination);
+
+jboolean openFile(JNIEnv* env, jstring filePath, LibRaw* rawProcessor);
+jboolean openBuffer(JNIEnv* env, jbyteArray bufferBytes, LibRaw* rawProcessor);
 
 typedef struct ID_CACHE
 {
@@ -103,53 +122,7 @@ void cacheJniIds(JNIEnv *env)
     JNI_IDS.cached = 1;
 }
 
-//JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
-//{
-//    JNIEnv* env;
-//    if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
-//        return -1;
-//    }
-//
-//    // Get jclass with env->FindClass.
-//    // Register methods with env->RegisterNatives.
-//
-//
-////    jclass bitmapConfig = env->FindClass("android/graphics/Bitmap$Config");
-////    jfieldID bitmapConfig_ARGB8888 = env->GetStaticFieldID(bitmapConfig, "ARGB_8888", "Landroid/graphics/Bitmap$Config;");
-////    jmethodID bmpCfgValueOf = env->GetStaticMethodID(bitmapConfig, "valueOf", "(Ljava/lang/String;)Landroid/graphics/Bitmap$Config;");
-////    JNI_IDS.argb8888 = env->GetStaticObjectField(bitmapConfig, bitmapConfig_ARGB8888);
-//
-////    jclass bitmapCompress = env->FindClass("android/graphics/Bitmap$CompressFormat");
-////    jmethodID midValueOf = env->GetStaticMethodID(bitmapConfig, "valueOf", "(Ljava/lang/String;)Landroid/graphics/Bitmap$Config;");
-////    jfieldID bitmapCompress_PNG = env->GetStaticFieldID(bitmapCompress, "PNG", "Landroid/graphics/Bitmap$CompressFormat;");
-////    JNI_IDS.PNG = env->GetStaticObjectField(bitmapCompress, bitmapCompress_PNG);
-//
-////    jclass bitmapCompress = env->FindClass("android/graphics/Bitmap$CompressFormat");
-////    jmethodID bmpCmpValueOf = env->GetStaticMethodID(bitmapCompress, "valueOf", "(Ljava/lang/String;)Landroid/graphics/Bitmap$CompressFormat;");
-////    JNI_IDS.PNG = env->CallStaticObjectMethod(bitmapConfig, bmpCfgValueOf, env->NewStringUTF("PNG"));
-//
-////    JNI_IDS.RawContainer = env->FindClass("com/anthonymandra/dcraw/RawContainer");
-////    JNI_IDS.raw_init = env->GetMethodID(JNI_IDS.RawContainer, "<init>", "([BIIZ)V");
-////
-////    JNI_IDS.bitmap = env->FindClass("android/graphics/Bitmap");
-////    JNI_IDS.bitmap_createBitmap = env->GetStaticMethodID(JNI_IDS.bitmap, "createBitmap", "([IIILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
-////    JNI_IDS.bitmap_createBitmap2 = env->GetStaticMethodID(JNI_IDS.bitmap, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
-////    JNI_IDS.bitmap_compress = env->GetMethodID(JNI_IDS.bitmap, "compress", "(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z");
-////
-////    JNI_IDS.bitmapRegionDecoder = env->FindClass("android/graphics/BitmapRegionDecoder");
-////    JNI_IDS.bitmapRegionDecoder_newInstance = env->GetStaticMethodID(JNI_IDS.bitmapRegionDecoder, "newInstance", "([BIIZ)Landroid/graphics/BitmapRegionDecoder;");
-////
-////	jclass t = env->FindClass("java/io/ByteArrayOutputStream");
-////	jclass test = env->FindClass("java/io/ByteArrayInputStream");
-////	JNI_IDS.byteArrayInputStream = env->FindClass("java/io/ByteArrayInputStream");
-////	JNI_IDS.byteArrayInputStream_init = env->GetMethodID(JNI_IDS.byteArrayInputStream, "<init>", "([B)V");
-////
-////	JNI_IDS.byteArrayOutputStream = env->FindClass("java/io/ByteArrayOutputStream");
-////	JNI_IDS.byteArrayOutputStream_init = env->GetMethodID(JNI_IDS.byteArrayOutputStream, "<init>", "()V");
-////	JNI_IDS.byteArrayOutputStream_toByteArray = env->GetMethodID(JNI_IDS.byteArrayOutputStream, "toByteArray", "()[B");
-//
-//    return JNI_VERSION_1_6;
-//}
+
 
 JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes)
 {
@@ -226,155 +199,251 @@ JNIEXPORT jobjectArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_canDecodeDire
 	return raw;
 }
 
+/***************************************************************************************************************************************************************************************************************
+/*      START THUMB GET
+/**************************************************************************************************************************************************************************************************************/
 
-JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat)
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat)
 {
 	LibRaw* rawProcessor = new LibRaw();
+	if(!openBuffer(env, bufferBytes, rawProcessor))
+	    return NULL;
+
+	return getThumbnail(env, rawProcessor, exif, quality, config, compressFormat);
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat)
+{
+    LibRaw* rawProcessor = new LibRaw();
+    if (!openFile(env, filePath, rawProcessor))
+        return NULL;
+
+    return getThumbnail(env, rawProcessor, exif, quality, config, compressFormat);
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFileWatermark(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
+    LibRaw* rawProcessor = new LibRaw();
+    if (!openFile(env, filePath, rawProcessor))
+        return NULL;
+
+    return getThumbnail(env, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+}
+
+jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat)
+{
+    return getThumbnail(env, rawProcessor, exif, quality, config, compressFormat, NULL, NULL, 0, 0);
+}
+
+jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
+    unsigned char* jpeg = NULL;
+    unsigned long jpegSize = 0;
+
+    jboolean success = JNI_FALSE;
+
+    if (rawProcessor->imgdata.thumbnail.tlength) // If there's an embedded thumbnail
+        success = getThumb(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+    else
+        success = getHalfRawImage(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat);
+
+    if (!success)
+        return NULL;
+
+    jbyteArray thumb = env->NewByteArray(jpegSize);
+    env->SetByteArrayRegion(thumb, 0, jpegSize, (jbyte *) jpeg);
+    if (jpeg)
+        free(jpeg);
+
+    rawProcessor->recycle();
+    free(rawProcessor);
+    return thumb;
+}
+
+jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
 	int result;
 
-	jsize len = env->GetArrayLength(bufferBytes);
-	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
-	result = rawProcessor->open_buffer(buffer, len);
-	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
+	if (exif)
+		setExif(env, rawProcessor->imgdata, exif);
 
-	unsigned char* jpeg;
-	unsigned long jpegSize;
-	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat);
-	jbyteArray thumb = env->NewByteArray(jpegSize);
-	env->SetByteArrayRegion(thumb, 0, jpegSize, (jbyte *) jpeg);
-	if (jpeg)
-		free(jpeg);
+	result = rawProcessor->unpack_thumb();
+	if (result != LIBRAW_SUCCESS)
+	{
+		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
+		return JNI_FALSE;
+	}
+
+	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_thumb(&result);
+	if (result != LIBRAW_SUCCESS)
+	{
+		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
+		return JNI_FALSE;
+	}
+
+    if (watermark)
+    {
+        unsigned char* pixels;
+        int width = rawProcessor->imgdata.thumbnail.twidth;
+        int height = rawProcessor->imgdata.thumbnail.theight;
+
+        bool isJpeg = image->type == LIBRAW_IMAGE_JPEG;
+        if (isJpeg) //jpeg must convert to bitmap
+        {
+            pixels = readJpeg(env, image, width, height);
+        }
+        else        //already bitmap
+        {
+            pixels = image->data;
+        }
+        bool watermarkSuccess = insertWatermark(env, pixels, width, height, watermark, margins, waterWidth, waterHeight);
+        createJpeg(env, outJpeg, outJpegSize, pixels, width, height, quality);
+
+        if (isJpeg && pixels)   // free the pixels if WE created them (libraw handles internal)
+            free(pixels);
+    }
+    else if (image->type == LIBRAW_IMAGE_BITMAP)    // no watermark, bitmap thumb, must convert to jpeg
+    {
+        createJpeg(env, outJpeg, outJpegSize, image->data, image->width, image->height, quality);
+    }
+    else                                            // thumb is already a bitmap, just copy
+    {
+        *outJpeg = new unsigned char[image->data_size];//(unsigned char *) malloc(image->data_size);
+        *outJpegSize = image->data_size;
+        memcpy(*outJpeg, image->data, *outJpegSize);
+    }
+
+//	FILE *orig = fopen("/sdcard/original.jpg","wb");
+//	FILE *copy = fopen("/sdcard/copy.jpg","wb");
+//	fwrite(image->data, sizeof(char), image->data_size, orig);
+//	fwrite(*outJpeg, sizeof(char), *outJpegSize, copy);
+//	fclose(orig);
+//	fclose(copy);
+
+	rawProcessor->dcraw_clear_mem(image);
+	return JNI_TRUE;
+}
+
+/***************************************************************************************************************************************************************************************************************
+/*      END THUMB GET
+/**************************************************************************************************************************************************************************************************************/
+
+
+/***************************************************************************************************************************************************************************************************************
+/*      START FULL RAW GET
+/**************************************************************************************************************************************************************************************************************/
+
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfImageFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat)
+{
+	LibRaw* rawProcessor = new LibRaw();
+    if (!openFile(env, filePath, rawProcessor))
+        return NULL;
+
+    unsigned char* jpeg = NULL;
+    unsigned long jpegSize = 0;
+
+	if(!getHalfRawImage(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat))
+	    return NULL;
+
+    jbyteArray image = env->NewByteArray(jpegSize);
+    env->SetByteArrayRegion(image, 0, jpegSize, (jbyte *) jpeg);
+    if (jpeg)
+        free(jpeg);
 
 	rawProcessor->recycle();
 	free(rawProcessor);
-	return thumb;
+
+	return image;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbFromFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat)
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat)
 {
-	LibRaw* rawProcessor = new LibRaw();
-
-	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
-	env->ReleaseStringUTFChars(filePath, str);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	unsigned char* jpeg = NULL;
-	unsigned long jpegSize = 0;
-	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat);
-	if (!success)
-		return NULL;
-
-//	FILE *pass = fopen("/sdcard/passed.jpg","wb");
-//	fwrite(jpeg, sizeof(char), jpegSize, pass);
-//	fclose(pass);
-
-	jbyteArray thumb = env->NewByteArray(jpegSize);
- 	env->SetByteArrayRegion(thumb, 0, jpegSize, (jbyte *) jpeg);
-	if (jpeg)
-		free(jpeg);
-
-	rawProcessor->recycle();
-	free(rawProcessor);
-	return thumb;
+    getRaw(env, filePath, exif, quality, config, compressFormat);
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getThumbWithWatermark(JNIEnv* env, jclass clazz, jstring filePath, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality)
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFileWatermark(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
 {
-	LibRaw* rawProcessor = new LibRaw();
-
-	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
-	env->ReleaseStringUTFChars(filePath, str);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	unsigned char* jpeg = NULL;
-	unsigned long jpegSize = 0;
-	jboolean success = getThumbWithWatermark(env, &jpeg, &jpegSize, rawProcessor, watermark, margins, waterWidth, waterHeight, quality);
-	if (!success)
-		return NULL;
-
-	jbyteArray thumb = env->NewByteArray(jpegSize);
-	env->SetByteArrayRegion(thumb, 0, jpegSize, (jbyte *) jpeg);
-	if (jpeg)
-		free(jpeg);
-
-	rawProcessor->recycle();
-	free(rawProcessor);
-	return thumb;
+    getRaw(env, filePath, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
 }
 
-JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getRawFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat)
+jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat)
 {
-	LibRaw* rawProcessor = new LibRaw();
-
-	jsize len = env->GetArrayLength(bufferBytes);
-	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
-
-	int result = rawProcessor->open_buffer(buffer, len);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	jobject regionDecoder = getRawDecoder(env, rawProcessor, quality, config, compressFormat);
-	rawProcessor->recycle();
-
-	return regionDecoder;
+    return getRaw(env, filePath, exif, quality, config, compressFormat, NULL, NULL, 0, 0);
 }
 
-JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getDecoderFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat)
+jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
 {
-	LibRaw* rawProcessor = new LibRaw();
+    LibRaw* rawProcessor = new LibRaw();
+    unsigned char* jpeg = NULL;
+    unsigned long jpegSize = 0;
 
-	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
-	env->ReleaseStringUTFChars(filePath, str);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
+    rawProcessor->imgdata.params.use_rawspeed = 1;
+    const char *str= env->GetStringUTFChars(filePath,0);
+    int result = rawProcessor->open_file(str, 0);
+    env->ReleaseStringUTFChars(filePath, str);
+    if (result != LIBRAW_SUCCESS)
+        return NULL;
 
-	jobject regionDecoder = getRawDecoder(env, rawProcessor, quality, config, compressFormat);
-	rawProcessor->recycle();
+    jboolean success = getRawImage(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+    if (!success)
+        return NULL;
 
-	return regionDecoder;
+    jbyteArray image = env->NewByteArray(jpegSize);
+    env->SetByteArrayRegion(image, 0, jpegSize, (jbyte *) jpeg);
+    if (jpeg)
+        free(jpeg);
+
+    rawProcessor->recycle();
+    free(rawProcessor);
+
+    return image;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfImageFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat)
+jboolean getRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
 {
-	LibRaw* rawProcessor = new LibRaw();
+	if (exif)
+		setExif(env, rawProcessor->imgdata, exif);
 
-	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
-	env->ReleaseStringUTFChars(filePath, str);
+	int result = rawProcessor->unpack();
 	if (result != LIBRAW_SUCCESS)
-		return NULL;
+		return JNI_FALSE;
 
-	jbyteArray bmp = getHalfRawImage(env, rawProcessor, quality, config, compressFormat);
-	rawProcessor->recycle();
+	//TODO: What is the cost of process?
+	result = rawProcessor->dcraw_process();
+	if (result != LIBRAW_SUCCESS)
+		return JNI_FALSE;
 
-	return bmp;
+	if (rawProcessor->imgdata.process_warnings & LIBRAW_WARN_RAWSPEED_PROCESSED)
+		__android_log_print(ANDROID_LOG_INFO, "JNI", "process = %d", result);
+	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_image(&result);
+	if (result != LIBRAW_SUCCESS)
+		return JNI_FALSE;
+
+    if (watermark)
+    {
+        // Always a bitmap, to save memory we edit the libraw copy directly, this could be dangerous, but doesn't affect current code.
+        bool watermarkSuccess = insertWatermark(env, image->data, image->width, image->height, watermark, margins, waterWidth, waterHeight);
+    }
+
+	createJpeg(env, outJpeg, outJpegSize, image->data, image->width, image->height, quality);
+
+	rawProcessor->dcraw_clear_mem(image);
+    return JNI_TRUE;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getImageFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat)
+jboolean getHalfRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat)
 {
-	LibRaw* rawProcessor = new LibRaw();
+	rawProcessor->imgdata.params.half_size = 1;
 
-	rawProcessor->imgdata.params.use_rawspeed = 1;
-	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
-	env->ReleaseStringUTFChars(filePath, str);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	jbyteArray bmp = getRawImage(env, rawProcessor, quality, config, compressFormat);
-	rawProcessor->recycle();
-	free(rawProcessor);
-	return bmp;
+	return getRawImage(env, outJpeg, outJpegSize, rawProcessor, exif, quality, config, compressFormat, NULL, NULL, 0, 0);
 }
 
-JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoderFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat)
+/***************************************************************************************************************************************************************************************************************
+/*      END FULL RAW GET
+/**************************************************************************************************************************************************************************************************************/
+
+
+JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoder(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat)
 {
 	LibRaw* rawProcessor = new LibRaw();
 
@@ -390,64 +459,122 @@ JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoderFrom
 	return regionDecoder;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jstring destination, int quality)
-{
-	LibRaw* rawProcessor = new LibRaw();
-	const char *output = env->GetStringUTFChars(destination, 0);
-	
-	jsize len = env->GetArrayLength(bufferBytes);
-	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
-	int result = rawProcessor->open_buffer(buffer, len);
-	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
-	if (LIBRAW_FATAL_ERROR(result))
-		return JNI_FALSE;
-
-	jboolean success = writeThumb(env, rawProcessor, output, quality);
-	env->ReleaseStringUTFChars(destination, output);
-
-	rawProcessor->recycle();
-	return success;
-}
-
-JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumb(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, int quality)
+JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getDecoder(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat)
 {
 	LibRaw* rawProcessor = new LibRaw();
 
-	const char *input = env->GetStringUTFChars(filePath,0);
-	const char *output = env->GetStringUTFChars(destination, 0);
-
-	int result = rawProcessor->open_file(input, 0);
-	env->ReleaseStringUTFChars(filePath, input);
+	const char *str= env->GetStringUTFChars(filePath,0);
+	int result = rawProcessor->open_file(str, 0);
+	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
-		return JNI_FALSE;
+		return NULL;
 
-	jboolean success = writeThumb(env, rawProcessor, output, quality);
-	env->ReleaseStringUTFChars(destination, output);
-
+	jobject regionDecoder = getRawDecoder(env, rawProcessor, quality, config, compressFormat);
 	rawProcessor->recycle();
-	return success;
+
+	return regionDecoder;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbWatermark(JNIEnv* env, jclass clazz, jstring filePath, jstring destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality)
+JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getRawFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat)
 {
 	LibRaw* rawProcessor = new LibRaw();
+	if (!openBuffer(env, bufferBytes, rawProcessor))
+	    return NULL;
 
-	const char *input = env->GetStringUTFChars(filePath,0);
-	const char *output = env->GetStringUTFChars(destination, 0);
-
-	int result = rawProcessor->open_file(input, 0);
-	env->ReleaseStringUTFChars(filePath, input);
-	if (result != LIBRAW_SUCCESS)
-		return JNI_FALSE;
-
-	jboolean success = writeThumb(env, rawProcessor, watermark, margins, waterWidth, waterHeight, quality, output);
-	env->ReleaseStringUTFChars(destination, output);
-
+	jobject regionDecoder = getRawDecoder(env, rawProcessor, quality, config, compressFormat);
 	rawProcessor->recycle();
-	return success;
+
+	return regionDecoder;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRawFromFile(JNIEnv* env, jclass clazz, jstring filePath, jstring destination)
+/***************************************************************************************************************************************************************************************************************
+/*      START THUMB WRITE
+/**************************************************************************************************************************************************************************************************************/
+
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFile
+    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, jstring destination)
+{
+    LibRaw* rawProcessor = new LibRaw();
+    if (!openFile(env, filePath, rawProcessor))
+        return JNI_FALSE;
+
+    return writeThumb(env, rawProcessor, quality, config, compressFormat, destination);
+}
+
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbFileWatermark
+    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, jstring destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
+    LibRaw* rawProcessor = new LibRaw();
+    if (!openFile(env, filePath, rawProcessor))
+        return JNI_FALSE;
+
+    return writeThumb(env, rawProcessor, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight, destination);
+}
+
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeThumbBuffer
+    (JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat, jstring destination)
+{
+	LibRaw* rawProcessor = new LibRaw();
+	if (!openBuffer(env, bufferBytes, rawProcessor))
+	    return JNI_FALSE;
+
+	return writeThumb(env, rawProcessor, quality, config, compressFormat, destination);
+}
+
+jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat, jstring destination)
+{
+	return writeThumb(env, rawProcessor, quality, config, compressFormat, NULL, NULL, 0, 0, destination);
+}
+
+jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, jstring destination)
+{
+  	unsigned char* jpeg = NULL;
+	unsigned long jpegSize = 0;
+
+	// TODO: Add exif to jpeg?
+	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+    //Might be good to reinsert the exif data in the jpeg (can libjpeg do so?)
+
+	if(!destination)
+		return JNI_FALSE;
+
+    const char *output = env->GetStringUTFChars(destination, 0);
+	FILE *tfp = fopen(output,"wb");
+    env->ReleaseStringUTFChars(destination, output);
+
+	if(!tfp)
+		return JNI_FALSE;
+
+	if(!jpeg)
+	{
+		fclose(tfp);
+		return JNI_FALSE;
+	}
+
+	try
+	{
+		fwrite(jpeg, sizeof(char), jpegSize, tfp);
+		fclose(tfp);
+	}
+	catch(...)
+	{
+		fclose(tfp);
+	}
+
+    if (jpeg)
+        free(jpeg);
+
+	rawProcessor->recycle();
+	free(rawProcessor);
+
+	return JNI_TRUE;
+}
+
+/***************************************************************************************************************************************************************************************************************
+/*      END THUMB WRITE
+/**************************************************************************************************************************************************************************************************************/
+
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRaw(JNIEnv* env, jclass clazz, jstring filePath, jstring destination)
 {
 	LibRaw* rawProcessor = new LibRaw();
 	const char *output = env->GetStringUTFChars(destination, 0);
@@ -485,50 +612,8 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRawFromBuffe
 	return success;
 }
 
-jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat)
-{
-	int result;
-	jbyteArray thumb;
-
-	if (exif)
-		setExif(env, rawProcessor->imgdata, exif);
-
-	result = rawProcessor->unpack_thumb();
-	if (result != LIBRAW_SUCCESS)
-	{
-		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
-		return JNI_FALSE;
-	}
-	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_thumb(&result);
-	if (result != LIBRAW_SUCCESS)
-	{
-		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
-		return JNI_FALSE;
-	}
-
-	if (image->type == LIBRAW_IMAGE_BITMAP)
-	{
-		createJpeg(env, outJpeg, outJpegSize, image->data, image->width, image->height, quality);
-	}
-	else
-	{
-		*outJpeg = new unsigned char[image->data_size];//(unsigned char *) malloc(image->data_size);
-		*outJpegSize = image->data_size;
-		memcpy(*outJpeg, image->data, *outJpegSize);
-	}
-
-//	FILE *orig = fopen("/sdcard/original.jpg","wb");
-//	FILE *copy = fopen("/sdcard/copy.jpg","wb");
-//	fwrite(image->data, sizeof(char), image->data_size, orig);
-//	fwrite(*outJpeg, sizeof(char), *outJpegSize, copy);
-//	fclose(orig);
-//	fclose(copy);
-
-	rawProcessor->dcraw_clear_mem(image);
-	return JNI_TRUE;
-}
-
-jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality)
+//Ensure the incoming pixels are a bitmap!
+jboolean insertWatermark(JNIEnv* env, unsigned char* pixels, int imageWidth, int imageHeight, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
 {
 	int* margin = env->GetIntArrayElements(margins, 0);
 	int top = margin[0];
@@ -540,106 +625,72 @@ jboolean getThumbWithWatermark(JNIEnv* env, unsigned char** outJpeg, unsigned lo
 	int startX, startY;
 	int result;
 
-	result = rawProcessor->unpack_thumb();
-	if (result != LIBRAW_SUCCESS)
-	{
-		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
-		return JNI_FALSE;
-	}
-	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_thumb(&result);
-	if (result != LIBRAW_SUCCESS)
-	{
-		__android_log_write(ANDROID_LOG_INFO, "JNI", libraw_strerror(result));
-		return JNI_FALSE;
-	}
+    if (waterWidth > imageWidth || waterHeight > imageHeight)
+    {
+        __android_log_print(ANDROID_LOG_INFO, "JNI", "Watermark Out of Bounds x = %d -> %d , y = %d -> %d",
+                waterWidth, imageWidth, waterHeight, imageHeight);
+        return JNI_FALSE;
+    }
+    if ((top > 0 && bottom > 0))
+        return JNI_FALSE;
+    if ((right > 0 && left > 0))
+        return JNI_FALSE;
 
-	int width = rawProcessor->imgdata.thumbnail.twidth;
-	int height = rawProcessor->imgdata.thumbnail.theight;
+    if (left >= 0)
+    {
+        startX = left;
+    }
+    else if (right >= 0)
+    {
+        startX = imageWidth - right - waterWidth;
+    }
+    else
+    {
+        startX = imageWidth / 2 - waterWidth / 2;	//center
+    }
+    if (startX < 0 || startX + waterWidth > imageWidth)
+    {
+        startX = 0;
+    }
 
-	if (waterWidth > width || waterHeight > height)
-	{
-		__android_log_print(ANDROID_LOG_INFO, "JNI", "Watermark Out of Bounds x = %d -> %d , y = %d -> %d",
-				waterWidth, width, waterHeight, height);
-		return JNI_FALSE;
-	}
-	if ((top > 0 && bottom > 0))
-		return JNI_FALSE;
-	if ((right > 0 && left > 0))
-		return JNI_FALSE;
+    if (top >= 0)
+    {
+        startY = top;
+    }
+    else if (bottom >= 0)
+    {
+        startY = imageHeight - bottom - waterHeight;
+    }
+    else
+    {
+        startY = imageHeight / 2 - waterHeight / 2;	//center
+    }
+    if (startY < 0 || startY + waterHeight > imageHeight)
+    {
+        startY = 0;
+    }
 
-	if (left >= 0)
-	{
-		startX = left;
-	}
-	else if (right >= 0)
-	{
-		startX = width - right - waterWidth;
-	}
-	else
-	{
-		startX = width / 2 - waterWidth / 2;	//center
-	}
-	if (startX < 0 || startX + waterWidth > width)
-	{
-		startX = 0;
-	}
+    jsize len = env->GetArrayLength(watermark);
+    unsigned char* watermarkPixels = (unsigned char*)env->GetByteArrayElements(watermark, 0);
 
-	if (top >= 0)
-	{
-		startY = top;
-	}
-	else if (bottom >= 0)
-	{
-		startY = height - bottom - waterHeight;
-	}
-	else
-	{
-		startY = height / 2 - waterHeight / 2;	//center
-	}
-	if (startY < 0 || startY + waterHeight > height)
-	{
-		startY = 0;
-	}
-
-	unsigned char* pixels;
-	bool jpeg = image->type == LIBRAW_IMAGE_JPEG;
-	if (jpeg)
-	{
-		pixels = readJpeg(env, image, width, height);
-	}
-	else
-	{
-		pixels = image->data;
-	}
-
-	jsize len = env->GetArrayLength(watermark);
-	unsigned char* watermarkPixels = (unsigned char*)env->GetByteArrayElements(watermark, 0);
-
-    int delta = (startY * width + startX) * 3;
-    int rowStride = width * 3;
+    int delta = (startY * imageWidth + startX) * 3;
+    int rowStride = imageWidth * 3;
     int waterStride = waterWidth * 3;
     int i = 0;
     for (int y = 0; y < waterHeight; y++)
     {
-    	int x = 0;
-    	while(x < waterStride)
-    	{
-    		pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //r
-    		pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //g
-    		pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //b
-    		i++; //a
-    	}
-    	delta += rowStride;
+        int x = 0;
+        while(x < waterStride)
+        {
+            pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //r
+            pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //g
+            pixels[delta + x] = clamp(pixels[delta + x], watermarkPixels[i++] >> 1); ++x; //b
+            i++; //a
+        }
+        delta += rowStride;
     }
 
     env->ReleaseByteArrayElements(watermark, (jbyte *)watermarkPixels, JNI_ABORT);
-
-	createJpeg(env, outJpeg, outJpegSize, pixels, width, height, quality);
-
-	if (jpeg && pixels)
-		free(pixels);
-
-	rawProcessor->dcraw_clear_mem(image);
 
     return JNI_TRUE;
 }
@@ -671,120 +722,11 @@ jobject getRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject co
 	return regionDecoder;
 }
 
-jbyteArray getRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat)
-{
-	int result = rawProcessor->unpack();
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	//TODO: What is the cost of process?
-	result = rawProcessor->dcraw_process();
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	if (rawProcessor->imgdata.process_warnings & LIBRAW_WARN_RAWSPEED_PROCESSED)
-		__android_log_print(ANDROID_LOG_INFO, "JNI", "process = %d", result);
-	libraw_processed_image_t *image = rawProcessor->dcraw_make_mem_image(&result);
-	if (result != LIBRAW_SUCCESS)
-		return NULL;
-
-	// image.width is only populated for rgb, but full decodes are always rgb
-	unsigned char* jpeg;
-	unsigned long jpegSize;
-	createJpeg(env, &jpeg, &jpegSize, image->data, image->width, image->height, quality);
-	jbyteArray raw = env->NewByteArray(jpegSize);
-	env->SetByteArrayRegion(raw, 0, jpegSize, (jbyte *) jpeg);
-	if (jpeg)
-		free(jpeg);
-
-	rawProcessor->dcraw_clear_mem(image);
-	return raw;
-}
-
-jbyteArray getHalfRawImage(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat)
-{
-	rawProcessor->imgdata.params.half_size = 1;
-
-	return getRawImage(env, rawProcessor, quality, config, compressFormat);
-}
-
 jobject getHalfRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat)
 {
 	rawProcessor->imgdata.params.half_size = 1;
 
 	return getRawDecoder(env, rawProcessor, quality, config, compressFormat);
-}
-
-jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, const char* destination, int quality)
-{
-	return writeThumb(env, rawProcessor, NULL, NULL, 0, 0, quality, destination);
-//
-//	unsigned char* jpeg = NULL;
-//	unsigned long jpegSize = 0;
-//	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, NULL, NULL);
-//
-//	if(!destination)
-//		return JNI_FALSE;
-//
-//	FILE *tfp = fopen(destination,"wb");
-//
-//	if(!tfp)
-//		return JNI_FALSE;
-//
-//	if(!jpeg)
-//	{
-//		fclose(tfp);
-//		return JNI_FALSE;
-//	}
-//
-//	try
-//	{
-//		fwrite(jpeg, sizeof(char), jpegSize, tfp);
-//		fclose(tfp);
-//	}
-//	catch(...)
-//	{
-//		fclose(tfp);
-//	}
-//
-//	return JNI_TRUE;
-}
-
-jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight, int quality, const char* destination)
-{
-	unsigned char* jpeg = NULL;
-	unsigned long jpegSize = 0;
-	jboolean success;
-	if (watermark == NULL)
-		success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, NULL, NULL);
-	else
-		success = getThumbWithWatermark(env, &jpeg, &jpegSize, rawProcessor, watermark, margins, waterWidth, waterHeight, quality);
-
-	if(!destination)
-		return JNI_FALSE;
-
-	FILE *tfp = fopen(destination,"wb");
-
-	if(!tfp)
-		return JNI_FALSE;
-
-	if(!jpeg)
-	{
-		fclose(tfp);
-		return JNI_FALSE;
-	}
-
-	try
-	{
-		fwrite(jpeg, sizeof(char), jpegSize, tfp);
-		fclose(tfp);
-	}
-	catch(...)
-	{
-		fclose(tfp);
-	}
-
-	return JNI_TRUE;
 }
 
 jboolean writeRaw(JNIEnv* env, LibRaw* rawProcessor, const char* destination)
@@ -847,14 +789,11 @@ unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, i
 	int row_stride;		/* physical row width in output buffer */
 
 	cinfo.err = jpeg_std_error(&jerr);
-
 	/* Now we can initialize the JPEG decompression object. */
 	jpeg_create_decompress(&cinfo);
 
-
 	/* Step 2: specify data source (eg, a file) */
 	jpeg_mem_src(&cinfo, raw->data, raw->data_size);
-
 	/* Step 3: read file parameters with jpeg_read_header() */
 	(void) jpeg_read_header(&cinfo, TRUE);
 
@@ -865,7 +804,6 @@ unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, i
 	*/
 
 	/* Step 5: Start decompressor */
-
 	(void) jpeg_start_decompress(&cinfo);
 	/* We can ignore the return value since suspension is not possible
 	* with the stdio data source.
@@ -898,17 +836,14 @@ unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, i
 	}
 
 	/* Step 7: Finish decompression */
-
 	(void) jpeg_finish_decompress(&cinfo);
 	/* We can ignore the return value since suspension is not possible
 	* with the stdio data source.
 	*/
 
 	/* Step 8: Release JPEG decompression object */
-
 	/* This is an important step since it will release a good deal of memory. */
 	jpeg_destroy_decompress(&cinfo);
-
 	/* At this point you may want to check to see whether any corrupt-data
 	* warnings occurred (test whether jerr.pub.num_warnings is nonzero).
 	*/
@@ -1001,6 +936,31 @@ jobject createBitmapRegionDecoder(JNIEnv* env, libraw_processed_image_t *raw, in
 
 	jobject regionDecoder = env->CallObjectMethod(JNI_IDS.bitmapRegionDecoder, JNI_IDS.bitmapRegionDecoder_newInstance, image, 0, jpegSize, JNI_FALSE);
 	return regionDecoder;
+}
+
+jboolean openFile(JNIEnv* env, jstring filePath, LibRaw* rawProcessor)
+{
+    const char *str= env->GetStringUTFChars(filePath,0);
+    int result = rawProcessor->open_file(str, 0);
+    env->ReleaseStringUTFChars(filePath, str);
+//    if (LIBRAW_FATAL_ERROR(result))
+    if (result != LIBRAW_SUCCESS)
+        return JNI_FALSE;
+
+    return JNI_TRUE;
+}
+
+jboolean openBuffer(JNIEnv* env, jbyteArray bufferBytes, LibRaw* rawProcessor)
+{
+	jsize len = env->GetArrayLength(bufferBytes);
+	jbyte* buffer = env->GetByteArrayElements(bufferBytes, 0);
+	int result = rawProcessor->open_buffer(buffer, len);
+	env->ReleaseByteArrayElements(bufferBytes, buffer, JNI_ABORT);
+    //if (LIBRAW_FATAL_ERROR(result))
+	if (result != LIBRAW_SUCCESS)
+		return JNI_FALSE;
+
+    return JNI_TRUE;
 }
 
 void setExif(JNIEnv* env, libraw_data_t imgdata, jobjectArray exif)

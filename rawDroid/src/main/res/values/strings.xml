@@ -107,6 +107,11 @@
     <string name="warningFailedToGetStream">Warning: Failed to get image stream.  If this continues please email:rawdroid@anthonymandra.com</string>
     <string name="warningShareFail">Share could not be completed.</string>
     <string name="warningBlankWatermark">You tried to apply an empty watermark.  Please add text.</string>
+    <string name="warningKitKat">Unfortunately your device is running Android 4.4+.  Google disabled writing to sdcards in this version.  There are two options to continue using sdcards:\n1:Use an external card reader.\n2:Root your device to fix it.\n\nWithout a fix you CANNOT edit, save or create metadata on sdcards.</string>
+    <string name="warningWriteDisabled">You have selected a folder that has write access disabled.</string>
+    <string name="warningWriteDisabledKitKat">You have selected a folder that has write access disabled.  Google disabled sdcard write access in Android 4.4.</string>
+    <string name="warningAccessError">Access Error</string>
+
 
     <!-- Preferences -->
     <string name="prefTitleImageInterface">Automatically display interface</string>
@@ -205,7 +210,8 @@
     <string name="indexingSummary">Search requires indexing images</string>
     
     <string name="welcomeTitle">Welcome to RawDroid!</string>
-    <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf this is your first time please consider running the tutorial by going to the Help menu item.\n\nIf you have any issues you can submit a bug report or email me via the menu.\n\nIf your images are not processed please email me an example image.</string>
+    <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
+    <string name="welcomeTutorial">Would you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
     
     <!-- Colors for xmp -->
     <string name="red">Red</string>
