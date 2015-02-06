@@ -3,7 +3,7 @@ apply plugin: 'android'
 def versionMajor = 2
 def versionMinor = 7
 def versionPatch = 2
-def versionBuild = 0
+def versionBuild = 1
 
 android {
     compileSdkVersion 21
@@ -19,6 +19,7 @@ android {
     defaultConfig {
         minSdkVersion 11    // Changed for showcaseview, 10 is 0.17% of users
         targetSdkVersion 21
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "")
         ndk {
             moduleName "libraw"

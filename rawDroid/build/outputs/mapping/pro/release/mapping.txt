@@ -12250,16 +12250,16 @@ com.google.android.vending.licensing.LicenseChecker -> com.d.a.a.a.i:
     java.util.Set mChecksInProgress -> i
     java.util.Queue mPendingChecks -> j
     109:121:java.security.PublicKey generatePublicKey(java.lang.String) -> a
-    139:173:void checkAccess(com.google.android.vending.licensing.LicenseCheckerCallback) -> a
-    177:189:void runChecks() -> b
-    192:196:void finishCheck(com.google.android.vending.licensing.LicenseValidator) -> a
-    277:279:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
-    285:287:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
-    294:301:void handleServiceConnectionError(com.google.android.vending.licensing.LicenseValidator) -> b
-    305:315:void cleanupService() -> c
-    326:328:void onDestroy() -> a
-    332:332:int generateNonce() -> d
-    344:348:java.lang.String getVersionCode(android.content.Context,java.lang.String) -> a
+    139:185:void checkAccess(com.google.android.vending.licensing.LicenseCheckerCallback) -> a
+    189:201:void runChecks() -> b
+    204:208:void finishCheck(com.google.android.vending.licensing.LicenseValidator) -> a
+    289:291:void onServiceConnected(android.content.ComponentName,android.os.IBinder) -> onServiceConnected
+    297:299:void onServiceDisconnected(android.content.ComponentName) -> onServiceDisconnected
+    306:313:void handleServiceConnectionError(com.google.android.vending.licensing.LicenseValidator) -> b
+    317:327:void cleanupService() -> c
+    338:340:void onDestroy() -> a
+    344:344:int generateNonce() -> d
+    356:360:java.lang.String getVersionCode(android.content.Context,java.lang.String) -> a
     57:57:void access$100(com.google.android.vending.licensing.LicenseChecker,com.google.android.vending.licensing.LicenseValidator) -> a
     57:57:void access$200(com.google.android.vending.licensing.LicenseChecker,com.google.android.vending.licensing.LicenseValidator) -> b
     57:57:java.util.Set access$300(com.google.android.vending.licensing.LicenseChecker) -> a
@@ -12269,21 +12269,21 @@ com.google.android.vending.licensing.LicenseChecker$ResultListener -> com.d.a.a.
     com.google.android.vending.licensing.LicenseValidator mValidator -> b
     java.lang.Runnable mOnTimeout -> c
     com.google.android.vending.licensing.LicenseChecker this$0 -> a
-    222:263:void verifyLicense(int,java.lang.String,java.lang.String) -> a
-    266:268:void startTimeout() -> a
-    271:273:void clearTimeout() -> b
-    198:198:com.google.android.vending.licensing.LicenseValidator access$000(com.google.android.vending.licensing.LicenseChecker$ResultListener) -> a
-    198:198:void access$400(com.google.android.vending.licensing.LicenseChecker$ResultListener) -> b
+    234:275:void verifyLicense(int,java.lang.String,java.lang.String) -> a
+    278:280:void startTimeout() -> a
+    283:285:void clearTimeout() -> b
+    210:210:com.google.android.vending.licensing.LicenseValidator access$000(com.google.android.vending.licensing.LicenseChecker$ResultListener) -> a
+    210:210:void access$400(com.google.android.vending.licensing.LicenseChecker$ResultListener) -> b
 com.google.android.vending.licensing.LicenseChecker$ResultListener$1 -> com.d.a.a.a.k:
     com.google.android.vending.licensing.LicenseChecker val$this$0 -> a
     com.google.android.vending.licensing.LicenseChecker$ResultListener this$1 -> b
-    206:209:void run() -> run
+    218:221:void run() -> run
 com.google.android.vending.licensing.LicenseChecker$ResultListener$2 -> com.d.a.a.a.l:
     int val$responseCode -> a
     java.lang.String val$signedData -> b
     java.lang.String val$signature -> c
     com.google.android.vending.licensing.LicenseChecker$ResultListener this$1 -> d
-    224:261:void run() -> run
+    236:273:void run() -> run
 com.google.android.vending.licensing.LicenseCheckerCallback -> com.d.a.a.a.m:
     void allow(int) -> a
     void dontAllow(int) -> b
