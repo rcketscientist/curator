@@ -9,6 +9,13 @@ android {
     compileSdkVersion 21
     buildToolsVersion "19.1.0"
 
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+//        abortOnError false
+    }
+
     defaultConfig {
         minSdkVersion 11    // Changed for showcaseview, 10 is 0.17% of users
         targetSdkVersion 21

@@ -264,14 +264,28 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.welcomeTitle);
+            builder.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    // Do nothing
+                }
+            });
+            builder.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    runTutorial();
+                }
+            });
 
             if (Constants.VariantCode > 9)
             {
-                builder.setMessage(R.string.welcomeMessage);
+                builder.setMessage(R.string.welcomeTutorial);
             }
             else
             {
-                builder.setMessage(R.string.welcomeTutorial);
+                builder.setMessage(R.string.welcomeMessage);
             }
 
             builder.show();
@@ -481,7 +495,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             imageGrid.smoothScrollToPosition(index);
     }
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	private void handleImportDirResult(final String destinationPath)
 	{
 		File destination = new File(destinationPath);
@@ -599,7 +613,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 //		ct.execute(mItemsForIntent);
 //	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	private List<MediaItem> storeSelectionForIntent()
 	{
 		return mItemsForIntent = (ArrayList<MediaItem>) mSelectedImages.clone();

@@ -198,12 +198,12 @@ public class LicenseManager extends License {
     {
         //Scallywags renamed your app?
 
-        if (context.getPackageName().compareTo(BuildConfig.PACKAGE_NAME) != 0)
+        if (context.getPackageName().compareTo(BuildConfig.APPLICATION_ID) != 0)
             return true; // BOOM!
 
         //Rogues relocated your app?
 
-        String installer = context.getPackageManager().getInstallerPackageName(BuildConfig.PACKAGE_NAME);
+        String installer = context.getPackageManager().getInstallerPackageName(BuildConfig.APPLICATION_ID);
 
         if (installer == null)
             return true; // BOOM!
