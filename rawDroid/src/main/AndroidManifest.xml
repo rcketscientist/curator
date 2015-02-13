@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.anthonymandra.rawdroid"
-    android:versionCode="122"
-    android:versionName="2.5.2" >
+    package="com.anthonymandra.rawdroid">
 
-    <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="21" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_STORAGE" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
     <uses-feature
         android:name="android.hardware.usb.host"
@@ -21,13 +20,6 @@
     <uses-feature
         android:name="android.hardware.touchscreen"
         android:required="false" />
-    
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_STORAGE" />
-    <!--<uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" /> This shouldn't work anyway-->
-    <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
     <supports-screens
         android:anyDensity="true"

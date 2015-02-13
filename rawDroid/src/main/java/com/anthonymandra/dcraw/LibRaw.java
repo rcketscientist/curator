@@ -155,7 +155,7 @@ public class LibRaw
 		int bottom = -1;
 		
 		public static Margins Center = new Margins();
-		public static Margins LowerRight = new Margins(0, 0, 100, 100);
+		public static Margins LowerRight = new Margins(-1, -1, 100, 100);
 
 		
 		/**

@@ -39,9 +39,12 @@ extern "C"
 	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfImageFile
 	    (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
 
-	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoder(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
-	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getRawFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat);
-	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getDecoderFromFile(JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getHalfDecoder
+	    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getRawFromBuffer
+	    (JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jobject JNICALL Java_com_anthonymandra_dcraw_LibRaw_getDecoderFromFile
+	    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat);
 
 	// Write raw tiff
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_dcraw_LibRaw_writeRawFromBuffer(JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jstring destination);
@@ -56,7 +59,8 @@ void createJpeg(JNIEnv* env, unsigned char** outJpeg, unsigned long* outJpegSize
 unsigned char* readJpeg(JNIEnv* env, libraw_processed_image_t *raw, int width, int height);
 unsigned char clamp(unsigned char a, unsigned char b);
 
-jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+jboolean getEmbedded(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+jboolean getThumbnail(JNIEnv* env, unsigned char** jpeg, unsigned long int* jpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat);
 jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
@@ -66,6 +70,7 @@ jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality,
 jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 jboolean getRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 jboolean getHalfRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+jboolean getHalfRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
 jobject getHalfRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
 jobject getRawDecoder(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject config, jobject compressFormat);
@@ -240,12 +245,7 @@ jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, in
     unsigned char* jpeg = NULL;
     unsigned long jpegSize = 0;
 
-    jboolean success = JNI_FALSE;
-
-    if (rawProcessor->imgdata.thumbnail.tlength) // If there's an embedded thumbnail
-        success = getThumb(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
-    else
-        success = getHalfRawImage(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat);
+    jboolean success = getThumbnail(env, &jpeg, &jpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
 
     if (!success)
         return NULL;
@@ -260,7 +260,15 @@ jbyteArray getThumbnail(JNIEnv* env, LibRaw* rawProcessor, jobjectArray exif, in
     return thumb;
 }
 
-jboolean getThumb(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+jboolean getThumbnail(JNIEnv* env, unsigned char** jpeg, unsigned long int* jpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
+    if (rawProcessor->imgdata.thumbnail.tlength)    // If there's an embedded thumbnail
+        return getEmbedded(env, jpeg, jpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+    else                                            // otherwise do a half-res decode
+        return getHalfRawImage(env, jpeg, jpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+}
+
+jboolean getEmbedded(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
 {
 	int result;
 
@@ -438,6 +446,13 @@ jboolean getHalfRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int
 	return getRawImage(env, outJpeg, outJpegSize, rawProcessor, exif, quality, config, compressFormat, NULL, NULL, 0, 0);
 }
 
+jboolean getHalfRawImage(JNIEnv* env, unsigned char** outJpeg, unsigned long int* outJpegSize, LibRaw* rawProcessor, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
+	rawProcessor->imgdata.params.half_size = 1;
+
+	return getRawImage(env, outJpeg, outJpegSize, rawProcessor, exif, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
+}
+
 /***************************************************************************************************************************************************************************************************************
 /*      END FULL RAW GET
 /**************************************************************************************************************************************************************************************************************/
@@ -531,9 +546,8 @@ jboolean writeThumb(JNIEnv* env, LibRaw* rawProcessor, int quality, jobject conf
   	unsigned char* jpeg = NULL;
 	unsigned long jpegSize = 0;
 
-	// TODO: Add exif to jpeg?
-	jboolean success = getThumb(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
-    //Might be good to reinsert the exif data in the jpeg (can libjpeg do so?)
+	// TODO: Add exif to jpeg (libexif) http://stackoverflow.com/questions/17019476/libexif-writing-new-exif-into-image-with-iptc-xmp
+	jboolean success = getThumbnail(env, &jpeg, &jpegSize, rawProcessor, NULL, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight);
 
 	if(!destination)
 		return JNI_FALSE;

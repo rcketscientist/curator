@@ -3075,6 +3075,7 @@ com.anthonymandra.content.RawImage
 com.anthonymandra.content.RawImage$RawImages
 com.anthonymandra.content.RawResponse
 com.anthonymandra.content.ResponseHandler
+com.anthonymandra.content.TiffDecoder
 com.anthonymandra.dcraw.LibRaw:
     private static final java.lang.String TAG
     private static final int numThreads
@@ -3154,6 +3155,7 @@ com.anthonymandra.framework.DiskLruCache$Snapshot:
     729:729:public java.lang.String getString(int)
 com.anthonymandra.framework.FileHandler
 com.anthonymandra.framework.FileHandlerFactory
+com.anthonymandra.framework.FileInfo
 com.anthonymandra.framework.GalleryActivity:
     public static final java.lang.String SWAP_BIN_DIR
     public static final java.lang.String RECYCLE_BIN_DIR
@@ -3225,6 +3227,7 @@ com.anthonymandra.framework.MetaObject:
     public abstract void setThumbWidth(int)
     public abstract int getThumbHeight()
     public abstract void setThumbHeight(int)
+com.anthonymandra.framework.RandomAccessStream
 com.anthonymandra.framework.RawObject:
     public abstract boolean canDecode()
     public abstract byte[] getImage()
@@ -3249,6 +3252,9 @@ com.anthonymandra.framework.RecycleBin$RemoveFileTask
 com.anthonymandra.framework.RecycleBin$RetainFragment
 com.anthonymandra.framework.SwapProvider:
     public static final java.lang.String AUTHORITY
+com.anthonymandra.framework.Tools
+com.anthonymandra.framework.Tools$1
+com.anthonymandra.framework.Tools$2
 com.anthonymandra.framework.Util:
     63:63:public static boolean hasFroyo()
     83:83:public static boolean hasIceCreamSandwich()
