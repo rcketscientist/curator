@@ -1,6 +1,3 @@
-[submodule "oIDistributionLibrary"]
-	path = oIDistributionLibrary
-	url = https://github.com/rcketscientist/oi-distribution-library.git
 [submodule "oIFileManager"]
 	path = oIFileManager
 	url = https://github.com/rcketscientist/oi-filemanager-library.git
