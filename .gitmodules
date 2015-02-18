@@ -16,9 +16,6 @@
 [submodule "treeviewlistandroid"]
 	path = treeviewlistandroid
 	url = https://github.com/rcketscientist/tree-view-list-android.git
-[submodule "fileManager"]
-	path = fileManager
-	url = https://github.com/rcketscientist/filemanager.git
 [submodule "rawDroid/src/main/jni/LibRaw"]
 	path = rawDroid/src/main/jni/LibRaw
 	url = https://github.com/rcketscientist/LibRaw.git
