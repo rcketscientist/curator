@@ -16,7 +16,6 @@
 
 package com.anthonymandra.framework;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -45,7 +44,7 @@ public class ImageCache
 	private static final int DEFAULT_MEM_CACHE_SIZE = 1024 * 1024 * 5; // 5MB
 
 	// Default disk cache size
-	private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+	private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 25; // 25MB
 
 	// Compression settings when writing images to disk cache
 	private static final CompressFormat DEFAULT_COMPRESS_FORMAT = CompressFormat.JPEG;
@@ -458,16 +457,11 @@ public class ImageCache
 		 */
 		public void setMemCacheSizePercent(Context context, float percent)
 		{
-			if (percent < 0.05f || percent > 0.8f)
-			{
-				throw new IllegalArgumentException("setMemCacheSizePercent - percent must be " + "between 0.05 and 0.8 (inclusive)");
-			}
-			memCacheSize = Math.round(percent * getMemoryClass(context) * 1024 * 1024);
-		}
-
-		private static int getMemoryClass(Context context)
-		{
-			return ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+            if (percent < 0.01f || percent > 0.8f) {
+                throw new IllegalArgumentException("setMemCacheSizePercent - percent must be "
+                        + "between 0.01 and 0.8 (inclusive)");
+            }
+            memCacheSize = Math.round(percent * Runtime.getRuntime().maxMemory() / 1024);
 		}
 	}
 

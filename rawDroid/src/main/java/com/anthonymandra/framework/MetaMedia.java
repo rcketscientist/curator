@@ -92,7 +92,7 @@ public abstract class MetaMedia extends MediaItem
 			@Override
 			public void run()
 			{
-				if (mMetadata.containsDirectory(XmpDirectory.class))
+				if (mMetadata.containsDirectoryOfType(XmpDirectory.class))
 					XmpWriter.write(os, mMetadata);
 			}
 		}.run();
@@ -100,10 +100,10 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getAperture()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class) &&
-			mMetadata.getDirectory(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_APERTURE))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class) &&
+			mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_APERTURE))
 		{
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_APERTURE);
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_APERTURE);
 		}
 		return apertureLegacy;
 //		return null;
@@ -111,9 +111,9 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getExposure()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
 		{
-			ExifSubIFDDirectory exif = mMetadata.getDirectory(ExifSubIFDDirectory.class);
+			ExifSubIFDDirectory exif = mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 			if (exif.containsTag(ExifSubIFDDirectory.TAG_EXPOSURE_TIME))
 			{
 				return exif.getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
@@ -129,24 +129,24 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getImageHeight()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
 		return null;
 	}
 
 	public String getImageWidth()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
 		return null;
 	}
 
 	public String getFocalLength()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class) &&
-				mMetadata.getDirectory(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_FOCAL_LENGTH))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class) &&
+				mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_FOCAL_LENGTH))
 		{
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
 		}
 			
 		return focalLegacy;
@@ -155,17 +155,17 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getFlash()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_FLASH);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_FLASH);
 		return null;
 	}
 
 	public String getShutterSpeed()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class) &&
-			mMetadata.getDirectory(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_SHUTTER_SPEED))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class) &&
+			mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_SHUTTER_SPEED))
 		{
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
 		}
 		return shutterLegacy;
 //		return null;
@@ -173,66 +173,66 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getWhiteBalance()
 	{
-		if (mMetadata.containsDirectory(CanonMakernoteDirectory.class))
-			return mMetadata.getDirectory(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE);
-		if (mMetadata.containsDirectory(PanasonicMakernoteDirectory.class))
-			return mMetadata.getDirectory(PanasonicMakernoteDirectory.class).getDescription(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE);
-		if (mMetadata.containsDirectory(FujifilmMakernoteDirectory.class))
-			return mMetadata.getDirectory(FujifilmMakernoteDirectory.class).getDescription(FujifilmMakernoteDirectory.TAG_WHITE_BALANCE);
-		if (mMetadata.containsDirectory(LeicaMakernoteDirectory.class))
-			return mMetadata.getDirectory(LeicaMakernoteDirectory.class).getDescription(LeicaMakernoteDirectory.TAG_WHITE_BALANCE);
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_WHITE_BALANCE);
+		if (mMetadata.containsDirectoryOfType(CanonMakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE);
+		if (mMetadata.containsDirectoryOfType(PanasonicMakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(PanasonicMakernoteDirectory.class).getDescription(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE);
+		if (mMetadata.containsDirectoryOfType(FujifilmMakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(FujifilmMakernoteDirectory.class).getDescription(FujifilmMakernoteDirectory.TAG_WHITE_BALANCE);
+		if (mMetadata.containsDirectoryOfType(LeicaMakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(LeicaMakernoteDirectory.class).getDescription(LeicaMakernoteDirectory.TAG_WHITE_BALANCE);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_WHITE_BALANCE);
 		return null;
 	}
 
 	public String getExposureProgram()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM);
 		return null;
 	}
 
 	public String getExposureMode()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_MODE);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_EXPOSURE_MODE);
 		return null;
 	}
 
 	public String getLensMake()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_LENS_MAKE);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_LENS_MAKE);
 		return null;
 	}
 
 	public String getLensModel()
 	{
-		if (mMetadata.containsDirectory(CanonMakernoteDirectory.class))
-			return mMetadata.getDirectory(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.TAG_LENS_MODEL);
-		if (mMetadata.containsDirectory(NikonType2MakernoteDirectory.class))
-			return mMetadata.getDirectory(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_LENS);
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_LENS_MODEL);
+		if (mMetadata.containsDirectoryOfType(CanonMakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.TAG_LENS_MODEL);
+		if (mMetadata.containsDirectoryOfType(NikonType2MakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_LENS);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_LENS_MODEL);
 		return null;
 	}
 
 	public String getDriveMode()
 	{
-		if (mMetadata.containsDirectory(CanonMakernoteDirectory.class))
-			return mMetadata.getDirectory(CanonMakernoteDirectory.class).getDescription(CameraSettings.TAG_CONTINUOUS_DRIVE_MODE);
-		if (mMetadata.containsDirectory(NikonType2MakernoteDirectory.class))
-			return mMetadata.getDirectory(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_SHOOTING_MODE);
+		if (mMetadata.containsDirectoryOfType(CanonMakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CameraSettings.TAG_CONTINUOUS_DRIVE_MODE);
+		if (mMetadata.containsDirectoryOfType(NikonType2MakernoteDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_SHOOTING_MODE);
 		return null;
 	}
 
 	public String getIso()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class) &&
-			mMetadata.getDirectory(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class) &&
+			mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).containsTag(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT))
 		{
-			return mMetadata.getDirectory(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
+			return mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class).getDescription(ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
 		}
 		return isoLegacy;
 //		return null;
@@ -240,9 +240,9 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getFNumber()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
 		{
-			ExifSubIFDDirectory exif = mMetadata.getDirectory(ExifSubIFDDirectory.class);
+			ExifSubIFDDirectory exif = mMetadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 			if (exif.containsTag(ExifSubIFDDirectory.TAG_FNUMBER))
 			{
 				return exif.getDescription(ExifSubIFDDirectory.TAG_FNUMBER);
@@ -260,17 +260,17 @@ public abstract class MetaMedia extends MediaItem
 	{
 		if (dateLegacy != null)
 			return dateLegacy.toLocaleString();
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
-			return mMetadata.getDirectory(ExifIFD0Directory.class).getDescription(ExifIFD0Directory.TAG_DATETIME);
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getDescription(ExifIFD0Directory.TAG_DATETIME);
 		return null;
 	}
 
 	public String getMake()
 	{
-		if (mMetadata.containsDirectory(ExifIFD0Directory.class) &&
-			mMetadata.getDirectory(ExifIFD0Directory.class).containsTag(ExifIFD0Directory.TAG_MAKE))
+		if (mMetadata.containsDirectoryOfType(ExifIFD0Directory.class) &&
+			mMetadata.getFirstDirectoryOfType(ExifIFD0Directory.class).containsTag(ExifIFD0Directory.TAG_MAKE))
 		{
-			return mMetadata.getDirectory(ExifIFD0Directory.class).getDescription(ExifIFD0Directory.TAG_MAKE);
+			return mMetadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getDescription(ExifIFD0Directory.TAG_MAKE);
 		}
 
 		return makeLegacy;
@@ -279,10 +279,10 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getModel()
 	{
-		if (mMetadata.containsDirectory(ExifIFD0Directory.class) &&
-			mMetadata.getDirectory(ExifIFD0Directory.class).containsTag(ExifIFD0Directory.TAG_MODEL))
+		if (mMetadata.containsDirectoryOfType(ExifIFD0Directory.class) &&
+			mMetadata.getFirstDirectoryOfType(ExifIFD0Directory.class).containsTag(ExifIFD0Directory.TAG_MODEL))
 		{
-			return mMetadata.getDirectory(ExifIFD0Directory.class).getDescription(ExifIFD0Directory.TAG_MODEL);
+			return mMetadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getDescription(ExifIFD0Directory.TAG_MODEL);
 		}
 
 		return modelLegacy;
@@ -291,11 +291,11 @@ public abstract class MetaMedia extends MediaItem
 
 	public int getOrientation()
 	{
-		if (mMetadata.containsDirectory(ExifSubIFDDirectory.class))
+		if (mMetadata.containsDirectoryOfType(ExifSubIFDDirectory.class))
 		{
 			try
 			{
-				return mMetadata.getDirectory(ExifIFD0Directory.class).getInt(ExifIFD0Directory.TAG_ORIENTATION);
+				return mMetadata.getFirstDirectoryOfType(ExifIFD0Directory.class).getInt(ExifIFD0Directory.TAG_ORIENTATION);
 			}
 			catch (MetadataException e)
 			{
@@ -338,35 +338,35 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getAltitude()
 	{
-		if (mMetadata.containsDirectory(GpsDirectory.class))
-			return mMetadata.getDirectory(GpsDirectory.class).getDescription(GpsDirectory.TAG_ALTITUDE);
+		if (mMetadata.containsDirectoryOfType(GpsDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(GpsDirectory.class).getDescription(GpsDirectory.TAG_ALTITUDE);
 		return null;
 	}
 
 	public String getLatitude()
 	{
-		if (mMetadata.containsDirectory(GpsDirectory.class))
-			return mMetadata.getDirectory(GpsDirectory.class).getDescription(GpsDirectory.TAG_LATITUDE);
+		if (mMetadata.containsDirectoryOfType(GpsDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(GpsDirectory.class).getDescription(GpsDirectory.TAG_LATITUDE);
 		return null;
 	}
 
 	public String getLongitude()
 	{
-		if (mMetadata.containsDirectory(GpsDirectory.class))
-			return mMetadata.getDirectory(GpsDirectory.class).getDescription(GpsDirectory.TAG_LONGITUDE);
+		if (mMetadata.containsDirectoryOfType(GpsDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(GpsDirectory.class).getDescription(GpsDirectory.TAG_LONGITUDE);
 		return null;
 	}
 
 	public double getRating()
 	{
-		if (mMetadata.containsDirectory(XmpDirectory.class))
+		if (mMetadata.containsDirectoryOfType(XmpDirectory.class))
 		{
-			XmpDirectory xmp = mMetadata.getDirectory(XmpDirectory.class);
+			XmpDirectory xmp = mMetadata.getFirstDirectoryOfType(XmpDirectory.class);
 			if (xmp.containsTag(XmpDirectory.TAG_RATING))
 			{
 				try
 				{
-					return mMetadata.getDirectory(XmpDirectory.class).getDouble(XmpDirectory.TAG_RATING);
+					return mMetadata.getFirstDirectoryOfType(XmpDirectory.class).getDouble(XmpDirectory.TAG_RATING);
 				}
 				catch (MetadataException e)
 				{
@@ -379,21 +379,29 @@ public abstract class MetaMedia extends MediaItem
 
 	public String getLabel()
 	{
-		if (mMetadata.containsDirectory(XmpDirectory.class))
-			return mMetadata.getDirectory(XmpDirectory.class).getDescription(XmpDirectory.TAG_LABEL);
+		if (mMetadata.containsDirectoryOfType(XmpDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(XmpDirectory.class).getDescription(XmpDirectory.TAG_LABEL);
 		return null;
 	}
 
 	public String[] getSubject()
 	{
-		if (mMetadata.containsDirectory(XmpDirectory.class))
-			return mMetadata.getDirectory(XmpDirectory.class).getStringArray(XmpDirectory.TAG_SUBJECT);
+		if (mMetadata.containsDirectoryOfType(XmpDirectory.class))
+			return mMetadata.getFirstDirectoryOfType(XmpDirectory.class).getStringArray(XmpDirectory.TAG_SUBJECT);
 		return null;
 	}
 
+    private void checkXmpDirectory()
+    {
+        if (!mMetadata.containsDirectoryOfType(XmpDirectory.class))
+            mMetadata.addDirectory(new XmpDirectory());
+    }
+
 	public void setRating(double rating)
 	{
-		XmpDirectory xmp = mMetadata.getDirectory(XmpDirectory.class);
+        checkXmpDirectory();
+
+		XmpDirectory xmp = mMetadata.getFirstDirectoryOfType(XmpDirectory.class);
 		if (Double.isNaN(rating))
 		{
 			if (xmp != null)
@@ -401,13 +409,15 @@ public abstract class MetaMedia extends MediaItem
 		}
 		else
 		{
-			mMetadata.getOrCreateDirectory(XmpDirectory.class).updateDouble(XmpDirectory.TAG_RATING, rating);
+			xmp.updateDouble(XmpDirectory.TAG_RATING, rating);
 		}
 	}
 
 	public void setLabel(String label)
 	{
-		XmpDirectory xmp = mMetadata.getDirectory(XmpDirectory.class);
+        checkXmpDirectory();
+
+		XmpDirectory xmp = mMetadata.getFirstDirectoryOfType(XmpDirectory.class);
 		if (label == null)
 		{
 			if (xmp != null)
@@ -416,13 +426,15 @@ public abstract class MetaMedia extends MediaItem
 		}
 		else
 		{
-			mMetadata.getOrCreateDirectory(XmpDirectory.class).updateString(XmpDirectory.TAG_LABEL, label);
+			xmp.updateString(XmpDirectory.TAG_LABEL, label);
 		}
 	}
 
 	public void setSubject(String[] subject)
 	{
-		XmpDirectory xmp = mMetadata.getDirectory(XmpDirectory.class);
+        checkXmpDirectory();
+
+		XmpDirectory xmp = mMetadata.getFirstDirectoryOfType(XmpDirectory.class);
 		if (subject.length == 0)
 		{
 			if (xmp != null)
@@ -430,7 +442,7 @@ public abstract class MetaMedia extends MediaItem
 		}
 		else
 		{
-			mMetadata.getOrCreateDirectory(XmpDirectory.class).updateStringArray(XmpDirectory.TAG_SUBJECT, subject);
+			xmp.updateStringArray(XmpDirectory.TAG_SUBJECT, subject);
 		}
 	}
 
@@ -523,10 +535,10 @@ public abstract class MetaMedia extends MediaItem
 			return;
 		}
 		
-		setContent(meta);
+		loadContent(meta);
 	}
 	
-	protected void setContent(Cursor meta)
+	protected void loadContent(Cursor meta)
 	{
 		width = meta.getInt(Meta.WIDTH_COLUMN);
 		height = meta.getInt(Meta.HEIGHT_COLUMN);

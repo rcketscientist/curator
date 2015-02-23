@@ -22,7 +22,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
@@ -51,7 +50,7 @@ public abstract class ImageWorker extends CacheManager
 		mResources = context.getResources();
 	}
 
-	/**d
+	/**
 	 * Load an image specified by the data parameter into an ImageView (override {@link ImageWorker#processBitmap(Object)} to define the processing
 	 * logic). A memory and disk cache will be used if an {@link ImageCache} has been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
 	 * image is found in the memory cache, it is set immediately, otherwise an {@link AsyncTask} will be created to asynchronously load the bitmap.
@@ -71,10 +70,10 @@ public abstract class ImageWorker extends CacheManager
 
 		Bitmap bitmap = null;
 
-//		if (mImageCache != null)
-//		{
-//			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getFilePath()));// String.valueOf(image));
-//		}
+		if (mImageCache != null)
+		{
+			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getFilePath()));// String.valueOf(image));
+		}
 
 		if (bitmap != null)
 		{

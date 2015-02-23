@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -19,11 +20,11 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.v4.provider.DocumentFile;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,6 +64,7 @@ import com.anthonymandra.widget.LoadingImageView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
 import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.ChangeLogDialog;
 import com.inscription.WhatsNewDialog;
@@ -201,7 +203,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		ImageCacheParams cacheParams = new ImageCacheParams(this, IMAGE_CACHE_DIR);
 
 		// Set memory cache to 25% of mem class
-		cacheParams.setMemCacheSizePercent(this, 0.10f);
+		cacheParams.setMemCacheSizePercent(this, 0.15f);
 
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
 		mImageDecoder = new ImageDecoder(this, mImageThumbSize);
@@ -1325,8 +1327,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		return true;
 	}
 
+    @TargetApi(VERSION_CODES.JELLY_BEAN)
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	{
 		// Directory Entry
 		if (position < mFolders.size())
@@ -1362,7 +1365,19 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
         Intent viewer = new Intent(this, ViewerChooser.class);
         viewer.setData(media.getUri());
-        startActivityForResult(viewer, REQUEST_UPDATE_PHOTO);
+        if (Util.hasJellyBean())
+        {
+            // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
+            // show plus the thumbnail image in GridView is cropped. so using
+            // makeScaleUpAnimation() instead.
+            ActivityOptions options =
+                    ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
+            startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options.toBundle());
+        }
+        else
+        {
+            startActivityForResult(viewer, REQUEST_UPDATE_PHOTO);
+        }
 
 	}
 
@@ -1709,12 +1724,18 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
                     closeOptionsMenu(); //if overflow was shown
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
-                    tutorial.setShowcase(new ViewTarget(imageGrid.getChildAt(0)), true);
+                    Target image1 = new ViewTarget(imageGrid.getChildAt(0));
+                    if (image1 == null)
+                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
+                    tutorial.setShowcase(image1, true);
 					break;
 				case 11: // Add select
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
-                    tutorial.setShowcase(new ViewTarget(imageGrid.getChildAt(2)), true);
+                    Target image3 = new ViewTarget(imageGrid.getChildAt(2));
+                    if (image3 == null)
+                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
+                    tutorial.setShowcase(image3, true);
 					break;
 				case 12: // Select feedback
                     tutorial.setScaleMultiplier(1f);
@@ -1738,12 +1759,18 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
                         mMode.finish();
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
-                    tutorial.setShowcase(new ViewTarget(imageGrid.getChildAt(1)), true);
+                    Target image2 = new ViewTarget(imageGrid.getChildAt(1));
+                    if (image2 == null)
+                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
+                    tutorial.setShowcase(image2, true);
                     break;
                 case 16: // Select between end
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
-                    tutorial.setShowcase(new ViewTarget(imageGrid.getChildAt(3)), true);
+                    Target image4 = new ViewTarget(imageGrid.getChildAt(3));
+                    if (image4 == null)
+                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
+                    tutorial.setShowcase(image4, true);
                     break;
                 case 17: // Select between feedback
                     tutorial.setScaleMultiplier(1f);
@@ -1821,14 +1848,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
     }
 
     /**
-     * Since the no showcase view doesn't word wrap
-     */
-    private void setTutorialButtonShowcase()
-    {
-        tutorial.setShowcase(new ViewTarget(tutorial.getButtonId(), this), true);
-    }
-
-    /**
      * Handle opening the options menu if it's overflow
      * @param itemId menu id
      * @param animate Animate the showcase from the previous spot.  Recommend FALSE if previous showcase was NONE
@@ -1838,9 +1857,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
        ActionItemTarget item = new ActionItemTarget(this, itemId);
        ActionViewTarget overflow = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
 
-       if (overflow.getPoint().equals(item.getPoint()))
-           openOptionsMenu();   // Change size of showcase?
-       tutorial.setShowcase(item, animate);
+        if (item != null)
+        {
+            if (overflow != null)
+            {
+                if (overflow.getPoint().equals(item.getPoint()))
+                    openOptionsMenu();   // Change size of showcase?
+            }
+
+            tutorial.setShowcase(item, animate);
+        }
+        else
+        {
+            setTutorialNoShowcase();    //For lack of something better to do in this case.
+        }
     }
 
 	protected class SearchTask extends AsyncTask<Void, Void, Void> implements OnCancelListener

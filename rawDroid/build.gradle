@@ -96,7 +96,8 @@ dependencies {
     compile project(':showcaseView:library')
     compile project(':inscription')
     compile project(':treeviewlistandroid')
-    compile project(':metaDataExtractor')
+    compile project(':metadata-extractor')
+//    compile project(':metaDataExtractor')
     compile project(':oIFileManager')
     compile 'com.android.support:support-v4:21.+'
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'

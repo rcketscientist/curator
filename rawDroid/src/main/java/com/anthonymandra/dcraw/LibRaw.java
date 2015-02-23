@@ -129,10 +129,10 @@ public class LibRaw
 		long start = System.currentTimeMillis();
 		byte[] image = getThumbFile(file.getPath(), exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Thumbnail took " + (System.currentTimeMillis() - start) + "ms");
-		sum += System.currentTimeMillis() - start;
-		entries++;
+//		sum += System.currentTimeMillis() - start;
+//		entries++;
 		
-		Log.d(TAG, "DB: Thumbnail avg = " + sum / entries + "ms");
+//		Log.d(TAG, "DB: Thumbnail avg = " + sum / entries + "ms");
 		
 		return image;
 	}

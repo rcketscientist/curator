@@ -16,3 +16,4 @@ local.properties
 /gradle/gradle
 /gradle/gradlew.bat
 /gradle/gradlew
+build

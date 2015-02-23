@@ -22,3 +22,6 @@
 [submodule "rawDroid/src/main/jni/LibRaw-demosaic-pack-GPL2"]
 	path = rawDroid/src/main/jni/LibRaw-demosaic-pack-GPL2
 	url = https://github.com/LibRaw/LibRaw-demosaic-pack-GPL2.git
+[submodule "metadata-extractor"]
+	path = metadata-extractor
+	url = https://github.com/rcketscientist/metadata-extractor.git

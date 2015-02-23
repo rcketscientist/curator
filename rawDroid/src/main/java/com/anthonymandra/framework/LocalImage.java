@@ -252,7 +252,7 @@ public class LocalImage extends MetaMedia {
 	}
 
 	public boolean hasXmp() {
-		return hasXmpFile() || mMetadata.containsDirectory(XmpDirectory.class);
+		return hasXmpFile() || mMetadata.containsDirectoryOfType(XmpDirectory.class);
 	}
 
 	private boolean hasXmpFile() {

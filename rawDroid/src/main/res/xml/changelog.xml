@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="2.7.3.1"
+             versioncode="27301"
+             summary="Bug Patch"
+             date="12 FEB 2015">
+        <change>Fix: Google phone state rights bug</change>
+    </release>
+    <release version="2.7.3"
+             versioncode="27300"
+             summary="Bug Patch"
+             date="11 FEB 2015">
+        <change>Fix: Save jpeg for images requireing full decode</change>
+        <change>Fix: Google licensing bug</change>
+    </release>
+    <release version="2.7.2"
+             versioncode="27200"
+             summary="Feature release: Tutorial, Raw decoder"
+             date="05 FEB 2015">
+        <change>Added: Half-res full decodes for images without embedded thumbs</change>
+        <change>Updated: Tutorial to be interactive and demonstrate most actions</change>
+    </release>
+    <release version="2.5.9"
+             versioncode="25900"
+             summary="Minor fixes"
+             date="05 MAR 2014">
+        <change>Fixed: Reduce memory footprint on delete</change>
+        <change>Fixed: Crash after orientation change while paused</change>
+        <change>Fixed: Disallow blank recycling bin size</change>
+    </release>
     <release version="2.5.9"
         versioncode="25900"
         summary="Minor fixes"
