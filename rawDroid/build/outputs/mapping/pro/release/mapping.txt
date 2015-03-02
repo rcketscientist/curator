@@ -9206,18 +9206,18 @@ com.anthonymandra.content.MetaProvider -> com.anthonymandra.content.MetaProvider
     int DATABASE_VERSION -> a
     android.content.UriMatcher sUriMatcher -> b
     com.anthonymandra.content.MetaProvider$DatabaseHelper dbHelper -> c
-    99:117:int delete(android.net.Uri,java.lang.String,java.lang.String[]) -> delete
-    123:132:java.lang.String getType(android.net.Uri) -> getType
-    144:149:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String) -> openFile
-    162:184:android.net.Uri insert(android.net.Uri,android.content.ContentValues) -> insert
-    233:251:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
-    257:268:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
-    273:274:boolean onCreate() -> onCreate
+    105:123:int delete(android.net.Uri,java.lang.String,java.lang.String[]) -> delete
+    129:138:java.lang.String getType(android.net.Uri) -> getType
+    150:155:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String) -> openFile
+    168:190:android.net.Uri insert(android.net.Uri,android.content.ContentValues) -> insert
+    239:257:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
+    263:274:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
+    279:280:boolean onCreate() -> onCreate
 com.anthonymandra.content.MetaProvider$1 -> com.anthonymandra.content.c:
 com.anthonymandra.content.MetaProvider$DatabaseHelper -> com.anthonymandra.content.d:
-    57:58:void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
-    62:86:void createTable(android.database.sqlite.SQLiteDatabase) -> a
-    91:93:void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
+    61:62:void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
+    66:92:void createTable(android.database.sqlite.SQLiteDatabase) -> a
+    97:99:void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
 com.anthonymandra.dcraw.LibRaw -> com.anthonymandra.dcraw.LibRaw:
     java.util.concurrent.Executor EXECUTOR -> a
     int sum -> b
@@ -9559,22 +9559,23 @@ com.anthonymandra.framework.ImageCache -> com.anthonymandra.framework.ak:
     com.anthonymandra.framework.ImageCache$ImageCacheParams mCacheParams -> d
     java.lang.Object mDiskCacheLock -> e
     boolean mDiskCacheStarting -> f
-    105:117:com.anthonymandra.framework.ImageCache findOrCreateCache(android.support.v4.app.FragmentManager,com.anthonymandra.framework.ImageCache$ImageCacheParams) -> a
-    128:153:void init(com.anthonymandra.framework.ImageCache$ImageCacheParams) -> a
-    162:190:void initDiskCache() -> a
-    202:262:void addBitmapToCache(java.lang.String,android.graphics.Bitmap) -> a
-    293:341:android.graphics.Bitmap getBitmapFromDiskCache(java.lang.String) -> a
-    350:372:void clearCache() -> b
-    380:394:void flush() -> c
-    402:420:void close() -> d
-    482:490:java.lang.String hashKeyForDisk(java.lang.String) -> b
-    496:506:java.lang.String bytesToHexString(byte[]) -> a
-    519:528:com.anthonymandra.framework.ImageCache$RetainFragment findOrCreateRetainFragment(android.support.v4.app.FragmentManager) -> a
-    40:40:android.graphics.Bitmap$CompressFormat access$000() -> e
+    104:116:com.anthonymandra.framework.ImageCache findOrCreateCache(android.support.v4.app.FragmentManager,com.anthonymandra.framework.ImageCache$ImageCacheParams) -> a
+    127:152:void init(com.anthonymandra.framework.ImageCache$ImageCacheParams) -> a
+    161:189:void initDiskCache() -> a
+    201:261:void addBitmapToCache(java.lang.String,android.graphics.Bitmap) -> a
+    272:280:android.graphics.Bitmap getBitmapFromMemCache(java.lang.String) -> a
+    292:340:android.graphics.Bitmap getBitmapFromDiskCache(java.lang.String) -> b
+    349:371:void clearCache() -> b
+    379:393:void flush() -> c
+    401:419:void close() -> d
+    476:484:java.lang.String hashKeyForDisk(java.lang.String) -> c
+    490:500:java.lang.String bytesToHexString(byte[]) -> a
+    513:522:com.anthonymandra.framework.ImageCache$RetainFragment findOrCreateRetainFragment(android.support.v4.app.FragmentManager) -> a
+    39:39:android.graphics.Bitmap$CompressFormat access$000() -> e
 com.anthonymandra.framework.ImageCache$1 -> com.anthonymandra.framework.al:
     com.anthonymandra.framework.ImageCache this$0 -> a
-    141:141:int sizeOf(java.lang.String,android.graphics.Bitmap) -> a
-    134:134:int sizeOf(java.lang.Object,java.lang.Object) -> b
+    140:140:int sizeOf(java.lang.String,android.graphics.Bitmap) -> a
+    133:133:int sizeOf(java.lang.Object,java.lang.Object) -> b
 com.anthonymandra.framework.ImageCache$ImageCacheParams -> com.anthonymandra.framework.am:
     int memCacheSize -> a
     int diskCacheSize -> b
@@ -9585,13 +9586,12 @@ com.anthonymandra.framework.ImageCache$ImageCacheParams -> com.anthonymandra.fra
     boolean diskCacheEnabled -> g
     boolean clearDiskCacheOnStart -> h
     boolean initDiskCacheOnCreate -> i
-    461:466:void setMemCacheSizePercent(android.content.Context,float) -> a
-    470:470:int getMemoryClass(android.content.Context) -> a
+    460:465:void setMemCacheSizePercent(android.content.Context,float) -> a
 com.anthonymandra.framework.ImageCache$RetainFragment -> com.anthonymandra.framework.an:
     java.lang.Object mObject -> a
-    549:553:void onCreate(android.os.Bundle) -> onCreate
-    563:564:void setObject(java.lang.Object) -> a
-    573:573:java.lang.Object getObject() -> a
+    543:547:void onCreate(android.os.Bundle) -> onCreate
+    557:558:void setObject(java.lang.Object) -> a
+    567:567:java.lang.Object getObject() -> a
 com.anthonymandra.framework.ImageDecoder -> com.anthonymandra.framework.ao:
     47:54:android.graphics.Bitmap processBitmap(com.anthonymandra.framework.RawObject) -> a
     60:60:android.graphics.Bitmap processBitmap(java.lang.Object) -> a
@@ -9609,30 +9609,30 @@ com.anthonymandra.framework.ImageWorker -> com.anthonymandra.framework.aq:
     android.graphics.Bitmap mFolderBitmap -> g
     android.graphics.Bitmap mUnknownBitmap -> h
     android.content.res.Resources mResources -> i
-    66:97:void loadImage(com.anthonymandra.framework.RawObject,com.anthonymandra.widget.LoadingImageView) -> a
-    101:102:void setFolderImage(int) -> b
-    106:107:void setUnknownImage(int) -> c
-    137:163:boolean cancelPotentialWork(com.anthonymandra.framework.RawObject,com.anthonymandra.widget.LoadingImageView) -> b
-    172:179:com.anthonymandra.framework.ImageWorker$BitmapWorkerTask getBitmapWorkerTask(com.anthonymandra.widget.LoadingImageView) -> b
+    65:96:void loadImage(com.anthonymandra.framework.RawObject,com.anthonymandra.widget.LoadingImageView) -> a
+    100:101:void setFolderImage(int) -> b
+    105:106:void setUnknownImage(int) -> c
+    136:162:boolean cancelPotentialWork(com.anthonymandra.framework.RawObject,com.anthonymandra.widget.LoadingImageView) -> b
+    171:178:com.anthonymandra.framework.ImageWorker$BitmapWorkerTask getBitmapWorkerTask(com.anthonymandra.widget.LoadingImageView) -> b
     android.graphics.Bitmap processBitmap(java.lang.Object) -> a
-    342:343:void setImageBitmap(com.anthonymandra.widget.LoadingImageView,android.graphics.Bitmap) -> a
-    36:36:void access$100(com.anthonymandra.framework.ImageWorker,com.anthonymandra.widget.LoadingImageView,android.graphics.Bitmap) -> a
-    36:36:com.anthonymandra.framework.ImageWorker$BitmapWorkerTask access$200(com.anthonymandra.widget.LoadingImageView) -> a
+    341:342:void setImageBitmap(com.anthonymandra.widget.LoadingImageView,android.graphics.Bitmap) -> a
+    35:35:void access$100(com.anthonymandra.framework.ImageWorker,com.anthonymandra.widget.LoadingImageView,android.graphics.Bitmap) -> a
+    35:35:com.anthonymandra.framework.ImageWorker$BitmapWorkerTask access$200(com.anthonymandra.widget.LoadingImageView) -> a
 com.anthonymandra.framework.ImageWorker$AsyncDrawable -> com.anthonymandra.framework.ar:
     java.lang.ref.WeakReference bitmapWorkerTaskReference -> a
-    330:330:com.anthonymandra.framework.ImageWorker$BitmapWorkerTask getBitmapWorkerTask() -> a
+    329:329:com.anthonymandra.framework.ImageWorker$BitmapWorkerTask getBitmapWorkerTask() -> a
 com.anthonymandra.framework.ImageWorker$BitmapWorkerTask -> com.anthonymandra.framework.as:
     com.anthonymandra.framework.RawObject data -> e
     java.lang.ref.WeakReference imageViewReference -> f
     com.anthonymandra.framework.ImageWorker this$0 -> d
-    211:260:android.graphics.Bitmap doInBackground(java.lang.Object[]) -> e
-    270:285:void onPostExecute(android.graphics.Bitmap) -> a
-    290:295:void onCancelled(android.graphics.Bitmap) -> b
-    302:310:com.anthonymandra.widget.LoadingImageView getAttachedImageView() -> d
-    195:195:void onCancelled(java.lang.Object) -> b
-    195:195:void onPostExecute(java.lang.Object) -> a
-    195:195:java.lang.Object doInBackground(java.lang.Object[]) -> a
-    195:195:com.anthonymandra.framework.RawObject access$000(com.anthonymandra.framework.ImageWorker$BitmapWorkerTask) -> a
+    210:259:android.graphics.Bitmap doInBackground(java.lang.Object[]) -> e
+    269:284:void onPostExecute(android.graphics.Bitmap) -> a
+    289:294:void onCancelled(android.graphics.Bitmap) -> b
+    301:309:com.anthonymandra.widget.LoadingImageView getAttachedImageView() -> d
+    194:194:void onCancelled(java.lang.Object) -> b
+    194:194:void onPostExecute(java.lang.Object) -> a
+    194:194:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    194:194:com.anthonymandra.framework.RawObject access$000(com.anthonymandra.framework.ImageWorker$BitmapWorkerTask) -> a
 com.anthonymandra.framework.License -> com.anthonymandra.framework.at:
     java.lang.String TAG -> a
 com.anthonymandra.framework.License$LicenseState -> com.anthonymandra.framework.au:
@@ -9728,25 +9728,26 @@ com.anthonymandra.framework.MetaMedia -> com.anthonymandra.framework.ay:
     362:377:double getRating() -> R
     382:384:java.lang.String getLabel() -> S
     389:391:java.lang.String[] getSubject() -> T
-    396:406:void setRating(double) -> a
-    410:421:void setLabel(java.lang.String) -> b
-    425:435:void setSubject(java.lang.String[]) -> a
+    396:398:void checkXmpDirectory() -> l
+    402:414:void setRating(double) -> a
+    418:431:void setLabel(java.lang.String) -> b
+    435:447:void setSubject(java.lang.String[]) -> a
     java.io.BufferedInputStream getXmpInputStream() -> s
     java.io.BufferedOutputStream getXmpOutputStream() -> o
-    444:452:boolean readMetadata() -> U
-    458:482:boolean readMeta() -> l
-    488:515:void putContent() -> V
-    519:527:void getContent() -> W
-    531:542:void setContent(android.database.Cursor) -> a
-    546:565:boolean readXmp() -> q
-    571:572:int getWidth() -> f
-    577:578:void setWidth(int) -> b
-    582:583:int getHeight() -> g
-    588:589:void setHeight(int) -> c
-    593:594:int getThumbWidth() -> X
-    599:600:void setThumbWidth(int) -> d
-    610:611:void setThumbHeight(int) -> e
-    615:619:void checkMetaLoaded() -> Y
+    456:464:boolean readMetadata() -> U
+    470:494:boolean readMeta() -> q
+    500:527:void putContent() -> V
+    531:539:void getContent() -> W
+    543:554:void loadContent(android.database.Cursor) -> a
+    558:577:boolean readXmp() -> Z
+    583:584:int getWidth() -> f
+    589:590:void setWidth(int) -> b
+    594:595:int getHeight() -> g
+    600:601:void setHeight(int) -> c
+    605:606:int getThumbWidth() -> X
+    611:612:void setThumbWidth(int) -> d
+    622:623:void setThumbHeight(int) -> e
+    627:631:void checkMetaLoaded() -> Y
 com.anthonymandra.framework.MetaMedia$1 -> com.anthonymandra.framework.az:
     java.io.OutputStream val$os -> a
     com.anthonymandra.framework.MetaMedia this$0 -> b
@@ -9754,7 +9755,7 @@ com.anthonymandra.framework.MetaMedia$1 -> com.anthonymandra.framework.az:
 com.anthonymandra.framework.MetaMedia$2 -> com.anthonymandra.framework.ba:
     android.content.ContentValues val$cv -> a
     com.anthonymandra.framework.MetaMedia this$0 -> b
-    511:512:void run() -> run
+    523:524:void run() -> run
 com.anthonymandra.framework.MetaObject -> com.anthonymandra.framework.bb:
     void clearXmp() -> x
     void writeXmp() -> r
@@ -9851,9 +9852,10 @@ com.anthonymandra.framework.Util -> com.anthonymandra.framework.bg:
     68:68:boolean hasGingerbread() -> a
     73:73:boolean hasHoneycomb() -> b
     78:78:boolean hasHoneycombMR1() -> c
-    93:93:boolean hasKitkat() -> d
+    88:88:boolean hasJellyBean() -> d
+    93:93:boolean hasKitkat() -> e
     114:122:java.io.File getDiskCacheDir(android.content.Context,java.lang.String) -> a
-    133:137:boolean isExternalStorageRemovable() -> e
+    133:137:boolean isExternalStorageRemovable() -> f
     150:155:long getUsableSpace(java.io.File) -> a
     160:160:java.lang.String swapExtention(java.lang.String,java.lang.String) -> a
     165:185:boolean isTabDelimited(java.lang.String) -> a
@@ -10021,7 +10023,7 @@ com.anthonymandra.rawdroid.AppRater$3 -> com.anthonymandra.rawdroid.d:
     android.content.SharedPreferences$Editor val$editor -> a
     android.content.Context val$mContext -> b
     67:73:void onClick(android.content.DialogInterface,int) -> onClick
-com.anthonymandra.rawdroid.CameraImport -> com.anthonymandra.rawdroid.CameraImport:
+com.anthonymandra.rawdroid.CameraImportActivity -> com.anthonymandra.rawdroid.CameraImportActivity:
     android.mtp.MtpDevice mMtpDevice -> a
     java.util.List imageHandles -> b
     int requiredSpace -> c
@@ -10029,44 +10031,41 @@ com.anthonymandra.rawdroid.CameraImport -> com.anthonymandra.rawdroid.CameraImpo
     46:48:void onCreate(android.os.Bundle) -> onCreate
     53:56:void onDestroy() -> onDestroy
     61:84:void getMtpDevice() -> a
-    88:121:void getImageFiles() -> b
-    238:268:void requestImportImageLocation() -> c
-    273:284:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    288:309:void handleImportDirResult(java.lang.String) -> a
-    33:33:android.mtp.MtpDevice access$000(com.anthonymandra.rawdroid.CameraImport) -> a
-    33:33:void access$100(com.anthonymandra.rawdroid.CameraImport) -> b
-    33:33:java.io.File access$200(com.anthonymandra.rawdroid.CameraImport) -> c
-    33:33:int access$300(com.anthonymandra.rawdroid.CameraImport) -> d
-    33:33:java.util.List access$400(com.anthonymandra.rawdroid.CameraImport) -> e
-com.anthonymandra.rawdroid.CameraImport$1 -> com.anthonymandra.rawdroid.e:
-    com.anthonymandra.rawdroid.CameraImport this$0 -> a
-    95:96:void run() -> run
-com.anthonymandra.rawdroid.CameraImport$FindImagesTask -> com.anthonymandra.rawdroid.f:
+    88:119:boolean getImageFiles() -> b
+    246:276:void requestImportImageLocation() -> c
+    281:292:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    296:317:void handleImportDirResult(java.lang.String) -> a
+    33:33:android.mtp.MtpDevice access$000(com.anthonymandra.rawdroid.CameraImportActivity) -> a
+    33:33:boolean access$100(com.anthonymandra.rawdroid.CameraImportActivity) -> b
+    33:33:java.io.File access$200(com.anthonymandra.rawdroid.CameraImportActivity) -> c
+    33:33:int access$300(com.anthonymandra.rawdroid.CameraImportActivity) -> d
+    33:33:java.util.List access$400(com.anthonymandra.rawdroid.CameraImportActivity) -> e
+com.anthonymandra.rawdroid.CameraImportActivity$FindImagesTask -> com.anthonymandra.rawdroid.e:
     android.app.ProgressDialog mProgressDialog -> e
-    com.anthonymandra.rawdroid.CameraImport this$0 -> d
-    130:140:void onPreExecute() -> a
-    145:146:java.lang.Void doInBackground(java.lang.Void[]) -> a
-    152:161:void onPostExecute(java.lang.Void) -> a
-    123:123:void onPostExecute(java.lang.Object) -> a
-    123:123:java.lang.Object doInBackground(java.lang.Object[]) -> a
-com.anthonymandra.rawdroid.CameraImport$ImportTask -> com.anthonymandra.rawdroid.g:
+    com.anthonymandra.rawdroid.CameraImportActivity this$0 -> d
+    129:139:void onPreExecute() -> a
+    144:144:java.lang.Boolean doInBackground(java.lang.Void[]) -> a
+    150:165:void onPostExecute(java.lang.Boolean) -> a
+    122:122:void onPostExecute(java.lang.Object) -> a
+    122:122:java.lang.Object doInBackground(java.lang.Object[]) -> a
+com.anthonymandra.rawdroid.CameraImportActivity$ImportTask -> com.anthonymandra.rawdroid.f:
     boolean cancelled -> e
     android.app.ProgressDialog mProgressDialog -> f
-    com.anthonymandra.rawdroid.CameraImport this$0 -> d
-    172:178:void onPreExecute() -> a
-    183:198:java.util.List doInBackground(java.lang.Void[]) -> a
-    204:220:void onPostExecute(java.util.List) -> a
-    225:227:void onProgressUpdate(java.lang.Void[]) -> b
-    232:233:void onCancel(android.content.DialogInterface) -> onCancel
-    164:164:void onProgressUpdate(java.lang.Object[]) -> b
-    164:164:void onPostExecute(java.lang.Object) -> a
-    164:164:java.lang.Object doInBackground(java.lang.Object[]) -> a
-com.anthonymandra.rawdroid.Constants -> com.anthonymandra.rawdroid.h:
+    com.anthonymandra.rawdroid.CameraImportActivity this$0 -> d
+    176:182:void onPreExecute() -> a
+    187:206:java.util.List doInBackground(java.lang.Void[]) -> a
+    212:228:void onPostExecute(java.util.List) -> a
+    233:235:void onProgressUpdate(java.lang.Void[]) -> b
+    240:241:void onCancel(android.content.DialogInterface) -> onCancel
+    168:168:void onProgressUpdate(java.lang.Object[]) -> b
+    168:168:void onPostExecute(java.lang.Object) -> a
+    168:168:java.lang.Object doInBackground(java.lang.Object[]) -> a
+com.anthonymandra.rawdroid.Constants -> com.anthonymandra.rawdroid.g:
     int VariantCode -> a
     int DistractionInt -> b
     int DistractionInt2 -> c
     int DistractionInt3 -> d
-com.anthonymandra.rawdroid.FormatDialog -> com.anthonymandra.rawdroid.i:
+com.anthonymandra.rawdroid.FormatDialog -> com.anthonymandra.rawdroid.h:
     java.util.List sourceFiles -> a
     android.widget.Spinner spinner -> b
     android.content.Context mContext -> c
@@ -10076,14 +10075,14 @@ com.anthonymandra.rawdroid.FormatDialog -> com.anthonymandra.rawdroid.i:
     17:17:android.widget.Spinner access$200(com.anthonymandra.rawdroid.FormatDialog) -> a
     17:17:java.util.List access$300(com.anthonymandra.rawdroid.FormatDialog) -> b
     17:17:com.anthonymandra.rawdroid.FormatDialog$ResponseListener access$400(com.anthonymandra.rawdroid.FormatDialog) -> c
-com.anthonymandra.rawdroid.FormatDialog$1 -> com.anthonymandra.rawdroid.j:
-com.anthonymandra.rawdroid.FormatDialog$AcceptListener -> com.anthonymandra.rawdroid.k:
+com.anthonymandra.rawdroid.FormatDialog$1 -> com.anthonymandra.rawdroid.i:
+com.anthonymandra.rawdroid.FormatDialog$AcceptListener -> com.anthonymandra.rawdroid.j:
     com.anthonymandra.rawdroid.FormatDialog this$0 -> a
     72:101:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.FormatDialog$CancelListener -> com.anthonymandra.rawdroid.l:
+com.anthonymandra.rawdroid.FormatDialog$CancelListener -> com.anthonymandra.rawdroid.k:
     com.anthonymandra.rawdroid.FormatDialog this$0 -> a
     109:111:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.FormatDialog$ResponseListener -> com.anthonymandra.rawdroid.m:
+com.anthonymandra.rawdroid.FormatDialog$ResponseListener -> com.anthonymandra.rawdroid.l:
     void Response(java.lang.Boolean) -> a
 com.anthonymandra.rawdroid.FullSettingsActivity -> com.anthonymandra.rawdroid.FullSettingsActivity:
     java.lang.String[] prefShowOptions -> a
@@ -10143,17 +10142,17 @@ com.anthonymandra.rawdroid.FullSettingsActivity -> com.anthonymandra.rawdroid.Fu
     35:35:void access$1100() -> j
     35:35:void access$1200() -> k
     35:35:void access$1300() -> l
-com.anthonymandra.rawdroid.FullSettingsActivity$1 -> com.anthonymandra.rawdroid.n:
+com.anthonymandra.rawdroid.FullSettingsActivity$1 -> com.anthonymandra.rawdroid.m:
     225:226:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-com.anthonymandra.rawdroid.FullSettingsActivity$2 -> com.anthonymandra.rawdroid.o:
+com.anthonymandra.rawdroid.FullSettingsActivity$2 -> com.anthonymandra.rawdroid.n:
     245:248:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-com.anthonymandra.rawdroid.FullSettingsActivity$3 -> com.anthonymandra.rawdroid.p:
+com.anthonymandra.rawdroid.FullSettingsActivity$3 -> com.anthonymandra.rawdroid.o:
     261:262:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-com.anthonymandra.rawdroid.FullSettingsActivity$4 -> com.anthonymandra.rawdroid.q:
+com.anthonymandra.rawdroid.FullSettingsActivity$4 -> com.anthonymandra.rawdroid.p:
     690:691:boolean onPreferenceClick(android.preference.Preference) -> onPreferenceClick
-com.anthonymandra.rawdroid.FullSettingsActivity$5 -> com.anthonymandra.rawdroid.r:
+com.anthonymandra.rawdroid.FullSettingsActivity$5 -> com.anthonymandra.rawdroid.q:
     int[] $SwitchMap$com$anthonymandra$framework$License$LicenseState -> a
-com.anthonymandra.rawdroid.FullSettingsActivity$SettingFragment -> com.anthonymandra.rawdroid.s:
+com.anthonymandra.rawdroid.FullSettingsActivity$SettingFragment -> com.anthonymandra.rawdroid.r:
     592:593:void onCreate(android.os.Bundle) -> onCreate
     598:601:void onResume() -> onResume
     606:608:void onPause() -> onPause
@@ -10200,7 +10199,6 @@ com.anthonymandra.rawdroid.LegacyViewerActivity -> com.anthonymandra.rawdroid.Le
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel mModel -> c
     com.android.legacy.ui.GLRootView mGLRootView -> d
     com.android.legacy.ui.GLView mRootPane -> at
-    int mImageIndex -> au
     60:74:void onCreate(android.os.Bundle) -> onCreate
     78:80:void lookupViews() -> F
     85:95:void onResume() -> onResume
@@ -10219,31 +10217,43 @@ com.anthonymandra.rawdroid.LegacyViewerActivity -> com.anthonymandra.rawdroid.Le
     24:24:com.android.legacy.ui.ImageViewer access$100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> a
     24:24:int access$200(com.anthonymandra.rawdroid.LegacyViewerActivity) -> b
     24:24:java.util.List access$300(com.anthonymandra.rawdroid.LegacyViewerActivity) -> c
-    24:24:java.util.List access$400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> d
-    24:24:void access$500(com.anthonymandra.rawdroid.LegacyViewerActivity,android.net.Uri) -> a
-    24:24:void access$700(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> a
-    24:24:java.util.List access$800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> e
-    24:24:java.util.List access$900(com.anthonymandra.rawdroid.LegacyViewerActivity) -> f
-    24:24:java.util.List access$1100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> g
-    24:24:void access$1300(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> b
-    24:24:com.android.legacy.ui.GLRootView access$1400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> h
-    24:24:com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel access$1500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> i
-com.anthonymandra.rawdroid.LegacyViewerActivity$1 -> com.anthonymandra.rawdroid.t:
+    24:24:int access$400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> d
+    24:24:int access$500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> e
+    24:24:java.util.List access$600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> f
+    24:24:int access$700(com.anthonymandra.rawdroid.LegacyViewerActivity) -> g
+    24:24:int access$800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> h
+    24:24:void access$900(com.anthonymandra.rawdroid.LegacyViewerActivity,android.net.Uri) -> a
+    24:24:int access$1100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> i
+    24:24:void access$1200(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> a
+    24:24:int access$1300(com.anthonymandra.rawdroid.LegacyViewerActivity) -> j
+    24:24:java.util.List access$1400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> k
+    24:24:int access$1500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> l
+    24:24:java.util.List access$1600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> m
+    24:24:int access$1800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> n
+    24:24:int access$1900(com.anthonymandra.rawdroid.LegacyViewerActivity) -> o
+    24:24:int access$2000(com.anthonymandra.rawdroid.LegacyViewerActivity) -> p
+    24:24:java.util.List access$2100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> q
+    24:24:int access$2200(com.anthonymandra.rawdroid.LegacyViewerActivity) -> r
+    24:24:int access$2400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> s
+    24:24:void access$2500(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> b
+    24:24:com.android.legacy.ui.GLRootView access$2600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> t
+    24:24:com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel access$2700(com.anthonymandra.rawdroid.LegacyViewerActivity) -> u
+com.anthonymandra.rawdroid.LegacyViewerActivity$1 -> com.anthonymandra.rawdroid.s:
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> j
     39:40:void renderBackground(com.android.legacy.ui.GLCanvas) -> b
     45:49:void onLayout(boolean,int,int,int,int) -> a
-com.anthonymandra.rawdroid.LegacyViewerActivity$CurrentImageLoader -> com.anthonymandra.rawdroid.u:
+com.anthonymandra.rawdroid.LegacyViewerActivity$CurrentImageLoader -> com.anthonymandra.rawdroid.t:
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> d
     511:513:void onPostExecute(android.graphics.Bitmap) -> a
     506:506:void onPostExecute(java.lang.Object) -> a
-com.anthonymandra.rawdroid.LegacyViewerActivity$LargeImageLoader -> com.anthonymandra.rawdroid.v:
+com.anthonymandra.rawdroid.LegacyViewerActivity$LargeImageLoader -> com.anthonymandra.rawdroid.u:
     int mIndex -> d
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> e
     552:565:android.graphics.BitmapRegionDecoder doInBackground(java.lang.Object[]) -> e
     571:574:void onPostExecute(android.graphics.BitmapRegionDecoder) -> a
     545:545:void onPostExecute(java.lang.Object) -> a
     545:545:java.lang.Object doInBackground(java.lang.Object[]) -> a
-com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthonymandra.rawdroid.w:
+com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthonymandra.rawdroid.v:
     android.graphics.BitmapRegionDecoder mLargeBitmap -> b
     android.graphics.Bitmap[] mScreenNails -> c
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> a
@@ -10262,20 +10272,20 @@ com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthon
     396:412:void updateLargeImage(int,android.graphics.BitmapRegionDecoder) -> a
     417:420:void requestNextImageWithMeta() -> k
     425:475:void requestNextImage() -> l
-com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$1 -> com.anthonymandra.rawdroid.x:
+com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$1 -> com.anthonymandra.rawdroid.w:
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel this$1 -> a
     275:276:void run() -> run
-com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$2 -> com.anthonymandra.rawdroid.y:
+com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$2 -> com.anthonymandra.rawdroid.x:
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel this$1 -> a
     311:312:void run() -> run
-com.anthonymandra.rawdroid.LegacyViewerActivity$SmallImageLoader -> com.anthonymandra.rawdroid.z:
+com.anthonymandra.rawdroid.LegacyViewerActivity$SmallImageLoader -> com.anthonymandra.rawdroid.y:
     int mIndex -> e
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> f
     523:533:android.graphics.Bitmap doInBackground(java.lang.Object[]) -> e
     539:542:void onPostExecute(android.graphics.Bitmap) -> a
     516:516:void onPostExecute(java.lang.Object) -> a
     516:516:java.lang.Object doInBackground(java.lang.Object[]) -> a
-com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.aa:
+com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.z:
     java.lang.String TAG -> a
     com.google.android.vending.licensing.LicenseCheckerCallback mLicenseCheckerCallback -> b
     com.google.android.vending.licensing.LicenseChecker mChecker -> c
@@ -10293,13 +10303,13 @@ com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.aa:
     23:23:void access$000() -> b
     23:23:void access$200(com.anthonymandra.framework.License$LicenseState) -> a
     23:23:com.google.android.vending.licensing.LicenseChecker access$300() -> c
-com.anthonymandra.rawdroid.LicenseManager$1 -> com.anthonymandra.rawdroid.ab:
+com.anthonymandra.rawdroid.LicenseManager$1 -> com.anthonymandra.rawdroid.aa:
     66:67:void run() -> run
-com.anthonymandra.rawdroid.LicenseManager$RawdroidLicenseCheckerCallback -> com.anthonymandra.rawdroid.ac:
+com.anthonymandra.rawdroid.LicenseManager$RawdroidLicenseCheckerCallback -> com.anthonymandra.rawdroid.ab:
     162:164:void allow(int) -> a
     167:169:void dontAllow(int) -> b
     172:174:void applicationError(int) -> c
-com.anthonymandra.rawdroid.ParentChild -> com.anthonymandra.rawdroid.ad:
+com.anthonymandra.rawdroid.ParentChild -> com.anthonymandra.rawdroid.ac:
     java.lang.Object parent -> a
     java.lang.Object child -> b
     21:21:java.lang.Object getChild() -> a
@@ -10329,186 +10339,186 @@ com.anthonymandra.rawdroid.RawDroid -> com.anthonymandra.rawdroid.RawDroid:
     int tutorialStage -> u
     int noPoint -> v
     int bias -> w
-    178:254:void onCreate(android.os.Bundle) -> onCreate
-    258:293:void doFirstRun() -> g
-    297:311:boolean packageExists(java.lang.String) -> c
-    316:328:void doProCheck() -> h
-    332:373:void getKeywords() -> i
-    377:387:void setRecentFolder() -> j
-    394:404:void updateGallery() -> k
-    409:410:boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> onCreateOptionsMenu
-    416:437:void onResume() -> onResume
-    442:447:void onPause() -> onPause
-    452:454:void onStop() -> onStop
-    459:461:void onDestroy() -> onDestroy
-    466:489:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    493:496:void handlePhotoUpdate(android.net.Uri) -> b
-    501:527:void handleImportDirResult(java.lang.String) -> d
-    531:536:long getSelectedImageSize() -> w
-    542:562:void handleExportThumbResult(java.lang.String) -> e
-    566:577:void showWriteAccessError() -> x
-    619:619:java.util.List storeSelectionForIntent() -> y
-    626:677:boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> onOptionsItemSelected
-    684:685:boolean onShareTargetSelected(com.actionbarsherlock.widget.ShareActionProvider,android.content.Intent) -> onShareTargetSelected
-    690:694:void selectAll() -> z
-    698:709:void requestUsb() -> A
-    713:724:void requestRename() -> B
-    736:769:void requestImportImageLocation() -> C
-    781:812:void requestExportThumbLocation() -> D
-    816:818:void requestSettings() -> E
-    823:824:void updateAfterDelete() -> t
-    829:830:void updateAfterRestore() -> u
-    839:847:void updateLocalFiles() -> a
-    851:856:void updatePath(java.io.File) -> d
-    861:870:boolean onNavigationItemSelected(int,long) -> onNavigationItemSelected
-    875:887:void setNavigation() -> F
-    891:893:void upOneLevel() -> G
-    898:904:void onBackPressed() -> onBackPressed
-    1033:1035:void startMultiSelectMode() -> b
-    1039:1044:void endMultiSelectMode() -> c
-    1048:1070:void updateSelection() -> d
-    1301:1303:void startContextualActionBar() -> H
-    1308:1325:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
-    1332:1367:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-    1373:1373:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-    1379:1387:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
-    1606:1645:void runTutorial() -> e
-    1819:1821:void setTutorialNoShowcase() -> I
-    1838:1844:void setTutorialActionView(int,boolean) -> a
-    1926:1932:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    82:82:com.anthonymandra.rawdroid.RawDroid$ImageAdapter access$000(com.anthonymandra.rawdroid.RawDroid) -> a
-    82:82:void access$200(com.anthonymandra.rawdroid.RawDroid) -> b
-    82:82:com.actionbarsherlock.widget.ShareActionProvider access$302(com.anthonymandra.rawdroid.RawDroid,com.actionbarsherlock.widget.ShareActionProvider) -> a
-    82:82:com.actionbarsherlock.widget.ShareActionProvider access$400(com.anthonymandra.rawdroid.RawDroid) -> c
-    82:82:android.content.Intent access$500(com.anthonymandra.rawdroid.RawDroid) -> d
-    82:82:com.actionbarsherlock.widget.ShareActionProvider access$600(com.anthonymandra.rawdroid.RawDroid) -> e
-    82:82:int access$700(com.anthonymandra.rawdroid.RawDroid) -> f
-    82:82:int access$800(com.anthonymandra.rawdroid.RawDroid) -> g
-    82:82:int access$900(com.anthonymandra.rawdroid.RawDroid) -> h
-    82:82:java.util.List access$1000(com.anthonymandra.rawdroid.RawDroid) -> i
-    82:82:java.util.List access$1100(com.anthonymandra.rawdroid.RawDroid) -> j
-    82:82:java.util.List access$1200(com.anthonymandra.rawdroid.RawDroid) -> k
-    82:82:java.util.List access$1300(com.anthonymandra.rawdroid.RawDroid) -> l
-    82:82:java.util.List access$1400(com.anthonymandra.rawdroid.RawDroid) -> m
-    82:82:java.util.List access$1500(com.anthonymandra.rawdroid.RawDroid) -> n
-    82:82:com.anthonymandra.framework.ImageDecoder access$1600(com.anthonymandra.rawdroid.RawDroid) -> o
-    82:82:boolean access$1700(com.anthonymandra.rawdroid.RawDroid) -> p
-    82:82:java.util.List access$1800(com.anthonymandra.rawdroid.RawDroid) -> q
-    82:82:java.util.List access$1900(com.anthonymandra.rawdroid.RawDroid) -> r
-    82:82:java.util.List access$2000(com.anthonymandra.rawdroid.RawDroid) -> s
-    82:82:java.util.List access$2100(com.anthonymandra.rawdroid.RawDroid) -> t
-    82:82:java.util.List access$2200(com.anthonymandra.rawdroid.RawDroid) -> u
-    82:82:java.util.List access$2300(com.anthonymandra.rawdroid.RawDroid) -> v
-    82:82:java.util.List access$2400(com.anthonymandra.rawdroid.RawDroid) -> w
-    82:82:java.lang.String access$2600() -> f
-    82:82:void access$2700(com.anthonymandra.rawdroid.RawDroid,java.io.File) -> a
-    82:82:com.github.amlcurran.showcaseview.ShowcaseView access$2900(com.anthonymandra.rawdroid.RawDroid) -> x
-    82:82:void access$3000(com.anthonymandra.rawdroid.RawDroid) -> y
-    82:82:void access$3100(com.anthonymandra.rawdroid.RawDroid,int,boolean) -> a
-    82:82:android.widget.GridView access$3200(com.anthonymandra.rawdroid.RawDroid) -> z
-    82:82:com.actionbarsherlock.view.ActionMode access$3300(com.anthonymandra.rawdroid.RawDroid) -> A
-    82:82:boolean access$3402(boolean) -> a
-    82:82:boolean access$3502(boolean) -> b
-    82:82:android.app.ProgressDialog access$3602(com.anthonymandra.rawdroid.RawDroid,android.app.ProgressDialog) -> a
-    82:82:android.app.ProgressDialog access$3700(com.anthonymandra.rawdroid.RawDroid) -> B
-    82:82:android.app.ProgressDialog access$3800(com.anthonymandra.rawdroid.RawDroid) -> C
-    82:82:android.app.ProgressDialog access$3900(com.anthonymandra.rawdroid.RawDroid) -> D
-    82:82:android.app.ProgressDialog access$4000(com.anthonymandra.rawdroid.RawDroid) -> E
-    82:82:com.anthonymandra.framework.GalleryActivity$RawFilter access$4100(com.anthonymandra.rawdroid.RawDroid) -> F
-    82:82:android.app.ProgressDialog access$4200(com.anthonymandra.rawdroid.RawDroid) -> G
-com.anthonymandra.rawdroid.RawDroid$1 -> com.anthonymandra.rawdroid.ae:
+    180:256:void onCreate(android.os.Bundle) -> onCreate
+    260:295:void doFirstRun() -> g
+    299:313:boolean packageExists(java.lang.String) -> c
+    318:330:void doProCheck() -> h
+    334:375:void getKeywords() -> i
+    379:389:void setRecentFolder() -> j
+    396:406:void updateGallery() -> k
+    411:412:boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> onCreateOptionsMenu
+    418:439:void onResume() -> onResume
+    444:449:void onPause() -> onPause
+    454:456:void onStop() -> onStop
+    461:463:void onDestroy() -> onDestroy
+    468:491:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    495:498:void handlePhotoUpdate(android.net.Uri) -> b
+    503:529:void handleImportDirResult(java.lang.String) -> d
+    533:538:long getSelectedImageSize() -> w
+    544:564:void handleExportThumbResult(java.lang.String) -> e
+    568:579:void showWriteAccessError() -> x
+    621:621:java.util.List storeSelectionForIntent() -> y
+    628:679:boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> onOptionsItemSelected
+    686:687:boolean onShareTargetSelected(com.actionbarsherlock.widget.ShareActionProvider,android.content.Intent) -> onShareTargetSelected
+    692:696:void selectAll() -> z
+    700:711:void requestUsb() -> A
+    715:726:void requestRename() -> B
+    738:771:void requestImportImageLocation() -> C
+    783:814:void requestExportThumbLocation() -> D
+    818:820:void requestSettings() -> E
+    825:826:void updateAfterDelete() -> t
+    831:832:void updateAfterRestore() -> u
+    841:849:void updateLocalFiles() -> a
+    853:858:void updatePath(java.io.File) -> d
+    863:872:boolean onNavigationItemSelected(int,long) -> onNavigationItemSelected
+    877:889:void setNavigation() -> F
+    893:895:void upOneLevel() -> G
+    900:906:void onBackPressed() -> onBackPressed
+    1035:1037:void startMultiSelectMode() -> b
+    1041:1046:void endMultiSelectMode() -> c
+    1050:1072:void updateSelection() -> d
+    1303:1305:void startContextualActionBar() -> H
+    1310:1327:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
+    1335:1382:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    1388:1388:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
+    1394:1402:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
+    1621:1660:void runTutorial() -> e
+    1846:1848:void setTutorialNoShowcase() -> I
+    1857:1874:void setTutorialActionView(int,boolean) -> a
+    1956:1962:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    84:84:com.anthonymandra.rawdroid.RawDroid$ImageAdapter access$000(com.anthonymandra.rawdroid.RawDroid) -> a
+    84:84:void access$200(com.anthonymandra.rawdroid.RawDroid) -> b
+    84:84:com.actionbarsherlock.widget.ShareActionProvider access$302(com.anthonymandra.rawdroid.RawDroid,com.actionbarsherlock.widget.ShareActionProvider) -> a
+    84:84:com.actionbarsherlock.widget.ShareActionProvider access$400(com.anthonymandra.rawdroid.RawDroid) -> c
+    84:84:android.content.Intent access$500(com.anthonymandra.rawdroid.RawDroid) -> d
+    84:84:com.actionbarsherlock.widget.ShareActionProvider access$600(com.anthonymandra.rawdroid.RawDroid) -> e
+    84:84:int access$700(com.anthonymandra.rawdroid.RawDroid) -> f
+    84:84:int access$800(com.anthonymandra.rawdroid.RawDroid) -> g
+    84:84:int access$900(com.anthonymandra.rawdroid.RawDroid) -> h
+    84:84:java.util.List access$1000(com.anthonymandra.rawdroid.RawDroid) -> i
+    84:84:java.util.List access$1100(com.anthonymandra.rawdroid.RawDroid) -> j
+    84:84:java.util.List access$1200(com.anthonymandra.rawdroid.RawDroid) -> k
+    84:84:java.util.List access$1300(com.anthonymandra.rawdroid.RawDroid) -> l
+    84:84:java.util.List access$1400(com.anthonymandra.rawdroid.RawDroid) -> m
+    84:84:java.util.List access$1500(com.anthonymandra.rawdroid.RawDroid) -> n
+    84:84:com.anthonymandra.framework.ImageDecoder access$1600(com.anthonymandra.rawdroid.RawDroid) -> o
+    84:84:boolean access$1700(com.anthonymandra.rawdroid.RawDroid) -> p
+    84:84:java.util.List access$1800(com.anthonymandra.rawdroid.RawDroid) -> q
+    84:84:java.util.List access$1900(com.anthonymandra.rawdroid.RawDroid) -> r
+    84:84:java.util.List access$2000(com.anthonymandra.rawdroid.RawDroid) -> s
+    84:84:java.util.List access$2100(com.anthonymandra.rawdroid.RawDroid) -> t
+    84:84:java.util.List access$2200(com.anthonymandra.rawdroid.RawDroid) -> u
+    84:84:java.util.List access$2300(com.anthonymandra.rawdroid.RawDroid) -> v
+    84:84:java.util.List access$2400(com.anthonymandra.rawdroid.RawDroid) -> w
+    84:84:java.lang.String access$2600() -> f
+    84:84:void access$2700(com.anthonymandra.rawdroid.RawDroid,java.io.File) -> a
+    84:84:com.github.amlcurran.showcaseview.ShowcaseView access$2900(com.anthonymandra.rawdroid.RawDroid) -> x
+    84:84:void access$3000(com.anthonymandra.rawdroid.RawDroid) -> y
+    84:84:void access$3100(com.anthonymandra.rawdroid.RawDroid,int,boolean) -> a
+    84:84:android.widget.GridView access$3200(com.anthonymandra.rawdroid.RawDroid) -> z
+    84:84:com.actionbarsherlock.view.ActionMode access$3300(com.anthonymandra.rawdroid.RawDroid) -> A
+    84:84:boolean access$3402(boolean) -> a
+    84:84:boolean access$3502(boolean) -> b
+    84:84:android.app.ProgressDialog access$3602(com.anthonymandra.rawdroid.RawDroid,android.app.ProgressDialog) -> a
+    84:84:android.app.ProgressDialog access$3700(com.anthonymandra.rawdroid.RawDroid) -> B
+    84:84:android.app.ProgressDialog access$3800(com.anthonymandra.rawdroid.RawDroid) -> C
+    84:84:android.app.ProgressDialog access$3900(com.anthonymandra.rawdroid.RawDroid) -> D
+    84:84:android.app.ProgressDialog access$4000(com.anthonymandra.rawdroid.RawDroid) -> E
+    84:84:com.anthonymandra.framework.GalleryActivity$RawFilter access$4100(com.anthonymandra.rawdroid.RawDroid) -> F
+    84:84:android.app.ProgressDialog access$4200(com.anthonymandra.rawdroid.RawDroid) -> G
+com.anthonymandra.rawdroid.RawDroid$1 -> com.anthonymandra.rawdroid.ad:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    272:272:void onClick(android.content.DialogInterface,int) -> onClick
-com.anthonymandra.rawdroid.RawDroid$2 -> com.anthonymandra.rawdroid.af:
+    274:274:void onClick(android.content.DialogInterface,int) -> onClick
+com.anthonymandra.rawdroid.RawDroid$2 -> com.anthonymandra.rawdroid.ae:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    278:279:void onClick(android.content.DialogInterface,int) -> onClick
-com.anthonymandra.rawdroid.RawDroid$3 -> com.anthonymandra.rawdroid.ag:
+    280:281:void onClick(android.content.DialogInterface,int) -> onClick
+com.anthonymandra.rawdroid.RawDroid$3 -> com.anthonymandra.rawdroid.af:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    400:401:void run() -> run
-com.anthonymandra.rawdroid.RawDroid$CopyImageTask -> com.anthonymandra.rawdroid.ah:
+    402:403:void run() -> run
+com.anthonymandra.rawdroid.RawDroid$CopyImageTask -> com.anthonymandra.rawdroid.ag:
     android.app.ProgressDialog importProgress -> c
     java.io.File mDestination -> d
     java.util.List failed -> a
     com.anthonymandra.rawdroid.RawDroid this$0 -> b
-    1404:1410:void onPreExecute() -> onPreExecute
-    1415:1432:java.lang.Boolean doInBackground(java.util.List[]) -> a
-    1438:1451:void onPostExecute(java.lang.Boolean) -> a
-    1456:1464:void onProgressUpdate(java.lang.String[]) -> a
-    1469:1470:void onCancel(android.content.DialogInterface) -> onCancel
-    1389:1389:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
-    1389:1389:void onPostExecute(java.lang.Object) -> onPostExecute
-    1389:1389:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.anthonymandra.rawdroid.RawDroid$CopyThumbTask -> com.anthonymandra.rawdroid.ai:
+    1419:1425:void onPreExecute() -> onPreExecute
+    1430:1447:java.lang.Boolean doInBackground(java.util.List[]) -> a
+    1453:1466:void onPostExecute(java.lang.Boolean) -> a
+    1471:1479:void onProgressUpdate(java.lang.String[]) -> a
+    1484:1485:void onCancel(android.content.DialogInterface) -> onCancel
+    1404:1404:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+    1404:1404:void onPostExecute(java.lang.Object) -> onPostExecute
+    1404:1404:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.anthonymandra.rawdroid.RawDroid$CopyThumbTask -> com.anthonymandra.rawdroid.ah:
     android.app.ProgressDialog importProgress -> c
     java.io.File mDestination -> d
     java.util.List failed -> a
     com.anthonymandra.rawdroid.RawDroid this$0 -> b
-    1487:1493:void onPreExecute() -> onPreExecute
-    1498:1560:java.lang.Boolean doInBackground(java.util.List[]) -> a
-    1566:1578:void onPostExecute(java.lang.Boolean) -> a
-    1583:1591:void onProgressUpdate(java.lang.String[]) -> a
-    1596:1597:void onCancel(android.content.DialogInterface) -> onCancel
-    1473:1473:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
-    1473:1473:void onPostExecute(java.lang.Object) -> onPostExecute
-    1473:1473:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.anthonymandra.rawdroid.RawDroid$GalleryActionMode -> com.anthonymandra.rawdroid.aj:
+    1502:1508:void onPreExecute() -> onPreExecute
+    1513:1575:java.lang.Boolean doInBackground(java.util.List[]) -> a
+    1581:1593:void onPostExecute(java.lang.Boolean) -> a
+    1598:1606:void onProgressUpdate(java.lang.String[]) -> a
+    1611:1612:void onCancel(android.content.DialogInterface) -> onCancel
+    1488:1488:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+    1488:1488:void onPostExecute(java.lang.Object) -> onPostExecute
+    1488:1488:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.anthonymandra.rawdroid.RawDroid$GalleryActionMode -> com.anthonymandra.rawdroid.ai:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    994:1004:boolean onCreateActionMode(com.actionbarsherlock.view.ActionMode,com.actionbarsherlock.view.Menu) -> onCreateActionMode
-    1010:1010:boolean onPrepareActionMode(com.actionbarsherlock.view.ActionMode,com.actionbarsherlock.view.Menu) -> onPrepareActionMode
-    1016:1021:boolean onActionItemClicked(com.actionbarsherlock.view.ActionMode,com.actionbarsherlock.view.MenuItem) -> onActionItemClicked
-    1027:1028:void onDestroyActionMode(com.actionbarsherlock.view.ActionMode) -> onDestroyActionMode
-com.anthonymandra.rawdroid.RawDroid$ImageAdapter -> com.anthonymandra.rawdroid.ak:
+    996:1006:boolean onCreateActionMode(com.actionbarsherlock.view.ActionMode,com.actionbarsherlock.view.Menu) -> onCreateActionMode
+    1012:1012:boolean onPrepareActionMode(com.actionbarsherlock.view.ActionMode,com.actionbarsherlock.view.Menu) -> onPrepareActionMode
+    1018:1023:boolean onActionItemClicked(com.actionbarsherlock.view.ActionMode,com.actionbarsherlock.view.MenuItem) -> onActionItemClicked
+    1029:1030:void onDestroyActionMode(com.actionbarsherlock.view.ActionMode) -> onDestroyActionMode
+com.anthonymandra.rawdroid.RawDroid$ImageAdapter -> com.anthonymandra.rawdroid.aj:
     android.view.LayoutInflater mInflater -> e
     int mItemHeight -> a
     int mNumColumns -> b
     android.widget.AbsListView$LayoutParams mImageViewLayoutParams -> c
     com.anthonymandra.rawdroid.RawDroid this$0 -> d
-    1100:1100:int getCount() -> getCount
-    1106:1106:java.lang.Object getItem(int) -> getItem
-    1112:1112:long getItemId(int) -> getItemId
-    1121:1177:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-    1182:1185:com.android.gallery3d.data.MediaItem getImage(int) -> a
-    1190:1192:void addUniqueSelection(com.android.gallery3d.data.MediaItem) -> c
-    1196:1199:void addSelection(com.android.gallery3d.data.MediaItem) -> a
-    1204:1237:void addBetweenSelection(int) -> b
-    1241:1244:void removeSelection(com.anthonymandra.framework.RawObject) -> a
-    1248:1251:void clearSelection() -> a
-    1260:1271:void toggleSelection(com.android.gallery3d.data.MediaItem) -> b
-    1275:1286:void setItemHeight(int) -> c
-    1290:1291:void setNumColumns(int) -> d
-    1295:1295:int getNumColumns() -> b
-com.anthonymandra.rawdroid.RawDroid$OnResponseListener -> com.anthonymandra.rawdroid.al:
+    1102:1102:int getCount() -> getCount
+    1108:1108:java.lang.Object getItem(int) -> getItem
+    1114:1114:long getItemId(int) -> getItemId
+    1123:1179:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    1184:1187:com.android.gallery3d.data.MediaItem getImage(int) -> a
+    1192:1194:void addUniqueSelection(com.android.gallery3d.data.MediaItem) -> c
+    1198:1201:void addSelection(com.android.gallery3d.data.MediaItem) -> a
+    1206:1239:void addBetweenSelection(int) -> b
+    1243:1246:void removeSelection(com.anthonymandra.framework.RawObject) -> a
+    1250:1253:void clearSelection() -> a
+    1262:1273:void toggleSelection(com.android.gallery3d.data.MediaItem) -> b
+    1277:1288:void setItemHeight(int) -> c
+    1292:1293:void setNumColumns(int) -> d
+    1297:1297:int getNumColumns() -> b
+com.anthonymandra.rawdroid.RawDroid$OnResponseListener -> com.anthonymandra.rawdroid.ak:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    937:941:void Response(java.lang.Boolean) -> a
-com.anthonymandra.rawdroid.RawDroid$SearchTask -> com.anthonymandra.rawdroid.am:
+    939:943:void Response(java.lang.Boolean) -> a
+com.anthonymandra.rawdroid.RawDroid$SearchTask -> com.anthonymandra.rawdroid.al:
     boolean cancelled -> a
     java.util.List imageFolders -> b
     com.anthonymandra.rawdroid.RawDroid this$0 -> c
-    1854:1859:void onPreExecute() -> onPreExecute
-    1864:1866:java.lang.Void doInBackground(java.lang.Void[]) -> a
-    1871:1890:void search(java.io.File) -> a
-    1895:1908:void onPostExecute(java.lang.Void) -> a
-    1913:1914:void onCancelled() -> onCancelled
-    1919:1920:void onCancel(android.content.DialogInterface) -> onCancel
-    1846:1846:void onPostExecute(java.lang.Object) -> onPostExecute
-    1846:1846:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
-com.anthonymandra.rawdroid.RawDroid$SearchTask$1 -> com.anthonymandra.rawdroid.an:
+    1884:1889:void onPreExecute() -> onPreExecute
+    1894:1896:java.lang.Void doInBackground(java.lang.Void[]) -> a
+    1901:1920:void search(java.io.File) -> a
+    1925:1938:void onPostExecute(java.lang.Void) -> a
+    1943:1944:void onCancelled() -> onCancelled
+    1949:1950:void onCancel(android.content.DialogInterface) -> onCancel
+    1876:1876:void onPostExecute(java.lang.Object) -> onPostExecute
+    1876:1876:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+com.anthonymandra.rawdroid.RawDroid$SearchTask$1 -> com.anthonymandra.rawdroid.am:
     com.anthonymandra.rawdroid.RawDroid$SearchTask this$1 -> a
-    1903:1905:void onClick(android.content.DialogInterface,int) -> onClick
-com.anthonymandra.rawdroid.RawDroid$SpinnerFile -> com.anthonymandra.rawdroid.ao:
+    1933:1935:void onClick(android.content.DialogInterface,int) -> onClick
+com.anthonymandra.rawdroid.RawDroid$SpinnerFile -> com.anthonymandra.rawdroid.an:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    982:985:java.lang.String toString() -> toString
-com.anthonymandra.rawdroid.RawDroid$TutorialClickListener -> com.anthonymandra.rawdroid.ap:
+    984:987:java.lang.String toString() -> toString
+com.anthonymandra.rawdroid.RawDroid$TutorialClickListener -> com.anthonymandra.rawdroid.ao:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
-    1653:1807:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.RawDroid$ViewHolder -> com.anthonymandra.rawdroid.aq:
+    1668:1834:void onClick(android.view.View) -> onClick
+com.anthonymandra.rawdroid.RawDroid$ViewHolder -> com.anthonymandra.rawdroid.ap:
     android.widget.TextView filename -> a
     com.anthonymandra.widget.LoadingImageView image -> b
 com.anthonymandra.rawdroid.ViewerChooser -> com.anthonymandra.rawdroid.ViewerChooser:
     int REQUEST_VIEWER -> a
     19:41:void onCreate(android.os.Bundle) -> onCreate
     48:51:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-com.anthonymandra.rawdroid.XmpFragment -> com.anthonymandra.rawdroid.ar:
+com.anthonymandra.rawdroid.XmpFragment -> com.anthonymandra.rawdroid.aq:
     java.lang.String TAG -> l
     java.util.Set selectedKeywords -> a
     android.widget.RatingBar mRatingBar -> b
@@ -10543,16 +10553,16 @@ com.anthonymandra.rawdroid.XmpFragment -> com.anthonymandra.rawdroid.ar:
     43:43:void access$100(com.anthonymandra.rawdroid.XmpFragment) -> b
     43:43:void access$200(com.anthonymandra.rawdroid.XmpFragment) -> c
     43:43:void access$300(com.anthonymandra.rawdroid.XmpFragment) -> d
-com.anthonymandra.rawdroid.XmpFragment$1 -> com.anthonymandra.rawdroid.as:
+com.anthonymandra.rawdroid.XmpFragment$1 -> com.anthonymandra.rawdroid.ar:
     com.anthonymandra.rawdroid.XmpFragment this$0 -> a
     382:383:void onRatingChanged(android.widget.RatingBar,float,boolean) -> onRatingChanged
-com.anthonymandra.rawdroid.XmpFragment$2 -> com.anthonymandra.rawdroid.at:
+com.anthonymandra.rawdroid.XmpFragment$2 -> com.anthonymandra.rawdroid.as:
     com.anthonymandra.rawdroid.XmpFragment this$0 -> a
     391:397:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpFragment$3 -> com.anthonymandra.rawdroid.au:
+com.anthonymandra.rawdroid.XmpFragment$3 -> com.anthonymandra.rawdroid.at:
     com.anthonymandra.rawdroid.XmpFragment this$0 -> a
     405:407:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpFragment$TreeAdapter -> com.anthonymandra.rawdroid.av:
+com.anthonymandra.rawdroid.XmpFragment$TreeAdapter -> com.anthonymandra.rawdroid.au:
     int iconWidth -> a
     com.anthonymandra.rawdroid.XmpFragment this$0 -> b
     423:425:void setCollapsedDrawable(android.graphics.drawable.Drawable) -> a
@@ -10640,39 +10650,63 @@ com.anthonymandra.widget.SeekBarPreference -> com.anthonymandra.widget.SeekBarPr
     136:136:void onStopTrackingTouch(android.widget.SeekBar) -> onStopTrackingTouch
     156:160:void showDialog(android.os.Bundle) -> showDialog
     165:170:void onClick(android.view.View) -> onClick
-com.drew.imaging.ImageMetadataReader -> com.b.a.a:
-    92:130:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-    167:175:int peekMagicNumber(java.io.InputStream) -> b
-com.drew.imaging.ImageProcessingException -> com.b.a.b:
-com.drew.imaging.PhotographicConversions -> com.b.a.c:
+com.drew.imaging.FileType -> com.b.a.a:
+    com.drew.imaging.FileType Unknown -> a
+    com.drew.imaging.FileType Jpeg -> b
+    com.drew.imaging.FileType Tiff -> c
+    com.drew.imaging.FileType Psd -> d
+    com.drew.imaging.FileType Png -> e
+    com.drew.imaging.FileType Bmp -> f
+    com.drew.imaging.FileType Gif -> g
+    com.drew.imaging.FileType Ico -> h
+    com.drew.imaging.FileType Pcx -> i
+    com.drew.imaging.FileType Riff -> j
+    com.drew.imaging.FileType Arw -> k
+    com.drew.imaging.FileType Crw -> l
+    com.drew.imaging.FileType Cr2 -> m
+    com.drew.imaging.FileType Nef -> n
+    com.drew.imaging.FileType Orf -> o
+    com.drew.imaging.FileType Raf -> p
+    com.drew.imaging.FileType Rw2 -> q
+    com.drew.imaging.FileType[] $VALUES -> r
+    26:26:com.drew.imaging.FileType[] values() -> values
+    26:26:com.drew.imaging.FileType valueOf(java.lang.String) -> valueOf
+com.drew.imaging.FileTypeDetector -> com.b.a.b:
+    com.drew.lang.ByteTrie _root -> a
+    85:98:com.drew.imaging.FileType detectFileType(java.io.BufferedInputStream) -> a
+com.drew.imaging.ImageMetadataReader -> com.b.a.c:
+    91:129:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+com.drew.imaging.ImageProcessingException -> com.b.a.d:
+com.drew.imaging.PhotographicConversions -> com.b.a.e:
     double ROOT_TWO -> a
     45:45:double apertureToFStop(double) -> a
 com.drew.imaging.bmp.BmpMetadataReader -> com.b.a.a.a:
     55:57:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
 com.drew.imaging.gif.GifMetadataReader -> com.b.a.b.a:
-    58:60:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-com.drew.imaging.jpeg.JpegMetadataReader -> com.b.a.c.a:
+    59:61:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+com.drew.imaging.ico.IcoMetadataReader -> com.b.a.c.a:
+    55:57:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+com.drew.imaging.jpeg.JpegMetadataReader -> com.b.a.d.a:
     java.lang.Iterable ALL_READERS -> a
-    67:69:com.drew.metadata.Metadata readMetadata(java.io.InputStream,java.lang.Iterable) -> a
-    75:75:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-    105:118:void process(com.drew.metadata.Metadata,java.io.InputStream,java.lang.Iterable) -> a
-    123:132:void processJpegSegmentData(com.drew.metadata.Metadata,java.lang.Iterable,com.drew.imaging.jpeg.JpegSegmentData) -> a
-com.drew.imaging.jpeg.JpegProcessingException -> com.b.a.c.b:
-com.drew.imaging.jpeg.JpegSegmentData -> com.b.a.c.c:
+    68:70:com.drew.metadata.Metadata readMetadata(java.io.InputStream,java.lang.Iterable) -> a
+    76:76:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+    106:119:void process(com.drew.metadata.Metadata,java.io.InputStream,java.lang.Iterable) -> a
+    124:129:void processJpegSegmentData(com.drew.metadata.Metadata,java.lang.Iterable,com.drew.imaging.jpeg.JpegSegmentData) -> a
+com.drew.imaging.jpeg.JpegProcessingException -> com.b.a.d.b:
+com.drew.imaging.jpeg.JpegSegmentData -> com.b.a.d.c:
     java.util.HashMap _segmentDataMap -> a
     57:58:void addSegment(byte,byte[]) -> a
     144:144:java.lang.Iterable getSegments(com.drew.imaging.jpeg.JpegSegmentType) -> a
     156:157:java.lang.Iterable getSegments(byte) -> a
     163:163:java.util.List getSegmentList(byte) -> b
-    171:177:java.util.List getOrCreateSegmentList(byte) -> c
-com.drew.imaging.jpeg.JpegSegmentMetadataReader -> com.b.a.c.d:
+    170:176:java.util.List getOrCreateSegmentList(byte) -> c
+com.drew.imaging.jpeg.JpegSegmentMetadataReader -> com.b.a.d.d:
     java.lang.Iterable getSegmentTypes() -> a
-    boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-com.drew.imaging.jpeg.JpegSegmentReader -> com.b.a.c.e:
+    void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+com.drew.imaging.jpeg.JpegSegmentReader -> com.b.a.d.e:
     boolean $assertionsDisabled -> a
-    92:153:com.drew.imaging.jpeg.JpegSegmentData readSegments(com.drew.lang.SequentialReader,java.lang.Iterable) -> a
-com.drew.imaging.jpeg.JpegSegmentType -> com.b.a.c.f:
+    92:161:com.drew.imaging.jpeg.JpegSegmentData readSegments(com.drew.lang.SequentialReader,java.lang.Iterable) -> a
+com.drew.imaging.jpeg.JpegSegmentType -> com.b.a.d.f:
     com.drew.imaging.jpeg.JpegSegmentType APP0 -> a
     com.drew.imaging.jpeg.JpegSegmentType APP1 -> b
     com.drew.imaging.jpeg.JpegSegmentType APP2 -> c
@@ -10713,7 +10747,9 @@ com.drew.imaging.jpeg.JpegSegmentType -> com.b.a.c.f:
     com.drew.imaging.jpeg.JpegSegmentType[] $VALUES -> L
     34:34:com.drew.imaging.jpeg.JpegSegmentType[] values() -> values
     34:34:com.drew.imaging.jpeg.JpegSegmentType valueOf(java.lang.String) -> valueOf
-com.drew.imaging.png.PngChromaticities -> com.b.a.d.a:
+com.drew.imaging.pcx.PcxMetadataReader -> com.b.a.e.a:
+    55:57:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+com.drew.imaging.png.PngChromaticities -> com.b.a.f.a:
     int _whitePointX -> a
     int _whitePointY -> b
     int _redX -> c
@@ -10729,15 +10765,15 @@ com.drew.imaging.png.PngChromaticities -> com.b.a.d.a:
     70:70:int getGreenY() -> e
     75:75:int getBlueX() -> f
     80:80:int getBlueY() -> g
-com.drew.imaging.png.PngChunk -> com.b.a.d.b:
+com.drew.imaging.png.PngChunk -> com.b.a.f.b:
     com.drew.imaging.png.PngChunkType _chunkType -> a
     byte[] _bytes -> b
     24:24:com.drew.imaging.png.PngChunkType getType() -> a
     30:30:byte[] getBytes() -> b
-com.drew.imaging.png.PngChunkReader -> com.b.a.d.c:
+com.drew.imaging.png.PngChunkReader -> com.b.a.f.c:
     byte[] PNG_SIGNATURE_BYTES -> a
-    53:98:java.lang.Iterable extract(com.drew.lang.SequentialReader,java.util.Set) -> a
-com.drew.imaging.png.PngChunkType -> com.b.a.d.d:
+    53:100:java.lang.Iterable extract(com.drew.lang.SequentialReader,java.util.Set) -> a
+com.drew.imaging.png.PngChunkType -> com.b.a.f.d:
     java.util.Set _identifiersAllowingMultiples -> t
     com.drew.imaging.png.PngChunkType IHDR -> a
     com.drew.imaging.png.PngChunkType PLTE -> b
@@ -10767,7 +10803,7 @@ com.drew.imaging.png.PngChunkType -> com.b.a.d.d:
     183:183:java.lang.String toString() -> toString
     189:197:boolean equals(java.lang.Object) -> equals
     203:203:int hashCode() -> hashCode
-com.drew.imaging.png.PngColorType -> com.b.a.d.e:
+com.drew.imaging.png.PngColorType -> com.b.a.f.e:
     com.drew.imaging.png.PngColorType Greyscale -> a
     com.drew.imaging.png.PngColorType TrueColor -> b
     com.drew.imaging.png.PngColorType IndexedColor -> c
@@ -10782,7 +10818,7 @@ com.drew.imaging.png.PngColorType -> com.b.a.d.e:
     39:45:com.drew.imaging.png.PngColorType fromNumericValue(int) -> a
     61:61:int getNumericValue() -> a
     67:67:java.lang.String getDescription() -> b
-com.drew.imaging.png.PngHeader -> com.b.a.d.f:
+com.drew.imaging.png.PngHeader -> com.b.a.f.f:
     int _imageWidth -> a
     int _imageHeight -> b
     byte _bitsPerSample -> c
@@ -10797,12 +10833,21 @@ com.drew.imaging.png.PngHeader -> com.b.a.d.f:
     71:71:byte getCompressionType() -> e
     76:76:byte getFilterMethod() -> f
     81:81:byte getInterlaceMethod() -> g
-com.drew.imaging.png.PngMetadataReader -> com.b.a.d.g:
-    37:168:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-com.drew.imaging.png.PngProcessingException -> com.b.a.d.h:
-com.drew.imaging.psd.PsdMetadataReader -> com.b.a.e.a:
-    58:60:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-com.drew.imaging.tiff.TiffDataFormat -> com.b.a.f.a:
+com.drew.imaging.png.PngMetadataReader -> com.b.a.f.g:
+    java.util.Set _desiredChunkTypes -> a
+    61:73:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+    78:218:void processChunk(com.drew.metadata.Metadata,com.drew.imaging.png.PngChunk) -> a
+com.drew.imaging.png.PngProcessingException -> com.b.a.f.h:
+com.drew.imaging.psd.PsdMetadataReader -> com.b.a.g.a:
+    56:58:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+com.drew.imaging.riff.RiffHandler -> com.b.a.h.a:
+    boolean shouldAcceptRiffIdentifier(java.lang.String) -> a
+    boolean shouldAcceptChunk(java.lang.String) -> b
+    void processChunk(java.lang.String,byte[]) -> a
+com.drew.imaging.riff.RiffProcessingException -> com.b.a.h.b:
+com.drew.imaging.riff.RiffReader -> com.b.a.h.c:
+    54:100:void processRiff(com.drew.lang.SequentialReader,com.drew.imaging.riff.RiffHandler) -> a
+com.drew.imaging.tiff.TiffDataFormat -> com.b.a.i.a:
     com.drew.imaging.tiff.TiffDataFormat INT8_U -> a
     com.drew.imaging.tiff.TiffDataFormat STRING -> b
     com.drew.imaging.tiff.TiffDataFormat INT16_U -> c
@@ -10820,8 +10865,8 @@ com.drew.imaging.tiff.TiffDataFormat -> com.b.a.f.a:
     int _componentSizeBytes -> o
     67:81:com.drew.imaging.tiff.TiffDataFormat fromTiffFormatCode(int) -> a
     93:93:int getComponentSizeBytes() -> a
-    104:104:java.lang.String toString() -> toString
-com.drew.imaging.tiff.TiffHandler -> com.b.a.f.b:
+    105:105:java.lang.String toString() -> toString
+com.drew.imaging.tiff.TiffHandler -> com.b.a.i.b:
     void setTiffMarker(int) -> a
     boolean isTagIfdPointer(int) -> b
     boolean hasFollowerIfd() -> a
@@ -10850,14 +10895,16 @@ com.drew.imaging.tiff.TiffHandler -> com.b.a.f.b:
     void setInt32sArray(int,int[]) -> b
     void setInt32u(int,long) -> a
     void setInt32uArray(int,long[]) -> a
-com.drew.imaging.tiff.TiffMetadataReader -> com.b.a.f.c:
-    64:66:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-com.drew.imaging.tiff.TiffProcessingException -> com.b.a.f.d:
-com.drew.imaging.tiff.TiffReader -> com.b.a.f.e:
+com.drew.imaging.tiff.TiffMetadataReader -> com.b.a.i.c:
+    66:69:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
+com.drew.imaging.tiff.TiffProcessingException -> com.b.a.i.d:
+com.drew.imaging.tiff.TiffReader -> com.b.a.i.e:
     53:81:void processTiff(com.drew.lang.RandomAccessReader,com.drew.imaging.tiff.TiffHandler,int) -> a
-    114:226:void processIfd(com.drew.imaging.tiff.TiffHandler,com.drew.lang.RandomAccessReader,java.util.Set,int,int) -> a
-    235:348:void processTag(com.drew.imaging.tiff.TiffHandler,int,int,int,int,com.drew.lang.RandomAccessReader) -> a
-    360:360:int calculateTagOffset(int,int) -> a
+    114:232:void processIfd(com.drew.imaging.tiff.TiffHandler,com.drew.lang.RandomAccessReader,java.util.Set,int,int) -> a
+    241:354:void processTag(com.drew.imaging.tiff.TiffHandler,int,int,int,int,com.drew.lang.RandomAccessReader) -> a
+    366:366:int calculateTagOffset(int,int) -> a
+com.drew.imaging.webp.WebpMetadataReader -> com.b.a.j.a:
+    57:59:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
 com.drew.lang.BufferBoundsException -> com.b.b.a:
     47:57:java.lang.String getMessage(int,int,long) -> a
 com.drew.lang.ByteArrayReader -> com.b.b.b:
@@ -10867,13 +10914,26 @@ com.drew.lang.ByteArrayReader -> com.b.b.b:
     67:69:void validateIndex(int,int) -> a
     74:74:boolean isValidIndex(int,int) -> b
     83:87:byte[] getBytes(int,int) -> c
-com.drew.lang.CompoundException -> com.b.b.c:
+com.drew.lang.ByteTrie -> com.b.b.c:
+    com.drew.lang.ByteTrie$ByteTrieNode _root -> a
+    int _maxDepth -> b
+    60:70:java.lang.Object find(byte[]) -> a
+    76:91:void addPath(java.lang.Object,byte[][]) -> a
+    96:97:void setDefaultValue(java.lang.Object) -> a
+    102:102:int getMaxDepth() -> a
+com.drew.lang.ByteTrie$ByteTrieNode -> com.b.b.d:
+    java.util.Map _children -> a
+    java.lang.Object _value -> b
+    43:46:void setValue(java.lang.Object) -> a
+    36:36:java.lang.Object access$000(com.drew.lang.ByteTrie$ByteTrieNode) -> a
+    36:36:java.util.Map access$100(com.drew.lang.ByteTrie$ByteTrieNode) -> b
+com.drew.lang.CompoundException -> com.b.b.e:
     java.lang.Throwable _innerException -> a
-    68:76:java.lang.String toString() -> toString
-    81:86:void printStackTrace(java.io.PrintStream) -> printStackTrace
-    90:95:void printStackTrace(java.io.PrintWriter) -> printStackTrace
-    99:104:void printStackTrace() -> printStackTrace
-com.drew.lang.GeoLocation -> com.b.b.d:
+    69:77:java.lang.String toString() -> toString
+    83:88:void printStackTrace(java.io.PrintStream) -> printStackTrace
+    93:98:void printStackTrace(java.io.PrintWriter) -> printStackTrace
+    103:108:void printStackTrace() -> printStackTrace
+com.drew.lang.GeoLocation -> com.b.b.f:
     double _latitude -> a
     double _longitude -> b
     58:58:double getLatitude() -> a
@@ -10884,12 +10944,12 @@ com.drew.lang.GeoLocation -> com.b.b.d:
     125:130:boolean equals(java.lang.Object) -> equals
     138:142:int hashCode() -> hashCode
     152:152:java.lang.String toString() -> toString
-com.drew.lang.KeyValuePair -> com.b.b.e:
+com.drew.lang.KeyValuePair -> com.b.b.g:
     java.lang.String _key -> a
     java.lang.String _value -> b
     24:24:java.lang.String getKey() -> a
     30:30:java.lang.String getValue() -> b
-com.drew.lang.RandomAccessReader -> com.b.b.f:
+com.drew.lang.RandomAccessReader -> com.b.b.h:
     boolean _isMotorolaByteOrder -> a
     byte getByte(int) -> a
     byte[] getBytes(int,int) -> c
@@ -10898,20 +10958,22 @@ com.drew.lang.RandomAccessReader -> com.b.b.f:
     long getLength() -> a
     113:114:void setMotorolaByteOrder(boolean) -> a
     125:125:boolean isMotorolaByteOrder() -> b
-    137:139:short getUInt8(int) -> b
-    151:153:byte getInt8(int) -> c
-    165:174:int getUInt16(int) -> d
-    187:196:short getInt16(int) -> e
-    209:222:long getUInt32(int) -> f
-    235:248:int getInt32(int) -> g
-    261:282:long getInt64(int) -> h
-    288:302:float getS15Fixed16(int) -> i
-    308:308:float getFloat32(int) -> j
-    313:313:double getDouble64(int) -> k
-    319:319:java.lang.String getString(int,int) -> d
-    325:329:java.lang.String getString(int,int,java.lang.String) -> a
-    348:355:java.lang.String getNullTerminatedString(int,int) -> e
-com.drew.lang.RandomAccessStreamReader -> com.b.b.g:
+    137:143:boolean getBit(int) -> b
+    155:157:short getUInt8(int) -> c
+    169:171:byte getInt8(int) -> d
+    183:192:int getUInt16(int) -> e
+    205:214:short getInt16(int) -> f
+    227:238:int getInt24(int) -> g
+    251:264:long getUInt32(int) -> h
+    277:290:int getInt32(int) -> i
+    303:324:long getInt64(int) -> j
+    338:352:float getS15Fixed16(int) -> k
+    358:358:float getFloat32(int) -> l
+    363:363:double getDouble64(int) -> m
+    369:369:java.lang.String getString(int,int) -> d
+    375:379:java.lang.String getString(int,int,java.lang.String) -> a
+    398:405:java.lang.String getNullTerminatedString(int,int) -> e
+com.drew.lang.RandomAccessStreamReader -> com.b.b.i:
     java.io.InputStream _stream -> b
     int _chunkLength -> c
     java.util.ArrayList _chunks -> d
@@ -10923,33 +10985,33 @@ com.drew.lang.RandomAccessStreamReader -> com.b.b.g:
     108:152:boolean isValidIndex(int,int) -> b
     158:164:byte getByte(int) -> a
     171:193:byte[] getBytes(int,int) -> c
-com.drew.lang.Rational -> com.b.b.h:
+com.drew.lang.Rational -> com.b.b.j:
     long _numerator -> a
     long _denominator -> b
-    67:67:double doubleValue() -> doubleValue
-    79:79:float floatValue() -> floatValue
-    92:92:byte byteValue() -> byteValue
-    105:105:int intValue() -> intValue
-    118:118:long longValue() -> longValue
-    131:131:short shortValue() -> shortValue
-    138:138:long getDenominator() -> a
-    144:144:long getNumerator() -> b
-    155:155:com.drew.lang.Rational getReciprocal() -> c
-    161:161:boolean isInteger() -> d
-    174:174:java.lang.String toString() -> toString
-    181:197:java.lang.String toSimpleString(boolean) -> a
-    209:211:boolean tooComplexForSimplification() -> f
-    225:228:boolean equals(java.lang.Object) -> equals
-    234:234:int hashCode() -> hashCode
-    270:282:com.drew.lang.Rational getSimplifiedInstance() -> e
-com.drew.lang.SequentialByteArrayReader -> com.b.b.i:
+    69:69:double doubleValue() -> doubleValue
+    84:84:float floatValue() -> floatValue
+    100:100:byte byteValue() -> byteValue
+    114:114:int intValue() -> intValue
+    128:128:long longValue() -> longValue
+    142:142:short shortValue() -> shortValue
+    149:149:long getDenominator() -> a
+    155:155:long getNumerator() -> b
+    166:166:com.drew.lang.Rational getReciprocal() -> c
+    172:172:boolean isInteger() -> d
+    186:186:java.lang.String toString() -> toString
+    193:209:java.lang.String toSimpleString(boolean) -> a
+    221:223:boolean tooComplexForSimplification() -> f
+    237:240:boolean equals(java.lang.Object) -> equals
+    246:246:int hashCode() -> hashCode
+    282:294:com.drew.lang.Rational getSimplifiedInstance() -> e
+com.drew.lang.SequentialByteArrayReader -> com.b.b.k:
     byte[] _bytes -> a
     int _index -> b
-    52:55:byte getByte() -> a
-    62:70:byte[] getBytes(int) -> a
-    76:85:void skip(long) -> a
-    90:101:boolean trySkip(long) -> b
-com.drew.lang.SequentialReader -> com.b.b.j:
+    57:60:byte getByte() -> a
+    67:75:byte[] getBytes(int) -> a
+    81:90:void skip(long) -> a
+    95:106:boolean trySkip(long) -> b
+com.drew.lang.SequentialReader -> com.b.b.l:
     boolean _isMotorolaByteOrder -> a
     byte getByte() -> a
     byte[] getBytes(int) -> a
@@ -10961,11 +11023,12 @@ com.drew.lang.SequentialReader -> com.b.b.j:
     116:116:byte getInt8() -> d
     126:133:int getUInt16() -> e
     145:152:short getInt16() -> f
-    187:198:int getInt32() -> g
-    264:264:java.lang.String getString(int) -> b
-    270:274:java.lang.String getString(int,java.lang.String) -> a
-    291:298:java.lang.String getNullTerminatedString(int) -> c
-com.drew.lang.StreamReader -> com.b.b.k:
+    164:175:long getUInt32() -> g
+    187:198:int getInt32() -> h
+    272:272:java.lang.String getString(int) -> b
+    278:282:java.lang.String getString(int,java.lang.String) -> a
+    299:306:java.lang.String getNullTerminatedString(int) -> c
+com.drew.lang.StreamReader -> com.b.b.m:
     java.io.InputStream _stream -> b
     boolean $assertionsDisabled -> a
     51:54:byte getByte() -> a
@@ -10973,7 +11036,7 @@ com.drew.lang.StreamReader -> com.b.b.k:
     78:85:void skip(long) -> a
     90:93:boolean trySkip(long) -> b
     104:112:long skipInternal(long) -> c
-com.drew.lang.StringUtil -> com.b.b.l:
+com.drew.lang.StringUtil -> com.b.b.n:
     41:57:java.lang.String join(java.lang.Iterable,java.lang.String) -> a
     63:78:java.lang.String join(java.lang.CharSequence[],java.lang.String) -> a
     84:90:java.lang.String fromStream(java.io.InputStream) -> a
@@ -10998,40 +11061,42 @@ com.drew.metadata.Directory -> com.b.c.b:
     boolean $assertionsDisabled -> d
     java.lang.String getName() -> a
     java.util.HashMap getTagNameMap() -> b
-    93:93:boolean containsTag(int) -> a
-    125:128:void setDescriptor(com.drew.metadata.TagDescriptor) -> a
-    137:138:void addError(java.lang.String) -> a
-    177:178:void setInt(int,int) -> a
-    188:189:void setIntArray(int,int[]) -> a
-    199:200:void setFloat(int,float) -> a
-    210:211:void setFloatArray(int,float[]) -> a
-    221:222:void setDouble(int,double) -> a
-    232:233:void setDoubleArray(int,double[]) -> a
-    244:247:void setString(int,java.lang.String) -> a
-    257:258:void setStringArray(int,java.lang.String[]) -> a
-    268:269:void setBoolean(int,boolean) -> a
-    279:280:void setLong(int,long) -> a
-    290:291:void setDate(int,java.util.Date) -> a
-    301:302:void setRational(int,com.drew.lang.Rational) -> a
-    312:313:void setRationalArray(int,com.drew.lang.Rational[]) -> a
-    323:324:void setByteArray(int,byte[]) -> a
-    336:348:void setObject(int,java.lang.Object) -> a
-    359:360:void setObjectArray(int,java.lang.Object) -> b
-    381:388:int getInt(int) -> b
-    409:443:java.lang.Integer getInteger(int) -> c
-    456:482:java.lang.String[] getStringArray(int) -> d
-    495:535:int[] getIntArray(int) -> e
-    548:585:byte[] getByteArray(int) -> f
-    591:597:double getDouble(int) -> g
-    603:616:java.lang.Double getDoubleObject(int) -> h
-    635:647:java.lang.Float getFloatObject(int) -> i
-    666:678:java.lang.Long getLongObject(int) -> j
-    774:788:com.drew.lang.Rational getRational(int) -> k
-    795:802:com.drew.lang.Rational[] getRationalArray(int) -> l
-    815:861:java.lang.String getString(int) -> m
-    887:887:java.lang.Object getObject(int) -> n
-    901:909:java.lang.String getTagName(int) -> o
-    922:923:java.lang.String getDescription(int) -> p
+    89:89:boolean isEmpty() -> c
+    101:101:boolean containsTag(int) -> a
+    133:136:void setDescriptor(com.drew.metadata.TagDescriptor) -> a
+    145:146:void addError(java.lang.String) -> a
+    185:186:void setInt(int,int) -> a
+    196:197:void setIntArray(int,int[]) -> a
+    207:208:void setFloat(int,float) -> a
+    218:219:void setFloatArray(int,float[]) -> a
+    229:230:void setDouble(int,double) -> a
+    240:241:void setDoubleArray(int,double[]) -> a
+    252:255:void setString(int,java.lang.String) -> a
+    265:266:void setStringArray(int,java.lang.String[]) -> a
+    276:277:void setBoolean(int,boolean) -> a
+    287:288:void setLong(int,long) -> a
+    298:299:void setDate(int,java.util.Date) -> a
+    309:310:void setRational(int,com.drew.lang.Rational) -> a
+    320:321:void setRationalArray(int,com.drew.lang.Rational[]) -> a
+    331:332:void setByteArray(int,byte[]) -> a
+    344:356:void setObject(int,java.lang.Object) -> a
+    367:368:void setObjectArray(int,java.lang.Object) -> b
+    389:396:int getInt(int) -> b
+    417:451:java.lang.Integer getInteger(int) -> c
+    464:490:java.lang.String[] getStringArray(int) -> d
+    503:543:int[] getIntArray(int) -> e
+    556:593:byte[] getByteArray(int) -> f
+    599:605:double getDouble(int) -> g
+    611:624:java.lang.Double getDoubleObject(int) -> h
+    643:655:java.lang.Float getFloatObject(int) -> i
+    674:686:java.lang.Long getLongObject(int) -> j
+    782:796:com.drew.lang.Rational getRational(int) -> k
+    803:810:com.drew.lang.Rational[] getRationalArray(int) -> l
+    823:869:java.lang.String getString(int) -> m
+    895:895:java.lang.Object getObject(int) -> n
+    909:917:java.lang.String getTagName(int) -> o
+    941:942:java.lang.String getDescription(int) -> p
+    948:951:java.lang.String toString() -> toString
 com.drew.metadata.Face -> com.b.c.c:
     int _x -> a
     int _y -> b
@@ -11041,21 +11106,24 @@ com.drew.metadata.Face -> com.b.c.c:
     com.drew.metadata.Age _age -> f
     91:103:boolean equals(java.lang.Object) -> equals
     109:115:int hashCode() -> hashCode
-    121:130:java.lang.String toString() -> toString
+    122:131:java.lang.String toString() -> toString
 com.drew.metadata.Metadata -> com.b.c.d:
-    java.util.Map _directoryByClass -> a
-    java.util.Collection _directoryList -> b
-    88:101:com.drew.metadata.Directory getOrCreateDirectory(java.lang.Class) -> a
-    119:119:com.drew.metadata.Directory getDirectory(java.lang.Class) -> b
-    131:131:boolean containsDirectory(java.lang.Class) -> c
+    java.util.Map _directoryListByClass -> a
+    65:68:int getDirectoryCount() -> a
+    78:79:void addDirectory(com.drew.metadata.Directory) -> a
+    96:101:com.drew.metadata.Directory getFirstDirectoryOfType(java.lang.Class) -> a
+    112:113:boolean containsDirectoryOfType(java.lang.Class) -> b
+    134:136:java.lang.String toString() -> toString
+    145:145:java.util.Collection getDirectoryList(java.lang.Class) -> c
+    151:156:java.util.Collection getOrCreateDirectoryList(java.lang.Class) -> d
 com.drew.metadata.MetadataException -> com.b.c.e:
 com.drew.metadata.Tag -> com.b.c.f:
     int _tagType -> a
     com.drew.metadata.Directory _directory -> b
     51:51:int getTagType() -> a
     77:77:java.lang.String getDescription() -> b
-    89:89:java.lang.String getTagName() -> c
-    112:115:java.lang.String toString() -> toString
+    103:103:java.lang.String getTagName() -> c
+    127:130:java.lang.String toString() -> toString
 com.drew.metadata.TagDescriptor -> com.b.c.g:
     com.drew.metadata.Directory _directory -> a
     boolean $assertionsDisabled -> b
@@ -11072,297 +11140,279 @@ com.drew.metadata.TagDescriptor -> com.b.c.g:
     201:204:java.lang.String getEpochTimeDescription(int) -> d
     213:237:java.lang.String getBitFlagDescription(int,java.lang.Object[]) -> a
     243:257:java.lang.String get7BitStringFromBytes(int) -> e
-    263:269:java.lang.String getAsciiStringFromBytes(int) -> f
+    263:271:java.lang.String getAsciiStringFromBytes(int) -> f
 com.drew.metadata.adobe.AdobeJpegDescriptor -> com.b.c.a.a:
-    38:44:java.lang.String getDescription(int) -> a
-    50:55:java.lang.String getDctEncodeVersionDescription() -> a
-    61:68:java.lang.String getColorTransformDescription() -> b
+    40:46:java.lang.String getDescription(int) -> a
+    53:58:java.lang.String getDctEncodeVersionDescription() -> a
+    64:71:java.lang.String getColorTransformDescription() -> b
 com.drew.metadata.adobe.AdobeJpegDirectory -> com.b.c.a.b:
     java.util.HashMap _tagNameMap -> e
     66:66:java.lang.String getName() -> a
     72:72:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.adobe.AdobeJpegReader -> com.b.c.a.c:
-    45:45:java.lang.Iterable getSegmentTypes() -> a
-    50:50:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    55:56:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    60:76:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
+    48:48:java.lang.Iterable getSegmentTypes() -> a
+    53:57:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    61:79:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
 com.drew.metadata.bmp.BmpHeaderDescriptor -> com.b.c.b.a:
-    19:23:java.lang.String getDescription(int) -> a
-    38:57:java.lang.String getCompressionDescription() -> a
+    20:24:java.lang.String getDescription(int) -> a
+    39:58:java.lang.String getCompressionDescription() -> a
 com.drew.metadata.bmp.BmpHeaderDirectory -> com.b.c.b.b:
     java.util.HashMap _tagNameMap -> e
-    50:50:java.lang.String getName() -> a
-    56:56:java.util.HashMap getTagNameMap() -> b
+    51:51:java.lang.String getName() -> a
+    58:58:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.bmp.BmpReader -> com.b.c.b.c:
-    16:106:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
-com.drew.metadata.exif.ExifIFD0Descriptor -> com.b.c.c.a:
-    boolean _allowDecimalRepresentationOfRationals -> c
-    69:95:java.lang.String getDescription(int) -> a
-    102:111:java.lang.String getReferenceBlackWhiteDescription() -> a
-    117:123:java.lang.String getYResolutionDescription() -> b
-    129:135:java.lang.String getXResolutionDescription() -> c
-    141:141:java.lang.String getYCbCrPositioningDescription() -> d
-    147:147:java.lang.String getOrientationDescription() -> e
-    162:162:java.lang.String getResolutionDescription() -> f
-    169:176:java.lang.String getUnicodeDescription(int) -> g
-    183:183:java.lang.String getWindowsAuthorDescription() -> g
-    189:189:java.lang.String getWindowsCommentDescription() -> h
-    195:195:java.lang.String getWindowsKeywordsDescription() -> i
-    201:201:java.lang.String getWindowsTitleDescription() -> j
-    207:207:java.lang.String getWindowsSubjectDescription() -> k
-com.drew.metadata.exif.ExifIFD0Directory -> com.b.c.c.b:
-    java.util.HashMap _tagNameMap -> e
-    118:118:java.lang.String getName() -> a
-    124:124:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.exif.ExifInteropDescriptor -> com.b.c.c.c:
-    44:50:java.lang.String getDescription(int) -> a
-    57:57:java.lang.String getInteropVersionDescription() -> a
-    63:68:java.lang.String getInteropIndexDescription() -> b
-com.drew.metadata.exif.ExifInteropDirectory -> com.b.c.c.d:
-    java.util.HashMap _tagNameMap -> e
-    61:61:java.lang.String getName() -> a
-    67:67:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.exif.ExifReader -> com.b.c.c.e:
-    int[] BYTES_PER_FORMAT -> a
-    boolean _storeThumbnailBytes -> b
-    100:100:java.lang.Iterable getSegmentTypes() -> a
-    105:105:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    110:151:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    163:170:void extractTiff(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
-    179:229:void extractTiff(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata,com.drew.metadata.Directory,int) -> a
-    260:384:void processIFD(com.drew.metadata.Directory,java.util.Set,int,int,com.drew.metadata.Metadata,com.drew.lang.RandomAccessReader) -> a
-    394:516:void processMakernote(int,java.util.Set,int,com.drew.metadata.Metadata,com.drew.lang.RandomAccessReader) -> a
-    522:553:void processKodakMakernote(com.drew.metadata.exif.makernotes.KodakMakernoteDirectory,int,com.drew.lang.RandomAccessReader) -> a
-    565:677:void processTag(com.drew.metadata.Directory,int,int,int,int,com.drew.lang.RandomAccessReader) -> a
-    690:690:int calculateTagOffset(int,int) -> a
-com.drew.metadata.exif.ExifSubIFDDescriptor -> com.b.c.c.f:
+    16:107:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
+com.drew.metadata.exif.ExifDescriptorBase -> com.b.c.c.a:
     boolean _allowDecimalRepresentationOfRationals -> c
     java.text.DecimalFormat SimpleDecimalFormatter -> d
-    76:176:java.lang.String getDescription(int) -> a
-    183:183:java.lang.String getNewSubfileTypeDescription() -> a
-    197:197:java.lang.String getSubfileTypeDescription() -> b
-    207:207:java.lang.String getThresholdingDescription() -> c
-    217:217:java.lang.String getFillOrderDescription() -> d
-    226:226:java.lang.String getSubjectDistanceRangeDescription() -> e
-    237:237:java.lang.String getSharpnessDescription() -> f
-    247:247:java.lang.String getSaturationDescription() -> g
-    257:257:java.lang.String getContrastDescription() -> h
-    267:267:java.lang.String getGainControlDescription() -> i
-    279:279:java.lang.String getSceneCaptureTypeDescription() -> j
-    290:295:java.lang.String get35mmFilmEquivFocalLengthDescription() -> k
-    301:306:java.lang.String getDigitalZoomRatioDescription() -> l
-    312:312:java.lang.String getWhiteBalanceModeDescription() -> m
-    321:321:java.lang.String getExposureModeDescription() -> n
-    331:331:java.lang.String getCustomRenderedDescription() -> o
-    340:373:java.lang.String getUserCommentDescription() -> p
-    381:385:java.lang.String getIsoEquivalentDescription() -> q
-    392:392:java.lang.String getExifVersionDescription() -> r
-    398:398:java.lang.String getFlashPixVersionDescription() -> s
-    404:404:java.lang.String getSceneTypeDescription() -> t
-    413:413:java.lang.String getFileSourceDescription() -> u
-    424:427:java.lang.String getExposureBiasDescription() -> v
-    433:437:java.lang.String getMaxApertureValueDescription() -> w
-    443:447:java.lang.String getApertureValueDescription() -> x
-    453:453:java.lang.String getExposureProgramDescription() -> y
-    469:477:java.lang.String getYCbCrSubsamplingDescription() -> z
-    488:488:java.lang.String getPlanarConfigurationDescription() -> A
-    498:499:java.lang.String getSamplesPerPixelDescription() -> B
-    505:506:java.lang.String getRowsPerStripDescription() -> C
-    512:513:java.lang.String getStripByteCountsDescription() -> D
-    520:539:java.lang.String getPhotometricInterpretationDescription() -> E
-    546:547:java.lang.String getBitsPerSampleDescription() -> F
-    553:558:java.lang.String getFocalPlaneXResolutionDescription() -> G
-    564:569:java.lang.String getFocalPlaneYResolutionDescription() -> H
-    577:577:java.lang.String getFocalPlaneResolutionUnitDescription() -> I
-    588:589:java.lang.String getExifImageWidthDescription() -> J
-    595:596:java.lang.String getExifImageHeightDescription() -> K
-    602:609:java.lang.String getColorSpaceDescription() -> L
-    615:619:java.lang.String getFocalLengthDescription() -> M
-    636:662:java.lang.String getFlashDescription() -> N
-    671:688:java.lang.String getWhiteBalanceDescription() -> O
-    697:710:java.lang.String getMeteringModeDescription() -> P
-    717:721:java.lang.String getSubjectDistanceDescription() -> Q
-    727:731:java.lang.String getCompressedAverageBitsPerPixelDescription() -> R
-    739:740:java.lang.String getExposureTimeDescription() -> S
-    756:766:java.lang.String getShutterSpeedDescription() -> T
-    793:796:java.lang.String getFNumberDescription() -> U
-    805:805:java.lang.String getSensingMethodDescription() -> V
-    821:832:java.lang.String getComponentConfigurationDescription() -> W
-com.drew.metadata.exif.ExifSubIFDDirectory -> com.b.c.c.g:
+    71:207:java.lang.String getDescription(int) -> a
+    214:214:java.lang.String getInteropVersionDescription() -> a
+    220:225:java.lang.String getInteropIndexDescription() -> b
+    233:242:java.lang.String getReferenceBlackWhiteDescription() -> c
+    248:254:java.lang.String getYResolutionDescription() -> d
+    260:266:java.lang.String getXResolutionDescription() -> e
+    272:272:java.lang.String getYCbCrPositioningDescription() -> f
+    278:278:java.lang.String getOrientationDescription() -> g
+    293:293:java.lang.String getResolutionDescription() -> h
+    300:307:java.lang.String getUnicodeDescription(int) -> g
+    314:314:java.lang.String getWindowsAuthorDescription() -> i
+    320:320:java.lang.String getWindowsCommentDescription() -> j
+    326:326:java.lang.String getWindowsKeywordsDescription() -> k
+    332:332:java.lang.String getWindowsTitleDescription() -> l
+    338:338:java.lang.String getWindowsSubjectDescription() -> m
+    344:352:java.lang.String getYCbCrSubsamplingDescription() -> n
+    363:363:java.lang.String getPlanarConfigurationDescription() -> o
+    373:374:java.lang.String getSamplesPerPixelDescription() -> p
+    380:381:java.lang.String getRowsPerStripDescription() -> q
+    387:388:java.lang.String getStripByteCountsDescription() -> r
+    395:414:java.lang.String getPhotometricInterpretationDescription() -> s
+    421:422:java.lang.String getBitsPerSampleDescription() -> t
+    428:429:java.lang.String getImageWidthDescription() -> u
+    435:436:java.lang.String getImageHeightDescription() -> v
+    442:442:java.lang.String getNewSubfileTypeDescription() -> w
+    456:456:java.lang.String getSubfileTypeDescription() -> x
+    466:466:java.lang.String getThresholdingDescription() -> y
+    476:476:java.lang.String getFillOrderDescription() -> z
+    485:485:java.lang.String getSubjectDistanceRangeDescription() -> A
+    496:496:java.lang.String getSensitivityTypeRangeDescription() -> B
+    511:511:java.lang.String getSharpnessDescription() -> C
+    521:521:java.lang.String getSaturationDescription() -> D
+    531:531:java.lang.String getContrastDescription() -> E
+    541:541:java.lang.String getGainControlDescription() -> F
+    553:553:java.lang.String getSceneCaptureTypeDescription() -> G
+    564:569:java.lang.String get35mmFilmEquivFocalLengthDescription() -> H
+    575:580:java.lang.String getDigitalZoomRatioDescription() -> I
+    586:586:java.lang.String getWhiteBalanceModeDescription() -> J
+    595:595:java.lang.String getExposureModeDescription() -> K
+    605:605:java.lang.String getCustomRenderedDescription() -> L
+    614:647:java.lang.String getUserCommentDescription() -> M
+    655:659:java.lang.String getIsoEquivalentDescription() -> N
+    666:666:java.lang.String getExifVersionDescription() -> O
+    672:672:java.lang.String getFlashPixVersionDescription() -> P
+    678:678:java.lang.String getSceneTypeDescription() -> Q
+    687:687:java.lang.String getFileSourceDescription() -> R
+    698:701:java.lang.String getExposureBiasDescription() -> S
+    707:711:java.lang.String getMaxApertureValueDescription() -> T
+    717:721:java.lang.String getApertureValueDescription() -> U
+    727:727:java.lang.String getExposureProgramDescription() -> V
+    744:749:java.lang.String getFocalPlaneXResolutionDescription() -> W
+    755:760:java.lang.String getFocalPlaneYResolutionDescription() -> X
+    768:768:java.lang.String getFocalPlaneResolutionUnitDescription() -> Y
+    779:780:java.lang.String getExifImageWidthDescription() -> Z
+    786:787:java.lang.String getExifImageHeightDescription() -> aa
+    793:800:java.lang.String getColorSpaceDescription() -> ab
+    806:810:java.lang.String getFocalLengthDescription() -> ac
+    827:853:java.lang.String getFlashDescription() -> ad
+    862:879:java.lang.String getWhiteBalanceDescription() -> ae
+    888:901:java.lang.String getMeteringModeDescription() -> af
+    908:954:java.lang.String getCompressionDescription() -> ag
+    961:965:java.lang.String getSubjectDistanceDescription() -> ah
+    971:975:java.lang.String getCompressedAverageBitsPerPixelDescription() -> ai
+    983:984:java.lang.String getExposureTimeDescription() -> aj
+    1000:1010:java.lang.String getShutterSpeedDescription() -> ak
+    1037:1040:java.lang.String getFNumberDescription() -> al
+    1049:1049:java.lang.String getSensingMethodDescription() -> am
+    1065:1076:java.lang.String getComponentConfigurationDescription() -> an
+    1082:1089:java.lang.String getJpegProcDescription() -> ao
+com.drew.metadata.exif.ExifDirectoryBase -> com.b.c.c.b:
+    582:731:void addExifTagNames(java.util.HashMap) -> a
+com.drew.metadata.exif.ExifIFD0Descriptor -> com.b.c.c.c:
+com.drew.metadata.exif.ExifIFD0Directory -> com.b.c.c.d:
     java.util.HashMap _tagNameMap -> e
-    655:655:java.lang.String getName() -> a
-    661:661:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.exif.ExifThumbnailDescriptor -> com.b.c.c.h:
-    boolean _allowDecimalRepresentationOfRationals -> c
-    68:106:java.lang.String getDescription(int) -> a
-    113:122:java.lang.String getReferenceBlackWhiteDescription() -> a
-    128:136:java.lang.String getYCbCrSubsamplingDescription() -> b
-    147:147:java.lang.String getPlanarConfigurationDescription() -> c
-    157:158:java.lang.String getSamplesPerPixelDescription() -> d
-    164:165:java.lang.String getRowsPerStripDescription() -> e
-    171:172:java.lang.String getStripByteCountsDescription() -> f
-    179:198:java.lang.String getPhotometricInterpretationDescription() -> g
-    205:237:java.lang.String getCompressionDescription() -> h
-    244:245:java.lang.String getBitsPerSampleDescription() -> i
-    251:252:java.lang.String getThumbnailImageWidthDescription() -> j
-    258:259:java.lang.String getThumbnailImageHeightDescription() -> k
-    265:266:java.lang.String getThumbnailLengthDescription() -> l
-    272:273:java.lang.String getThumbnailOffsetDescription() -> m
-    279:285:java.lang.String getYResolutionDescription() -> n
-    291:297:java.lang.String getXResolutionDescription() -> o
-    303:303:java.lang.String getYCbCrPositioningDescription() -> p
-    309:309:java.lang.String getOrientationDescription() -> q
-    324:324:java.lang.String getResolutionDescription() -> r
-com.drew.metadata.exif.ExifThumbnailDirectory -> com.b.c.c.i:
+    58:58:java.lang.String getName() -> a
+    65:65:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.exif.ExifInteropDescriptor -> com.b.c.c.e:
+com.drew.metadata.exif.ExifInteropDirectory -> com.b.c.c.f:
+    java.util.HashMap _tagNameMap -> e
+    51:51:java.lang.String getName() -> a
+    58:58:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.exif.ExifReader -> com.b.c.c.g:
+    boolean _storeThumbnailBytes -> b
+    boolean $assertionsDisabled -> a
+    62:62:java.lang.Iterable getSegmentTypes() -> a
+    67:75:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    80:81:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
+    88:100:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata,int) -> a
+com.drew.metadata.exif.ExifSubIFDDescriptor -> com.b.c.c.h:
+com.drew.metadata.exif.ExifSubIFDDirectory -> com.b.c.c.i:
+    java.util.HashMap _tagNameMap -> e
+    54:54:java.lang.String getName() -> a
+    61:61:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.exif.ExifThumbnailDescriptor -> com.b.c.c.j:
+    45:53:java.lang.String getDescription(int) -> a
+    60:92:java.lang.String getCompressionDescription() -> ag
+    99:100:java.lang.String getThumbnailLengthDescription() -> ap
+    106:107:java.lang.String getThumbnailOffsetDescription() -> aq
+com.drew.metadata.exif.ExifThumbnailDirectory -> com.b.c.c.k:
     java.util.HashMap _tagNameMap -> e
     byte[] _thumbnailData -> f
-    177:177:java.lang.String getName() -> a
-    183:183:java.util.HashMap getTagNameMap() -> b
-    199:200:void setThumbnailData(byte[]) -> a
-com.drew.metadata.exif.ExifTiffHandler -> com.b.c.c.j:
-    boolean _storeThumbnailBytes -> d
-    55:62:void setTiffMarker(int) -> a
-    66:77:boolean isTagIfdPointer(int) -> b
-    83:89:boolean hasFollowerIfd() -> a
-    100:104:boolean customProcessTag(int,java.util.Set,int,com.drew.lang.RandomAccessReader,int,int) -> a
-    109:125:void completed(com.drew.lang.RandomAccessReader,int) -> a
-    134:293:boolean processMakernote(int,java.util.Set,int,com.drew.lang.RandomAccessReader,int) -> a
-    299:330:void processKodakMakernote(com.drew.metadata.exif.makernotes.KodakMakernoteDirectory,int,com.drew.lang.RandomAccessReader) -> a
-com.drew.metadata.exif.GpsDescriptor -> com.b.c.c.k:
-    48:82:java.lang.String getDescription(int) -> a
-    89:89:java.lang.String getGpsVersionIdDescription() -> k
-    95:96:java.lang.String getGpsLatitudeDescription() -> a
-    102:103:java.lang.String getGpsLongitudeDescription() -> b
-    110:111:java.lang.String getGpsTimeStampDescription() -> c
-    117:128:java.lang.String getGpsDestinationReferenceDescription() -> d
-    135:140:java.lang.String getGpsDirectionDescription(int) -> g
-    146:155:java.lang.String getGpsDirectionReferenceDescription(int) -> h
-    162:173:java.lang.String getGpsSpeedRefDescription() -> e
-    180:189:java.lang.String getGpsMeasureModeDescription() -> f
-    196:205:java.lang.String getGpsStatusDescription() -> g
-    212:212:java.lang.String getGpsAltitudeRefDescription() -> h
-    218:219:java.lang.String getGpsAltitudeDescription() -> i
-    225:225:java.lang.String getGpsDifferentialDescription() -> j
-com.drew.metadata.exif.GpsDirectory -> com.b.c.c.l:
+    104:104:java.lang.String getName() -> a
+    111:111:java.util.HashMap getTagNameMap() -> b
+    127:128:void setThumbnailData(byte[]) -> a
+com.drew.metadata.exif.ExifTiffHandler -> com.b.c.c.l:
+    boolean _storeThumbnailBytes -> c
+    57:64:void setTiffMarker(int) -> a
+    68:79:boolean isTagIfdPointer(int) -> b
+    85:96:boolean hasFollowerIfd() -> a
+    107:122:boolean customProcessTag(int,java.util.Set,int,com.drew.lang.RandomAccessReader,int,int) -> a
+    127:143:void completed(com.drew.lang.RandomAccessReader,int) -> a
+    151:312:boolean processMakernote(int,java.util.Set,int,com.drew.lang.RandomAccessReader) -> a
+    318:349:void processKodakMakernote(com.drew.metadata.exif.makernotes.KodakMakernoteDirectory,int,com.drew.lang.RandomAccessReader) -> a
+com.drew.metadata.exif.GpsDescriptor -> com.b.c.c.m:
+    49:83:java.lang.String getDescription(int) -> a
+    90:90:java.lang.String getGpsVersionIdDescription() -> k
+    96:97:java.lang.String getGpsLatitudeDescription() -> a
+    103:104:java.lang.String getGpsLongitudeDescription() -> b
+    111:118:java.lang.String getGpsTimeStampDescription() -> c
+    124:135:java.lang.String getGpsDestinationReferenceDescription() -> d
+    142:147:java.lang.String getGpsDirectionDescription(int) -> g
+    153:162:java.lang.String getGpsDirectionReferenceDescription(int) -> h
+    169:180:java.lang.String getGpsSpeedRefDescription() -> e
+    187:196:java.lang.String getGpsMeasureModeDescription() -> f
+    203:212:java.lang.String getGpsStatusDescription() -> g
+    219:219:java.lang.String getGpsAltitudeRefDescription() -> h
+    225:226:java.lang.String getGpsAltitudeDescription() -> i
+    232:232:java.lang.String getGpsDifferentialDescription() -> j
+com.drew.metadata.exif.GpsDirectory -> com.b.c.c.n:
     java.util.HashMap _tagNameMap -> e
-    145:145:java.lang.String getName() -> a
-    151:151:java.util.HashMap getTagNameMap() -> b
-    163:183:com.drew.lang.GeoLocation getGeoLocation() -> c
+    147:147:java.lang.String getName() -> a
+    154:154:java.util.HashMap getTagNameMap() -> b
+    166:186:com.drew.lang.GeoLocation getGeoLocation() -> d
 com.drew.metadata.exif.makernotes.CanonMakernoteDescriptor -> com.b.c.c.a.a:
-    44:130:java.lang.String getDescription(int) -> a
-    137:140:java.lang.String getSerialNumberDescription() -> a
-    325:342:java.lang.String getFlashBiasDescription() -> b
-    348:358:java.lang.String getAfPointUsedDescription() -> c
-    365:365:java.lang.String getWhiteBalanceDescription() -> d
-    380:380:java.lang.String getFocusMode2Description() -> e
-    386:401:java.lang.String getFlashDetailsDescription() -> f
-    407:413:java.lang.String getFocalUnitsPerMillimetreDescription() -> g
-    420:424:java.lang.String getShortFocalLengthDescription() -> h
-    430:434:java.lang.String getLongFocalLengthDescription() -> i
-    440:440:java.lang.String getExposureModeDescription() -> j
-    454:454:java.lang.String getAfPointSelectedDescription() -> k
-    468:468:java.lang.String getMeteringModeDescription() -> l
-    480:503:java.lang.String getIsoDescription() -> m
-    510:521:java.lang.String getSharpnessDescription() -> n
-    528:539:java.lang.String getSaturationDescription() -> o
-    546:557:java.lang.String getContrastDescription() -> p
-    564:564:java.lang.String getEasyShootingModeDescription() -> q
-    584:584:java.lang.String getImageSizeDescription() -> r
-    595:595:java.lang.String getFocusMode1Description() -> s
-    611:622:java.lang.String getContinuousDriveModeDescription() -> t
-    628:650:java.lang.String getFlashModeDescription() -> u
-    657:664:java.lang.String getSelfTimerDelayDescription() -> v
-    671:671:java.lang.String getMacroModeDescription() -> w
-    677:677:java.lang.String getQualityDescription() -> x
-    683:683:java.lang.String getDigitalZoomDescription() -> y
-    689:702:java.lang.String getFocusTypeDescription() -> z
-    709:709:java.lang.String getFlashActivityDescription() -> A
+    45:131:java.lang.String getDescription(int) -> a
+    138:141:java.lang.String getSerialNumberDescription() -> a
+    326:343:java.lang.String getFlashBiasDescription() -> b
+    349:359:java.lang.String getAfPointUsedDescription() -> c
+    366:366:java.lang.String getWhiteBalanceDescription() -> d
+    381:381:java.lang.String getFocusMode2Description() -> e
+    387:402:java.lang.String getFlashDetailsDescription() -> f
+    408:414:java.lang.String getFocalUnitsPerMillimetreDescription() -> g
+    421:425:java.lang.String getShortFocalLengthDescription() -> h
+    431:435:java.lang.String getLongFocalLengthDescription() -> i
+    441:441:java.lang.String getExposureModeDescription() -> j
+    455:455:java.lang.String getAfPointSelectedDescription() -> k
+    469:469:java.lang.String getMeteringModeDescription() -> l
+    481:504:java.lang.String getIsoDescription() -> m
+    511:522:java.lang.String getSharpnessDescription() -> n
+    529:540:java.lang.String getSaturationDescription() -> o
+    547:558:java.lang.String getContrastDescription() -> p
+    565:565:java.lang.String getEasyShootingModeDescription() -> q
+    585:585:java.lang.String getImageSizeDescription() -> r
+    596:596:java.lang.String getFocusMode1Description() -> s
+    612:623:java.lang.String getContinuousDriveModeDescription() -> t
+    629:651:java.lang.String getFlashModeDescription() -> u
+    658:665:java.lang.String getSelfTimerDelayDescription() -> v
+    672:672:java.lang.String getMacroModeDescription() -> w
+    678:678:java.lang.String getQualityDescription() -> x
+    684:684:java.lang.String getDigitalZoomDescription() -> y
+    690:703:java.lang.String getFocusTypeDescription() -> z
+    710:710:java.lang.String getFlashActivityDescription() -> A
 com.drew.metadata.exif.makernotes.CanonMakernoteDirectory -> com.b.c.c.a.b:
     java.util.HashMap _tagNameMap -> e
-    658:658:java.lang.String getName() -> a
-    664:664:java.util.HashMap getTagNameMap() -> b
-    676:720:void setObjectArray(int,java.lang.Object) -> b
+    659:659:java.lang.String getName() -> a
+    666:666:java.util.HashMap getTagNameMap() -> b
+    678:722:void setObjectArray(int,java.lang.Object) -> b
 com.drew.metadata.exif.makernotes.CasioType1MakernoteDescriptor -> com.b.c.c.a.c:
-    44:70:java.lang.String getDescription(int) -> a
-    77:92:java.lang.String getCcdSensitivityDescription() -> a
-    99:99:java.lang.String getSaturationDescription() -> b
-    105:105:java.lang.String getContrastDescription() -> c
-    111:111:java.lang.String getSharpnessDescription() -> d
-    117:128:java.lang.String getDigitalZoomDescription() -> e
-    135:148:java.lang.String getWhiteBalanceDescription() -> f
-    155:160:java.lang.String getObjectDistanceDescription() -> g
-    166:176:java.lang.String getFlashIntensityDescription() -> h
-    183:183:java.lang.String getFlashModeDescription() -> i
-    189:189:java.lang.String getFocusingModeDescription() -> j
-    195:195:java.lang.String getQualityDescription() -> k
-    201:201:java.lang.String getRecordingModeDescription() -> l
+    45:71:java.lang.String getDescription(int) -> a
+    78:93:java.lang.String getCcdSensitivityDescription() -> a
+    100:100:java.lang.String getSaturationDescription() -> b
+    106:106:java.lang.String getContrastDescription() -> c
+    112:112:java.lang.String getSharpnessDescription() -> d
+    118:129:java.lang.String getDigitalZoomDescription() -> e
+    136:149:java.lang.String getWhiteBalanceDescription() -> f
+    156:161:java.lang.String getObjectDistanceDescription() -> g
+    167:177:java.lang.String getFlashIntensityDescription() -> h
+    184:184:java.lang.String getFlashModeDescription() -> i
+    190:190:java.lang.String getFocusingModeDescription() -> j
+    196:196:java.lang.String getQualityDescription() -> k
+    202:202:java.lang.String getRecordingModeDescription() -> l
 com.drew.metadata.exif.makernotes.CasioType1MakernoteDirectory -> com.b.c.c.a.d:
     java.util.HashMap _tagNameMap -> e
-    94:94:java.lang.String getName() -> a
-    100:100:java.util.HashMap getTagNameMap() -> b
+    95:95:java.lang.String getName() -> a
+    102:102:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.CasioType2MakernoteDescriptor -> com.b.c.c.a.e:
-    44:100:java.lang.String getDescription(int) -> a
-    107:107:java.lang.String getFilterDescription() -> a
-    113:113:java.lang.String getEnhancementDescription() -> b
-    119:119:java.lang.String getColourModeDescription() -> c
-    125:125:java.lang.String getCcdIsoSensitivityDescription() -> d
-    131:131:java.lang.String getTimeZoneDescription() -> e
-    137:144:java.lang.String getFocusMode2Description() -> f
-    151:151:java.lang.String getQualityDescription() -> g
-    157:157:java.lang.String getSelfTimerDescription() -> h
-    163:163:java.lang.String getRecordModeDescription() -> i
-    169:169:java.lang.String getFlashDistanceDescription() -> j
-    175:178:java.lang.String getObjectDistanceDescription() -> k
-    184:193:java.lang.String getWhiteBalance2Description() -> l
-    200:200:java.lang.String getWhiteBalanceBiasDescription() -> m
-    206:209:java.lang.String getCasioPreviewThumbnailDescription() -> n
-    216:216:java.lang.String getPrintImageMatchingInfoDescription() -> o
-    222:222:java.lang.String getSharpnessDescription() -> p
-    228:228:java.lang.String getContrastDescription() -> q
-    234:234:java.lang.String getSaturationDescription() -> r
-    240:243:java.lang.String getFocalLengthDescription() -> s
-    249:249:java.lang.String getWhiteBalance1Description() -> t
-    263:272:java.lang.String getIsoSensitivityDescription() -> u
-    279:279:java.lang.String getFocusMode1Description() -> v
-    285:296:java.lang.String getImageSizeDescription() -> w
-    303:303:java.lang.String getQualityModeDescription() -> x
-    309:309:java.lang.String getThumbnailOffsetDescription() -> y
-    315:318:java.lang.String getThumbnailSizeDescription() -> z
-    324:327:java.lang.String getThumbnailDimensionsDescription() -> A
+    45:101:java.lang.String getDescription(int) -> a
+    108:108:java.lang.String getFilterDescription() -> a
+    114:114:java.lang.String getEnhancementDescription() -> b
+    120:120:java.lang.String getColourModeDescription() -> c
+    126:126:java.lang.String getCcdIsoSensitivityDescription() -> d
+    132:132:java.lang.String getTimeZoneDescription() -> e
+    138:145:java.lang.String getFocusMode2Description() -> f
+    152:152:java.lang.String getQualityDescription() -> g
+    158:158:java.lang.String getSelfTimerDescription() -> h
+    164:164:java.lang.String getRecordModeDescription() -> i
+    170:170:java.lang.String getFlashDistanceDescription() -> j
+    176:179:java.lang.String getObjectDistanceDescription() -> k
+    185:194:java.lang.String getWhiteBalance2Description() -> l
+    201:201:java.lang.String getWhiteBalanceBiasDescription() -> m
+    207:210:java.lang.String getCasioPreviewThumbnailDescription() -> n
+    217:217:java.lang.String getPrintImageMatchingInfoDescription() -> o
+    223:223:java.lang.String getSharpnessDescription() -> p
+    229:229:java.lang.String getContrastDescription() -> q
+    235:235:java.lang.String getSaturationDescription() -> r
+    241:244:java.lang.String getFocalLengthDescription() -> s
+    250:250:java.lang.String getWhiteBalance1Description() -> t
+    264:273:java.lang.String getIsoSensitivityDescription() -> u
+    280:280:java.lang.String getFocusMode1Description() -> v
+    286:297:java.lang.String getImageSizeDescription() -> w
+    304:304:java.lang.String getQualityModeDescription() -> x
+    310:310:java.lang.String getThumbnailOffsetDescription() -> y
+    316:319:java.lang.String getThumbnailSizeDescription() -> z
+    325:328:java.lang.String getThumbnailDimensionsDescription() -> A
 com.drew.metadata.exif.makernotes.CasioType2MakernoteDirectory -> com.b.c.c.a.f:
     java.util.HashMap _tagNameMap -> e
-    222:222:java.lang.String getName() -> a
-    228:228:java.util.HashMap getTagNameMap() -> b
+    223:223:java.lang.String getName() -> a
+    230:230:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.FujifilmMakernoteDescriptor -> com.b.c.c.a.g:
-    61:111:java.lang.String getDescription(int) -> a
-    118:118:java.lang.String getMakernoteVersionDescription() -> x
-    124:138:java.lang.String getSharpnessDescription() -> a
-    145:166:java.lang.String getWhiteBalanceDescription() -> b
-    173:189:java.lang.String getColorSaturationDescription() -> c
-    196:208:java.lang.String getToneDescription() -> d
-    215:223:java.lang.String getContrastDescription() -> e
-    230:238:java.lang.String getNoiseReductionDescription() -> f
-    245:253:java.lang.String getHighIsoNoiseReductionDescription() -> g
-    260:260:java.lang.String getFlashModeDescription() -> h
-    273:274:java.lang.String getFlashExposureValueDescription() -> i
-    280:280:java.lang.String getMacroDescription() -> j
-    286:286:java.lang.String getFocusModeDescription() -> k
-    292:292:java.lang.String getSlowSyncDescription() -> l
-    298:335:java.lang.String getPictureModeDescription() -> m
-    342:342:java.lang.String getExrAutoDescription() -> n
-    348:356:java.lang.String getExrModeDescription() -> o
-    363:363:java.lang.String getAutoBracketingDescription() -> p
-    374:382:java.lang.String getFinePixColorDescription() -> q
-    389:389:java.lang.String getBlurWarningDescription() -> r
-    399:399:java.lang.String getFocusWarningDescription() -> s
-    409:409:java.lang.String getAutoExposureWarningDescription() -> t
-    419:419:java.lang.String getDynamicRangeDescription() -> u
-    431:446:java.lang.String getFilmModeDescription() -> v
-    453:464:java.lang.String getDynamicRangeSettingDescription() -> w
+    62:112:java.lang.String getDescription(int) -> a
+    119:119:java.lang.String getMakernoteVersionDescription() -> x
+    125:139:java.lang.String getSharpnessDescription() -> a
+    146:167:java.lang.String getWhiteBalanceDescription() -> b
+    174:190:java.lang.String getColorSaturationDescription() -> c
+    197:209:java.lang.String getToneDescription() -> d
+    216:224:java.lang.String getContrastDescription() -> e
+    231:239:java.lang.String getNoiseReductionDescription() -> f
+    246:254:java.lang.String getHighIsoNoiseReductionDescription() -> g
+    261:261:java.lang.String getFlashModeDescription() -> h
+    274:275:java.lang.String getFlashExposureValueDescription() -> i
+    281:281:java.lang.String getMacroDescription() -> j
+    287:287:java.lang.String getFocusModeDescription() -> k
+    293:293:java.lang.String getSlowSyncDescription() -> l
+    299:336:java.lang.String getPictureModeDescription() -> m
+    343:343:java.lang.String getExrAutoDescription() -> n
+    349:357:java.lang.String getExrModeDescription() -> o
+    364:364:java.lang.String getAutoBracketingDescription() -> p
+    375:383:java.lang.String getFinePixColorDescription() -> q
+    390:390:java.lang.String getBlurWarningDescription() -> r
+    400:400:java.lang.String getFocusWarningDescription() -> s
+    410:410:java.lang.String getAutoExposureWarningDescription() -> t
+    420:420:java.lang.String getDynamicRangeDescription() -> u
+    432:447:java.lang.String getFilmModeDescription() -> v
+    454:465:java.lang.String getDynamicRangeSettingDescription() -> w
 com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory -> com.b.c.c.a.h:
     java.util.HashMap _tagNameMap -> e
-    168:168:java.lang.String getName() -> a
-    174:174:java.util.HashMap getTagNameMap() -> b
+    169:169:java.lang.String getName() -> a
+    176:176:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.KodakMakernoteDescriptor -> com.b.c.c.a.i:
     45:65:java.lang.String getDescription(int) -> a
     72:72:java.lang.String getSharpnessDescription() -> a
@@ -11376,372 +11426,386 @@ com.drew.metadata.exif.makernotes.KodakMakernoteDescriptor -> com.b.c.c.a.i:
     149:149:java.lang.String getQualityDescription() -> i
 com.drew.metadata.exif.makernotes.KodakMakernoteDirectory -> com.b.c.c.a.j:
     java.util.HashMap _tagNameMap -> e
-    103:103:java.lang.String getName() -> a
-    109:109:java.util.HashMap getTagNameMap() -> b
+    104:104:java.lang.String getName() -> a
+    111:111:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.KyoceraMakernoteDescriptor -> com.b.c.c.a.k:
-    51:57:java.lang.String getDescription(int) -> a
-    64:64:java.lang.String getPrintImageMatchingInfoDescription() -> a
-    70:70:java.lang.String getProprietaryThumbnailDataDescription() -> b
+    52:58:java.lang.String getDescription(int) -> a
+    65:65:java.lang.String getPrintImageMatchingInfoDescription() -> a
+    71:71:java.lang.String getProprietaryThumbnailDataDescription() -> b
 com.drew.metadata.exif.makernotes.KyoceraMakernoteDirectory -> com.b.c.c.a.l:
     java.util.HashMap _tagNameMap -> e
-    55:55:java.lang.String getName() -> a
-    61:61:java.util.HashMap getTagNameMap() -> b
+    56:56:java.lang.String getName() -> a
+    63:63:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.LeicaMakernoteDescriptor -> com.b.c.c.a.m:
-    46:68:java.lang.String getDescription(int) -> a
-    75:75:java.lang.String getCameraTemperatureDescription() -> a
-    81:81:java.lang.String getApproximateFNumberDescription() -> b
-    87:87:java.lang.String getMeasuredLvDescription() -> c
-    93:93:java.lang.String getExternalSensorBrightnessValueDescription() -> d
-    99:99:java.lang.String getWhiteBalanceDescription() -> e
-    113:113:java.lang.String getUserProfileDescription() -> f
-    124:124:java.lang.String getQualityDescription() -> g
+    47:69:java.lang.String getDescription(int) -> a
+    76:76:java.lang.String getCameraTemperatureDescription() -> a
+    82:82:java.lang.String getApproximateFNumberDescription() -> b
+    88:88:java.lang.String getMeasuredLvDescription() -> c
+    94:94:java.lang.String getExternalSensorBrightnessValueDescription() -> d
+    100:100:java.lang.String getWhiteBalanceDescription() -> e
+    114:114:java.lang.String getUserProfileDescription() -> f
+    125:125:java.lang.String getQualityDescription() -> g
 com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory -> com.b.c.c.a.n:
     java.util.HashMap _tagNameMap -> e
-    97:97:java.lang.String getName() -> a
-    103:103:java.util.HashMap getTagNameMap() -> b
+    98:98:java.lang.String getName() -> a
+    105:105:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.NikonType1MakernoteDescriptor -> com.b.c.c.a.o:
-    56:74:java.lang.String getDescription(int) -> a
-    81:81:java.lang.String getConverterDescription() -> a
-    87:92:java.lang.String getDigitalZoomDescription() -> b
-    98:103:java.lang.String getFocusDescription() -> c
-    109:109:java.lang.String getWhiteBalanceDescription() -> d
-    123:123:java.lang.String getCcdSensitivityDescription() -> e
-    136:136:java.lang.String getImageAdjustmentDescription() -> f
-    148:148:java.lang.String getColorModeDescription() -> g
-    158:158:java.lang.String getQualityDescription() -> h
+    57:75:java.lang.String getDescription(int) -> a
+    82:82:java.lang.String getConverterDescription() -> a
+    88:93:java.lang.String getDigitalZoomDescription() -> b
+    99:104:java.lang.String getFocusDescription() -> c
+    110:110:java.lang.String getWhiteBalanceDescription() -> d
+    124:124:java.lang.String getCcdSensitivityDescription() -> e
+    137:137:java.lang.String getImageAdjustmentDescription() -> f
+    149:149:java.lang.String getColorModeDescription() -> g
+    159:159:java.lang.String getQualityDescription() -> h
 com.drew.metadata.exif.makernotes.NikonType1MakernoteDirectory -> com.b.c.c.a.p:
     java.util.HashMap _tagNameMap -> e
-    82:82:java.lang.String getName() -> a
-    88:88:java.util.HashMap getTagNameMap() -> b
+    83:83:java.lang.String getName() -> a
+    90:90:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.NikonType2MakernoteDescriptor -> com.b.c.c.a.q:
-    49:98:java.lang.String getDescription(int) -> a
-    105:105:java.lang.String getPowerUpTimeDescription() -> a
-    111:111:java.lang.String getHighISONoiseReductionDescription() -> b
-    125:125:java.lang.String getFlashUsedDescription() -> c
-    142:142:java.lang.String getNEFCompressionDescription() -> d
-    158:158:java.lang.String getShootingModeDescription() -> e
-    174:174:java.lang.String getLensTypeDescription() -> f
-    186:186:java.lang.String getColorSpaceDescription() -> g
-    196:206:java.lang.String getActiveDLightingDescription() -> h
-    213:221:java.lang.String getVignetteControlDescription() -> i
-    228:246:java.lang.String getAutoFocusPositionDescription() -> j
-    253:258:java.lang.String getDigitalZoomDescription() -> k
-    264:264:java.lang.String getProgramShiftDescription() -> l
-    270:270:java.lang.String getExposureDifferenceDescription() -> m
-    276:276:java.lang.String getAutoFlashCompensationDescription() -> n
-    282:282:java.lang.String getFlashExposureCompensationDescription() -> o
-    288:288:java.lang.String getFlashBracketCompensationDescription() -> p
-    294:294:java.lang.String getExposureTuningDescription() -> q
-    300:300:java.lang.String getLensStopsDescription() -> r
-    306:313:java.lang.String getEVDescription(int) -> g
-    319:324:java.lang.String getIsoSettingDescription() -> s
-    330:336:java.lang.String getLensDescription() -> t
-    343:343:java.lang.String getHueAdjustmentDescription() -> u
-    349:350:java.lang.String getColorModeDescription() -> v
-    356:356:java.lang.String getFirmwareVersionDescription() -> w
+    50:99:java.lang.String getDescription(int) -> a
+    106:106:java.lang.String getPowerUpTimeDescription() -> a
+    112:112:java.lang.String getHighISONoiseReductionDescription() -> b
+    126:126:java.lang.String getFlashUsedDescription() -> c
+    143:143:java.lang.String getNEFCompressionDescription() -> d
+    159:159:java.lang.String getShootingModeDescription() -> e
+    175:175:java.lang.String getLensTypeDescription() -> f
+    187:187:java.lang.String getColorSpaceDescription() -> g
+    197:207:java.lang.String getActiveDLightingDescription() -> h
+    214:222:java.lang.String getVignetteControlDescription() -> i
+    229:247:java.lang.String getAutoFocusPositionDescription() -> j
+    254:259:java.lang.String getDigitalZoomDescription() -> k
+    265:265:java.lang.String getProgramShiftDescription() -> l
+    271:271:java.lang.String getExposureDifferenceDescription() -> m
+    277:277:java.lang.String getAutoFlashCompensationDescription() -> n
+    283:283:java.lang.String getFlashExposureCompensationDescription() -> o
+    289:289:java.lang.String getFlashBracketCompensationDescription() -> p
+    295:295:java.lang.String getExposureTuningDescription() -> q
+    301:301:java.lang.String getLensStopsDescription() -> r
+    307:314:java.lang.String getEVDescription(int) -> g
+    320:325:java.lang.String getIsoSettingDescription() -> s
+    331:337:java.lang.String getLensDescription() -> t
+    344:344:java.lang.String getHueAdjustmentDescription() -> u
+    350:351:java.lang.String getColorModeDescription() -> v
+    357:357:java.lang.String getFirmwareVersionDescription() -> w
 com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory -> com.b.c.c.a.r:
     java.util.HashMap _tagNameMap -> e
-    914:914:java.lang.String getName() -> a
-    920:920:java.util.HashMap getTagNameMap() -> b
+    915:915:java.lang.String getName() -> a
+    922:922:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.OlympusMakernoteDescriptor -> com.b.c.c.a.s:
-    48:176:java.lang.String getDescription(int) -> a
-    183:183:java.lang.String getExposureModeDescription() -> a
-    189:189:java.lang.String getFlashModeCameraSettingDescription() -> b
-    196:196:java.lang.String getWhiteBalanceDescription() -> c
-    217:217:java.lang.String getImageSizeDescription() -> d
-    223:223:java.lang.String getImageQualityDescription() -> e
-    229:229:java.lang.String getShootingModeDescription() -> f
-    244:244:java.lang.String getMeteringModeDescription() -> g
-    253:259:java.lang.String getApexFilmSpeedDescription() -> h
-    269:275:java.lang.String getApexShutterSpeedTimeDescription() -> i
-    284:290:java.lang.String getApexApertureDescription() -> j
-    296:296:java.lang.String getMacroModeCameraSettingDescription() -> k
-    302:302:java.lang.String getDigitalZoomDescription() -> l
-    308:309:java.lang.String getExposureCompensationDescription() -> m
-    315:315:java.lang.String getBracketStepDescription() -> n
-    321:325:java.lang.String getIntervalLengthDescription() -> o
-    331:335:java.lang.String getIntervalNumberDescription() -> p
-    341:342:java.lang.String getFocalLengthDescription() -> q
-    348:351:java.lang.String getFocusDistanceDescription() -> r
-    359:359:java.lang.String getFlastFiredDescription() -> s
-    368:374:java.lang.String getDateDescription() -> t
-    383:390:java.lang.String getTimeDescription() -> u
-    397:401:java.lang.String getMaxApertureAtFocalLengthDescription() -> v
-    407:407:java.lang.String getFileNumberMemoryDescription() -> w
-    413:418:java.lang.String getLastFileNumberDescription() -> x
-    424:425:java.lang.String getWhiteBalanceRedDescription() -> y
-    431:432:java.lang.String getWhiteBalanceGreenDescription() -> z
-    438:439:java.lang.String getWhiteBalanceBlueDescription() -> A
-    445:446:java.lang.String getSaturationDescription() -> B
-    452:453:java.lang.String getContrastDescription() -> C
-    459:459:java.lang.String getSharpnessCameraSettingDescription() -> D
-    465:465:java.lang.String getSubjectProgramDescription() -> E
-    471:472:java.lang.String getFlastCompensationDescription() -> F
-    478:478:java.lang.String getIsoSettingDescription() -> G
-    484:484:java.lang.String getCameraModelDescription() -> H
-    498:498:java.lang.String getIntervalModeDescription() -> I
-    504:504:java.lang.String getFolderNameDescription() -> J
-    510:510:java.lang.String getColorModeCameraSettingDescription() -> K
-    516:517:java.lang.String getColorFilterDescription() -> L
-    523:523:java.lang.String getBlackAndWhiteFilterDescription() -> M
-    529:529:java.lang.String getInternalFlashDescription() -> N
-    535:536:java.lang.String getApexBrightnessDescription() -> O
-    542:542:java.lang.String getSpotFocusPointXCoordinateDescription() -> P
-    548:548:java.lang.String getSpotFocusPointYCoordinateDescription() -> Q
-    554:554:java.lang.String getWideFocusZoneDescription() -> R
-    566:566:java.lang.String getFocusModeCameraSettingDescription() -> S
-    572:572:java.lang.String getFocusAreaDescription() -> T
-    578:578:java.lang.String getDecSwitchPositionDescription() -> U
-    584:584:java.lang.String getMakernoteVersionDescription() -> V
-    590:590:java.lang.String getImageQuality2Description() -> W
-    601:601:java.lang.String getImageQuality1Description() -> X
-    612:612:java.lang.String getColorModeDescription() -> Y
-    623:623:java.lang.String getSharpnessDescription() -> Z
-    629:629:java.lang.String getFocusModeDescription() -> aa
-    635:635:java.lang.String getFocusRangeDescription() -> ab
-    641:641:java.lang.String getFlashModeDescription() -> ac
-    647:647:java.lang.String getDigiZoomRatioDescription() -> ad
-    653:656:java.lang.String getCameraIdDescription() -> ae
-    662:662:java.lang.String getMacroModeDescription() -> af
-    668:668:java.lang.String getBWModeDescription() -> ag
-    674:674:java.lang.String getJpegQualityDescription() -> ah
-    684:746:java.lang.String getSpecialModeDescription() -> ai
+    49:177:java.lang.String getDescription(int) -> a
+    184:184:java.lang.String getExposureModeDescription() -> a
+    190:190:java.lang.String getFlashModeCameraSettingDescription() -> b
+    197:197:java.lang.String getWhiteBalanceDescription() -> c
+    218:218:java.lang.String getImageSizeDescription() -> d
+    224:224:java.lang.String getImageQualityDescription() -> e
+    230:230:java.lang.String getShootingModeDescription() -> f
+    245:245:java.lang.String getMeteringModeDescription() -> g
+    254:260:java.lang.String getApexFilmSpeedDescription() -> h
+    270:276:java.lang.String getApexShutterSpeedTimeDescription() -> i
+    285:291:java.lang.String getApexApertureDescription() -> j
+    297:297:java.lang.String getMacroModeCameraSettingDescription() -> k
+    303:303:java.lang.String getDigitalZoomDescription() -> l
+    309:310:java.lang.String getExposureCompensationDescription() -> m
+    316:316:java.lang.String getBracketStepDescription() -> n
+    322:326:java.lang.String getIntervalLengthDescription() -> o
+    332:336:java.lang.String getIntervalNumberDescription() -> p
+    342:343:java.lang.String getFocalLengthDescription() -> q
+    349:352:java.lang.String getFocusDistanceDescription() -> r
+    360:360:java.lang.String getFlastFiredDescription() -> s
+    369:375:java.lang.String getDateDescription() -> t
+    384:391:java.lang.String getTimeDescription() -> u
+    398:402:java.lang.String getMaxApertureAtFocalLengthDescription() -> v
+    408:408:java.lang.String getFileNumberMemoryDescription() -> w
+    414:419:java.lang.String getLastFileNumberDescription() -> x
+    425:426:java.lang.String getWhiteBalanceRedDescription() -> y
+    432:433:java.lang.String getWhiteBalanceGreenDescription() -> z
+    439:440:java.lang.String getWhiteBalanceBlueDescription() -> A
+    446:447:java.lang.String getSaturationDescription() -> B
+    453:454:java.lang.String getContrastDescription() -> C
+    460:460:java.lang.String getSharpnessCameraSettingDescription() -> D
+    466:466:java.lang.String getSubjectProgramDescription() -> E
+    472:473:java.lang.String getFlastCompensationDescription() -> F
+    479:479:java.lang.String getIsoSettingDescription() -> G
+    485:485:java.lang.String getCameraModelDescription() -> H
+    499:499:java.lang.String getIntervalModeDescription() -> I
+    505:505:java.lang.String getFolderNameDescription() -> J
+    511:511:java.lang.String getColorModeCameraSettingDescription() -> K
+    517:518:java.lang.String getColorFilterDescription() -> L
+    524:524:java.lang.String getBlackAndWhiteFilterDescription() -> M
+    530:530:java.lang.String getInternalFlashDescription() -> N
+    536:537:java.lang.String getApexBrightnessDescription() -> O
+    543:543:java.lang.String getSpotFocusPointXCoordinateDescription() -> P
+    549:549:java.lang.String getSpotFocusPointYCoordinateDescription() -> Q
+    555:555:java.lang.String getWideFocusZoneDescription() -> R
+    567:567:java.lang.String getFocusModeCameraSettingDescription() -> S
+    573:573:java.lang.String getFocusAreaDescription() -> T
+    579:579:java.lang.String getDecSwitchPositionDescription() -> U
+    585:585:java.lang.String getMakernoteVersionDescription() -> V
+    591:591:java.lang.String getImageQuality2Description() -> W
+    602:602:java.lang.String getImageQuality1Description() -> X
+    613:613:java.lang.String getColorModeDescription() -> Y
+    624:624:java.lang.String getSharpnessDescription() -> Z
+    630:630:java.lang.String getFocusModeDescription() -> aa
+    636:636:java.lang.String getFocusRangeDescription() -> ab
+    642:642:java.lang.String getFlashModeDescription() -> ac
+    648:648:java.lang.String getDigiZoomRatioDescription() -> ad
+    654:657:java.lang.String getCameraIdDescription() -> ae
+    663:663:java.lang.String getMacroModeDescription() -> af
+    669:669:java.lang.String getBWModeDescription() -> ag
+    675:675:java.lang.String getJpegQualityDescription() -> ah
+    685:747:java.lang.String getSpecialModeDescription() -> ai
 com.drew.metadata.exif.makernotes.OlympusMakernoteDirectory -> com.b.c.c.a.t:
     java.util.HashMap _tagNameMap -> e
-    347:347:java.lang.String getName() -> a
-    353:358:void setByteArray(int,byte[]) -> a
-    362:376:void processCameraSettings(byte[]) -> a
-    380:381:boolean isIntervalMode() -> c
-    387:387:java.util.HashMap getTagNameMap() -> b
+    348:348:java.lang.String getName() -> a
+    354:359:void setByteArray(int,byte[]) -> a
+    363:377:void processCameraSettings(byte[]) -> a
+    381:382:boolean isIntervalMode() -> d
+    389:389:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.PanasonicMakernoteDescriptor -> com.b.c.c.a.u:
     java.lang.String[] _sceneModes -> c
-    57:159:java.lang.String getDescription(int) -> a
-    166:166:java.lang.String getPrintImageMatchingInfoDescription() -> a
-    172:172:java.lang.String getTextStampDescription() -> b
-    178:178:java.lang.String getTextStamp1Description() -> c
-    184:184:java.lang.String getTextStamp2Description() -> d
-    190:190:java.lang.String getTextStamp3Description() -> e
-    196:196:java.lang.String getMacroModeDescription() -> f
-    202:202:java.lang.String getFlashFiredDescription() -> g
-    208:208:java.lang.String getImageStabilizationDescription() -> h
-    219:219:java.lang.String getAudioDescription() -> i
-    225:225:java.lang.String getTransformDescription() -> j
-    231:231:java.lang.String getTransform1Description() -> k
-    237:261:java.lang.String getTransformDescription(int) -> g
-    268:268:java.lang.String getIntelligentExposureDescription() -> l
-    275:275:java.lang.String getFlashWarningDescription() -> m
-    282:282:java.lang.String getCountryDescription() -> n
-    288:288:java.lang.String getStateDescription() -> o
-    294:294:java.lang.String getCityDescription() -> p
-    300:300:java.lang.String getLandmarkDescription() -> q
-    306:306:java.lang.String getTitleDescription() -> r
-    312:312:java.lang.String getBabyNameDescription() -> s
-    318:318:java.lang.String getLocationDescription() -> t
-    324:324:java.lang.String getIntelligentResolutionDescription() -> u
-    331:331:java.lang.String getContrastDescription() -> v
-    337:337:java.lang.String getWorldTimeLocationDescription() -> w
-    344:344:java.lang.String getAdvancedSceneModeDescription() -> x
-    366:366:java.lang.String getUnknownDataDumpDescription() -> y
-    372:372:java.lang.String getColorEffectDescription() -> z
-    380:383:java.lang.String getUptimeDescription() -> A
-    389:389:java.lang.String getBurstModeDescription() -> B
-    397:410:java.lang.String getContrastModeDescription() -> C
-    417:417:java.lang.String getNoiseReductionDescription() -> D
-    425:425:java.lang.String getSelfTimerDescription() -> E
-    433:442:java.lang.String getRotationDescription() -> F
-    449:449:java.lang.String getAfAssistLampDescription() -> G
-    457:457:java.lang.String getColorModeDescription() -> H
-    465:465:java.lang.String getOpticalZoomModeDescription() -> I
-    473:473:java.lang.String getConversionLensDescription() -> J
-    481:481:java.lang.String getDetectedFacesDescription() -> K
-    487:487:java.lang.String getRecognizedFacesDescription() -> L
-    493:501:java.lang.String buildFacesDescription(com.drew.metadata.Face[]) -> a
-    562:562:java.lang.String getRecordModeDescription() -> M
-    568:568:java.lang.String getSceneModeDescription() -> N
-    574:574:java.lang.String getFocusModeDescription() -> O
-    581:612:java.lang.String getAfAreaModeDescription() -> P
-    619:619:java.lang.String getQualityModeDescription() -> Q
-    635:635:java.lang.String getVersionDescription() -> R
-    641:641:java.lang.String getMakernoteVersionDescription() -> S
-    647:647:java.lang.String getExifVersionDescription() -> T
-    653:653:java.lang.String getInternalSerialNumberDescription() -> U
-    659:659:java.lang.String getWhiteBalanceDescription() -> V
-    679:680:java.lang.String getBabyAgeDescription() -> W
-    686:687:java.lang.String getBabyAge1Description() -> X
+    58:160:java.lang.String getDescription(int) -> a
+    167:167:java.lang.String getPrintImageMatchingInfoDescription() -> a
+    173:173:java.lang.String getTextStampDescription() -> b
+    179:179:java.lang.String getTextStamp1Description() -> c
+    185:185:java.lang.String getTextStamp2Description() -> d
+    191:191:java.lang.String getTextStamp3Description() -> e
+    197:197:java.lang.String getMacroModeDescription() -> f
+    203:203:java.lang.String getFlashFiredDescription() -> g
+    209:209:java.lang.String getImageStabilizationDescription() -> h
+    220:220:java.lang.String getAudioDescription() -> i
+    226:226:java.lang.String getTransformDescription() -> j
+    232:232:java.lang.String getTransform1Description() -> k
+    238:262:java.lang.String getTransformDescription(int) -> g
+    269:269:java.lang.String getIntelligentExposureDescription() -> l
+    276:276:java.lang.String getFlashWarningDescription() -> m
+    283:283:java.lang.String getCountryDescription() -> n
+    289:289:java.lang.String getStateDescription() -> o
+    295:295:java.lang.String getCityDescription() -> p
+    301:301:java.lang.String getLandmarkDescription() -> q
+    307:307:java.lang.String getTitleDescription() -> r
+    313:313:java.lang.String getBabyNameDescription() -> s
+    319:319:java.lang.String getLocationDescription() -> t
+    325:325:java.lang.String getIntelligentResolutionDescription() -> u
+    332:332:java.lang.String getContrastDescription() -> v
+    338:338:java.lang.String getWorldTimeLocationDescription() -> w
+    345:345:java.lang.String getAdvancedSceneModeDescription() -> x
+    367:367:java.lang.String getUnknownDataDumpDescription() -> y
+    373:373:java.lang.String getColorEffectDescription() -> z
+    381:384:java.lang.String getUptimeDescription() -> A
+    390:390:java.lang.String getBurstModeDescription() -> B
+    398:411:java.lang.String getContrastModeDescription() -> C
+    418:418:java.lang.String getNoiseReductionDescription() -> D
+    426:426:java.lang.String getSelfTimerDescription() -> E
+    434:443:java.lang.String getRotationDescription() -> F
+    450:450:java.lang.String getAfAssistLampDescription() -> G
+    458:458:java.lang.String getColorModeDescription() -> H
+    466:466:java.lang.String getOpticalZoomModeDescription() -> I
+    474:474:java.lang.String getConversionLensDescription() -> J
+    482:482:java.lang.String getDetectedFacesDescription() -> K
+    488:488:java.lang.String getRecognizedFacesDescription() -> L
+    494:502:java.lang.String buildFacesDescription(com.drew.metadata.Face[]) -> a
+    563:563:java.lang.String getRecordModeDescription() -> M
+    569:569:java.lang.String getSceneModeDescription() -> N
+    575:575:java.lang.String getFocusModeDescription() -> O
+    582:613:java.lang.String getAfAreaModeDescription() -> P
+    620:620:java.lang.String getQualityModeDescription() -> Q
+    636:636:java.lang.String getVersionDescription() -> R
+    642:642:java.lang.String getMakernoteVersionDescription() -> S
+    648:648:java.lang.String getExifVersionDescription() -> T
+    654:654:java.lang.String getInternalSerialNumberDescription() -> U
+    660:660:java.lang.String getWhiteBalanceDescription() -> V
+    680:681:java.lang.String getBabyAgeDescription() -> W
+    687:688:java.lang.String getBabyAge1Description() -> X
 com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory -> com.b.c.c.a.v:
     java.util.HashMap _tagNameMap -> e
-    554:554:java.lang.String getName() -> a
-    560:560:java.util.HashMap getTagNameMap() -> b
-    566:590:com.drew.metadata.Face[] getDetectedFaces() -> c
-    597:624:com.drew.metadata.Face[] getRecognizedFaces() -> d
-    636:639:com.drew.metadata.Age getAge(int) -> q
+    556:556:java.lang.String getName() -> a
+    563:563:java.util.HashMap getTagNameMap() -> b
+    569:593:com.drew.metadata.Face[] getDetectedFaces() -> d
+    600:627:com.drew.metadata.Face[] getRecognizedFaces() -> e
+    639:642:com.drew.metadata.Age getAge(int) -> q
 com.drew.metadata.exif.makernotes.PentaxMakernoteDescriptor -> com.b.c.c.a.w:
-    47:71:java.lang.String getDescription(int) -> a
-    78:78:java.lang.String getColourDescription() -> a
-    84:93:java.lang.String getIsoSpeedDescription() -> b
-    100:100:java.lang.String getSaturationDescription() -> c
-    106:106:java.lang.String getContrastDescription() -> d
-    112:112:java.lang.String getSharpnessDescription() -> e
-    118:123:java.lang.String getDigitalZoomDescription() -> f
-    129:129:java.lang.String getWhiteBalanceDescription() -> g
-    136:136:java.lang.String getFlashModeDescription() -> h
-    143:143:java.lang.String getFocusModeDescription() -> i
-    149:149:java.lang.String getQualityLevelDescription() -> j
-    155:155:java.lang.String getCaptureModeDescription() -> k
+    48:72:java.lang.String getDescription(int) -> a
+    79:79:java.lang.String getColourDescription() -> a
+    85:94:java.lang.String getIsoSpeedDescription() -> b
+    101:101:java.lang.String getSaturationDescription() -> c
+    107:107:java.lang.String getContrastDescription() -> d
+    113:113:java.lang.String getSharpnessDescription() -> e
+    119:124:java.lang.String getDigitalZoomDescription() -> f
+    130:130:java.lang.String getWhiteBalanceDescription() -> g
+    137:137:java.lang.String getFlashModeDescription() -> h
+    144:144:java.lang.String getFocusModeDescription() -> i
+    150:150:java.lang.String getQualityLevelDescription() -> j
+    156:156:java.lang.String getCaptureModeDescription() -> k
 com.drew.metadata.exif.makernotes.PentaxMakernoteDirectory -> com.b.c.c.a.x:
     java.util.HashMap _tagNameMap -> e
-    160:160:java.lang.String getName() -> a
-    166:166:java.util.HashMap getTagNameMap() -> b
+    161:161:java.lang.String getName() -> a
+    168:168:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.RicohMakernoteDescriptor -> com.b.c.c.a.y:
-    45:51:java.lang.String getDescription(int) -> a
+    46:52:java.lang.String getDescription(int) -> a
 com.drew.metadata.exif.makernotes.RicohMakernoteDirectory -> com.b.c.c.a.z:
     java.util.HashMap _tagNameMap -> e
-    59:59:java.lang.String getName() -> a
-    65:65:java.util.HashMap getTagNameMap() -> b
+    60:60:java.lang.String getName() -> a
+    67:67:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.SanyoMakernoteDescriptor -> com.b.c.c.a.aa:
-    45:83:java.lang.String getDescription(int) -> a
-    90:119:java.lang.String getSanyoQualityDescription() -> a
-    126:126:java.lang.String getMacroDescription() -> b
-    132:132:java.lang.String getDigitalZoomDescription() -> c
-    138:138:java.lang.String getSequentialShotDescription() -> d
-    144:144:java.lang.String getWideRangeDescription() -> e
-    150:150:java.lang.String getColorAdjustmentModeDescription() -> f
-    156:156:java.lang.String getQuickShotDescription() -> g
-    162:162:java.lang.String getSelfTimerDescription() -> h
-    168:168:java.lang.String getVoiceMemoDescription() -> i
-    174:174:java.lang.String getRecordShutterDescription() -> j
-    180:180:java.lang.String getFlickerReduceDescription() -> k
-    186:186:java.lang.String getOptimalZoomOnDescription() -> l
-    192:192:java.lang.String getDigitalZoomOnDescription() -> m
-    198:198:java.lang.String getLightSourceSpecialDescription() -> n
-    204:204:java.lang.String getResavedDescription() -> o
-    210:210:java.lang.String getSceneSelectDescription() -> p
-    217:217:java.lang.String getSequenceShotIntervalDescription() -> q
-    224:224:java.lang.String getFlashModeDescription() -> r
+    46:84:java.lang.String getDescription(int) -> a
+    91:120:java.lang.String getSanyoQualityDescription() -> a
+    127:127:java.lang.String getMacroDescription() -> b
+    133:133:java.lang.String getDigitalZoomDescription() -> c
+    139:139:java.lang.String getSequentialShotDescription() -> d
+    145:145:java.lang.String getWideRangeDescription() -> e
+    151:151:java.lang.String getColorAdjustmentModeDescription() -> f
+    157:157:java.lang.String getQuickShotDescription() -> g
+    163:163:java.lang.String getSelfTimerDescription() -> h
+    169:169:java.lang.String getVoiceMemoDescription() -> i
+    175:175:java.lang.String getRecordShutterDescription() -> j
+    181:181:java.lang.String getFlickerReduceDescription() -> k
+    187:187:java.lang.String getOptimalZoomOnDescription() -> l
+    193:193:java.lang.String getDigitalZoomOnDescription() -> m
+    199:199:java.lang.String getLightSourceSpecialDescription() -> n
+    205:205:java.lang.String getResavedDescription() -> o
+    211:211:java.lang.String getSceneSelectDescription() -> p
+    218:218:java.lang.String getSequenceShotIntervalDescription() -> q
+    225:225:java.lang.String getFlashModeDescription() -> r
 com.drew.metadata.exif.makernotes.SanyoMakernoteDirectory -> com.b.c.c.a.ab:
     java.util.HashMap _tagNameMap -> e
-    114:114:java.lang.String getName() -> a
-    120:120:java.util.HashMap getTagNameMap() -> b
+    115:115:java.lang.String getName() -> a
+    122:122:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.SigmaMakernoteDescriptor -> com.b.c.c.a.ac:
     45:51:java.lang.String getDescription(int) -> a
     57:65:java.lang.String getMeteringModeDescription() -> a
     72:81:java.lang.String getExposureModeDescription() -> b
 com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory -> com.b.c.c.a.ad:
     java.util.HashMap _tagNameMap -> e
-    99:99:java.lang.String getName() -> a
-    105:105:java.util.HashMap getTagNameMap() -> b
+    100:100:java.lang.String getName() -> a
+    107:107:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.SonyType1MakernoteDescriptor -> com.b.c.c.a.ae:
-    45:111:java.lang.String getDescription(int) -> a
-    118:118:java.lang.String getImageQualityDescription() -> a
-    133:133:java.lang.String getFlashExposureCompensationDescription() -> b
-    139:151:java.lang.String getTeleconverterDescription() -> c
-    158:172:java.lang.String getWhiteBalanceDescription() -> d
-    179:185:java.lang.String getColorTemperatureDescription() -> e
-    191:191:java.lang.String getZoneMatchingDescription() -> f
-    198:216:java.lang.String getDynamicRangeOptimizerDescription() -> g
-    223:229:java.lang.String getImageStabilizationDescription() -> h
-    236:256:java.lang.String getColorModeDescription() -> i
-    263:271:java.lang.String getMacroDescription() -> j
-    278:313:java.lang.String getExposureModeDescription() -> k
-    320:328:java.lang.String getJpegQualityDescription() -> l
-    335:343:java.lang.String getAntiBlurDescription() -> m
-    350:357:java.lang.String getLongExposureNoiseReductionDescription() -> n
-    364:374:java.lang.String getHighIsoNoiseReductionDescription() -> o
-    381:421:java.lang.String getPictureEffectDescription() -> p
-    428:428:java.lang.String getSoftSkinEffectDescription() -> q
-    434:434:java.lang.String getVignettingCorrectionDescription() -> r
-    440:440:java.lang.String getLateralChromaticAberrationDescription() -> s
-    446:446:java.lang.String getDistortionCorrectionDescription() -> t
-    452:452:java.lang.String getAutoPortraitFramedDescription() -> u
-    458:458:java.lang.String getFocusModeDescription() -> v
-    465:465:java.lang.String getAFPointSelectedDescription() -> w
-    492:537:java.lang.String getSonyModelIdDescription() -> x
-    544:574:java.lang.String getSceneModeDescription() -> y
-    581:597:java.lang.String getAFModeDescription() -> z
-    604:614:java.lang.String getAFIlluminatorDescription() -> A
-    621:638:java.lang.String getFlashLevelDescription() -> B
-    645:657:java.lang.String getReleaseModeDescription() -> C
-    664:673:java.lang.String getSequenceNumberDescription() -> D
+    46:112:java.lang.String getDescription(int) -> a
+    119:119:java.lang.String getImageQualityDescription() -> a
+    134:134:java.lang.String getFlashExposureCompensationDescription() -> b
+    140:152:java.lang.String getTeleconverterDescription() -> c
+    159:173:java.lang.String getWhiteBalanceDescription() -> d
+    180:186:java.lang.String getColorTemperatureDescription() -> e
+    192:192:java.lang.String getZoneMatchingDescription() -> f
+    199:217:java.lang.String getDynamicRangeOptimizerDescription() -> g
+    224:230:java.lang.String getImageStabilizationDescription() -> h
+    237:257:java.lang.String getColorModeDescription() -> i
+    264:272:java.lang.String getMacroDescription() -> j
+    279:314:java.lang.String getExposureModeDescription() -> k
+    321:329:java.lang.String getJpegQualityDescription() -> l
+    336:344:java.lang.String getAntiBlurDescription() -> m
+    351:358:java.lang.String getLongExposureNoiseReductionDescription() -> n
+    365:375:java.lang.String getHighIsoNoiseReductionDescription() -> o
+    382:422:java.lang.String getPictureEffectDescription() -> p
+    429:429:java.lang.String getSoftSkinEffectDescription() -> q
+    435:435:java.lang.String getVignettingCorrectionDescription() -> r
+    441:441:java.lang.String getLateralChromaticAberrationDescription() -> s
+    447:447:java.lang.String getDistortionCorrectionDescription() -> t
+    453:453:java.lang.String getAutoPortraitFramedDescription() -> u
+    459:459:java.lang.String getFocusModeDescription() -> v
+    466:466:java.lang.String getAFPointSelectedDescription() -> w
+    493:538:java.lang.String getSonyModelIdDescription() -> x
+    545:575:java.lang.String getSceneModeDescription() -> y
+    582:598:java.lang.String getAFModeDescription() -> z
+    605:615:java.lang.String getAFIlluminatorDescription() -> A
+    622:639:java.lang.String getFlashLevelDescription() -> B
+    646:658:java.lang.String getReleaseModeDescription() -> C
+    665:674:java.lang.String getSequenceNumberDescription() -> D
 com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory -> com.b.c.c.a.af:
     java.util.HashMap _tagNameMap -> e
-    218:218:java.lang.String getName() -> a
-    224:224:java.util.HashMap getTagNameMap() -> b
+    219:219:java.lang.String getName() -> a
+    226:226:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.exif.makernotes.SonyType6MakernoteDescriptor -> com.b.c.c.a.ag:
-    45:49:java.lang.String getDescription(int) -> a
-    56:56:java.lang.String getMakernoteThumbVersionDescription() -> a
+    46:50:java.lang.String getDescription(int) -> a
+    57:57:java.lang.String getMakernoteThumbVersionDescription() -> a
 com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory -> com.b.c.c.a.ah:
     java.util.HashMap _tagNameMap -> e
-    60:60:java.lang.String getName() -> a
-    66:66:java.util.HashMap getTagNameMap() -> b
+    61:61:java.lang.String getName() -> a
+    68:68:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.gif.GifHeaderDescriptor -> com.b.c.d.a:
 com.drew.metadata.gif.GifHeaderDirectory -> com.b.c.d.b:
     java.util.HashMap _tagNameMap -> e
-    46:46:java.lang.String getName() -> a
-    52:52:java.util.HashMap getTagNameMap() -> b
+    47:47:java.lang.String getName() -> a
+    54:54:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.gif.GifReader -> com.b.c.d.c:
-    19:88:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
+    19:89:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
 com.drew.metadata.icc.IccDescriptor -> com.b.c.e.a:
-    43:57:java.lang.String getDescription(int) -> a
-    72:211:java.lang.String getTagDataString(int) -> g
-    218:233:java.lang.String formatDoubleAsString(double,int,boolean) -> a
-    239:254:java.lang.String getRenderingIntentDescription() -> a
-    261:284:java.lang.String getPlatformDescription() -> b
-    291:318:java.lang.String getProfileClassDescription() -> c
-    325:334:java.lang.String getProfileVersionDescription() -> d
-    339:340:int getInt32FromString(java.lang.String) -> a
+    47:61:java.lang.String getDescription(int) -> a
+    76:217:java.lang.String getTagDataString(int) -> g
+    224:239:java.lang.String formatDoubleAsString(double,int,boolean) -> a
+    245:260:java.lang.String getRenderingIntentDescription() -> a
+    267:290:java.lang.String getPlatformDescription() -> b
+    297:324:java.lang.String getProfileClassDescription() -> c
+    331:340:java.lang.String getProfileVersionDescription() -> d
+    345:346:int getInt32FromString(java.lang.String) -> a
 com.drew.metadata.icc.IccDirectory -> com.b.c.e.b:
     java.util.HashMap _tagNameMap -> e
-    182:182:java.lang.String getName() -> a
-    188:188:java.util.HashMap getTagNameMap() -> b
+    186:186:java.lang.String getName() -> a
+    193:193:java.util.HashMap getTagNameMap() -> b
 com.drew.metadata.icc.IccReader -> com.b.c.e.c:
-    52:52:java.lang.Iterable getSegmentTypes() -> a
-    57:57:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    63:67:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    73:124:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
-    128:131:void set4ByteString(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> a
-    135:138:void setInt32(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> b
-    143:146:void setInt64(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> c
-    151:164:void setDate(com.drew.metadata.icc.IccDirectory,int,com.drew.lang.RandomAccessReader) -> a
-    170:176:java.lang.String getStringFromInt32(int) -> a
-com.drew.metadata.iptc.IptcDescriptor -> com.b.c.f.a:
-    45:51:java.lang.String getDescription(int) -> a
-    58:93:java.lang.String getFileFormatDescription() -> a
-    159:162:java.lang.String getKeywordsDescription() -> b
-com.drew.metadata.iptc.IptcDirectory -> com.b.c.f.b:
+    55:55:java.lang.Iterable getSegmentTypes() -> a
+    60:88:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    94:148:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
+    152:155:void set4ByteString(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> a
+    159:162:void setInt32(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> b
+    167:170:void setInt64(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> c
+    175:188:void setDate(com.drew.metadata.icc.IccDirectory,int,com.drew.lang.RandomAccessReader) -> a
+    194:200:java.lang.String getStringFromInt32(int) -> a
+com.drew.metadata.ico.IcoDescriptor -> com.b.c.f.a:
+    43:53:java.lang.String getDescription(int) -> a
+    60:60:java.lang.String getImageTypeDescription() -> a
+    66:69:java.lang.String getImageWidthDescription() -> b
+    75:78:java.lang.String getImageHeightDescription() -> c
+    84:87:java.lang.String getColourPaletteSizeDescription() -> d
+com.drew.metadata.ico.IcoDirectory -> com.b.c.f.b:
     java.util.HashMap _tagNameMap -> e
-    216:216:java.lang.String getName() -> a
-    222:222:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.iptc.IptcReader -> com.b.c.f.c:
+    70:70:java.lang.String getName() -> a
+    77:77:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.ico.IcoReader -> com.b.c.f.c:
+    boolean $assertionsDisabled -> a
+    41:111:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
+com.drew.metadata.iptc.IptcDescriptor -> com.b.c.g.a:
+    46:56:java.lang.String getDescription(int) -> a
+    63:98:java.lang.String getFileFormatDescription() -> a
+    164:167:java.lang.String getKeywordsDescription() -> b
+    233:238:java.lang.String getTimeCreatedDescription() -> c
+    244:249:java.lang.String getDigitalTimeCreatedDescription() -> d
+com.drew.metadata.iptc.IptcDirectory -> com.b.c.g.b:
+    java.util.HashMap _tagNameMap -> e
+    217:217:java.lang.String getName() -> a
+    224:224:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.iptc.IptcReader -> com.b.c.g.c:
     62:62:java.lang.Iterable getSegmentTypes() -> a
-    68:68:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    73:74:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    81:136:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata,long) -> a
-    140:202:void processTag(com.drew.lang.SequentialReader,com.drew.metadata.Directory,int,int,int) -> a
-com.drew.metadata.jfif.JfifDescriptor -> com.b.c.g.a:
-    44:54:java.lang.String getDescription(int) -> a
-    61:64:java.lang.String getImageVersionDescription() -> a
-    70:75:java.lang.String getImageResYDescription() -> b
-    81:86:java.lang.String getImageResXDescription() -> c
-    92:100:java.lang.String getImageResUnitsDescription() -> d
-com.drew.metadata.jfif.JfifDirectory -> com.b.c.g.b:
+    67:73:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    80:140:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata,long) -> a
+    144:239:void processTag(com.drew.lang.SequentialReader,com.drew.metadata.Directory,int,int,int) -> a
+com.drew.metadata.iptc.Iso2022Converter -> com.b.c.g.d:
+    31:37:java.lang.String convertISO2022CharsetToJavaCharset(byte[]) -> a
+    63:78:java.lang.String guessEncoding(byte[]) -> b
+com.drew.metadata.jfif.JfifDescriptor -> com.b.c.h.a:
+    45:55:java.lang.String getDescription(int) -> a
+    62:65:java.lang.String getImageVersionDescription() -> a
+    71:76:java.lang.String getImageResYDescription() -> b
+    82:87:java.lang.String getImageResXDescription() -> c
+    93:101:java.lang.String getImageResUnitsDescription() -> d
+com.drew.metadata.jfif.JfifDirectory -> com.b.c.h.b:
     java.util.HashMap _tagNameMap -> e
-    61:61:java.lang.String getName() -> a
-    67:67:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.jfif.JfifReader -> com.b.c.g.c:
-    45:45:java.lang.Iterable getSegmentTypes() -> a
-    50:50:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    55:56:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    64:84:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
-com.drew.metadata.jpeg.JpegCommentDescriptor -> com.b.c.h.a:
-com.drew.metadata.jpeg.JpegCommentDirectory -> com.b.c.h.b:
+    62:62:java.lang.String getName() -> a
+    69:69:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.jfif.JfifReader -> com.b.c.h.c:
+    48:48:java.lang.Iterable getSegmentTypes() -> a
+    53:58:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    66:87:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
+com.drew.metadata.jpeg.JpegCommentDescriptor -> com.b.c.i.a:
+com.drew.metadata.jpeg.JpegCommentDirectory -> com.b.c.i.b:
     java.util.HashMap _tagNameMap -> e
-    56:56:java.lang.String getName() -> a
-    62:62:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.jpeg.JpegCommentReader -> com.b.c.h.c:
+    57:57:java.lang.String getName() -> a
+    64:64:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.jpeg.JpegCommentReader -> com.b.c.i.c:
     41:41:java.lang.Iterable getSegmentTypes() -> a
-    47:47:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    52:56:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-com.drew.metadata.jpeg.JpegComponent -> com.b.c.h.d:
+    52:59:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+com.drew.metadata.jpeg.JpegComponent -> com.b.c.i.d:
     int _componentId -> a
     int _samplingFactorByte -> b
     int _quantizationTableNumber -> c
@@ -11749,139 +11813,161 @@ com.drew.metadata.jpeg.JpegComponent -> com.b.c.h.d:
     78:78:int getQuantizationTableNumber() -> b
     83:83:int getHorizontalSamplingFactor() -> c
     88:88:int getVerticalSamplingFactor() -> d
-com.drew.metadata.jpeg.JpegDescriptor -> com.b.c.h.e:
-    43:62:java.lang.String getDescription(int) -> a
-    69:89:java.lang.String getImageCompressionTypeDescription() -> a
-    95:98:java.lang.String getImageWidthDescription() -> b
-    104:107:java.lang.String getImageHeightDescription() -> c
-    113:116:java.lang.String getDataPrecisionDescription() -> d
-    122:136:java.lang.String getComponentDataDescription(int) -> g
-com.drew.metadata.jpeg.JpegDirectory -> com.b.c.h.f:
+com.drew.metadata.jpeg.JpegDescriptor -> com.b.c.i.e:
+    44:63:java.lang.String getDescription(int) -> a
+    70:90:java.lang.String getImageCompressionTypeDescription() -> a
+    96:99:java.lang.String getImageWidthDescription() -> b
+    105:108:java.lang.String getImageHeightDescription() -> c
+    114:117:java.lang.String getDataPrecisionDescription() -> d
+    123:130:java.lang.String getComponentDataDescription(int) -> g
+com.drew.metadata.jpeg.JpegDirectory -> com.b.c.i.f:
     java.util.HashMap _tagNameMap -> e
-    89:89:java.lang.String getName() -> a
-    95:95:java.util.HashMap getTagNameMap() -> b
-    106:107:com.drew.metadata.jpeg.JpegComponent getComponent(int) -> q
-com.drew.metadata.jpeg.JpegReader -> com.b.c.h.g:
+    90:90:java.lang.String getName() -> a
+    97:97:java.util.HashMap getTagNameMap() -> b
+    108:109:com.drew.metadata.jpeg.JpegComponent getComponent(int) -> q
+com.drew.metadata.jpeg.JpegReader -> com.b.c.i.g:
     45:45:java.lang.Iterable getSegmentTypes() -> a
-    67:67:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    72:107:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-com.drew.metadata.photoshop.PhotoshopDescriptor -> com.b.c.i.a:
-    41:70:java.lang.String getDescription(int) -> a
-    78:136:java.lang.String getJpegQualityString() -> a
-    144:151:java.lang.String getPixelAspectRatioString() -> b
-    159:178:java.lang.String getPrintScaleDescription() -> c
-    186:194:java.lang.String getResolutionInfoDescription() -> d
-    202:221:java.lang.String getVersionDescription() -> e
-    229:248:java.lang.String getSlicesDescription() -> f
-    256:280:java.lang.String getThumbnailDescription(int) -> g
-    287:290:java.lang.String getBooleanString(int) -> h
-    296:303:java.lang.String get32BitNumberString(int) -> i
-    310:313:java.lang.String getSimpleString(int) -> j
-    319:322:java.lang.String getBinaryDataString(int) -> k
-com.drew.metadata.photoshop.PhotoshopDirectory -> com.b.c.i.b:
-    java.util.HashMap _tagNameMap -> e
-    138:138:java.lang.String getName() -> a
-    144:144:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.photoshop.PhotoshopReader -> com.b.c.i.c:
-    47:47:java.lang.Iterable getSegmentTypes() -> a
-    52:52:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    57:58:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    62:125:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
-com.drew.metadata.photoshop.PsdHeaderDescriptor -> com.b.c.i.d:
-    40:52:java.lang.String getDescription(int) -> a
-    60:65:java.lang.String getChannelCountDescription() -> a
-    73:78:java.lang.String getBitsPerChannelDescription() -> b
-    87:102:java.lang.String getColorModeDescription() -> c
-    110:115:java.lang.String getImageHeightDescription() -> d
-    123:128:java.lang.String getImageWidthDescription() -> e
-com.drew.metadata.photoshop.PsdHeaderDirectory -> com.b.c.i.e:
+    67:70:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    74:103:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+com.drew.metadata.pcx.PcxDescriptor -> com.b.c.j.a:
+    41:49:java.lang.String getDescription(int) -> a
+    59:59:java.lang.String getVersionDescription() -> a
+    71:71:java.lang.String getColorPlanesDescription() -> b
+    79:79:java.lang.String getPaletteTypeDescription() -> c
+com.drew.metadata.pcx.PcxDirectory -> com.b.c.j.b:
     java.util.HashMap _tagNameMap -> e
     77:77:java.lang.String getName() -> a
-    83:83:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.photoshop.PsdReader -> com.b.c.i.f:
-    40:78:void extract(com.drew.lang.RandomAccessReader,com.drew.metadata.Metadata) -> a
-com.drew.metadata.png.PngChromaticitiesDirectory -> com.b.c.j.a:
+    84:84:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.pcx.PcxReader -> com.b.c.j.c:
+    46:89:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
+com.drew.metadata.photoshop.PhotoshopDescriptor -> com.b.c.k.a:
+    45:74:java.lang.String getDescription(int) -> a
+    82:142:java.lang.String getJpegQualityString() -> a
+    150:157:java.lang.String getPixelAspectRatioString() -> b
+    165:184:java.lang.String getPrintScaleDescription() -> c
+    192:200:java.lang.String getResolutionInfoDescription() -> d
+    208:227:java.lang.String getVersionDescription() -> e
+    235:254:java.lang.String getSlicesDescription() -> f
+    262:286:java.lang.String getThumbnailDescription(int) -> g
+    293:296:java.lang.String getBooleanString(int) -> h
+    302:309:java.lang.String get32BitNumberString(int) -> i
+    316:319:java.lang.String getSimpleString(int) -> j
+    325:328:java.lang.String getBinaryDataString(int) -> k
+com.drew.metadata.photoshop.PhotoshopDirectory -> com.b.c.k.b:
     java.util.HashMap _tagNameMap -> e
-    45:45:java.lang.String getName() -> a
-    51:51:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.png.PngDescriptor -> com.b.c.j.b:
-    28:46:java.lang.String getDescription(int) -> a
-    53:59:java.lang.String getColorTypeDescription() -> a
-    65:65:java.lang.String getCompressionTypeDescription() -> b
-    71:71:java.lang.String getFilterMethodDescription() -> c
-    77:77:java.lang.String getInterlaceMethodDescription() -> d
-    83:83:java.lang.String getPaletteHasTransparencyDescription() -> e
-    89:89:java.lang.String getIsSrgbColorSpaceDescription() -> f
-    101:111:java.lang.String getTextualDataDescription() -> g
-    117:138:java.lang.String getBackgroundColorDescription() -> h
-com.drew.metadata.png.PngDirectory -> com.b.c.j.c:
+    223:223:java.lang.String getName() -> a
+    230:230:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.photoshop.PhotoshopReader -> com.b.c.k.c:
+    52:52:java.lang.Iterable getSegmentTypes() -> a
+    57:69:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    73:144:void extract(com.drew.lang.SequentialReader,int,com.drew.metadata.Metadata) -> a
+com.drew.metadata.photoshop.PsdHeaderDescriptor -> com.b.c.k.d:
+    41:53:java.lang.String getDescription(int) -> a
+    62:67:java.lang.String getChannelCountDescription() -> a
+    76:81:java.lang.String getBitsPerChannelDescription() -> b
+    90:105:java.lang.String getColorModeDescription() -> c
+    113:118:java.lang.String getImageHeightDescription() -> d
+    126:131:java.lang.String getImageWidthDescription() -> e
+com.drew.metadata.photoshop.PsdHeaderDirectory -> com.b.c.k.e:
     java.util.HashMap _tagNameMap -> e
-    58:58:java.lang.String getName() -> a
-    64:64:java.util.HashMap getTagNameMap() -> b
-com.drew.metadata.tiff.DirectoryTiffHandler -> com.b.c.k.a:
-    java.util.Stack _directoryStack -> d
+    78:78:java.lang.String getName() -> a
+    85:85:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.photoshop.PsdReader -> com.b.c.k.f:
+    boolean $assertionsDisabled -> a
+    39:120:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
+com.drew.metadata.png.PngChromaticitiesDirectory -> com.b.c.l.a:
+    java.util.HashMap _tagNameMap -> e
+    66:66:java.lang.String getName() -> a
+    73:73:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.png.PngDescriptor -> com.b.c.l.b:
+    48:68:java.lang.String getDescription(int) -> a
+    75:81:java.lang.String getColorTypeDescription() -> a
+    87:87:java.lang.String getCompressionTypeDescription() -> b
+    93:93:java.lang.String getFilterMethodDescription() -> c
+    99:99:java.lang.String getInterlaceMethodDescription() -> d
+    105:105:java.lang.String getPaletteHasTransparencyDescription() -> e
+    111:111:java.lang.String getIsSrgbColorSpaceDescription() -> f
+    123:123:java.lang.String getUnitSpecifierDescription() -> g
+    133:145:java.lang.String getTextualDataDescription() -> h
+    151:172:java.lang.String getBackgroundColorDescription() -> i
+com.drew.metadata.png.PngDirectory -> com.b.c.l.c:
+    java.util.HashMap _tagNameMap -> e
+    com.drew.imaging.png.PngChunkType _pngChunkType -> f
+    100:100:java.lang.String getName() -> a
+    107:107:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.tiff.DirectoryTiffHandler -> com.b.c.m.a:
+    java.util.Stack _directoryStack -> c
     com.drew.metadata.Directory _currentDirectory -> a
     com.drew.metadata.Metadata _metadata -> b
-    boolean $assertionsDisabled -> c
-    51:52:void endingIFD() -> b
-    56:59:void pushDirectory(java.lang.Class) -> a
-    63:64:void warn(java.lang.String) -> a
-    68:69:void error(java.lang.String) -> b
-    73:74:void setByteArray(int,byte[]) -> a
-    78:79:void setString(int,java.lang.String) -> a
-    83:84:void setRational(int,com.drew.lang.Rational) -> a
-    88:89:void setRationalArray(int,com.drew.lang.Rational[]) -> a
-    93:94:void setFloat(int,float) -> a
-    98:99:void setFloatArray(int,float[]) -> a
-    103:104:void setDouble(int,double) -> a
-    108:109:void setDoubleArray(int,double[]) -> a
-    114:115:void setInt8s(int,byte) -> a
-    120:121:void setInt8sArray(int,byte[]) -> b
-    126:127:void setInt8u(int,short) -> a
-    132:133:void setInt8uArray(int,short[]) -> a
-    138:139:void setInt16s(int,int) -> a
-    144:145:void setInt16sArray(int,short[]) -> b
-    150:151:void setInt16u(int,int) -> b
-    156:157:void setInt16uArray(int,int[]) -> a
-    161:162:void setInt32s(int,int) -> c
-    166:167:void setInt32sArray(int,int[]) -> b
-    171:172:void setInt32u(int,long) -> a
-    177:178:void setInt32uArray(int,long[]) -> a
-com.drew.metadata.xmp.XmpDescriptor -> com.b.c.l.a:
+    58:59:void endingIFD() -> b
+    63:72:void pushDirectory(java.lang.Class) -> a
+    76:77:void warn(java.lang.String) -> a
+    81:82:void error(java.lang.String) -> b
+    86:87:void setByteArray(int,byte[]) -> a
+    91:92:void setString(int,java.lang.String) -> a
+    96:97:void setRational(int,com.drew.lang.Rational) -> a
+    101:102:void setRationalArray(int,com.drew.lang.Rational[]) -> a
+    106:107:void setFloat(int,float) -> a
+    111:112:void setFloatArray(int,float[]) -> a
+    116:117:void setDouble(int,double) -> a
+    121:122:void setDoubleArray(int,double[]) -> a
+    127:128:void setInt8s(int,byte) -> a
+    133:134:void setInt8sArray(int,byte[]) -> b
+    139:140:void setInt8u(int,short) -> a
+    145:146:void setInt8uArray(int,short[]) -> a
+    151:152:void setInt16s(int,int) -> a
+    157:158:void setInt16sArray(int,short[]) -> b
+    163:164:void setInt16u(int,int) -> b
+    169:170:void setInt16uArray(int,int[]) -> a
+    174:175:void setInt32s(int,int) -> c
+    179:180:void setInt32sArray(int,int[]) -> b
+    184:185:void setInt32u(int,long) -> a
+    190:191:void setInt32uArray(int,long[]) -> a
+com.drew.metadata.webp.WebpDescriptor -> com.b.c.n.a:
+    41:43:java.lang.String getDescription(int) -> a
+com.drew.metadata.webp.WebpDirectory -> com.b.c.n.b:
+    java.util.HashMap _tagNameMap -> e
+    57:57:java.lang.String getName() -> a
+    64:64:java.util.HashMap getTagNameMap() -> b
+com.drew.metadata.webp.WebpRiffHandler -> com.b.c.n.c:
+    com.drew.metadata.Metadata _metadata -> a
+    59:59:boolean shouldAcceptRiffIdentifier(java.lang.String) -> a
+    64:67:boolean shouldAcceptChunk(java.lang.String) -> b
+    74:109:void processChunk(java.lang.String,byte[]) -> a
+com.drew.metadata.xmp.XmpDescriptor -> com.b.c.o.a:
     java.text.DecimalFormat SimpleDecimalFormatter -> c
-    52:74:java.lang.String getDescription(int) -> a
-    82:85:java.lang.String getExposureTimeDescription() -> a
-    95:116:java.lang.String getExposureProgramDescription() -> b
-    125:139:java.lang.String getShutterSpeedDescription() -> c
-    147:150:java.lang.String getFNumberDescription() -> d
-    157:161:java.lang.String getFocalLengthDescription() -> e
-    168:172:java.lang.String getApertureValueDescription() -> f
-com.drew.metadata.xmp.XmpDirectory -> com.b.c.l.b:
+    53:75:java.lang.String getDescription(int) -> a
+    83:86:java.lang.String getExposureTimeDescription() -> a
+    96:117:java.lang.String getExposureProgramDescription() -> b
+    126:140:java.lang.String getShutterSpeedDescription() -> c
+    148:151:java.lang.String getFNumberDescription() -> d
+    158:162:java.lang.String getFocalLengthDescription() -> e
+    169:173:java.lang.String getApertureValueDescription() -> f
+com.drew.metadata.xmp.XmpDirectory -> com.b.c.o.b:
     int TAG_SUBJECT -> e
     java.util.HashMap _tagNameMap -> f
     java.util.HashMap _tagSchemaMap -> g
     java.util.HashMap _tagPropNameMap -> h
     java.util.Map _propertyValueByPath -> i
     com.adobe.xmp.XMPMeta _xmpMeta -> j
-    243:243:java.lang.String getName() -> a
-    249:249:java.util.HashMap getTagNameMap() -> b
-    254:255:void addProperty(java.lang.String,java.lang.String) -> a
-    270:271:void setXMPMeta(com.adobe.xmp.XMPMeta) -> a
-    280:282:com.adobe.xmp.XMPMeta getXMPMeta() -> c
-    362:371:void updateDouble(int,double) -> b
-    397:406:void updateString(int,java.lang.String) -> b
-    410:411:void deleteProperty(int) -> q
-    415:433:void updateStringArray(int,java.lang.String[]) -> b
-com.drew.metadata.xmp.XmpReader -> com.b.c.l.c:
-    61:61:java.lang.Iterable getSegmentTypes() -> a
-    66:66:boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType) -> a
-    82:106:void extract(byte[],com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
-    115:126:void extract(byte[],com.drew.metadata.Metadata) -> a
-    135:146:void extract(java.lang.String,com.drew.metadata.Metadata) -> a
-    151:209:void processXmpTags(com.drew.metadata.xmp.XmpDirectory,com.adobe.xmp.XMPMeta) -> a
-    216:280:void processXmpTag(com.adobe.xmp.XMPMeta,com.drew.metadata.xmp.XmpDirectory,int,int) -> a
-    287:295:void processXmpDateTag(com.adobe.xmp.XMPMeta,com.drew.metadata.xmp.XmpDirectory,int) -> a
-com.drew.metadata.xmp.XmpWriter -> com.b.c.l.d:
+    247:247:java.lang.String getName() -> a
+    254:254:java.util.HashMap getTagNameMap() -> b
+    259:260:void addProperty(java.lang.String,java.lang.String) -> a
+    276:290:void setXMPMeta(com.adobe.xmp.XMPMeta) -> a
+    299:301:com.adobe.xmp.XMPMeta getXMPMeta() -> d
+    381:390:void updateDouble(int,double) -> b
+    416:425:void updateString(int,java.lang.String) -> b
+    429:430:void deleteProperty(int) -> q
+    434:452:void updateStringArray(int,java.lang.String[]) -> b
+com.drew.metadata.xmp.XmpReader -> com.b.c.o.c:
+    80:80:java.lang.Iterable getSegmentTypes() -> a
+    93:104:void readJpegSegments(java.lang.Iterable,com.drew.metadata.Metadata,com.drew.imaging.jpeg.JpegSegmentType) -> a
+    113:124:void extract(byte[],com.drew.metadata.Metadata) -> a
+    133:144:void extract(java.lang.String,com.drew.metadata.Metadata) -> a
+    149:206:void processXmpTags(com.drew.metadata.xmp.XmpDirectory,com.adobe.xmp.XMPMeta) -> a
+    213:264:void processXmpTag(com.adobe.xmp.XMPMeta,com.drew.metadata.xmp.XmpDirectory,int,int) -> a
+    270:277:void processXmpDateTag(com.adobe.xmp.XMPMeta,com.drew.metadata.xmp.XmpDirectory,int) -> a
+com.drew.metadata.xmp.XmpWriter -> com.b.c.o.d:
     21:35:boolean write(java.io.OutputStream,com.drew.metadata.Metadata) -> a
 com.github.amlcurran.showcaseview.AnimationFactory -> com.c.a.a.a:
     void fadeInView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener) -> a
@@ -12168,7 +12254,7 @@ com.github.amlcurran.showcaseview.targets.ActionViewTarget -> com.c.a.a.a.d:
     com.github.amlcurran.showcaseview.targets.ActionBarViewWrapper mActionBarWrapper -> a
     com.github.amlcurran.showcaseview.targets.Reflector mReflector -> b
     37:40:void setUp() -> b
-    44:69:android.graphics.Point getPoint() -> a
+    44:73:android.graphics.Point getPoint() -> a
 com.github.amlcurran.showcaseview.targets.ActionViewTarget$1 -> com.c.a.a.a.e:
     int[] $SwitchMap$com$github$amlcurran$showcaseview$targets$ActionViewTarget$Type -> a
 com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type -> com.c.a.a.a.f:
@@ -12178,8 +12264,8 @@ com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type -> com.c.a.a.a.f
     com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type OVERFLOW -> d
     com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type MEDIA_ROUTE_BUTTON -> e
     com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type[] $VALUES -> f
-    72:72:com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type[] values() -> values
-    72:72:com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type valueOf(java.lang.String) -> valueOf
+    76:76:com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type[] values() -> values
+    76:76:com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type valueOf(java.lang.String) -> valueOf
 com.github.amlcurran.showcaseview.targets.AppCompatReflector -> com.c.a.a.a.g:
     android.app.Activity mActivity -> a
     36:36:android.view.ViewParent getActionBarView() -> a

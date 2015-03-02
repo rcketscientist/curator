@@ -121,7 +121,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:48:17
 	android:name
 		ADDED from AndroidManifest.xml:48:27
-activity#com.anthonymandra.rawdroid.CameraImport
+activity#com.anthonymandra.rawdroid.CameraImportActivity
 ADDED from AndroidManifest.xml:52:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:54:13

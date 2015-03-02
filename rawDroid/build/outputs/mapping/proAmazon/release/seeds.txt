@@ -5047,8 +5047,8 @@ com.anthonymandra.framework.License$LicenseState: com.anthonymandra.framework.Li
 com.anthonymandra.framework.SwapProvider
 com.anthonymandra.framework.SwapProvider: SwapProvider()
 com.anthonymandra.framework.ViewerActivity: ViewerActivity()
-com.anthonymandra.rawdroid.CameraImport
-com.anthonymandra.rawdroid.CameraImport: CameraImport()
+com.anthonymandra.rawdroid.CameraImportActivity
+com.anthonymandra.rawdroid.CameraImportActivity: CameraImportActivity()
 com.anthonymandra.rawdroid.FullSettingsActivity
 com.anthonymandra.rawdroid.FullSettingsActivity: FullSettingsActivity()
 com.anthonymandra.rawdroid.FullSettingsActivity$SettingFragment: FullSettingsActivity$SettingFragment()
@@ -6406,6 +6406,8 @@ com.anthonymandra.widget.MultiSpinner: java.util.List getSelected()
 com.anthonymandra.widget.MultiSpinner: void setSelected(java.util.List)
 com.anthonymandra.widget.SeekBarPreference
 com.anthonymandra.widget.SeekBarPreference: SeekBarPreference(android.content.Context,android.util.AttributeSet)
+com.drew.imaging.FileType: com.drew.imaging.FileType[] values()
+com.drew.imaging.FileType: com.drew.imaging.FileType valueOf(java.lang.String)
 com.drew.imaging.jpeg.JpegSegmentType: com.drew.imaging.jpeg.JpegSegmentType[] values()
 com.drew.imaging.jpeg.JpegSegmentType: com.drew.imaging.jpeg.JpegSegmentType valueOf(java.lang.String)
 com.drew.imaging.png.PngColorType: com.drew.imaging.png.PngColorType[] values()
