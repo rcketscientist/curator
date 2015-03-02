@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="2.7.4"
-             versioncode="27400"
-             summary="Patch"
-             date="02 MAR 2015">
-        <change>Fix: Legacy viewer indexing to first image</change>
-        <change>Enhancement: Camera import will skip existing files</change>
-    </release>
     <release version="2.7.3.1"
              versioncode="27301"
              summary="Bug Patch"
@@ -17,7 +10,7 @@
              versioncode="27300"
              summary="Bug Patch"
              date="11 FEB 2015">
-        <change>Fix: Save jpeg for images requiring full decode</change>
+        <change>Fix: Save jpeg for images requireing full decode</change>
         <change>Fix: Google licensing bug</change>
     </release>
     <release version="2.7.2"

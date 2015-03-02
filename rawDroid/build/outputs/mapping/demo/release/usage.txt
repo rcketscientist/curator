@@ -3038,19 +3038,13 @@ com.anthonymandra.content.Meta:
     public static final int URI_COLUMN
     public static final int THUMB_HEIGHT_COLUMN
     public static final int THUMB_WIDTH_COLUMN
-    public static final int THUMBNAIL_URI_COLUMN
-    public static final int FULL_IMAGE_URI_COLUMN
     public static final java.lang.String AUTHORITY
-    8:37:public Meta()
+    8:34:public Meta()
 com.anthonymandra.content.Meta$Data:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_META_TYPE
     public static final java.lang.String META
-    public static final java.lang.String THUMB
-    public static final java.lang.String IMAGE
     public static final java.lang.String URI
-    public static final java.lang.String THUMBNAIL_URI
-    public static final java.lang.String FULL_IMAGE_URI
     public static final java.lang.String NAME
     public static final java.lang.String TIMESTAMP
     public static final java.lang.String MODEL
@@ -3071,20 +3065,17 @@ com.anthonymandra.content.Meta$Data:
     public static final java.lang.String THUMB_WIDTH
     public static final java.lang.String MEDIA_ID
     public static final java.lang.String _DATA
-    37:37:public Meta$Data()
+    34:34:public Meta$Data()
 com.anthonymandra.content.MetaProvider:
     public static final java.lang.String DATABASE_NAME
     public static final java.lang.String META_TABLE_NAME
     private static final int META
     private static final int META_ID
-    private static final int THUMB
-    private static final int THUMB_ID
-    private static final int IMAGE
-    private static final int IMAGE_ID
 com.anthonymandra.content.RawImage
 com.anthonymandra.content.RawImage$RawImages
 com.anthonymandra.content.RawResponse
 com.anthonymandra.content.ResponseHandler
+com.anthonymandra.content.TiffDecoder
 com.anthonymandra.dcraw.LibRaw:
     private static final java.lang.String TAG
     private static final int numThreads
@@ -3164,6 +3155,7 @@ com.anthonymandra.framework.DiskLruCache$Snapshot:
     729:729:public java.lang.String getString(int)
 com.anthonymandra.framework.FileHandler
 com.anthonymandra.framework.FileHandlerFactory
+com.anthonymandra.framework.FileInfo
 com.anthonymandra.framework.GalleryActivity:
     public static final java.lang.String SWAP_BIN_DIR
     public static final java.lang.String RECYCLE_BIN_DIR
@@ -3187,9 +3179,10 @@ com.anthonymandra.framework.ImageCache:
     private static final boolean DEFAULT_DISK_CACHE_ENABLED
     private static final boolean DEFAULT_CLEAR_DISK_CACHE_ON_START
     private static final boolean DEFAULT_INIT_DISK_CACHE_ON_CREATE
-    63:88:public ImageCache(android.content.Context,java.lang.String)
+    64:89:public ImageCache(android.content.Context,java.lang.String)
+    273:281:public android.graphics.Bitmap getBitmapFromMemCache(java.lang.String)
 com.anthonymandra.framework.ImageCache$ImageCacheParams:
-    426:444:public ImageCache$ImageCacheParams(java.io.File)
+    427:445:public ImageCache$ImageCacheParams(java.io.File)
 com.anthonymandra.framework.ImageDecoder:
     private static final java.lang.String TAG
     22:23:public ImageDecoder(android.content.Context,int,int)
@@ -3201,7 +3194,7 @@ com.anthonymandra.framework.ImageResizer:
     240:261:public static android.graphics.Bitmap decodeSampledBitmapFromInputStream(java.io.InputStream,int,int)
 com.anthonymandra.framework.ImageUpdateListener
 com.anthonymandra.framework.ImageWorker:
-    123:128:public static void cancelWork(com.anthonymandra.widget.LoadingImageView)
+    124:129:public static void cancelWork(com.anthonymandra.widget.LoadingImageView)
 com.anthonymandra.framework.License:
     public static final java.lang.String KEY_LICENSE_RESPONSE
 com.anthonymandra.framework.LocalImage:
@@ -3218,7 +3211,7 @@ com.anthonymandra.framework.MetaMedia:
     139:141:public java.lang.String getImageWidth()
     205:207:public java.lang.String getLensMake()
     270:276:public java.lang.String getMake()
-    616:617:public int getThumbHeight()
+    604:605:public int getThumbHeight()
 com.anthonymandra.framework.MetaObject:
     public abstract java.lang.String getAperture()
     public abstract java.lang.String getImageHeight()
@@ -3234,6 +3227,7 @@ com.anthonymandra.framework.MetaObject:
     public abstract void setThumbWidth(int)
     public abstract int getThumbHeight()
     public abstract void setThumbHeight(int)
+com.anthonymandra.framework.RandomAccessStream
 com.anthonymandra.framework.RawObject:
     public abstract boolean canDecode()
     public abstract byte[] getImage()
@@ -3258,9 +3252,13 @@ com.anthonymandra.framework.RecycleBin$RemoveFileTask
 com.anthonymandra.framework.RecycleBin$RetainFragment
 com.anthonymandra.framework.SwapProvider:
     public static final java.lang.String AUTHORITY
+com.anthonymandra.framework.Tools
+com.anthonymandra.framework.Tools$1
+com.anthonymandra.framework.Tools$2
 com.anthonymandra.framework.Util:
     63:63:public static boolean hasFroyo()
     83:83:public static boolean hasIceCreamSandwich()
+    88:88:public static boolean hasJellyBean()
     98:98:public static boolean hasLollipop()
     287:295:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
     300:319:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
@@ -3280,7 +3278,7 @@ com.anthonymandra.rawdroid.AppRater:
     private static final int LAUNCHES_UNTIL_PROMPT
     12:12:public AppRater()
 com.anthonymandra.rawdroid.BuildConfig
-com.anthonymandra.rawdroid.CameraImportActivity:
+com.anthonymandra.rawdroid.CameraImport:
     private static final int REQUEST_MTP_IMPORT_DIR
 com.anthonymandra.rawdroid.Constants:
     public static final java.lang.String KEY_LICENSE_RESPONSE
@@ -3393,10 +3391,11 @@ com.anthonymandra.rawdroid.RawDroid:
     private static final int REQUEST_UPDATE_PHOTO
     private android.os.Parcelable gridState
     android.app.Dialog formatDialog
-    949:958:public static boolean isCamera(android.hardware.usb.UsbDevice)
+    947:956:public static boolean isCamera(android.hardware.usb.UsbDevice)
+    1828:1829:private void setTutorialButtonShowcase()
 com.anthonymandra.rawdroid.RawDroid$DirAlphaComparator
 com.anthonymandra.rawdroid.RawDroid$ImageAdapter:
-    1257:1257:public java.util.List getSelectedItems()
+    1255:1255:public java.util.List getSelectedItems()
 com.anthonymandra.rawdroid.XmpFragment:
     public static final java.lang.String FRAGMENT_TAG
 com.anthonymandra.rawdroid.beta.RawCursorAdapter
@@ -3423,12 +3422,17 @@ com.anthonymandra.widget.SeekBarPreference:
     139:139:public int getMax()
     142:145:public void setProgress(int)
     146:146:public int getProgress()
-com.drew.imaging.FileTypeDetector:
-    68:69:private FileTypeDetector()
 com.drew.imaging.ImageMetadataReader:
-    153:161:public static com.drew.metadata.Metadata readMetadata(java.io.File)
-    165:166:private ImageMetadataReader()
-    184:278:public static void main(java.lang.String[])
+    private static final int JPEG_FILE_MAGIC_NUMBER
+    private static final int MOTOROLA_TIFF_MAGIC_NUMBER
+    private static final int INTEL_TIFF_MAGIC_NUMBER
+    private static final int PSD_MAGIC_NUMBER
+    private static final int PNG_MAGIC_NUMBER
+    private static final int BMP_MAGIC_NUMBER
+    private static final int GIF_MAGIC_NUMBER
+    154:158:public static com.drew.metadata.Metadata readMetadata(java.io.File)
+    179:180:private ImageMetadataReader()
+    198:292:public static void main(java.lang.String[])
 com.drew.imaging.ImageProcessingException:
     private static final long serialVersionUID
     42:43:public ImageProcessingException(java.lang.String,java.lang.Throwable)
@@ -3439,16 +3443,13 @@ com.drew.imaging.bmp.BmpMetadataReader:
     36:36:public BmpMetadataReader()
     41:47:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.imaging.gif.GifMetadataReader:
-    40:40:public GifMetadataReader()
-    45:53:public static com.drew.metadata.Metadata readMetadata(java.io.File)
-com.drew.imaging.ico.IcoMetadataReader:
-    36:36:public IcoMetadataReader()
-    41:49:public static com.drew.metadata.Metadata readMetadata(java.io.File)
+    39:39:public GifMetadataReader()
+    44:50:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.imaging.jpeg.JpegMetadataReader:
-    82:90:public static com.drew.metadata.Metadata readMetadata(java.io.File,java.lang.Iterable)
-    96:96:public static com.drew.metadata.Metadata readMetadata(java.io.File)
-    101:102:public static void process(com.drew.metadata.Metadata,java.io.InputStream)
-    132:133:private JpegMetadataReader()
+    81:88:public static com.drew.metadata.Metadata readMetadata(java.io.File,java.lang.Iterable)
+    95:95:public static com.drew.metadata.Metadata readMetadata(java.io.File)
+    100:101:public static void process(com.drew.metadata.Metadata,java.io.InputStream)
+    135:136:private JpegMetadataReader()
 com.drew.imaging.jpeg.JpegProcessingException:
     private static final long serialVersionUID
     42:43:public JpegProcessingException(java.lang.String,java.lang.Throwable)
@@ -3459,23 +3460,20 @@ com.drew.imaging.jpeg.JpegSegmentData:
     100:100:public byte[] getSegment(com.drew.imaging.jpeg.JpegSegmentType)
     114:114:public byte[] getSegment(com.drew.imaging.jpeg.JpegSegmentType,int)
     128:131:public byte[] getSegment(byte,int)
-    187:187:public int getSegmentCount(com.drew.imaging.jpeg.JpegSegmentType)
-    198:199:public int getSegmentCount(byte)
-    212:213:public void removeSegmentOccurrence(com.drew.imaging.jpeg.JpegSegmentType,int)
-    225:227:public void removeSegmentOccurrence(byte,int)
-    236:237:public void removeSegment(com.drew.imaging.jpeg.JpegSegmentType)
-    246:247:public void removeSegment(byte)
-    257:257:public boolean containsSegment(com.drew.imaging.jpeg.JpegSegmentType)
-    268:268:public boolean containsSegment(byte)
+    188:188:public int getSegmentCount(com.drew.imaging.jpeg.JpegSegmentType)
+    199:200:public int getSegmentCount(byte)
+    213:214:public void removeSegmentOccurrence(com.drew.imaging.jpeg.JpegSegmentType,int)
+    226:228:public void removeSegmentOccurrence(byte,int)
+    237:238:public void removeSegment(com.drew.imaging.jpeg.JpegSegmentType)
+    247:248:public void removeSegment(byte)
+    258:258:public boolean containsSegment(com.drew.imaging.jpeg.JpegSegmentType)
+    269:269:public boolean containsSegment(byte)
 com.drew.imaging.jpeg.JpegSegmentReader:
     private static final byte SEGMENT_SOS
     private static final byte MARKER_EOI
     67:73:public static com.drew.imaging.jpeg.JpegSegmentData readSegments(java.io.File,java.lang.Iterable)
 com.drew.imaging.jpeg.JpegSegmentType:
     168:172:public static com.drew.imaging.jpeg.JpegSegmentType fromByte(byte)
-com.drew.imaging.pcx.PcxMetadataReader:
-    36:36:public PcxMetadataReader()
-    41:49:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.imaging.png.PngChromaticities:
     50:50:public int getWhitePointY()
 com.drew.imaging.png.PngChunkType:
@@ -3488,18 +3486,14 @@ com.drew.imaging.png.PngChunkType:
 com.drew.imaging.png.PngColorType:
     73:73:public int[] getAllowedBitDepths()
 com.drew.imaging.png.PngMetadataReader:
-    19:19:public PngMetadataReader()
-    47:55:public static com.drew.metadata.Metadata readMetadata(java.io.File)
+    18:18:public PngMetadataReader()
+    23:29:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.imaging.png.PngProcessingException:
     private static final long serialVersionUID
     42:43:public PngProcessingException(java.lang.String,java.lang.Throwable)
 com.drew.imaging.psd.PsdMetadataReader:
     37:37:public PsdMetadataReader()
-    42:50:public static com.drew.metadata.Metadata readMetadata(java.io.File)
-com.drew.imaging.riff.RiffProcessingException:
-    private static final long serialVersionUID
-    43:44:public RiffProcessingException(java.lang.String,java.lang.Throwable)
-    48:49:public RiffProcessingException(java.lang.Throwable)
+    42:52:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.imaging.tiff.TiffDataFormat:
     public static final int CODE_INT8_U
     public static final int CODE_STRING
@@ -3515,15 +3509,12 @@ com.drew.imaging.tiff.TiffDataFormat:
     public static final int CODE_DOUBLE
     98:98:public int getTiffFormatCode()
 com.drew.imaging.tiff.TiffMetadataReader:
-    39:39:public TiffMetadataReader()
-    44:56:public static com.drew.metadata.Metadata readMetadata(java.io.File)
+    40:40:public TiffMetadataReader()
+    45:54:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.imaging.tiff.TiffProcessingException:
     private static final long serialVersionUID
     44:45:public TiffProcessingException(java.lang.String,java.lang.Throwable)
     49:50:public TiffProcessingException(java.lang.Throwable)
-com.drew.imaging.webp.WebpMetadataReader:
-    38:38:public WebpMetadataReader()
-    43:51:public static com.drew.metadata.Metadata readMetadata(java.io.File)
 com.drew.lang.BufferBoundsException:
     private static final long serialVersionUID
 com.drew.lang.CompoundException:
@@ -3540,14 +3531,16 @@ com.drew.lang.RandomAccessStreamReader:
 com.drew.lang.Rational:
     private static final long serialVersionUID
 com.drew.lang.SequentialReader:
+    164:175:public long getUInt32()
     210:229:public long getInt64()
-    243:255:public float getS15Fixed16()
-    261:261:public float getFloat32()
-    266:266:public double getDouble64()
+    235:247:public float getS15Fixed16()
+    253:253:public float getFloat32()
+    258:258:public double getDouble64()
 com.drew.lang.StringUtil:
     36:36:public StringUtil()
     95:105:public static int compare(java.lang.String,java.lang.String)
-    113:113:public static java.lang.String urlEncode(java.lang.String)
+    112:119:public static java.lang.String escapeForWiki(java.lang.String)
+    126:126:public static java.lang.String urlEncode(java.lang.String)
 com.drew.lang.annotations.NotNull
 com.drew.lang.annotations.Nullable
 com.drew.lang.annotations.SuppressWarnings
@@ -3561,19 +3554,18 @@ com.drew.metadata.Age:
 com.drew.metadata.BuildConfig
 com.drew.metadata.DefaultTagDescriptor
 com.drew.metadata.Directory:
-    112:112:public java.util.Collection getTags()
-    122:122:public int getTagCount()
-    155:155:public boolean hasErrors()
-    166:166:public java.lang.Iterable getErrors()
-    172:172:public int getErrorCount()
-    630:636:public float getFloat(int)
-    661:667:public long getLong(int)
-    692:698:public boolean getBoolean(int)
-    706:720:public java.lang.Boolean getBooleanObject(int)
-    732:732:public java.util.Date getDate(int)
-    745:775:public java.util.Date getDate(int,java.util.TimeZone)
-    875:881:public java.lang.String getString(int,java.lang.String)
-    928:928:public boolean hasTagName(int)
+    104:104:public java.util.Collection getTags()
+    114:114:public int getTagCount()
+    147:147:public boolean hasErrors()
+    158:158:public java.lang.Iterable getErrors()
+    164:164:public int getErrorCount()
+    622:628:public float getFloat(int)
+    653:659:public long getLong(int)
+    684:690:public boolean getBoolean(int)
+    698:712:public java.lang.Boolean getBooleanObject(int)
+    724:724:public java.util.Date getDate(int)
+    737:767:public java.util.Date getDate(int,java.util.TimeZone)
+    867:873:public java.lang.String getString(int,java.lang.String)
 com.drew.metadata.Face:
     58:58:public int getX()
     63:63:public int getY()
@@ -3582,11 +3574,9 @@ com.drew.metadata.Face:
     79:79:public java.lang.String getName()
     85:85:public com.drew.metadata.Age getAge()
 com.drew.metadata.Metadata:
-    49:49:public java.lang.Iterable getDirectories()
-    55:55:public java.util.Collection getDirectoriesOfType(java.lang.Class)
-    124:128:public boolean hasErrors()
-com.drew.metadata.Metadata$DirectoryIterable
-com.drew.metadata.Metadata$DirectoryIterable$DirectoryIterator
+    59:59:public java.lang.Iterable getDirectories()
+    69:69:public int getDirectoryCount()
+    142:146:public boolean hasErrors()
 com.drew.metadata.MetadataException:
     private static final long serialVersionUID
     42:43:public MetadataException(java.lang.Throwable)
@@ -3595,8 +3585,7 @@ com.drew.metadata.MetadataReader
 com.drew.metadata.Schema
 com.drew.metadata.Tag:
     63:65:public java.lang.String getTagTypeHex()
-    91:91:public boolean hasTagName()
-    115:115:public java.lang.String getDirectoryName()
+    101:101:public java.lang.String getDirectoryName()
 com.drew.metadata.TagDescriptor:
     182:185:protected java.lang.String getFormattedFloat(int,java.lang.String)
 com.drew.metadata.adobe.AdobeJpegDirectory:
@@ -3604,8 +3593,6 @@ com.drew.metadata.adobe.AdobeJpegDirectory:
     public static final int TAG_APP14_FLAGS0
     public static final int TAG_APP14_FLAGS1
     public static final int TAG_COLOR_TRANSFORM
-com.drew.metadata.adobe.AdobeJpegReader:
-    public static final java.lang.String PREAMBLE
 com.drew.metadata.bmp.BmpHeaderDirectory:
     public static final int TAG_HEADER_SIZE
     public static final int TAG_IMAGE_HEIGHT
@@ -3617,85 +3604,111 @@ com.drew.metadata.bmp.BmpHeaderDirectory:
     public static final int TAG_Y_PIXELS_PER_METER
     public static final int TAG_PALETTE_COLOUR_COUNT
     public static final int TAG_IMPORTANT_COLOUR_COUNT
-com.drew.metadata.exif.ExifDirectoryBase:
+com.drew.metadata.exif.ExifIFD0Directory:
+    public static final int TAG_IMAGE_DESCRIPTION
+    public static final int TAG_MAKE
+    public static final int TAG_MODEL
+    public static final int TAG_ORIENTATION
+    public static final int TAG_X_RESOLUTION
+    public static final int TAG_Y_RESOLUTION
+    public static final int TAG_RESOLUTION_UNIT
+    public static final int TAG_SOFTWARE
+    public static final int TAG_DATETIME
+    public static final int TAG_ARTIST
+    public static final int TAG_WHITE_POINT
+    public static final int TAG_PRIMARY_CHROMATICITIES
+    public static final int TAG_YCBCR_COEFFICIENTS
+    public static final int TAG_YCBCR_POSITIONING
+    public static final int TAG_REFERENCE_BLACK_WHITE
+    public static final int TAG_EXIF_SUB_IFD_OFFSET
+    public static final int TAG_GPS_INFO_OFFSET
+    public static final int TAG_COPYRIGHT
+    public static final int TAG_TIME_ZONE_OFFSET
+    public static final int TAG_WIN_TITLE
+    public static final int TAG_WIN_COMMENT
+    public static final int TAG_WIN_AUTHOR
+    public static final int TAG_WIN_KEYWORDS
+    public static final int TAG_WIN_SUBJECT
+com.drew.metadata.exif.ExifInteropDirectory:
     public static final int TAG_INTEROP_INDEX
     public static final int TAG_INTEROP_VERSION
-    public static final int TAG_NEW_SUBFILE_TYPE
-    public static final int TAG_SUBFILE_TYPE
-    public static final int TAG_IMAGE_WIDTH
-    public static final int TAG_IMAGE_HEIGHT
+    public static final int TAG_RELATED_IMAGE_FILE_FORMAT
+    public static final int TAG_RELATED_IMAGE_WIDTH
+    public static final int TAG_RELATED_IMAGE_LENGTH
+com.drew.metadata.exif.ExifReader:
+    private static final int MAX_FORMAT_CODE
+    private static final int FMT_BYTE
+    private static final int FMT_STRING
+    private static final int FMT_USHORT
+    private static final int FMT_ULONG
+    private static final int FMT_URATIONAL
+    private static final int FMT_SBYTE
+    private static final int FMT_UNDEFINED
+    private static final int FMT_SSHORT
+    private static final int FMT_SLONG
+    private static final int FMT_SRATIONAL
+    private static final int FMT_SINGLE
+    private static final int FMT_DOUBLE
+    private static final java.lang.String JPEG_EXIF_SEGMENT_PREAMBLE
+    89:89:public boolean isStoreThumbnailBytes()
+    94:95:public void setStoreThumbnailBytes(boolean)
+com.drew.metadata.exif.ExifSubIFDDirectory:
+    public static final int TAG_APERTURE
     public static final int TAG_BITS_PER_SAMPLE
-    public static final int TAG_COMPRESSION
     public static final int TAG_PHOTOMETRIC_INTERPRETATION
     public static final int TAG_THRESHOLDING
     public static final int TAG_FILL_ORDER
     public static final int TAG_DOCUMENT_NAME
-    public static final int TAG_IMAGE_DESCRIPTION
-    public static final int TAG_MAKE
-    public static final int TAG_MODEL
     public static final int TAG_STRIP_OFFSETS
-    public static final int TAG_ORIENTATION
     public static final int TAG_SAMPLES_PER_PIXEL
     public static final int TAG_ROWS_PER_STRIP
     public static final int TAG_STRIP_BYTE_COUNTS
     public static final int TAG_MIN_SAMPLE_VALUE
     public static final int TAG_MAX_SAMPLE_VALUE
-    public static final int TAG_X_RESOLUTION
-    public static final int TAG_Y_RESOLUTION
     public static final int TAG_PLANAR_CONFIGURATION
-    public static final int TAG_PAGE_NAME
-    public static final int TAG_RESOLUTION_UNIT
+    public static final int TAG_YCBCR_SUBSAMPLING
+    public static final int TAG_NEW_SUBFILE_TYPE
+    public static final int TAG_SUBFILE_TYPE
     public static final int TAG_TRANSFER_FUNCTION
-    public static final int TAG_SOFTWARE
-    public static final int TAG_DATETIME
-    public static final int TAG_ARTIST
-    public static final int TAG_HOST_COMPUTER
     public static final int TAG_PREDICTOR
-    public static final int TAG_WHITE_POINT
-    public static final int TAG_PRIMARY_CHROMATICITIES
     public static final int TAG_TILE_WIDTH
     public static final int TAG_TILE_LENGTH
     public static final int TAG_TILE_OFFSETS
     public static final int TAG_TILE_BYTE_COUNTS
-    public static final int TAG_SUB_IFD_OFFSET
-    public static final int TAG_TRANSFER_RANGE
     public static final int TAG_JPEG_TABLES
-    public static final int TAG_JPEG_PROC
-    public static final int TAG_YCBCR_COEFFICIENTS
-    public static final int TAG_YCBCR_SUBSAMPLING
-    public static final int TAG_YCBCR_POSITIONING
-    public static final int TAG_REFERENCE_BLACK_WHITE
-    public static final int TAG_RELATED_IMAGE_FILE_FORMAT
-    public static final int TAG_RELATED_IMAGE_WIDTH
-    public static final int TAG_RELATED_IMAGE_HEIGHT
-    public static final int TAG_RATING
     public static final int TAG_CFA_REPEAT_PATTERN_DIM
     public static final int TAG_CFA_PATTERN_2
     public static final int TAG_BATTERY_LEVEL
-    public static final int TAG_COPYRIGHT
-    public static final int TAG_EXPOSURE_TIME
-    public static final int TAG_FNUMBER
     public static final int TAG_IPTC_NAA
     public static final int TAG_INTER_COLOR_PROFILE
-    public static final int TAG_EXPOSURE_PROGRAM
     public static final int TAG_SPECTRAL_SENSITIVITY
-    public static final int TAG_ISO_EQUIVALENT
     public static final int TAG_OPTO_ELECTRIC_CONVERSION_FUNCTION
     public static final int TAG_INTERLACE
-    public static final int TAG_TIME_ZONE_OFFSET_TIFF_EP
-    public static final int TAG_SELF_TIMER_MODE_TIFF_EP
-    public static final int TAG_SENSITIVITY_TYPE
-    public static final int TAG_STANDARD_OUTPUT_SENSITIVITY
-    public static final int TAG_RECOMMENDED_EXPOSURE_INDEX
     public static final int TAG_TIME_ZONE_OFFSET
     public static final int TAG_SELF_TIMER_MODE
+    public static final int TAG_FLASH_ENERGY
+    public static final int TAG_SPATIAL_FREQ_RESPONSE
+    public static final int TAG_NOISE
+    public static final int TAG_IMAGE_NUMBER
+    public static final int TAG_SECURITY_CLASSIFICATION
+    public static final int TAG_IMAGE_HISTORY
+    public static final int TAG_SUBJECT_LOCATION
+    public static final int TAG_EXPOSURE_INDEX_2
+    public static final int TAG_TIFF_EP_STANDARD_ID
+    public static final int TAG_FLASH_ENERGY_2
+    public static final int TAG_SPATIAL_FREQ_RESPONSE_2
+    public static final int TAG_SUBJECT_LOCATION_2
+    public static final int TAG_PAGE_NAME
+    public static final int TAG_EXPOSURE_TIME
+    public static final int TAG_FNUMBER
+    public static final int TAG_EXPOSURE_PROGRAM
+    public static final int TAG_ISO_EQUIVALENT
     public static final int TAG_EXIF_VERSION
     public static final int TAG_DATETIME_ORIGINAL
     public static final int TAG_DATETIME_DIGITIZED
     public static final int TAG_COMPONENTS_CONFIGURATION
     public static final int TAG_COMPRESSED_AVERAGE_BITS_PER_PIXEL
     public static final int TAG_SHUTTER_SPEED
-    public static final int TAG_APERTURE
     public static final int TAG_BRIGHTNESS_VALUE
     public static final int TAG_EXPOSURE_BIAS
     public static final int TAG_MAX_APERTURE
@@ -3705,38 +3718,20 @@ com.drew.metadata.exif.ExifDirectoryBase:
     public static final int TAG_WHITE_BALANCE
     public static final int TAG_FLASH
     public static final int TAG_FOCAL_LENGTH
-    public static final int TAG_FLASH_ENERGY_TIFF_EP
-    public static final int TAG_SPATIAL_FREQ_RESPONSE_TIFF_EP
-    public static final int TAG_NOISE
-    public static final int TAG_FOCAL_PLANE_X_RESOLUTION_TIFF_EP
-    public static final int TAG_FOCAL_PLANE_Y_RESOLUTION_TIFF_EP
-    public static final int TAG_IMAGE_NUMBER
-    public static final int TAG_SECURITY_CLASSIFICATION
-    public static final int TAG_IMAGE_HISTORY
-    public static final int TAG_SUBJECT_LOCATION_TIFF_EP
-    public static final int TAG_EXPOSURE_INDEX_TIFF_EP
-    public static final int TAG_STANDARD_ID_TIFF_EP
     public static final int TAG_MAKERNOTE
     public static final int TAG_USER_COMMENT
     public static final int TAG_SUBSECOND_TIME
     public static final int TAG_SUBSECOND_TIME_ORIGINAL
     public static final int TAG_SUBSECOND_TIME_DIGITIZED
-    public static final int TAG_WIN_TITLE
-    public static final int TAG_WIN_COMMENT
-    public static final int TAG_WIN_AUTHOR
-    public static final int TAG_WIN_KEYWORDS
-    public static final int TAG_WIN_SUBJECT
     public static final int TAG_FLASHPIX_VERSION
     public static final int TAG_COLOR_SPACE
     public static final int TAG_EXIF_IMAGE_WIDTH
     public static final int TAG_EXIF_IMAGE_HEIGHT
     public static final int TAG_RELATED_SOUND_FILE
-    public static final int TAG_FLASH_ENERGY
-    public static final int TAG_SPATIAL_FREQ_RESPONSE
+    public static final int TAG_INTEROP_OFFSET
     public static final int TAG_FOCAL_PLANE_X_RESOLUTION
     public static final int TAG_FOCAL_PLANE_Y_RESOLUTION
     public static final int TAG_FOCAL_PLANE_RESOLUTION_UNIT
-    public static final int TAG_SUBJECT_LOCATION
     public static final int TAG_EXPOSURE_INDEX
     public static final int TAG_SENSING_METHOD
     public static final int TAG_FILE_SOURCE
@@ -3762,29 +3757,33 @@ com.drew.metadata.exif.ExifDirectoryBase:
     public static final int TAG_LENS_MODEL
     public static final int TAG_LENS_SERIAL_NUMBER
     public static final int TAG_GAMMA
-    public static final int TAG_PRINT_IM
-    public static final int TAG_PANASONIC_TITLE
-    public static final int TAG_PANASONIC_TITLE_2
-    public static final int TAG_PADDING
     public static final int TAG_LENS
-com.drew.metadata.exif.ExifIFD0Directory:
-    public static final int TAG_EXIF_SUB_IFD_OFFSET
-    public static final int TAG_GPS_INFO_OFFSET
-com.drew.metadata.exif.ExifReader:
-    public static final java.lang.String JPEG_SEGMENT_PREAMBLE
-    51:51:public boolean isStoreThumbnailBytes()
-    56:57:public void setStoreThumbnailBytes(boolean)
-com.drew.metadata.exif.ExifSubIFDDirectory:
-    public static final int TAG_INTEROP_OFFSET
 com.drew.metadata.exif.ExifThumbnailDirectory:
+    public static final int TAG_THUMBNAIL_IMAGE_WIDTH
+    public static final int TAG_THUMBNAIL_IMAGE_HEIGHT
+    public static final int TAG_BITS_PER_SAMPLE
+    public static final int TAG_THUMBNAIL_COMPRESSION
+    public static final int TAG_PHOTOMETRIC_INTERPRETATION
+    public static final int TAG_STRIP_OFFSETS
+    public static final int TAG_ORIENTATION
+    public static final int TAG_SAMPLES_PER_PIXEL
+    public static final int TAG_ROWS_PER_STRIP
+    public static final int TAG_STRIP_BYTE_COUNTS
+    public static final int TAG_X_RESOLUTION
+    public static final int TAG_Y_RESOLUTION
+    public static final int TAG_PLANAR_CONFIGURATION
+    public static final int TAG_RESOLUTION_UNIT
     public static final int TAG_THUMBNAIL_OFFSET
     public static final int TAG_THUMBNAIL_LENGTH
-    public static final int TAG_THUMBNAIL_COMPRESSION
-    116:116:public boolean hasThumbnailData()
-    122:122:public byte[] getThumbnailData()
-    132:145:public void writeThumbnail(java.lang.String)
+    public static final int TAG_YCBCR_COEFFICIENTS
+    public static final int TAG_YCBCR_SUBSAMPLING
+    public static final int TAG_YCBCR_POSITIONING
+    public static final int TAG_REFERENCE_BLACK_WHITE
+    188:188:public boolean hasThumbnailData()
+    194:194:public byte[] getThumbnailData()
+    204:217:public void writeThumbnail(java.lang.String)
 com.drew.metadata.exif.GpsDescriptor:
-    238:239:public java.lang.String getDegreesMinutesSecondsDescription()
+    231:232:public java.lang.String getDegreesMinutesSecondsDescription()
 com.drew.metadata.exif.GpsDirectory:
     public static final int TAG_VERSION_ID
     public static final int TAG_LATITUDE_REF
@@ -4431,9 +4430,6 @@ com.drew.metadata.exif.makernotes.SonyType6MakernoteDirectory:
     public static final int TAG_MAKERNOTE_THUMB_OFFSET
     public static final int TAG_MAKERNOTE_THUMB_LENGTH
     public static final int TAG_MAKERNOTE_THUMB_VERSION
-com.drew.metadata.file.FileMetadataDescriptor
-com.drew.metadata.file.FileMetadataDirectory
-com.drew.metadata.file.FileMetadataReader
 com.drew.metadata.gif.GifHeaderDirectory:
     public static final int TAG_GIF_FORMAT_VERSION
     public static final int TAG_IMAGE_WIDTH
@@ -4521,42 +4517,30 @@ com.drew.metadata.icc.IccDirectory:
     public static final int TAG_TAG_vued
     public static final int TAG_TAG_view
     public static final int TAG_APPLE_MULTI_LANGUAGE_PROFILE_NAME
-com.drew.metadata.icc.IccReader:
-    public static final java.lang.String JPEG_SEGMENT_PREAMBLE
-com.drew.metadata.ico.IcoDirectory:
-    public static final int TAG_IMAGE_TYPE
-    public static final int TAG_IMAGE_WIDTH
-    public static final int TAG_IMAGE_HEIGHT
-    public static final int TAG_COLOUR_PALETTE_SIZE
-    public static final int TAG_COLOUR_PLANES
-    public static final int TAG_CURSOR_HOTSPOT_X
-    public static final int TAG_BITS_PER_PIXEL
-    public static final int TAG_CURSOR_HOTSPOT_Y
-    public static final int TAG_IMAGE_SIZE_BYTES
-    public static final int TAG_IMAGE_OFFSET_BYTES
 com.drew.metadata.iptc.IptcDescriptor:
-    104:104:public java.lang.String getByLineDescription()
-    110:110:public java.lang.String getByLineTitleDescription()
-    116:116:public java.lang.String getCaptionDescription()
-    122:122:public java.lang.String getCategoryDescription()
-    128:128:public java.lang.String getCityDescription()
-    134:134:public java.lang.String getCopyrightNoticeDescription()
-    140:140:public java.lang.String getCountryOrPrimaryLocationDescription()
-    146:146:public java.lang.String getCreditDescription()
-    152:152:public java.lang.String getDateCreatedDescription()
-    158:158:public java.lang.String getHeadlineDescription()
-    173:173:public java.lang.String getObjectNameDescription()
-    179:179:public java.lang.String getOriginalTransmissionReferenceDescription()
-    185:185:public java.lang.String getOriginatingProgramDescription()
-    191:191:public java.lang.String getProvinceOrStateDescription()
-    197:197:public java.lang.String getRecordVersionDescription()
-    203:203:public java.lang.String getReleaseDateDescription()
-    209:209:public java.lang.String getReleaseTimeDescription()
-    215:215:public java.lang.String getSourceDescription()
-    221:221:public java.lang.String getSpecialInstructionsDescription()
-    227:227:public java.lang.String getSupplementalCategoriesDescription()
-    255:255:public java.lang.String getUrgencyDescription()
-    261:261:public java.lang.String getWriterDescription()
+    99:99:public java.lang.String getByLineDescription()
+    105:105:public java.lang.String getByLineTitleDescription()
+    111:111:public java.lang.String getCaptionDescription()
+    117:117:public java.lang.String getCategoryDescription()
+    123:123:public java.lang.String getCityDescription()
+    129:129:public java.lang.String getCopyrightNoticeDescription()
+    135:135:public java.lang.String getCountryOrPrimaryLocationDescription()
+    141:141:public java.lang.String getCreditDescription()
+    147:147:public java.lang.String getDateCreatedDescription()
+    153:153:public java.lang.String getHeadlineDescription()
+    168:168:public java.lang.String getObjectNameDescription()
+    174:174:public java.lang.String getOriginalTransmissionReferenceDescription()
+    180:180:public java.lang.String getOriginatingProgramDescription()
+    186:186:public java.lang.String getProvinceOrStateDescription()
+    192:192:public java.lang.String getRecordVersionDescription()
+    198:198:public java.lang.String getReleaseDateDescription()
+    204:204:public java.lang.String getReleaseTimeDescription()
+    210:210:public java.lang.String getSourceDescription()
+    216:216:public java.lang.String getSpecialInstructionsDescription()
+    222:222:public java.lang.String getSupplementalCategoriesDescription()
+    228:228:public java.lang.String getTimeCreatedDescription()
+    234:234:public java.lang.String getUrgencyDescription()
+    240:240:public java.lang.String getWriterDescription()
 com.drew.metadata.iptc.IptcDirectory:
     public static final int TAG_ENVELOPE_RECORD_VERSION
     public static final int TAG_DESTINATION
@@ -4635,33 +4619,20 @@ com.drew.metadata.iptc.IptcDirectory:
     public static final int TAG_OBJECT_PREVIEW_FILE_FORMAT
     public static final int TAG_OBJECT_PREVIEW_FILE_FORMAT_VERSION
     public static final int TAG_OBJECT_PREVIEW_DATA
-    233:236:public java.util.List getKeywords()
-com.drew.metadata.iptc.Iso2022Converter:
-    private static final java.lang.String ISO_8859_1
-    private static final java.lang.String UTF_8
-    private static final byte LATIN_CAPITAL_A
-    private static final int DOT
-    private static final byte LATIN_CAPITAL_G
-    private static final byte PERCENT_SIGN
-    private static final byte ESC
-    82:82:private Iso2022Converter()
+    231:234:public java.util.List getKeywords()
 com.drew.metadata.jfif.JfifDirectory:
     public static final int TAG_VERSION
     public static final int TAG_UNITS
     public static final int TAG_RESX
     public static final int TAG_RESY
-    74:74:public int getVersion()
-    79:79:public int getResUnits()
-    84:84:public int getImageWidth()
-    89:89:public int getImageHeight()
-com.drew.metadata.jfif.JfifReader:
-    public static final java.lang.String PREAMBLE
+    72:72:public int getVersion()
+    77:77:public int getResUnits()
+    82:82:public int getImageWidth()
+    87:87:public int getImageHeight()
 com.drew.metadata.jpeg.JpegCommentDescriptor:
     42:42:public java.lang.String getJpegCommentDescription()
 com.drew.metadata.jpeg.JpegCommentDirectory:
     public static final int TAG_COMMENT
-com.drew.metadata.jpeg.JpegCommentReader:
-    47:47:public boolean canProcess(byte[],com.drew.imaging.jpeg.JpegSegmentType)
 com.drew.metadata.jpeg.JpegComponent:
     private static final long serialVersionUID
     50:50:public int getComponentId()
@@ -4675,24 +4646,9 @@ com.drew.metadata.jpeg.JpegDirectory:
     public static final int TAG_COMPONENT_DATA_2
     public static final int TAG_COMPONENT_DATA_3
     public static final int TAG_COMPONENT_DATA_4
-    114:114:public int getImageWidth()
-    119:119:public int getImageHeight()
-    124:124:public int getNumberOfComponents()
-com.drew.metadata.pcx.PcxDirectory:
-    public static final int TAG_VERSION
-    public static final int TAG_BITS_PER_PIXEL
-    public static final int TAG_XMIN
-    public static final int TAG_YMIN
-    public static final int TAG_XMAX
-    public static final int TAG_YMAX
-    public static final int TAG_HORIZONTAL_DPI
-    public static final int TAG_VERTICAL_DPI
-    public static final int TAG_PALETTE
-    public static final int TAG_COLOR_PLANES
-    public static final int TAG_BYTES_PER_LINE
-    public static final int TAG_PALETTE_TYPE
-    public static final int TAG_HSCR_SIZE
-    public static final int TAG_VSCR_SIZE
+    112:112:public int getImageWidth()
+    117:117:public int getImageHeight()
+    122:122:public int getNumberOfComponents()
 com.drew.metadata.photoshop.PhotoshopDirectory:
     public static final int TAG_CHANNELS_ROWS_COLUMNS_DEPTH_MODE
     public static final int TAG_MAC_PRINT_INFO
@@ -4700,7 +4656,7 @@ com.drew.metadata.photoshop.PhotoshopDirectory:
     public static final int TAG_INDEXED_COLOR_TABLE
     public static final int TAG_RESOLUTION_INFO
     public static final int TAG_ALPHA_CHANNELS
-    public static final int TAG_DISPLAY_INFO_OBSOLETE
+    public static final int TAG_DISPLAY_INFO
     public static final int TAG_CAPTION
     public static final int TAG_BORDER_INFORMATION
     public static final int TAG_BACKGROUND_COLOR
@@ -4726,58 +4682,18 @@ com.drew.metadata.photoshop.PhotoshopDirectory:
     public static final int TAG_URL
     public static final int TAG_THUMBNAIL
     public static final int TAG_GLOBAL_ANGLE
-    public static final int TAG_ICC_PROFILE_BYTES
-    public static final int TAG_WATERMARK
     public static final int TAG_ICC_UNTAGGED_PROFILE
-    public static final int TAG_EFFECTS_VISIBLE
-    public static final int TAG_SPOT_HALFTONE
     public static final int TAG_SEED_NUMBER
-    public static final int TAG_UNICODE_ALPHA_NAMES
-    public static final int TAG_INDEXED_COLOR_TABLE_COUNT
-    public static final int TAG_TRANSPARENCY_INDEX
     public static final int TAG_GLOBAL_ALTITUDE
     public static final int TAG_SLICES
-    public static final int TAG_WORKFLOW_URL
-    public static final int TAG_JUMP_TO_XPEP
-    public static final int TAG_ALPHA_IDENTIFIERS
     public static final int TAG_URL_LIST
     public static final int TAG_VERSION
-    public static final int TAG_EXIF_DATA_1
-    public static final int TAG_EXIF_DATA_3
-    public static final int TAG_XMP_DATA
     public static final int TAG_CAPTION_DIGEST
     public static final int TAG_PRINT_SCALE
     public static final int TAG_PIXEL_ASPECT_RATIO
-    public static final int TAG_LAYER_COMPS
-    public static final int TAG_ALTERNATE_DUOTONE_COLORS
-    public static final int TAG_ALTERNATE_SPOT_COLORS
-    public static final int TAG_LAYER_SELECTION_IDS
-    public static final int TAG_HDR_TONING_INFO
     public static final int TAG_PRINT_INFO
-    public static final int TAG_LAYER_GROUPS_ENABLED_ID
-    public static final int TAG_COLOR_SAMPLERS
-    public static final int TAG_MEASUREMENT_SCALE
-    public static final int TAG_TIMELINE_INFORMATION
-    public static final int TAG_SHEET_DISCLOSURE
-    public static final int TAG_DISPLAY_INFO
-    public static final int TAG_ONION_SKINS
-    public static final int TAG_COUNT_INFORMATION
-    public static final int TAG_PRINT_INFO_2
-    public static final int TAG_PRINT_STYLE
-    public static final int TAG_MAC_NSPRINTINFO
-    public static final int TAG_WIN_DEVMODE
-    public static final int TAG_AUTO_SAVE_FILE_PATH
-    public static final int TAG_AUTO_SAVE_FORMAT
-    public static final int TAG_PATH_SELECTION_STATE
-    public static final int TAG_CLIPPING_PATH_NAME
-    public static final int TAG_ORIGIN_PATH_INFO
-    public static final int TAG_IMAGE_READY_VARIABLES_XML
-    public static final int TAG_IMAGE_READY_DATA_SETS
-    public static final int TAG_LIGHTROOM_WORKFLOW
     public static final int TAG_PRINT_FLAGS_INFO
-    236:245:public byte[] getThumbnailBytes()
-com.drew.metadata.photoshop.PhotoshopReader:
-    private static final java.lang.String JPEG_SEGMENT_PREAMBLE
+    150:159:public byte[] getThumbnailBytes()
 com.drew.metadata.photoshop.PsdHeaderDirectory:
     public static final int TAG_CHANNEL_COUNT
     public static final int TAG_IMAGE_HEIGHT
@@ -4805,22 +4721,11 @@ com.drew.metadata.png.PngDirectory:
     public static final int TAG_PALETTE_HAS_TRANSPARENCY
     public static final int TAG_SRGB_RENDERING_INTENT
     public static final int TAG_GAMMA
-    public static final int TAG_ICC_PROFILE_NAME
+    public static final int TAG_PROFILE_NAME
     public static final int TAG_TEXTUAL_DATA
     public static final int TAG_LAST_MODIFICATION_TIME
     public static final int TAG_BACKGROUND_COLOR
-    public static final int TAG_PIXELS_PER_UNIT_X
-    public static final int TAG_PIXELS_PER_UNIT_Y
-    public static final int TAG_UNIT_SPECIFIER
-    public static final int TAG_SIGNIFICANT_BITS
-    93:93:public com.drew.imaging.png.PngChunkType getPngChunkType()
-com.drew.metadata.webp.WebpDirectory:
-    public static final int TAG_IMAGE_HEIGHT
-    public static final int TAG_IMAGE_WIDTH
-    public static final int TAG_HAS_ALPHA
-    public static final int TAG_IS_ANIMATION
 com.drew.metadata.xmp.XmpDirectory:
-    public static final int TAG_XMP_VALUE_COUNT
     public static final int TAG_MAKE
     public static final int TAG_MODEL
     public static final int TAG_EXPOSURE_TIME
@@ -4837,26 +4742,21 @@ com.drew.metadata.xmp.XmpDirectory:
     public static final int TAG_DATETIME_DIGITIZED
     public static final int TAG_RATING
     public static final int TAG_LABEL
-    271:271:public java.util.Map getXmpProperties()
-    311:320:public void updateInt(int,int)
-    324:342:public void updateIntArray(int,int[])
-    346:355:public void updateFloat(int,float)
-    359:377:public void updateFloatArray(int,float[])
-    394:412:public void updateDoubleArray(int,double[])
-    456:465:public void updateBoolean(int,boolean)
-    469:478:public void updateLong(int,long)
-    482:492:public void updateDate(int,java.util.Date)
+    265:265:public java.util.Map getXmpProperties()
+    292:301:public void updateInt(int,int)
+    305:323:public void updateIntArray(int,int[])
+    327:336:public void updateFloat(int,float)
+    340:358:public void updateFloatArray(int,float[])
+    375:393:public void updateDoubleArray(int,double[])
+    437:446:public void updateBoolean(int,boolean)
+    450:459:public void updateLong(int,long)
+    463:473:public void updateDate(int,java.util.Date)
 com.drew.metadata.xmp.XmpReader:
     private static final int FMT_STRING
     private static final int FMT_RATIONAL
     private static final int FMT_INT
     private static final int FMT_DOUBLE
     private static final int FMT_STRING_ARRAY
-    private static final java.lang.String SCHEMA_XMP_PROPERTIES
-    private static final java.lang.String SCHEMA_EXIF_SPECIFIC_PROPERTIES
-    private static final java.lang.String SCHEMA_EXIF_ADDITIONAL_PROPERTIES
-    private static final java.lang.String SCHEMA_EXIF_TIFF_PROPERTIES
-    public static final java.lang.String XMP_JPEG_PREAMBLE
 com.drew.metadata.xmp.XmpWriter:
     11:11:public XmpWriter()
 com.drew.tools.ExtractJpegSegmentTool
@@ -4865,13 +4765,10 @@ com.drew.tools.ProcessAllImagesInFolderUtility
 com.drew.tools.ProcessAllImagesInFolderUtility$BasicFileHandler
 com.drew.tools.ProcessAllImagesInFolderUtility$FileHandler
 com.drew.tools.ProcessAllImagesInFolderUtility$FileHandlerBase
-com.drew.tools.ProcessAllImagesInFolderUtility$MarkdownTableOutputHandler
-com.drew.tools.ProcessAllImagesInFolderUtility$MarkdownTableOutputHandler$1
-com.drew.tools.ProcessAllImagesInFolderUtility$MarkdownTableOutputHandler$Row
 com.drew.tools.ProcessAllImagesInFolderUtility$TextFileOutputHandler
-com.drew.tools.ProcessAllImagesInFolderUtility$TextFileOutputHandler$1
-com.drew.tools.ProcessAllImagesInFolderUtility$UnknownTagHandler
-com.drew.tools.ProcessAllImagesInFolderUtility$UnknownTagHandler$1
+com.drew.tools.ProcessAllImagesInFolderUtility$WikiTableOutputHandler
+com.drew.tools.ProcessAllImagesInFolderUtility$WikiTableOutputHandler$1
+com.drew.tools.ProcessAllImagesInFolderUtility$WikiTableOutputHandler$Row
 com.drew.tools.ProcessUrlUtility
 com.github.amlcurran.showcaseview.AnimatorAnimationFactory:
     private static final java.lang.String ALPHA
