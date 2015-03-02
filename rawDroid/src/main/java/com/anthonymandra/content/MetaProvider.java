@@ -29,6 +29,10 @@ public class MetaProvider extends ContentProvider
 
 	private static final int META = 1;
 	private static final int META_ID = 2;
+    private static final int THUMB = 3;
+    private static final int THUMB_ID = 4;
+    private static final int IMAGE = 5;
+    private static final int IMAGE_ID = 6;
 
 	private static UriMatcher sUriMatcher;
 
@@ -62,26 +66,28 @@ public class MetaProvider extends ContentProvider
 			String createMetaTable = 
 					"CREATE TABLE " + META_TABLE_NAME + " (" + 
 					BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-					Meta.Data.NAME 			+ " TEXT, " + 
-					Meta.Data.TIMESTAMP 	+ " TEXT, " + 
-					Meta.Data.MODEL 		+ " TEXT, " + 
-					Meta.Data.APERTURE 		+ " TEXT, " + 
-					Meta.Data.EXPOSURE 		+ " TEXT, " + 
-					Meta.Data.FLASH 		+ " TEXT, " + 
-					Meta.Data.FOCAL_LENGTH 	+ " TEXT, " + 
-					Meta.Data.ISO 			+ " TEXT, " + 
-					Meta.Data.WHITE_BALANCE + " TEXT, " + 
-					Meta.Data.HEIGHT 		+ " INTEGER, " + 
-					Meta.Data.WIDTH 		+ " INTEGER, " + 
-					Meta.Data.LATITUDE 		+ " TEXT, " + 
-					Meta.Data.LONGITUDE 	+ " TEXT, " + 
-					Meta.Data.ALTITUDE 		+ " TEXT, " + 
-					Meta.Data.MEDIA_ID 		+ " TEXT, " +
-					Meta.Data.ORIENTATION 	+ " INTEGER, " +
-					Meta.Data.MAKE 			+ " TEXT, "	+ 
-					Meta.Data.URI 			+ " TEXT," 	+ 
-					Meta.Data.THUMB_HEIGHT	+ " INTEGER," + 
-					Meta.Data.THUMB_WIDTH	+ " INTEGER" + ");";
+					Meta.Data.NAME 		    	+ " TEXT, " +
+					Meta.Data.TIMESTAMP     	+ " TEXT, " +
+					Meta.Data.MODEL 	    	+ " TEXT, " +
+					Meta.Data.APERTURE 	    	+ " TEXT, " +
+					Meta.Data.EXPOSURE 		    + " TEXT, " +
+					Meta.Data.FLASH 		    + " TEXT, " +
+					Meta.Data.FOCAL_LENGTH  	+ " TEXT, " +
+					Meta.Data.ISO 			    + " TEXT, " +
+					Meta.Data.WHITE_BALANCE     + " TEXT, " +
+					Meta.Data.HEIGHT 		    + " INTEGER, " +
+					Meta.Data.WIDTH 		    + " INTEGER, " +
+					Meta.Data.LATITUDE 		    + " TEXT, " +
+					Meta.Data.LONGITUDE 	    + " TEXT, " +
+					Meta.Data.ALTITUDE 		    + " TEXT, " +
+					Meta.Data.MEDIA_ID 		    + " TEXT, " +
+					Meta.Data.ORIENTATION 	    + " INTEGER, " +
+					Meta.Data.MAKE 			    + " TEXT, "	+
+					Meta.Data.URI 			    + " TEXT UNIQUE," 	+
+					Meta.Data.THUMB_HEIGHT	    + " INTEGER," +
+					Meta.Data.THUMB_WIDTH	    + " INTEGER" +
+                    Meta.Data.THUMBNAIL_URI 	+ " TEXT UNIQUE," 	+
+                    Meta.Data.FULL_IMAGE_URI 	+ " TEXT UNIQUE" 	+ ");";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 
