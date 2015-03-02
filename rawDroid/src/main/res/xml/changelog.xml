@@ -17,7 +17,7 @@
              versioncode="27300"
              summary="Bug Patch"
              date="11 FEB 2015">
-        <change>Fix: Save jpeg for images requiring full decode</change>
+        <change>Fix: Save jpeg for images requireing full decode</change>
         <change>Fix: Google licensing bug</change>
     </release>
     <release version="2.7.2"

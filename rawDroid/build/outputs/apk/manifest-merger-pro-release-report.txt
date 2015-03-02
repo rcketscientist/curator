@@ -122,7 +122,7 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:48:17
 	android:name
 		ADDED from AndroidManifest.xml:48:27
-activity#com.anthonymandra.rawdroid.CameraImportActivity
+activity#com.anthonymandra.rawdroid.CameraImport
 ADDED from AndroidManifest.xml:52:9
 	android:configChanges
 		ADDED from AndroidManifest.xml:54:13
@@ -193,7 +193,7 @@ INJECTED from AndroidManifest.xml:0:0 reason: use-sdk injection requested
 MERGED from rawdroid.showcaseView:library:unspecified:22:5
 MERGED from rawdroid:inscription:unspecified:7:5
 MERGED from rawdroid:treeviewlistandroid:unspecified:7:5
-MERGED from rawdroid:metadata-extractor:unspecified:7:5
+MERGED from rawdroid:metaDataExtractor:unspecified:7:5
 MERGED from rawdroid:oIFileManager:unspecified:38:5
 MERGED from com.android.support:support-v4:21.0.3:15:5
 MERGED from com.actionbarsherlock:actionbarsherlock:4.4.0:3:3

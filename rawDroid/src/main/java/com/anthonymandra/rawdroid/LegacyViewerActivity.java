@@ -49,10 +49,6 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		}
 	};
 
-	// private DecodeRawTask decodeTask;
-	// private FrameLayout decodeProgress;
-
-//	private int mImageIndex;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
