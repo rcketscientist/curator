@@ -9206,18 +9206,18 @@ com.anthonymandra.content.MetaProvider -> com.anthonymandra.content.MetaProvider
     int DATABASE_VERSION -> a
     android.content.UriMatcher sUriMatcher -> b
     com.anthonymandra.content.MetaProvider$DatabaseHelper dbHelper -> c
-    105:123:int delete(android.net.Uri,java.lang.String,java.lang.String[]) -> delete
-    129:138:java.lang.String getType(android.net.Uri) -> getType
-    150:155:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String) -> openFile
-    168:190:android.net.Uri insert(android.net.Uri,android.content.ContentValues) -> insert
-    239:257:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
-    263:274:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
-    279:280:boolean onCreate() -> onCreate
+    99:117:int delete(android.net.Uri,java.lang.String,java.lang.String[]) -> delete
+    123:132:java.lang.String getType(android.net.Uri) -> getType
+    144:149:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String) -> openFile
+    162:184:android.net.Uri insert(android.net.Uri,android.content.ContentValues) -> insert
+    233:251:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
+    257:268:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
+    273:274:boolean onCreate() -> onCreate
 com.anthonymandra.content.MetaProvider$1 -> com.anthonymandra.content.c:
 com.anthonymandra.content.MetaProvider$DatabaseHelper -> com.anthonymandra.content.d:
-    61:62:void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
-    66:92:void createTable(android.database.sqlite.SQLiteDatabase) -> a
-    97:99:void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
+    57:58:void onCreate(android.database.sqlite.SQLiteDatabase) -> onCreate
+    62:86:void createTable(android.database.sqlite.SQLiteDatabase) -> a
+    91:93:void onUpgrade(android.database.sqlite.SQLiteDatabase,int,int) -> onUpgrade
 com.anthonymandra.dcraw.LibRaw -> com.anthonymandra.dcraw.LibRaw:
     java.util.concurrent.Executor EXECUTOR -> a
     int sum -> b

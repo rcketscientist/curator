@@ -3038,19 +3038,13 @@ com.anthonymandra.content.Meta:
     public static final int URI_COLUMN
     public static final int THUMB_HEIGHT_COLUMN
     public static final int THUMB_WIDTH_COLUMN
-    public static final int THUMBNAIL_URI_COLUMN
-    public static final int FULL_IMAGE_URI_COLUMN
     public static final java.lang.String AUTHORITY
-    8:37:public Meta()
+    8:34:public Meta()
 com.anthonymandra.content.Meta$Data:
     public static final java.lang.String CONTENT_TYPE
     public static final java.lang.String CONTENT_META_TYPE
     public static final java.lang.String META
-    public static final java.lang.String THUMB
-    public static final java.lang.String IMAGE
     public static final java.lang.String URI
-    public static final java.lang.String THUMBNAIL_URI
-    public static final java.lang.String FULL_IMAGE_URI
     public static final java.lang.String NAME
     public static final java.lang.String TIMESTAMP
     public static final java.lang.String MODEL
@@ -3071,16 +3065,12 @@ com.anthonymandra.content.Meta$Data:
     public static final java.lang.String THUMB_WIDTH
     public static final java.lang.String MEDIA_ID
     public static final java.lang.String _DATA
-    37:37:public Meta$Data()
+    34:34:public Meta$Data()
 com.anthonymandra.content.MetaProvider:
     public static final java.lang.String DATABASE_NAME
     public static final java.lang.String META_TABLE_NAME
     private static final int META
     private static final int META_ID
-    private static final int THUMB
-    private static final int THUMB_ID
-    private static final int IMAGE
-    private static final int IMAGE_ID
 com.anthonymandra.content.RawImage
 com.anthonymandra.content.RawImage$RawImages
 com.anthonymandra.content.RawResponse

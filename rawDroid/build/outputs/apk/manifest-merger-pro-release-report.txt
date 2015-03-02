@@ -203,8 +203,6 @@ MERGED from com.actionbarsherlock:actionbarsherlock:4.4.0:3:3
 	android:minSdkVersion
 		INJECTED from AndroidManifest.xml:0:0
 		INJECTED from AndroidManifest.xml:0:0
-android:uses-permission#android.permission.READ_PHONE_STATE
-IMPLIED from AndroidManifest.xml:2:1 reason: pl.polidea.treeview has a targetSdkVersion < 4
 activity#org.openintents.filemanager.FileManagerActivity
 ADDED from rawdroid:oIFileManager:unspecified:57:9
 	android:label
