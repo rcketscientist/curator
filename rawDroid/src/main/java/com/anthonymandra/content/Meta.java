@@ -28,6 +28,9 @@ public class Meta
 	public static final int URI_COLUMN = 18;
 	public static final int THUMB_HEIGHT_COLUMN = 19;
 	public static final int THUMB_WIDTH_COLUMN = 20;
+    public static final int THUMBNAIL_URI_COLUMN = 21;
+    public static final int FULL_IMAGE_URI_COLUMN = 22;
+
 
 	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_META;
 
@@ -39,9 +42,14 @@ public class Meta
 		public static final String CONTENT_META_TYPE = "vnd.android.cursor.item/vnd.rawdroid.meta";
 
 		public static final String META = "meta";
+        public static final String THUMB = "thumb";
+        public static final String IMAGE = "image";
+
 
 		// Uri
 		public static final String URI = "uri";
+        public static final String THUMBNAIL_URI = "thumbnail_uri";
+        public static final String FULL_IMAGE_URI = "full_image_uri";
 
 		// Meta data
 		public static final String NAME = "name";
