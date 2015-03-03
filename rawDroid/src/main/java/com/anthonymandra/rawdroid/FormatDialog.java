@@ -20,23 +20,24 @@ public class FormatDialog extends Dialog
 	private Spinner spinner;
 
 	private Context mContext;
+    private DialogListener listener;
 
-	private ResponseListener responseListener;
+    interface DialogListener
+    {
+        void onCompleted();
+        void onCanceled();
+    }
+
+    public void setDialogListener(DialogListener listener)
+    {
+        this.listener = listener;
+    }
 
 	public FormatDialog(Context context, List<? extends RawObject> sourceFiles)
 	{
 		super(context);
 		this.mContext = context;
 		this.sourceFiles = sourceFiles;
-	}
-
-	public FormatDialog(Context context, String title, List<? extends RawObject> sourceFiles, ResponseListener listener)
-	{
-		super(context);
-		setTitle(title);
-		this.mContext = context;
-		this.sourceFiles = sourceFiles;
-		this.responseListener = listener;
 	}
 
 	@Override
@@ -96,8 +97,10 @@ public class FormatDialog extends Dialog
 						break;
 				}
 			}
-			responseListener.Response(true);
-			FormatDialog.this.dismiss();
+            if (listener != null)
+                listener.onCompleted();
+
+			dismiss();
 		}
 	}
 
@@ -106,13 +109,10 @@ public class FormatDialog extends Dialog
 		@Override
 		public void onClick(View v)
 		{
-			responseListener.Response(false);
-			FormatDialog.this.dismiss();
-		}
-	}
+            if (listener != null)
+                listener.onCanceled();
 
-	public interface ResponseListener
-	{
-		public void Response(Boolean accept);
+            dismiss();
+		}
 	}
 }

@@ -717,8 +717,22 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		{
 			filesToRename.addAll(mRawImages);
 		}
-		// TODO: This should manage raw and jpg
-		new FormatDialog(this, getString(R.string.renameImages), filesToRename, new OnResponseListener()).show();
+		FormatDialog dialog = new FormatDialog(this, filesToRename);
+        dialog.setTitle(getString(R.string.renameImages));
+        dialog.setDialogListener(new FormatDialog.DialogListener() {
+            @Override
+            public void onCompleted()
+            {
+                updatePath(mCurrentPath);
+            }
+
+            @Override
+            public void onCanceled()
+            {
+                //Do nothing
+            }
+        });
+        dialog.show();
 	}
 
 	private void requestImportImageLocation()
@@ -935,18 +949,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	private class OnResponseListener implements FormatDialog.ResponseListener
-	{
-		@Override
-		public void Response(Boolean accept)
-		{
-			if (accept)
-			{
-				updateGallery();
-			}
-		}
-	}
-
 	@TargetApi(12)
 	static public boolean isCamera(UsbDevice device)
 	{
@@ -1031,6 +1033,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		public void onDestroyActionMode(ActionMode mode)
 		{
 			endMultiSelectMode();
+            mMode = null;
 		}
 	}
 

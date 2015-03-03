@@ -231,25 +231,33 @@ public class LocalImage extends MetaMedia {
 	}
 
 	@Override
+
 	public boolean rename(String baseName) {
-		Boolean imageSuccess = true;
-		Boolean xmpSuccess = true;
+		Boolean success;
 
-		String filename = getName();
-		String ext = filename.substring(filename.lastIndexOf("."),
-				filename.length());
+        success = renameAssociatedFile(mImage, baseName);
+		if (hasXmpFile())
+        {
+            success = success && renameAssociatedFile(getXmpFile(), baseName);
+        }
+        if (hasJpgFile())
+        {
+            success = success && renameAssociatedFile(getJpgFile(), baseName);
+        }
 
-		String rename = baseName + ext;
-		File renameFile = new File(mImage.getParent() + File.separator + rename);
-		mImage.renameTo(renameFile);
-
-		if (hasXmpFile()) {
-			rename = baseName + ".xmp";
-			File renameXmp = new File(mImage.getParent(), rename);
-			xmpSuccess = getXmpFile().renameTo(renameXmp);
-		}
-		return imageSuccess && xmpSuccess;
+		return success;
 	}
+
+    public boolean renameAssociatedFile(File original, String baseName)
+    {
+        String filename = original.getName();
+        String ext = filename.substring(filename.lastIndexOf("."),
+                filename.length());
+
+        String rename = baseName + ext;
+        File renameFile = new File(mImage.getParent(), rename);
+        return original.renameTo(renameFile);
+    }
 
 	public boolean hasXmp() {
 		return hasXmpFile() || mMetadata.containsDirectoryOfType(XmpDirectory.class);
@@ -258,23 +266,33 @@ public class LocalImage extends MetaMedia {
 	private boolean hasXmpFile() {
 		return getXmpFile().exists();
 	}
+    private boolean hasJpgFile() {
+        return getJpgFile().exists();
+    }
 
 	private File getXmpFile() {
-		if (mXmp != null)
-			return mXmp;
+		if (mXmp == null)
+            mXmp = getAssociatedFile("xmp");
 
-		String name = mImage.getName();
-		int pos = name.lastIndexOf(".");
-		if (pos > 0) {
-			name = name.substring(0, pos);
-		}
-		name += ".xmp";
-
-		mXmp = new File(mImage.getParent(), name);
 		return mXmp;
 	}
 
-	public void writeXmp() {
+    private File getJpgFile() {
+        return getAssociatedFile("jpg");
+    }
+
+    private File getAssociatedFile(String ext) {
+        String name = mImage.getName();
+        int pos = name.lastIndexOf(".");
+        if (pos > 0) {
+            name = name.substring(0, pos);
+        }
+        name += "." + ext;
+
+        return new File(mImage.getParent(), name);
+    }
+
+    public void writeXmp() {
 		OutputStream os = getXmpOutputStream();
 		if (os == null)
 			return;
