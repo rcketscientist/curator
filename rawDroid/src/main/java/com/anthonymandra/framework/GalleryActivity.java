@@ -456,7 +456,8 @@ public abstract class GalleryActivity extends ActionBarActivity
 //			justDelete = true;
 //			message = getString(R.string.warningRecycleMtp);
 //		}
-		/* else */if (!useRecycle)
+		/* else */
+        if (!useRecycle)
 		{
 			justDelete = true;
 			message = getString(R.string.warningDeleteDirect);
