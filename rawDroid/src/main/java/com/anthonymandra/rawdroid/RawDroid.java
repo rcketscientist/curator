@@ -3,7 +3,6 @@ package com.anthonymandra.rawdroid;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -15,6 +14,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
@@ -25,9 +25,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar.OnNavigationListener;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -45,13 +52,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.widget.ShareActionProvider;
-import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.GalleryActivity;
@@ -64,7 +64,6 @@ import com.anthonymandra.widget.LoadingImageView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
 import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.ChangeLogDialog;
 import com.inscription.WhatsNewDialog;
@@ -82,15 +81,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public class RawDroid extends GalleryActivity implements OnNavigationListener, OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-		OnShareTargetSelectedListener, OnSharedPreferenceChangeListener
+        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener
 {
 	private static final String TAG = RawDroid.class.getSimpleName();
 
 	public static final String KEY_STARTUP_DIR = "keyStartupDir";
 
-	public static final String LICENSE_RECEIVER = "com.anthonymandra.rawdroid.LicenseResponse";
-	public static final String LICENSE_REQUEST = "com.anthonymandra.rawdroid.LicenseRequest";
-	public static final String PERMISSION = "com.anthonymandra.rawdroid.permission";
 	public static final String LICENSE_RESULT = "license_result";
 	public static final int LICENSE_ALLOW = 1;
 	public static final int LICENSE_DISALLOW = 2;
@@ -159,8 +155,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	protected ArrayList<MediaItem> mSelectedImages = new ArrayList<MediaItem>();
 	protected List<MediaItem> mItemsForIntent = new ArrayList<MediaItem>();
 
-	Dialog formatDialog;
-
 	// Selection support
 	private boolean multiSelectMode;
 
@@ -180,6 +174,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
+        setSupportActionBar(toolbar);
 
 		doFirstRun();
         doProCheck();
@@ -209,7 +205,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		mImageDecoder = new ImageDecoder(this, mImageThumbSize);
 		mImageDecoder.setFolderImage(R.drawable.android_folder);
 		mImageDecoder.setUnknownImage(R.drawable.unkown_file);
-		mImageDecoder.addImageCache(getSupportFragmentManager(), cacheParams);
+		mImageDecoder.addImageCache(getFragmentManager(), cacheParams);
 
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
@@ -227,12 +223,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 		// getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        getSupportActionBar().setNavigationMode(android.support.v7.app.ActionBar.NAVIGATION_MODE_LIST);
 		Context context = getSupportActionBar().getThemedContext();
 
-		navAdapter = new ArrayAdapter<SpinnerFile>(context, R.layout.sherlock_spinner_item, new ArrayList<SpinnerFile>());
-		navAdapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-		getSupportActionBar().setListNavigationCallbacks(navAdapter, this);
+		navAdapter = new ArrayAdapter<SpinnerFile>(context, android.R.layout.simple_spinner_item, new ArrayList<SpinnerFile>());
+		navAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        getSupportActionBar().setListNavigationCallbacks(navAdapter, this);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(this);
@@ -252,7 +248,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			setRecentFolder();
 		}
 
-        licenseHandler = new LicenseHandler();
+        licenseHandler = new LicenseHandler(this);
 	}
 
 	private void doFirstRun()
@@ -262,7 +258,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
         {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("isFirstRun", false);
-            editor.commit();
+            editor.apply();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.welcomeTitle);
@@ -408,7 +404,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		getSupportMenuInflater().inflate(R.menu.gallery_options, menu);
+		getMenuInflater().inflate(R.menu.gallery_options, menu);
 		return true;
 	}
 
@@ -522,7 +518,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(PREFS_MOST_RECENT_IMPORT, destination.getPath());
-		editor.commit();
+		editor.apply();
 
 		CopyImageTask ct = new CopyImageTask(destination);
 		ct.execute(mItemsForIntent);
@@ -557,7 +553,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, destination.getPath());
-        editor.commit();
+        editor.apply();
 
         CopyThumbTask ct = new CopyThumbTask(destination);
         ct.execute(mItemsForIntent);
@@ -609,7 +605,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 //		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 //		SharedPreferences.Editor editor = settings.edit();
 //		editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, destPath);
-//		editor.commit();
+//		editor.apply();
 //
 //		CopyThumbTask ct = new CopyThumbTask(new File(destPath));
 //		ct.execute(mItemsForIntent);
@@ -862,7 +858,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	{
         if (lockNavigation)
         {
-            Toast.makeText(this, R.string.tutorialNavDisabled, Toast.LENGTH_SHORT);
+            Toast.makeText(this, R.string.tutorialNavDisabled, Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -897,8 +893,16 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onBackPressed()
 	{
-		if (mCurrentPath.equals(ROOT))
-			super.onBackPressed();
+        // Default back operation in action mode
+        if (mMode != null)
+        {
+            super.onBackPressed();
+            // Same as: mMode.finish();
+        }
+		else if (mCurrentPath.equals(ROOT))
+        {
+            super.onBackPressed();
+        }
 		else
 		{
 			upOneLevel();
@@ -993,12 +997,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu)
 		{
-			getSupportMenuInflater().inflate(R.menu.gallery_contextual, menu);
-			getSupportMenuInflater().inflate(R.menu.gallery_options, menu);
+			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
+//			getMenuInflater().inflate(R.menu.gallery_options, menu);
 			MenuItem actionItem = menu.findItem(R.id.galleryShare);
 			if (actionItem != null)
 			{
-				mShareProvider = (ShareActionProvider) actionItem.getActionProvider();
+				mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
 				mShareProvider.setOnShareTargetSelectedListener(RawDroid.this);
 				mShareProvider.setShareIntent(mShareIntent);
 			}
@@ -1057,17 +1061,13 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		{
 			mMode.setTitle(mSelectedImages.size() + " selected");
 		}
-        if (mSelectedImages.size() == 0)
+        if (mSelectedImages.size() == 1)
         {
-            return;
+            setShareUri(arrayUri.get(0));
         }
 		else if (mSelectedImages.size() > 1)
 		{
             setShareUri(arrayUri);
-		}
-		else
-		{
-            setShareUri(arrayUri.get(0));
 		}
 	}
 
@@ -1209,7 +1209,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 			if (mSelectedImages.size() > 0)
 			{
-				RawObject lastSelected = mSelectedImages.get(mSelectedImages.size() - 1);
+				MediaItem lastSelected = mSelectedImages.get(mSelectedImages.size() - 1);
 				int lastIndex = mVisibleItems.indexOf(lastSelected);
 
 				// Later selection
@@ -1238,7 +1238,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			notifyDataSetChanged();
 		}
 
-		public void removeSelection(RawObject media)
+		public void removeSelection(MediaItem media)
 		{
 			mSelectedImages.remove(media);
 			updateSelection();
@@ -1300,7 +1300,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void startContextualActionBar()
 	{
-		mMode = startActionMode(new GalleryActionMode());
+		mMode = startSupportActionMode(new GalleryActionMode());
 		startMultiSelectMode();
 	}
 
@@ -1354,14 +1354,14 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
         if (lockViewer)
         {
-            Toast.makeText(this, R.string.tutorialViewerDisabled, Toast.LENGTH_SHORT);
+            Toast.makeText(this, R.string.tutorialViewerDisabled, Toast.LENGTH_SHORT).show();
             return;
         }
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(PREFS_MOST_RECENT_FOLDER, mCurrentPath.getPath());
-        editor.commit();
+        editor.apply();
 
         Intent viewer = new Intent(this, ViewerChooser.class);
         viewer.setData(media.getUri());
@@ -1432,7 +1432,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 			importProgress.setMax(copyList.size());
 
-			for (RawObject toCopy : copyList)
+			for (MediaItem toCopy : copyList)
 			{
 				publishProgress(toCopy.getName());
 				boolean result = toCopy.copy(mDestination);
@@ -1540,7 +1540,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
                 processWatermark = true;
                 if (watermarkText.isEmpty())
                 {
-                    Toast.makeText(RawDroid.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG);
+                    Toast.makeText(RawDroid.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
                     processWatermark = false;
                 }
                 else
@@ -1613,9 +1613,6 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	}
 
     int tutorialStage = 0;
-    int  noPoint = 1000001; // This is the point chosen in showcaseView to define Target.NONE
-    // We're defining it manually because back to back Target.NONE don't update text
-//    PointTarget lowerRight = new PointTarget(0,0);//mDisplayWidth - 50, mDisplayHeight - 30);
 	public void runTutorial()
 	{
         tutorialStage = 0;
@@ -1642,7 +1639,11 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
         }
 
-        catch (FileNotFoundException e) {}
+        catch (FileNotFoundException e)
+        {
+            Toast.makeText(this, "Unable to open tutorial examples.  Please skip file selection.", Toast.LENGTH_LONG).show();
+        }
+
 
         updatePath(tutorialDirectory);
         lockNavigation = true;
@@ -1724,18 +1725,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
                     closeOptionsMenu(); //if overflow was shown
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
-                    Target image1 = new ViewTarget(imageGrid.getChildAt(0));
-                    if (image1 == null)
+                    View view0 = imageGrid.getChildAt(0);
+                    if (view0 != null)
+                        tutorial.setShowcase(new ViewTarget(view0), true);
+                    else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-                    tutorial.setShowcase(image1, true);
 					break;
 				case 11: // Add select
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
-                    Target image3 = new ViewTarget(imageGrid.getChildAt(2));
-                    if (image3 == null)
+                    View view2 = imageGrid.getChildAt(2);
+                    if (view2 != null)
+                        tutorial.setShowcase(new ViewTarget(view2), true);
+                    else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-                    tutorial.setShowcase(image3, true);
 					break;
 				case 12: // Select feedback
                     tutorial.setScaleMultiplier(1f);
@@ -1759,18 +1762,20 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
                         mMode.finish();
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
-                    Target image2 = new ViewTarget(imageGrid.getChildAt(1));
-                    if (image2 == null)
+                    View view1 = imageGrid.getChildAt(1);
+                    if (view1 != null)
+                        tutorial.setShowcase(new ViewTarget(view1), true);
+                    else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-                    tutorial.setShowcase(image2, true);
                     break;
                 case 16: // Select between end
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
-                    Target image4 = new ViewTarget(imageGrid.getChildAt(3));
-                    if (image4 == null)
+                    View view3 = imageGrid.getChildAt(3);
+                    if (view3 != null)
+                        tutorial.setShowcase(new ViewTarget(view3), true);
+                    else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-                    tutorial.setShowcase(image4, true);
                     break;
                 case 17: // Select between feedback
                     tutorial.setScaleMultiplier(1f);
@@ -1854,14 +1859,16 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
      */
     private void setTutorialActionView(int itemId, boolean animate)
     {
-       ActionItemTarget item = new ActionItemTarget(this, itemId);
-       ActionViewTarget overflow = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
+        ActionItemTarget item = new ActionItemTarget(this, itemId);
+        ActionViewTarget overflow = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
 
-        if (item != null)
+        Point overflowLocation = overflow.getPoint();
+        Point itemLocation = item.getPoint();
+        if (itemLocation != null)
         {
-            if (overflow != null)
+            if (overflowLocation != null)
             {
-                if (overflow.getPoint().equals(item.getPoint()))
+                if (overflowLocation.equals(itemLocation))
                     openOptionsMenu();   // Change size of showcase?
             }
 
@@ -1925,7 +1932,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			mProgressDialog.dismiss();
 			AlertDialog.Builder builder = new AlertDialog.Builder(RawDroid.this);
 			builder.setTitle(R.string.imageFolders);
-			builder.setSingleChoiceItems(imageFolders.toArray(new String[0]), -1, new DialogInterface.OnClickListener()
+			builder.setSingleChoiceItems(imageFolders.toArray(new String[imageFolders.size()]), -1, new DialogInterface.OnClickListener()
 			{
 				@Override
 				public void onClick(DialogInterface dialog, int which)

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
@@ -55,6 +56,8 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 	{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.legacy_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
+        setSupportActionBar(toolbar);
 
         initialize();
 
@@ -235,8 +238,8 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 			if (screennail == null)
 				return null;
 
-			int width = 0;
-			int height = 0;
+			int width;
+			int height;
 
 			if (which == INDEX_CURRENT && mLargeBitmap != null)
 			{
@@ -522,11 +525,10 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 			if (imageData == null)
 				return null;
 
-            Bitmap image =  Util.createBitmapLarge(imageData,
+            return  Util.createBitmapLarge(imageData,
                     LegacyViewerActivity.displayWidth,
                     LegacyViewerActivity.displayHeight,
                     true);
-            return image;
         }
 
 		@Override

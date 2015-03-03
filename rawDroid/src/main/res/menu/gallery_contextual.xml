@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/gallery_delete"
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="1"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/delete"/>
     <item
         android:id="@+id/galleryExportThumbs"
         android:icon="@android:drawable/ic_menu_gallery"
         android:orderInCategory="5"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/exportThumbnails"/>
     <item
         android:id="@+id/galleryMoveImages"
         android:icon="@drawable/import_images"
         android:orderInCategory="3"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/moveImages"/>
     <item
         android:id="@+id/galleryRename"
         android:icon="@android:drawable/ic_menu_edit"
         android:orderInCategory="2"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/rename"/>
     <item
         android:id="@+id/galleryShare"
-        android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"
-        android:showAsAction="always"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:showAsAction="always"
         android:title="@string/shareWith"/>
 
 </menu>

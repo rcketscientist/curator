@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/gallerySelectAll"
         android:icon="@drawable/select_all"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
         android:id="@+id/gallery_usb"
         android:icon="@drawable/usb"
         android:orderInCategory="11"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/usb"/>
     <item
         android:id="@+id/gallery_recycle"
         android:icon="@drawable/recycle"
         android:orderInCategory="12"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
     <item
         android:id="@+id/gallerySearch"
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="10"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="Search"/>
     <item android:title="@string/help"
         android:orderInCategory="20">
@@ -31,25 +32,25 @@
                 android:id="@+id/galleryContact"
                 android:icon="@android:drawable/ic_menu_send"
                 android:orderInCategory="31"
-                android:showAsAction="never"
+                app:showAsAction="never"
                 android:title="@string/contact"/>
             <item
                 android:id="@+id/galleryClearCache"
                 android:icon="@android:drawable/ic_menu_report_image"
                 android:orderInCategory="32"
-                android:showAsAction="never"
+                app:showAsAction="never"
                 android:title="@string/clearCache"/>
             <item
                 android:id="@+id/galleryTutorial"
                 android:icon="@android:drawable/ic_menu_help"
                 android:orderInCategory="33"
-                android:showAsAction="never"
+                app:showAsAction="never"
                 android:title="@string/tutorial"/>
             <item
                 android:id="@+id/galleryAbout"
                 android:icon="@android:drawable/ic_menu_search"
                 android:orderInCategory="34"
-                android:showAsAction="never"
+                app:showAsAction="never"
                 android:title="@string/about"/>
         </menu>
     </item>
@@ -57,7 +58,7 @@
         android:id="@+id/gallerySettings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="21"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/settings"/>
 
 </menu>

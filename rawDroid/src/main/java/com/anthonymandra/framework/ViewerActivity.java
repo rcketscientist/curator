@@ -1,5 +1,7 @@
 package com.anthonymandra.framework;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -11,25 +13,24 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ActionProvider;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.view.ActionProvider;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
-import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.Constants;
@@ -44,12 +45,10 @@ import com.anthonymandra.widget.HistogramView;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by amand_000 on 8/27/13.
- */
 public abstract class ViewerActivity extends GalleryActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener {
 
@@ -127,7 +126,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         super.onCreate(savedInstanceState);
@@ -140,7 +139,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             finish();
         }
 
-        licenseHandler = new ViewerLicenseHandler();
+        licenseHandler = new ViewerLicenseHandler(this);
     }
 
     @Override
@@ -202,7 +201,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             editor.commit();
         }
 
-        int indexHint = 0;
+        int indexHint;
         if (input.isDirectory())
         {
             setPath(input);
@@ -276,7 +275,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         metaFragment = findViewById(R.id.metaPanel);
         navFragment = findViewById(R.id.navPanel);
         
-        viewerLayout = findViewById(R.id.frameLayoutViewer);
+        viewerLayout = findViewById(R.id.viewerLayout);
 
         histView = (HistogramView) findViewById(R.id.histogramView1);
         metaPanel = findViewById(R.id.tableLayoutMeta);
@@ -340,7 +339,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         int actionBarHeight = 0;
         // Calculate ActionBar height
         TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(com.actionbarsherlock.R.attr.actionBarSize, tv, true))
+        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
         {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
         }
@@ -525,7 +524,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     private void hideSidebar()
     {
     	showSidebar = false;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.hide(xmpFrag);
         transaction.commitAllowingStateLoss();
     }
@@ -533,7 +532,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     private void showSidebar()
     {
     	showSidebar = true;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.show(xmpFrag);
         transaction.commitAllowingStateLoss();
     }
@@ -614,7 +613,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             {
                 Toast.makeText(ViewerActivity.this,
                         "Memory Error: Histogram failed due to recycled image.  Try swapping slower or using Legacy Viewer.",
-                        Toast.LENGTH_SHORT);
+                        Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
                 return null;
             }
@@ -674,11 +673,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        getSupportMenuInflater().inflate(R.menu.viewer_options, menu);
+        getMenuInflater().inflate(R.menu.viewer_options, menu);
         MenuItem actionItem = menu.findItem(R.id.viewShare);
         if (actionItem != null)
         {
-            mShareProvider = (ShareActionProvider) actionItem.getActionProvider();
+            mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
             mShareProvider.setShareIntent(mShareIntent);
             mShareProvider.setSubUiVisibilityListener(this);
         }
@@ -735,9 +734,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
     	if (xmpFrag != null)
     	{
-	        FragmentManager fm = getSupportFragmentManager();
+	        FragmentManager fm = getFragmentManager();
 	        FragmentTransaction ft = fm.beginTransaction();
-	        ft.remove(getSupportFragmentManager().findFragmentByTag(XmpFragment.FRAGMENT_TAG));
+	        ft.remove(getFragmentManager().findFragmentByTag(XmpFragment.FRAGMENT_TAG));
 	        ft.commitAllowingStateLoss();
 	        fm.executePendingTransactions();
     	}
@@ -754,7 +753,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         	container = R.id.xmpRightContainer;
         }
          
-        FragmentManager fm = getSupportFragmentManager();
+        FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(container, xmpFrag, XmpFragment.FRAGMENT_TAG);      
         ft.commitAllowingStateLoss();
@@ -818,7 +817,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, dest.getParent());
-        editor.commit();
+        editor.apply();
 
         boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
         String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
@@ -918,9 +917,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
                     autoHide.cancel();
                 hidePanels();
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                xmpFrag = XmpFragment.newInstance((MetaMedia) getCurrentItem());
-                transaction.add(R.id.frameLayoutViewer, xmpFrag);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                xmpFrag = XmpFragment.newInstance(getCurrentItem());
+                transaction.add(R.id.viewerLayout, xmpFrag);
                 transaction.addToBackStack(null);
                 transaction.commitAllowingStateLoss();
             }
@@ -995,13 +994,21 @@ public abstract class ViewerActivity extends GalleryActivity implements
         });
     }
 
-    protected class ViewerLicenseHandler extends LicenseHandler
+    protected static class ViewerLicenseHandler extends LicenseHandler
     {
+        private final WeakReference<ViewerActivity> mViewer;
+
+        public ViewerLicenseHandler(ViewerActivity viewer)
+        {
+            super(viewer);
+            this.mViewer = new WeakReference<ViewerActivity>(viewer);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-            setWatermark(state != License.LicenseState.pro);
+            mViewer.get().setWatermark(state != License.LicenseState.pro);
         }
     }
 }

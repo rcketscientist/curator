@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--
          <item
@@ -19,54 +20,54 @@
         android:id="@+id/view_recycle"
         android:orderInCategory="27"
         android:icon="@drawable/recycle"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
     <item
         android:id="@+id/view_edit"
         android:orderInCategory="13"
         android:icon="@android:drawable/ic_menu_edit"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/edit"/>
     <item
         android:id="@+id/view_delete"
         android:orderInCategory="11"
         android:icon="@android:drawable/ic_menu_delete"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/delete"/>
     <item
         android:id="@+id/view_save"
         android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="21"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/save_as"/>
     <item
         android:id="@+id/view_wallpaper"
         android:orderInCategory="27"
-        android:showAsAction="never"
+        app:showAsAction="never"
         android:title="@string/wallpaper"/>
     <item
         android:id="@+id/view_tag"
         android:orderInCategory="12"
         android:icon="@drawable/tag"
-        android:showAsAction="always"
+        app:showAsAction="always"
         android:title="@string/view_tag"/>
     <item
         android:id="@+id/viewSettings"
         android:orderInCategory="28"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/settings"/>
     <item
         android:id="@+id/viewHelp"
         android:orderInCategory="29"
         android:icon="@android:drawable/ic_menu_help"
-        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom"
         android:title="@string/help"/>
     <item
         android:id="@+id/viewShare"
         android:orderInCategory="14"
-        android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"
-        android:showAsAction="always"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:showAsAction="always"
         android:title="@string/shareWith"/>
 
 </menu>

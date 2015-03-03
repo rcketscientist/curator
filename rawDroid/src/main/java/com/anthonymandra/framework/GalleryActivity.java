@@ -16,10 +16,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.widget.ShareActionProvider;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.BuildConfig;
@@ -30,6 +30,7 @@ import com.anthonymandra.rawdroid.R;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,7 +43,7 @@ import java.util.Locale;
  * @author amand_000
  * 
  */
-public abstract class GalleryActivity extends SherlockFragmentActivity
+public abstract class GalleryActivity extends ActionBarActivity
 {
 	@SuppressWarnings("unused")
 	private static final String TAG = GalleryActivity.class.getSimpleName();
@@ -788,7 +789,12 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
 		}
 	}
 
-    public class LicenseHandler extends Handler{
+    public static class LicenseHandler extends Handler{
+        private final WeakReference<Context> mContext;
+        public LicenseHandler(Context context)
+        {
+            mContext = new WeakReference<Context>(context);
+        }
 
         @Override
         public void handleMessage(Message msg) {
@@ -796,11 +802,11 @@ public abstract class GalleryActivity extends SherlockFragmentActivity
             if (state.toString().startsWith("modified"))
             {
                 for (int i=0; i < 3; i++)
-                    Toast.makeText(GalleryActivity.this, "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
             }
             else if (state == License.LicenseState.error)
             {
-                Toast.makeText(GalleryActivity.this, "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext.get(), "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
             }
         }
     }

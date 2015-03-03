@@ -1,6 +1,6 @@
 package com.anthonymandra.framework;
 
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 
 public abstract class CacheManager
 {

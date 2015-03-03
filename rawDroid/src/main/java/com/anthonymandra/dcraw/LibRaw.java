@@ -43,7 +43,7 @@ public class LibRaw
 
 	/**
 	 * Gets the thumbnail from a raw image.  Thumbnail will be returned as a jpeg.  In the case of a 
-	 * thumbnail that is in rgb format it will be converted using {@link config}, {@link quality}, and {@link format}.
+	 * thumbnail that is in rgb format it will be converted using {@code config}, {@code quality}, and {@code format}.
 	 * @param filePath Path to the file
 	 * @param exif Array will be populated with exif information
 	 * @param quality Quality at which to compress an rgb thumbnail

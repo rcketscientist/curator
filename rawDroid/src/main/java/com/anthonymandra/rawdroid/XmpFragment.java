@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -18,7 +19,6 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.MetaObject;
@@ -27,7 +27,6 @@ import com.anthonymandra.widget.MultiSpinner;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +39,7 @@ import pl.polidea.treeview.TreeNodeInfo;
 import pl.polidea.treeview.TreeStateManager;
 import pl.polidea.treeview.TreeViewList;
 
-public class XmpFragment extends SherlockFragment
+public class XmpFragment extends Fragment
 {
 	private static final String TAG = XmpFragment.class.getSimpleName();
 	public static final String FRAGMENT_TAG = "XmpFragment";
@@ -178,7 +177,7 @@ public class XmpFragment extends SherlockFragment
 		Set<String>	allKeywords = new HashSet<String>();
 		allKeywords.addAll(selectedKeywords);
 		allKeywords.addAll(customKeywords.getSelected());
-		return allKeywords.toArray(new String[0]);
+		return allKeywords.toArray(new String[allKeywords.size()]);
 	}
 
 	private void setLastXmp()

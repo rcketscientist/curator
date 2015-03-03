@@ -17,6 +17,7 @@
 package com.android.gallery3d.app;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -28,9 +29,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.ActionBar;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ImageCacheService;
 import com.android.gallery3d.data.MediaItem;
@@ -39,6 +40,7 @@ import com.android.gallery3d.ui.GLRootView;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
+import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.RawDroid;
 
 public abstract class PhotoPage extends AbstractGalleryActivity implements
@@ -259,6 +261,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
 //        mSelectionManager = new SelectionManager(mActivity, false);
 //        mMenuExecutor = new MenuExecutor(mActivity, mSelectionManager);
         setContentView(mContentView);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
+        setSupportActionBar(toolbar);
 
         mPhotoView = new PhotoView(this);
         mPhotoView.setListener(this);
