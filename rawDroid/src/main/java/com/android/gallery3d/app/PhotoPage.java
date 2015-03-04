@@ -263,6 +263,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         setContentView(mContentView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.app_name);
+        getSupportActionBar().setLogo(R.drawable.icon);
 
         mPhotoView = new PhotoView(this);
         mPhotoView.setListener(this);

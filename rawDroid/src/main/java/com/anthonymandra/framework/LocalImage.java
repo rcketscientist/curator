@@ -91,9 +91,9 @@ public class LocalImage extends MetaMedia {
 
 	@Override
 	public boolean delete() {
-		if (hasXmp())
+		if (hasXmpFile())
 			getXmpFile().delete();
-        if (hasJpeg())
+        if (hasJpgFile())
             getJpgFile().delete();
 		return mImage.delete();
 	}
