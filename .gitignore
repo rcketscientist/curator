@@ -17,3 +17,10 @@ local.properties
 /gradle/gradlew.bat
 /gradle/gradlew
 build
+/rawDroid/src/main/obj
+/rawDroid/src/main/libs
+/rawDroid/build/outputs/apk/rawDroid-pro-debug.apk
+/rawDroid/build/outputs/apk/rawDroid-pro-debug-unaligned.apk
+/rawDroid/build/outputs/apk/rawDroid-demo-debug-unaligned.apk
+/rawDroid/build/outputs/apk/rawDroid-demo-debug.apk
+/rawDroid/build/outputs/apk/manifest-merger-demo-debug-report.txt

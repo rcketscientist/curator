@@ -25,6 +25,11 @@
             android:title="@string/prefTitleUseLegacyViewer" />
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="prefKeyUseImmersive"
+            android:summary="@string/prefSummaryUseImmersive"
+            android:title="@string/prefTitleUseImmersive" />
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="prefKeyShowImageInterface"
             android:summary="@string/prefSummaryImageInterface"
             android:title="@string/prefTitleImageInterface" />
@@ -43,7 +48,13 @@
         <ListPreference
             android:defaultValue="Automatic"
             android:key="prefKeyShowHist"
-            android:title="@string/prefTitleShowHist" 
+            android:title="@string/prefTitleShowHist"
+            android:entries="@array/showOptions"
+            android:entryValues="@array/showOptionsValues"/>
+        <ListPreference
+            android:defaultValue="Always"
+            android:key="prefKeyShowToolbar"
+            android:title="@string/prefTitleShowToolbar"
             android:entries="@array/showOptions"
             android:entryValues="@array/showOptionsValues"/>
     </PreferenceCategory>

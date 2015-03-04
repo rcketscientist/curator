@@ -139,6 +139,7 @@
     <string name="prefTitleShowNav">Show Navigation</string>
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>
+    <string name="prefTitleShowToolbar">Show Toolbar</string>
     <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Make sure you are connected and try again later.</string>
     <string name="prefSummaryLicenseModified">Application was modified!  Uninstall apps designed to crack licensing.  There are also reports of some ad blocking software making modifications.  You may need to reinstall afterwards.</string>
     <string name="prefSummaryLicense">All features are available.  Thank you for your support!</string>
@@ -160,6 +161,8 @@
     <string name="prefSummaryRightMargin">Distance from right edge of image to right edge of watermark.</string>
     <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark.</string>
     <string name="prefSummaryBottomMargin">Distance from bottom edge of image to bottom edge of watermark.</string>
+    <string name="prefTitleUseImmersive">Use Immersive</string>
+    <string name="prefSummaryUseImmersive">(Android 4.4+) Hide nav and status bars until swiped in.</string>
 
     <string name="buypro">Click here to upgrade to Rawdroid Pro to unlock features and improve speed!</string>
     

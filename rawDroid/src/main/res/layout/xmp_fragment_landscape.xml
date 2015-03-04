@@ -4,7 +4,6 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="256dp"
     android:layout_height="match_parent"
-    android:background="@color/Transparent_Black"
     android:orientation="vertical" >
 
     <LinearLayout

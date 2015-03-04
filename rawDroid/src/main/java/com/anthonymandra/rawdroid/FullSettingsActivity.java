@@ -55,6 +55,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static final String KEY_ClearGalleryCache = "prefKeyClearGalleryCache";
 	public static final String KEY_ShowMeta = "prefKeyShowMeta";
 	public static final String KEY_ShowHist = "prefKeyShowHist";
+    public static final String KEY_ShowToolbar = "prefKeyShowToolbar";
 	public static final String KEY_XmpRed = "prefKeyXmpRed";
 	public static final String KEY_XmpBlue = "prefKeyXmpBlue";
 	public static final String KEY_XmpGreen = "prefKeyXmpGreen";
@@ -62,6 +63,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static final String KEY_XmpPurple = "prefKeyXmpPurple";
 	public static final String KEY_CustomKeywords = "prefKeyCustomKeywords";
     public static final String KEY_UseLegacyViewer = "prefKeyUseLegacyViewer";
+    public static final String KEY_UseImmersive = "prefKeyUseImmersive";
 
     public static final String KEY_ExifName = "prefKeyName";
     public static final String KEY_ExifDate = "prefKeyExifDate";
@@ -429,27 +431,37 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		updateShowMeta(sharedPreferences);
 		updateShowNav(sharedPreferences);
 		updateShowHist(sharedPreferences);
+        updateShowToolbar(sharedPreferences);
 	}
 
 	private static void updateShowMeta(SharedPreferences sharedPreferences)
 	{
-		ListPreference showMeta = (ListPreference) mPreferenceManager.findPreference(KEY_ShowMeta);
-		showMeta.setSummary(translateShowOptionsText(sharedPreferences.getString(KEY_ShowMeta, "Automatic")));
+        updateShowView(sharedPreferences, KEY_ShowMeta);
 	}
 
 	private static void updateShowNav(SharedPreferences sharedPreferences)
 	{
-		ListPreference showNav = (ListPreference) mPreferenceManager.findPreference(KEY_ShowNav);
-		showNav.setSummary(translateShowOptionsText(sharedPreferences.getString(KEY_ShowNav, "Automatic")));
+        updateShowView(sharedPreferences, KEY_ShowNav);
 	}
 
 	private static void updateShowHist(SharedPreferences sharedPreferences)
 	{
-		ListPreference showHist = (ListPreference) mPreferenceManager.findPreference(KEY_ShowHist);
-		showHist.setSummary(translateShowOptionsText(sharedPreferences.getString(KEY_ShowHist, "Automatic")));
+        updateShowView(sharedPreferences, KEY_ShowHist);
 	}
 
-	private static String translateShowOptionsText(String result)
+    private static void updateShowToolbar(SharedPreferences sharedPreferences)
+    {
+        updateShowView(sharedPreferences, KEY_ShowToolbar);
+    }
+
+    private static void updateShowView(SharedPreferences sharedPreferences, String key)
+    {
+        ListPreference showViewPref = (ListPreference) mPreferenceManager.findPreference(key);
+        showViewPref.setSummary(translateShowOptionsText(sharedPreferences.getString(key, "Automatic")));
+    }
+
+
+    private static String translateShowOptionsText(String result)
 	{
 		if (result.equals("Always"))
 		{
@@ -527,6 +539,10 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
         else if (key.equals(KEY_ShowHist))
         {
             updateShowHist(sharedPreferences);
+        }
+        else if (key.equals(KEY_ShowToolbar))
+        {
+            updateShowToolbar(sharedPreferences);
         }
         else if (key.equals(KEY_XmpRed))
         {

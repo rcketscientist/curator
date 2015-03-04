@@ -56,10 +56,8 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 	{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.legacy_layout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.app_name);
-        getSupportActionBar().setLogo(R.drawable.icon);
 
         initialize();
 

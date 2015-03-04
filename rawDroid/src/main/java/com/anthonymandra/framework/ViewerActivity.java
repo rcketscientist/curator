@@ -1,5 +1,6 @@
 package com.anthonymandra.framework;
 
+import android.annotation.TargetApi;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.WallpaperManager;
@@ -24,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TableRow;
@@ -126,18 +126,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-        if (Util.hasKitkat())
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        else
-        {
-            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
+//        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 
         super.onCreate(savedInstanceState);
         mImageIndex = setPathFromIntent();
@@ -153,12 +142,44 @@ public abstract class ViewerActivity extends GalleryActivity implements
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+
+        if (hasFocus)
+        {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean useImmersive = settings.getBoolean(FullSettingsActivity.KEY_UseImmersive, true);
+            if (Util.hasKitkat() && useImmersive)
+            {
+                setImmersive();
+            }
+            else
+            {
+                this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            }
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (Constants.VariantCode < 12)
         {
             setWatermark(true);
         }
+    }
+
+    @TargetApi(19)
+    protected void setImmersive()
+    {
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     protected void initialize()
@@ -362,14 +383,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
             sideBarWrapper.requestLayout();
         }
 
-        ((ViewGroup.MarginLayoutParams) metaFragment.getLayoutParams()).setMargins(0, actionBarHeight, 0, 0);
-        ((ViewGroup.MarginLayoutParams) navFragment.getLayoutParams()).setMargins(0, actionBarHeight, 0, 0);
-        metaFragment.requestLayout();
-        navFragment.requestLayout();
+//        ((ViewGroup.MarginLayoutParams) metaFragment.getLayoutParams()).setMargins(0, actionBarHeight, 0, 0);
+//        metaFragment.requestLayout();
 
         // Hide title text and set home as up
         actionBar.setDisplayShowTitleEnabled(false);
-        // actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.translucent_black_rect));
     }
 
@@ -439,7 +457,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 {
                     histView.setVisibility(View.VISIBLE);
                 }
-                getSupportActionBar().show();
+                if (!settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always")
+                        .equals("Never"))
+                {
+                    getSupportActionBar().show();
+                }
             }
         });
     }
@@ -467,7 +489,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 {
                     histView.setVisibility(View.INVISIBLE);
                 }
-                getSupportActionBar().hide();
+                if (!settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always")
+                        .equals("Always"))
+                {
+                    getSupportActionBar().hide();
+                }
             }
         });
     }
