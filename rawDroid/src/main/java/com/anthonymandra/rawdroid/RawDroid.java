@@ -68,6 +68,7 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.ChangeLogDialog;
 import com.inscription.WhatsNewDialog;
 
+import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.BufferedWriter;
@@ -747,7 +748,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 //        }
 //        else
 //        {
-            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+            intent = new Intent(this, FileManagerActivity.class);
+            intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
+//            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
 
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
@@ -792,7 +795,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 //        }
 //        else
 //        {
-            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+//            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+            intent = new Intent(this, FileManagerActivity.class);
+            intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             String recentExport = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
 

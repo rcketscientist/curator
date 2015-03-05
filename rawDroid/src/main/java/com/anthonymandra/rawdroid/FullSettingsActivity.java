@@ -24,6 +24,7 @@ import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.SeekBarPreference;
 
+import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.BufferedInputStream;
@@ -279,15 +280,17 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	 */
 	private static void requestImportKeywords()
 	{
-		Intent keywords = new Intent(FileManagerIntents.ACTION_PICK_FILE);
+//		Intent keywords = new Intent(FileManagerIntents.ACTION_PICK_FILE);
+        Intent intent = new Intent(mActivity, FileManagerActivity.class);
+        intent.setAction(FileManagerIntents.ACTION_PICK_FILE);
 
 		// Set fancy title and button (optional)
-		keywords.putExtra(FileManagerIntents.EXTRA_TITLE, R.string.choosefile);
-		keywords.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, R.string.import1);
+        intent.putExtra(FileManagerIntents.EXTRA_TITLE, R.string.choosefile);
+        intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, R.string.import1);
 
 		try
 		{
-			mActivity.startActivityForResult(keywords, REQUEST_CODE_PICK_KEYWORD_FILE);
+			mActivity.startActivityForResult(intent, REQUEST_CODE_PICK_KEYWORD_FILE);
 		}
 		catch (ActivityNotFoundException e)
 		{

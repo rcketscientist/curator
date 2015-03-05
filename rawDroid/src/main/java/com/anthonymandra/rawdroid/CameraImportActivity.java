@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.anthonymandra.framework.AsyncTask;
 
+import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
@@ -243,7 +244,9 @@ public class CameraImportActivity extends Activity
 
 	private void requestImportImageLocation()
 	{
-		Intent images = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+//		Intent images = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+        Intent intent = new Intent(this, FileManagerActivity.class);
+        intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
@@ -258,15 +261,15 @@ public class CameraImportActivity extends Activity
 		}
 
 		// Construct URI from file name.
-		images.setData(Uri.fromFile(importLocation));
+        intent.setData(Uri.fromFile(importLocation));
 
 		// Set fancy title and button (optional)
-		images.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
-		images.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
+        intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
+        intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
 
 		try
 		{
-			startActivityForResult(images, REQUEST_MTP_IMPORT_DIR);
+			startActivityForResult(intent, REQUEST_MTP_IMPORT_DIR);
 		}
 		catch (ActivityNotFoundException e)
 		{

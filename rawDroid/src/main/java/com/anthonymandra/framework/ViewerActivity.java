@@ -42,6 +42,7 @@ import com.anthonymandra.rawdroid.ViewerChooser;
 import com.anthonymandra.rawdroid.XmpFragment;
 import com.anthonymandra.widget.HistogramView;
 
+import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
@@ -668,7 +669,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void saveImage()
     {
-        Intent intent = new Intent(FileManagerIntents.ACTION_PICK_FILE);
+        Intent intent = new Intent(this, FileManagerActivity.class);
+        intent.setAction(FileManagerIntents.ACTION_PICK_FILE);
+//        Intent intent = new Intent(FileManagerIntents.ACTION_PICK_FILE);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         String startPath = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
         MediaItem media = getCurrentItem();
