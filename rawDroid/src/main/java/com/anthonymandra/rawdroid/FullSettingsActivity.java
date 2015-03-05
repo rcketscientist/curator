@@ -49,11 +49,9 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	public static final String KEY_ShowNativeFiles = "prefKeyShowNativeFiles";
 	public static final String KEY_ShowUnknownFiles = "prefKeyShowUnknownFiles";
 	public static final String KEY_RecycleBinSize = "prefKeyRecycleBinSize";
-	public static final String KEY_ComingSoon = "prefKeyComingSoon";
 	public static final String KEY_DeleteConfirmation = "prefKeyDeleteConfirmation";
 	public static final String KEY_UseRecycleBin = "prefKeyUseRecycleBin";
 	public static final String KEY_ImportKeywords = "prefKeyImportKeywords";
-	public static final String KEY_ClearGalleryCache = "prefKeyClearGalleryCache";
 	public static final String KEY_ShowMeta = "prefKeyShowMeta";
 	public static final String KEY_ShowHist = "prefKeyShowHist";
     public static final String KEY_ShowToolbar = "prefKeyShowToolbar";
@@ -111,11 +109,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
     private static Handler licenseHandler;
 
-    public enum WatermarkLocations
-    {
-        Center, LowerLeft, LowerRight, UpperLeft, UpperRight
-    }
-
     @Override
     protected boolean isValidFragment (String fragmentName) {
         return
@@ -140,30 +133,28 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
 		if (action != null)
 		{
-			if (action.equals(PREFS_STORAGE))
-			{
-				addPreferencesFromResource(R.xml.preferences_storage);
-			}
-			else if (action.equals(PREFS_METADATA))
-			{
-				addPreferencesFromResource(R.xml.preferences_metadata);
-				attachMetaButtons();
-				updateXmpColors();
-			}
-			else if (action.equals(PREFS_VIEW))
-			{
-				addPreferencesFromResource(R.xml.preferences_view);
-				updateShowOptions();
-			}
-            else if (action.equals(PREFS_LICENSE))
+            switch (action)
             {
-                addPreferencesFromResource(R.xml.preferences_license);
-                attachLicenseButtons();
-            }
-            else if (action.equals(PREFS_WATERMARK))
-            {
-                addPreferencesFromResource(R.xml.preferences_watermark);
-                updateWatermarkOptions();
+                case PREFS_STORAGE:
+                    addPreferencesFromResource(R.xml.preferences_storage);
+                    break;
+                case PREFS_METADATA:
+                    addPreferencesFromResource(R.xml.preferences_metadata);
+                    attachMetaButtons();
+                    updateXmpColors();
+                    break;
+                case PREFS_VIEW:
+                    addPreferencesFromResource(R.xml.preferences_view);
+                    updateShowOptions();
+                    break;
+                case PREFS_LICENSE:
+                    addPreferencesFromResource(R.xml.preferences_license);
+                    attachLicenseButtons();
+                    break;
+                case PREFS_WATERMARK:
+                    addPreferencesFromResource(R.xml.preferences_watermark);
+                    updateWatermarkOptions();
+                    break;
             }
 		}
 		else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
@@ -217,7 +208,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 	 */
 	private static void attachMetaButtons()
 	{
-		Preference button = (Preference) mPreferenceManager.findPreference(KEY_ImportKeywords);
+		Preference button = mPreferenceManager.findPreference(KEY_ImportKeywords);
 		if (button != null)
 		{
 			button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -237,7 +228,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
      */
     private static void attachLicenseButtons()
     {
-        Preference manual = (Preference) mPreferenceManager.findPreference(KEY_ManualLicense);
+        Preference manual = mPreferenceManager.findPreference(KEY_ManualLicense);
         if (manual != null)
         {
             manual.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -246,14 +237,14 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
                 public boolean onPreferenceClick(Preference arg0)
                 {
                     LicenseManager.getLicense(mActivity.getBaseContext(), licenseHandler);
-                    Preference check = (Preference) mPreferenceManager.findPreference(KEY_ManualLicense);
+                    Preference check = mPreferenceManager.findPreference(KEY_ManualLicense);
                     check.setTitle(mActivity.getString(R.string.prefTitleManualLicense) + " (Request Sent)");
                     return true;
                 }
             });
         }
 
-        Preference email = (Preference) mPreferenceManager.findPreference(KEY_Contact);
+        Preference email = mPreferenceManager.findPreference(KEY_Contact);
         if (email != null)
         {
             email.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -325,7 +316,6 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 		catch (IOException e)
 		{
 			Toast.makeText(this, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
-			return;
 		}
 	}
 
@@ -466,133 +456,106 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
     private static String translateShowOptionsText(String result)
 	{
-		if (result.equals("Always"))
-		{
-			return prefShowOptions[1];
-		}
-		else if (result.equals("Never"))
-		{
-			return prefShowOptions[2];
-		}
-		else
-		// Automatic
-		{
-			return prefShowOptions[0];
-		}
+        switch (result)
+        {
+            case "Always":
+                return prefShowOptions[1];
+            case "Never":
+                return prefShowOptions[2];
+            default:
+                 return prefShowOptions[0]; // Automatic
+        }
 	}
 
     private static String translateWatermarkLocations(String result)
     {
-        if (result.equals("Lower Left"))
+        switch (result)
         {
-            return prefWatermarkLocations[1];
-        }
-        else if (result.equals("Lower Right"))
-        {
-            return prefWatermarkLocations[2];
-        }
-
-        else if (result.equals("Upper Left"))
-        {
-            return prefWatermarkLocations[3];
-        }
-
-        else if (result.equals("Upper Right"))
-        {
-            return prefWatermarkLocations[4];
-        }
-        else
-        {
-            return prefWatermarkLocations[0];
+            case "Lower Left":
+                return prefWatermarkLocations[1];
+            case "Lower Right":
+                return prefWatermarkLocations[2];
+            case "Upper Left":
+                return prefWatermarkLocations[3];
+            case "Upper Right":
+                return prefWatermarkLocations[4];
+            default:
+                return prefWatermarkLocations[0];
         }
     }
 
     private static void onSharedPreferenceChangedBase(SharedPreferences sharedPreferences, String key)
     {
-        if (key.equals(KEY_RecycleBinSize))
+        switch (key)
         {
-            int value;
-            EditTextPreference option = (EditTextPreference) mPreferenceManager.findPreference(KEY_RecycleBinSize);
-            try
-            {
-                value = Integer.parseInt(option.getText());
-            }
-            catch (NumberFormatException e)
-            {
-                value = 0;
-            }
-            if (value < minRecycleBin)
-            {
-                option.setText(String.valueOf(minRecycleBin));
-            }
-            else if (value > maxRecycleBin)
-            {
-                option.setText(String.valueOf(maxRecycleBin));
-            }
-            updateRecycleBin();
-        }
-        else if (key.equals(KEY_ShowMeta))
-        {
-            updateShowMeta(sharedPreferences);
-        }
-        else if (key.equals(KEY_ShowNav))
-        {
-            updateShowNav(sharedPreferences);
-        }
-        else if (key.equals(KEY_ShowHist))
-        {
-            updateShowHist(sharedPreferences);
-        }
-        else if (key.equals(KEY_ShowToolbar))
-        {
-            updateShowToolbar(sharedPreferences);
-        }
-        else if (key.equals(KEY_XmpRed))
-        {
-            updateRed(sharedPreferences);
-        }
-        else if (key.equals(KEY_XmpBlue))
-        {
-            updateBlue(sharedPreferences);
-        }
-        else if (key.equals(KEY_XmpGreen))
-        {
-            updateGreen(sharedPreferences);
-        }
-        else if (key.equals(KEY_XmpYellow))
-        {
-            updateYellow(sharedPreferences);
-        }
-        else if (key.equals(KEY_XmpPurple))
-        {
-            updatePurple(sharedPreferences);
-        }
-        else if (key.equals(KEY_EnableWatermark))
-        {
-            updateWatermarkEnabled();
-        }
-        else if (key.equals(KEY_WatermarkLocation))
-        {
-            updateWatermarkLocation();
-        }
-        else if (key.equals(KEY_WatermarkTopMargin) ||
-        		key.equals(KEY_WatermarkBottomMargin) ||
-        		key.equals(KEY_WatermarkLeftMargin) ||
-        		key.equals(KEY_WatermarkRightMargin))
-        {
-        	updateWatermarkMargins();
-        }        		
-        else if (key.equals(KEY_WatermarkSize))
-        {
-            updateWatermarkSize();
-        }
-        else if (key.equals(KEY_WatermarkAlpha))
-        {
-            updateWatermarkAlpha();
-        }
-        else if (key.equals(KEY_WatermarkText))
-        {
-            updateWatermarkText();
+            case KEY_RecycleBinSize:
+                int value;
+                EditTextPreference option = (EditTextPreference) mPreferenceManager.findPreference(KEY_RecycleBinSize);
+                try
+                {
+                    value = Integer.parseInt(option.getText());
+                }
+                catch (NumberFormatException e)
+                {
+                    value = 0;
+                }
+                if (value < minRecycleBin)
+                {
+                    option.setText(String.valueOf(minRecycleBin));
+                } else if (value > maxRecycleBin)
+                {
+                    option.setText(String.valueOf(maxRecycleBin));
+                }
+                updateRecycleBin();
+                break;
+            case KEY_ShowMeta:
+                updateShowMeta(sharedPreferences);
+                break;
+            case KEY_ShowNav:
+                updateShowNav(sharedPreferences);
+                break;
+            case KEY_ShowHist:
+                updateShowHist(sharedPreferences);
+                break;
+            case KEY_ShowToolbar:
+                updateShowToolbar(sharedPreferences);
+                break;
+            case KEY_XmpRed:
+                updateRed(sharedPreferences);
+                break;
+            case KEY_XmpBlue:
+                updateBlue(sharedPreferences);
+                break;
+            case KEY_XmpGreen:
+                updateGreen(sharedPreferences);
+                break;
+            case KEY_XmpYellow:
+                updateYellow(sharedPreferences);
+                break;
+            case KEY_XmpPurple:
+                updatePurple(sharedPreferences);
+                break;
+            case KEY_EnableWatermark:
+                updateWatermarkEnabled();
+                break;
+            case KEY_WatermarkLocation:
+                updateWatermarkLocation();
+                break;
+            case KEY_WatermarkTopMargin:
+            case KEY_WatermarkBottomMargin:
+            case KEY_WatermarkLeftMargin:
+            case KEY_WatermarkRightMargin:
+                updateWatermarkMargins();
+                break;
+            case KEY_WatermarkSize:
+                updateWatermarkSize();
+                break;
+            case KEY_WatermarkAlpha:
+                updateWatermarkAlpha();
+                break;
+            case KEY_WatermarkText:
+                updateWatermarkText();
+                break;
         }
     }
 
@@ -633,6 +596,14 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
         }
     }
 
+    private static class LicenseHandler extends Handler{
+        @Override
+        public void handleMessage(Message msg) {
+            License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+            updateLicense(state);
+        }
+    }
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragmentLicense extends PreferenceFragment
     {
@@ -642,14 +613,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences_license);
 
-            licenseHandler = new Handler()
-            {
-                @Override
-                public void handleMessage(Message msg) {
-                    License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-                    updateLicense(state);
-                }
-            };
+            licenseHandler = new LicenseHandler();
         }
 
         @Override
@@ -663,8 +627,8 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
     private static void updateLicense(License.LicenseState state)
     {
-        Preference license = (Preference) mPreferenceManager.findPreference(KEY_license);
-        Preference check = (Preference) mPreferenceManager.findPreference(KEY_ManualLicense);
+        Preference license = mPreferenceManager.findPreference(KEY_license);
+        Preference check = mPreferenceManager.findPreference(KEY_ManualLicense);
 
         // This might happen if the user switches tabs quickly while looking up license
         if (check == null || license == null)
@@ -698,7 +662,7 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 
     private static void setBuyButton()
     {
-        Preference license = (Preference) mPreferenceManager.findPreference(KEY_license);
+        Preference license = mPreferenceManager.findPreference(KEY_license);
         if (license != null)
         {
             license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
