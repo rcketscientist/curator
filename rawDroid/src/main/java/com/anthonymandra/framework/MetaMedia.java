@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
@@ -28,6 +29,7 @@ import com.drew.metadata.xmp.XmpWriter;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -68,17 +70,25 @@ public abstract class MetaMedia extends MediaItem
 		setLabel(null);
 		setRating(Double.NaN);
 		setSubject(new String[0]);
-		resetXmp();
-		// readXmp(); // When we delete fields we must reread to update.
+        try
+        {
+            resetXmp();
+        }
+        catch (FileNotFoundException e)
+        {
+            Toast.makeText(mContext, "XMP file could not be created.  Thank Google for disabling write access in Android 4.4+.  You can root to fix, or use a card reader.", Toast.LENGTH_LONG).show();
+        }
+        // readXmp(); // When we delete fields we must reread to update.
 	}
 
 	private boolean isLoaded = false;
 
 	public abstract boolean hasXmp();
 
-	protected void resetXmp()
-	{
+	protected void resetXmp() throws FileNotFoundException
+    {
 		BufferedOutputStream bos = getXmpOutputStream();
+
 		XmpWriter.write(bos, mMetadata);
 		mMetadata = new Metadata();
 		readXmp();
@@ -448,7 +458,7 @@ public abstract class MetaMedia extends MediaItem
 
 	protected abstract BufferedInputStream getXmpInputStream();
 
-	protected abstract BufferedOutputStream getXmpOutputStream();
+	protected abstract BufferedOutputStream getXmpOutputStream() throws FileNotFoundException;
 
 	public boolean readMetadata()
 	{

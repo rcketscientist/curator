@@ -227,7 +227,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             finish();
         }
 
-        if (isNative(input))
+        if (Util.isNative(input))
         {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
@@ -975,7 +975,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             updateViewerItems();
 
             // If current images are native and viewing is turned off finish activity
-            if (media == null || !sharedPreferences.getBoolean(key, true) && isNative(new File(media.getFilePath())))
+            if (media == null || !sharedPreferences.getBoolean(key, true) && Util.isNative(new File(media.getFilePath())))
             {
                 if (mVisibleItems.size() > 0)
                 {

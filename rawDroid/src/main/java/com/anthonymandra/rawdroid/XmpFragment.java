@@ -27,6 +27,7 @@ import com.anthonymandra.widget.MultiSpinner;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -169,8 +170,15 @@ public class XmpFragment extends Fragment
 
 		setLastXmp();
 //		Log.d(TAG, "Modifications: " + mMedia.getName());
-		mMedia.writeXmp();
-	}
+        try
+        {
+            mMedia.writeXmp();
+        }
+        catch (FileNotFoundException e)
+        {
+            Toast.makeText(getActivity(), "XMP file could not be created.  Thank Google for disabling write access in Android 4.4+.  You can root to fix, or use a card reader.", Toast.LENGTH_LONG).show();
+        }
+    }
 	
 	private String[] getSubject()
 	{

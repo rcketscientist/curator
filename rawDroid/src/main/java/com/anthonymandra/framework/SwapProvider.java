@@ -7,6 +7,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -65,7 +67,13 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
             // If it returns 1 - then it matches the Uri defined in onCreate
             case 1:
-               
+                File input =  new File(uri.getFragment());
+                //If it's a native file, just share it directly.
+                if (Util.isNative(input))
+                {
+                    return ParcelFileDescriptor.open(input, ParcelFileDescriptor.MODE_READ_WRITE);
+                }
+
                 File swapFile = new File(Util.getDiskCacheDir(getContext(),
                         GalleryActivity.SWAP_BIN_DIR),
                         uri.getLastPathSegment());
@@ -74,7 +82,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 // Some receivers may call multiple times
                 if (!swapFile.exists())
                 {
-                	LocalImage image = new LocalImage(getContext(), new File(uri.getFragment()));
+                	LocalImage image = new LocalImage(getContext(), input);
 	                byte[] imageData = image.getThumb();
 	                if (imageData == null)
 	                    return null;
@@ -124,7 +132,19 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 					}
 					
 					if (!success)
-						Toast.makeText(getContext(), "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
+                    {
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                Toast.makeText(getContext(), "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
+                            }
+                        } );
+                    }
+
+
                 }
 
                 return ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);

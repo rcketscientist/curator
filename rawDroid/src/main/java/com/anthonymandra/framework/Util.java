@@ -185,15 +185,22 @@ public class Util
 		return numberOfLevels > 0;
 	}
 
-	public static boolean isNativeImage(RawObject file)
-	{
-		String filename = file.getName();
-		int dotposition = filename.lastIndexOf(".");
-		String ext = filename.substring(dotposition + 1, filename.length()).toLowerCase();
+//	public static boolean isNativeImage(RawObject file)
+//	{
+//		String filename = file.getName();
+//		int dotposition = filename.lastIndexOf(".");
+//		String ext = filename.substring(dotposition + 1, filename.length()).toLowerCase();
+//
+//		// Compare against supported android image formats
+//		return (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif"));
+//	}
 
-		// Compare against supported android image formats
-		return (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif"));
-	}
+    public static boolean isNative(File file)
+    {
+        String filename = file.getName().toLowerCase();
+        return (filename.endsWith("jpg") || filename.endsWith("jpeg")
+                || filename.endsWith("png") || filename.endsWith("bmp") || filename.endsWith("gif"));
+    }
 	
 	public static boolean isTiffImage(File file)
 	{

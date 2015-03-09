@@ -81,7 +81,7 @@ public class LocalImage extends MetaMedia {
     @Override
     public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
                                         int waterHeight, Margins margins) {
-        if (Util.isNativeImage(this)) {
+        if (Util.isNative(getFile())) {
             return getImageBytes();
         }
 
@@ -130,7 +130,7 @@ public class LocalImage extends MetaMedia {
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public byte[] getThumb() {
-		if (Util.isNativeImage(this)) {
+		if (Util.isNative(getFile())) {
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile(mImage.getPath(), o);
@@ -217,12 +217,9 @@ public class LocalImage extends MetaMedia {
 	}
 
 	@Override
-	public BufferedOutputStream getXmpOutputStream() {
-		try {
-			return new BufferedOutputStream(new FileOutputStream(getXmpFile()));
-		} catch (FileNotFoundException e) {
-			return null;
-		}
+	public BufferedOutputStream getXmpOutputStream() throws FileNotFoundException
+    {
+        return new BufferedOutputStream(new FileOutputStream(getXmpFile()));
 	}
 
 	@Override
@@ -292,10 +289,9 @@ public class LocalImage extends MetaMedia {
         return new File(mImage.getParent(), name);
     }
 
-    public void writeXmp() {
+    public void writeXmp() throws FileNotFoundException
+    {
 		OutputStream os = getXmpOutputStream();
-		if (os == null)
-			return;
 
 		writeXmp(os);
         Utils.closeSilently(os);

@@ -258,7 +258,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 		}
 
 		clearSubLists();
-		
+
 		for (File file : mCurrentPath.listFiles())
 		{
             addFileInternal(file);
@@ -761,16 +761,8 @@ public abstract class GalleryActivity extends ActionBarActivity
 		@Override
 		public boolean accept(File file)
 		{
-			return isNative(file);
+			return Util.isNative(file);
 		}
-	}
-
-	protected boolean isNative(File file)
-	{
-		String filename = file.getName();
-		return (filename.toLowerCase(Locale.US).endsWith("jpg") || filename.toLowerCase(Locale.US).endsWith("jpeg")
-				|| filename.toLowerCase(Locale.US).endsWith("png") || filename.toLowerCase(Locale.US).endsWith("bmp") || filename.toLowerCase(Locale.US)
-				.endsWith("gif"));
 	}
 
 	class FileAlphaCompare implements Comparator<File>

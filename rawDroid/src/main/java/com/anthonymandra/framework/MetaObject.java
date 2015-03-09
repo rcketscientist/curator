@@ -1,5 +1,7 @@
 package com.anthonymandra.framework;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by amand_000 on 8/10/13.
  */
@@ -7,7 +9,7 @@ public interface MetaObject {
 
     public void clearXmp();
 
-    public void writeXmp();
+    public void writeXmp() throws FileNotFoundException;
 
     public boolean readMetadata();
 
