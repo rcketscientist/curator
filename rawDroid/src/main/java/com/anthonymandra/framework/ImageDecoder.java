@@ -50,8 +50,7 @@ public class ImageDecoder extends ImageResizer
 			return null;
 		}
 
-	    Bitmap b = decodeSampledBitmapFromByteArray(imageData, mImageWidth, mImageHeight);
-        return b;
+	    return decodeSampledBitmapFromByteArray(imageData, mImageWidth, mImageHeight);
 	}
 
 	@Override

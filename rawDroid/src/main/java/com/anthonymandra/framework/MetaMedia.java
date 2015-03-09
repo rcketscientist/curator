@@ -87,7 +87,7 @@ public abstract class MetaMedia extends MediaItem
 
 	protected void writeXmp(final OutputStream os)
 	{
-		new Runnable()
+		new Thread(new Runnable()
 		{
 			@Override
 			public void run()
@@ -95,7 +95,7 @@ public abstract class MetaMedia extends MediaItem
 				if (mMetadata.containsDirectoryOfType(XmpDirectory.class))
 					XmpWriter.write(os, mMetadata);
 			}
-		}.run();
+		}).start();
 	}
 
 	public String getAperture()
@@ -457,8 +457,7 @@ public abstract class MetaMedia extends MediaItem
 		{
 			boolean metaResult = readMeta();
 			boolean xmpResult = readXmp();
-			boolean result = metaResult && xmpResult;
-			isLoaded = result;
+            isLoaded = metaResult && xmpResult;
 		}
 
 		return isLoaded;

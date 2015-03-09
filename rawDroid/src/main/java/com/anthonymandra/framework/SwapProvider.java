@@ -127,8 +127,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 						Toast.makeText(getContext(), "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
                 }
 
-                ParcelFileDescriptor pfd = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
-                return pfd;            
+                return ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
 
             default:
                 Log.v(TAG, "Unsupported uri: '" + uri + "'.");

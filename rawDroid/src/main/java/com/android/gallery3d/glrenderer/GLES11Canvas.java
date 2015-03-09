@@ -68,10 +68,10 @@ public class GLES11Canvas implements GLCanvas {
     private int mBoxCoords;
 
     private GLState mGLState;
-    private final ArrayList<RawTexture> mTargetStack = new ArrayList<RawTexture>();
+    private final ArrayList<RawTexture> mTargetStack = new ArrayList<>();
 
     private float mAlpha;
-    private final ArrayList<ConfigState> mRestoreStack = new ArrayList<ConfigState>();
+    private final ArrayList<ConfigState> mRestoreStack = new ArrayList<>();
     private ConfigState mRecycledRestoreAction;
 
     private final RectF mDrawTextureSourceRect = new RectF();

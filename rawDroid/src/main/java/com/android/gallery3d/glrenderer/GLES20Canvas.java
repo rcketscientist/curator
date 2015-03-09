@@ -254,7 +254,7 @@ public class GLES20Canvas implements GLCanvas {
     private int[] mFrameBuffer = new int[1];
 
     // Bound textures.
-    private ArrayList<RawTexture> mTargetTextures = new ArrayList<RawTexture>();
+    private ArrayList<RawTexture> mTargetTextures = new ArrayList<>();
 
     // Temporary variables used within calculations
     private final float[] mTempMatrix = new float[32];

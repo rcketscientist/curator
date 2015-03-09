@@ -7,7 +7,6 @@ import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -216,9 +215,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
         Uri data = getIntent().getData();
         if (data == null)
         {
+            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
             finish();
         }
 
+        @SuppressWarnings("ConstantConditions")
         File input = new File(data.getPath());
         if (!input.exists())
         {
@@ -230,7 +231,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-            editor.commit();
+            editor.apply();
         }
 
         int indexHint;
@@ -314,7 +315,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
         navigationPanel = findViewById(R.id.leftNavigation);
 
         // Nav fragment
-        buttonRotate = (ImageButton) findViewById(R.id.imageButtonRotate);
         zoomLevel = (TextView) findViewById(R.id.textViewScale);
         buttonPrev = (ImageButton) findViewById(R.id.imageButtonLeftBack);
         buttonNext = (ImageButton) findViewById(R.id.imageButtonLeftFwd);
@@ -396,18 +396,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
     {
         buttonPrev.setOnClickListener(new PreviousImageClickListener());
         buttonNext.setOnClickListener(new NextImageClickListener());
-        // Rotate
-        buttonRotate.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                int orientation = getRequestedOrientation();
-                orientation = orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                        : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-                setRequestedOrientation(orientation);
-            }
-        });
     }
 
     @Override
@@ -1040,7 +1028,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         public ViewerLicenseHandler(ViewerActivity viewer)
         {
             super(viewer);
-            this.mViewer = new WeakReference<ViewerActivity>(viewer);
+            this.mViewer = new WeakReference<>(viewer);
         }
 
         @Override

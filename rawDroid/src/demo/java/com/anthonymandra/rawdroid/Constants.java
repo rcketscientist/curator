@@ -1,8 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-/**
- * Created by amand_000 on 2/9/14.
- */
 public class Constants {
     public static int VariantCode = 8;
     public static final String KEY_LICENSE_RESPONSE = "licenseResponse";

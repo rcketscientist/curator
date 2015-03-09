@@ -50,7 +50,7 @@ public class LicenseManager extends License {
 
     private static void updateLicense(LicenseState state) {
         lastResponse = state;
-        Message response = licenseHandler.obtainMessage();
+        Message response = licenseHandler.obtainMessage()
         Bundle b = new Bundle();
         b.putSerializable(KEY_LICENSE_RESPONSE, lastResponse);
         response.setData(b);
@@ -60,7 +60,7 @@ public class LicenseManager extends License {
     public static void getLicense(Context c, Handler h) {
         context = c;
         licenseHandler = h;
-        new Runnable() {
+        new Runnable() { //TODO: Unused but doesn't spawn a thread
             @Override
             public void run() {
                 checkLicense();

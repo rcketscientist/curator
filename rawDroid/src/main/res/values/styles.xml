@@ -62,6 +62,11 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
+        <item name="android:actionOverflowButtonStyle">@style/Widget.ActionButton.Overflow</item>
+    </style>
+
+    <style name="Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:contentDescription">@string/abc_action_menu_overflow_description</item>
     </style>
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">

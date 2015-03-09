@@ -65,7 +65,7 @@ public class TiledTexture implements Texture {
 
     public static class Uploader implements OnGLIdleListener {
         private final ArrayDeque<TiledTexture> mTextures =
-                new ArrayDeque<TiledTexture>(INIT_CAPACITY);
+                new ArrayDeque<>(INIT_CAPACITY);
 
         private final GLRoot mGlRoot;
         private boolean mIsQueued = false;
@@ -195,7 +195,7 @@ public class TiledTexture implements Texture {
     public TiledTexture(Bitmap bitmap) {
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
-        ArrayList<Tile> list = new ArrayList<Tile>();
+        ArrayList<Tile> list = new ArrayList<>();
 
         for (int x = 0, w = mWidth; x < w; x += CONTENT_SIZE) {
             for (int y = 0, h = mHeight; y < h; y += CONTENT_SIZE) {

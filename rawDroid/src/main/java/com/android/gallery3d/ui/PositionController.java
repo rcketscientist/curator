@@ -167,19 +167,19 @@ class PositionController {
     // The focused box (Box*) centers at mPlatform's (mCurrentX, mCurrentY)
 
 	private Platform mPlatform = new Platform();
-	private RangeArray<Box> mBoxes = new RangeArray<Box>(-BOX_MAX, BOX_MAX);
+	private RangeArray<Box> mBoxes = new RangeArray<>(-BOX_MAX, BOX_MAX);
 	// The gap at the right of a Box i is at index i. The gap at the left of a
 	// Box i is at index i - 1.
-	private RangeArray<Gap> mGaps = new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
+	private RangeArray<Gap> mGaps = new RangeArray<>(-BOX_MAX, BOX_MAX - 1);
 	private FilmRatio mFilmRatio = new FilmRatio();
 
 	// These are only used during moveBox().
-	private RangeArray<Box> mTempBoxes = new RangeArray<Box>(-BOX_MAX, BOX_MAX);
+	private RangeArray<Box> mTempBoxes = new RangeArray<>(-BOX_MAX, BOX_MAX);
     private RangeArray<Gap> mTempGaps =
-        new RangeArray<Gap>(-BOX_MAX, BOX_MAX - 1);
+        new RangeArray<>(-BOX_MAX, BOX_MAX - 1);
 
     // The output of the PositionController. Available through getPosition().
-	private RangeArray<Rect> mRects = new RangeArray<Rect>(-BOX_MAX, BOX_MAX);
+	private RangeArray<Rect> mRects = new RangeArray<>(-BOX_MAX, BOX_MAX);
 
 	// The direction of a new picture should appear. New pictures pop from top
 	// if this value is true, or from bottom if this value is false.
@@ -885,7 +885,7 @@ class PositionController {
     private void dumpRect(int i) {
         StringBuilder sb = new StringBuilder();
         Rect r = mRects.get(i);
-        sb.append("Rect " + i + ":");
+        sb.append("Rect ").append(i).append(":");
         sb.append("(");
         sb.append(r.centerX());
         sb.append(",");

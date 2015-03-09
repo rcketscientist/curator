@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +29,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +44,7 @@ public class XmpFragment extends Fragment
 	private static final String TAG = XmpFragment.class.getSimpleName();
 	public static final String FRAGMENT_TAG = "XmpFragment";
 	
-	Set<String> selectedKeywords = new HashSet<String>();
+	Set<String> selectedKeywords = new HashSet<>();
 	RatingBar mRatingBar;
 	TreeAdapter mKeywordAdapter;
 	MetaObject mMedia;
@@ -174,7 +174,7 @@ public class XmpFragment extends Fragment
 	
 	private String[] getSubject()
 	{
-		Set<String>	allKeywords = new HashSet<String>();
+		Set<String>	allKeywords = new HashSet<>();
 		allKeywords.addAll(selectedKeywords);
 		allKeywords.addAll(customKeywords.getSelected());
 		return allKeywords.toArray(new String[allKeywords.size()]);
@@ -228,10 +228,8 @@ public class XmpFragment extends Fragment
 				return true;
 			}
 		}
-		if (!bothSubjectEmpty && !Arrays.equals(widgetSubject, metaSubject))
-			return true;
-		return false;
-	}
+        return !bothSubjectEmpty && !Arrays.equals(widgetSubject, metaSubject);
+    }
 
 	private double getRating()
 	{
@@ -324,8 +322,8 @@ public class XmpFragment extends Fragment
 
 	private void createTreeView()
 	{
-		TreeStateManager<ParentChild> manager = new InMemoryTreeStateManager<ParentChild>();
-		TreeBuilder<ParentChild> tree = new TreeBuilder<ParentChild>(manager);
+		TreeStateManager<ParentChild> manager = new InMemoryTreeStateManager<>();
+		TreeBuilder<ParentChild> tree = new TreeBuilder<>(manager);
 		int numberOfLevels = 0;
 		BufferedReader readbuffer = null;
 		try
@@ -335,7 +333,7 @@ public class XmpFragment extends Fragment
 				return;
 			readbuffer = new BufferedReader(new FileReader(keywords));
 			String line;
-			HashMap<Integer, String> parents = new HashMap<Integer, String>();
+			SparseArray<String> parents = new SparseArray<>();
 			parents.put(-1, null);
 			while ((line = readbuffer.readLine()) != null)
 			{
@@ -344,7 +342,7 @@ public class XmpFragment extends Fragment
 				String node = tokens[level];
 				parents.put(level, node);
 				numberOfLevels = Math.max(numberOfLevels, level + 1);
-				ParentChild pair = new ParentChild<String>(parents.get(level - 1), node);
+				ParentChild pair = new ParentChild<>(parents.get(level - 1), node);
 				tree.sequentiallyAddNextNode(pair, level);
 			}
 		}
@@ -470,7 +468,7 @@ public class XmpFragment extends Fragment
 		@Override
 		public View getNewChildView(TreeNodeInfo treeNodeInfo)
 		{
-			View view = getActivity().getLayoutInflater().inflate(R.layout.treeview_item, null);
+			View view = getActivity().getLayoutInflater().inflate(R.layout.treeview_item, null, false);
 			return updateView(view, treeNodeInfo);
 		}
 

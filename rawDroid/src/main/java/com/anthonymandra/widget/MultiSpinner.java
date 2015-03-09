@@ -22,7 +22,7 @@ import java.util.List;
 public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener// , OnCancelListener
 {
 	private List<String> items;
-	private List<String> selected = new ArrayList<String>();
+	private List<String> selected = new ArrayList<>();
 	private static final String delimiter = ",";
 	AlertDialog dialogSelectKeyword;
 
@@ -46,7 +46,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 
 	private void initialize()
 	{
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, new String[]
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, new String[]
 		{ (String) getPrompt() });
 		setAdapter(adapter);
 		parsePreference();
@@ -64,7 +64,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 	private void savePreference()
 	{
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-		sp.edit().putString(FullSettingsActivity.KEY_CustomKeywords, serializeItems()).commit();
+		sp.edit().putString(FullSettingsActivity.KEY_CustomKeywords, serializeItems()).apply();
 	}
 
 	private String serializeItems()
@@ -86,7 +86,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 		if (sp == null)
 			return;
 		String pref = sp.getString(FullSettingsActivity.KEY_CustomKeywords, "");
-		items = new ArrayList<String>();
+		items = new ArrayList<>();
 		Collections.addAll(items, pref.split(delimiter));
 	}
 
@@ -107,7 +107,7 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 	public boolean performClick()
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		List<String> display = new ArrayList<String>(items);
+		List<String> display = new ArrayList<>(items);
 		builder.setMultiChoiceItems(display.toArray(new CharSequence[display.size()]), getSelectedArray(), this);
 		builder.setPositiveButton(R.string.addKeyword, new DialogInterface.OnClickListener()
 		{

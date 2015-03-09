@@ -21,19 +21,6 @@
         android:background="@color/Transparent_Black" >
 
         <TableRow
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
-            <TableRow
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_column="0"
-                android:layout_span="2">
-
-            </TableRow>
-        </TableRow>
-
-        <TableRow
             android:id="@+id/rowName"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >

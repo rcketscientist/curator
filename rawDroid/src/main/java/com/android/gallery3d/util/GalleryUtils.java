@@ -25,8 +25,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.ConditionVariable;
-import android.os.Environment;
-import android.os.StatFs;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -371,22 +369,6 @@ public class GalleryUtils {
 //        }
 //        return R.string.select_image;
 //    }
-
-    public static boolean hasSpaceForSize(long size) {
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            return false;
-        }
-
-        String path = Environment.getExternalStorageDirectory().getPath();
-        try {
-            StatFs stat = new StatFs(path);
-            return stat.getAvailableBlocks() * (long) stat.getBlockSize() > size;
-        } catch (Exception e) {
-            Log.i(TAG, "Fail to access external storage", e);
-        }
-        return false;
-    }
 
     public static boolean isPanorama(MediaItem item) {
         if (item == null) return false;

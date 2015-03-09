@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,13 +48,11 @@ public class AppRater
 			}
 		}
 
-		editor.commit();
+		editor.apply();
 	}
 
 	public static void showRateDialog(final Context mContext, final SharedPreferences.Editor editor)
 	{
-		Dialog dialog = new Dialog(mContext);
-
 		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 		builder.setMessage(R.string.ratingRequest).setTitle("Rate " + APP_TITLE).setIcon(mContext.getApplicationInfo().icon).setCancelable(false)
 				.setPositiveButton("Rate Now", new DialogInterface.OnClickListener()
@@ -95,9 +92,7 @@ public class AppRater
 
 					}
 				});
-		dialog = builder.create();
-
-		dialog.show();
+		builder.create().show();
 	}
 
 	// public static void showRateDialog(final Context mContext, final SharedPreferences.Editor editor)

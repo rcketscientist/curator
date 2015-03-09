@@ -98,7 +98,7 @@ public class TileImageView extends GLView {
     private final RectF mSourceRect = new RectF();
     private final RectF mTargetRect = new RectF();
 
-    private final LongSparseArray<Tile> mActiveTiles = new LongSparseArray<Tile>();
+    private final LongSparseArray<Tile> mActiveTiles = new LongSparseArray<>();
 
     // The following three queue is guarded by TileImageView.this
     private final TileQueue mRecycledQueue = new TileQueue();

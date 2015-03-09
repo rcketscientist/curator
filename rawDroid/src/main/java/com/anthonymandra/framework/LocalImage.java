@@ -124,10 +124,8 @@ public class LocalImage extends MetaMedia {
 		// Log.d(TAG, "isDirectory: " + String.valueOf(mImage.isDirectory()));
 		// Log.d(TAG, "isFile: " + String.valueOf(mImage.isFile()));
 		// Log.d(TAG, "isHidden: " + String.valueOf(mImage.isHidden()));
-		if (!mImage.isFile())
-			return false;
-		return LibRaw.canDecode(mImage);
-	}
+        return mImage.isFile() && LibRaw.canDecode(mImage);
+    }
 
 	@SuppressLint("SimpleDateFormat")
 	@Override

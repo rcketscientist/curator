@@ -129,7 +129,7 @@ public final class DiskLruCache implements Closeable {
 	private long size = 0;
 	private Writer journalWriter;
     private final LinkedHashMap<String, Entry> lruEntries
-            = new LinkedHashMap<String, Entry>(0, 0.75f, true);
+            = new LinkedHashMap<>(0, 0.75f, true);
 	private int redundantOpCount;
 
 	/**
@@ -466,7 +466,7 @@ public final class DiskLruCache implements Closeable {
         }
 
         redundantOpCount++;
-        journalWriter.append(READ + ' ' + key + '\n');
+        journalWriter.append(READ + ' ').append(key).append('\n');
         if (journalRebuildRequired()) {
             executorService.submit(cleanupCallable);
         }
@@ -500,7 +500,7 @@ public final class DiskLruCache implements Closeable {
         Editor editor = new Editor(entry);
         entry.currentEditor = editor;
 
-        // flush the journal before creating files to prevent file leaks
+        // flush the .journal before creating files to prevent file leaks
         journalWriter.write(DIRTY + ' ' + key + '\n');
         journalWriter.flush();
         return editor;
@@ -614,7 +614,7 @@ public final class DiskLruCache implements Closeable {
         }
 
         redundantOpCount++;
-        journalWriter.append(REMOVE + ' ' + key + '\n');
+        journalWriter.append(REMOVE + ' ').append(key).append('\n');
         lruEntries.remove(key);
 
         if (journalRebuildRequired()) {
@@ -653,7 +653,7 @@ public final class DiskLruCache implements Closeable {
         if (journalWriter == null) {
             return; // already closed
         }
-        for (Entry entry : new ArrayList<Entry>(lruEntries.values())) {
+        for (Entry entry : new ArrayList<>(lruEntries.values())) {
             if (entry.currentEditor != null) {
                 entry.currentEditor.abort();
             }

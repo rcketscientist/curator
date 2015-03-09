@@ -144,7 +144,7 @@ public class GLView {
 
         // Build parent-child links
         if (mComponents == null) {
-            mComponents = new ArrayList<GLView>();
+            mComponents = new ArrayList<>();
         }
         mComponents.add(component);
         component.mParent = this;

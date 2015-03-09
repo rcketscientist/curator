@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.preference.DialogPreference;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -84,13 +85,13 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
         mValueText.setTextSize(32);
         params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.FILL_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
         layout.addView(mValueText, params);
 
         mSeekBar = new SeekBar(mContext);
         mSeekBar.setOnSeekBarChangeListener(this);
-        layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         if (shouldPersist())
             mValue = getPersistedInt(mDefault);
@@ -102,7 +103,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     }
 
     @Override
-    protected void onBindDialogView(View v) {
+    protected void onBindDialogView(@NonNull View v) {
         super.onBindDialogView(v);
         mSeekBar.setMax(mMax);
         mSeekBar.setProgress(mValue);

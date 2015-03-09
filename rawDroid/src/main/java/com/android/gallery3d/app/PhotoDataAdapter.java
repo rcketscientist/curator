@@ -119,7 +119,7 @@ public class PhotoDataAdapter implements Model {
     // [mActiveStart, mActiveEnd) range must be contained within
     // the [mContentStart, mContentEnd) range.
     private HashMap<Uri, ImageEntry> mImageCache =
-            new HashMap<Uri, ImageEntry>();
+            new HashMap<>();
     private int mActiveStart = 0;
     private int mActiveEnd = 0;
 
@@ -829,7 +829,7 @@ public class PhotoDataAdapter implements Model {
 	}
 
 	private void updateImageCache()	{
-        HashSet<Uri> toBeRemoved = new HashSet<Uri>(mImageCache.keySet());
+        HashSet<Uri> toBeRemoved = new HashSet<>(mImageCache.keySet());
         for (int i = mActiveStart; i < mActiveEnd; ++i) {
 			MediaItem item = mData[i % DATA_CACHE_SIZE];
             if (item == null) continue;
@@ -934,7 +934,7 @@ public class PhotoDataAdapter implements Model {
     }
 
     private <T> T executeAndWait(Callable<T> callable) {
-        FutureTask<T> task = new FutureTask<T>(callable);
+        FutureTask<T> task = new FutureTask<>(callable);
         mMainHandler.sendMessage(
                 mMainHandler.obtainMessage(MSG_RUN_OBJECT, task));
         try {
@@ -1033,7 +1033,7 @@ public class PhotoDataAdapter implements Model {
 
 	public ArrayList<MediaItem> getMediaItem(int start, int count)
 	{
-		ArrayList<MediaItem> result = new ArrayList<MediaItem>();
+		ArrayList<MediaItem> result = new ArrayList<>();
 
 		for (int i = start; i <= start + count; i++)
 		{

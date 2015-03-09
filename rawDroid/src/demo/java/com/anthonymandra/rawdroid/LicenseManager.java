@@ -7,9 +7,6 @@ import android.os.Message;
 
 import com.anthonymandra.framework.License;
 
-/**
- * Created by amand_000 on 9/10/13.
- */
 public class LicenseManager extends License {
     private static final String TAG = LicenseManager.class.getSimpleName();
     private static final LicenseState INITIAL_RESPONSE = LicenseState.demo;

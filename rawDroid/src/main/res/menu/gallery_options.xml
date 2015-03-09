@@ -24,7 +24,7 @@
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="10"
         app:showAsAction="ifRoom"
-        android:title="Search"/>
+        android:title="@string/search"/>
     <item android:title="@string/help"
         android:orderInCategory="20">
         <menu>

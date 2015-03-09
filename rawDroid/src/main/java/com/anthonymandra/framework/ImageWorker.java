@@ -198,7 +198,7 @@ public abstract class ImageWorker extends CacheManager
 
 		public BitmapWorkerTask(LoadingImageView imageView)
 		{
-			imageViewReference = new WeakReference<LoadingImageView>(imageView);
+			imageViewReference = new WeakReference<>(imageView);
 		}
 
 		/**
@@ -322,7 +322,7 @@ public abstract class ImageWorker extends CacheManager
         public AsyncDrawable(Resources res, Bitmap bitmap, BitmapWorkerTask bitmapWorkerTask) {
             super(res, bitmap);
             bitmapWorkerTaskReference =
-                new WeakReference<BitmapWorkerTask>(bitmapWorkerTask);
+                new WeakReference<>(bitmapWorkerTask);
         }
 
         public BitmapWorkerTask getBitmapWorkerTask() {

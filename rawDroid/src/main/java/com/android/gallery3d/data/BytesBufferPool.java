@@ -66,7 +66,7 @@ public class BytesBufferPool {
     private final ArrayList<BytesBuffer> mList;
 
     public BytesBufferPool(int poolSize, int bufferSize) {
-        mList = new ArrayList<BytesBuffer>(poolSize);
+        mList = new ArrayList<>(poolSize);
         mPoolSize = poolSize;
         mBufferSize = bufferSize;
     }

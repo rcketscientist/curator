@@ -77,9 +77,9 @@ public class GLRootView extends GLSurfaceView implements GLSurfaceView.Renderer,
 
 	private final GalleryEGLConfigChooser mEglConfigChooser = new GalleryEGLConfigChooser();
 
-	private final ArrayList<CanvasAnimation> mAnimations = new ArrayList<CanvasAnimation>();
+	private final ArrayList<CanvasAnimation> mAnimations = new ArrayList<>();
 
-	private final LinkedList<OnGLIdleListener> mIdleListeners = new LinkedList<OnGLIdleListener>();
+	private final LinkedList<OnGLIdleListener> mIdleListeners = new LinkedList<>();
 
 	private final IdleRunner mIdleRunner = new IdleRunner();
 

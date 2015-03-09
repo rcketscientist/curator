@@ -64,7 +64,7 @@ public class GLCanvasImp implements GLCanvas
 
 	private float mAlpha;
 	private final Rect mClipRect = new Rect();
-	private final Stack<ConfigState> mRestoreStack = new Stack<ConfigState>();
+	private final Stack<ConfigState> mRestoreStack = new Stack<>();
 	private ConfigState mRecycledRestoreAction;
 
 	private final RectF mDrawTextureSourceRect = new RectF();

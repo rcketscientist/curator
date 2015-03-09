@@ -153,8 +153,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private int mImageThumbSpacing;
 	private ImageDecoder mImageDecoder;
 	private ImageAdapter imageAdapter;
-	protected ArrayList<MediaItem> mSelectedImages = new ArrayList<MediaItem>();
-	protected List<MediaItem> mItemsForIntent = new ArrayList<MediaItem>();
+	protected ArrayList<MediaItem> mSelectedImages = new ArrayList<>();
+	protected List<MediaItem> mItemsForIntent = new ArrayList<>();
 
 	// Selection support
 	private boolean multiSelectMode;
@@ -168,6 +168,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
+    private Toolbar toolbar;
+    private View overflowButton;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -175,10 +177,15 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.galleryToolbar);
+        toolbar = (Toolbar) findViewById(R.id.galleryToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setLogo(R.drawable.icon);
+
+        //trick to grab overflow
+        final ArrayList<View> outViews = new ArrayList<>();
+        getWindow().getDecorView().findViewsWithText(outViews, getString(R.string.abc_action_menu_overflow_description), View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
+
 
 		doFirstRun();
         doProCheck();
@@ -229,7 +236,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
         getSupportActionBar().setNavigationMode(android.support.v7.app.ActionBar.NAVIGATION_MODE_LIST);
 		Context context = getSupportActionBar().getThemedContext();
 
-		navAdapter = new ArrayAdapter<SpinnerFile>(context, android.R.layout.simple_spinner_item, new ArrayList<SpinnerFile>());
+		navAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, new ArrayList<SpinnerFile>());
 		navAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         getSupportActionBar().setListNavigationCallbacks(navAdapter, this);
 
@@ -711,7 +718,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void requestRename()
 	{
-		List<MediaItem> filesToRename = new ArrayList<MediaItem>();
+		List<MediaItem> filesToRename = new ArrayList<>();
 		if (mSelectedImages.size() > 0)
 		{
 			filesToRename = storeSelectionForIntent();
@@ -1061,7 +1068,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	public void updateSelection()
 	{
-        ArrayList<Uri> arrayUri = new ArrayList<Uri>();
+        ArrayList<Uri> arrayUri = new ArrayList<>();
         for (RawObject selection : mSelectedImages)
         {
             arrayUri.add(selection.getSwapUri());
@@ -1415,7 +1422,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	{
 		private ProgressDialog importProgress;
 		private File mDestination;
-		List<String> failed = new ArrayList<String>();
+		List<String> failed = new ArrayList<>();
 
 		public CopyImageTask(File destination)
 		{
@@ -1499,7 +1506,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	{
 		private ProgressDialog importProgress;
 		private File mDestination;
-		List<String> failed = new ArrayList<String>();
+		List<String> failed = new ArrayList<>();
 
 		public CopyThumbTask(File destination)
 		{
@@ -1869,6 +1876,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
      */
     private void setTutorialActionView(int itemId, boolean animate)
     {
+
         ActionItemTarget item = new ActionItemTarget(this, itemId);
         ActionViewTarget overflow = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
 
@@ -1893,7 +1901,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	protected class SearchTask extends AsyncTask<Void, Void, Void> implements OnCancelListener
 	{
 		boolean cancelled;
-		List<String> imageFolders = new ArrayList<String>();
+		List<String> imageFolders = new ArrayList<>();
 
 		@Override
 		protected void onPreExecute()

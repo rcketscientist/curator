@@ -45,7 +45,7 @@ public abstract class UploadedTexture extends BasicTexture {
     // To prevent keeping allocation the borders, we store those used borders here.
     // Since the length will be power of two, it won't use too much memory.
     private static HashMap<BorderKey, Bitmap> sBorderLines =
-            new HashMap<BorderKey, Bitmap>();
+            new HashMap<>();
     private static BorderKey sBorderKey = new BorderKey();
 
     @SuppressWarnings("unused")

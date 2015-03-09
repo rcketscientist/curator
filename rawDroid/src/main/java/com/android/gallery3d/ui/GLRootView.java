@@ -96,10 +96,10 @@ public class GLRootView extends GLSurfaceView
     private volatile boolean mRenderRequested = false;
 
     private final ArrayList<CanvasAnimation> mAnimations =
-            new ArrayList<CanvasAnimation>();
+            new ArrayList<>();
 
     private final ArrayDeque<OnGLIdleListener> mIdleListeners =
-            new ArrayDeque<OnGLIdleListener>();
+            new ArrayDeque<>();
 
     private final IdleRunner mIdleRunner = new IdleRunner();
 

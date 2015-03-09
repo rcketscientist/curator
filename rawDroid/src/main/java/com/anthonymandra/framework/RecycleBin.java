@@ -58,7 +58,7 @@ public class RecycleBin
 	private boolean mDiskCacheStarting = true;
 	private int mDiskCacheSize = DEFAULT_DISK_CACHE_SIZE;
 	private File mDiskCacheDir;
-	private List<ImageUpdateListener> listeners = new ArrayList<ImageUpdateListener>();
+	private List<ImageUpdateListener> listeners = new ArrayList<>();
 
 	/**
 	 * Creating a new ImageCache object using the default parameters.
@@ -124,10 +124,6 @@ public class RecycleBin
 				{
 					Log.e(TAG, "addFileToBin - " + e);
 				}
-				catch (Exception e)
-				{
-					Log.e(TAG, "addFileToBin - " + e);
-				}
 				finally
 				{
                     Utils.closeSilently(bis);
@@ -163,7 +159,6 @@ public class RecycleBin
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 			{
-				InputStream inputStream = null;
 				try
 				{
 					final DiskLruCache.Snapshot snapshot = bin.get(key);
@@ -175,10 +170,6 @@ public class RecycleBin
 				catch (final IOException e)
 				{
 					Log.e(TAG, "getFileFromBin - " + e);
-				}
-				finally
-				{
-                    Utils.closeSilently(inputStream);
 				}
 			}
 			return null;
@@ -300,7 +291,7 @@ public class RecycleBin
 
 	public List<String> getKeys()
 	{
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		final DiskLruCache bin = getDiskCache();
 		if (bin == null)
 		{

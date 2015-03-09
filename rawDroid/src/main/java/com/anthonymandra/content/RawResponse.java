@@ -152,4 +152,4 @@ public class RawResponse implements HttpResponse
 	public void setParams(HttpParams httpParams)
 	{
 	}
-};
+}

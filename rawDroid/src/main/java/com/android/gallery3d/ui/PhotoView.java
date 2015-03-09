@@ -188,7 +188,7 @@ public class PhotoView extends GLView {
     // The picture entries, the valid index is from -SCREEN_NAIL_MAX to
     // SCREEN_NAIL_MAX.
     private final RangeArray<Picture> mPictures =
-            new RangeArray<Picture>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
+            new RangeArray<>(-SCREEN_NAIL_MAX, SCREEN_NAIL_MAX);
     private Size[] mSizes = new Size[2 * SCREEN_NAIL_MAX + 1];
 
     private final MyGestureListener mGestureListener;

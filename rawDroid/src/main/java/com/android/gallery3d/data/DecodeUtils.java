@@ -91,7 +91,12 @@ public class DecodeUtils {
 
     public static void decodeBounds(JobContext jc, byte[] bytes, int offset,
             int length, Options options) {
-		Utils.assertTrue(options != null);
+        if (options == null)
+        {
+            options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        }
+
 		options.inJustDecodeBounds = true;
 		jc.setCancelListener(new DecodeCanceller(options));
 		BitmapFactory.decodeByteArray(bytes, offset, length, options);

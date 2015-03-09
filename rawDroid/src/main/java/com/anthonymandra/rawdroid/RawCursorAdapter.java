@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.beta;
+package com.anthonymandra.rawdroid;
 
 import android.content.Context;
 import android.database.Cursor;

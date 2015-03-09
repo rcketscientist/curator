@@ -89,7 +89,7 @@ public class ImageViewer extends GLView
 	private final GestureDetector mGestureDetector;
 	private final DownUpDetector mDownUpDetector;
 
-	private final HashMap<Long, Tile> mActiveTiles = new HashMap<Long, Tile>();
+	private final HashMap<Long, Tile> mActiveTiles = new HashMap<>();
 	private Iterator<Tile> mUploadIter;
 
 	private Tile mRecycledHead = null;
@@ -350,7 +350,6 @@ public class ImageViewer extends GLView
 		int right = Math.round(left + mImageWidth * scale);
 
 		int gap = IMAGE_GAP + gapToSide(mImageWidth, width, scale);
-		;
 
 		// layout the previous image
 		ScreenNailEntry entry = mScreenNails[ENTRY_PREVIOUS];
@@ -483,12 +482,11 @@ public class ImageViewer extends GLView
 
 	private void invalidateAllTiles()
 	{
-		Iterator<Map.Entry<Long, Tile>> iter = mActiveTiles.entrySet().iterator();
-		while (iter.hasNext())
-		{
-			Tile tile = iter.next().getValue();
-			recycleTile(tile);
-		}
+        for (Map.Entry<Long, Tile> longTileEntry : mActiveTiles.entrySet())
+        {
+            Tile tile = longTileEntry.getValue();
+            recycleTile(tile);
+        }
 		mActiveTiles.clear();
 	}
 
@@ -1089,7 +1087,7 @@ public class ImageViewer extends GLView
 		long result = x;
 		result = (result << 16) | y;
 		result = (result << 16) | level;
-		return Long.valueOf(result);
+		return result;
 	}
 
 	// TODO: avoid drawing the unused part of the textures.

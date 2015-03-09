@@ -78,7 +78,7 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 	}
 
     private WeakHashMap<ContentListener, Object> mListeners =
-            new WeakHashMap<ContentListener, Object>();
+            new WeakHashMap<>();
 
     // NOTE: The MediaSet only keeps a weak reference to the listener. The
     // listener is automatically removed when there is no other reference to

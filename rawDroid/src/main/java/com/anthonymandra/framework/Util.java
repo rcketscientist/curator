@@ -271,33 +271,28 @@ public class Util
 
 	public static Bitmap createBitmapLarge(byte[] image, int viewWidth, int viewHeight, boolean minSize)
 	{
-		Bitmap result = null;
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeByteArray(image, 0, image.length, o);
 		o.inSampleSize = Util.getLargeSampleSize(o, viewWidth, viewHeight);
 		// setScalingPow2(image, viewWidth, viewHeight, o, minSize);
 		o.inJustDecodeBounds = false;
-		result = BitmapFactory.decodeByteArray(image, 0, image.length, o);
-		return result;
+		return BitmapFactory.decodeByteArray(image, 0, image.length, o);
 	}
 
 	public static Bitmap createBitmapLarge(InputStream data, int viewWidth, int viewHeight, boolean minSize)
 	{
-		Bitmap result = null;
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(data, null, o);
 		o.inSampleSize = Util.getLargeSampleSize(o, viewWidth, viewHeight);
 		// setScalingPow2(image, viewWidth, viewHeight, o, minSize);
 		o.inJustDecodeBounds = false;
-		result = BitmapFactory.decodeStream(data, null, o);
-		return result;
+        return BitmapFactory.decodeStream(data, null, o);
 	}
 
 	public static Bitmap createBitmapToSize(InputStream data, int width, int height)
 	{
-		Bitmap result = null;
 		Options o = new BitmapFactory.Options();
 		o.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(data, null, o);
@@ -315,8 +310,7 @@ public class Util
             return null;
         }
 
-		result = BitmapFactory.decodeStream(data, null, o);
-		return result;
+		return BitmapFactory.decodeStream(data, null, o);
 	}
 
 	public static Bitmap createBitmapToSize(byte[] image, int width, int height)
@@ -360,6 +354,7 @@ public class Util
 		byte[] buf = new byte[1024];
 		int len;
 		OutputStream out = null;
+        boolean success = true;
 		try
 		{
 			out = new BufferedOutputStream(new FileOutputStream(destination));
@@ -370,7 +365,7 @@ public class Util
 		}
 		catch (IOException e)
 		{
-			return false;
+			success = false;
 		}
 		finally
 		{
@@ -381,10 +376,10 @@ public class Util
 			}
 			catch (IOException e)
 			{
-				return false;
+				success = false;
 			}
 		}
-		return true;
+		return success;
 	}
 	
 	public static boolean copy(File source, File destination)
@@ -512,8 +507,7 @@ public class Util
         ByteBuffer dst = ByteBuffer.allocate(Util.getBitmapSize(src));
         dst.order(ByteOrder.nativeOrder());
         src.copyPixelsToBuffer(dst);
-        byte[] srcData = dst.array();
-        return srcData;
+        return dst.array();
 	}
 
     public static Bitmap addWatermark(Context context, Bitmap src)
@@ -579,30 +573,28 @@ public class Util
         int x = 0, y = 0;
 
         // We center the text in their respective quadrants
-        if (location.equals("Center"))
+        switch (location)
         {
-            x = w/2;
-            y = h/2;
-        }
-        else if (location.equals("Lower Left"))
-        {
-            x = w/4;
-            y = h/4*3;
-        }
-        else if (location.equals("Lower Right"))
-        {
-            x = w/4*3;
-            y = h/4*3;
-        }
-        else if (location.equals("Upper Left"))
-        {
-            x = w/4;
-            y = h/4;
-        }
-        else if (location.equals("Upper Right"))
-        {
-            x = w/4*3;
-            y = h/4;
+            case "Center":
+                x = w / 2;
+                y = h / 2;
+                break;
+            case "Lower Left":
+                x = w / 4;
+                y = h / 4 * 3;
+                break;
+            case "Lower Right":
+                x = w / 4 * 3;
+                y = h / 4 * 3;
+                break;
+            case "Upper Left":
+                x = w / 4;
+                y = h / 4;
+                break;
+            case "Upper Right":
+                x = w / 4 * 3;
+                y = h / 4;
+                break;
         }
 
         Canvas canvas = new Canvas(result);

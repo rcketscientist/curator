@@ -8,9 +8,6 @@ import android.preference.PreferenceManager;
 
 import com.anthonymandra.framework.Util;
 
-/**
- * Created by amand_000 on 8/29/13.
- */
 public class ViewerChooser extends Activity {
 
     private static int REQUEST_VIEWER = 1;
@@ -24,7 +21,7 @@ public class ViewerChooser extends Activity {
         {
             SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(FullSettingsActivity.KEY_UseLegacyViewer, !Util.hasHoneycomb());
-            editor.commit();
+            editor.apply();
         }
 
         if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))

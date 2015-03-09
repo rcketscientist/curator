@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.app;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -70,6 +71,7 @@ public class OrientationManager implements OrientationSource {
     ////////////////////////////////////////////////////////////////////////////
 
     // Lock the framework orientation to the current device orientation
+    @TargetApi(18)
     public void lockOrientation() {
         if (mOrientationLocked) return;
         mOrientationLocked = true;

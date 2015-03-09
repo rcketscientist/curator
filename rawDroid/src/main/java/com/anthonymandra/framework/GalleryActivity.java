@@ -1,6 +1,7 @@
 package com.anthonymandra.framework;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -70,12 +71,12 @@ public abstract class GalleryActivity extends ActionBarActivity
 	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
 	private MetaAlphaCompare metaCompare = new MetaAlphaCompare();
 
-	protected List<File> mFolders = new ArrayList<File>();
-	protected List<MediaItem> mRawImages = new ArrayList<MediaItem>();
-	protected List<MediaItem> mNativeImages = new ArrayList<MediaItem>();
-	protected List<MediaItem> mXmpFiles = new ArrayList<MediaItem>();
-	protected List<MediaItem> mUnknownFiles = new ArrayList<MediaItem>();
-	protected List<MediaItem> mVisibleItems = new ArrayList<MediaItem>();
+	protected List<File> mFolders = new ArrayList<>();
+	protected List<MediaItem> mRawImages = new ArrayList<>();
+	protected List<MediaItem> mNativeImages = new ArrayList<>();
+	protected List<MediaItem> mXmpFiles = new ArrayList<>();
+	protected List<MediaItem> mUnknownFiles = new ArrayList<>();
+	protected List<MediaItem> mVisibleItems = new ArrayList<>();
 
 	protected File mCurrentPath;
 
@@ -293,7 +294,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 		if (mSwapDir == null)
 			return;
 
-		new Runnable()
+		new Thread(new Runnable()
 		{
 			@Override
 			public void run()
@@ -307,7 +308,7 @@ public abstract class GalleryActivity extends ActionBarActivity
                     }
                 }
 			}
-		}.run();
+		}).start();
 	}
 
 	protected void createRecycleBin()
@@ -340,7 +341,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 			return;
 		}
 		final List<String> keys = recycleBin.getKeys();
-		final List<String> filesToRestore = new ArrayList<String>(keys.size());
+		final List<String> filesToRestore = new ArrayList<>(keys.size());
 		new AlertDialog.Builder(this).setTitle(R.string.recycleBin).setNegativeButton(R.string.emptyRecycleBin, new Dialog.OnClickListener()
 		{
 
@@ -404,13 +405,11 @@ public abstract class GalleryActivity extends ActionBarActivity
 
 	protected boolean removeImage(RawObject toRemove)
 	{
-		boolean result = false;
-		result = result || mRawImages.remove(toRemove);
-		result = result || mNativeImages.remove(toRemove);
-		result = result || mXmpFiles.remove(toRemove);
-		result = result || mUnknownFiles.remove(toRemove);
-		result = result || mVisibleItems.remove(toRemove);
-		return result;
+		return mRawImages.remove(toRemove)
+		    || mNativeImages.remove(toRemove)
+		    || mXmpFiles.remove(toRemove)
+		    || mUnknownFiles.remove(toRemove)
+		    || mVisibleItems.remove(toRemove);
 	}
 
 	/**
@@ -422,7 +421,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 	 */
 	protected void deleteImage(final MediaItem toDelete)
 	{
-		List<MediaItem> itemsToDelete = new ArrayList<MediaItem>();
+		List<MediaItem> itemsToDelete = new ArrayList<>();
 		itemsToDelete.add(toDelete);
 		deleteImages(itemsToDelete);
 	}
@@ -511,19 +510,23 @@ public abstract class GalleryActivity extends ActionBarActivity
         startActivity(viewIntent);
     }
 
+    @TargetApi(21)
     protected void requestEmailIntent()
     {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto","rawdroid@anthonymandra.com", null));
 
         StringBuilder body = new StringBuilder();
-        body.append("Variant:   " + BuildConfig.FLAVOR).append("\n");
-        body.append("Version:   " + BuildConfig.VERSION_NAME).append("\n");
-        body.append("Make:      " + Build.MANUFACTURER).append("\n");
-        body.append("Model:     " + Build.MODEL).append("\n");
-        body.append("ABI:       " + Build.CPU_ABI).append("\n");
-        body.append("Android:   " + Build.DISPLAY).append("\n");
-        body.append("SDK:       " + Build.VERSION.SDK_INT).append("\n\n");
+        body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
+        body.append("Version:   ").append(BuildConfig.VERSION_NAME).append("\n");
+        body.append("Make:      ").append(Build.MANUFACTURER).append("\n");
+        body.append("Model:     ").append(Build.MODEL).append("\n");
+        if (Util.hasLollipop())
+            body.append("ABI:       ").append(Build.SUPPORTED_ABIS).append("\n");
+        else
+            body.append("ABI:       ").append(Build.CPU_ABI).append("\n");
+        body.append("Android:   ").append(Build.DISPLAY).append("\n");
+        body.append("SDK:       ").append(Build.VERSION.SDK_INT).append("\n\n");
         body.append("---Please don't remove this data---").append("\n\n");
 
         emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
@@ -554,7 +557,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 		{
 			List<MediaItem> itemsToDelete = params[0];
 			mProgressDialog.setMax(itemsToDelete.size());
-			final List<RawObject> removed = new ArrayList<RawObject>();
+			final List<RawObject> removed = new ArrayList<>();
 
 			for (RawObject image : itemsToDelete)
 			{
@@ -661,7 +664,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 		{
 			List<MediaItem> itemsToDelete = params[0];
 			mProgressDialog.setMax(itemsToDelete.size());
-			final List<RawObject> removed = new ArrayList<RawObject>();
+			final List<RawObject> removed = new ArrayList<>();
 
 			for (RawObject image : itemsToDelete)
 			{
@@ -794,7 +797,7 @@ public abstract class GalleryActivity extends ActionBarActivity
         private final WeakReference<Context> mContext;
         public LicenseHandler(Context context)
         {
-            mContext = new WeakReference<Context>(context);
+            mContext = new WeakReference<>(context);
         }
 
         @Override

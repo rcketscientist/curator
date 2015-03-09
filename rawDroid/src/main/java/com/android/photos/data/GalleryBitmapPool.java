@@ -36,7 +36,7 @@ public class GalleryBitmapPool {
 
     private int mCapacityBytes;
     private SparseArrayBitmapPool [] mPools;
-    private Pool<Node> mSharedNodePool = new SynchronizedPool<Node>(128);
+    private Pool<Node> mSharedNodePool = new SynchronizedPool<>(128);
 
     private GalleryBitmapPool(int capacityBytes) {
         mPools = new SparseArrayBitmapPool[3];

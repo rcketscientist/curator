@@ -26,6 +26,8 @@ import android.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import com.android.gallery3d.common.Utils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -239,22 +241,9 @@ public class ImageCache
 				{
 					Log.e(TAG, "addBitmapToCache - " + e);
 				}
-				catch (Exception e)
-				{
-					Log.e(TAG, "addBitmapToCache - " + e);
-				}
 				finally
 				{
-					try
-					{
-						if (out != null)
-						{
-							out.close();
-						}
-					}
-					catch (IOException e)
-					{
-					}
+                    Utils.closeSilently(out);
 				}
 			}
 		}
@@ -313,8 +302,7 @@ public class ImageCache
 						inputStream = snapshot.getInputStream(DISK_CACHE_INDEX);
 						if (inputStream != null)
 						{
-							final Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-							return bitmap;
+                            return BitmapFactory.decodeStream(inputStream);
 						}
 					}
 				}
@@ -488,15 +476,15 @@ public class ImageCache
 	{
 		// http://stackoverflow.com/questions/332079
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < bytes.length; i++)
-		{
-			String hex = Integer.toHexString(0xFF & bytes[i]);
-			if (hex.length() == 1)
-			{
-				sb.append('0');
-			}
-			sb.append(hex);
-		}
+        for (byte aByte : bytes)
+        {
+            String hex = Integer.toHexString(0xFF & aByte);
+            if (hex.length() == 1)
+            {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
 		return sb.toString();
 	}
 

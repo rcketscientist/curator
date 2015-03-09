@@ -26,7 +26,7 @@ public class SparseArrayBitmapPool {
 
     private static final int BITMAPS_TO_KEEP_AFTER_UNNEEDED_HINT = 4;
     private int mCapacityBytes;
-    private SparseArray<Node> mStore = new SparseArray<Node>();
+    private SparseArray<Node> mStore = new SparseArray<>();
     private int mSizeBytes = 0;
 
     private Pool<Node> mNodePool;

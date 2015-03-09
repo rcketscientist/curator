@@ -1,73 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content" android:layout_height="wrap_content">
+    android:id="@+id/leftPanel"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true" >
 
-    <RelativeLayout
-        android:id="@+id/leftPanel"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/watermark"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/watermark512"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="false" />
+
+    <LinearLayout
+        android:id="@+id/leftNavigation"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true" >
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/watermark"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/watermark512"
-            android:layout_gravity="center"
-            android:layout_centerVertical="true"
-            android:adjustViewBounds="false" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:background="@color/background_material_dark"
+        android:alpha=".75">
 
         <ImageButton
-            android:id="@+id/imageButtonRotate"
+            android:id="@+id/imageButtonLeftBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:alpha=".75"
-            android:background="@drawable/button_black"
-            android:src="@android:drawable/ic_menu_always_landscape_portrait"
-            android:visibility="gone" />
+            android:src="@android:drawable/ic_media_rew"
+            android:minHeight="?attr/actionBarSize"
+            android:minWidth="?attr/actionBarSize"
+            android:background="@android:color/transparent"/>
 
-        <LinearLayout
-            android:id="@+id/leftNavigation"
+        <ImageButton
+            android:id="@+id/imageButtonLeftFwd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:orientation="vertical"
-            android:background="@color/background_material_dark"
-            android:alpha=".75">
+            android:src="@android:drawable/ic_media_ff"
+            android:minHeight="?attr/actionBarSize"
+            android:minWidth="?attr/actionBarSize"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/imageButtonLeftBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_media_rew"
-                android:minHeight="?attr/actionBarSize"
-                android:minWidth="?attr/actionBarSize"
-                android:background="@android:color/transparent"/>
-
-            <ImageButton
-                android:id="@+id/imageButtonLeftFwd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_media_ff"
-                android:minHeight="?attr/actionBarSize"
-                android:minWidth="?attr/actionBarSize"
-                android:background="@android:color/transparent"/>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textViewScale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:background="@color/Transparent_Black"
-            android:text="0%" />
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/textViewScale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/Transparent_Black"
+        android:text="0%" />
 
 </RelativeLayout>

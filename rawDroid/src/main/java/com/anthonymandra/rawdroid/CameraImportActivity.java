@@ -36,7 +36,7 @@ public class CameraImportActivity extends Activity
 	private static final int REQUEST_MTP_IMPORT_DIR = 3;
 
 	private MtpDevice mMtpDevice;
-	private List<Integer> imageHandles = new ArrayList<Integer>();
+	private List<Integer> imageHandles = new ArrayList<>();
 	private int requiredSpace;
 	// private ProgressDialog mProgressDialog;
 	private File destination;
@@ -59,7 +59,7 @@ public class CameraImportActivity extends Activity
 	@TargetApi(12)
 	private void getMtpDevice()
 	{
-		UsbDevice device = (UsbDevice) getIntent().getParcelableExtra(UsbManager.EXTRA_DEVICE);
+		UsbDevice device = getIntent().getParcelableExtra(UsbManager.EXTRA_DEVICE);
 		if (device != null)
 		{
 			UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
@@ -75,12 +75,11 @@ public class CameraImportActivity extends Activity
                 finish();
 			}
 			mMtpDevice = new MtpDevice(device);
-			if (mMtpDevice == null)
-			{
-				Toast.makeText(this, "USB Error 03: Failed to create connection.", Toast.LENGTH_SHORT).show();
+			if (!mMtpDevice.open(usbDeviceConnection))
+            {
+                Toast.makeText(this, "USB Error 03: Failed to create connection.", Toast.LENGTH_SHORT).show();
                 finish();
-			}
-			mMtpDevice.open(usbDeviceConnection);
+            }
 		}
 	}
 
@@ -185,7 +184,7 @@ public class CameraImportActivity extends Activity
 		@Override
 		protected List<String> doInBackground(Void... params)
 		{
-			final List<String> failures = new ArrayList<String>();
+			final List<String> failures = new ArrayList<>();
 
 			for (int objectHandle : imageHandles)
 			{
@@ -301,7 +300,7 @@ public class CameraImportActivity extends Activity
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(RawDroid.PREFS_MOST_RECENT_IMPORT, destination.getPath());
-		editor.commit();
+		editor.apply();
 
 		getMtpDevice();
 
