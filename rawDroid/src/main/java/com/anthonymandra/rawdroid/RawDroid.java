@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.ApplicationInfo;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -26,7 +28,6 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar.OnNavigationListener;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
@@ -48,7 +49,9 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,8 +65,7 @@ import com.anthonymandra.framework.RawObject;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.LoadingImageView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.ChangeLogDialog;
 import com.inscription.WhatsNewDialog;
@@ -81,8 +83,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class RawDroid extends GalleryActivity implements OnNavigationListener, OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener
+public class RawDroid extends GalleryActivity implements OnItemClickListener, OnItemLongClickListener, OnScrollListener,
+        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener, AdapterView.OnItemSelectedListener
 {
 	private static final String TAG = RawDroid.class.getSimpleName();
 
@@ -142,8 +144,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private static final File ROOT = new File("/");
 	private Parcelable gridState;
 
-    private static boolean lockNavigation = false;
-    private static boolean lockViewer = true;
+    private static boolean inTutorial = false;
+	private static boolean inActionMode = false;
 
 	// Widget handles
 	private GridView imageGrid;
@@ -164,12 +166,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	private int mDisplayWidth;
 	private int mDisplayHeight;
 
-	private ActionMode mMode;
+	private ActionMode mContextMode;
 
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
-    private Toolbar toolbar;
-    private View overflowButton;
+    private Toolbar mToolbar;
+    private Spinner mNavigationSpinner;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -177,18 +179,13 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		super.onCreate(savedInstanceState);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
-        toolbar = (Toolbar) findViewById(R.id.galleryToolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
+        setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(R.string.app_name);
         getSupportActionBar().setLogo(R.drawable.icon);
 
-        //trick to grab overflow
-        final ArrayList<View> outViews = new ArrayList<>();
-        getWindow().getDecorView().findViewsWithText(outViews, getString(R.string.abc_action_menu_overflow_description), View.FIND_VIEWS_WITH_CONTENT_DESCRIPTION);
-
-
 		doFirstRun();
-        doProCheck();
+//        doProCheck();
 
 		AppRater.app_launched(this);
 
@@ -198,8 +195,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		mDisplayWidth = metrics.widthPixels;
 		mDisplayHeight = metrics.heightPixels;
 
-        lockNavigation = false;
-        lockViewer = false;
+        inTutorial = false;
 
 		imageGrid = ((GridView) findViewById(R.id.gridview));
 		imageGrid.setOnScrollListener(this);
@@ -231,14 +227,15 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		imageAdapter = new ImageAdapter(this);
 		imageGrid.setAdapter(imageAdapter);
 
-		// getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Context themedContext = getSupportActionBar().getThemedContext();
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setNavigationMode(android.support.v7.app.ActionBar.NAVIGATION_MODE_LIST);
-		Context context = getSupportActionBar().getThemedContext();
 
-		navAdapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, new ArrayList<SpinnerFile>());
+		navAdapter = new ArrayAdapter<>(themedContext, android.R.layout.simple_spinner_item, new ArrayList<SpinnerFile>());
 		navAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        getSupportActionBar().setListNavigationCallbacks(navAdapter, this);
+
+        mNavigationSpinner = (Spinner) findViewById(R.id.navSpinner);
+        mNavigationSpinner.setAdapter(navAdapter);
+        mNavigationSpinner.setOnItemSelectedListener(this);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		settings.registerOnSharedPreferenceChangeListener(this);
@@ -437,8 +434,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 
 		// We end muli-select because .contains fails after a resume and doesn't show selections
-		// if (mMode != null)
-		// mMode.finish();
+		// if (mContextMode != null)
+		// mContextMode.finish();
 		mImageDecoder.setExitTasksEarly(false);
 		imageAdapter.notifyDataSetChanged();
 		Log.i(TAG, "onResume");
@@ -630,31 +627,31 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		if (inTutorial)
+			Toast.makeText(this, R.string.tutorialDisabled, Toast.LENGTH_SHORT).show();
 		// Handle item selection
 		switch (item.getItemId())
 		{
-			case R.id.galleryRename:
+			case R.id.contextRename:
 				storeSelectionForIntent();
 				requestRename();
 				return true;
 			case R.id.galleryClearCache:
-                lockViewer = false;
-                lockNavigation = false;
 				mImageDecoder.clearCache();
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
 			case R.id.gallery_usb:
 				requestUsb();
 				return true;
-			case R.id.gallery_delete:
+			case R.id.context_delete:
 				storeSelectionForIntent();
 				deleteImages(mItemsForIntent);
 				return true;
-			case R.id.galleryExportThumbs:
+			case R.id.contextExportThumbs:
 				storeSelectionForIntent();
 				requestExportThumbLocation();
 				return true;
-			case R.id.galleryMoveImages:
+			case R.id.contextMoveImages:
 				storeSelectionForIntent();
 				requestImportImageLocation();
 				return true;
@@ -662,9 +659,11 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				requestSettings();
 				return true;
 			case R.id.gallery_recycle:
+            case R.id.context_recycle:
 				showRecycleBin();
 				return true;
 			case R.id.gallerySelectAll:
+            case R.id.contextSelectAll:
 				selectAll();
 				return false;
 			case R.id.gallerySearch:
@@ -689,7 +688,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		mMode.finish(); // end the contextual action bar and multi-select mode
+		mContextMode.finish(); // end the contextual action bar and multi-select mode
 		return false;
 	}
 
@@ -881,24 +880,10 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		updateLocalFiles();
 	}
 
-	@Override
-	public boolean onNavigationItemSelected(int itemPosition, long itemId)
-	{
-        if (lockNavigation)
-        {
-            Toast.makeText(this, R.string.tutorialNavDisabled, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-		File path = navAdapter.getItem(itemPosition);
-		updatePath(path);
-		// setPath(path.getFilePath());
-		return true;
-	}
-
 	private void setNavigation()
 	{
-		getSupportActionBar().setSelectedNavigationItem(0);
+        mNavigationSpinner.setSelection(0);
+
 		SpinnerFile currentPath = new SpinnerFile(mCurrentPath.getPath());
 
 		navAdapter.clear();
@@ -921,11 +906,15 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 	@Override
 	public void onBackPressed()
 	{
+        if (inTutorial)
+		{
+			closeTutorial();
+		}
         // Default back operation in action mode
-        if (mMode != null)
+        else if (mContextMode != null)
         {
             super.onBackPressed();
-            // Same as: mMode.finish();
+            // Same as: mContextMode.finish();
         }
 		else if (mCurrentPath.equals(ROOT))
         {
@@ -937,7 +926,26 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-	class DirAlphaComparator implements Comparator<File>
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+    {
+        if (inTutorial)
+        {
+            Toast.makeText(this, R.string.tutorialDisabled, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        File path = navAdapter.getItem(position);
+        updatePath(path);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent)
+    {
+        //Nothing selected, well do nothing of course
+    }
+
+    class DirAlphaComparator implements Comparator<File>
 	{
 
 		// Comparator interface requires defining compare method.
@@ -1013,9 +1021,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu)
 		{
+			inActionMode = true;
 			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
-//			getMenuInflater().inflate(R.menu.gallery_options, menu);
-			MenuItem actionItem = menu.findItem(R.id.galleryShare);
+			MenuItem actionItem = menu.findItem(R.id.contextShare);
 			if (actionItem != null)
 			{
 				mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
@@ -1046,8 +1054,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		@Override
 		public void onDestroyActionMode(ActionMode mode)
 		{
+			inActionMode = false;
 			endMultiSelectMode();
-            mMode = null;
+            mContextMode = null;
 		}
 	}
 
@@ -1074,9 +1083,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             arrayUri.add(selection.getSwapUri());
         }
 
-		if (mMode != null)
+		if (mContextMode != null)
 		{
-			mMode.setTitle(mSelectedImages.size() + " selected");
+			mContextMode.setTitle(mSelectedImages.size() + " selected");
 		}
         if (mSelectedImages.size() == 1)
         {
@@ -1317,7 +1326,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 
 	private void startContextualActionBar()
 	{
-		mMode = startSupportActionMode(new GalleryActionMode());
+		mContextMode = startSupportActionMode(new GalleryActionMode());
 		startMultiSelectMode();
 	}
 
@@ -1369,9 +1378,9 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 			return;
 		}
 
-        if (lockViewer)
+        if (inTutorial)
         {
-            Toast.makeText(this, R.string.tutorialViewerDisabled, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.tutorialDisabled, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -1629,10 +1638,12 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 		}
 	}
 
-    int tutorialStage = 0;
+    int tutorialStage;
+	File previousPath;
 	public void runTutorial()
 	{
         tutorialStage = 0;
+		previousPath = mCurrentPath;
         File tutorialDirectory = Util.getDiskCacheDir(this, "tutorial");
         if (!tutorialDirectory.exists())
         {
@@ -1661,10 +1672,8 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
             Toast.makeText(this, "Unable to open tutorial examples.  Please skip file selection.", Toast.LENGTH_LONG).show();
         }
 
-
         updatePath(tutorialDirectory);
-        lockNavigation = true;
-        lockViewer = true;
+        inTutorial = true;
 
         tutorial = new ShowcaseView.Builder(this)//, true)
                 .setContentTitle(R.string.tutorialWelcomeTitle)
@@ -1674,12 +1683,14 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
                 .build();
 
         tutorial.setButtonText(getString(R.string.next));
+        tutorial.setButtonPosition(getRightParam(getResources()));
         setTutorialNoShowcase();
 	}
 
 	private class TutorialClickListener implements OnClickListener
 	{
         //Note: Don't animate coming from "NoShowcase" it flies in from off screen which is silly.
+		View view;
 		@Override
 		public void onClick(View v)
 		{
@@ -1725,7 +1736,7 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 				case 7: // Find Path
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindPathText));
-                    tutorial.setTarget(new ActionViewTarget(RawDroid.this, ActionViewTarget.Type.SPINNER));
+					setTutorialActionView(R.id.navSpinner, true);
 					break;
 				case 8: // Recent Folder
                     tutorial.setScaleMultiplier(0.5f);
@@ -1739,122 +1750,195 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
 					break;
 				case 10: // Long Select
                     tutorial.setScaleMultiplier(1.5f);
-                    closeOptionsMenu(); //if overflow was shown
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
-                    View view0 = imageGrid.getChildAt(0);
-                    if (view0 != null)
-                        tutorial.setShowcase(new ViewTarget(view0), true);
+                    view = imageGrid.getChildAt(0);
+                    if (view != null)
+                        tutorial.setShowcase(new ViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
 					break;
 				case 11: // Add select
+					// If the user is lazy select for them
+					if (!inActionMode)
+						onItemLongClick(imageGrid, imageGrid.getChildAt(0), 0, 0);
+
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
-                    View view2 = imageGrid.getChildAt(2);
-                    if (view2 != null)
-                        tutorial.setShowcase(new ViewTarget(view2), true);
+                    view = imageGrid.getChildAt(2);
+                    if (view != null)
+                        tutorial.setShowcase(new ViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
 					break;
 				case 12: // Select feedback
-                    tutorial.setScaleMultiplier(1f);
+					// If the user is lazy select for them
+					if (mSelectedImages.size() < 2)
+					{
+						mContextMode.finish();
+						onItemLongClick(imageGrid, imageGrid.getChildAt(0), 0, 0);
+						onItemClick(imageGrid, imageGrid.getChildAt(2), 2, 2);
+					}
+
+                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
-                    tutorial.setShowcase(new ActionViewTarget(RawDroid.this, ActionViewTarget.Type.SPINNER), true);
-//                    setTutorialNoShowcase();
+                    // This is ghetto, I know the spinner lies UNDER the selection view
+					setTutorialActionView(R.id.navSpinner, true);
 					break;
 				case 13: // Select All
+					if (inActionMode)
+						mContextMode.finish();
+
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectAll));
                     setTutorialActionView(R.id.gallerySelectAll, true);
 					break;
 				case 14: // Exit Selection
+					// If the user is lazy select for them
+					if (mSelectedImages.size() < 1)
+					{
+						selectAll();
+					}
+
                     tutorial.setScaleMultiplier(1f);
-                    closeOptionsMenu(); //if overflow was shown
                     tutorial.setContentText(getString(R.string.tutorialExitSelectionText));
-                    tutorial.setShowcase(new ActionViewTarget(RawDroid.this, ActionViewTarget.Type.HOME), true);
+                    setTutorialHomeView(true);
 					break;
                 case 15: // Select between beginning
-                    if (mMode != null)
-                        mMode.finish();
+                    if (mContextMode != null)
+                        mContextMode.finish();
+
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
-                    View view1 = imageGrid.getChildAt(1);
-                    if (view1 != null)
-                        tutorial.setShowcase(new ViewTarget(view1), true);
+                    view = imageGrid.getChildAt(3);		//WTF index is backwards.
+                    if (view != null)
+                        tutorial.setShowcase(new ViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
                     break;
                 case 16: // Select between end
+					// If the user is lazy select for them
+					if (mSelectedImages.size() < 1)
+						onItemLongClick(imageGrid, imageGrid.getChildAt(1), 1, 1);
+
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
-                    View view3 = imageGrid.getChildAt(3);
-                    if (view3 != null)
-                        tutorial.setShowcase(new ViewTarget(view3), true);
+
+					setTutorialHomeView(true);
+                    view = imageGrid.getChildAt(1);	//WTF index is backwards.
+                    if (view != null)
+                        tutorial.setShowcase(new ViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
                     break;
                 case 17: // Select between feedback
-                    tutorial.setScaleMultiplier(1f);
+					// If the user is lazy select for them
+					if (mSelectedImages.size() < 2)
+					{
+						onItemLongClick(imageGrid, imageGrid.getChildAt(1), 1, 1);
+						onItemLongClick(imageGrid, imageGrid.getChildAt(3), 3, 3);
+					}
+
+                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));
-                    tutorial.setShowcase(new ActionViewTarget(RawDroid.this, ActionViewTarget.Type.SPINNER), true);
-//                    setTutorialNoShowcase();
+                    // This is ghetto, I know the spinner lies UNDER the selection view
+					setTutorialActionView(R.id.navSpinner, true);
                     break;
                 case 18: // Rename
+					if (!inActionMode)
+						startContextualActionBar();
+
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRenameTitle));
                     tutorial.setContentText(getString(R.string.tutorialRenameText));
-                    setTutorialActionView(R.id.galleryRename, true);
+                    setTutorialActionView(R.id.contextRename, true);
                     break;
                 case 19: // Move
-//                    tutorial.setScaleMultiplier(0.5f);
-                    closeOptionsMenu(); //if overflow was shown
+					if (!inActionMode)
+						startContextualActionBar();
+
+                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialMoveTitle));
                     tutorial.setContentText(getString(R.string.tutorialMoveText));
-                    setTutorialActionView(R.id.galleryMoveImages, true);
+                    setTutorialActionView(R.id.contextMoveImages, true);
                     break;
                 case 20: // Export
-//                    tutorial.setScaleMultiplier(0.5f);
-                    closeOptionsMenu(); //if overflow was shown
+					if (!inActionMode)
+						startContextualActionBar();
+
+                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
                     tutorial.setContentText(getString(R.string.tutorialExportText));
-                    setTutorialActionView(R.id.galleryExportThumbs, true);
+                    setTutorialActionView(R.id.contextExportThumbs, true);
                     break;
-                case 21: // Share
-//                    tutorial.setScaleMultiplier(0.5f);
-                    closeOptionsMenu(); //if overflow was shown
-                    tutorial.setContentTitle(getString(R.string.tutorialShareTitle));
-                    tutorial.setContentText(getString(R.string.tutorialShareText));
-                    setTutorialActionView(R.id.galleryShare, true);
-                    break;
+                case 21: // Share (can't figure out how to address the share button
+//					if (!inActionMode)
+//						startContextualActionBar();
+//
+//                    tutorial.setContentTitle(getString(R.string.tutorialShareTitle));
+//                    tutorial.setContentText(getString(R.string.tutorialShareText));
+//                    setTutorialShareView(true);
+//					setTutorialActionView(R.id.contextShare, true);
+//                    break;
+					tutorialStage++;
                 case 22: // Recycle
-                    if (mMode != null)
-                        mMode.finish();
-//                    tutorial.setScaleMultiplier(0.5f);
-                    closeOptionsMenu(); //if overflow was shown
+                    if (mContextMode != null)
+                        mContextMode.finish();
+
+                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
                     tutorial.setContentText(getString(R.string.tutorialRecycleText));
                     setTutorialActionView(R.id.gallery_recycle, true);
                     break;
                 case 23: // Actionbar help
-//                    tutorial.setScaleMultiplier(0.5f);
-                    closeOptionsMenu(); //if overflow was shown
+                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle));
                     tutorial.setContentText(getString(R.string.tutorialActionbarHelpText));
                     setTutorialActionView(R.id.gallerySelectAll, true);
                     break;
 				default: // We're done
-                    lockNavigation = false;
-                    lockViewer = false;
-                    if (mMode != null)
-                        mMode.finish();
-                    closeOptionsMenu();
-					tutorial.hide();
+                    closeTutorial();
                     break;
 			}
             tutorialStage++;
 		}
 	}
+
+    public void closeTutorial()
+    {
+        inTutorial = false;
+        if (mContextMode != null)
+            mContextMode.finish();
+        closeOptionsMenu();
+        tutorial.hide();
+		updatePath(previousPath);
+    }
+
+    //TODO: Hack for showcase appearing behind nav bar
+    public int getNavigationBarHeight(int orientation) {
+        try {
+            Resources resources = getResources();
+            int id = resources.getIdentifier(
+                    orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape",
+                    "dimen", "android");
+            if (id > 0) {
+                return resources.getDimensionPixelSize(id);
+            }
+        } catch (NullPointerException | IllegalArgumentException | Resources.NotFoundException e) {
+            return 0;
+        }
+        return 0;
+    }
+
+    //TODO: Hack for showcase appearing behind nav bar
+    public RelativeLayout.LayoutParams getRightParam(Resources res) {
+        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        int margin = ((Number) (res.getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, getNavigationBarHeight(res.getConfiguration().orientation) + 5);
+        return lps;
+    }
 
     static int bias = 1;
     private void setTutorialNoShowcase()
@@ -1865,38 +1949,59 @@ public class RawDroid extends GalleryActivity implements OnNavigationListener, O
         // So this funkiness places the showcase off screen flittering back and forth one pixel
         // This doesn't screw up word wrap.
 //        tutorial.setScaleMultiplier(0.1f);
+
         bias *= -1;
         tutorial.setShowcaseX(mDisplayWidth + 1000 + bias);
+
+    }
+
+    private void setTutorialHomeView(boolean animate)
+    {
+        PointTarget home = new PointTarget(16,16);  //Design guideline is 32x32
+        tutorial.setShowcase(home, animate);
     }
 
     /**
-     * Handle opening the options menu if it's overflow
+     * Showcase item or overflow if it doesn't exist
      * @param itemId menu id
      * @param animate Animate the showcase from the previous spot.  Recommend FALSE if previous showcase was NONE
      */
     private void setTutorialActionView(int itemId, boolean animate)
     {
+		ViewTarget target;
+		View itemView = findViewById(itemId);
+		if (itemView == null)
+		{
+			//List of all mToolbar items, assuming last is overflow
+			List<View> views = mToolbar.getTouchables();
+			target = new ViewTarget(views.get(views.size()-1)); //overflow
+		}
+		else
+		{
+			target = new ViewTarget(itemView);
+		}
 
-        ActionItemTarget item = new ActionItemTarget(this, itemId);
-        ActionViewTarget overflow = new ActionViewTarget(this, ActionViewTarget.Type.OVERFLOW);
-
-        Point overflowLocation = overflow.getPoint();
-        Point itemLocation = item.getPoint();
-        if (itemLocation != null)
-        {
-            if (overflowLocation != null)
-            {
-                if (overflowLocation.equals(itemLocation))
-                    openOptionsMenu();   // Change size of showcase?
-            }
-
-            tutorial.setShowcase(item, animate);
-        }
-        else
-        {
-            setTutorialNoShowcase();    //For lack of something better to do in this case.
-        }
+		tutorial.setShowcase(target, animate);
     }
+
+	private void setTutorialShareView(boolean animate)
+	{
+		ViewTarget target;
+		View itemView = mShareProvider.onCreateActionView();
+		if (itemView == null)
+		{
+			//List of all mToolbar items, assuming last is overflow
+			List<View> views = mToolbar.getTouchables();
+			target = new ViewTarget(views.get(views.size()-1)); //overflow
+			openOptionsMenu();   // Change size of showcase?
+		}
+		else
+		{
+			target = new ViewTarget(itemView);
+		}
+
+		tutorial.setShowcase(target, animate);
+	}
 
 	protected class SearchTask extends AsyncTask<Void, Void, Void> implements OnCancelListener
 	{

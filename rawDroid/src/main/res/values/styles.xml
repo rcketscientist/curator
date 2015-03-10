@@ -62,11 +62,14 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
-        <item name="android:actionOverflowButtonStyle">@style/Widget.ActionButton.Overflow</item>
+        <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
+<!--        <item name="windowDrawsSystemBarBackgrounds">false</item>-->
     </style>
 
-    <style name="Widget.ActionButton.Overflow" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:contentDescription">@string/abc_action_menu_overflow_description</item>
+    <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
+    <style name="Custom.Widget.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
     </style>
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">

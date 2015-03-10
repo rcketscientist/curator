@@ -3,33 +3,45 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/gallery_delete"
+        android:id="@+id/contextSelectAll"
+        android:icon="@drawable/select_all"
+        android:orderInCategory="0"
+        app:showAsAction="always"
+        android:title="@string/selectAll"/>
+    <item
+        android:id="@+id/context_delete"
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="1"
         app:showAsAction="always"
         android:title="@string/delete"/>
     <item
-        android:id="@+id/galleryExportThumbs"
+        android:id="@+id/contextExportThumbs"
         android:icon="@android:drawable/ic_menu_gallery"
         android:orderInCategory="5"
         app:showAsAction="ifRoom"
         android:title="@string/exportThumbnails"/>
     <item
-        android:id="@+id/galleryMoveImages"
+        android:id="@+id/contextMoveImages"
         android:icon="@drawable/import_images"
         android:orderInCategory="3"
         app:showAsAction="ifRoom"
         android:title="@string/moveImages"/>
     <item
-        android:id="@+id/galleryRename"
+        android:id="@+id/contextRename"
         android:icon="@android:drawable/ic_menu_edit"
         android:orderInCategory="2"
         app:showAsAction="ifRoom"
         android:title="@string/rename"/>
     <item
-        android:id="@+id/galleryShare"
+        android:id="@+id/contextShare"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         app:showAsAction="always"
         android:title="@string/shareWith"/>
+    <item
+        android:id="@+id/context_recycle"
+        android:icon="@drawable/recycle"
+        android:orderInCategory="12"
+        app:showAsAction="ifRoom"
+        android:title="@string/accessRecycle"/>
 
 </menu>

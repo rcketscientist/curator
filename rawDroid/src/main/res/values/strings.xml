@@ -240,8 +240,7 @@
     <!-- Tutorials -->
     <string name="tutorialWelcomeTitle">Welcome to the Rawdroid Tutorial</string>
     <string name="tutorialWelcomeText">The tutorial is interactive and can be advanced by clicking the next button.</string>
-    <string name="tutorialNavDisabled">Navigation is disabled during the tutorial</string>
-    <string name="tutorialViewerDisabled">Viewer is disabled during the tutorial</string>
+    <string name="tutorialDisabled">Disabled during the tutorial</string>
 
     <string name="tutorialConnectTitle">How to Connect Images</string>
     <string name="tutorialConnectText1">There are three main ways to access your images in Rawdroid.</string>
@@ -262,7 +261,7 @@
     <string name="tutorialMultiSelectText">You can add images to the selection by QUICKLY pressing on them.  Try that on image 3.</string>
     <string name="tutorialMultiSelectText2">You have now selected just images 1 and 3.</string>
     <string name="tutorialSelectAllText">You can quickly select all with this button.  Try that now.</string>
-    <string name="tutorialExitSelectionText">You can exit the selection mode by clicking the check.  Try that now.</string>
+    <string name="tutorialExitSelectionText">You can exit the selection mode by clicking the back button.  Try that now.</string>
     <string name="tutorialSelectBetweenText1">You can also select a range of images by long pressing on the beginning and end image.  Enter selection mode by LONG pressing on image 2.</string>
     <string name="tutorialSelectBetweenText2">Now LONG press again on image 4.</string>
     <string name="tutorialSelectBetweenText3">You have selected images 2 and 3 and 4.</string>
