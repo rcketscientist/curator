@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="2.9.0"
+        versioncode="29000"
+        summary="Major Maintenance Release"
+        date="10 MAR 2015">
+        <change>Enhancement: Port interface to new Material design</change>
+        <change>Enhancement: New minimalistic viewer toolbar</change>
+        <change>Enhancement: Viewer toolbar visibility configurable</change>
+        <change>Enhancement: Rename now handles associated files (xmp, jpg)</change>
+        <change>Fix: Rename will now refresh the view</change>
+        <change>Enhancement: Delete also removes the jpeg</change>
+        <change>Enhancement: Immersive view in 5.0, swipe up to view nav bars (configurable)</change>
+        <change>Fix: Explain to user when write fails on 4.4+</change>
+        <change>Enhancement: Convert tutorial to Material design</change>
+        <change>Enhancement: Tutorial will automate actions if user doesn't interact</change>
+    </release>
     <release version="2.7.4"
              versioncode="27400"
              summary="Patch"
