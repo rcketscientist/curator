@@ -959,10 +959,6 @@ android.support.v4.view.AccessibilityDelegateCompatIcs$AccessibilityDelegateBrid
 android.support.v4.view.AccessibilityDelegateCompatJellyBean
 android.support.v4.view.AccessibilityDelegateCompatJellyBean$1
 android.support.v4.view.AccessibilityDelegateCompatJellyBean$AccessibilityDelegateBridgeJellyBean
-android.support.v4.view.ActionProvider:
-    private static final java.lang.String TAG
-    86:86:public android.content.Context getContext()
-    145:148:public void refreshVisibility()
 android.support.v4.view.GestureDetectorCompat
 android.support.v4.view.GestureDetectorCompat$GestureDetectorCompatImpl
 android.support.v4.view.GestureDetectorCompat$GestureDetectorCompatImplBase
@@ -2348,8 +2344,6 @@ android.support.v7.internal.view.menu.MenuItemImpl:
     232:233:public android.view.MenuItem setCallback(java.lang.Runnable)
 android.support.v7.internal.view.menu.MenuItemWrapperICS:
     static final java.lang.String LOG_TAG
-android.support.v7.internal.view.menu.MenuItemWrapperJB$ActionProviderWrapperJB:
-    68:69:public void refreshVisibility()
 android.support.v7.internal.view.menu.MenuPopupHelper:
     private static final java.lang.String TAG
     80:81:public MenuPopupHelper(android.content.Context,android.support.v7.internal.view.menu.MenuBuilder)
@@ -2709,20 +2703,6 @@ android.support.v7.widget.LayoutState:
     static final int ITEM_DIRECTION_HEAD
     static final int ITEM_DIRECTION_TAIL
     static final int SCOLLING_OFFSET_NaN
-android.support.v7.widget.LinearLayoutCompat:
-    public static final int HORIZONTAL
-    public static final int VERTICAL
-    public static final int SHOW_DIVIDER_NONE
-    public static final int SHOW_DIVIDER_BEGINNING
-    public static final int SHOW_DIVIDER_MIDDLE
-    public static final int SHOW_DIVIDER_END
-    private static final int VERTICAL_GRAVITY_COUNT
-    private static final int INDEX_CENTER_VERTICAL
-    private static final int INDEX_TOP
-    private static final int INDEX_BOTTOM
-    private static final int INDEX_FILL
-    377:377:public boolean isBaselineAligned()
-    400:400:public boolean isMeasureWithLargestChildEnabled()
 android.support.v7.widget.LinearLayoutCompat$DividerMode
 android.support.v7.widget.LinearLayoutCompat$LayoutParams:
     1771:1808:public LinearLayoutCompat$LayoutParams(int,int,float)
@@ -3108,91 +3088,6 @@ android.support.v7.widget.RecyclerViewAccessibilityDelegate:
 android.support.v7.widget.RecyclerViewAccessibilityDelegate$1
 android.support.v7.widget.ScrollbarHelper:
     23:23:ScrollbarHelper()
-android.support.v7.widget.SearchView:
-    private static final boolean DBG
-    private static final java.lang.String LOG_TAG
-    private static final java.lang.String IME_OPTION_NO_MICROPHONE
-    private final android.view.View mSearchPlate
-    private final android.view.View mDropDownAnchor
-    private java.lang.CharSequence mOldQueryText
-    private final android.view.View$OnClickListener mOnClickListener
-    android.view.View$OnKeyListener mTextKeyListener
-    private final android.widget.TextView$OnEditorActionListener mOnEditorActionListener
-    private final android.widget.AdapterView$OnItemClickListener mOnItemClickListener
-    private final android.widget.AdapterView$OnItemSelectedListener mOnItemSelectedListener
-    private android.text.TextWatcher mTextWatcher
-    264:265:public SearchView(android.content.Context)
-    268:269:public SearchView(android.content.Context,android.util.AttributeSet)
-    166:1591:public SearchView(android.content.Context,android.util.AttributeSet,int)
-    377:384:private void addOnLayoutChangeListenerToDropDownAnchorSDK11()
-    387:394:private void addOnLayoutChangeListenerToDropDownAnchorBase()
-    636:636:public boolean isIconfiedByDefault()
-    686:686:public boolean isSubmitButtonEnabled()
-    716:716:public boolean isQueryRefinementEnabled()
-    869:873:private void updateFocusedState()
-    972:1011:private boolean onSuggestionsKey(android.view.View,int,android.view.KeyEvent)
-    1115:1126:private void onTextChanged(java.lang.CharSequence)
-    1178:1197:private void onVoiceClicked()
-    1244:1265:private void adjustDropDownSizeAndPosition()
-    1268:1275:private boolean onItemClicked(int,int,java.lang.String)
-    1279:1284:private boolean onItemSelected(int)
-    1321:1341:private void rewriteQueryFromSuggestion(int)
-    1354:1364:private boolean launchSuggestion(int,int,java.lang.String)
-    1371:1381:private void launchIntent(android.content.Intent)
-    1447:1451:private android.content.Intent createVoiceWebSearchIntent(android.content.Intent,android.app.SearchableInfo)
-    1463:1519:private android.content.Intent createVoiceAppSearchIntent(android.content.Intent,android.app.SearchableInfo)
-    1538:1574:private android.content.Intent createIntentFromSuggestion(android.database.Cursor,int,java.lang.String)
-    104:104:static synthetic void access$000(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.support.v4.widget.CursorAdapter access$100(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.view.View$OnFocusChangeListener access$200(android.support.v7.widget.SearchView)
-    104:104:static synthetic void access$300(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.widget.ImageView access$400(android.support.v7.widget.SearchView)
-    104:104:static synthetic void access$500(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.widget.ImageView access$600(android.support.v7.widget.SearchView)
-    104:104:static synthetic void access$700(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.widget.ImageView access$800(android.support.v7.widget.SearchView)
-    104:104:static synthetic void access$900(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.widget.ImageView access$1000(android.support.v7.widget.SearchView)
-    104:104:static synthetic boolean access$1100()
-    104:104:static synthetic void access$1200(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.support.v7.widget.SearchView$SearchAutoComplete access$1300(android.support.v7.widget.SearchView)
-    104:104:static synthetic void access$1400(android.support.v7.widget.SearchView)
-    104:104:static synthetic android.app.SearchableInfo access$1500(android.support.v7.widget.SearchView)
-    104:104:static synthetic boolean access$1600(android.support.v7.widget.SearchView,android.view.View,int,android.view.KeyEvent)
-    104:104:static synthetic void access$1800(android.support.v7.widget.SearchView,int,java.lang.String,java.lang.String)
-    104:104:static synthetic boolean access$1900(android.support.v7.widget.SearchView,int,int,java.lang.String)
-    104:104:static synthetic boolean access$2000(android.support.v7.widget.SearchView,int)
-    104:104:static synthetic void access$2100(android.support.v7.widget.SearchView,java.lang.CharSequence)
-android.support.v7.widget.SearchView$1
-android.support.v7.widget.SearchView$10
-android.support.v7.widget.SearchView$11
-android.support.v7.widget.SearchView$12
-android.support.v7.widget.SearchView$2
-android.support.v7.widget.SearchView$3
-android.support.v7.widget.SearchView$4
-android.support.v7.widget.SearchView$5
-android.support.v7.widget.SearchView$6
-android.support.v7.widget.SearchView$7
-android.support.v7.widget.SearchView$8
-android.support.v7.widget.SearchView$9
-android.support.v7.widget.SearchView$AutoCompleteTextViewReflector:
-    1808:1818:void showSoftInputUnchecked(android.view.inputmethod.InputMethodManager,android.view.View,int)
-android.support.v7.widget.SearchView$OnQueryTextListener:
-    public abstract boolean onQueryTextChange(java.lang.String)
-android.support.v7.widget.SearchView$OnSuggestionListener:
-    public abstract boolean onSuggestionSelect(int)
-    public abstract boolean onSuggestionClick(int)
-android.support.v7.widget.SearchView$SearchAutoComplete:
-    1661:1661:private boolean isEmpty()
-    1608:1608:static synthetic boolean access$1700(android.support.v7.widget.SearchView$SearchAutoComplete)
-android.support.v7.widget.ShareActionProvider:
-    private static final int DEFAULT_INITIAL_ACTIVITY_COUNT
-    public static final java.lang.String DEFAULT_SHARE_HISTORY_FILE_NAME
-    124:159:public ShareActionProvider(android.content.Context)
-    278:280:public void setShareHistoryFileName(java.lang.String)
-android.support.v7.widget.ShareActionProvider$ShareMenuItemOnMenuItemClickListener:
-    310:310:private ShareActionProvider$ShareMenuItemOnMenuItemClickListener(android.support.v7.widget.ShareActionProvider)
-    310:310:synthetic ShareActionProvider$ShareMenuItemOnMenuItemClickListener(android.support.v7.widget.ShareActionProvider,android.support.v7.widget.ShareActionProvider$1)
 android.support.v7.widget.Space
 android.support.v7.widget.StaggeredGridLayoutManager:
     public static final java.lang.String TAG

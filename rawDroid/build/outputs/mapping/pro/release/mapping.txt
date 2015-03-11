@@ -1106,19 +1106,22 @@ android.support.v4.view.AccessibilityDelegateCompat$AccessibilityDelegateStubImp
 android.support.v4.view.AccessibilityDelegateCompatIcs -> android.support.v4.view.f:
     42:42:java.lang.Object newAccessibilityDelegateDefaultImpl() -> a
 android.support.v4.view.ActionProvider -> android.support.v4.view.g:
-    android.content.Context mContext -> a
-    android.support.v4.view.ActionProvider$SubUiVisibilityListener mSubUiVisibilityListener -> b
-    android.support.v4.view.ActionProvider$VisibilityListener mVisibilityListener -> c
-    android.view.View onCreateActionView() -> a
-    109:109:android.view.View onCreateActionView(android.view.MenuItem) -> a
-    121:121:boolean overridesItemVisibility() -> b
-    135:135:boolean isVisible() -> c
-    182:182:boolean onPerformDefaultAction() -> d
-    195:195:boolean hasSubMenu() -> e
-    208:208:void onPrepareSubMenu(android.view.SubMenu) -> a
-    217:220:void subUiVisibilityChanged(boolean) -> a
-    226:227:void setSubUiVisibilityListener(android.support.v4.view.ActionProvider$SubUiVisibilityListener) -> a
-    236:242:void setVisibilityListener(android.support.v4.view.ActionProvider$VisibilityListener) -> a
+    java.lang.String TAG -> TAG
+    android.content.Context mContext -> mContext
+    android.support.v4.view.ActionProvider$SubUiVisibilityListener mSubUiVisibilityListener -> mSubUiVisibilityListener
+    android.support.v4.view.ActionProvider$VisibilityListener mVisibilityListener -> mVisibilityListener
+    86:86:android.content.Context getContext() -> getContext
+    android.view.View onCreateActionView() -> onCreateActionView
+    109:109:android.view.View onCreateActionView(android.view.MenuItem) -> onCreateActionView
+    121:121:boolean overridesItemVisibility() -> overridesItemVisibility
+    135:135:boolean isVisible() -> isVisible
+    145:148:void refreshVisibility() -> refreshVisibility
+    182:182:boolean onPerformDefaultAction() -> onPerformDefaultAction
+    195:195:boolean hasSubMenu() -> hasSubMenu
+    208:208:void onPrepareSubMenu(android.view.SubMenu) -> onPrepareSubMenu
+    217:220:void subUiVisibilityChanged(boolean) -> subUiVisibilityChanged
+    226:227:void setSubUiVisibilityListener(android.support.v4.view.ActionProvider$SubUiVisibilityListener) -> setSubUiVisibilityListener
+    236:242:void setVisibilityListener(android.support.v4.view.ActionProvider$VisibilityListener) -> setVisibilityListener
 android.support.v4.view.ActionProvider$SubUiVisibilityListener -> android.support.v4.view.h:
     void onSubUiVisibilityChanged(boolean) -> a_
 android.support.v4.view.ActionProvider$VisibilityListener -> android.support.v4.view.i:
@@ -4434,15 +4437,15 @@ android.support.v7.internal.view.menu.MenuItemWrapperICS -> android.support.v7.i
 android.support.v7.internal.view.menu.MenuItemWrapperICS$ActionProviderWrapper -> android.support.v7.internal.view.menu.p:
     android.view.ActionProvider mInner -> a
     android.support.v7.internal.view.menu.MenuItemWrapperICS this$0 -> b
-    353:353:android.view.View onCreateActionView() -> a
-    358:358:boolean onPerformDefaultAction() -> d
-    363:363:boolean hasSubMenu() -> e
-    368:369:void onPrepareSubMenu(android.view.SubMenu) -> a
+    353:353:android.view.View onCreateActionView() -> onCreateActionView
+    358:358:boolean onPerformDefaultAction() -> onPerformDefaultAction
+    363:363:boolean hasSubMenu() -> hasSubMenu
+    368:369:void onPrepareSubMenu(android.view.SubMenu) -> onPrepareSubMenu
 android.support.v7.internal.view.menu.MenuItemWrapperICS$CollapsibleActionViewWrapper -> android.support.v7.internal.view.menu.q:
     android.view.CollapsibleActionView mWrappedView -> a
-    389:390:void onActionViewExpanded() -> a
-    394:395:void onActionViewCollapsed() -> b
-    398:398:android.view.View getWrappedView() -> c
+    389:390:void onActionViewExpanded() -> onActionViewExpanded
+    394:395:void onActionViewCollapsed() -> onActionViewCollapsed
+    398:398:android.view.View getWrappedView() -> a
 android.support.v7.internal.view.menu.MenuItemWrapperICS$OnActionExpandListenerWrapper -> android.support.v7.internal.view.menu.r:
     android.support.v7.internal.view.menu.MenuItemWrapperICS this$0 -> a
     334:334:boolean onMenuItemActionExpand(android.view.MenuItem) -> a
@@ -4455,10 +4458,11 @@ android.support.v7.internal.view.menu.MenuItemWrapperJB -> android.support.v7.in
 android.support.v7.internal.view.menu.MenuItemWrapperJB$ActionProviderWrapperJB -> android.support.v7.internal.view.menu.u:
     android.support.v4.view.ActionProvider$VisibilityListener mListener -> c
     android.support.v7.internal.view.menu.MenuItemWrapperJB this$0 -> d
-    53:53:android.view.View onCreateActionView(android.view.MenuItem) -> a
-    58:58:boolean overridesItemVisibility() -> b
-    63:63:boolean isVisible() -> c
-    73:75:void setVisibilityListener(android.support.v4.view.ActionProvider$VisibilityListener) -> a
+    53:53:android.view.View onCreateActionView(android.view.MenuItem) -> onCreateActionView
+    58:58:boolean overridesItemVisibility() -> overridesItemVisibility
+    63:63:boolean isVisible() -> isVisible
+    68:69:void refreshVisibility() -> refreshVisibility
+    73:75:void setVisibilityListener(android.support.v4.view.ActionProvider$VisibilityListener) -> setVisibilityListener
     79:82:void onActionProviderVisibilityChanged(boolean) -> onActionProviderVisibilityChanged
 android.support.v7.internal.view.menu.MenuPopupHelper -> android.support.v7.internal.view.menu.v:
     int ITEM_LAYOUT -> a
@@ -5625,8 +5629,8 @@ android.support.v7.view.ActionMode$Callback -> android.support.v7.b.b:
     boolean onActionItemClicked(android.support.v7.view.ActionMode,android.view.MenuItem) -> a
     void onDestroyActionMode(android.support.v7.view.ActionMode) -> a
 android.support.v7.view.CollapsibleActionView -> android.support.v7.b.c:
-    void onActionViewExpanded() -> a
-    void onActionViewCollapsed() -> b
+    void onActionViewExpanded() -> onActionViewExpanded
+    void onActionViewCollapsed() -> onActionViewCollapsed
 android.support.v7.widget.ActionMenuPresenter -> android.support.v7.widget.ActionMenuPresenter:
     android.view.View mOverflowButton -> i
     boolean mReserveOverflow -> j
@@ -5744,7 +5748,7 @@ android.support.v7.widget.ActionMenuView -> android.support.v7.widget.ActionMenu
     125:135:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
     138:139:void setOnMenuItemClickListener(android.support.v7.widget.ActionMenuView$OnMenuItemClickListener) -> setOnMenuItemClickListener
     144:171:void onMeasure(int,int) -> onMeasure
-    175:384:void onMeasureExactFormat(int,int) -> c
+    175:384:void onMeasureExactFormat(int,int) -> a
     401:431:int measureChildForCells(android.view.View,int,int,int,int) -> a
     436:537:void onLayout(boolean,int,int,int,int) -> onLayout
     541:543:void onDetachedFromWindow() -> onDetachedFromWindow
@@ -5769,9 +5773,9 @@ android.support.v7.widget.ActionMenuView -> android.support.v7.widget.ActionMenu
     696:708:boolean hasSupportDividerBeforeChildAt(int) -> a
     712:712:boolean dispatchPopulateAccessibilityEvent(android.view.accessibility.AccessibilityEvent) -> dispatchPopulateAccessibilityEvent
     717:718:void setExpandedActionViewsExclusive(boolean) -> setExpandedActionViewsExclusive
-    43:43:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> b
-    43:43:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateDefaultLayoutParams() -> j
-    43:43:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.util.AttributeSet) -> b
+    43:43:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
+    43:43:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
+    43:43:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
     43:43:android.view.ViewGroup$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
     43:43:android.view.ViewGroup$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
     43:43:android.view.ViewGroup$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
@@ -5894,21 +5898,32 @@ android.support.v7.widget.LayoutState -> android.support.v7.widget.v:
     73:73:boolean hasMore(android.support.v7.widget.RecyclerView$State) -> a
     83:85:android.view.View next(android.support.v7.widget.RecyclerView$Recycler) -> a
 android.support.v7.widget.LinearLayoutCompat -> android.support.v7.widget.LinearLayoutCompat:
-    boolean mBaselineAligned -> a
-    int mBaselineAlignedChildIndex -> b
-    int mBaselineChildTop -> c
-    int mOrientation -> d
-    int mGravity -> e
-    int mTotalLength -> f
-    float mWeightSum -> g
-    boolean mUseLargestChild -> h
-    int[] mMaxAscent -> i
-    int[] mMaxDescent -> j
-    android.graphics.drawable.Drawable mDivider -> k
-    int mDividerWidth -> l
-    int mDividerHeight -> m
-    int mShowDividers -> n
-    int mDividerPadding -> o
+    int HORIZONTAL -> HORIZONTAL
+    int VERTICAL -> VERTICAL
+    int SHOW_DIVIDER_NONE -> SHOW_DIVIDER_NONE
+    int SHOW_DIVIDER_BEGINNING -> SHOW_DIVIDER_BEGINNING
+    int SHOW_DIVIDER_MIDDLE -> SHOW_DIVIDER_MIDDLE
+    int SHOW_DIVIDER_END -> SHOW_DIVIDER_END
+    boolean mBaselineAligned -> mBaselineAligned
+    int mBaselineAlignedChildIndex -> mBaselineAlignedChildIndex
+    int mBaselineChildTop -> mBaselineChildTop
+    int mOrientation -> mOrientation
+    int mGravity -> mGravity
+    int mTotalLength -> mTotalLength
+    float mWeightSum -> mWeightSum
+    boolean mUseLargestChild -> mUseLargestChild
+    int[] mMaxAscent -> mMaxAscent
+    int[] mMaxDescent -> mMaxDescent
+    int VERTICAL_GRAVITY_COUNT -> VERTICAL_GRAVITY_COUNT
+    int INDEX_CENTER_VERTICAL -> INDEX_CENTER_VERTICAL
+    int INDEX_TOP -> INDEX_TOP
+    int INDEX_BOTTOM -> INDEX_BOTTOM
+    int INDEX_FILL -> INDEX_FILL
+    android.graphics.drawable.Drawable mDivider -> mDivider
+    int mDividerWidth -> mDividerWidth
+    int mDividerHeight -> mDividerHeight
+    int mShowDividers -> mShowDividers
+    int mDividerPadding -> mDividerPadding
     192:196:void setShowDividers(int) -> setShowDividers
     200:200:boolean shouldDelayChildPressedState() -> shouldDelayChildPressedState
     209:209:int getShowDividers() -> getShowDividers
@@ -5918,42 +5933,44 @@ android.support.v7.widget.LinearLayoutCompat -> android.support.v7.widget.Linear
     265:265:int getDividerPadding() -> getDividerPadding
     274:274:int getDividerWidth() -> getDividerWidth
     279:288:void onDraw(android.graphics.Canvas) -> onDraw
-    291:315:void drawDividersVertical(android.graphics.Canvas) -> a
-    318:356:void drawDividersHorizontal(android.graphics.Canvas) -> b
-    359:362:void drawHorizontalDivider(android.graphics.Canvas,int) -> a
-    365:368:void drawVerticalDivider(android.graphics.Canvas,int) -> b
+    291:315:void drawDividersVertical(android.graphics.Canvas) -> drawDividersVertical
+    318:356:void drawDividersHorizontal(android.graphics.Canvas) -> drawDividersHorizontal
+    359:362:void drawHorizontalDivider(android.graphics.Canvas,int) -> drawHorizontalDivider
+    365:368:void drawVerticalDivider(android.graphics.Canvas,int) -> drawVerticalDivider
+    377:377:boolean isBaselineAligned() -> isBaselineAligned
     388:389:void setBaselineAligned(boolean) -> setBaselineAligned
+    400:400:boolean isMeasureWithLargestChildEnabled() -> isMeasureWithLargestChildEnabled
     414:415:void setMeasureWithLargestChildEnabled(boolean) -> setMeasureWithLargestChildEnabled
     419:467:int getBaseline() -> getBaseline
     476:476:int getBaselineAlignedChildIndex() -> getBaselineAlignedChildIndex
     484:489:void setBaselineAlignedChildIndex(int) -> setBaselineAlignedChildIndex
-    501:501:android.view.View getVirtualChildAt(int) -> b
+    501:501:android.view.View getVirtualChildAt(int) -> getVirtualChildAt
     514:514:int getVirtualChildCount() -> getVirtualChildCount
     525:525:float getWeightSum() -> getWeightSum
     541:542:void setWeightSum(float) -> setWeightSum
     546:551:void onMeasure(int,int) -> onMeasure
-    561:575:boolean hasDividerBeforeChildAt(int) -> c
-    590:886:void measureVertical(int,int) -> a
-    890:909:void forceUniformWidth(int,int) -> c
-    923:1307:void measureHorizontal(int,int) -> b
-    1313:1332:void forceUniformHeight(int,int) -> d
-    1343:1343:int getChildrenSkipCount(android.view.View,int) -> a
-    1354:1354:int measureNullChild(int) -> d
-    1373:1375:void measureChildBeforeLayout(android.view.View,int,int,int,int,int) -> a
-    1385:1385:int getLocationOffset(android.view.View) -> a
-    1397:1397:int getNextLocationOffset(android.view.View) -> b
+    561:575:boolean hasDividerBeforeChildAt(int) -> hasDividerBeforeChildAt
+    590:886:void measureVertical(int,int) -> measureVertical
+    890:909:void forceUniformWidth(int,int) -> forceUniformWidth
+    923:1307:void measureHorizontal(int,int) -> measureHorizontal
+    1313:1332:void forceUniformHeight(int,int) -> forceUniformHeight
+    1343:1343:int getChildrenSkipCount(android.view.View,int) -> getChildrenSkipCount
+    1354:1354:int measureNullChild(int) -> measureNullChild
+    1373:1375:void measureChildBeforeLayout(android.view.View,int,int,int,int,int) -> measureChildBeforeLayout
+    1385:1385:int getLocationOffset(android.view.View) -> getLocationOffset
+    1397:1397:int getNextLocationOffset(android.view.View) -> getNextLocationOffset
     1402:1407:void onLayout(boolean,int,int,int,int) -> onLayout
-    1422:1502:void layoutVertical(int,int,int,int) -> a
-    1517:1638:void layoutHorizontal(int,int,int,int) -> b
-    1641:1642:void setChildFrame(android.view.View,int,int,int,int) -> a
+    1422:1502:void layoutVertical(int,int,int,int) -> layoutVertical
+    1517:1638:void layoutHorizontal(int,int,int,int) -> layoutHorizontal
+    1641:1642:void setChildFrame(android.view.View,int,int,int,int) -> setChildFrame
     1650:1654:void setOrientation(int) -> setOrientation
     1663:1663:int getOrientation() -> getOrientation
     1675:1687:void setGravity(int) -> setGravity
     1690:1695:void setHorizontalGravity(int) -> setHorizontalGravity
     1698:1703:void setVerticalGravity(int) -> setVerticalGravity
-    1707:1707:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.util.AttributeSet) -> b
-    1720:1725:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateDefaultLayoutParams() -> j
-    1730:1730:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> b
+    1707:1707:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.util.AttributeSet) -> generateLayoutParams
+    1720:1725:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateDefaultLayoutParams() -> generateDefaultLayoutParams
+    1730:1730:android.support.v7.widget.LinearLayoutCompat$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> generateLayoutParams
     1737:1737:boolean checkLayoutParams(android.view.ViewGroup$LayoutParams) -> checkLayoutParams
     1741:1745:void onInitializeAccessibilityEvent(android.view.accessibility.AccessibilityEvent) -> onInitializeAccessibilityEvent
     1748:1752:void onInitializeAccessibilityNodeInfo(android.view.accessibility.AccessibilityNodeInfo) -> onInitializeAccessibilityNodeInfo
@@ -6764,45 +6781,59 @@ android.support.v7.widget.ScrollbarHelper -> android.support.v7.widget.br:
     60:69:int computeScrollExtent(android.support.v7.widget.RecyclerView$State,android.support.v7.widget.OrientationHelper,android.view.View,android.view.View,android.support.v7.widget.RecyclerView$LayoutManager,boolean) -> a
     79:92:int computeScrollRange(android.support.v7.widget.RecyclerView$State,android.support.v7.widget.OrientationHelper,android.view.View,android.view.View,android.support.v7.widget.RecyclerView$LayoutManager,boolean) -> b
 android.support.v7.widget.SearchView -> android.support.v7.widget.SearchView:
-    boolean IS_AT_LEAST_FROYO -> b
-    android.support.v7.widget.SearchView$SearchAutoComplete mQueryTextView -> c
-    android.view.View mSearchEditFrame -> d
-    android.view.View mSubmitArea -> e
-    android.widget.ImageView mSearchButton -> f
-    android.widget.ImageView mSubmitButton -> g
-    android.widget.ImageView mCloseButton -> h
-    android.widget.ImageView mVoiceButton -> i
-    android.widget.ImageView mSearchHintIcon -> j
-    int mSearchIconResId -> k
-    int mSuggestionRowLayout -> l
-    int mSuggestionCommitIconResId -> m
-    android.content.Intent mVoiceWebSearchIntent -> n
-    android.content.Intent mVoiceAppSearchIntent -> o
-    android.support.v7.widget.SearchView$OnQueryTextListener mOnQueryChangeListener -> p
-    android.support.v7.widget.SearchView$OnCloseListener mOnCloseListener -> q
-    android.view.View$OnFocusChangeListener mOnQueryTextFocusChangeListener -> r
-    android.support.v7.widget.SearchView$OnSuggestionListener mOnSuggestionListener -> s
-    android.view.View$OnClickListener mOnSearchClickListener -> t
-    boolean mIconifiedByDefault -> u
-    boolean mIconified -> v
-    android.support.v4.widget.CursorAdapter mSuggestionsAdapter -> w
-    boolean mSubmitButtonEnabled -> x
-    java.lang.CharSequence mQueryHint -> y
-    boolean mQueryRefinement -> z
-    boolean mClearingFocus -> A
-    int mMaxWidth -> B
-    boolean mVoiceButtonEnabled -> C
-    java.lang.CharSequence mUserQuery -> D
-    boolean mExpandedInActionView -> E
-    int mCollapsedImeOptions -> F
-    android.app.SearchableInfo mSearchable -> G
-    android.os.Bundle mAppSearchData -> H
-    android.support.v7.internal.widget.TintManager mTintManager -> I
-    android.support.v7.widget.SearchView$AutoCompleteTextViewReflector HIDDEN_METHOD_INVOKER -> a
-    java.lang.Runnable mShowImeRunnable -> J
-    java.lang.Runnable mUpdateDrawableStateRunnable -> K
-    java.lang.Runnable mReleaseCursorRunnable -> L
-    java.util.WeakHashMap mOutsideDrawablesCache -> M
+    boolean DBG -> DBG
+    java.lang.String LOG_TAG -> LOG_TAG
+    boolean IS_AT_LEAST_FROYO -> IS_AT_LEAST_FROYO
+    java.lang.String IME_OPTION_NO_MICROPHONE -> IME_OPTION_NO_MICROPHONE
+    android.support.v7.widget.SearchView$SearchAutoComplete mQueryTextView -> mQueryTextView
+    android.view.View mSearchEditFrame -> mSearchEditFrame
+    android.view.View mSearchPlate -> mSearchPlate
+    android.view.View mSubmitArea -> mSubmitArea
+    android.widget.ImageView mSearchButton -> mSearchButton
+    android.widget.ImageView mSubmitButton -> mSubmitButton
+    android.widget.ImageView mCloseButton -> mCloseButton
+    android.widget.ImageView mVoiceButton -> mVoiceButton
+    android.widget.ImageView mSearchHintIcon -> mSearchHintIcon
+    android.view.View mDropDownAnchor -> mDropDownAnchor
+    int mSearchIconResId -> mSearchIconResId
+    int mSuggestionRowLayout -> mSuggestionRowLayout
+    int mSuggestionCommitIconResId -> mSuggestionCommitIconResId
+    android.content.Intent mVoiceWebSearchIntent -> mVoiceWebSearchIntent
+    android.content.Intent mVoiceAppSearchIntent -> mVoiceAppSearchIntent
+    android.support.v7.widget.SearchView$OnQueryTextListener mOnQueryChangeListener -> mOnQueryChangeListener
+    android.support.v7.widget.SearchView$OnCloseListener mOnCloseListener -> mOnCloseListener
+    android.view.View$OnFocusChangeListener mOnQueryTextFocusChangeListener -> mOnQueryTextFocusChangeListener
+    android.support.v7.widget.SearchView$OnSuggestionListener mOnSuggestionListener -> mOnSuggestionListener
+    android.view.View$OnClickListener mOnSearchClickListener -> mOnSearchClickListener
+    boolean mIconifiedByDefault -> mIconifiedByDefault
+    boolean mIconified -> mIconified
+    android.support.v4.widget.CursorAdapter mSuggestionsAdapter -> mSuggestionsAdapter
+    boolean mSubmitButtonEnabled -> mSubmitButtonEnabled
+    java.lang.CharSequence mQueryHint -> mQueryHint
+    boolean mQueryRefinement -> mQueryRefinement
+    boolean mClearingFocus -> mClearingFocus
+    int mMaxWidth -> mMaxWidth
+    boolean mVoiceButtonEnabled -> mVoiceButtonEnabled
+    java.lang.CharSequence mOldQueryText -> mOldQueryText
+    java.lang.CharSequence mUserQuery -> mUserQuery
+    boolean mExpandedInActionView -> mExpandedInActionView
+    int mCollapsedImeOptions -> mCollapsedImeOptions
+    android.app.SearchableInfo mSearchable -> mSearchable
+    android.os.Bundle mAppSearchData -> mAppSearchData
+    android.support.v7.internal.widget.TintManager mTintManager -> mTintManager
+    android.support.v7.widget.SearchView$AutoCompleteTextViewReflector HIDDEN_METHOD_INVOKER -> HIDDEN_METHOD_INVOKER
+    java.lang.Runnable mShowImeRunnable -> mShowImeRunnable
+    java.lang.Runnable mUpdateDrawableStateRunnable -> mUpdateDrawableStateRunnable
+    java.lang.Runnable mReleaseCursorRunnable -> mReleaseCursorRunnable
+    java.util.WeakHashMap mOutsideDrawablesCache -> mOutsideDrawablesCache
+    android.view.View$OnClickListener mOnClickListener -> mOnClickListener
+    android.view.View$OnKeyListener mTextKeyListener -> mTextKeyListener
+    android.widget.TextView$OnEditorActionListener mOnEditorActionListener -> mOnEditorActionListener
+    android.widget.AdapterView$OnItemClickListener mOnItemClickListener -> mOnItemClickListener
+    android.widget.AdapterView$OnItemSelectedListener mOnItemSelectedListener -> mOnItemSelectedListener
+    android.text.TextWatcher mTextWatcher -> mTextWatcher
+    377:384:void addOnLayoutChangeListenerToDropDownAnchorSDK11() -> addOnLayoutChangeListenerToDropDownAnchorSDK11
+    387:394:void addOnLayoutChangeListenerToDropDownAnchorBase() -> addOnLayoutChangeListenerToDropDownAnchorBase
     397:397:int getSuggestionRowLayout() -> getSuggestionRowLayout
     401:401:int getSuggestionCommitIconResId() -> getSuggestionCommitIconResId
     413:429:void setSearchableInfo(android.app.SearchableInfo) -> setSearchableInfo
@@ -6819,49 +6850,125 @@ android.support.v7.widget.SearchView -> android.support.v7.widget.SearchView:
     540:541:void setOnSuggestionListener(android.support.v7.widget.SearchView$OnSuggestionListener) -> setOnSuggestionListener
     552:553:void setOnSearchClickListener(android.view.View$OnClickListener) -> setOnSearchClickListener
     561:561:java.lang.CharSequence getQuery() -> getQuery
-    573:583:void setQuery(java.lang.CharSequence,boolean) -> a
+    573:583:void setQuery(java.lang.CharSequence,boolean) -> setQuery
     592:594:void setQueryHint(java.lang.CharSequence) -> setQueryHint
     601:611:java.lang.CharSequence getQueryHint() -> getQueryHint
     625:629:void setIconifiedByDefault(boolean) -> setIconifiedByDefault
+    636:636:boolean isIconfiedByDefault() -> isIconfiedByDefault
     650:655:void setIconified(boolean) -> setIconified
-    664:664:boolean isIconified() -> c
+    664:664:boolean isIconified() -> isIconified
     676:678:void setSubmitButtonEnabled(boolean) -> setSubmitButtonEnabled
+    686:686:boolean isSubmitButtonEnabled() -> isSubmitButtonEnabled
     704:709:void setQueryRefinementEnabled(boolean) -> setQueryRefinementEnabled
+    716:716:boolean isQueryRefinementEnabled() -> isQueryRefinementEnabled
     726:729:void setSuggestionsAdapter(android.support.v4.widget.CursorAdapter) -> setSuggestionsAdapter
     736:736:android.support.v4.widget.CursorAdapter getSuggestionsAdapter() -> getSuggestionsAdapter
     743:746:void setMaxWidth(int) -> setMaxWidth
     754:754:int getMaxWidth() -> getMaxWidth
     760:790:void onMeasure(int,int) -> onMeasure
     793:793:int getPreferredWidth() -> getPreferredWidth
-    798:811:void updateViewsVisibility(boolean) -> a
-    815:829:boolean hasVoiceSearch() -> e
-    833:833:boolean isSubmitAreaEnabled() -> f
-    837:843:void updateSubmitButton(boolean) -> b
-    846:853:void updateSubmitArea() -> g
-    856:862:void updateCloseButton() -> h
-    865:866:void postUpdateFocusedState() -> i
+    798:811:void updateViewsVisibility(boolean) -> updateViewsVisibility
+    815:829:boolean hasVoiceSearch() -> hasVoiceSearch
+    833:833:boolean isSubmitAreaEnabled() -> isSubmitAreaEnabled
+    837:843:void updateSubmitButton(boolean) -> updateSubmitButton
+    846:853:void updateSubmitArea() -> updateSubmitArea
+    856:862:void updateCloseButton() -> updateCloseButton
+    865:866:void postUpdateFocusedState() -> postUpdateFocusedState
+    869:873:void updateFocusedState() -> updateFocusedState
     877:880:void onDetachedFromWindow() -> onDetachedFromWindow
     883:894:void setImeVisibility(boolean) -> setImeVisibility
-    901:902:void onQueryRefine(java.lang.CharSequence) -> a
-    1016:1027:java.lang.CharSequence getDecoratedHint(java.lang.CharSequence) -> b
-    1031:1045:void updateQueryHint() -> k
-    1052:1086:void updateSearchAutoComplete() -> l
-    1095:1101:void updateVoiceButton(boolean) -> c
-    1129:1140:void onSubmitQuery() -> m
-    1143:1144:void dismissSuggestions() -> n
-    1147:1164:void onCloseClicked() -> o
-    1167:1173:void onSearchClicked() -> p
-    1200:1207:void onTextFocusChanged() -> d
+    901:902:void onQueryRefine(java.lang.CharSequence) -> onQueryRefine
+    972:1011:boolean onSuggestionsKey(android.view.View,int,android.view.KeyEvent) -> onSuggestionsKey
+    1016:1027:java.lang.CharSequence getDecoratedHint(java.lang.CharSequence) -> getDecoratedHint
+    1031:1045:void updateQueryHint() -> updateQueryHint
+    1052:1086:void updateSearchAutoComplete() -> updateSearchAutoComplete
+    1095:1101:void updateVoiceButton(boolean) -> updateVoiceButton
+    1115:1126:void onTextChanged(java.lang.CharSequence) -> onTextChanged
+    1129:1140:void onSubmitQuery() -> onSubmitQuery
+    1143:1144:void dismissSuggestions() -> dismissSuggestions
+    1147:1164:void onCloseClicked() -> onCloseClicked
+    1167:1173:void onSearchClicked() -> onSearchClicked
+    1178:1197:void onVoiceClicked() -> onVoiceClicked
+    1200:1207:void onTextFocusChanged() -> onTextFocusChanged
     1211:1214:void onWindowFocusChanged(boolean) -> onWindowFocusChanged
-    1221:1226:void onActionViewCollapsed() -> b
-    1233:1240:void onActionViewExpanded() -> a
+    1221:1226:void onActionViewCollapsed() -> onActionViewCollapsed
+    1233:1240:void onActionViewExpanded() -> onActionViewExpanded
+    1244:1265:void adjustDropDownSizeAndPosition() -> adjustDropDownSizeAndPosition
+    1268:1275:boolean onItemClicked(int,int,java.lang.String) -> onItemClicked
+    1279:1284:boolean onItemSelected(int) -> onItemSelected
+    1321:1341:void rewriteQueryFromSuggestion(int) -> rewriteQueryFromSuggestion
+    1354:1364:boolean launchSuggestion(int,int,java.lang.String) -> launchSuggestion
+    1371:1381:void launchIntent(android.content.Intent) -> launchIntent
     1387:1390:void setQuery(java.lang.CharSequence) -> setQuery
-    1393:1396:void launchQuerySearch(int,java.lang.String,java.lang.String) -> a
-    1414:1439:android.content.Intent createIntent(java.lang.String,android.net.Uri,java.lang.String,java.lang.String,int,java.lang.String) -> a
-    1579:1581:void forceSuggestionQuery() -> q
-    1584:1584:boolean isLandscapeMode(android.content.Context) -> a
-    104:104:void access$2200(android.support.v7.widget.SearchView,boolean) -> a
-android.support.v7.widget.SearchView$AutoCompleteTextViewReflector -> android.support.v7.widget.bs:
+    1393:1396:void launchQuerySearch(int,java.lang.String,java.lang.String) -> launchQuerySearch
+    1414:1439:android.content.Intent createIntent(java.lang.String,android.net.Uri,java.lang.String,java.lang.String,int,java.lang.String) -> createIntent
+    1447:1451:android.content.Intent createVoiceWebSearchIntent(android.content.Intent,android.app.SearchableInfo) -> createVoiceWebSearchIntent
+    1463:1519:android.content.Intent createVoiceAppSearchIntent(android.content.Intent,android.app.SearchableInfo) -> createVoiceAppSearchIntent
+    1538:1574:android.content.Intent createIntentFromSuggestion(android.database.Cursor,int,java.lang.String) -> createIntentFromSuggestion
+    1579:1581:void forceSuggestionQuery() -> forceSuggestionQuery
+    1584:1584:boolean isLandscapeMode(android.content.Context) -> isLandscapeMode
+    104:104:void access$000(android.support.v7.widget.SearchView) -> access$000
+    104:104:android.support.v4.widget.CursorAdapter access$100(android.support.v7.widget.SearchView) -> access$100
+    104:104:android.view.View$OnFocusChangeListener access$200(android.support.v7.widget.SearchView) -> access$200
+    104:104:void access$300(android.support.v7.widget.SearchView) -> access$300
+    104:104:android.widget.ImageView access$400(android.support.v7.widget.SearchView) -> access$400
+    104:104:void access$500(android.support.v7.widget.SearchView) -> access$500
+    104:104:android.widget.ImageView access$600(android.support.v7.widget.SearchView) -> access$600
+    104:104:void access$700(android.support.v7.widget.SearchView) -> access$700
+    104:104:android.widget.ImageView access$800(android.support.v7.widget.SearchView) -> access$800
+    104:104:void access$900(android.support.v7.widget.SearchView) -> access$900
+    104:104:android.widget.ImageView access$1000(android.support.v7.widget.SearchView) -> access$1000
+    104:104:boolean access$1100() -> access$1100
+    104:104:void access$1200(android.support.v7.widget.SearchView) -> access$1200
+    104:104:android.support.v7.widget.SearchView$SearchAutoComplete access$1300(android.support.v7.widget.SearchView) -> access$1300
+    104:104:void access$1400(android.support.v7.widget.SearchView) -> access$1400
+    104:104:android.app.SearchableInfo access$1500(android.support.v7.widget.SearchView) -> access$1500
+    104:104:boolean access$1600(android.support.v7.widget.SearchView,android.view.View,int,android.view.KeyEvent) -> access$1600
+    104:104:void access$1800(android.support.v7.widget.SearchView,int,java.lang.String,java.lang.String) -> access$1800
+    104:104:boolean access$1900(android.support.v7.widget.SearchView,int,int,java.lang.String) -> access$1900
+    104:104:boolean access$2000(android.support.v7.widget.SearchView,int) -> access$2000
+    104:104:void access$2100(android.support.v7.widget.SearchView,java.lang.CharSequence) -> access$2100
+    104:104:void access$2200(android.support.v7.widget.SearchView,boolean) -> access$2200
+android.support.v7.widget.SearchView$1 -> android.support.v7.widget.bs:
+    android.support.v7.widget.SearchView this$0 -> a
+    168:174:void run() -> run
+android.support.v7.widget.SearchView$10 -> android.support.v7.widget.bt:
+    android.support.v7.widget.SearchView this$0 -> a
+    1294:1295:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+android.support.v7.widget.SearchView$11 -> android.support.v7.widget.bu:
+    android.support.v7.widget.SearchView this$0 -> a
+    1305:1306:void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
+    1314:1314:void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
+android.support.v7.widget.SearchView$12 -> android.support.v7.widget.bv:
+    android.support.v7.widget.SearchView this$0 -> a
+    1593:1593:void beforeTextChanged(java.lang.CharSequence,int,int,int) -> beforeTextChanged
+    1597:1598:void onTextChanged(java.lang.CharSequence,int,int,int) -> onTextChanged
+    1601:1601:void afterTextChanged(android.text.Editable) -> afterTextChanged
+android.support.v7.widget.SearchView$2 -> android.support.v7.widget.bw:
+    android.support.v7.widget.SearchView this$0 -> a
+    179:180:void run() -> run
+android.support.v7.widget.SearchView$3 -> android.support.v7.widget.bx:
+    android.support.v7.widget.SearchView this$0 -> a
+    185:188:void run() -> run
+android.support.v7.widget.SearchView$4 -> android.support.v7.widget.by:
+    android.support.v7.widget.SearchView this$0 -> a
+    323:326:void onFocusChange(android.view.View,boolean) -> onFocusChange
+android.support.v7.widget.SearchView$5 -> android.support.v7.widget.bz:
+    android.support.v7.widget.SearchView this$0 -> a
+    381:382:void onLayoutChange(android.view.View,int,int,int,int,int,int,int,int) -> onLayoutChange
+android.support.v7.widget.SearchView$6 -> android.support.v7.widget.ca:
+    android.support.v7.widget.SearchView this$0 -> a
+    391:392:void onGlobalLayout() -> onGlobalLayout
+android.support.v7.widget.SearchView$7 -> android.support.v7.widget.cb:
+    android.support.v7.widget.SearchView this$0 -> a
+    907:920:void onClick(android.view.View) -> onClick
+android.support.v7.widget.SearchView$8 -> android.support.v7.widget.cc:
+    android.support.v7.widget.SearchView this$0 -> a
+    931:961:boolean onKey(android.view.View,int,android.view.KeyEvent) -> onKey
+android.support.v7.widget.SearchView$9 -> android.support.v7.widget.cd:
+    android.support.v7.widget.SearchView this$0 -> a
+    1109:1110:boolean onEditorAction(android.widget.TextView,int,android.view.KeyEvent) -> onEditorAction
+android.support.v7.widget.SearchView$AutoCompleteTextViewReflector -> android.support.v7.widget.ce:
     java.lang.reflect.Method doBeforeTextChanged -> a
     java.lang.reflect.Method doAfterTextChanged -> b
     java.lang.reflect.Method ensureImeVisible -> c
@@ -6869,11 +6976,15 @@ android.support.v7.widget.SearchView$AutoCompleteTextViewReflector -> android.su
     1781:1787:void doBeforeTextChanged(android.widget.AutoCompleteTextView) -> a
     1790:1796:void doAfterTextChanged(android.widget.AutoCompleteTextView) -> b
     1799:1805:void ensureImeVisible(android.widget.AutoCompleteTextView,boolean) -> a
-android.support.v7.widget.SearchView$OnCloseListener -> android.support.v7.widget.bt:
+    1808:1818:void showSoftInputUnchecked(android.view.inputmethod.InputMethodManager,android.view.View,int) -> a
+android.support.v7.widget.SearchView$OnCloseListener -> android.support.v7.widget.cf:
     boolean onClose() -> a
-android.support.v7.widget.SearchView$OnQueryTextListener -> android.support.v7.widget.bu:
+android.support.v7.widget.SearchView$OnQueryTextListener -> android.support.v7.widget.cg:
     boolean onQueryTextSubmit(java.lang.String) -> a
-android.support.v7.widget.SearchView$OnSuggestionListener -> android.support.v7.widget.bv:
+    boolean onQueryTextChange(java.lang.String) -> b
+android.support.v7.widget.SearchView$OnSuggestionListener -> android.support.v7.widget.ch:
+    boolean onSuggestionSelect(int) -> a
+    boolean onSuggestionClick(int) -> b
 android.support.v7.widget.SearchView$SearchAutoComplete -> android.support.v7.widget.SearchView$SearchAutoComplete:
     int[] POPUP_WINDOW_ATTRS -> a
     int mThreshold -> b
@@ -6882,35 +6993,40 @@ android.support.v7.widget.SearchView$SearchAutoComplete -> android.support.v7.wi
     1643:1644:void setSearchView(android.support.v7.widget.SearchView) -> setSearchView
     1648:1650:void setThreshold(int) -> setThreshold
     1654:1655:void setDropDownBackgroundResource(int) -> setDropDownBackgroundResource
+    1661:1661:boolean isEmpty() -> a
     1670:1670:void replaceText(java.lang.CharSequence) -> replaceText
     1680:1680:void performCompletion() -> performCompletion
     1688:1700:void onWindowFocusChanged(boolean) -> onWindowFocusChanged
     1704:1706:void onFocusChanged(boolean,int,android.graphics.Rect) -> onFocusChanged
     1714:1714:boolean enoughToFilter() -> enoughToFilter
     1719:1740:boolean onKeyPreIme(int,android.view.KeyEvent) -> onKeyPreIme
-android.support.v7.widget.ShareActionProvider -> android.support.v7.widget.bw:
-    int mMaxShownActivityCount -> a
-    android.support.v7.widget.ShareActionProvider$ShareMenuItemOnMenuItemClickListener mOnMenuItemClickListener -> b
-    android.content.Context mContext -> c
-    java.lang.String mShareHistoryFileName -> d
-    android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener mOnShareTargetSelectedListener -> e
-    android.support.v7.internal.widget.ActivityChooserModel$OnChooseActivityListener mOnChooseActivityListener -> f
-    172:174:void setOnShareTargetSelectedListener(android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener) -> a
-    182:199:android.view.View onCreateActionView() -> a
-    207:207:boolean hasSubMenu() -> e
-    216:244:void onPrepareSubMenu(android.view.SubMenu) -> a
-    302:305:void setShareIntent(android.content.Intent) -> a
-    330:338:void setActivityChooserPolicyIfNeeded() -> f
-    87:87:android.content.Context access$100(android.support.v7.widget.ShareActionProvider) -> a
-    87:87:java.lang.String access$200(android.support.v7.widget.ShareActionProvider) -> b
-    87:87:android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener access$400(android.support.v7.widget.ShareActionProvider) -> c
-android.support.v7.widget.ShareActionProvider$1 -> android.support.v7.widget.bx:
-android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener -> android.support.v7.widget.by:
+    1608:1608:boolean access$1700(android.support.v7.widget.SearchView$SearchAutoComplete) -> a
+android.support.v7.widget.ShareActionProvider -> android.support.v7.widget.ShareActionProvider:
+    int DEFAULT_INITIAL_ACTIVITY_COUNT -> DEFAULT_INITIAL_ACTIVITY_COUNT
+    int mMaxShownActivityCount -> mMaxShownActivityCount
+    android.support.v7.widget.ShareActionProvider$ShareMenuItemOnMenuItemClickListener mOnMenuItemClickListener -> mOnMenuItemClickListener
+    java.lang.String DEFAULT_SHARE_HISTORY_FILE_NAME -> DEFAULT_SHARE_HISTORY_FILE_NAME
+    android.content.Context mContext -> mContext
+    java.lang.String mShareHistoryFileName -> mShareHistoryFileName
+    android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener mOnShareTargetSelectedListener -> mOnShareTargetSelectedListener
+    android.support.v7.internal.widget.ActivityChooserModel$OnChooseActivityListener mOnChooseActivityListener -> mOnChooseActivityListener
+    172:174:void setOnShareTargetSelectedListener(android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener) -> setOnShareTargetSelectedListener
+    182:199:android.view.View onCreateActionView() -> onCreateActionView
+    207:207:boolean hasSubMenu() -> hasSubMenu
+    216:244:void onPrepareSubMenu(android.view.SubMenu) -> onPrepareSubMenu
+    278:280:void setShareHistoryFileName(java.lang.String) -> setShareHistoryFileName
+    302:305:void setShareIntent(android.content.Intent) -> setShareIntent
+    330:338:void setActivityChooserPolicyIfNeeded() -> setActivityChooserPolicyIfNeeded
+    87:87:android.content.Context access$100(android.support.v7.widget.ShareActionProvider) -> access$100
+    87:87:java.lang.String access$200(android.support.v7.widget.ShareActionProvider) -> access$200
+    87:87:android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener access$400(android.support.v7.widget.ShareActionProvider) -> access$400
+android.support.v7.widget.ShareActionProvider$1 -> android.support.v7.widget.ci:
+android.support.v7.widget.ShareActionProvider$OnShareTargetSelectedListener -> android.support.v7.widget.cj:
     boolean onShareTargetSelected(android.support.v7.widget.ShareActionProvider,android.content.Intent) -> a
-android.support.v7.widget.ShareActionProvider$ShareActivityChooserModelPolicy -> android.support.v7.widget.bz:
+android.support.v7.widget.ShareActionProvider$ShareActivityChooserModelPolicy -> android.support.v7.widget.ck:
     android.support.v7.widget.ShareActionProvider this$0 -> a
     346:350:boolean onChooseActivity(android.support.v7.internal.widget.ActivityChooserModel,android.content.Intent) -> a
-android.support.v7.widget.ShareActionProvider$ShareMenuItemOnMenuItemClickListener -> android.support.v7.widget.ca:
+android.support.v7.widget.ShareActionProvider$ShareMenuItemOnMenuItemClickListener -> android.support.v7.widget.cl:
     android.support.v7.widget.ShareActionProvider this$0 -> a
     313:321:boolean onMenuItemClick(android.view.MenuItem) -> onMenuItemClick
 android.support.v7.widget.StaggeredGridLayoutManager -> android.support.v7.widget.StaggeredGridLayoutManager:
@@ -7011,7 +7127,7 @@ android.support.v7.widget.StaggeredGridLayoutManager -> android.support.v7.widge
     1832:1832:android.support.v7.widget.RecyclerView$LayoutParams generateLayoutParams(android.content.Context,android.util.AttributeSet) -> a
     1837:1840:android.support.v7.widget.RecyclerView$LayoutParams generateLayoutParams(android.view.ViewGroup$LayoutParams) -> a
     1846:1846:boolean checkLayoutParams(android.support.v7.widget.RecyclerView$LayoutParams) -> a
-android.support.v7.widget.StaggeredGridLayoutManager$AnchorInfo -> android.support.v7.widget.cb:
+android.support.v7.widget.StaggeredGridLayoutManager$AnchorInfo -> android.support.v7.widget.cm:
     int mPosition -> a
     int mOffset -> b
     boolean mLayoutFromEnd -> c
@@ -7020,7 +7136,7 @@ android.support.v7.widget.StaggeredGridLayoutManager$AnchorInfo -> android.suppo
     2615:2619:void reset() -> a
     2622:2624:void assignCoordinateFromPadding() -> b
     2627:2632:void assignCoordinateFromPadding(int) -> a
-android.support.v7.widget.StaggeredGridLayoutManager$LayoutParams -> android.support.v7.widget.cc:
+android.support.v7.widget.StaggeredGridLayoutManager$LayoutParams -> android.support.v7.widget.cn:
     android.support.v7.widget.StaggeredGridLayoutManager$Span mSpan -> e
     boolean mFullSpan -> f
 android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup -> android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup:
@@ -7047,7 +7163,7 @@ android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup$FullSpanItem
     2463:2463:int describeContents() -> describeContents
     2468:2476:void writeToParcel(android.os.Parcel,int) -> writeToParcel
     2480:2480:java.lang.String toString() -> toString
-android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup$FullSpanItem$1 -> android.support.v7.widget.cd:
+android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup$FullSpanItem$1 -> android.support.v7.widget.co:
     2491:2491:android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup$FullSpanItem createFromParcel(android.os.Parcel) -> a
     2496:2496:android.support.v7.widget.StaggeredGridLayoutManager$LazySpanLookup$FullSpanItem[] newArray(int) -> a
     2488:2488:java.lang.Object[] newArray(int) -> newArray
@@ -7067,12 +7183,12 @@ android.support.v7.widget.StaggeredGridLayoutManager$SavedState -> android.suppo
     2553:2558:void invalidateSpanInfo() -> a
     2569:2569:int describeContents() -> describeContents
     2574:2588:void writeToParcel(android.os.Parcel,int) -> writeToParcel
-android.support.v7.widget.StaggeredGridLayoutManager$SavedState$1 -> android.support.v7.widget.ce:
+android.support.v7.widget.StaggeredGridLayoutManager$SavedState$1 -> android.support.v7.widget.cp:
     2594:2594:android.support.v7.widget.StaggeredGridLayoutManager$SavedState createFromParcel(android.os.Parcel) -> a
     2599:2599:android.support.v7.widget.StaggeredGridLayoutManager$SavedState[] newArray(int) -> a
     2591:2591:java.lang.Object[] newArray(int) -> newArray
     2591:2591:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v7.widget.StaggeredGridLayoutManager$Span -> android.support.v7.widget.cf:
+android.support.v7.widget.StaggeredGridLayoutManager$Span -> android.support.v7.widget.cq:
     java.util.ArrayList mViews -> f
     int mCachedStart -> a
     int mCachedEnd -> b
@@ -7097,7 +7213,7 @@ android.support.v7.widget.StaggeredGridLayoutManager$Span -> android.support.v7.
     2101:2101:android.support.v7.widget.StaggeredGridLayoutManager$LayoutParams getLayoutParams(android.view.View) -> c
     2105:2111:void onOffset(int) -> d
     1926:1926:java.util.ArrayList access$300(android.support.v7.widget.StaggeredGridLayoutManager$Span) -> a
-android.support.v7.widget.SuggestionsAdapter -> android.support.v7.widget.cg:
+android.support.v7.widget.SuggestionsAdapter -> android.support.v7.widget.cr:
     android.app.SearchManager mSearchManager -> j
     android.support.v7.widget.SearchView mSearchView -> k
     android.app.SearchableInfo mSearchable -> l
@@ -7141,7 +7257,7 @@ android.support.v7.widget.SuggestionsAdapter -> android.support.v7.widget.cg:
     657:666:java.lang.String getStringOrNull(android.database.Cursor,int) -> a
     675:706:android.graphics.drawable.Drawable getDrawableFromResourceUri(android.net.Uri) -> a
     713:754:android.database.Cursor getSearchManagerSuggestions(android.app.SearchableInfo,java.lang.String,int) -> a
-android.support.v7.widget.SuggestionsAdapter$ChildViewCache -> android.support.v7.widget.ch:
+android.support.v7.widget.SuggestionsAdapter$ChildViewCache -> android.support.v7.widget.cs:
     android.widget.TextView mText1 -> a
     android.widget.TextView mText2 -> b
     android.widget.ImageView mIcon1 -> c
@@ -7276,16 +7392,16 @@ android.support.v7.widget.Toolbar -> android.support.v7.widget.Toolbar:
     107:107:android.widget.ImageButton access$300(android.support.v7.widget.Toolbar) -> c
     107:107:int access$400(android.support.v7.widget.Toolbar) -> d
     107:107:void access$500(android.support.v7.widget.Toolbar,boolean) -> a
-android.support.v7.widget.Toolbar$1 -> android.support.v7.widget.ci:
+android.support.v7.widget.Toolbar$1 -> android.support.v7.widget.ct:
     android.support.v7.widget.Toolbar this$0 -> a
     162:165:boolean onMenuItemClick(android.view.MenuItem) -> a
-android.support.v7.widget.Toolbar$2 -> android.support.v7.widget.cj:
+android.support.v7.widget.Toolbar$2 -> android.support.v7.widget.cu:
     android.support.v7.widget.Toolbar this$0 -> a
     180:181:void run() -> run
-android.support.v7.widget.Toolbar$3 -> android.support.v7.widget.ck:
+android.support.v7.widget.Toolbar$3 -> android.support.v7.widget.cv:
     android.support.v7.widget.Toolbar this$0 -> a
     1014:1015:void onClick(android.view.View) -> onClick
-android.support.v7.widget.Toolbar$ExpandedActionViewMenuPresenter -> android.support.v7.widget.cl:
+android.support.v7.widget.Toolbar$ExpandedActionViewMenuPresenter -> android.support.v7.widget.cw:
     android.support.v7.internal.view.menu.MenuBuilder mMenu -> a
     android.support.v7.internal.view.menu.MenuItemImpl mCurrentExpandedItem -> b
     android.support.v7.widget.Toolbar this$0 -> c
@@ -7296,22 +7412,22 @@ android.support.v7.widget.Toolbar$ExpandedActionViewMenuPresenter -> android.sup
     1936:1936:boolean flagActionItems() -> b
     1941:1963:boolean expandItemActionView(android.support.v7.internal.view.menu.MenuBuilder,android.support.v7.internal.view.menu.MenuItemImpl) -> a
     1970:1983:boolean collapseItemActionView(android.support.v7.internal.view.menu.MenuBuilder,android.support.v7.internal.view.menu.MenuItemImpl) -> b
-android.support.v7.widget.Toolbar$LayoutParams -> android.support.v7.widget.cm:
+android.support.v7.widget.Toolbar$LayoutParams -> android.support.v7.widget.cx:
     int mViewType -> b
     1837:1841:void copyMarginsFromCompat(android.view.ViewGroup$MarginLayoutParams) -> a
-android.support.v7.widget.Toolbar$OnMenuItemClickListener -> android.support.v7.widget.cn:
+android.support.v7.widget.Toolbar$OnMenuItemClickListener -> android.support.v7.widget.cy:
     boolean onMenuItemClick(android.view.MenuItem) -> a
 android.support.v7.widget.Toolbar$SavedState -> android.support.v7.widget.Toolbar$SavedState:
     int expandedMenuItemId -> a
     boolean isOverflowOpen -> b
     android.os.Parcelable$Creator CREATOR -> CREATOR
     1860:1863:void writeToParcel(android.os.Parcel,int) -> writeToParcel
-android.support.v7.widget.Toolbar$SavedState$1 -> android.support.v7.widget.co:
+android.support.v7.widget.Toolbar$SavedState$1 -> android.support.v7.widget.cz:
     1869:1869:android.support.v7.widget.Toolbar$SavedState createFromParcel(android.os.Parcel) -> a
     1874:1874:android.support.v7.widget.Toolbar$SavedState[] newArray(int) -> a
     1865:1865:java.lang.Object[] newArray(int) -> newArray
     1865:1865:java.lang.Object createFromParcel(android.os.Parcel) -> createFromParcel
-android.support.v7.widget.WindowCallbackWrapper -> android.support.v7.widget.cp:
+android.support.v7.widget.WindowCallbackWrapper -> android.support.v7.widget.da:
     android.support.v7.internal.app.WindowCallback mWrapped -> a
     44:44:boolean onMenuItemSelected(int,android.view.MenuItem) -> a
     49:49:boolean onCreatePanelMenu(int,android.view.Menu) -> a
