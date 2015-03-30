@@ -1643,8 +1643,6 @@ android.support.v7.widget.Toolbar: void setMinimumHeight(int)
 android.support.v7.widget.Toolbar: int getMinimumHeightCompat()
 android.support.v7.widget.Toolbar$SavedState
 android.support.v7.widget.Toolbar$SavedState: android.os.Parcelable$Creator CREATOR
-com.android.gallery3d.anim.StateTransitionAnimation$Transition: com.android.gallery3d.anim.StateTransitionAnimation$Transition[] values()
-com.android.gallery3d.anim.StateTransitionAnimation$Transition: com.android.gallery3d.anim.StateTransitionAnimation$Transition valueOf(java.lang.String)
 com.android.gallery3d.app.AbstractGalleryActivity: AbstractGalleryActivity()
 com.android.gallery3d.app.PhotoPage: PhotoPage()
 com.android.gallery3d.ui.GLRootView
@@ -2154,6 +2152,17 @@ com.anthonymandra.rawdroid.R$drawable: int gallery_border
 com.anthonymandra.rawdroid.R$drawable: int grid_pressed
 com.anthonymandra.rawdroid.R$drawable: int grid_selected
 com.anthonymandra.rawdroid.R$drawable: int hand
+com.anthonymandra.rawdroid.R$drawable: int ic_action_camera
+com.anthonymandra.rawdroid.R$drawable: int ic_action_edit
+com.anthonymandra.rawdroid.R$drawable: int ic_action_labels
+com.anthonymandra.rawdroid.R$drawable: int ic_action_next_item
+com.anthonymandra.rawdroid.R$drawable: int ic_action_not_secure
+com.anthonymandra.rawdroid.R$drawable: int ic_action_previous_item
+com.anthonymandra.rawdroid.R$drawable: int ic_action_secure
+com.anthonymandra.rawdroid.R$drawable: int ic_action_select_all
+com.anthonymandra.rawdroid.R$drawable: int ic_action_share
+com.anthonymandra.rawdroid.R$drawable: int ic_action_usb
+com.anthonymandra.rawdroid.R$drawable: int ic_folder
 com.anthonymandra.rawdroid.R$drawable: int ic_launcher_folder
 com.anthonymandra.rawdroid.R$drawable: int ic_launcher_folder_open
 com.anthonymandra.rawdroid.R$drawable: int ic_launcher_home
@@ -2161,6 +2170,8 @@ com.anthonymandra.rawdroid.R$drawable: int ic_launcher_home_small
 com.anthonymandra.rawdroid.R$drawable: int ic_menu_back_small
 com.anthonymandra.rawdroid.R$drawable: int ic_menu_forward_small
 com.anthonymandra.rawdroid.R$drawable: int ic_menu_multiselect
+com.anthonymandra.rawdroid.R$drawable: int ic_unknown_file
+com.anthonymandra.rawdroid.R$drawable: int ic_xmpfile
 com.anthonymandra.rawdroid.R$drawable: int icon
 com.anthonymandra.rawdroid.R$drawable: int icon_file
 com.anthonymandra.rawdroid.R$drawable: int icon_sdcard
@@ -2178,21 +2189,18 @@ com.anthonymandra.rawdroid.R$drawable: int overscroll_glow
 com.anthonymandra.rawdroid.R$drawable: int photogrid_list_selector
 com.anthonymandra.rawdroid.R$drawable: int plus_white
 com.anthonymandra.rawdroid.R$drawable: int recycle
-com.anthonymandra.rawdroid.R$drawable: int select_all
-com.anthonymandra.rawdroid.R$drawable: int tag
 com.anthonymandra.rawdroid.R$drawable: int translucent_black_rect
 com.anthonymandra.rawdroid.R$drawable: int tutorial1
 com.anthonymandra.rawdroid.R$drawable: int tutorial2
 com.anthonymandra.rawdroid.R$drawable: int tutorial3
 com.anthonymandra.rawdroid.R$drawable: int tutorial4
 com.anthonymandra.rawdroid.R$drawable: int tutorial5
-com.anthonymandra.rawdroid.R$drawable: int unkown_file
-com.anthonymandra.rawdroid.R$drawable: int usb
 com.anthonymandra.rawdroid.R$drawable: int watermark1024
 com.anthonymandra.rawdroid.R$drawable: int watermark128
 com.anthonymandra.rawdroid.R$drawable: int watermark256
 com.anthonymandra.rawdroid.R$drawable: int watermark512
 com.anthonymandra.rawdroid.R$drawable: int white_border_translucent_black
+com.anthonymandra.rawdroid.R$drawable: int zoom_selector
 com.anthonymandra.rawdroid.R$id: int LinearLayout1
 com.anthonymandra.rawdroid.R$id: int RelativeLayout1
 com.anthonymandra.rawdroid.R$id: int TextView06
@@ -2433,6 +2441,7 @@ com.anthonymandra.rawdroid.R$id: int withText
 com.anthonymandra.rawdroid.R$id: int wrap_content
 com.anthonymandra.rawdroid.R$id: int xmpBottomContainer
 com.anthonymandra.rawdroid.R$id: int xmpRightContainer
+com.anthonymandra.rawdroid.R$id: int zoomButton
 com.anthonymandra.rawdroid.R$integer: int abc_max_action_buttons
 com.anthonymandra.rawdroid.R$integer: int defRecycleBinSize
 com.anthonymandra.rawdroid.R$layout: int abc_action_bar_title_item
@@ -2982,7 +2991,6 @@ com.anthonymandra.rawdroid.R$style: int GalleryTheme
 com.anthonymandra.rawdroid.R$style: int MetaField
 com.anthonymandra.rawdroid.R$style: int MetaLabel
 com.anthonymandra.rawdroid.R$style: int MetaTextAppearance
-com.anthonymandra.rawdroid.R$style: int PhotoGridLayout
 com.anthonymandra.rawdroid.R$style: int Platform_AppCompat
 com.anthonymandra.rawdroid.R$style: int Platform_AppCompat_Dialog
 com.anthonymandra.rawdroid.R$style: int Platform_AppCompat_Light

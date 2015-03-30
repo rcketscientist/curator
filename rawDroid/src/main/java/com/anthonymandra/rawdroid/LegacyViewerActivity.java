@@ -14,7 +14,6 @@ import com.android.legacy.ui.GLRootView;
 import com.android.legacy.ui.GLView;
 import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
-import com.android.legacy.ui.ImageViewer.ScaleChangedListener;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.Util;
@@ -22,13 +21,12 @@ import com.anthonymandra.framework.ViewerActivity;
 
 import java.io.IOException;
 
-public class LegacyViewerActivity extends ViewerActivity implements ScaleChangedListener
+public class LegacyViewerActivity extends ViewerActivity
 {
 	private static final String TAG = LegacyViewerActivity.class.getSimpleName();
 
 	private ImageViewer mImageViewer;
 	private final MyImageViewerModel mModel = new MyImageViewerModel();
-	private boolean isInterfaceHidden;
 
 	private GLRootView mGLRootView;
 	private GLView mRootPane = new GLView()
@@ -50,7 +48,6 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		}
 	};
 
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -64,10 +61,9 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
 
-		// decodeProgress = (FrameLayout) findViewById(R.id.frameRawProgress);
-
 		mImageViewer = new ImageViewer(this);
 		mImageViewer.setModel(mModel);
+		mImageViewer.setScaleListener(this);
 		mRootPane.addComponent(mImageViewer);
 		mModel.requestNextImageWithMeta();
 	}
@@ -78,7 +74,13 @@ public class LegacyViewerActivity extends ViewerActivity implements ScaleChanged
         mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
     }
 
-    @Override
+	@Override
+	protected void onZoomLockChanged(boolean locked)
+	{
+		mImageViewer.setZoomLock(locked);
+	}
+
+	@Override
 	public void onResume()
 	{
 		super.onResume();

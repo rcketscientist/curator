@@ -22,7 +22,6 @@
 
     <GridView
         android:id="@+id/gridview"
-        style="@style/PhotoGridLayout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:columnWidth="@dimen/image_thumbnail_size"
@@ -31,5 +30,7 @@
         android:numColumns="auto_fit"
         android:scrollingCache="false"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="@dimen/image_thumbnail_spacing" />
+        android:verticalSpacing="@dimen/image_thumbnail_spacing"
+        android:drawSelectorOnTop="true"
+        android:listSelector="@drawable/photogrid_list_selector"/>
 </LinearLayout>

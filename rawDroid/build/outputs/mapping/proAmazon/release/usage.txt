@@ -3590,35 +3590,12 @@ com.android.gallery3d.anim.Animation:
     57:58:public void setInterpolator(android.view.animation.Interpolator)
     61:62:public void setDuration(int)
     65:66:public void start()
+    73:73:public boolean isActive()
     77:78:public void forceStop()
-com.android.gallery3d.anim.StateTransitionAnimation:
-    103:104:public StateTransitionAnimation(com.android.gallery3d.anim.StateTransitionAnimation$Transition,com.android.gallery3d.glrenderer.RawTexture)
-    106:112:public StateTransitionAnimation(com.android.gallery3d.anim.StateTransitionAnimation$Spec,com.android.gallery3d.glrenderer.RawTexture)
-com.android.gallery3d.anim.StateTransitionAnimation$1
-com.android.gallery3d.anim.StateTransitionAnimation$Spec:
-    77:86:private static com.android.gallery3d.anim.StateTransitionAnimation$Spec specForTransition(com.android.gallery3d.anim.StateTransitionAnimation$Transition)
-    29:29:static synthetic com.android.gallery3d.anim.StateTransitionAnimation$Spec access$000(com.android.gallery3d.anim.StateTransitionAnimation$Transition)
 com.android.gallery3d.app.AbstractGalleryActivity:
     private static final java.lang.String TAG
-    private boolean mDisableToggleStatusBar
-    protected static final int FLAG_HIDE_ACTION_BAR
-    protected static final int FLAG_HIDE_STATUS_BAR
-    protected static final int FLAG_SCREEN_ON_WHEN_PLUGGED
-    protected static final int FLAG_SCREEN_ON_ALWAYS
-    protected static final int FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-    protected static final int FLAG_SHOW_WHEN_LOCKED
-    protected int mFlags
-    private static final java.lang.String KEY_TRANSITION_IN
-    187:188:private static void setAlertDialogIconAttribute(android.app.AlertDialog$Builder)
-    296:297:protected void disableToggleStatusBar()
-    301:309:private void toggleStatusBarByOrientation()
-    312:312:public com.android.gallery3d.app.TransitionStore getTransitionStore()
-    320:320:protected boolean isFullscreen()
-    409:428:private void setScreenFlags()
-com.android.gallery3d.app.GalleryApp:
-    public abstract com.android.gallery3d.app.TransitionStore getTransitionStore()
+    143:143:public com.android.gallery3d.app.TransitionStore getTransitionStore()
 com.android.gallery3d.app.GalleryContext:
-    public abstract android.os.Looper getMainLooper()
     public abstract android.content.res.Resources getResources()
 com.android.gallery3d.app.Model:
     public abstract void setCurrentPhoto(android.net.Uri,int)
@@ -3641,79 +3618,18 @@ com.android.gallery3d.app.PhotoDataAdapter:
     private static final int BIT_SCREEN_NAIL
     private static final int BIT_FULL_IMAGE
     private static final int INDEX_NOT_FOUND
-    592:604:public void setCurrentPhoto(android.net.Uri,int)
-    619:620:public void setFocusHintPath(android.net.Uri)
+    566:578:public void setCurrentPhoto(android.net.Uri,int)
+    593:594:public void setFocusHintPath(android.net.Uri)
 com.android.gallery3d.app.PhotoPage:
     private static final java.lang.String TAG
-    private static final int MSG_HIDE_BARS
-    private static final int MSG_ON_FULL_SCREEN_CHANGED
-    private static final int MSG_UPDATE_ACTION_BAR
     private static final int MSG_UNFREEZE_GLROOT
-    private static final int MSG_WANT_BARS
-    private static final int MSG_REFRESH_BOTTOM_CONTROLS
-    private static final int MSG_ON_CAMERA_CENTER
-    private static final int MSG_ON_PICTURE_CENTER
     private static final int MSG_REFRESH_IMAGE
     private static final int MSG_UPDATE_PHOTO_UI
-    private static final int MSG_UPDATE_PROGRESS
     private static final int MSG_UPDATE_DEFERRED
-    private static final int MSG_UPDATE_SHARE_URI
-    private static final int MSG_UPDATE_PANORAMA_UI
     private static final int HIDE_BARS_TIMEOUT
     private static final int UNFREEZE_GLROOT_TIMEOUT
-    private static final int REQUEST_SLIDESHOW
-    private static final int REQUEST_CROP
-    private static final int REQUEST_CROP_PICASA
-    private static final int REQUEST_EDIT
-    private static final int REQUEST_PLAY_VIDEO
-    private static final int REQUEST_TRIM
-    public static final java.lang.String KEY_MEDIA_SET_PATH
-    public static final java.lang.String KEY_MEDIA_ITEM_PATH
-    public static final java.lang.String KEY_INDEX_HINT
-    public static final java.lang.String KEY_OPEN_ANIMATION_RECT
-    public static final java.lang.String KEY_APP_BRIDGE
-    public static final java.lang.String KEY_TREAT_BACK_AS_UP
-    public static final java.lang.String KEY_START_IN_FILMSTRIP
-    public static final java.lang.String KEY_RETURN_INDEX_HINT
-    public static final java.lang.String KEY_SHOW_WHEN_LOCKED
-    public static final java.lang.String KEY_IN_CAMERA_ROLL
-    public static final java.lang.String KEY_ALBUMPAGE_TRANSITION
-    public static final int MSG_ALBUMPAGE_NONE
-    public static final int MSG_ALBUMPAGE_STARTED
-    public static final int MSG_ALBUMPAGE_RESUMED
-    public static final int MSG_ALBUMPAGE_PICKED
-    public static final java.lang.String ACTION_NEXTGEN_EDIT
-    public static final java.lang.String ACTION_SIMPLE_EDIT
-    private boolean mShowDetails
-    private boolean mHaveImageEditor
-    private boolean mShowSpinner
-    private java.lang.String mSetPathString
-    private java.lang.String mOriginalSetPathString
-    private boolean mTreatBackAsUp
-    private static final long CAMERA_SWITCH_CUTOFF_THRESHOLD_MS
     private static final long DEFERRED_UPDATE_MS
-    private boolean mDeleteIsFocus
-    private com.android.gallery3d.data.ImageCacheService mImageCacheService
-    private com.android.gallery3d.ui.GLRootView mGLRootView
-    638:650:private void setupNfcBeamPush()
-    653:654:private void setNfcBeamPushUri(android.net.Uri)
-    662:662:private static android.content.Intent createShareIntent(com.android.gallery3d.data.MediaObject)
-    670:670:private static android.content.Intent createSharePanoramaIntent(android.net.Uri)
-    674:676:private void overrideTransitionToEditor()
-    690:690:private void launchTinyPlanet()
-    719:719:private void launchPhotoEditor()
-    741:741:private void launchSimpleEditor()
-    822:828:private boolean canDoSlideShow()
-    913:922:private void onUpPressed()
-    946:946:private void setResult()
-    959:959:public boolean switchWithCaptureAnimation(int)
-    1144:1144:private void hideDetails()
-    1158:1158:private void showDetails()
-    1249:1249:public void onUndoDeleteImage()
-    1269:1269:public void playVideo(android.app.Activity,android.net.Uri,java.lang.String)
-    1288:1288:private void setCurrentPhotoByIntent(android.content.Intent)
-    46:46:static synthetic android.net.Uri[] access$1500(com.android.gallery3d.app.PhotoPage)
-com.android.gallery3d.app.PhotoPage$3
+    251:251:public void playVideo(android.app.Activity,android.net.Uri,java.lang.String)
 com.android.gallery3d.app.TransitionStore:
     25:26:public void put(java.lang.Object,java.lang.Object)
     29:30:public void putIfNotPresent(java.lang.Object,java.lang.Object)
@@ -3893,6 +3809,7 @@ com.android.gallery3d.glrenderer.GLCanvas:
     public static final int SAVE_FLAG_ALPHA
     public static final int SAVE_FLAG_MATRIX
     public abstract void clearBuffer()
+    public abstract void setAlpha(float)
     public abstract float getAlpha()
     public abstract void translate(float,float,float)
     public abstract void drawLine(float,float,float,float,com.android.gallery3d.glrenderer.GLPaint)
@@ -4108,25 +4025,24 @@ com.android.gallery3d.ui.GLView:
     private static final int FLAG_INVISIBLE
     private static final int FLAG_SET_MEASURED_SIZE
     private static final int FLAG_LAYOUT_REQUESTED
-    87:95:public void startAnimation(com.android.gallery3d.anim.CanvasAnimation)
-    100:108:public void setVisibility(int)
-    160:165:public boolean removeComponent(com.android.gallery3d.ui.GLView)
-    170:174:public void removeAllComponents()
-    177:186:private void removeOneComponent(com.android.gallery3d.ui.GLView)
-    189:189:public android.graphics.Rect bounds()
-    213:223:public void requestLayout()
-    246:248:public void setIntroAnimation(com.android.gallery3d.anim.StateTransitionAnimation)
-    346:346:public android.graphics.Rect getPaddings()
-    367:381:public void measure(int,int)
-    384:384:protected void onMeasure(int,int)
-    387:390:protected void setMeasuredSize(int,int)
-    393:393:public int getMeasuredWidth()
-    397:397:public int getMeasuredHeight()
-    408:420:public boolean getBoundsOf(com.android.gallery3d.ui.GLView,android.graphics.Rect)
-    424:430:protected void onVisibilityChanged(int)
-    447:450:public void lockRendering()
-    453:456:public void unlockRendering()
-    461:465:void dumpTree(java.lang.String)
+    87:95:public void setVisibility(int)
+    147:152:public boolean removeComponent(com.android.gallery3d.ui.GLView)
+    157:161:public void removeAllComponents()
+    164:173:private void removeOneComponent(com.android.gallery3d.ui.GLView)
+    176:176:public android.graphics.Rect bounds()
+    200:210:public void requestLayout()
+    223:223:public float[] getBackgroundColor()
+    314:314:public android.graphics.Rect getPaddings()
+    335:349:public void measure(int,int)
+    352:352:protected void onMeasure(int,int)
+    355:358:protected void setMeasuredSize(int,int)
+    361:361:public int getMeasuredWidth()
+    365:365:public int getMeasuredHeight()
+    376:388:public boolean getBoundsOf(com.android.gallery3d.ui.GLView,android.graphics.Rect)
+    392:398:protected void onVisibilityChanged(int)
+    415:418:public void lockRendering()
+    421:424:public void unlockRendering()
+    429:433:void dumpTree(java.lang.String)
 com.android.gallery3d.ui.GLView$OnClickListener
 com.android.gallery3d.ui.GestureRecognizer:
     private static final java.lang.String TAG
@@ -4137,11 +4053,6 @@ com.android.gallery3d.ui.PhotoView:
     public static final long INVALID_DATA_VERSION
     private static final int MSG_CANCEL_EXTRA_SCALING
     private static final int MSG_SWITCH_FOCUS
-    private static final int MSG_CAPTURE_ANIMATION_DONE
-    private static final int MSG_DELETE_ANIMATION_DONE
-    private static final int MSG_DELETE_DONE
-    private static final int MSG_UNDO_BAR_TIMEOUT
-    private static final int MSG_UNDO_BAR_FULL_CAMERA
     private static final float SWIPE_THRESHOLD
     private static final float DEFAULT_TEXT_SIZE
     private static final int ICON_RATIO
@@ -4154,27 +4065,12 @@ com.android.gallery3d.ui.PhotoView:
     private static final int HOLD_TOUCH_DOWN
     private static final int HOLD_CAPTURE_ANIMATION
     private static final int HOLD_DELETE
-    private static final int UNDO_BAR_SHOW
-    private static final int UNDO_BAR_TIMEOUT
-    private static final int UNDO_BAR_TOUCHED
-    private static final int UNDO_BAR_FULL_CAMERA
-    private static final int UNDO_BAR_DELETE_LAST
-    462:463:public boolean isDeleting()
-    548:554:public void setCameraRelativeFrame(android.graphics.Rect)
-    1325:1326:public void setSwipingEnabled(boolean)
-    1374:1376:public void resetToFirstPicture()
-    1392:1398:private void showUndoBar(boolean)
-    1430:1430:public boolean canUndo()
-    1638:1639:public void switchToImage(int)
-    1650:1651:private void switchToFirstImage()
-    1658:1659:public void setOpenAnimationRect(android.graphics.Rect)
-    1666:1672:public boolean switchWithCaptureAnimation(int)
-    1677:1705:private boolean switchWithCaptureAnimationLocked(int)
-    1827:1827:public android.graphics.Rect getPhotoRect(int)
+    290:291:public void stopScrolling()
+    1091:1093:public void resetToFirstPicture()
+    1288:1289:public void switchToImage(int)
+    1300:1301:private void switchToFirstImage()
 com.android.gallery3d.ui.PhotoView$1:
-    295:296:public void onRelease()
-com.android.gallery3d.ui.PhotoView$Listener:
-    public abstract void onUndoDeleteImage()
+    258:259:public void onRelease()
 com.android.gallery3d.ui.PhotoView$Model:
     public static final int LOADING_INIT
     public static final int LOADING_COMPLETE
@@ -4182,8 +4078,6 @@ com.android.gallery3d.ui.PhotoView$Model:
     public static final int FOCUS_HINT_NEXT
     public static final int FOCUS_HINT_PREVIOUS
     public abstract void setFocusHintPath(android.net.Uri)
-com.android.gallery3d.ui.PhotoView$MyGestureListener:
-    1314:1315:public void setSwipingEnabled(boolean)
 com.android.gallery3d.ui.PositionController:
     private static final java.lang.String TAG
     public static final int IMAGE_AT_LEFT_EDGE
@@ -4215,14 +4109,12 @@ com.android.gallery3d.ui.PositionController:
     private static final int BOX_MAX
     private static final int DEFAULT_DELETE_ANIMATION_DURATION
     private static final int MAX_DELETE_ANIMATION_DURATION
-    230:231:public void setOpenAnimationRect(android.graphics.Rect)
-    551:561:public void startCaptureAnimationSlide(int)
-    868:883:private void dumpState()
-    886:899:private void dumpRect(int)
-    993:1004:private void debugMoveBox(int[])
+    866:881:private void dumpState()
+    884:897:private void dumpRect(int)
+    991:1002:private void debugMoveBox(int[])
+    1200:1204:public boolean isCenter()
 com.android.gallery3d.ui.PositionController$Listener:
     public abstract void onRelease()
-com.android.gallery3d.ui.PreparePageFadeoutTexture
 com.android.gallery3d.ui.TileImageView:
     public static final int SIZE_UNKNOWN
     private static final java.lang.String TAG
@@ -4245,6 +4137,7 @@ com.android.gallery3d.ui.TiledScreenNail:
     private static final long ANIMATION_NEEDED
     private static final long ANIMATION_DONE
     147:148:public static void disableDrawPlaceholder()
+    151:152:public static void enableDrawPlaceholder()
     208:208:public boolean isShowingPlaceholder()
 com.android.gallery3d.util.CacheManager:
     private static final java.lang.String TAG
@@ -4447,9 +4340,8 @@ com.android.legacy.ui.ImageViewer:
     private static final int SWITCH_THRESHOLD
     private static final int THRESHOLD_TO_DOWNSCALE
     private boolean rotated
-    163:163:public void setRotation(int)
-    212:252:public static android.graphics.Bitmap rotateToPortrait(android.graphics.Bitmap,int)
-    906:908:public void onResume()
+    202:242:public static android.graphics.Bitmap rotateToPortrait(android.graphics.Bitmap,int)
+    901:903:public void onResume()
     1444:1445:public void initiateTransition()
     1449:1460:public void initiateDeleteTransition()
 com.android.legacy.ui.ImageViewer$AnimationController:
@@ -4750,14 +4642,14 @@ com.anthonymandra.framework.RecycleBin$RetainFragment
 com.anthonymandra.framework.SwapProvider:
     public static final java.lang.String AUTHORITY
 com.anthonymandra.framework.Util:
-    63:63:public static boolean hasFroyo()
-    83:83:public static boolean hasIceCreamSandwich()
-    292:298:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
-    303:320:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
-    419:438:public static android.graphics.Bitmap addWatermark2(android.content.Context,android.graphics.Bitmap)
-    443:492:public static android.graphics.Bitmap addWatermark(android.content.Context,java.io.File,android.graphics.Bitmap)
-    522:570:public static android.graphics.Bitmap addWatermark(android.content.Context,android.graphics.Bitmap)
-    576:619:public static android.graphics.Bitmap addCustomWatermark(android.graphics.Bitmap,java.lang.String,int,int,java.lang.String)
+    66:66:public static boolean hasFroyo()
+    86:86:public static boolean hasIceCreamSandwich()
+    290:296:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
+    301:320:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
+    420:439:public static android.graphics.Bitmap addWatermark2(android.content.Context,android.graphics.Bitmap)
+    444:493:public static android.graphics.Bitmap addWatermark(android.content.Context,java.io.File,android.graphics.Bitmap)
+    523:571:public static android.graphics.Bitmap addWatermark(android.content.Context,android.graphics.Bitmap)
+    577:620:public static android.graphics.Bitmap addCustomWatermark(android.graphics.Bitmap,java.lang.String,int,int,java.lang.String)
 com.anthonymandra.framework.ViewerActivity:
     protected static final int REQUEST_CODE_PICK_FILE_OR_DIRECTORY
     protected static final int REQUEST_CODE_KEYWORDS
@@ -4836,10 +4728,9 @@ com.anthonymandra.rawdroid.FullSettingsActivity:
     private static final int maxRecycleBin
 com.anthonymandra.rawdroid.ImageModel
 com.anthonymandra.rawdroid.LegacyViewerActivity:
-    private boolean isInterfaceHidden
-    496:497:public void deleteToPrevious()
+    498:499:public void deleteToPrevious()
 com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel:
-    338:355:public void deleteToPrevious()
+    340:357:public void deleteToPrevious()
 com.anthonymandra.rawdroid.LicenseReceiver
 com.anthonymandra.rawdroid.ParentChild:
     16:16:public java.lang.Object getParent()
@@ -4881,10 +4772,10 @@ com.anthonymandra.rawdroid.RawDroid:
     302:316:private boolean packageExists(java.lang.String)
     321:333:private void doProCheck()
     977:986:public static boolean isCamera(android.hardware.usb.UsbDevice)
-    1990:2004:private void setTutorialShareView(boolean)
+    1995:2009:private void setTutorialShareView(boolean)
 com.anthonymandra.rawdroid.RawDroid$DirAlphaComparator
 com.anthonymandra.rawdroid.RawDroid$ImageAdapter:
-    1283:1283:public java.util.List getSelectedItems()
+    1288:1288:public java.util.List getSelectedItems()
 com.anthonymandra.rawdroid.XmpFragment:
     public static final java.lang.String FRAGMENT_TAG
 com.anthonymandra.widget.HistogramView:

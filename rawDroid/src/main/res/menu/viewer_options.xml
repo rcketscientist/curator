@@ -48,7 +48,7 @@
     <item
         android:id="@+id/view_tag"
         android:orderInCategory="12"
-        android:icon="@drawable/tag"
+        android:icon="@drawable/ic_action_labels"
         app:showAsAction="always"
         android:title="@string/view_tag"/>
     <item

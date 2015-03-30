@@ -4,7 +4,8 @@
     android:id="@+id/leftPanel"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_alignParentLeft="true" >
+    android:layout_alignParentLeft="true"
+    >
 
     <ImageView
         android:layout_width="match_parent"
@@ -30,7 +31,7 @@
             android:id="@+id/imageButtonLeftBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_media_rew"
+            android:src="@drawable/ic_action_previous_item"
             android:minHeight="?attr/actionBarSize"
             android:minWidth="?attr/actionBarSize"
             android:background="@android:color/transparent"/>
@@ -39,19 +40,34 @@
             android:id="@+id/imageButtonLeftFwd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_media_ff"
+            android:src="@drawable/ic_action_next_item"
             android:minHeight="?attr/actionBarSize"
             android:minWidth="?attr/actionBarSize"
             android:background="@android:color/transparent"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textViewScale"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@color/Transparent_Black"
-        android:text="0%" />
+        android:background="@color/Transparent_Black">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/zoomButton"
+            android:button="@drawable/zoom_selector"/>
+
+        <TextView
+            android:id="@+id/textViewScale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/abc_text_size_large_material"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

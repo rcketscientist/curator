@@ -438,7 +438,7 @@ public abstract class GalleryActivity extends ActionBarActivity
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		Boolean deleteConfirm = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true);
 		Boolean useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true);
-		Boolean justDelete = false;
+		Boolean justDelete;
 		String message;
 		long spaceRequired = 0;
 		for (RawObject toDelete : itemsToDelete)

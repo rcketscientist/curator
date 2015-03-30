@@ -6,19 +6,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import com.android.gallery3d.app.PhotoDataAdapter.DataListener;
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.framework.License;
 
 import java.util.WeakHashMap;
 
-public class ImageViewActivity extends PhotoPage implements DataListener
+public class ImageViewActivity extends PhotoPage
 {
 	private static final String TAG = ImageViewActivity.class.getSimpleName();
-
-	// private DecodeRawTask decodeTask;
-	// private FrameLayout decodeProgress;
 
     @Override
 	public void onCreate(Bundle savedInstanceState)
@@ -35,12 +32,14 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 	@Override
 	protected void updateAfterDelete()
 	{
+        mPhotoView.setDeleteOrRestore(true);
 		updateImageSource();
 	}
 
     @Override
 	protected void updateAfterRestore()
 	{
+        mPhotoView.setDeleteOrRestore(true);
 		updateImageSource();
 	}
 
@@ -67,7 +66,13 @@ public class ImageViewActivity extends PhotoPage implements DataListener
 		updateImageDetails();
 	}
 
-	@Override
+    @Override
+    public void onCommitDeleteImage(MediaItem toDelete)
+    {
+        deleteImage(toDelete);
+    }
+
+    @Override
 	/**
 	 * This occurs whenever the current image changes.
 	 */
@@ -121,5 +126,12 @@ public class ImageViewActivity extends PhotoPage implements DataListener
     @Override
     public void goToFirstPicture() {
         mModel.moveTo(0);
+    }
+
+    @Override
+    protected void setLicenseState(License.LicenseState state)
+    {
+        super.setLicenseState(state);
+        mPhotoView.setLicenseState(state);
     }
 }

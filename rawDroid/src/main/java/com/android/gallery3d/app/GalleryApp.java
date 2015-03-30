@@ -22,15 +22,10 @@ import com.android.gallery3d.ui.GLRoot;
 
 public interface GalleryApp extends GalleryContext
 {
-//    public StateManager getStateManager();
-	public GLRoot getGLRoot();
+	GLRoot getGLRoot();
 
-//    public GalleryActionBar getGalleryActionBar();
+	ImageCacheService getImageCacheService();
 
-	public TransitionStore getTransitionStore();
-
-	public ImageCacheService getImageCacheService();
-
-    public void addContentListener(ContentListener listener);
-    public void removeContentListener(ContentListener listener);
+    void addContentListener(ContentListener listener);
+    void removeContentListener(ContentListener listener);
 }
