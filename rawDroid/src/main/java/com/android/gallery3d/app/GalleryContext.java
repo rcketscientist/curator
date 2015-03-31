@@ -18,18 +18,12 @@ package com.android.gallery3d.app;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.os.Looper;
 
 import com.android.gallery3d.util.ThreadPool;
-//import com.android.gallery3d.data.DataManager;
 
 public interface GalleryContext
 {
-	public Context getAndroidContext();
-
-	public Looper getMainLooper();
-
-	public Resources getResources();
-
-	public ThreadPool getThreadPool();
+	Context getAndroidContext();
+	Resources getResources();
+	ThreadPool getThreadPool();
 }

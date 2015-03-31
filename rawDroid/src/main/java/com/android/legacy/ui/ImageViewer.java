@@ -33,6 +33,7 @@ import android.view.ScaleGestureDetector;
 
 import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
 import com.android.legacy.util.Utils;
+import com.anthonymandra.framework.ScaleChangedListener;
 import com.anthonymandra.rawdroid.LegacyViewerActivity;
 
 import java.util.HashMap;
@@ -103,6 +104,7 @@ public class ImageViewer extends GLView
 	private int mCenterX;
 	private int mCenterY;
 	private float mScale;
+	private boolean mScaleLocked;
 
 	// Temp variables to avoid memory allocation
 	private final Rect mTileRange = new Rect();
@@ -132,11 +134,6 @@ public class ImageViewer extends GLView
 		mScaleDetector = new ScaleGestureDetector(context, new MyScaleListener());
 		mDownUpDetector = new DownUpDetector(new MyDownUpListener());
 
-		if (context instanceof ScaleChangedListener)
-		{
-			mScaleChangedListener = (ScaleChangedListener) mContext;
-		}
-
 		mAnimationController = new AnimationController(this);
 
 		for (int i = 0, n = mScreenNails.length; i < n; ++i)
@@ -145,21 +142,14 @@ public class ImageViewer extends GLView
 		}
 	}
 
-	public void setRotation(int rotation)
+	public void setScaleListener(ScaleChangedListener listener)
 	{
-//		// Ghetto
-//		if (mRotation != 0)
-//		{
-//			mRotation = -mRotation;
-//			resetCurrentImagePosition();
-//			notifyScreenNailInvalidated(ENTRY_CURRENT);
-//		}
-//
-//		mRotation = rotation;
-//		rotated = false;
-//		resetCurrentImagePosition();
-//		notifyScreenNailInvalidated(ENTRY_CURRENT);
-//		// Maybe reset current image
+		mScaleChangedListener = listener;
+	}
+
+	public void setZoomLock(boolean locked)
+	{
+		mScaleLocked = locked;
 	}
 
 	public void setModel(Model model)
@@ -531,7 +521,8 @@ public class ImageViewer extends GLView
 		mCenterX = centerX;
 		mCenterY = centerY;
 		mScale = scale;
-		mScaleChangedListener.onScaleChanged(mScale);
+		if (mScaleChangedListener != null)
+			mScaleChangedListener.onScaleChanged(mScale);
 
 		layoutTiles(centerX, centerY, scale, mRotation);
 		layoutScreenNails(centerX, centerY, scale);
@@ -588,9 +579,13 @@ public class ImageViewer extends GLView
 
 			mScaleMin = Math.min(1f, Math.min((float) mViewW / mImageW, (float) mViewH / mImageH));
 
-			mCurrentScale = mScaleMin;
-			mCurrentX = mImageW / 2;
-			mCurrentY = mImageH / 2;
+			// Only reset scale and position if not locked
+			if (!mViewer.mScaleLocked)
+			{
+				mCurrentScale = mScaleMin;
+				mCurrentX = mImageW / 2;
+				mCurrentY = mImageH / 2;
+			}
 
 			mViewer.setPosition(mCurrentX, mCurrentY, mCurrentScale);
 		}
@@ -1328,24 +1323,29 @@ public class ImageViewer extends GLView
 			// We need to ignore the next UP event.
 			mIgnoreUpEvent = true;
 
-			if (mScale < 1)
+			int centerX, centerY;
+			float scale;
+			if (mScale < 1)	//zoom to 1:1 pixel ratio
 			{
 				float imageOffsetX = Math.max(0, (mViewWidth - (mImageWidth * mScale)) / 2);
 				float imageOffsetY = Math.max(0, (mViewHeight - (mImageHeight * mScale)) / 2);
 
-				int centerX = (int) ((int) (e.getX() - imageOffsetX) / mScale);
-				int centerY = (int) ((int) (e.getY() - imageOffsetY) / mScale);
+				centerX = (int) ((int) (e.getX() - imageOffsetX) / mScale);
+				centerY = (int) ((int) (e.getY() - imageOffsetY) / mScale);
 
-				// Only accept zoom within image frame
-				if (centerX >= 0 && centerY >= 0 && centerX <= mImageWidth && centerY <= mImageHeight)
-				{
-					mAnimationController.startAnimation(centerX, centerY, 1, AnimationController.ANIM_KIND_SCALE);
-				}
+				scale = 1;
 			}
-			else
+			else //reset to min scale
 			{
-				// Reset the image
-				notifyScreenNailInvalidated(ENTRY_CURRENT);
+				centerX = mImageWidth / 2;
+				centerY = mImageHeight / 2;
+				scale = mAnimationController.mScaleMin;
+			}
+
+			// Only accept zoom within image frame
+			if (centerX >= 0 && centerY >= 0 && centerX <= mImageWidth && centerY <= mImageHeight)
+			{
+				mAnimationController.startAnimation(centerX, centerY, scale, AnimationController.ANIM_KIND_SCALE);
 			}
 			// mScaleChangedListener.onScaleChanged(mScale);
 			return true;
@@ -1563,10 +1563,5 @@ public class ImageViewer extends GLView
 		{
 			mTexture.draw(canvas, mX, mY, mDrawWidth, mDrawHeight);
 		}
-	}
-
-	public interface ScaleChangedListener
-	{
-		public void onScaleChanged(float currentScale);
 	}
 }

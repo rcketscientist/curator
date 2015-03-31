@@ -42,7 +42,7 @@ class PositionController {
 	private static final long NO_ANIMATION = -1;
 	private static final long LAST_ANIMATION = -2;
 
-	private static final int ANIM_KIND_NONE = -1;
+	private static final int ANIM_KIND_NONE = 10;	// This crashes indexing ANIM_TIME[]...
 	private static final int ANIM_KIND_SCROLL = 0;
 	private static final int ANIM_KIND_SCALE = 1;
 	private static final int ANIM_KIND_SNAPBACK = 2;
@@ -71,6 +71,7 @@ class PositionController {
         0,    // ANIM_KIND_FLING_X (see the comment above)
         0,    // ANIM_KIND_DELETE (the duration is calculated dynamically)
         CAPTURE_ANIMATION_TIME,  // ANIM_KIND_CAPTURE
+        0		//ANIM_KIND_NONE
 	};
 
 	// We try to scale up the image to fill the screen. But in order not to
@@ -185,7 +186,7 @@ class PositionController {
 	// if this value is true, or from bottom if this value is false.
 	boolean mPopFromTop;
 
-    public interface Listener {
+	public interface Listener {
         void invalidate();
         boolean isHoldingDown();
         boolean isHoldingDelete();
@@ -226,10 +227,6 @@ class PositionController {
 		}
 	}
 
-    public void setOpenAnimationRect(Rect r) {
-		mOpenAnimationRect = r;
-	}
-
     public void setViewSize(int viewW, int viewH) {
         if (viewW == mViewW && viewH == mViewH) return;
 
@@ -259,22 +256,6 @@ class PositionController {
 		}
 	}
 
-    public void setConstrainedFrame(Rect cFrame) {
-        if (mConstrainedFrame.equals(cFrame)) return;
-		mConstrainedFrame.set(cFrame);
-		mPlatform.updateDefaultXY();
-		updateScaleAndGapLimit();
-		snapAndRedraw();
-	}
-
-    public void forceImageSize(int index, Size s) {
-        if (s.width == 0 || s.height == 0) return;
-		Box b = mBoxes.get(index);
-		b.mImageW = s.width;
-		b.mImageH = s.height;
-		return;
-	}
-
     public void setImageSize(int index, Size s, Rect cFrame) {
         if (s.width == 0 || s.height == 0) return;
 
@@ -288,7 +269,10 @@ class PositionController {
 
         if (!needUpdate) return;
 		updateScaleAndGapLimit();
-		snapAndRedraw();
+
+		// This relies on managing image transitions.  By not automatically
+		// redrawing we can have zoomlock transitions without animations
+//			snapAndRedraw();
 	}
 
 	// Returns false if the box size doesn't change.
@@ -543,22 +527,36 @@ class PositionController {
         startAnimation(mPlatform.mDefaultX, 0, b.mScaleMin, ANIM_KIND_SLIDE);
     }
 
-    // Slide the focused box to the center of the view with the capture
-    // animation. In addition to the sliding, the animation will also scale the
-    // the focused box, the specified neighbor box, and the gap between the
-    // two. The specified offset should be 1 or -1.
-    public void startCaptureAnimationSlide(int offset) {
-        Box b = mBoxes.get(0);
-        Box n = mBoxes.get(offset);  // the neighbor box
-        Gap g = mGaps.get(offset);  // the gap between the two boxes
+	/**
+	 * Update the current image with the exact position and scale from prior image
+	 */
+	public void updateCurrentImage(int platformX, int platformY, int boxY, float scale)
+	{
+		Box b = mBoxes.get(0);
+		b.mCurrentScale = scale;
+		b.mCurrentY = boxY;
+		mPlatform.mCurrentX = platformX;
+		mPlatform.mToX = platformX;
 
-        mPlatform.doAnimation(mPlatform.mDefaultX, mPlatform.mDefaultY,
-                ANIM_KIND_CAPTURE);
-        b.doAnimation(0, b.mScaleMin, ANIM_KIND_CAPTURE);
-        n.doAnimation(0, n.mScaleMin, ANIM_KIND_CAPTURE);
-        g.doAnimation(g.mDefaultSize, ANIM_KIND_CAPTURE);
-        redraw();
-    }
+		mPlatform.mCurrentY = platformY;
+		mPlatform.mToY = platformY;
+		redraw();
+	}
+
+	public int getPlatformX()
+	{
+		return mPlatform.mCurrentX;
+	}
+
+	public int getPlatformY()
+	{
+		return mPlatform.mCurrentY;
+	}
+
+	public int getBoxY()
+	{
+		return mBoxes.get(0).mCurrentY;
+	}
 
     // Only allow scrolling when we are not currently in an animation or we
     // are in some animation with can be interrupted.
@@ -1184,7 +1182,9 @@ class PositionController {
             updateScaleAndGapLimit();
         }
 
-        snapAndRedraw();
+		// This relies on managing image transitions.  By not automatically
+		// redrawing we can have zoomlock transitions without animations
+//        	snapAndRedraw();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1260,15 +1260,6 @@ class PositionController {
 
     public void setPopFromTop(boolean top) {
         mPopFromTop = top;
-    }
-
-    public boolean hasDeletingBox() {
-        for(int i = -BOX_MAX; i <= BOX_MAX; i++) {
-            if (mBoxes.get(i).mAnimationKind == ANIM_KIND_DELETE) {
-                return true;
-            }
-        }
-        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////

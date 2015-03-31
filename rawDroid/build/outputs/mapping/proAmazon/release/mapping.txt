@@ -8046,88 +8046,42 @@ com.android.gallery3d.anim.Animation -> com.android.gallery3d.a.a:
     int mDuration -> b
     android.view.animation.Interpolator mInterpolator -> c
     69:70:void setStartTime(long) -> a
-    73:73:boolean isActive() -> a
     81:88:boolean calculate(long) -> b
     void onCalculate(float) -> a
 com.android.gallery3d.anim.CanvasAnimation -> com.android.gallery3d.a.b:
-    int getCanvasSaveFlags() -> b
+    int getCanvasSaveFlags() -> a
     void apply(com.android.gallery3d.glrenderer.GLCanvas) -> a
-com.android.gallery3d.anim.StateTransitionAnimation -> com.android.gallery3d.a.c:
-    com.android.gallery3d.anim.StateTransitionAnimation$Spec mTransitionSpec -> a
-    float mCurrentContentScale -> b
-    float mCurrentContentAlpha -> c
-    float mCurrentBackgroundScale -> d
-    float mCurrentBackgroundAlpha -> e
-    float mCurrentOverlayScale -> f
-    float mCurrentOverlayAlpha -> g
-    com.android.gallery3d.glrenderer.RawTexture mOldScreenTexture -> h
-    116:124:boolean calculate(long) -> b
-    129:143:void onCalculate(float) -> a
-    146:157:void applyOldTexture(com.android.gallery3d.ui.GLView,com.android.gallery3d.glrenderer.GLCanvas,float,float,boolean) -> a
-    160:163:void applyBackground(com.android.gallery3d.ui.GLView,com.android.gallery3d.glrenderer.GLCanvas) -> a
-    166:172:void applyContentTransform(com.android.gallery3d.ui.GLView,com.android.gallery3d.glrenderer.GLCanvas) -> b
-    175:178:void applyOverlay(com.android.gallery3d.ui.GLView,com.android.gallery3d.glrenderer.GLCanvas) -> c
-com.android.gallery3d.anim.StateTransitionAnimation$Spec -> com.android.gallery3d.a.d:
-    com.android.gallery3d.anim.StateTransitionAnimation$Spec OUTGOING -> a
-    com.android.gallery3d.anim.StateTransitionAnimation$Spec INCOMING -> b
-    com.android.gallery3d.anim.StateTransitionAnimation$Spec PHOTO_INCOMING -> c
-    android.view.animation.Interpolator DEFAULT_INTERPOLATOR -> r
-    int duration -> d
-    float backgroundAlphaFrom -> e
-    float backgroundAlphaTo -> f
-    float backgroundScaleFrom -> g
-    float backgroundScaleTo -> h
-    float contentAlphaFrom -> i
-    float contentAlphaTo -> j
-    float contentScaleFrom -> k
-    float contentScaleTo -> l
-    float overlayAlphaFrom -> m
-    float overlayAlphaTo -> n
-    float overlayScaleFrom -> o
-    float overlayScaleTo -> p
-    android.view.animation.Interpolator interpolator -> q
-com.android.gallery3d.anim.StateTransitionAnimation$Transition -> com.android.gallery3d.a.e:
-    com.android.gallery3d.anim.StateTransitionAnimation$Transition None -> a
-    com.android.gallery3d.anim.StateTransitionAnimation$Transition Outgoing -> b
-    com.android.gallery3d.anim.StateTransitionAnimation$Transition Incoming -> c
-    com.android.gallery3d.anim.StateTransitionAnimation$Transition PhotoIncoming -> d
-    com.android.gallery3d.anim.StateTransitionAnimation$Transition[] $VALUES -> e
-    91:91:com.android.gallery3d.anim.StateTransitionAnimation$Transition[] values() -> values
-    91:91:com.android.gallery3d.anim.StateTransitionAnimation$Transition valueOf(java.lang.String) -> valueOf
 com.android.gallery3d.app.AbstractGalleryActivity -> com.android.gallery3d.b.a:
     com.android.gallery3d.ui.GLRootView mGLRootView -> o
     com.android.gallery3d.data.ImageCacheService mImageCacheService -> p
     java.lang.Object mLock -> q
-    com.android.gallery3d.util.ThreadPool mThreadPool -> aF
-    com.android.gallery3d.app.OrientationManager mOrientationManager -> aG
-    com.android.gallery3d.app.TransitionStore mTransitionStore -> aH
-    android.app.AlertDialog mAlertDialog -> aI
-    android.content.BroadcastReceiver mMountReceiver -> aJ
-    android.content.IntentFilter mMountFilter -> aK
-    boolean mPlugged -> aL
-    com.android.gallery3d.anim.StateTransitionAnimation$Transition mNextTransition -> aM
-    com.android.gallery3d.ui.GLView mContentPane -> aN
+    com.android.gallery3d.util.ThreadPool mThreadPool -> aG
+    com.android.gallery3d.app.OrientationManager mOrientationManager -> aH
+    com.android.gallery3d.app.TransitionStore mTransitionStore -> aI
+    android.app.AlertDialog mAlertDialog -> aJ
+    android.content.BroadcastReceiver mMountReceiver -> aK
+    com.android.gallery3d.ui.GLView mContentPane -> aL
     float[] mBackgroundColor -> n
-    68:78:void onCreate(android.os.Bundle) -> onCreate
-    82:89:void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
-    108:108:android.content.Context getAndroidContext() -> i
-    118:121:com.android.gallery3d.util.ThreadPool getThreadPool() -> j
-    131:131:com.android.gallery3d.ui.GLRoot getGLRoot() -> k
-    135:135:com.android.gallery3d.app.OrientationManager getOrientationManager() -> l
-    140:142:void setContentView(int) -> setContentView
-    145:150:void onStorageReady() -> m
-    154:182:void onStart() -> onStart
-    192:199:void onStop() -> onStop
-    203:224:void onResume() -> onResume
-    228:240:void onPause() -> onPause
-    244:252:void onDestroy() -> onDestroy
-    380:387:void setContentPane(com.android.gallery3d.ui.GLView) -> a
-    390:390:int getBackgroundColorId() -> n
-    394:394:float[] getBackgroundColor() -> o
-    400:405:com.android.gallery3d.data.ImageCacheService getImageCacheService() -> p
+    55:62:void onCreate(android.os.Bundle) -> onCreate
+    66:72:void onSaveInstanceState(android.os.Bundle) -> onSaveInstanceState
+    76:76:android.content.Context getAndroidContext() -> i
+    81:84:com.android.gallery3d.util.ThreadPool getThreadPool() -> j
+    88:88:com.android.gallery3d.ui.GLRoot getGLRoot() -> k
+    92:92:com.android.gallery3d.app.OrientationManager getOrientationManager() -> l
+    97:99:void setContentView(int) -> setContentView
+    102:107:void onStorageReady() -> m
+    111:112:void onStart() -> onStart
+    116:117:void onStop() -> onStop
+    121:124:void onResume() -> onResume
+    128:133:void onPause() -> onPause
+    137:140:void onDestroy() -> onDestroy
+    154:157:void setContentPane(com.android.gallery3d.ui.GLView) -> a
+    160:160:int getBackgroundColorId() -> n
+    164:164:float[] getBackgroundColor() -> o
+    170:175:com.android.gallery3d.data.ImageCacheService getImageCacheService() -> p
 com.android.gallery3d.app.AbstractGalleryActivity$1 -> com.android.gallery3d.b.b:
     com.android.gallery3d.app.AbstractGalleryActivity this$0 -> a
-    61:62:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    49:50:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.android.gallery3d.app.GalleryApp -> com.android.gallery3d.b.c:
     com.android.gallery3d.ui.GLRoot getGLRoot() -> k
     com.android.gallery3d.data.ImageCacheService getImageCacheService() -> p
@@ -8191,51 +8145,48 @@ com.android.gallery3d.app.PhotoDataAdapter -> com.android.gallery3d.b.i:
     com.android.gallery3d.glrenderer.TiledTexture$Uploader mUploader -> C
     com.android.gallery3d.app.GalleryApp mActivity -> D
     long mMediaVersion -> E
-    221:225:com.android.gallery3d.data.MediaItem getItemInternal(int) -> l
-    229:231:long getVersion(int) -> m
-    235:237:android.net.Uri getPath(int) -> n
+    221:225:com.android.gallery3d.data.MediaItem getItemInternal(int) -> i
+    229:231:long getVersion(int) -> j
+    235:237:android.net.Uri getPath(int) -> k
     242:288:void fireDataChange() -> k
     291:292:void setDataListener(com.android.gallery3d.app.PhotoDataAdapter$DataListener) -> a
     295:327:void updateScreenNail(android.net.Uri,com.android.gallery3d.util.Future) -> a
     330:346:void updateFullImage(android.net.Uri,com.android.gallery3d.util.Future) -> b
     350:361:void resume() -> a
     365:382:void pause() -> b
-    385:391:com.android.gallery3d.data.MediaItem getItem(int) -> o
-    395:411:void updateCurrentIndex(int) -> p
-    414:428:void uploadScreenNail(int) -> q
+    385:391:com.android.gallery3d.data.MediaItem getItem(int) -> l
+    395:411:void updateCurrentIndex(int) -> m
+    414:428:void uploadScreenNail(int) -> n
     431:437:void updateScreenNailUploadQueue() -> l
     441:442:void moveTo(int) -> a
     446:463:com.android.gallery3d.ui.ScreenNail getScreenNail(int) -> b
     468:478:void getImageSize(int,com.android.gallery3d.ui.PhotoView$Size) -> a
     482:483:int getImageRotation(int) -> c
     488:490:void setNeedFullImage(boolean) -> a
-    495:495:boolean isCamera(int) -> d
-    501:501:boolean isPanorama(int) -> e
-    507:507:boolean isStaticCamera(int) -> f
-    512:512:boolean isVideo(int) -> g
-    521:521:boolean isDeletable(int) -> h
-    530:534:int getLoadingState(int) -> i
-    539:539:com.android.gallery3d.ui.ScreenNail getScreenNail() -> e
-    544:548:android.graphics.Bitmap getCurrentBitmap() -> d
-    553:553:int getImageHeight() -> f
-    558:558:int getImageWidth() -> g
-    563:563:int getLevelCount() -> h
-    568:568:android.graphics.Bitmap getTile(int,int,int,int) -> a
-    573:573:boolean isEmpty() -> c
-    578:578:int getCurrentIndex() -> i
-    583:587:com.android.gallery3d.data.MediaItem getMediaItem(int) -> j
-    609:609:com.android.gallery3d.data.MediaItem getCurrentItem() -> j
-    614:615:void setFocusHintDirection(int) -> k
-    623:629:void updateTileProvider() -> m
-    632:647:void updateTileProvider(com.android.gallery3d.app.PhotoDataAdapter$ImageEntry) -> a
-    651:675:void updateSlidingWindow() -> n
-    678:710:void updateImageRequests() -> o
-    780:780:boolean isTemporaryItem(com.android.gallery3d.data.MediaItem) -> a
-    786:788:com.android.gallery3d.ui.ScreenNail newPlaceholderScreenNail(com.android.gallery3d.data.MediaItem) -> b
-    793:828:com.android.gallery3d.util.Future startTaskIfNeeded(int,int) -> b
-    832:873:void updateImageCache() -> p
-    937:945:java.lang.Object executeAndWait(java.util.concurrent.Callable) -> a
-    1036:1046:java.util.ArrayList getMediaItem(int,int) -> a
+    494:494:boolean isVideo(int) -> d
+    499:499:boolean isDeletable(int) -> e
+    504:508:int getLoadingState(int) -> f
+    513:513:com.android.gallery3d.ui.ScreenNail getScreenNail() -> e
+    518:522:android.graphics.Bitmap getCurrentBitmap() -> d
+    527:527:int getImageHeight() -> f
+    532:532:int getImageWidth() -> g
+    537:537:int getLevelCount() -> h
+    542:542:android.graphics.Bitmap getTile(int,int,int,int) -> a
+    547:547:boolean isEmpty() -> c
+    552:552:int getCurrentIndex() -> i
+    557:561:com.android.gallery3d.data.MediaItem getMediaItem(int) -> g
+    583:583:com.android.gallery3d.data.MediaItem getCurrentItem() -> j
+    588:589:void setFocusHintDirection(int) -> h
+    597:603:void updateTileProvider() -> m
+    606:621:void updateTileProvider(com.android.gallery3d.app.PhotoDataAdapter$ImageEntry) -> a
+    625:649:void updateSlidingWindow() -> n
+    652:684:void updateImageRequests() -> o
+    754:754:boolean isTemporaryItem(com.android.gallery3d.data.MediaItem) -> a
+    760:762:com.android.gallery3d.ui.ScreenNail newPlaceholderScreenNail(com.android.gallery3d.data.MediaItem) -> b
+    767:802:com.android.gallery3d.util.Future startTaskIfNeeded(int,int) -> b
+    806:847:void updateImageCache() -> p
+    911:919:java.lang.Object executeAndWait(java.util.concurrent.Callable) -> a
+    1010:1020:java.util.ArrayList getMediaItem(int,int) -> a
     51:51:com.android.gallery3d.app.PhotoDataAdapter$DataListener access$100(com.android.gallery3d.app.PhotoDataAdapter) -> a
     51:51:void access$200(com.android.gallery3d.app.PhotoDataAdapter) -> b
     51:51:boolean access$400(com.android.gallery3d.app.PhotoDataAdapter,com.android.gallery3d.data.MediaItem) -> a
@@ -8279,19 +8230,19 @@ com.android.gallery3d.app.PhotoDataAdapter$DataListener -> com.android.gallery3d
 com.android.gallery3d.app.PhotoDataAdapter$FullImageJob -> com.android.gallery3d.b.l:
     com.android.gallery3d.data.MediaItem mItem -> b
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    752:755:android.graphics.BitmapRegionDecoder run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
-    743:743:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> b
+    726:729:android.graphics.BitmapRegionDecoder run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
+    717:717:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> b
 com.android.gallery3d.app.PhotoDataAdapter$FullImageListener -> com.android.gallery3d.b.m:
     android.net.Uri mPath -> b
     com.android.gallery3d.util.Future mFuture -> c
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    886:889:void onFutureDone(com.android.gallery3d.util.Future) -> a
-    893:894:void run() -> run
+    860:863:void onFutureDone(com.android.gallery3d.util.Future) -> a
+    867:868:void run() -> run
 com.android.gallery3d.app.PhotoDataAdapter$GetUpdateInfo -> com.android.gallery3d.b.n:
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    964:968:boolean needContentReload() -> b
-    974:982:com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo call() -> a
-    961:961:java.lang.Object call() -> call
+    938:942:boolean needContentReload() -> b
+    948:956:com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo call() -> a
+    935:935:java.lang.Object call() -> call
 com.android.gallery3d.app.PhotoDataAdapter$ImageEntry -> com.android.gallery3d.b.o:
     android.graphics.BitmapRegionDecoder fullImage -> a
     com.android.gallery3d.ui.ScreenNail screenNail -> b
@@ -8308,33 +8259,33 @@ com.android.gallery3d.app.PhotoDataAdapter$ReloadTask -> com.android.gallery3d.b
     boolean mDirty -> c
     boolean mIsLoading -> d
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    1056:1059:void updateLoading(boolean) -> a
-    1063:1135:void run() -> run
-    1138:1141:void notifyDirty() -> a
-    1144:1146:void terminate() -> b
-    1149:1151:com.android.gallery3d.data.MediaItem findCurrentMediaItem(com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo) -> a
-    1155:1166:int findIndexOfTarget(com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo) -> b
-    1171:1181:int findIndexInSource(android.net.Uri,int) -> a
-    1185:1192:int findIndexOfPathInCache(com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo,android.net.Uri) -> a
+    1030:1033:void updateLoading(boolean) -> a
+    1037:1109:void run() -> run
+    1112:1115:void notifyDirty() -> a
+    1118:1120:void terminate() -> b
+    1123:1125:com.android.gallery3d.data.MediaItem findCurrentMediaItem(com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo) -> a
+    1129:1140:int findIndexOfTarget(com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo) -> b
+    1145:1155:int findIndexInSource(android.net.Uri,int) -> a
+    1159:1166:int findIndexOfPathInCache(com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo,android.net.Uri) -> a
 com.android.gallery3d.app.PhotoDataAdapter$ScreenNailJob -> com.android.gallery3d.b.r:
     com.android.gallery3d.data.MediaItem mItem -> b
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    729:739:com.android.gallery3d.ui.ScreenNail run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
-    712:712:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> b
+    703:713:com.android.gallery3d.ui.ScreenNail run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
+    686:686:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> b
 com.android.gallery3d.app.PhotoDataAdapter$ScreenNailListener -> com.android.gallery3d.b.s:
     android.net.Uri mPath -> b
     com.android.gallery3d.util.Future mFuture -> c
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    908:911:void onFutureDone(com.android.gallery3d.util.Future) -> a
-    915:916:void run() -> run
+    882:885:void onFutureDone(com.android.gallery3d.util.Future) -> a
+    889:890:void run() -> run
 com.android.gallery3d.app.PhotoDataAdapter$SourceListener -> com.android.gallery3d.b.t:
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> a
-    932:933:void onContentDirty() -> a
+    906:907:void onContentDirty() -> a
 com.android.gallery3d.app.PhotoDataAdapter$UpdateContent -> com.android.gallery3d.b.u:
     com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo mUpdateInfo -> a
     com.android.gallery3d.app.PhotoDataAdapter this$0 -> b
-    995:1030:java.lang.Void call() -> a
-    986:986:java.lang.Object call() -> call
+    969:1004:java.lang.Void call() -> a
+    960:960:java.lang.Object call() -> call
 com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo -> com.android.gallery3d.b.v:
     long version -> a
     boolean reloadContent -> b
@@ -8347,82 +8298,45 @@ com.android.gallery3d.app.PhotoDataAdapter$UpdateInfo -> com.android.gallery3d.b
 com.android.gallery3d.app.PhotoPage -> com.android.gallery3d.b.w:
     com.android.gallery3d.ui.PhotoView mPhotoView -> o
     com.android.gallery3d.app.Model mModel -> p
-    int mCurrentIndex -> aF
-    android.os.Handler mHandler -> aG
-    boolean mShowBars -> aH
-    boolean mActionBarAllowed -> aI
-    boolean mIsMenuVisible -> aJ
-    com.android.gallery3d.data.MediaItem mCurrentPhoto -> aK
-    boolean mIsActive -> aL
-    com.android.gallery3d.app.OrientationManager mOrientationManager -> aM
-    boolean mStartInFilmstrip -> aN
-    boolean mHasCameraScreennailOrPlaceholder -> aO
-    boolean mRecenterCameraOnResume -> aP
-    boolean mIsPanorama -> aQ
-    boolean mIsPanorama360 -> aR
-    long mCameraSwitchCutoff -> aS
-    boolean mSkipUpdateCurrentPhoto -> aT
-    boolean mDeferredUpdateWaiting -> aU
-    long mDeferUpdateUntil -> aV
-    android.net.Uri[] mNfcPushUris -> aW
+    int mCurrentIndex -> aG
+    android.os.Handler mHandler -> aH
+    com.android.gallery3d.data.MediaItem mCurrentPhoto -> aI
+    boolean mIsActive -> aJ
+    com.android.gallery3d.app.OrientationManager mOrientationManager -> aK
+    boolean mSkipUpdateCurrentPhoto -> aL
+    boolean mDeferredUpdateWaiting -> aM
+    long mDeferUpdateUntil -> aN
     int mContentView -> q
-    com.android.gallery3d.app.PhotoPage$MyMenuVisibilityListener mMenuVisibilityListener -> aX
-    com.android.gallery3d.ui.GLView mRootPane -> aY
-    258:523:void onCreate(android.os.Bundle) -> onCreate
-    527:560:void onPhotoChanged(int,android.net.Uri) -> a
-    564:576:void onLoadingFinished(boolean) -> b_
-    580:580:void onLoadingStarted() -> b_
-    584:589:void onPictureCenter(boolean) -> b
-    697:697:void launchCamera() -> W
-    744:749:void requestDeferredUpdate() -> X
-    752:772:void updateUIForCurrentPhoto() -> Y
-    775:782:void updateCurrentPhoto(com.android.gallery3d.data.MediaItem) -> c
-    795:795:void updateProgressBar() -> Z
-    843:843:void showBars() -> aa
-    852:852:void hideBars() -> ab
-    859:859:void refreshHidingMessage() -> ac
-    863:874:boolean canShowBars() -> ad
-    878:879:void wantBars() -> ae
-    887:887:void toggleBars() -> af
-    893:893:void updateBars() -> ag
-    1169:1207:void onSingleTapUp(int,int) -> a
-    1213:1213:void onActionBarAllowed(boolean) -> c
-    1218:1218:void onActionBarWanted() -> q
-    1225:1225:void onFullScreenChanged(boolean) -> d
-    1239:1239:void onDeleteImage(android.net.Uri,int) -> a
-    1256:1256:void onCommitDeleteImage() -> r
-    1332:1355:void onPause() -> onPause
-    1359:1360:void onCurrentImageUpdated() -> s
-    1387:1387:void onFilmModeChanged(boolean) -> e
-    1421:1423:void transitionFromAlbumPageIfNeeded() -> ah
-    1427:1462:void onResume() -> onResume
-    1474:1480:void onDestroy() -> onDestroy
-    1548:1548:void onUndoBarVisibilityChanged(boolean) -> f
-    46:46:boolean access$102(com.android.gallery3d.app.PhotoPage,boolean) -> a
-    46:46:void access$200(com.android.gallery3d.app.PhotoPage) -> a
-    46:46:void access$300(com.android.gallery3d.app.PhotoPage) -> b
-    46:46:com.android.gallery3d.data.MediaItem access$400(com.android.gallery3d.app.PhotoPage) -> c
-    46:46:boolean access$502(com.android.gallery3d.app.PhotoPage,boolean) -> b
-    46:46:boolean access$602(com.android.gallery3d.app.PhotoPage,boolean) -> c
-    46:46:void access$700(com.android.gallery3d.app.PhotoPage) -> d
-    46:46:void access$800(com.android.gallery3d.app.PhotoPage) -> e
-    46:46:long access$900(com.android.gallery3d.app.PhotoPage) -> f
-    46:46:boolean access$1002(com.android.gallery3d.app.PhotoPage,boolean) -> d
-    46:46:void access$1100(com.android.gallery3d.app.PhotoPage) -> g
-    46:46:android.os.Handler access$1200(com.android.gallery3d.app.PhotoPage) -> h
-    46:46:com.android.gallery3d.data.MediaItem access$402(com.android.gallery3d.app.PhotoPage,com.android.gallery3d.data.MediaItem) -> a
-    46:46:void access$1300(com.android.gallery3d.app.PhotoPage,com.android.gallery3d.data.MediaItem) -> b
-    46:46:void access$1400(com.android.gallery3d.app.PhotoPage) -> i
+    com.android.gallery3d.ui.GLView mRootPane -> aO
+    85:148:void onCreate(android.os.Bundle) -> onCreate
+    152:160:void onPhotoChanged(int,android.net.Uri) -> a
+    164:170:void onLoadingFinished(boolean) -> b_
+    174:174:void onLoadingStarted() -> b_
+    177:182:void requestDeferredUpdate() -> U
+    185:193:void updateUIForCurrentPhoto() -> V
+    196:203:void updateCurrentPhoto(com.android.gallery3d.data.MediaItem) -> d
+    210:238:void onSingleTapUp(int,int) -> a
+    255:265:void onPause() -> onPause
+    269:270:void onCurrentImageUpdated() -> q
+    274:274:void onFilmModeChanged(boolean) -> b
+    277:279:void transitionFromAlbumPageIfNeeded() -> W
+    283:298:void onResume() -> onResume
+    303:304:void onZoomLockChanged(boolean) -> c
+    308:312:void onDestroy() -> onDestroy
+    36:36:long access$000(com.android.gallery3d.app.PhotoPage) -> a
+    36:36:boolean access$102(com.android.gallery3d.app.PhotoPage,boolean) -> a
+    36:36:void access$200(com.android.gallery3d.app.PhotoPage) -> b
+    36:36:android.os.Handler access$300(com.android.gallery3d.app.PhotoPage) -> c
+    36:36:com.android.gallery3d.data.MediaItem access$400(com.android.gallery3d.app.PhotoPage) -> d
+    36:36:com.android.gallery3d.data.MediaItem access$402(com.android.gallery3d.app.PhotoPage,com.android.gallery3d.data.MediaItem) -> a
+    36:36:void access$500(com.android.gallery3d.app.PhotoPage,com.android.gallery3d.data.MediaItem) -> b
 com.android.gallery3d.app.PhotoPage$1 -> com.android.gallery3d.b.x:
     com.android.gallery3d.app.PhotoPage this$0 -> a
-    249:253:void onLayout(boolean,int,int,int,int) -> a
+    79:80:void onLayout(boolean,int,int,int,int) -> a
 com.android.gallery3d.app.PhotoPage$2 -> com.android.gallery3d.b.y:
     com.android.gallery3d.app.PhotoPage this$0 -> a
-    279:393:void handleMessage(android.os.Message) -> handleMessage
-com.android.gallery3d.app.PhotoPage$MyMenuVisibilityListener -> com.android.gallery3d.b.z:
-    com.android.gallery3d.app.PhotoPage this$0 -> a
-    208:210:void onMenuVisibilityChanged(boolean) -> onMenuVisibilityChanged
-com.android.gallery3d.app.TransitionStore -> com.android.gallery3d.b.aa:
+    101:128:void handleMessage(android.os.Message) -> handleMessage
+com.android.gallery3d.app.TransitionStore -> com.android.gallery3d.b.z:
     java.util.HashMap mStorage -> a
 com.android.gallery3d.common.ApiHelper -> com.android.gallery3d.c.a:
     boolean AT_LEAST_16 -> a
@@ -8658,8 +8572,7 @@ com.android.gallery3d.glrenderer.GLCanvas -> com.android.gallery3d.e.c:
     com.android.gallery3d.glrenderer.GLId getGLId() -> a
     void setSize(int,int) -> a
     void clearBuffer(float[]) -> a
-    void setAlpha(float) -> a
-    void multiplyAlpha(float) -> b
+    void multiplyAlpha(float) -> a
     void translate(float,float) -> a
     void scale(float,float,float) -> a
     void rotate(float,float,float,float) -> a
@@ -8706,8 +8619,8 @@ com.android.gallery3d.glrenderer.GLES11Canvas -> com.android.gallery3d.e.d:
     int mCountTextureOES -> c
     com.android.gallery3d.glrenderer.GLId mGLId -> A
     129:153:void setSize(int,int) -> a
-    157:159:void setAlpha(float) -> a
-    168:170:void multiplyAlpha(float) -> b
+    157:159:void setAlpha(float) -> b
+    168:170:void multiplyAlpha(float) -> a
     173:173:java.nio.ByteBuffer allocateDirectNativeOrderBuffer(int) -> b
     214:226:void fillRect(float,float,float,float,int) -> a
     238:243:void translate(float,float) -> a
@@ -8814,8 +8727,8 @@ com.android.gallery3d.glrenderer.GLES20Canvas -> com.android.gallery3d.e.i:
     347:359:void setSize(int,int) -> a
     371:375:void clearBuffer(float[]) -> a
     379:379:float getAlpha() -> e
-    384:385:void setAlpha(float) -> a
-    389:390:void multiplyAlpha(float) -> b
+    384:385:void setAlpha(float) -> b
+    389:390:void multiplyAlpha(float) -> a
     402:408:void translate(float,float) -> a
     412:413:void scale(float,float,float) -> a
     417:426:void rotate(float,float,float,float) -> a
@@ -9172,30 +9085,28 @@ com.android.gallery3d.ui.GLView -> com.android.gallery3d.ui.n:
     int mScrollHeight -> i
     int mScrollWidth -> j
     float[] mBackgroundColor -> q
-    com.android.gallery3d.anim.StateTransitionAnimation mTransition -> r
-    112:112:int getVisibility() -> b
-    117:119:void attachToRoot(com.android.gallery3d.ui.GLRoot) -> a
-    123:125:void detachFromRoot() -> c
-    129:129:int getComponentCount() -> d
-    134:137:com.android.gallery3d.ui.GLView getComponent(int) -> a
-    143:156:void addComponent(com.android.gallery3d.ui.GLView) -> a
-    193:193:int getWidth() -> e
-    197:197:int getHeight() -> f
-    201:201:com.android.gallery3d.ui.GLRoot getGLRoot() -> g
-    207:209:void invalidate() -> h
-    226:243:void render(com.android.gallery3d.glrenderer.GLCanvas) -> a
-    251:251:float[] getBackgroundColor() -> i
-    255:256:void setBackgroundColor(float[]) -> a
-    259:266:void renderBackground(com.android.gallery3d.glrenderer.GLCanvas) -> b
-    269:290:void renderChild(com.android.gallery3d.glrenderer.GLCanvas,com.android.gallery3d.ui.GLView) -> a
-    293:293:boolean onTouch(android.view.MotionEvent) -> a
-    298:309:boolean dispatchTouchEvent(android.view.MotionEvent,int,int,com.android.gallery3d.ui.GLView,boolean) -> a
-    313:342:boolean dispatchTouchEvent(android.view.MotionEvent) -> b
-    350:357:void layout(int,int,int,int) -> a
-    360:363:boolean setBounds(int,int,int,int) -> b
-    402:402:void onLayout(boolean,int,int,int,int) -> a
-    433:437:void onAttachToRoot(com.android.gallery3d.ui.GLRoot) -> b
-    440:444:void onDetachFromRoot() -> j
+    99:99:int getVisibility() -> b
+    104:106:void attachToRoot(com.android.gallery3d.ui.GLRoot) -> a
+    110:112:void detachFromRoot() -> c
+    116:116:int getComponentCount() -> d
+    121:124:com.android.gallery3d.ui.GLView getComponent(int) -> a
+    130:143:void addComponent(com.android.gallery3d.ui.GLView) -> a
+    180:180:int getWidth() -> e
+    184:184:int getHeight() -> f
+    188:188:com.android.gallery3d.ui.GLRoot getGLRoot() -> g
+    194:196:void invalidate() -> h
+    213:220:void render(com.android.gallery3d.glrenderer.GLCanvas) -> a
+    227:228:void setBackgroundColor(float[]) -> a
+    231:234:void renderBackground(com.android.gallery3d.glrenderer.GLCanvas) -> b
+    237:258:void renderChild(com.android.gallery3d.glrenderer.GLCanvas,com.android.gallery3d.ui.GLView) -> a
+    261:261:boolean onTouch(android.view.MotionEvent) -> a
+    266:277:boolean dispatchTouchEvent(android.view.MotionEvent,int,int,com.android.gallery3d.ui.GLView,boolean) -> a
+    281:310:boolean dispatchTouchEvent(android.view.MotionEvent) -> b
+    318:325:void layout(int,int,int,int) -> a
+    328:331:boolean setBounds(int,int,int,int) -> b
+    370:370:void onLayout(boolean,int,int,int,int) -> a
+    401:405:void onAttachToRoot(com.android.gallery3d.ui.GLRoot) -> b
+    408:412:void onDetachFromRoot() -> i
 com.android.gallery3d.ui.GestureRecognizer -> com.android.gallery3d.ui.o:
     android.view.GestureDetector mGestureDetector -> a
     android.view.ScaleGestureDetector mScaleDetector -> b
@@ -9237,177 +9148,150 @@ com.android.gallery3d.ui.OrientationSource -> com.android.gallery3d.ui.u:
     int getCompensation() -> d
 com.android.gallery3d.ui.PhotoView -> com.android.gallery3d.ui.v:
     int mPlaceholderColor -> a
-    float TRANSITION_SCALE_FACTOR -> k
-    com.android.gallery3d.ui.PhotoView$ZInterpolator mScaleInterpolator -> l
-    android.view.animation.AccelerateInterpolator mAlphaInterpolator -> m
-    com.android.gallery3d.util.RangeArray mPictures -> n
-    com.android.gallery3d.ui.PhotoView$Size[] mSizes -> o
-    com.android.gallery3d.ui.PhotoView$MyGestureListener mGestureListener -> p
-    com.android.gallery3d.ui.GestureRecognizer mGestureRecognizer -> q
-    com.android.gallery3d.ui.PositionController mPositionController -> r
-    com.android.gallery3d.ui.PhotoView$Listener mListener -> s
-    com.android.gallery3d.ui.PhotoView$Model mModel -> t
-    com.android.gallery3d.glrenderer.StringTexture mNoThumbnailText -> u
-    com.android.gallery3d.ui.TileImageView mTileView -> v
-    com.android.gallery3d.ui.EdgeView mEdgeView -> w
-    com.android.gallery3d.glrenderer.Texture mVideoPlayIcon -> x
-    com.android.gallery3d.ui.SynchronizedHandler mHandler -> y
-    boolean mCancelExtraScalingPending -> z
-    boolean mFilmMode -> A
-    boolean mWantPictureCenterCallbacks -> B
-    int mDisplayRotation -> C
-    int mCompensation -> D
-    boolean mFullScreenCamera -> E
-    android.graphics.Rect mCameraRelativeFrame -> F
-    android.graphics.Rect mCameraRect -> G
+    boolean mDeleteOrRestore -> k
+    boolean mIsPro -> l
+    float TRANSITION_SCALE_FACTOR -> m
+    com.android.gallery3d.ui.PhotoView$ZInterpolator mScaleInterpolator -> n
+    android.view.animation.AccelerateInterpolator mAlphaInterpolator -> o
+    com.android.gallery3d.util.RangeArray mPictures -> p
+    com.android.gallery3d.ui.PhotoView$Size[] mSizes -> q
+    com.android.gallery3d.ui.PhotoView$MyGestureListener mGestureListener -> r
+    com.android.gallery3d.ui.GestureRecognizer mGestureRecognizer -> s
+    com.android.gallery3d.ui.PositionController mPositionController -> t
+    com.android.gallery3d.ui.PhotoView$Listener mListener -> u
+    com.anthonymandra.framework.ScaleChangedListener mScaleListener -> v
+    com.android.gallery3d.ui.PhotoView$Model mModel -> w
+    com.android.gallery3d.glrenderer.StringTexture mNoThumbnailText -> x
+    com.android.gallery3d.ui.TileImageView mTileView -> y
+    com.android.gallery3d.ui.EdgeView mEdgeView -> z
+    com.android.gallery3d.glrenderer.Texture mVideoPlayIcon -> A
+    com.android.gallery3d.ui.SynchronizedHandler mHandler -> B
+    boolean mCancelExtraScalingPending -> C
+    boolean mFilmMode -> D
+    boolean mWantPictureCenterCallbacks -> E
+    int mDisplayRotation -> F
+    int mCompensation -> G
     boolean mFirst -> H
     int mPrevBound -> I
     int mNextBound -> J
     int mHolding -> K
     int mTouchBoxIndex -> L
-    boolean mTouchBoxDeletable -> M
-    int mUndoIndexHint -> N
-    android.content.Context mContext -> O
-    int mUndoBarState -> P
-    320:321:void stopScrolling() -> a
-    324:326:void setModel(com.android.gallery3d.ui.PhotoView$Model) -> a
-    400:401:void setWantPictureCenterCallbacks(boolean) -> a
-    408:459:void notifyDataChange(int[],int,int) -> a
-    467:473:void notifyImageChange(int) -> b
-    476:479:void setPictureSize(int) -> c
-    484:515:void onLayout(boolean,int,int,int,int) -> a
-    522:545:void updateCameraRect() -> p
-    560:560:int getCameraRotation() -> q
-    571:578:int getPanoramaRotation() -> r
-    921:922:void drawPlaceHolder(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
-    926:929:void drawVideoPlayIcon(com.android.gallery3d.glrenderer.GLCanvas,int) -> a
-    933:935:void drawLoadingFailMessage(com.android.gallery3d.glrenderer.GLCanvas) -> c
-    938:938:int getRotated(int,int,int) -> c
-    947:948:boolean onTouch(android.view.MotionEvent) -> a
-    1337:1337:void updateActionBar() -> s
-    1340:1348:void setFilmMode(boolean) -> b
-    1351:1351:boolean getFilmMode() -> k
-    1359:1365:void pause() -> l
-    1368:1370:void resume() -> m
-    1401:1407:void hideUndoBar() -> t
-    1418:1427:void checkHideUndoBar(int) -> d
-    1439:1484:void render(com.android.gallery3d.glrenderer.GLCanvas) -> a
-    1492:1497:void checkFocusSwitching() -> u
-    1501:1510:void switchFocus() -> v
-    1515:1534:int switchPosition() -> w
-    1540:1555:void switchToHitPicture(int,int) -> a
-    1566:1588:boolean swipeImages(float,float) -> a
-    1592:1596:void snapback() -> x
-    1599:1612:boolean snapToNeighborImage() -> y
-    1616:1619:boolean slideToNextPicture() -> z
-    1623:1626:boolean slideToPrevPicture() -> A
-    1630:1630:int gapToSide(int,int) -> b
-    1642:1643:void switchToNextImage() -> B
-    1646:1647:void switchToPrevImage() -> C
-    1709:1716:void captureAnimationDone(int) -> e
-    1735:1765:float calculateMoveOutProgress(int,int,int) -> d
-    1771:1772:float getScrollAlpha(float) -> a
-    1778:1782:float getScrollScale(float) -> b
-    1807:1807:float interpolate(float,float,float) -> b
-    1813:1815:float getOffsetAlpha(float) -> c
-    1823:1824:void setListener(com.android.gallery3d.ui.PhotoView$Listener) -> a
-    1876:1882:void goToNextPicture() -> n
-    1888:1895:void goToPrevPicture() -> o
-    44:44:int access$100(com.android.gallery3d.ui.PhotoView) -> a
-    44:44:com.android.gallery3d.ui.EdgeView access$200(com.android.gallery3d.ui.PhotoView) -> b
-    44:44:com.android.gallery3d.ui.PhotoView$Listener access$300(com.android.gallery3d.ui.PhotoView) -> c
-    44:44:com.android.gallery3d.ui.GestureRecognizer access$400(com.android.gallery3d.ui.PhotoView) -> d
-    44:44:com.android.gallery3d.ui.PositionController access$500(com.android.gallery3d.ui.PhotoView) -> e
-    44:44:boolean access$602(com.android.gallery3d.ui.PhotoView,boolean) -> a
-    44:44:void access$700(com.android.gallery3d.ui.PhotoView) -> f
-    44:44:void access$800(com.android.gallery3d.ui.PhotoView,int) -> a
-    44:44:com.android.gallery3d.ui.SynchronizedHandler access$900(com.android.gallery3d.ui.PhotoView) -> g
-    44:44:int access$1000(com.android.gallery3d.ui.PhotoView) -> h
-    44:44:int access$1100(com.android.gallery3d.ui.PhotoView) -> i
-    44:44:com.android.gallery3d.ui.PhotoView$Model access$1200(com.android.gallery3d.ui.PhotoView) -> j
-    44:44:int access$102(com.android.gallery3d.ui.PhotoView,int) -> b
-    44:44:void access$1300(com.android.gallery3d.ui.PhotoView) -> k
-    44:44:void access$1400(com.android.gallery3d.ui.PhotoView,int) -> c
-    44:44:com.android.gallery3d.ui.TileImageView access$1500(com.android.gallery3d.ui.PhotoView) -> l
-    44:44:int access$1600(com.android.gallery3d.ui.PhotoView) -> m
-    44:44:int access$1700(com.android.gallery3d.ui.PhotoView) -> n
-    44:44:int access$1800(int,int,int) -> a
-    44:44:boolean access$1900(com.android.gallery3d.ui.PhotoView) -> o
-    44:44:com.android.gallery3d.util.RangeArray access$2000(com.android.gallery3d.ui.PhotoView) -> p
-    44:44:float access$2100(int,int,int) -> b
-    44:44:float access$2200(com.android.gallery3d.ui.PhotoView,float) -> a
-    44:44:float access$2300(com.android.gallery3d.ui.PhotoView,float) -> b
-    44:44:float access$2400(float,float,float) -> a
-    44:44:float access$2500(com.android.gallery3d.ui.PhotoView,float) -> c
-    44:44:void access$2600(com.android.gallery3d.ui.PhotoView,com.android.gallery3d.glrenderer.GLCanvas,int) -> a
-    44:44:void access$2700(com.android.gallery3d.ui.PhotoView,com.android.gallery3d.glrenderer.GLCanvas) -> a
-    44:44:void access$2800(com.android.gallery3d.ui.PhotoView,com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
-    44:44:boolean access$2900(com.android.gallery3d.ui.PhotoView) -> q
-    44:44:void access$3000(com.android.gallery3d.ui.PhotoView,int,int) -> a
-    44:44:int access$3100(com.android.gallery3d.ui.PhotoView) -> r
-    44:44:boolean access$3200(com.android.gallery3d.ui.PhotoView) -> s
-    44:44:boolean access$3300(com.android.gallery3d.ui.PhotoView,float,float) -> a
-    44:44:int access$3102(com.android.gallery3d.ui.PhotoView,int) -> d
-    44:44:int access$3402(com.android.gallery3d.ui.PhotoView,int) -> e
-    44:44:boolean access$600(com.android.gallery3d.ui.PhotoView) -> t
-    44:44:boolean access$3202(com.android.gallery3d.ui.PhotoView,boolean) -> b
-    44:44:boolean access$3500(com.android.gallery3d.ui.PhotoView) -> u
+    boolean mZoomLocked -> M
+    android.content.Context mContext -> N
+    284:287:void delete() -> n
+    294:296:void setModel(com.android.gallery3d.ui.PhotoView$Model) -> a
+    322:323:void setWantPictureCenterCallbacks(boolean) -> a
+    330:367:void notifyDataChange(int[],int,int) -> a
+    371:372:void setDeleteOrRestore(boolean) -> b
+    375:381:void notifyImageChange(int) -> b
+    384:386:void setPictureSize(int) -> c
+    391:417:void onLayout(boolean,int,int,int,int) -> a
+    696:697:void drawPlaceHolder(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
+    701:704:void drawVideoPlayIcon(com.android.gallery3d.glrenderer.GLCanvas,int) -> a
+    708:710:void drawLoadingFailMessage(com.android.gallery3d.glrenderer.GLCanvas) -> c
+    713:713:int getRotated(int,int,int) -> c
+    722:723:boolean onTouch(android.view.MotionEvent) -> a
+    1058:1065:void setFilmMode(boolean) -> c
+    1068:1068:boolean getFilmMode() -> a
+    1076:1082:void pause() -> j
+    1085:1087:void resume() -> k
+    1101:1134:void render(com.android.gallery3d.glrenderer.GLCanvas) -> a
+    1142:1147:void checkFocusSwitching() -> o
+    1151:1160:void switchFocus() -> p
+    1165:1184:int switchPosition() -> q
+    1190:1205:void switchToHitPicture(int,int) -> a
+    1216:1238:boolean swipeImages(float,float) -> a
+    1242:1246:void snapback() -> r
+    1249:1262:boolean snapToNeighborImage() -> s
+    1266:1269:boolean slideToNextPicture() -> t
+    1273:1276:boolean slideToPrevPicture() -> u
+    1280:1280:int gapToSide(int,int) -> b
+    1292:1293:void switchToNextImage() -> v
+    1296:1297:void switchToPrevImage() -> w
+    1320:1350:float calculateMoveOutProgress(int,int,int) -> d
+    1356:1357:float getScrollAlpha(float) -> a
+    1363:1367:float getScrollScale(float) -> b
+    1392:1392:float interpolate(float,float,float) -> b
+    1398:1400:float getOffsetAlpha(float) -> c
+    1408:1409:void setListener(com.android.gallery3d.ui.PhotoView$Listener) -> a
+    1412:1413:void setScaleListener(com.anthonymandra.framework.ScaleChangedListener) -> a
+    1419:1433:void goToNextPicture() -> l
+    1439:1454:void goToPrevPicture() -> m
+    1458:1459:void setZoomLock(boolean) -> d
+    1463:1464:void setLicenseState(com.anthonymandra.framework.License$LicenseState) -> a
+    45:45:int access$100(com.android.gallery3d.ui.PhotoView) -> a
+    45:45:com.android.gallery3d.ui.EdgeView access$200(com.android.gallery3d.ui.PhotoView) -> b
+    45:45:com.anthonymandra.framework.ScaleChangedListener access$300(com.android.gallery3d.ui.PhotoView) -> c
+    45:45:com.android.gallery3d.ui.GestureRecognizer access$400(com.android.gallery3d.ui.PhotoView) -> d
+    45:45:com.android.gallery3d.ui.PositionController access$500(com.android.gallery3d.ui.PhotoView) -> e
+    45:45:boolean access$602(com.android.gallery3d.ui.PhotoView,boolean) -> a
+    45:45:void access$700(com.android.gallery3d.ui.PhotoView) -> f
+    45:45:com.android.gallery3d.ui.TileImageView access$800(com.android.gallery3d.ui.PhotoView) -> g
+    45:45:com.android.gallery3d.ui.PhotoView$Model access$900(com.android.gallery3d.ui.PhotoView) -> h
+    45:45:int access$1000(int,int,int) -> a
+    45:45:float access$1100(int,int,int) -> b
+    45:45:float access$1200(com.android.gallery3d.ui.PhotoView,float) -> a
+    45:45:float access$1300(com.android.gallery3d.ui.PhotoView,float) -> b
+    45:45:float access$1400(float,float,float) -> a
+    45:45:float access$1500(com.android.gallery3d.ui.PhotoView,float) -> c
+    45:45:void access$1600(com.android.gallery3d.ui.PhotoView,com.android.gallery3d.glrenderer.GLCanvas,int) -> a
+    45:45:void access$1700(com.android.gallery3d.ui.PhotoView,com.android.gallery3d.glrenderer.GLCanvas) -> a
+    45:45:int access$1800(com.android.gallery3d.ui.PhotoView) -> i
+    45:45:int access$1900(com.android.gallery3d.ui.PhotoView) -> j
+    45:45:void access$2000(com.android.gallery3d.ui.PhotoView,com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
+    45:45:int access$102(com.android.gallery3d.ui.PhotoView,int) -> a
+    45:45:boolean access$2100(com.android.gallery3d.ui.PhotoView) -> k
+    45:45:void access$2200(com.android.gallery3d.ui.PhotoView,int,int) -> a
+    45:45:com.android.gallery3d.ui.PhotoView$Listener access$2300(com.android.gallery3d.ui.PhotoView) -> l
+    45:45:int access$2400(com.android.gallery3d.ui.PhotoView) -> m
+    45:45:boolean access$2500(com.android.gallery3d.ui.PhotoView,float,float) -> a
+    45:45:boolean access$2600(com.android.gallery3d.ui.PhotoView) -> n
+    45:45:void access$2700(com.android.gallery3d.ui.PhotoView) -> o
+    45:45:int access$2402(com.android.gallery3d.ui.PhotoView,int) -> b
+    45:45:boolean access$600(com.android.gallery3d.ui.PhotoView) -> p
+    45:45:com.android.gallery3d.ui.SynchronizedHandler access$2800(com.android.gallery3d.ui.PhotoView) -> q
+    45:45:boolean access$2900(com.android.gallery3d.ui.PhotoView) -> r
+    45:45:void access$3000(com.android.gallery3d.ui.PhotoView) -> s
 com.android.gallery3d.ui.PhotoView$1 -> com.android.gallery3d.ui.w:
     com.android.gallery3d.ui.PhotoView this$0 -> a
-    279:280:void invalidate() -> a
-    283:283:boolean isHoldingDown() -> b
-    287:287:boolean isHoldingDelete() -> c
-    291:292:void onPull(int,int) -> a
-    299:300:void onAbsorb(int,int) -> b
-    305:306:void onScaleChanged(float) -> a
+    242:243:void invalidate() -> a
+    246:246:boolean isHoldingDown() -> b
+    250:250:boolean isHoldingDelete() -> c
+    254:255:void onPull(int,int) -> a
+    262:263:void onAbsorb(int,int) -> b
+    268:270:void onScaleChanged(float) -> a
 com.android.gallery3d.ui.PhotoView$FullPicture -> com.android.gallery3d.ui.x:
     int mRotation -> b
-    boolean mIsCamera -> c
-    boolean mIsPanorama -> d
-    boolean mIsStaticCamera -> e
-    boolean mIsVideo -> f
-    boolean mIsDeletable -> g
-    int mLoadingState -> h
-    com.android.gallery3d.ui.PhotoView$Size mSize -> i
+    boolean mIsVideo -> c
+    boolean mIsDeletable -> d
+    int mLoadingState -> e
+    com.android.gallery3d.ui.PhotoView$Size mSize -> f
     com.android.gallery3d.ui.PhotoView this$0 -> a
-    608:618:void reload() -> a
-    622:622:com.android.gallery3d.ui.PhotoView$Size getSize() -> b
-    627:629:void forceSize() -> c
-    632:644:void updateSize() -> f
-    648:662:void draw(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
-    666:667:void setScreenNail(com.android.gallery3d.ui.ScreenNail) -> a
-    671:671:boolean isCamera() -> d
-    676:676:boolean isDeletable() -> e
-    680:750:void drawTileView(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> b
-    756:773:void setTileViewPosition(float,float,int,int,float) -> a
+    440:447:void reload() -> a
+    451:451:com.android.gallery3d.ui.PhotoView$Size getSize() -> b
+    455:461:void updateSize() -> c
+    465:475:void draw(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
+    479:480:void setScreenNail(com.android.gallery3d.ui.ScreenNail) -> a
+    483:553:void drawTileView(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> b
+    559:576:void setTileViewPosition(float,float,int,int,float) -> a
 com.android.gallery3d.ui.PhotoView$Listener -> com.android.gallery3d.ui.y:
     void onSingleTapUp(int,int) -> a
-    void onFullScreenChanged(boolean) -> d
-    void onActionBarAllowed(boolean) -> c
-    void onActionBarWanted() -> q
-    void onCurrentImageUpdated() -> s
-    void onDeleteImage(android.net.Uri,int) -> a
-    void onCommitDeleteImage() -> r
-    void onFilmModeChanged(boolean) -> e
-    void onPictureCenter(boolean) -> b
-    void onUndoBarVisibilityChanged(boolean) -> f
+    void onCurrentImageUpdated() -> q
+    void onFilmModeChanged(boolean) -> b
+    void onCommitDeleteImage(com.android.gallery3d.data.MediaItem) -> a
     void onSingleTapConfirmed() -> c_
-    void onScaleChanged(float) -> a
 com.android.gallery3d.ui.PhotoView$Model -> com.android.gallery3d.ui.z:
     int getCurrentIndex() -> i
     void moveTo(int) -> a
     void getImageSize(int,com.android.gallery3d.ui.PhotoView$Size) -> a
-    com.android.gallery3d.data.MediaItem getMediaItem(int) -> j
+    com.android.gallery3d.data.MediaItem getMediaItem(int) -> g
     int getImageRotation(int) -> c
     com.android.gallery3d.ui.ScreenNail getScreenNail(int) -> b
     void setNeedFullImage(boolean) -> a
-    boolean isCamera(int) -> d
-    boolean isPanorama(int) -> e
-    boolean isStaticCamera(int) -> f
-    boolean isVideo(int) -> g
-    boolean isDeletable(int) -> h
-    int getLoadingState(int) -> i
-    void setFocusHintDirection(int) -> k
+    boolean isVideo(int) -> d
+    boolean isDeletable(int) -> e
+    int getLoadingState(int) -> f
+    void setFocusHintDirection(int) -> h
     com.android.gallery3d.data.MediaItem getCurrentItem() -> j
 com.android.gallery3d.ui.PhotoView$MyGestureListener -> com.android.gallery3d.ui.aa:
     boolean mIgnoreUpEvent -> b
@@ -9415,66 +9299,55 @@ com.android.gallery3d.ui.PhotoView$MyGestureListener -> com.android.gallery3d.ui
     boolean mModeChanged -> d
     boolean mIgnoreScalingGesture -> e
     boolean mDownInScrolling -> f
-    boolean mIgnoreSwipingGesture -> g
-    boolean mScrolledAfterDown -> h
-    boolean mFirstScrollX -> i
-    int mDeltaY -> j
-    float mAccScale -> k
-    boolean mHadFling -> l
+    boolean mScrolledAfterDown -> g
+    boolean mFirstScrollX -> h
+    int mDeltaY -> i
+    float mAccScale -> j
+    boolean mHadFling -> k
     com.android.gallery3d.ui.PhotoView this$0 -> a
-    985:1020:boolean onSingleTapUp(float,float) -> a
-    1025:1041:boolean onDoubleTap(float,float) -> b
-    1046:1069:boolean onScroll(float,float,float,float) -> a
-    1073:1085:int calculateDeltaY(float) -> a
-    1090:1098:boolean onFling(android.view.MotionEvent,android.view.MotionEvent,float,float) -> a
-    1102:1137:boolean flingImages(float,float,float) -> b
-    1141:1150:void deleteAfterAnimation(int) -> a
-    1154:1166:boolean onScaleBegin(float,float) -> c
-    1171:1215:boolean onScale(float,float,float) -> a
-    1220:1224:void onScaleEnd() -> a
-    1227:1233:void startExtraScalingIfNeeded() -> c
-    1236:1241:void stopExtraScalingIfNeeded() -> d
-    1247:1277:void onDown(float,float) -> d
-    1281:1311:void onUp() -> b
-    1319:1320:boolean onSingleTapConfirmed(float,float) -> e
+    758:793:boolean onSingleTapUp(float,float) -> a
+    798:812:boolean onDoubleTap(float,float) -> b
+    817:839:boolean onScroll(float,float,float,float) -> a
+    845:853:int calculateDeltaY(float) -> a
+    858:865:boolean onFling(android.view.MotionEvent,android.view.MotionEvent,float,float) -> a
+    869:908:boolean flingImages(float,float,float) -> b
+    913:919:boolean onScaleBegin(float,float) -> c
+    924:960:boolean onScale(float,float,float) -> a
+    965:968:void onScaleEnd() -> a
+    971:977:void startExtraScalingIfNeeded() -> c
+    980:985:void stopExtraScalingIfNeeded() -> d
+    991:1016:void onDown(float,float) -> d
+    1020:1047:void onUp() -> b
+    1051:1052:boolean onSingleTapConfirmed(float,float) -> e
 com.android.gallery3d.ui.PhotoView$MyHandler -> com.android.gallery3d.ui.ab:
     com.android.gallery3d.ui.PhotoView this$0 -> a
-    335:396:void handleMessage(android.os.Message) -> handleMessage
+    305:318:void handleMessage(android.os.Message) -> handleMessage
 com.android.gallery3d.ui.PhotoView$Picture -> com.android.gallery3d.ui.ac:
     void reload() -> a
     void draw(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
     void setScreenNail(com.android.gallery3d.ui.ScreenNail) -> a
-    boolean isCamera() -> d
-    boolean isDeletable() -> e
-    void forceSize() -> c
     com.android.gallery3d.ui.PhotoView$Size getSize() -> b
 com.android.gallery3d.ui.PhotoView$ScreenNailPicture -> com.android.gallery3d.ui.ad:
     int mIndex -> b
     int mRotation -> c
     com.android.gallery3d.ui.ScreenNail mScreenNail -> d
-    boolean mIsCamera -> e
-    boolean mIsPanorama -> f
-    boolean mIsStaticCamera -> g
-    boolean mIsVideo -> h
-    boolean mIsDeletable -> i
-    int mLoadingState -> j
-    com.android.gallery3d.ui.PhotoView$Size mSize -> k
+    boolean mIsVideo -> e
+    boolean mIsDeletable -> f
+    int mLoadingState -> g
+    com.android.gallery3d.ui.PhotoView$Size mSize -> h
     com.android.gallery3d.ui.PhotoView this$0 -> a
-    794:802:void reload() -> a
-    806:806:com.android.gallery3d.ui.PhotoView$Size getSize() -> b
-    811:866:void draw(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
-    869:870:boolean isScreenNailAnimating() -> f
-    875:876:void setScreenNail(com.android.gallery3d.ui.ScreenNail) -> a
-    880:882:void forceSize() -> c
-    885:906:void updateSize() -> g
-    910:910:boolean isCamera() -> d
-    915:915:boolean isDeletable() -> e
+    594:599:void reload() -> a
+    603:603:com.android.gallery3d.ui.PhotoView$Size getSize() -> b
+    608:663:void draw(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.Rect) -> a
+    666:667:boolean isScreenNailAnimating() -> c
+    672:673:void setScreenNail(com.android.gallery3d.ui.ScreenNail) -> a
+    676:691:void updateSize() -> d
 com.android.gallery3d.ui.PhotoView$Size -> com.android.gallery3d.ui.ae:
     int width -> a
     int height -> b
 com.android.gallery3d.ui.PhotoView$ZInterpolator -> com.android.gallery3d.ui.af:
     float focalLength -> a
-    1798:1798:float getInterpolation(float) -> a
+    1383:1383:float getInterpolation(float) -> a
 com.android.gallery3d.ui.PositionController -> com.android.gallery3d.ui.ag:
     int[] ANIM_TIME -> b
     boolean mExtraScalingRange -> c
@@ -9507,78 +9380,78 @@ com.android.gallery3d.ui.PositionController -> com.android.gallery3d.ui.ag:
     com.android.gallery3d.util.RangeArray mTempGaps -> D
     com.android.gallery3d.util.RangeArray mRects -> E
     boolean mPopFromTop -> a
-    234:260:void setViewSize(int,int) -> a
-    263:268:void setConstrainedFrame(android.graphics.Rect) -> a
-    271:275:void forceImageSize(int,com.android.gallery3d.ui.PhotoView$Size) -> a
-    279:292:void setImageSize(int,com.android.gallery3d.ui.PhotoView$Size,android.graphics.Rect) -> a
-    296:339:boolean setBoxSize(int,int,int,boolean) -> a
-    343:366:boolean startOpeningAnimationIfNeeded() -> v
-    370:377:void setFilmMode(boolean) -> a
-    380:385:void setExtraScalingRange(boolean) -> b
-    391:401:void updateScaleAndGapLimit() -> w
-    406:409:int getDefaultGapSize(int) -> d
-    425:425:int gapToSide(com.android.gallery3d.ui.PositionController$Box) -> a
-    430:437:void stopAnimation() -> a
-    440:459:void skipAnimation() -> b
-    462:463:void snapback() -> c
-    466:469:void skipToFinalPosition() -> d
-    476:493:void zoomIn(float,float,float) -> a
-    496:498:void resetToFullView() -> e
-    501:508:void beginScale(float,float) -> a
-    516:532:int scaleBy(float,float,float) -> b
-    536:538:void endScale() -> f
-    542:544:void startHorizontalSlide() -> g
-    566:574:boolean canScroll() -> x
-    578:613:void scrollPage(int,int) -> b
-    616:648:void scrollFilmX(int) -> a
-    651:657:void scrollFilmY(int,int) -> c
-    660:688:boolean flingPage(int,int) -> d
-    692:707:boolean flingFilmX(int) -> b
-    715:743:int flingFilmY(int,int) -> e
-    751:759:int hitTest(int,int) -> f
-    778:780:void redraw() -> y
-    783:792:void snapAndRedraw() -> z
-    796:800:boolean startAnimation(int,int,float,int) -> a
-    804:816:void advanceAnimation() -> h
-    820:825:boolean inOpeningAnimation() -> i
-    834:834:int widthOf(com.android.gallery3d.ui.PositionController$Box) -> b
-    839:839:int heightOf(com.android.gallery3d.ui.PositionController$Box) -> c
-    844:844:int widthOf(com.android.gallery3d.ui.PositionController$Box,float) -> a
-    849:849:int heightOf(com.android.gallery3d.ui.PositionController$Box,float) -> b
-    858:864:void layoutAndSetPosition() -> A
-    902:924:void convertBoxToRect(int) -> e
-    928:928:android.graphics.Rect getPosition(int) -> c
-    937:941:void initPlatform() -> B
-    945:955:void initBox(int) -> f
-    959:973:void initBox(int,com.android.gallery3d.ui.PhotoView$Size) -> b
-    978:982:void initGap(int) -> g
-    985:989:void initGap(int,int) -> g
-    1026:1188:void moveBox(int[],boolean,boolean,boolean,com.android.gallery3d.ui.PhotoView$Size[]) -> a
-    1195:1196:boolean isAtMinimalScale() -> j
-    1200:1204:boolean isCenter() -> k
-    1209:1210:int getImageWidth() -> l
-    1214:1215:int getImageHeight() -> m
-    1219:1223:float getImageScale() -> n
-    1227:1243:int getImageAtEdges() -> o
-    1247:1247:boolean isScrolling() -> p
-    1252:1255:void stopScrolling() -> q
-    1258:1258:float getFilmRatio() -> r
+    231:257:void setViewSize(int,int) -> a
+    260:276:void setImageSize(int,com.android.gallery3d.ui.PhotoView$Size,android.graphics.Rect) -> a
+    280:323:boolean setBoxSize(int,int,int,boolean) -> a
+    327:350:boolean startOpeningAnimationIfNeeded() -> w
+    354:361:void setFilmMode(boolean) -> a
+    364:369:void setExtraScalingRange(boolean) -> b
+    375:385:void updateScaleAndGapLimit() -> x
+    390:393:int getDefaultGapSize(int) -> d
+    409:409:int gapToSide(com.android.gallery3d.ui.PositionController$Box) -> a
+    414:421:void stopAnimation() -> a
+    424:443:void skipAnimation() -> b
+    446:447:void snapback() -> c
+    450:453:void skipToFinalPosition() -> d
+    460:477:void zoomIn(float,float,float) -> a
+    480:482:void resetToFullView() -> e
+    485:492:void beginScale(float,float) -> a
+    500:516:int scaleBy(float,float,float) -> b
+    520:522:void endScale() -> f
+    526:528:void startHorizontalSlide() -> g
+    535:544:void updateCurrentImage(int,int,int,float) -> a
+    548:548:int getPlatformX() -> h
+    553:553:int getPlatformY() -> i
+    558:558:int getBoxY() -> j
+    564:572:boolean canScroll() -> y
+    576:611:void scrollPage(int,int) -> b
+    614:646:void scrollFilmX(int) -> a
+    649:655:void scrollFilmY(int,int) -> c
+    658:686:boolean flingPage(int,int) -> d
+    690:705:boolean flingFilmX(int) -> b
+    713:741:int flingFilmY(int,int) -> e
+    749:757:int hitTest(int,int) -> f
+    776:778:void redraw() -> z
+    781:790:void snapAndRedraw() -> A
+    794:798:boolean startAnimation(int,int,float,int) -> a
+    802:814:void advanceAnimation() -> k
+    818:823:boolean inOpeningAnimation() -> l
+    832:832:int widthOf(com.android.gallery3d.ui.PositionController$Box) -> b
+    837:837:int heightOf(com.android.gallery3d.ui.PositionController$Box) -> c
+    842:842:int widthOf(com.android.gallery3d.ui.PositionController$Box,float) -> a
+    847:847:int heightOf(com.android.gallery3d.ui.PositionController$Box,float) -> b
+    856:862:void layoutAndSetPosition() -> B
+    900:922:void convertBoxToRect(int) -> e
+    926:926:android.graphics.Rect getPosition(int) -> c
+    935:939:void initPlatform() -> C
+    943:953:void initBox(int) -> f
+    957:971:void initBox(int,com.android.gallery3d.ui.PhotoView$Size) -> a
+    976:980:void initGap(int) -> g
+    983:987:void initGap(int,int) -> g
+    1024:1188:void moveBox(int[],boolean,boolean,boolean,com.android.gallery3d.ui.PhotoView$Size[]) -> a
+    1195:1196:boolean isAtMinimalScale() -> m
+    1209:1210:int getImageWidth() -> n
+    1214:1215:int getImageHeight() -> o
+    1219:1223:float getImageScale() -> p
+    1227:1243:int getImageAtEdges() -> q
+    1247:1247:boolean isScrolling() -> r
+    1252:1255:void stopScrolling() -> s
+    1258:1258:float getFilmRatio() -> t
     1262:1263:void setPopFromTop(boolean) -> c
-    1266:1271:boolean hasDeletingBox() -> s
-    1279:1304:float getMinimalScale(com.android.gallery3d.ui.PositionController$Box) -> d
-    1308:1310:float getMaximalScale(com.android.gallery3d.ui.PositionController$Box) -> e
-    1314:1315:boolean isAlmostEqual(float,float) -> b
-    1335:1357:void calculateStableBound(float,int) -> a
-    1360:1361:void calculateStableBound(float) -> a
-    1364:1364:boolean viewTallerThanScaledImage(float) -> b
-    1368:1368:boolean viewWiderThanScaledImage(float) -> c
-    1372:1372:float getTargetScale(com.android.gallery3d.ui.PositionController$Box) -> f
+    1270:1295:float getMinimalScale(com.android.gallery3d.ui.PositionController$Box) -> d
+    1299:1301:float getMaximalScale(com.android.gallery3d.ui.PositionController$Box) -> e
+    1305:1306:boolean isAlmostEqual(float,float) -> b
+    1326:1348:void calculateStableBound(float,int) -> a
+    1351:1352:void calculateStableBound(float) -> a
+    1355:1355:boolean viewTallerThanScaledImage(float) -> b
+    1359:1359:boolean viewWiderThanScaledImage(float) -> c
+    1363:1363:float getTargetScale(com.android.gallery3d.ui.PositionController$Box) -> f
     30:30:com.android.gallery3d.ui.PositionController$Listener access$700(com.android.gallery3d.ui.PositionController) -> a
     30:30:boolean access$800(com.android.gallery3d.ui.PositionController) -> b
     30:30:com.android.gallery3d.util.RangeArray access$900(com.android.gallery3d.ui.PositionController) -> c
     30:30:boolean access$1000(com.android.gallery3d.ui.PositionController) -> d
     30:30:boolean access$1100(com.android.gallery3d.ui.PositionController) -> e
-    30:30:int access$1200() -> t
+    30:30:int access$1200() -> u
     30:30:void access$1300(com.android.gallery3d.ui.PositionController,float,int) -> a
     30:30:boolean access$1400(com.android.gallery3d.ui.PositionController,float) -> a
     30:30:float access$1500(com.android.gallery3d.ui.PositionController) -> f
@@ -9588,7 +9461,7 @@ com.android.gallery3d.ui.PositionController -> com.android.gallery3d.ui.ag:
     30:30:android.graphics.Rect access$1900(com.android.gallery3d.ui.PositionController) -> j
     30:30:int access$2000(com.android.gallery3d.ui.PositionController) -> k
     30:30:int access$2100(com.android.gallery3d.ui.PositionController) -> l
-    30:30:int[] access$2200() -> u
+    30:30:int[] access$2200() -> v
     30:30:android.widget.Scroller access$2300(com.android.gallery3d.ui.PositionController) -> m
     30:30:boolean access$2400(com.android.gallery3d.ui.PositionController) -> n
     30:30:boolean access$2500(com.android.gallery3d.ui.PositionController) -> o
@@ -9605,8 +9478,8 @@ com.android.gallery3d.ui.PositionController$Animatable -> com.android.gallery3d.
     int mAnimationDuration -> c
     boolean interpolate(float) -> a
     boolean startSnapback() -> a
-    1392:1421:boolean advanceAnimation() -> b
-    1425:1444:float applyInterpolationCurve(int,float) -> a
+    1383:1412:boolean advanceAnimation() -> b
+    1416:1435:float applyInterpolationCurve(int,float) -> a
 com.android.gallery3d.ui.PositionController$Box -> com.android.gallery3d.ui.aj:
     int mImageW -> d
     int mImageH -> e
@@ -9621,30 +9494,30 @@ com.android.gallery3d.ui.PositionController$Box -> com.android.gallery3d.ui.aj:
     float mToScale -> n
     int mAbsoluteX -> o
     com.android.gallery3d.ui.PositionController this$0 -> p
-    1633:1670:boolean startSnapback() -> a
-    1674:1690:boolean doAnimation(int,float,int) -> a
-    1695:1695:float clampScale(float) -> b
-    1702:1705:boolean interpolate(float) -> a
-    1710:1725:boolean interpolateFlingPage(float) -> c
-    1729:1741:boolean interpolateLinear(float) -> d
-    1608:1608:boolean access$500(com.android.gallery3d.ui.PositionController$Box,int,float,int) -> a
+    1624:1661:boolean startSnapback() -> a
+    1665:1681:boolean doAnimation(int,float,int) -> a
+    1686:1686:float clampScale(float) -> b
+    1693:1696:boolean interpolate(float) -> a
+    1701:1716:boolean interpolateFlingPage(float) -> c
+    1720:1732:boolean interpolateLinear(float) -> d
+    1599:1599:boolean access$400(com.android.gallery3d.ui.PositionController$Box,int,float,int) -> a
 com.android.gallery3d.ui.PositionController$FilmRatio -> com.android.gallery3d.ui.ak:
     float mCurrentRatio -> d
     float mFromRatio -> e
     float mToRatio -> f
     com.android.gallery3d.ui.PositionController this$0 -> g
-    1807:1809:boolean startSnapback() -> a
-    1814:1820:boolean doAnimation(float,int) -> a
-    1825:1830:boolean interpolate(float) -> a
+    1798:1800:boolean startSnapback() -> a
+    1805:1811:boolean doAnimation(float,int) -> a
+    1816:1821:boolean interpolate(float) -> a
 com.android.gallery3d.ui.PositionController$Gap -> com.android.gallery3d.ui.al:
     int mDefaultSize -> d
     int mCurrentGap -> e
     int mFromGap -> f
     int mToGap -> g
     com.android.gallery3d.ui.PositionController this$0 -> h
-    1761:1762:boolean startSnapback() -> a
-    1767:1776:boolean doAnimation(int,int) -> a
-    1781:1791:boolean interpolate(float) -> a
+    1752:1753:boolean startSnapback() -> a
+    1758:1767:boolean doAnimation(int,int) -> a
+    1772:1782:boolean interpolate(float) -> a
 com.android.gallery3d.ui.PositionController$Listener -> com.android.gallery3d.ui.am:
     void invalidate() -> a
     boolean isHoldingDown() -> b
@@ -9663,14 +9536,14 @@ com.android.gallery3d.ui.PositionController$Platform -> com.android.gallery3d.ui
     int mDefaultY -> k
     int mFlingOffset -> l
     com.android.gallery3d.ui.PositionController this$0 -> m
-    1458:1493:boolean startSnapback() -> a
-    1504:1512:void updateDefaultXY() -> c
-    1516:1526:boolean doAnimation(int,int,int) -> a
-    1531:1536:boolean interpolate(float) -> a
-    1541:1561:boolean interpolateFlingFilm(float) -> b
-    1565:1581:boolean interpolateFlingPage(float) -> c
-    1586:1599:boolean interpolateLinear(float) -> d
-    1451:1451:boolean access$400(com.android.gallery3d.ui.PositionController$Platform,int,int,int) -> a
+    1449:1484:boolean startSnapback() -> a
+    1495:1503:void updateDefaultXY() -> c
+    1507:1517:boolean doAnimation(int,int,int) -> a
+    1522:1527:boolean interpolate(float) -> a
+    1532:1552:boolean interpolateFlingFilm(float) -> b
+    1556:1572:boolean interpolateFlingPage(float) -> c
+    1577:1590:boolean interpolateLinear(float) -> d
+    1442:1442:boolean access$500(com.android.gallery3d.ui.PositionController$Platform,int,int,int) -> a
 com.android.gallery3d.ui.ScreenNail -> com.android.gallery3d.ui.ao:
     int getWidth() -> a
     int getHeight() -> b
@@ -9716,14 +9589,14 @@ com.android.gallery3d.ui.TileImageView -> com.android.gallery3d.ui.aq:
     177:191:void notifyModelInvalidated() -> a
     196:198:void onLayout(boolean,int,int,int,int) -> a
     209:278:void layoutTiles(int,int,float,int) -> b
-    281:291:void invalidateTiles() -> k
+    281:291:void invalidateTiles() -> j
     294:295:void getRange(android.graphics.Rect,int,int,int,int) -> a
     306:330:void getRange(android.graphics.Rect,int,int,int,float,int) -> a
     357:365:boolean setPosition(int,int,float,int) -> a
-    369:395:void freeTextures() -> l
-    398:406:void prepareTextures() -> m
+    369:395:void freeTextures() -> k
+    398:406:void prepareTextures() -> l
     410:461:void render(com.android.gallery3d.glrenderer.GLCanvas) -> a
-    464:465:boolean isScreenNailAnimating() -> o
+    464:465:boolean isScreenNailAnimating() -> n
     469:475:void uploadBackgroundTiles(com.android.gallery3d.glrenderer.GLCanvas) -> c
     478:484:void queueForUpload(com.android.gallery3d.ui.TileImageView$Tile) -> a
     487:491:void queueForDecode(com.android.gallery3d.ui.TileImageView$Tile) -> b
@@ -9736,7 +9609,7 @@ com.android.gallery3d.ui.TileImageView -> com.android.gallery3d.ui.aq:
     593:623:void drawTile(com.android.gallery3d.glrenderer.GLCanvas,int,int,int,float,float,float) -> a
     628:651:boolean drawTile(com.android.gallery3d.ui.TileImageView$Tile,com.android.gallery3d.glrenderer.GLCanvas,android.graphics.RectF,android.graphics.RectF) -> a
     43:43:com.android.gallery3d.ui.TileImageView$TileQueue access$300(com.android.gallery3d.ui.TileImageView) -> a
-    43:43:int access$400() -> n
+    43:43:int access$400() -> m
     43:43:com.android.gallery3d.ui.TileImageView$TileSource access$500(com.android.gallery3d.ui.TileImageView) -> b
     43:43:com.android.gallery3d.ui.TileImageView$Tile access$600(com.android.gallery3d.ui.TileImageView,int,int,int) -> a
     43:43:int access$700(com.android.gallery3d.ui.TileImageView) -> c
@@ -9814,14 +9687,13 @@ com.android.gallery3d.ui.TiledScreenNail -> com.android.gallery3d.ui.az:
     127:127:int getHeight() -> b
     132:132:void noDraw() -> c
     136:144:void recycle() -> d
-    151:152:void enableDrawPlaceholder() -> e
     156:176:void draw(com.android.gallery3d.glrenderer.GLCanvas,int,int,int,int) -> a
     180:187:void draw(com.android.gallery3d.glrenderer.GLCanvas,android.graphics.RectF,android.graphics.RectF) -> a
-    193:199:boolean isAnimating() -> f
-    203:204:float getRatio() -> i
-    212:212:com.android.gallery3d.glrenderer.TiledTexture getTexture() -> g
+    193:199:boolean isAnimating() -> e
+    203:204:float getRatio() -> h
+    212:212:com.android.gallery3d.glrenderer.TiledTexture getTexture() -> f
     216:217:void setMaxSide(int) -> b
-    221:221:android.graphics.Bitmap getBitmap() -> h
+    221:221:android.graphics.Bitmap getBitmap() -> g
 com.android.gallery3d.util.CacheManager -> com.android.gallery3d.f.a:
     java.util.HashMap sCacheMap -> a
     boolean sOldCheckDone -> b
@@ -10184,70 +10056,74 @@ com.android.legacy.ui.ImageViewer -> com.android.legacy.ui.p:
     int mCenterX -> E
     int mCenterY -> F
     float mScale -> G
-    android.graphics.Rect mTileRange -> H
-    android.graphics.Rect[] mActiveRange -> I
-    com.android.legacy.ui.ImageViewer$Uploader mUploader -> J
-    com.android.legacy.ui.ImageViewer$AnimationController mAnimationController -> K
-    com.android.legacy.ui.ImageViewer$Model mModel -> L
-    int mSwitchIndex -> M
-    int mRotation -> N
-    android.content.Context mContext -> O
-    boolean isTextureFreed -> P
+    boolean mScaleLocked -> H
+    android.graphics.Rect mTileRange -> I
+    android.graphics.Rect[] mActiveRange -> J
+    com.android.legacy.ui.ImageViewer$Uploader mUploader -> K
+    com.android.legacy.ui.ImageViewer$AnimationController mAnimationController -> L
+    com.android.legacy.ui.ImageViewer$Model mModel -> M
+    int mSwitchIndex -> N
+    int mRotation -> O
+    android.content.Context mContext -> P
+    boolean isTextureFreed -> Q
     boolean mInTransition -> j
-    boolean mIgnoreUpEvent -> Q
-    com.android.legacy.ui.ImageViewer$ScaleChangedListener mScaleChangedListener -> R
-    167:171:void setModel(com.android.legacy.ui.ImageViewer$Model) -> a
-    175:180:void resetImages() -> n
-    184:201:void notifyLargeBitmapInvalidated() -> k
-    205:206:int calcuateLevelCount(int,int,int) -> a
-    257:291:void notifyScreenNailInvalidated(int) -> b
-    295:301:void resetCurrentImagePosition() -> o
-    306:309:boolean onTouch(android.view.MotionEvent) -> a
-    315:320:int ceilLog2(float) -> a
-    326:332:void onLayout(boolean,int,int,int,int) -> a
-    336:336:int gapToSide(int,int,float) -> c
-    346:400:void layoutScreenNails(int,int,float) -> d
-    413:481:void layoutTiles(int,int,float,int) -> a
-    485:491:void invalidateAllTiles() -> p
-    495:496:void getRange(android.graphics.Rect,int,int,int,int) -> a
-    506:527:void getRange(android.graphics.Rect,int,int,int,float,int) -> a
-    531:539:void setPosition(int,int,float) -> a
-    885:902:void freeTextures() -> l
-    914:929:void prepareTextures() -> m
-    934:1035:void render(com.android.legacy.ui.GLCanvas) -> a
-    1040:1050:com.android.legacy.ui.ImageViewer$Tile obtainTile(int,int,int) -> c
-    1055:1057:void recycleTile(com.android.legacy.ui.ImageViewer$Tile) -> a
-    1061:1068:void freeRecycledTile() -> q
-    1072:1078:void activateTile(int,int,int) -> d
-    1082:1082:com.android.legacy.ui.ImageViewer$Tile getTile(int,int,int) -> e
-    1087:1090:java.lang.Long makeTileKey(int,int,int) -> b
-    1098:1139:boolean drawTile(com.android.legacy.ui.ImageViewer$Tile,com.android.legacy.ui.GLCanvas,android.graphics.RectF,android.graphics.RectF) -> a
+    boolean mIgnoreUpEvent -> R
+    com.anthonymandra.framework.ScaleChangedListener mScaleChangedListener -> S
+    147:148:void setScaleListener(com.anthonymandra.framework.ScaleChangedListener) -> a
+    152:153:void setZoomLock(boolean) -> a
+    157:161:void setModel(com.android.legacy.ui.ImageViewer$Model) -> a
+    165:170:void resetImages() -> n
+    174:191:void notifyLargeBitmapInvalidated() -> k
+    195:196:int calcuateLevelCount(int,int,int) -> a
+    247:281:void notifyScreenNailInvalidated(int) -> b
+    285:291:void resetCurrentImagePosition() -> o
+    296:299:boolean onTouch(android.view.MotionEvent) -> a
+    305:310:int ceilLog2(float) -> a
+    316:322:void onLayout(boolean,int,int,int,int) -> a
+    326:326:int gapToSide(int,int,float) -> c
+    336:390:void layoutScreenNails(int,int,float) -> d
+    403:471:void layoutTiles(int,int,float,int) -> a
+    475:481:void invalidateAllTiles() -> p
+    485:486:void getRange(android.graphics.Rect,int,int,int,int) -> a
+    496:517:void getRange(android.graphics.Rect,int,int,int,float,int) -> a
+    521:530:void setPosition(int,int,float) -> a
+    880:897:void freeTextures() -> l
+    909:924:void prepareTextures() -> m
+    929:1030:void render(com.android.legacy.ui.GLCanvas) -> a
+    1035:1045:com.android.legacy.ui.ImageViewer$Tile obtainTile(int,int,int) -> c
+    1050:1052:void recycleTile(com.android.legacy.ui.ImageViewer$Tile) -> a
+    1056:1063:void freeRecycledTile() -> q
+    1067:1073:void activateTile(int,int,int) -> d
+    1077:1077:com.android.legacy.ui.ImageViewer$Tile getTile(int,int,int) -> e
+    1082:1085:java.lang.Long makeTileKey(int,int,int) -> b
+    1093:1134:boolean drawTile(com.android.legacy.ui.ImageViewer$Tile,com.android.legacy.ui.GLCanvas,android.graphics.RectF,android.graphics.RectF) -> a
     1464:1492:void onTransitionComplete() -> r
     1496:1496:boolean isDown() -> s
-    42:42:void access$1300(com.android.legacy.ui.ImageViewer) -> a
-    42:42:boolean access$1400(com.android.legacy.ui.ImageViewer) -> b
-    42:42:java.util.Iterator access$1600(com.android.legacy.ui.ImageViewer) -> c
-    42:42:android.graphics.BitmapRegionDecoder access$1700(com.android.legacy.ui.ImageViewer) -> d
-    42:42:android.graphics.RectF access$1800(com.android.legacy.ui.ImageViewer) -> e
-    42:42:android.graphics.RectF access$1900(com.android.legacy.ui.ImageViewer) -> f
-    42:42:int access$2000(com.android.legacy.ui.ImageViewer) -> g
-    42:42:com.android.legacy.ui.ImageViewer$Tile access$2100(com.android.legacy.ui.ImageViewer,int,int,int) -> a
-    42:42:int access$2200(com.android.legacy.ui.ImageViewer) -> h
-    42:42:int access$2206(com.android.legacy.ui.ImageViewer) -> i
-    42:42:boolean access$2302(com.android.legacy.ui.ImageViewer,boolean) -> a
-    42:42:com.android.legacy.ui.ImageViewer$ScreenNailEntry[] access$2400(com.android.legacy.ui.ImageViewer) -> j
-    42:42:int access$2500(com.android.legacy.ui.ImageViewer) -> k
-    42:42:int access$2600(com.android.legacy.ui.ImageViewer) -> l
-    42:42:com.android.legacy.ui.ImageViewer$AnimationController access$2700(com.android.legacy.ui.ImageViewer) -> m
-    42:42:boolean access$2802(com.android.legacy.ui.ImageViewer,boolean) -> b
-    42:42:float access$2900(com.android.legacy.ui.ImageViewer) -> n
-    42:42:int access$3000(com.android.legacy.ui.ImageViewer) -> o
-    42:42:int access$3100(com.android.legacy.ui.ImageViewer) -> p
-    42:42:android.content.Context access$3300(com.android.legacy.ui.ImageViewer) -> q
-    42:42:boolean access$2800(com.android.legacy.ui.ImageViewer) -> r
-    42:42:int access$3400(int,int,float) -> b
-    42:42:int access$3500(com.android.legacy.ui.ImageViewer) -> s
-    42:42:int access$3602(com.android.legacy.ui.ImageViewer,int) -> a
+    43:43:boolean access$1300(com.android.legacy.ui.ImageViewer) -> a
+    43:43:void access$1400(com.android.legacy.ui.ImageViewer) -> b
+    43:43:boolean access$1500(com.android.legacy.ui.ImageViewer) -> c
+    43:43:java.util.Iterator access$1700(com.android.legacy.ui.ImageViewer) -> d
+    43:43:android.graphics.BitmapRegionDecoder access$1800(com.android.legacy.ui.ImageViewer) -> e
+    43:43:android.graphics.RectF access$1900(com.android.legacy.ui.ImageViewer) -> f
+    43:43:android.graphics.RectF access$2000(com.android.legacy.ui.ImageViewer) -> g
+    43:43:int access$2100(com.android.legacy.ui.ImageViewer) -> h
+    43:43:com.android.legacy.ui.ImageViewer$Tile access$2200(com.android.legacy.ui.ImageViewer,int,int,int) -> a
+    43:43:int access$2300(com.android.legacy.ui.ImageViewer) -> i
+    43:43:int access$2306(com.android.legacy.ui.ImageViewer) -> j
+    43:43:boolean access$2402(com.android.legacy.ui.ImageViewer,boolean) -> a
+    43:43:com.android.legacy.ui.ImageViewer$ScreenNailEntry[] access$2500(com.android.legacy.ui.ImageViewer) -> k
+    43:43:int access$2600(com.android.legacy.ui.ImageViewer) -> l
+    43:43:int access$2700(com.android.legacy.ui.ImageViewer) -> m
+    43:43:com.android.legacy.ui.ImageViewer$AnimationController access$2800(com.android.legacy.ui.ImageViewer) -> n
+    43:43:boolean access$2902(com.android.legacy.ui.ImageViewer,boolean) -> b
+    43:43:float access$3000(com.android.legacy.ui.ImageViewer) -> o
+    43:43:int access$3100(com.android.legacy.ui.ImageViewer) -> p
+    43:43:int access$3200(com.android.legacy.ui.ImageViewer) -> q
+    43:43:android.content.Context access$3500(com.android.legacy.ui.ImageViewer) -> r
+    43:43:boolean access$2900(com.android.legacy.ui.ImageViewer) -> s
+    43:43:int access$3600(int,int,float) -> b
+    43:43:int access$3700(com.android.legacy.ui.ImageViewer) -> t
+    43:43:int access$3802(com.android.legacy.ui.ImageViewer,int) -> a
 com.android.legacy.ui.ImageViewer$1 -> com.android.legacy.ui.q:
 com.android.legacy.ui.ImageViewer$AnimationController -> com.android.legacy.ui.r:
     long mAnimationStartTime -> a
@@ -10271,21 +10147,22 @@ com.android.legacy.ui.ImageViewer$AnimationController -> com.android.legacy.ui.r
     boolean mInScale -> s
     float mScaleMin -> t
     float mScaleMax -> u
-    586:596:void onNewImage(int,int) -> a
-    600:614:void updateViewSize(int,int) -> b
-    618:619:void scrollBy(float,float) -> a
-    623:626:void beginScale(float,float) -> b
-    633:639:void scaleBy(float,float,float) -> a
-    643:645:void endScale() -> a
-    649:650:void up() -> b
-    654:655:void startSwitchTransition(int) -> a
-    659:682:void startAnimation(int,int,float,int) -> a
-    687:762:boolean advanceAnimation() -> c
-    768:853:boolean startSnapbackIfNeeded() -> d
-    858:860:float getTargetScale() -> e
-    870:872:int getTargetX() -> f
-    877:879:int getTargetY() -> g
-    541:541:void access$3200(com.android.legacy.ui.ImageViewer$AnimationController,int,int,float,int) -> a
+    577:591:void onNewImage(int,int) -> a
+    595:609:void updateViewSize(int,int) -> b
+    613:614:void scrollBy(float,float) -> a
+    618:621:void beginScale(float,float) -> b
+    628:634:void scaleBy(float,float,float) -> a
+    638:640:void endScale() -> a
+    644:645:void up() -> b
+    649:650:void startSwitchTransition(int) -> a
+    654:677:void startAnimation(int,int,float,int) -> a
+    682:757:boolean advanceAnimation() -> c
+    763:848:boolean startSnapbackIfNeeded() -> d
+    853:855:float getTargetScale() -> e
+    865:867:int getTargetX() -> f
+    872:874:int getTargetY() -> g
+    532:532:float access$3300(com.android.legacy.ui.ImageViewer$AnimationController) -> a
+    532:532:void access$3400(com.android.legacy.ui.ImageViewer$AnimationController,int,int,float,int) -> a
 com.android.legacy.ui.ImageViewer$ImageData -> com.android.legacy.ui.s:
     int fullWidth -> a
     int fullHeight -> b
@@ -10301,17 +10178,15 @@ com.android.legacy.ui.ImageViewer$MyDownUpListener -> com.android.legacy.ui.u:
     1402:1439:void onUp(android.view.MotionEvent) -> b
 com.android.legacy.ui.ImageViewer$MyGestureListener -> com.android.legacy.ui.v:
     com.android.legacy.ui.ImageViewer this$0 -> a
-    1310:1321:boolean onScroll(android.view.MotionEvent,android.view.MotionEvent,float,float) -> onScroll
-    1329:1351:boolean onDoubleTap(android.view.MotionEvent) -> onDoubleTap
+    1305:1316:boolean onScroll(android.view.MotionEvent,android.view.MotionEvent,float,float) -> onScroll
+    1324:1351:boolean onDoubleTap(android.view.MotionEvent) -> onDoubleTap
     1357:1358:boolean onSingleTapConfirmed(android.view.MotionEvent) -> onSingleTapConfirmed
 com.android.legacy.ui.ImageViewer$MyScaleListener -> com.android.legacy.ui.w:
     com.android.legacy.ui.ImageViewer this$0 -> a
     1368:1373:boolean onScale(android.view.ScaleGestureDetector) -> onScale
     1379:1383:boolean onScaleBegin(android.view.ScaleGestureDetector) -> onScaleBegin
     1389:1391:void onScaleEnd(android.view.ScaleGestureDetector) -> onScaleEnd
-com.android.legacy.ui.ImageViewer$ScaleChangedListener -> com.android.legacy.ui.x:
-    void onScaleChanged(float) -> a
-com.android.legacy.ui.ImageViewer$ScreenNailEntry -> com.android.legacy.ui.y:
+com.android.legacy.ui.ImageViewer$ScreenNailEntry -> com.android.legacy.ui.x:
     int mWidth -> a
     int mHeight -> b
     android.graphics.Bitmap mBitmap -> c
@@ -10335,26 +10210,26 @@ com.android.legacy.ui.ImageViewer$ScreenNailEntry -> com.android.legacy.ui.y:
     1529:1529:int access$1202(com.android.legacy.ui.ImageViewer$ScreenNailEntry,int) -> d
     1529:1529:int access$1000(com.android.legacy.ui.ImageViewer$ScreenNailEntry) -> f
     1529:1529:int access$1100(com.android.legacy.ui.ImageViewer$ScreenNailEntry) -> g
-    1529:1529:com.android.legacy.ui.BitmapTexture access$1500(com.android.legacy.ui.ImageViewer$ScreenNailEntry) -> h
-com.android.legacy.ui.ImageViewer$Tile -> com.android.legacy.ui.z:
+    1529:1529:com.android.legacy.ui.BitmapTexture access$1600(com.android.legacy.ui.ImageViewer$ScreenNailEntry) -> h
+com.android.legacy.ui.ImageViewer$Tile -> com.android.legacy.ui.y:
     int mX -> f
     int mY -> g
     int mTileLevel -> h
     com.android.legacy.ui.ImageViewer$Tile mNextFree -> i
     com.android.legacy.ui.ImageViewer this$0 -> j
-    1186:1187:void onFreeBitmap(android.graphics.Bitmap) -> a
-    1192:1241:android.graphics.Bitmap onGetBitmap() -> i
-    1246:1250:void update(int,int,int) -> a
-    1257:1262:void drawTile(com.android.legacy.ui.GLCanvas,float,float,float) -> a
-    1266:1271:com.android.legacy.ui.ImageViewer$Tile getParentTile() -> k
-    1277:1302:void drawTile(com.android.legacy.ui.GLCanvas,android.graphics.RectF,android.graphics.RectF) -> a
-com.android.legacy.ui.ImageViewer$Uploader -> com.android.legacy.ui.aa:
+    1181:1182:void onFreeBitmap(android.graphics.Bitmap) -> a
+    1187:1236:android.graphics.Bitmap onGetBitmap() -> i
+    1241:1245:void update(int,int,int) -> a
+    1252:1257:void drawTile(com.android.legacy.ui.GLCanvas,float,float,float) -> a
+    1261:1266:com.android.legacy.ui.ImageViewer$Tile getParentTile() -> k
+    1272:1297:void drawTile(com.android.legacy.ui.GLCanvas,android.graphics.RectF,android.graphics.RectF) -> a
+com.android.legacy.ui.ImageViewer$Uploader -> com.android.legacy.ui.z:
     boolean mActive -> a
     com.android.legacy.ui.ImageViewer this$0 -> b
-    1149:1165:boolean onGLIdle(com.android.legacy.ui.GLRoot,com.android.legacy.ui.GLCanvas) -> a
-com.android.legacy.ui.Texture -> com.android.legacy.ui.ab:
+    1144:1160:boolean onGLIdle(com.android.legacy.ui.GLRoot,com.android.legacy.ui.GLCanvas) -> a
+com.android.legacy.ui.Texture -> com.android.legacy.ui.aa:
     boolean isOpaque() -> j
-com.android.legacy.ui.UploadedTexture -> com.android.legacy.ui.ac:
+com.android.legacy.ui.UploadedTexture -> com.android.legacy.ui.ab:
     boolean mContentValid -> f
     boolean mOpaque -> g
     boolean mThrottled -> h
@@ -10377,7 +10252,7 @@ com.android.legacy.ui.UploadedTexture -> com.android.legacy.ui.ac:
     229:230:boolean onBind(com.android.legacy.ui.GLCanvas) -> b
     240:240:boolean isOpaque() -> j
     246:249:void recycle() -> f
-com.android.legacy.ui.UploadedTexture$DeadBitmapException -> com.android.legacy.ui.ad:
+com.android.legacy.ui.UploadedTexture$DeadBitmapException -> com.android.legacy.ui.ac:
     com.android.legacy.ui.UploadedTexture this$0 -> a
 com.android.legacy.util.IntArray -> com.android.legacy.b.a:
     int[] mData -> a
@@ -10673,31 +10548,31 @@ com.anthonymandra.framework.GalleryActivity -> com.anthonymandra.framework.t:
     104:108:void onResume() -> onResume
     113:116:void onPause() -> onPause
     121:128:void onDestroy() -> onDestroy
-    132:150:void updateGalleryItems() -> t
+    132:150:void updateGalleryItems() -> r
     154:170:int findMediaByFilename(java.lang.String) -> b
     175:183:int findVisibleByFilename(java.lang.String) -> c
-    202:207:void clearSubLists() -> u
+    202:207:void clearSubLists() -> s
     211:212:boolean setPath(java.io.File) -> a
     217:218:void setSingleImage(java.io.File) -> b
     222:242:void addFileInternal(java.io.File) -> c
     246:251:void sortCollections() -> l
-    255:269:boolean processLocalFolder() -> v
+    255:269:boolean processLocalFolder() -> t
     274:278:void addFile(java.io.File,boolean) -> a
-    285:290:void createSwapDir() -> w
-    294:312:void clearSwapDir() -> x
-    316:333:void createRecycleBin() -> y
-    337:387:void showRecycleBin() -> z
+    285:290:void createSwapDir() -> u
+    294:312:void clearSwapDir() -> v
+    316:333:void createRecycleBin() -> w
+    337:387:void showRecycleBin() -> x
     403:403:java.io.File getKeywordFile(android.content.Context) -> a
     408:412:boolean removeImage(com.anthonymandra.framework.RawObject) -> a
-    424:427:void deleteImage(com.android.gallery3d.data.MediaItem) -> a
+    424:427:void deleteImage(com.android.gallery3d.data.MediaItem) -> b
     432:505:void deleteImages(java.util.List) -> a
-    516:534:void requestEmailIntent() -> A
-    void updateAfterDelete() -> B
-    void updateAfterRestore() -> C
+    516:534:void requestEmailIntent() -> y
+    void updateAfterDelete() -> z
+    void updateAfterRestore() -> A
     710:716:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     720:724:void setShareUri(android.net.Uri) -> a
     728:732:void setShareUri(java.util.ArrayList) -> a
-    47:47:java.lang.String[] access$000() -> D
+    47:47:java.lang.String[] access$000() -> B
 com.anthonymandra.framework.GalleryActivity$1 -> com.anthonymandra.framework.u:
     com.anthonymandra.framework.GalleryActivity this$0 -> a
     302:310:void run() -> run
@@ -11062,6 +10937,8 @@ com.anthonymandra.framework.RecycleBin$CacheAsyncTask -> com.anthonymandra.frame
     com.anthonymandra.framework.RecycleBin this$0 -> d
     327:342:java.lang.Void doInBackground(java.lang.Object[]) -> e
     322:322:java.lang.Object doInBackground(java.lang.Object[]) -> a
+com.anthonymandra.framework.ScaleChangedListener -> com.anthonymandra.framework.bg:
+    void onScaleChanged(float) -> a
 com.anthonymandra.framework.SwapProvider -> com.anthonymandra.framework.SwapProvider:
     java.lang.String TAG -> a
     android.content.UriMatcher uriMatcher -> b
@@ -11080,38 +10957,39 @@ com.anthonymandra.framework.SwapProvider -> com.anthonymandra.framework.SwapProv
     191:191:java.lang.String getType(android.net.Uri) -> getType
     197:197:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
     203:211:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-com.anthonymandra.framework.SwapProvider$1 -> com.anthonymandra.framework.bg:
+com.anthonymandra.framework.SwapProvider$1 -> com.anthonymandra.framework.bh:
     com.anthonymandra.framework.SwapProvider this$0 -> a
     142:143:void run() -> run
-com.anthonymandra.framework.Util -> com.anthonymandra.framework.bh:
+com.anthonymandra.framework.Util -> com.anthonymandra.framework.bi:
     java.lang.String TAG -> a
-    68:68:boolean hasGingerbread() -> a
-    73:73:boolean hasHoneycomb() -> b
-    78:78:boolean hasHoneycombMR1() -> c
-    88:88:boolean hasJellyBean() -> d
-    93:93:boolean hasKitkat() -> e
-    98:98:boolean hasLollipop() -> f
-    114:122:java.io.File getDiskCacheDir(android.content.Context,java.lang.String) -> a
-    133:137:boolean isExternalStorageRemovable() -> g
+    71:71:boolean hasGingerbread() -> a
+    76:76:boolean hasHoneycomb() -> b
+    81:81:boolean hasHoneycombMR1() -> c
+    91:91:boolean hasJellyBean() -> d
+    96:96:boolean hasKitkat() -> e
+    101:101:boolean hasLollipop() -> f
+    115:123:java.io.File getDiskCacheDir(android.content.Context,java.lang.String) -> a
+    134:138:boolean isExternalStorageRemovable() -> g
     150:155:long getUsableSpace(java.io.File) -> a
     160:160:java.lang.String swapExtention(java.lang.String,java.lang.String) -> a
-    165:185:boolean isTabDelimited(java.lang.String) -> a
-    200:202:boolean isNative(java.io.File) -> b
-    207:208:boolean isTiffImage(java.io.File) -> c
-    222:254:int getExactSampleSize(android.graphics.BitmapFactory$Options,int,int) -> a
-    267:276:int getLargeSampleSize(android.graphics.BitmapFactory$Options,int,int) -> b
-    281:287:android.graphics.Bitmap createBitmapLarge(byte[],int,int,boolean) -> a
+    165:184:boolean isTabDelimited(java.lang.String) -> a
+    199:201:boolean isNative(java.io.File) -> b
+    206:207:boolean isTiffImage(java.io.File) -> c
+    221:252:int getExactSampleSize(android.graphics.BitmapFactory$Options,int,int) -> a
+    265:274:int getLargeSampleSize(android.graphics.BitmapFactory$Options,int,int) -> b
+    279:285:android.graphics.Bitmap createBitmapLarge(byte[],int,int,boolean) -> a
     325:332:android.graphics.Bitmap createBitmapToSize(byte[],int,int) -> a
     344:349:int getBitmapSize(android.graphics.Bitmap) -> a
-    361:389:boolean copy(java.io.InputStream,java.io.File) -> a
-    394:414:boolean copy(java.io.File,java.io.File) -> a
-    498:509:android.graphics.Bitmap getDemoWatermark(android.content.Context,int) -> a
-    514:517:byte[] getBitmapBytes(android.graphics.Bitmap) -> b
-    624:643:android.graphics.Bitmap getWatermarkText(java.lang.String,int,int,java.lang.String) -> a
-    654:668:android.content.Intent getStoreIntent(android.content.Context,java.lang.String) -> b
-    673:677:boolean isIntentAvailable(android.content.Context,android.content.Intent) -> a
-    682:700:void write(java.io.File,java.io.InputStream) -> a
-com.anthonymandra.framework.ViewerActivity -> com.anthonymandra.framework.bi:
+    361:387:boolean copy(java.io.InputStream,java.io.File) -> a
+    392:415:boolean copy(java.io.File,java.io.File) -> a
+    499:510:android.graphics.Bitmap getDemoWatermark(android.content.Context,int) -> a
+    515:518:byte[] getBitmapBytes(android.graphics.Bitmap) -> b
+    625:644:android.graphics.Bitmap getWatermarkText(java.lang.String,int,int,java.lang.String) -> a
+    656:670:android.content.Intent getStoreIntent(android.content.Context,java.lang.String) -> b
+    676:680:boolean isIntentAvailable(android.content.Context,android.content.Intent) -> a
+    685:702:void write(java.io.File,java.io.InputStream) -> a
+    706:719:java.lang.String getRealPathFromURI(android.content.Context,android.net.Uri) -> a
+com.anthonymandra.framework.ViewerActivity -> com.anthonymandra.framework.bj:
     java.lang.String TAG -> n
     com.anthonymandra.widget.HistogramView histView -> G
     android.view.View metaFragment -> H
@@ -11122,130 +11000,136 @@ com.anthonymandra.framework.ViewerActivity -> com.anthonymandra.framework.bi:
     android.widget.ImageButton buttonNext -> M
     android.view.View navigationPanel -> N
     android.widget.TextView zoomLevel -> O
-    android.widget.TextView metaDate -> P
-    android.widget.TextView metaModel -> Q
-    android.widget.TextView metaIso -> R
-    android.widget.TextView metaExposure -> S
-    android.widget.TextView metaAperture -> T
-    android.widget.TextView metaFocal -> U
-    android.widget.TextView metaDimensions -> V
-    android.widget.TextView metaAlt -> W
-    android.widget.TextView metaFlash -> X
-    android.widget.TextView metaLat -> Y
-    android.widget.TextView metaLon -> Z
-    android.widget.TextView metaName -> aa
-    android.widget.TextView metaWb -> ab
-    android.widget.TextView metaLens -> ac
-    android.widget.TextView metaDriveMode -> ad
-    android.widget.TextView metaExposureMode -> ae
-    android.widget.TextView metaExposureProgram -> af
-    android.widget.TableRow rowDate -> ag
-    android.widget.TableRow rowModel -> ah
-    android.widget.TableRow rowIso -> ai
-    android.widget.TableRow rowExposure -> aj
-    android.widget.TableRow rowAperture -> ak
-    android.widget.TableRow rowFocal -> al
-    android.widget.TableRow rowDimensions -> am
-    android.widget.TableRow rowAlt -> an
-    android.widget.TableRow rowFlash -> ao
-    android.widget.TableRow rowLat -> ap
-    android.widget.TableRow rowLon -> aq
-    android.widget.TableRow rowName -> ar
-    android.widget.TableRow rowWhiteBalance -> as
-    android.widget.TableRow rowLens -> at
-    android.widget.TableRow rowDriveMode -> au
-    android.widget.TableRow rowExposureMode -> av
-    android.widget.TableRow rowExposureProgram -> aw
-    java.util.Timer autoHide -> ax
-    boolean showSidebar -> ay
-    com.anthonymandra.rawdroid.XmpFragment xmpFrag -> az
-    boolean isInterfaceHidden -> aA
-    int displayWidth -> aB
-    int displayHeight -> aC
-    int mImageIndex -> aD
-    com.anthonymandra.framework.ViewerActivity$HistogramTask mHistogramTask -> aE
-    com.android.gallery3d.data.MediaItem getCurrentItem() -> E
-    android.graphics.Bitmap getCurrentBitmap() -> F
-    void goToPrevPicture() -> G
-    void goToNextPicture() -> H
-    void goToFirstPicture() -> I
-    131:142:void onCreate(android.os.Bundle) -> onCreate
-    147:162:void onWindowFocusChanged(boolean) -> onWindowFocusChanged
-    166:171:void onResume() -> onResume
-    176:183:void setImmersive() -> J
-    187:192:void initialize() -> K
-    196:201:void setWatermark(boolean) -> g
-    205:209:void setDisplayMetrics() -> L
-    213:264:int setPathFromIntent() -> M
-    269:277:void onBackPressed() -> onBackPressed
-    281:304:void setMetaVisibility() -> N
-    308:365:void lookupViews() -> O
-    369:393:void setActionBar() -> P
-    397:399:void attachButtons() -> Q
-    403:405:void onSubUiVisibilityChanged(boolean) -> a_
-    428:456:void showPanels() -> l
-    460:488:void hidePanels() -> m
-    492:498:void togglePanels() -> R
-    502:504:void updateImageDetails() -> S
-    508:512:void updateHistogram(android.graphics.Bitmap) -> a
-    516:547:void populateExif(com.android.gallery3d.data.MediaItem) -> b
-    551:555:void hideSidebar() -> n
-    559:563:void showSidebar() -> o
-    660:691:void saveImage() -> T
-    695:698:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
-    703:711:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    716:718:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
-    725:752:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    758:797:void loadXmpPanel() -> W
-    801:803:void startSettings() -> X
-    807:817:void editImage() -> Y
-    822:840:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    844:902:void handleSaveImage(java.io.File) -> c
-    906:917:void setWallpaper() -> Z
-    921:954:void tagImage() -> aa
-    958:965:void updateViewerItems() -> U
-    970:998:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    1002:1009:void setImageFocus() -> V
-    1013:1022:void onScaleChanged(float) -> a
-    52:52:void access$000(com.anthonymandra.framework.ViewerActivity) -> a
-    52:52:void access$100(com.anthonymandra.framework.ViewerActivity) -> b
-com.anthonymandra.framework.ViewerActivity$1 -> com.anthonymandra.framework.bj:
+    android.widget.CheckBox zoomButton -> P
+    android.widget.TextView metaDate -> Q
+    android.widget.TextView metaModel -> R
+    android.widget.TextView metaIso -> S
+    android.widget.TextView metaExposure -> T
+    android.widget.TextView metaAperture -> U
+    android.widget.TextView metaFocal -> V
+    android.widget.TextView metaDimensions -> W
+    android.widget.TextView metaAlt -> X
+    android.widget.TextView metaFlash -> Y
+    android.widget.TextView metaLat -> Z
+    android.widget.TextView metaLon -> aa
+    android.widget.TextView metaName -> ab
+    android.widget.TextView metaWb -> ac
+    android.widget.TextView metaLens -> ad
+    android.widget.TextView metaDriveMode -> ae
+    android.widget.TextView metaExposureMode -> af
+    android.widget.TextView metaExposureProgram -> ag
+    android.widget.TableRow rowDate -> ah
+    android.widget.TableRow rowModel -> ai
+    android.widget.TableRow rowIso -> aj
+    android.widget.TableRow rowExposure -> ak
+    android.widget.TableRow rowAperture -> al
+    android.widget.TableRow rowFocal -> am
+    android.widget.TableRow rowDimensions -> an
+    android.widget.TableRow rowAlt -> ao
+    android.widget.TableRow rowFlash -> ap
+    android.widget.TableRow rowLat -> aq
+    android.widget.TableRow rowLon -> ar
+    android.widget.TableRow rowName -> as
+    android.widget.TableRow rowWhiteBalance -> at
+    android.widget.TableRow rowLens -> au
+    android.widget.TableRow rowDriveMode -> av
+    android.widget.TableRow rowExposureMode -> aw
+    android.widget.TableRow rowExposureProgram -> ax
+    java.util.Timer autoHide -> ay
+    boolean showSidebar -> az
+    com.anthonymandra.rawdroid.XmpFragment xmpFrag -> aA
+    boolean isInterfaceHidden -> aB
+    int displayWidth -> aC
+    int displayHeight -> aD
+    int mImageIndex -> aE
+    com.anthonymandra.framework.ViewerActivity$HistogramTask mHistogramTask -> aF
+    com.android.gallery3d.data.MediaItem getCurrentItem() -> C
+    android.graphics.Bitmap getCurrentBitmap() -> D
+    void goToPrevPicture() -> E
+    void goToNextPicture() -> F
+    void goToFirstPicture() -> G
+    136:147:void onCreate(android.os.Bundle) -> onCreate
+    152:167:void onWindowFocusChanged(boolean) -> onWindowFocusChanged
+    171:176:void onResume() -> onResume
+    181:188:void setImmersive() -> H
+    192:197:void initialize() -> I
+    201:206:void setWatermark(boolean) -> d
+    210:214:void setDisplayMetrics() -> J
+    218:280:int setPathFromIntent() -> K
+    285:293:void onBackPressed() -> onBackPressed
+    297:320:void setMetaVisibility() -> L
+    324:382:void lookupViews() -> M
+    386:386:void onZoomLockChanged(boolean) -> c
+    390:414:void setActionBar() -> N
+    418:428:void attachButtons() -> O
+    432:434:void onSubUiVisibilityChanged(boolean) -> a_
+    457:485:void showPanels() -> l
+    489:517:void hidePanels() -> m
+    521:527:void togglePanels() -> P
+    531:533:void updateImageDetails() -> Q
+    537:541:void updateHistogram(android.graphics.Bitmap) -> a
+    545:576:void populateExif(com.android.gallery3d.data.MediaItem) -> c
+    580:584:void hideSidebar() -> n
+    588:592:void showSidebar() -> o
+    689:720:void saveImage() -> R
+    724:727:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    732:740:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    745:747:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
+    754:781:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    787:826:void loadXmpPanel() -> U
+    830:832:void startSettings() -> V
+    836:846:void editImage() -> W
+    851:869:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    873:931:void handleSaveImage(java.io.File) -> c
+    935:946:void setWallpaper() -> X
+    950:983:void tagImage() -> Y
+    987:994:void updateViewerItems() -> S
+    999:1027:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    1031:1038:void setImageFocus() -> T
+    1043:1054:void onScaleChanged(float) -> a
+    1076:1079:void setLicenseState(com.anthonymandra.framework.License$LicenseState) -> a
+    55:55:void access$000(com.anthonymandra.framework.ViewerActivity) -> a
+    55:55:void access$100(com.anthonymandra.framework.ViewerActivity) -> b
+com.anthonymandra.framework.ViewerActivity$1 -> com.anthonymandra.framework.bk:
+    com.anthonymandra.framework.ViewerActivity this$0 -> a
+    425:426:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
+com.anthonymandra.framework.ViewerActivity$2 -> com.anthonymandra.framework.bl:
     android.content.SharedPreferences val$settings -> a
     com.anthonymandra.framework.ViewerActivity this$0 -> b
-    434:454:void run() -> run
-com.anthonymandra.framework.ViewerActivity$2 -> com.anthonymandra.framework.bk:
+    463:483:void run() -> run
+com.anthonymandra.framework.ViewerActivity$3 -> com.anthonymandra.framework.bm:
     android.content.SharedPreferences val$settings -> a
     com.anthonymandra.framework.ViewerActivity this$0 -> b
-    466:486:void run() -> run
-com.anthonymandra.framework.ViewerActivity$3 -> com.anthonymandra.framework.bl:
+    495:515:void run() -> run
+com.anthonymandra.framework.ViewerActivity$4 -> com.anthonymandra.framework.bn:
     java.lang.String val$zoom -> a
     com.anthonymandra.framework.ViewerActivity this$0 -> b
-    1019:1020:void run() -> run
-com.anthonymandra.framework.ViewerActivity$AutoHideMetaTask -> com.anthonymandra.framework.bm:
+    1051:1052:void run() -> run
+com.anthonymandra.framework.ViewerActivity$AutoHideMetaTask -> com.anthonymandra.framework.bo:
     com.anthonymandra.framework.ViewerActivity this$0 -> a
-    570:571:void run() -> run
-com.anthonymandra.framework.ViewerActivity$HistogramTask -> com.anthonymandra.framework.bn:
+    599:600:void run() -> run
+com.anthonymandra.framework.ViewerActivity$HistogramTask -> com.anthonymandra.framework.bp:
     com.anthonymandra.framework.ViewerActivity this$0 -> d
-    611:613:void onPreExecute() -> a
-    619:647:com.anthonymandra.framework.Histogram doInBackground(android.graphics.Bitmap[]) -> a
-    653:655:void onPostExecute(com.anthonymandra.framework.Histogram) -> a
-    607:607:void onPostExecute(java.lang.Object) -> a
-    607:607:java.lang.Object doInBackground(java.lang.Object[]) -> a
-com.anthonymandra.framework.ViewerActivity$LoadMetadataTask -> com.anthonymandra.framework.bo:
+    640:642:void onPreExecute() -> a
+    648:676:com.anthonymandra.framework.Histogram doInBackground(android.graphics.Bitmap[]) -> a
+    682:684:void onPostExecute(com.anthonymandra.framework.Histogram) -> a
+    636:636:void onPostExecute(java.lang.Object) -> a
+    636:636:java.lang.Object doInBackground(java.lang.Object[]) -> a
+com.anthonymandra.framework.ViewerActivity$LoadMetadataTask -> com.anthonymandra.framework.bq:
     com.anthonymandra.framework.ViewerActivity this$0 -> d
-    585:588:com.android.gallery3d.data.MediaItem doInBackground(com.android.gallery3d.data.MediaItem[]) -> a
-    594:604:void onPostExecute(com.android.gallery3d.data.MediaItem) -> a
-    580:580:void onPostExecute(java.lang.Object) -> a
-    580:580:java.lang.Object doInBackground(java.lang.Object[]) -> a
-com.anthonymandra.framework.ViewerActivity$NextImageClickListener -> com.anthonymandra.framework.bp:
+    614:617:com.android.gallery3d.data.MediaItem doInBackground(com.android.gallery3d.data.MediaItem[]) -> a
+    623:633:void onPostExecute(com.android.gallery3d.data.MediaItem) -> a
+    609:609:void onPostExecute(java.lang.Object) -> a
+    609:609:java.lang.Object doInBackground(java.lang.Object[]) -> a
+com.anthonymandra.framework.ViewerActivity$NextImageClickListener -> com.anthonymandra.framework.br:
     com.anthonymandra.framework.ViewerActivity this$0 -> a
-    422:423:void onClick(android.view.View) -> onClick
-com.anthonymandra.framework.ViewerActivity$PreviousImageClickListener -> com.anthonymandra.framework.bq:
+    451:452:void onClick(android.view.View) -> onClick
+com.anthonymandra.framework.ViewerActivity$PreviousImageClickListener -> com.anthonymandra.framework.bs:
     com.anthonymandra.framework.ViewerActivity this$0 -> a
-    413:414:void onClick(android.view.View) -> onClick
-com.anthonymandra.framework.ViewerActivity$ViewerLicenseHandler -> com.anthonymandra.framework.br:
+    442:443:void onClick(android.view.View) -> onClick
+com.anthonymandra.framework.ViewerActivity$ViewerLicenseHandler -> com.anthonymandra.framework.bt:
     java.lang.ref.WeakReference mViewer -> a
-    1036:1039:void handleMessage(android.os.Message) -> handleMessage
+    1068:1071:void handleMessage(android.os.Message) -> handleMessage
 com.anthonymandra.rawdroid.AppRater -> com.anthonymandra.rawdroid.a:
     22:52:void app_launched(android.content.Context) -> a
     56:96:void showRateDialog(android.content.Context,android.content.SharedPreferences$Editor) -> a
@@ -11414,115 +11298,118 @@ com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentWatermark -> com
     686:688:void onCreate(android.os.Bundle) -> onCreate
     692:694:void onResume() -> onResume
 com.anthonymandra.rawdroid.ImageViewActivity -> com.anthonymandra.rawdroid.ImageViewActivity:
-    java.lang.String TAG -> aF
-    java.util.WeakHashMap mListeners -> aG
-    26:33:void onCreate(android.os.Bundle) -> onCreate
-    38:39:void updateAfterDelete() -> B
-    44:45:void updateAfterRestore() -> C
-    49:51:void updateImageSource() -> X
-    56:57:void onSingleTapConfirmed() -> c_
-    65:68:void onCurrentImageUpdated() -> s
-    76:78:void onPhotoChanged(int,android.net.Uri) -> a
-    87:88:void addContentListener(com.android.gallery3d.data.ContentListener) -> a
-    91:92:void removeContentListener(com.android.gallery3d.data.ContentListener) -> b
-    96:99:void notifyContentChanged() -> W
-    103:103:com.android.gallery3d.data.MediaItem getCurrentItem() -> E
-    108:108:android.graphics.Bitmap getCurrentBitmap() -> F
-    113:114:void goToPrevPicture() -> G
-    118:119:void goToNextPicture() -> H
-    123:124:void goToFirstPicture() -> I
+    java.lang.String TAG -> aG
+    java.util.WeakHashMap mListeners -> aH
+    23:30:void onCreate(android.os.Bundle) -> onCreate
+    35:37:void updateAfterDelete() -> z
+    42:44:void updateAfterRestore() -> A
+    48:50:void updateImageSource() -> V
+    55:56:void onSingleTapConfirmed() -> c_
+    64:67:void onCurrentImageUpdated() -> q
+    72:73:void onCommitDeleteImage(com.android.gallery3d.data.MediaItem) -> a
+    81:83:void onPhotoChanged(int,android.net.Uri) -> a
+    92:93:void addContentListener(com.android.gallery3d.data.ContentListener) -> a
+    96:97:void removeContentListener(com.android.gallery3d.data.ContentListener) -> b
+    101:104:void notifyContentChanged() -> U
+    108:108:com.android.gallery3d.data.MediaItem getCurrentItem() -> C
+    113:113:android.graphics.Bitmap getCurrentBitmap() -> D
+    118:119:void goToPrevPicture() -> E
+    123:124:void goToNextPicture() -> F
+    128:129:void goToFirstPicture() -> G
+    134:136:void setLicenseState(com.anthonymandra.framework.License$LicenseState) -> a
 com.anthonymandra.rawdroid.LegacyViewerActivity -> com.anthonymandra.rawdroid.LegacyViewerActivity:
     java.lang.String TAG -> n
     com.android.legacy.ui.ImageViewer mImageViewer -> o
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel mModel -> p
     com.android.legacy.ui.GLRootView mGLRootView -> q
-    com.android.legacy.ui.GLView mRootPane -> aF
-    57:73:void onCreate(android.os.Bundle) -> onCreate
-    77:79:void lookupViews() -> O
-    84:94:void onResume() -> onResume
-    99:110:void onPause() -> onPause
-    114:121:void loadExif() -> i
-    126:138:com.android.gallery3d.data.MediaItem getCurrentItem() -> E
-    143:143:android.graphics.Bitmap getCurrentBitmap() -> F
-    149:156:void updateAfterDelete() -> B
-    161:163:void updateAfterRestore() -> C
-    167:168:void decrementImageIndex() -> j
-    172:173:void incrementImageIndex() -> k
-    480:481:void goToNextPicture() -> H
-    485:487:void goToFirstPicture() -> I
-    491:492:void deleteToNext() -> l
-    502:503:void goToPrevPicture() -> G
-    25:25:com.android.legacy.ui.ImageViewer access$100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> a
-    25:25:int access$200(com.anthonymandra.rawdroid.LegacyViewerActivity) -> b
-    25:25:java.util.List access$300(com.anthonymandra.rawdroid.LegacyViewerActivity) -> c
-    25:25:int access$400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> d
-    25:25:int access$500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> e
-    25:25:java.util.List access$600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> f
-    25:25:int access$700(com.anthonymandra.rawdroid.LegacyViewerActivity) -> g
-    25:25:int access$800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> h
-    25:25:void access$900(com.anthonymandra.rawdroid.LegacyViewerActivity,android.net.Uri) -> a
-    25:25:int access$1100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> i
-    25:25:void access$1200(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> a
-    25:25:int access$1300(com.anthonymandra.rawdroid.LegacyViewerActivity) -> j
-    25:25:java.util.List access$1400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> k
-    25:25:int access$1500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> l
-    25:25:java.util.List access$1600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> m
-    25:25:int access$1800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> n
-    25:25:int access$1900(com.anthonymandra.rawdroid.LegacyViewerActivity) -> o
-    25:25:int access$2000(com.anthonymandra.rawdroid.LegacyViewerActivity) -> p
-    25:25:java.util.List access$2100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> q
-    25:25:int access$2200(com.anthonymandra.rawdroid.LegacyViewerActivity) -> r
-    25:25:int access$2400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> s
-    25:25:void access$2500(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> b
-    25:25:com.android.legacy.ui.GLRootView access$2600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> t
-    25:25:com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel access$2700(com.anthonymandra.rawdroid.LegacyViewerActivity) -> u
+    com.android.legacy.ui.GLView mRootPane -> aG
+    54:69:void onCreate(android.os.Bundle) -> onCreate
+    73:75:void lookupViews() -> M
+    80:81:void onZoomLockChanged(boolean) -> c
+    86:96:void onResume() -> onResume
+    101:112:void onPause() -> onPause
+    116:123:void loadExif() -> i
+    128:140:com.android.gallery3d.data.MediaItem getCurrentItem() -> C
+    145:145:android.graphics.Bitmap getCurrentBitmap() -> D
+    151:158:void updateAfterDelete() -> z
+    163:165:void updateAfterRestore() -> A
+    169:170:void decrementImageIndex() -> j
+    174:175:void incrementImageIndex() -> k
+    482:483:void goToNextPicture() -> F
+    487:489:void goToFirstPicture() -> G
+    493:494:void deleteToNext() -> l
+    504:505:void goToPrevPicture() -> E
+    24:24:com.android.legacy.ui.ImageViewer access$100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> a
+    24:24:int access$200(com.anthonymandra.rawdroid.LegacyViewerActivity) -> b
+    24:24:java.util.List access$300(com.anthonymandra.rawdroid.LegacyViewerActivity) -> c
+    24:24:int access$400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> d
+    24:24:int access$500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> e
+    24:24:java.util.List access$600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> f
+    24:24:int access$700(com.anthonymandra.rawdroid.LegacyViewerActivity) -> g
+    24:24:int access$800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> h
+    24:24:void access$900(com.anthonymandra.rawdroid.LegacyViewerActivity,android.net.Uri) -> a
+    24:24:int access$1100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> i
+    24:24:void access$1200(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> a
+    24:24:int access$1300(com.anthonymandra.rawdroid.LegacyViewerActivity) -> j
+    24:24:java.util.List access$1400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> k
+    24:24:int access$1500(com.anthonymandra.rawdroid.LegacyViewerActivity) -> l
+    24:24:java.util.List access$1600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> m
+    24:24:int access$1800(com.anthonymandra.rawdroid.LegacyViewerActivity) -> n
+    24:24:int access$1900(com.anthonymandra.rawdroid.LegacyViewerActivity) -> o
+    24:24:int access$2000(com.anthonymandra.rawdroid.LegacyViewerActivity) -> p
+    24:24:java.util.List access$2100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> q
+    24:24:int access$2200(com.anthonymandra.rawdroid.LegacyViewerActivity) -> r
+    24:24:int access$2400(com.anthonymandra.rawdroid.LegacyViewerActivity) -> s
+    24:24:void access$2500(com.anthonymandra.rawdroid.LegacyViewerActivity,android.graphics.Bitmap) -> b
+    24:24:com.android.legacy.ui.GLRootView access$2600(com.anthonymandra.rawdroid.LegacyViewerActivity) -> t
+    24:24:com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel access$2700(com.anthonymandra.rawdroid.LegacyViewerActivity) -> u
 com.anthonymandra.rawdroid.LegacyViewerActivity$1 -> com.anthonymandra.rawdroid.t:
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> j
-    40:41:void renderBackground(com.android.legacy.ui.GLCanvas) -> b
-    46:50:void onLayout(boolean,int,int,int,int) -> a
+    38:39:void renderBackground(com.android.legacy.ui.GLCanvas) -> b
+    44:48:void onLayout(boolean,int,int,int,int) -> a
 com.anthonymandra.rawdroid.LegacyViewerActivity$CurrentImageLoader -> com.anthonymandra.rawdroid.u:
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> d
-    510:512:void onPostExecute(android.graphics.Bitmap) -> a
-    505:505:void onPostExecute(java.lang.Object) -> a
+    512:514:void onPostExecute(android.graphics.Bitmap) -> a
+    507:507:void onPostExecute(java.lang.Object) -> a
 com.anthonymandra.rawdroid.LegacyViewerActivity$LargeImageLoader -> com.anthonymandra.rawdroid.v:
     int mIndex -> d
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> e
-    550:563:android.graphics.BitmapRegionDecoder doInBackground(java.lang.Object[]) -> e
-    569:572:void onPostExecute(android.graphics.BitmapRegionDecoder) -> a
-    543:543:void onPostExecute(java.lang.Object) -> a
-    543:543:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    552:565:android.graphics.BitmapRegionDecoder doInBackground(java.lang.Object[]) -> e
+    571:574:void onPostExecute(android.graphics.BitmapRegionDecoder) -> a
+    545:545:void onPostExecute(java.lang.Object) -> a
+    545:545:java.lang.Object doInBackground(java.lang.Object[]) -> a
 com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthonymandra.rawdroid.w:
     android.graphics.BitmapRegionDecoder mLargeBitmap -> b
     android.graphics.Bitmap[] mScreenNails -> c
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> a
-    182:182:android.graphics.BitmapRegionDecoder getLargeBitmap() -> c
-    187:192:boolean isRecycled() -> d
-    197:202:void resetCurrent() -> e
-    206:211:void resetNext() -> f
-    215:220:void resetPrevious() -> g
-    224:227:void resetBitmaps() -> h
-    231:233:void refresh() -> i
-    237:262:com.android.legacy.ui.ImageViewer$ImageData getImageData(int) -> a
-    267:299:void next() -> a
-    303:334:void previous() -> b
-    359:374:void deleteToNext() -> j
-    378:391:void updateScreenNail(int,android.graphics.Bitmap) -> a
-    395:411:void updateLargeImage(int,android.graphics.BitmapRegionDecoder) -> a
-    416:419:void requestNextImageWithMeta() -> k
-    424:474:void requestNextImage() -> l
+    184:184:android.graphics.BitmapRegionDecoder getLargeBitmap() -> c
+    189:194:boolean isRecycled() -> d
+    199:204:void resetCurrent() -> e
+    208:213:void resetNext() -> f
+    217:222:void resetPrevious() -> g
+    226:229:void resetBitmaps() -> h
+    233:235:void refresh() -> i
+    239:264:com.android.legacy.ui.ImageViewer$ImageData getImageData(int) -> a
+    269:301:void next() -> a
+    305:336:void previous() -> b
+    361:376:void deleteToNext() -> j
+    380:393:void updateScreenNail(int,android.graphics.Bitmap) -> a
+    397:413:void updateLargeImage(int,android.graphics.BitmapRegionDecoder) -> a
+    418:421:void requestNextImageWithMeta() -> k
+    426:476:void requestNextImage() -> l
 com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$1 -> com.anthonymandra.rawdroid.x:
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel this$1 -> a
-    274:275:void run() -> run
+    276:277:void run() -> run
 com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$2 -> com.anthonymandra.rawdroid.y:
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel this$1 -> a
-    310:311:void run() -> run
+    312:313:void run() -> run
 com.anthonymandra.rawdroid.LegacyViewerActivity$SmallImageLoader -> com.anthonymandra.rawdroid.z:
     int mIndex -> e
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> f
-    522:528:android.graphics.Bitmap doInBackground(java.lang.Object[]) -> e
-    537:540:void onPostExecute(android.graphics.Bitmap) -> a
-    515:515:void onPostExecute(java.lang.Object) -> a
-    515:515:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    524:530:android.graphics.Bitmap doInBackground(java.lang.Object[]) -> e
+    539:542:void onPostExecute(android.graphics.Bitmap) -> a
+    517:517:void onPostExecute(java.lang.Object) -> a
+    517:517:java.lang.Object doInBackground(java.lang.Object[]) -> a
 com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.aa:
     java.lang.String TAG -> a
     com.anthonymandra.framework.License$LicenseState INITIAL_RESPONSE -> b
@@ -11565,8 +11452,8 @@ com.anthonymandra.rawdroid.RawDroid -> com.anthonymandra.rawdroid.RawDroid:
     int bias -> J
     179:259:void onCreate(android.os.Bundle) -> onCreate
     263:298:void doFirstRun() -> q
-    337:378:void getKeywords() -> r
-    382:392:void setRecentFolder() -> s
+    337:378:void getKeywords() -> C
+    382:392:void setRecentFolder() -> D
     399:409:void updateGallery() -> E
     414:415:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     421:442:void onResume() -> onResume
@@ -11588,8 +11475,8 @@ com.anthonymandra.rawdroid.RawDroid -> com.anthonymandra.rawdroid.RawDroid:
     757:792:void requestImportImageLocation() -> L
     805:837:void requestExportThumbLocation() -> M
     841:843:void requestSettings() -> N
-    848:849:void updateAfterDelete() -> B
-    854:855:void updateAfterRestore() -> C
+    848:849:void updateAfterDelete() -> z
+    854:855:void updateAfterRestore() -> A
     864:872:void updateLocalFiles() -> i
     876:881:void updatePath(java.io.File) -> c
     885:898:void setNavigation() -> O
@@ -11600,19 +11487,19 @@ com.anthonymandra.rawdroid.RawDroid -> com.anthonymandra.rawdroid.RawDroid:
     1065:1067:void startMultiSelectMode() -> j
     1071:1076:void endMultiSelectMode() -> k
     1080:1098:void updateSelection() -> l
-    1329:1331:void startContextualActionBar() -> Q
-    1336:1353:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
-    1361:1408:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-    1414:1414:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-    1420:1428:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
-    1645:1688:void runTutorial() -> m
-    1909:1915:void closeTutorial() -> n
-    1920:1930:int getNavigationBarHeight(int) -> a
-    1935:1940:android.widget.RelativeLayout$LayoutParams getRightParam(android.content.res.Resources) -> a
-    1953:1956:void setTutorialNoShowcase() -> R
-    1960:1962:void setTutorialHomeView(boolean) -> c
-    1972:1985:void setTutorialActionView(int,boolean) -> a
-    2086:2092:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    1334:1336:void startContextualActionBar() -> Q
+    1341:1358:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
+    1366:1413:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    1419:1419:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
+    1425:1433:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
+    1650:1693:void runTutorial() -> m
+    1914:1920:void closeTutorial() -> n
+    1925:1935:int getNavigationBarHeight(int) -> a
+    1940:1945:android.widget.RelativeLayout$LayoutParams getRightParam(android.content.res.Resources) -> a
+    1958:1961:void setTutorialNoShowcase() -> R
+    1965:1967:void setTutorialHomeView(boolean) -> c
+    1977:1990:void setTutorialActionView(int,boolean) -> a
+    2091:2097:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
     86:86:com.anthonymandra.rawdroid.RawDroid$ImageAdapter access$000(com.anthonymandra.rawdroid.RawDroid) -> a
     86:86:java.io.File access$100(com.anthonymandra.rawdroid.RawDroid) -> b
     86:86:void access$200(com.anthonymandra.rawdroid.RawDroid,java.io.File) -> a
@@ -11632,31 +11519,32 @@ com.anthonymandra.rawdroid.RawDroid -> com.anthonymandra.rawdroid.RawDroid:
     86:86:java.util.List access$1600(com.anthonymandra.rawdroid.RawDroid) -> m
     86:86:java.util.List access$1700(com.anthonymandra.rawdroid.RawDroid) -> n
     86:86:com.anthonymandra.framework.ImageDecoder access$1800(com.anthonymandra.rawdroid.RawDroid) -> o
-    86:86:boolean access$1900(com.anthonymandra.rawdroid.RawDroid) -> p
-    86:86:java.util.List access$2000(com.anthonymandra.rawdroid.RawDroid) -> q
+    86:86:java.util.List access$1900(com.anthonymandra.rawdroid.RawDroid) -> p
+    86:86:boolean access$2000(com.anthonymandra.rawdroid.RawDroid) -> q
     86:86:java.util.List access$2100(com.anthonymandra.rawdroid.RawDroid) -> r
     86:86:java.util.List access$2200(com.anthonymandra.rawdroid.RawDroid) -> s
     86:86:java.util.List access$2300(com.anthonymandra.rawdroid.RawDroid) -> t
     86:86:java.util.List access$2400(com.anthonymandra.rawdroid.RawDroid) -> u
     86:86:java.util.List access$2500(com.anthonymandra.rawdroid.RawDroid) -> v
     86:86:java.util.List access$2600(com.anthonymandra.rawdroid.RawDroid) -> w
-    86:86:java.lang.String access$2800() -> o
-    86:86:com.github.amlcurran.showcaseview.ShowcaseView access$3000(com.anthonymandra.rawdroid.RawDroid) -> x
-    86:86:void access$3100(com.anthonymandra.rawdroid.RawDroid) -> y
-    86:86:void access$3200(com.anthonymandra.rawdroid.RawDroid,int,boolean) -> a
-    86:86:android.widget.GridView access$3300(com.anthonymandra.rawdroid.RawDroid) -> z
+    86:86:java.util.List access$2700(com.anthonymandra.rawdroid.RawDroid) -> x
+    86:86:java.lang.String access$2900() -> o
+    86:86:com.github.amlcurran.showcaseview.ShowcaseView access$3100(com.anthonymandra.rawdroid.RawDroid) -> y
+    86:86:void access$3200(com.anthonymandra.rawdroid.RawDroid) -> z
+    86:86:void access$3300(com.anthonymandra.rawdroid.RawDroid,int,boolean) -> a
+    86:86:android.widget.GridView access$3400(com.anthonymandra.rawdroid.RawDroid) -> A
     86:86:boolean access$300() -> p
-    86:86:android.support.v7.view.ActionMode access$800(com.anthonymandra.rawdroid.RawDroid) -> A
-    86:86:void access$3400(com.anthonymandra.rawdroid.RawDroid) -> B
-    86:86:void access$3500(com.anthonymandra.rawdroid.RawDroid,boolean) -> a
-    86:86:void access$3600(com.anthonymandra.rawdroid.RawDroid) -> C
-    86:86:android.app.ProgressDialog access$3702(com.anthonymandra.rawdroid.RawDroid,android.app.ProgressDialog) -> a
-    86:86:android.app.ProgressDialog access$3800(com.anthonymandra.rawdroid.RawDroid) -> D
+    86:86:android.support.v7.view.ActionMode access$800(com.anthonymandra.rawdroid.RawDroid) -> B
+    86:86:void access$3500(com.anthonymandra.rawdroid.RawDroid) -> C
+    86:86:void access$3600(com.anthonymandra.rawdroid.RawDroid,boolean) -> a
+    86:86:void access$3700(com.anthonymandra.rawdroid.RawDroid) -> D
+    86:86:android.app.ProgressDialog access$3802(com.anthonymandra.rawdroid.RawDroid,android.app.ProgressDialog) -> a
     86:86:android.app.ProgressDialog access$3900(com.anthonymandra.rawdroid.RawDroid) -> E
     86:86:android.app.ProgressDialog access$4000(com.anthonymandra.rawdroid.RawDroid) -> F
     86:86:android.app.ProgressDialog access$4100(com.anthonymandra.rawdroid.RawDroid) -> G
-    86:86:com.anthonymandra.framework.GalleryActivity$RawFilter access$4200(com.anthonymandra.rawdroid.RawDroid) -> H
-    86:86:android.app.ProgressDialog access$4300(com.anthonymandra.rawdroid.RawDroid) -> I
+    86:86:android.app.ProgressDialog access$4200(com.anthonymandra.rawdroid.RawDroid) -> H
+    86:86:com.anthonymandra.framework.GalleryActivity$RawFilter access$4300(com.anthonymandra.rawdroid.RawDroid) -> I
+    86:86:android.app.ProgressDialog access$4400(com.anthonymandra.rawdroid.RawDroid) -> J
 com.anthonymandra.rawdroid.RawDroid$1 -> com.anthonymandra.rawdroid.ac:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
     277:277:void onClick(android.content.DialogInterface,int) -> onClick
@@ -11675,27 +11563,27 @@ com.anthonymandra.rawdroid.RawDroid$CopyImageTask -> com.anthonymandra.rawdroid.
     java.io.File mDestination -> d
     java.util.List failed -> a
     com.anthonymandra.rawdroid.RawDroid this$0 -> b
-    1445:1451:void onPreExecute() -> onPreExecute
-    1456:1473:java.lang.Boolean doInBackground(java.util.List[]) -> a
-    1479:1492:void onPostExecute(java.lang.Boolean) -> a
-    1497:1505:void onProgressUpdate(java.lang.String[]) -> a
-    1510:1511:void onCancel(android.content.DialogInterface) -> onCancel
-    1430:1430:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
-    1430:1430:void onPostExecute(java.lang.Object) -> onPostExecute
-    1430:1430:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    1450:1456:void onPreExecute() -> onPreExecute
+    1461:1478:java.lang.Boolean doInBackground(java.util.List[]) -> a
+    1484:1497:void onPostExecute(java.lang.Boolean) -> a
+    1502:1510:void onProgressUpdate(java.lang.String[]) -> a
+    1515:1516:void onCancel(android.content.DialogInterface) -> onCancel
+    1435:1435:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+    1435:1435:void onPostExecute(java.lang.Object) -> onPostExecute
+    1435:1435:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
 com.anthonymandra.rawdroid.RawDroid$CopyThumbTask -> com.anthonymandra.rawdroid.ah:
     android.app.ProgressDialog importProgress -> c
     java.io.File mDestination -> d
     java.util.List failed -> a
     com.anthonymandra.rawdroid.RawDroid this$0 -> b
-    1528:1534:void onPreExecute() -> onPreExecute
-    1539:1601:java.lang.Boolean doInBackground(java.util.List[]) -> a
-    1607:1619:void onPostExecute(java.lang.Boolean) -> a
-    1624:1632:void onProgressUpdate(java.lang.String[]) -> a
-    1637:1638:void onCancel(android.content.DialogInterface) -> onCancel
-    1514:1514:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
-    1514:1514:void onPostExecute(java.lang.Object) -> onPostExecute
-    1514:1514:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    1533:1539:void onPreExecute() -> onPreExecute
+    1544:1606:java.lang.Boolean doInBackground(java.util.List[]) -> a
+    1612:1624:void onPostExecute(java.lang.Boolean) -> a
+    1629:1637:void onProgressUpdate(java.lang.String[]) -> a
+    1642:1643:void onCancel(android.content.DialogInterface) -> onCancel
+    1519:1519:void onProgressUpdate(java.lang.Object[]) -> onProgressUpdate
+    1519:1519:void onPostExecute(java.lang.Object) -> onPostExecute
+    1519:1519:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
 com.anthonymandra.rawdroid.RawDroid$GalleryActionMode -> com.anthonymandra.rawdroid.ai:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
     1024:1034:boolean onCreateActionMode(android.support.v7.view.ActionMode,android.view.Menu) -> a
@@ -11711,39 +11599,39 @@ com.anthonymandra.rawdroid.RawDroid$ImageAdapter -> com.anthonymandra.rawdroid.a
     1128:1128:int getCount() -> getCount
     1134:1134:java.lang.Object getItem(int) -> getItem
     1140:1140:long getItemId(int) -> getItemId
-    1149:1205:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
-    1210:1213:com.android.gallery3d.data.MediaItem getImage(int) -> a
-    1218:1220:void addUniqueSelection(com.android.gallery3d.data.MediaItem) -> d
-    1224:1227:void addSelection(com.android.gallery3d.data.MediaItem) -> a
-    1232:1265:void addBetweenSelection(int) -> b
-    1269:1272:void removeSelection(com.android.gallery3d.data.MediaItem) -> b
-    1276:1279:void clearSelection() -> a
-    1288:1299:void toggleSelection(com.android.gallery3d.data.MediaItem) -> c
-    1303:1314:void setItemHeight(int) -> c
-    1318:1319:void setNumColumns(int) -> d
-    1323:1323:int getNumColumns() -> b
+    1149:1210:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    1215:1218:com.android.gallery3d.data.MediaItem getImage(int) -> a
+    1223:1225:void addUniqueSelection(com.android.gallery3d.data.MediaItem) -> d
+    1229:1232:void addSelection(com.android.gallery3d.data.MediaItem) -> a
+    1237:1270:void addBetweenSelection(int) -> b
+    1274:1277:void removeSelection(com.android.gallery3d.data.MediaItem) -> b
+    1281:1284:void clearSelection() -> a
+    1293:1304:void toggleSelection(com.android.gallery3d.data.MediaItem) -> c
+    1308:1319:void setItemHeight(int) -> c
+    1323:1324:void setNumColumns(int) -> d
+    1328:1328:int getNumColumns() -> b
 com.anthonymandra.rawdroid.RawDroid$SearchTask -> com.anthonymandra.rawdroid.ak:
     boolean cancelled -> a
     java.util.List imageFolders -> b
     com.anthonymandra.rawdroid.RawDroid this$0 -> c
-    2014:2019:void onPreExecute() -> onPreExecute
-    2024:2026:java.lang.Void doInBackground(java.lang.Void[]) -> a
-    2031:2050:void search(java.io.File) -> a
-    2055:2068:void onPostExecute(java.lang.Void) -> a
-    2073:2074:void onCancelled() -> onCancelled
-    2079:2080:void onCancel(android.content.DialogInterface) -> onCancel
-    2006:2006:void onPostExecute(java.lang.Object) -> onPostExecute
-    2006:2006:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    2019:2024:void onPreExecute() -> onPreExecute
+    2029:2031:java.lang.Void doInBackground(java.lang.Void[]) -> a
+    2036:2055:void search(java.io.File) -> a
+    2060:2073:void onPostExecute(java.lang.Void) -> a
+    2078:2079:void onCancelled() -> onCancelled
+    2084:2085:void onCancel(android.content.DialogInterface) -> onCancel
+    2011:2011:void onPostExecute(java.lang.Object) -> onPostExecute
+    2011:2011:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
 com.anthonymandra.rawdroid.RawDroid$SearchTask$1 -> com.anthonymandra.rawdroid.al:
     com.anthonymandra.rawdroid.RawDroid$SearchTask this$1 -> a
-    2063:2065:void onClick(android.content.DialogInterface,int) -> onClick
+    2068:2070:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.rawdroid.RawDroid$SpinnerFile -> com.anthonymandra.rawdroid.am:
     com.anthonymandra.rawdroid.RawDroid this$0 -> a
     1012:1015:java.lang.String toString() -> toString
 com.anthonymandra.rawdroid.RawDroid$TutorialClickListener -> com.anthonymandra.rawdroid.an:
     android.view.View view -> a
     com.anthonymandra.rawdroid.RawDroid this$0 -> b
-    1697:1904:void onClick(android.view.View) -> onClick
+    1702:1909:void onClick(android.view.View) -> onClick
 com.anthonymandra.rawdroid.RawDroid$ViewHolder -> com.anthonymandra.rawdroid.ao:
     android.widget.TextView filename -> a
     com.anthonymandra.widget.LoadingImageView image -> b

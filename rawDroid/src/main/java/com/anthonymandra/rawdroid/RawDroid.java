@@ -210,7 +210,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
 		mImageDecoder = new ImageDecoder(this, mImageThumbSize);
 		mImageDecoder.setFolderImage(R.drawable.android_folder);
-		mImageDecoder.setUnknownImage(R.drawable.unkown_file);
+		mImageDecoder.setUnknownImage(R.drawable.ic_unknown_file);
 		mImageDecoder.addImageCache(getFragmentManager(), cacheParams);
 
 		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
@@ -1168,7 +1168,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			if (position < mFolders.size())
 			{
 				viewHolder.filename.setText(mFolders.get(position).getName());
-				viewHolder.image.setImageResource(R.drawable.android_folder);
+				viewHolder.image.setImageResource(R.drawable.ic_folder);
 			}
 			else
 			{
@@ -1184,10 +1184,15 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 //						}
 //					}).start();			
 				}
+				else if (mXmpFiles.contains(media))
+				{
+					viewHolder.filename.setText(media.getName());
+					viewHolder.image.setImageResource(R.drawable.ic_xmpfile);
+				}
 				else
 				{
 					viewHolder.filename.setText(media.getName());
-					viewHolder.image.setImageResource(R.drawable.unkown_file);
+					viewHolder.image.setImageResource(R.drawable.ic_unknown_file);
 				}
 
 				if (multiSelectMode && mSelectedImages.contains(media))

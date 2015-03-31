@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -25,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -50,7 +53,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class ViewerActivity extends GalleryActivity implements
-        SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener {
+        SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener,
+        ScaleChangedListener {
 
     private static final String TAG = ViewerActivity.class.getSimpleName();
 
@@ -68,6 +72,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     protected ImageButton buttonNext;
     protected View navigationPanel;
     protected TextView zoomLevel;
+    protected CheckBox zoomButton;
     protected TextView metaDate;
     protected TextView metaModel;
     protected TextView metaIso;
@@ -219,8 +224,19 @@ public abstract class ViewerActivity extends GalleryActivity implements
             finish();
         }
 
+        String path;
+        if (data.getAuthority().equals(MediaStore.AUTHORITY))
+        {
+            //Attempt to acquire the file
+            path = Util.getRealPathFromURI(this, data);
+        }
+        else
+        {
+            path = data.getPath();
+        }
+
         @SuppressWarnings("ConstantConditions")
-        File input = new File(data.getPath());
+        File input = new File(path);
         if (!input.exists())
         {
             Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
@@ -316,6 +332,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
         // Nav fragment
         zoomLevel = (TextView) findViewById(R.id.textViewScale);
+        zoomButton = (CheckBox) findViewById(R.id.zoomButton);
         buttonPrev = (ImageButton) findViewById(R.id.imageButtonLeftBack);
         buttonNext = (ImageButton) findViewById(R.id.imageButtonLeftFwd);
 
@@ -364,6 +381,10 @@ public abstract class ViewerActivity extends GalleryActivity implements
         loadXmpPanel();
     }
 
+    protected void onZoomLockChanged(boolean locked) {
+        // no base implementation
+    }
+
     protected void setActionBar()
     {
         final ActionBar actionBar = getSupportActionBar();
@@ -396,6 +417,14 @@ public abstract class ViewerActivity extends GalleryActivity implements
     {
         buttonPrev.setOnClickListener(new PreviousImageClickListener());
         buttonNext.setOnClickListener(new NextImageClickListener());
+        zoomButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                onZoomLockChanged(isChecked);
+            }
+        });
     }
 
     @Override
@@ -1008,9 +1037,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
         setResult(RESULT_OK, data);
     }
 
-    public void onScaleChanged(float scale)
+    @Override
+    public void onScaleChanged(float currentScale)
     {
-        final String zoom = String.valueOf((int) (scale * 100) + "%");
+        if (zoomLevel == null) return;
+
+        final String zoom = String.valueOf((int) (currentScale * 100) + "%");
         zoomLevel.post(new Runnable()
         {
             @Override
@@ -1035,7 +1067,14 @@ public abstract class ViewerActivity extends GalleryActivity implements
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-            mViewer.get().setWatermark(state != License.LicenseState.pro);
+            mViewer.get().setLicenseState(state);
         }
+    }
+
+    protected void setLicenseState(License.LicenseState state)
+    {
+        boolean isPro = state == License.LicenseState.pro;
+        setWatermark(!isPro);
+        zoomButton.setEnabled(isPro);
     }
 }

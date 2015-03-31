@@ -3,7 +3,7 @@
     android:id="@+id/fileView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <com.anthonymandra.widget.LoadingImageView
         android:id="@+id/webImageView"

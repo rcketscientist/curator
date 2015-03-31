@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.0.0"
+             versioncode="30000"
+             summary="Feature Release: Zoom lock, Quick delete"
+             date="30 MAR 2015">
+        <change>Feature(Pro): Zoom lock for comparison in viewer</change>
+        <change>Feature(Pro): Quickly delete in filmstrip mode (farthest zoom) by flinging image upward</change>
+    </release>
+    <release version="2.9.2"
+             versioncode="29200"
+             summary="Patch"
+             date="16 MAR 2015">
+        <change>Fix: Jpeg 'path not found' issue</change>
+    </release>
     <release version="2.9.0"
         versioncode="29000"
         summary="Major Maintenance Release"

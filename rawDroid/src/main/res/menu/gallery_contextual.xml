@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/contextSelectAll"
-        android:icon="@drawable/select_all"
+        android:icon="@drawable/ic_action_select_all"
         android:orderInCategory="0"
         app:showAsAction="always"
         android:title="@string/selectAll"/>

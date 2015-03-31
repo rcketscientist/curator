@@ -4,12 +4,12 @@
 
     <item
         android:id="@+id/gallerySelectAll"
-        android:icon="@drawable/select_all"
+        android:icon="@drawable/ic_action_select_all"
         app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
         android:id="@+id/gallery_usb"
-        android:icon="@drawable/usb"
+        android:icon="@drawable/ic_action_usb"
         android:orderInCategory="11"
         app:showAsAction="ifRoom"
         android:title="@string/usb"/>

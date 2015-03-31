@@ -455,7 +455,7 @@ public class PhotoDataAdapter implements Model {
 
         // Create a default ScreenNail if the real one is not available yet,
         // except for camera that a black screen is better than a gray tile.
-        if (entry.screenNail == null && !isCamera(offset)) {
+        if (entry.screenNail == null) {
             entry.screenNail = newPlaceholderScreenNail(item);
             if (offset == 0) updateTileProvider(entry);
         }
@@ -489,40 +489,14 @@ public class PhotoDataAdapter implements Model {
         mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
     }
 
-    @Override
-    public boolean isCamera(int offset) {
-        //return mCurrentIndex + offset == mCameraIndex;
-		return false;
-    }
-	
-	@Override
-    public boolean isPanorama(int offset) {
-        //return isCamera(offset) && mIsPanorama;
-		return false;
-    }
-	
-	@Override
-    public boolean isStaticCamera(int offset) {
-        //return isCamera(offset) && mIsStaticCamera;
-		return false;
-    }
-
 	@Override
 	public boolean isVideo(int offset) {
 		return false;
-        //MediaItem item = getItem(mCurrentIndex + offset);
-        //return (item == null)
-        //        ? false
-        //       : item.getMediaType() == MediaItem.MEDIA_TYPE_VIDEO;
 	}
 
 	@Override
     public boolean isDeletable(int offset) {
 		return false;
-        //MediaItem item = getItem(mCurrentIndex + offset);
-        //return (item == null)
-        //        ? false
-        //        : (item.getSupportedOperations() & MediaItem.SUPPORT_DELETE) != 0;
 	}
 
     @Override
