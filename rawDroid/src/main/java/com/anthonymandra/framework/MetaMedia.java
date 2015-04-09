@@ -480,7 +480,7 @@ public abstract class MetaMedia extends MediaItem
 		try
 		{
 			mMetadata = ImageMetadataReader.readMetadata(raw);
-			putContent();
+//			putContent();
 			return true;
 		}
 		catch (ImageProcessingException e)
@@ -506,6 +506,19 @@ public abstract class MetaMedia extends MediaItem
 	
 	protected void putContent()
 	{
+		final ContentValues cv = getContentValues();
+		
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				mContext.getContentResolver().insert(Meta.Data.CONTENT_URI, cv);
+			}
+		}).start();
+		
+	}
+
+	public ContentValues getContentValues()
+	{
 		final ContentValues cv = new ContentValues();
 		cv.put(Meta.Data.ALTITUDE, getAltitude());
 		cv.put(Meta.Data.APERTURE, getAperture());
@@ -524,15 +537,30 @@ public abstract class MetaMedia extends MediaItem
 		cv.put(Meta.Data.WIDTH, width);
 		cv.put(Meta.Data.URI, getUri().toString());
 		cv.put(Meta.Data.THUMB_HEIGHT, thumbHeight);
-		cv.put(Meta.Data.THUMB_WIDTH, thumbWidth);		
-		
-		new Thread(new Runnable() {			
-			@Override
-			public void run() {
-				mContext.getContentResolver().insert(Meta.Data.CONTENT_URI, cv);				
+		cv.put(Meta.Data.THUMB_WIDTH, thumbWidth);
+		cv.put(Meta.Data.RATING, getRating());
+		cv.put(Meta.Data.SUBJECT, convertArrayToString(getSubject()));
+		cv.put(Meta.Data.LABEL, getLabel());
+		return cv;
+	}
+
+	public static String strSeparator = "__,__";
+	public static String convertArrayToString(String[] array){
+		String str = "";
+		if (array == null)
+			return str;
+		for (int i = 0;i<array.length; i++) {
+			str = str+array[i];
+			// Do not append comma at the end of last element
+			if(i<array.length-1){
+				str = str+strSeparator;
 			}
-		}).start();
-		
+		}
+		return str;
+	}
+	public static String[] convertStringToArray(String str){
+		String[] arr = str.split(strSeparator);
+		return arr;
 	}
 	
 	protected void getContent()

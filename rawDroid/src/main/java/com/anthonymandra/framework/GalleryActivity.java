@@ -4,18 +4,25 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ContentProviderClient;
+import android.content.ContentProviderOperation;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.Loader;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
@@ -23,6 +30,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
@@ -31,12 +39,16 @@ import com.anthonymandra.rawdroid.R;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Activity that handles a recycling bin and UI updates.
@@ -44,7 +56,7 @@ import java.util.Locale;
  * @author amand_000
  * 
  */
-public abstract class GalleryActivity extends ActionBarActivity
+public abstract class GalleryActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@SuppressWarnings("unused")
 	private static final String TAG = GalleryActivity.class.getSimpleName();
@@ -53,7 +65,8 @@ public abstract class GalleryActivity extends ActionBarActivity
     public static final String RECYCLE_BIN_DIR = "recycle";
 	public static final int FILE_NOT_FOUND = -1;
 
-	private static final int REQUEST_CODE_SHARE = 0;
+	private static final int REQUEST_CODE_SHARE = 00;
+	private static final int REQUEST_CODE_WRITE_PERMISSION = 01;
 
 	protected RecycleBin recycleBin;
 	protected File mSwapDir;
@@ -64,6 +77,28 @@ public abstract class GalleryActivity extends ActionBarActivity
 	{ ".3fr", ".ari", ".arw", ".bay", ".crw", ".cr2", ".cap", ".dcs", ".dcr", ".dng", ".drf", ".eip", ".erf", ".fff", ".iiq", ".k25", ".kdc", ".mdc", ".mef",
 			".mos", ".mrw", ".nef", ".nrw", ".obm", ".orf", ".pef", ".ptx", ".pxn", ".r3d", ".raf", ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf", ".srw",
 			".tif", ".tiff", ".x3f" };
+
+	private static final File[] MOUNT_ROOTS =
+	{
+		new File("/mnt"),
+		new File("/Removable"),
+		new File("/udisk"),
+		new File("/usbStorage"),
+		new File("/storage"),
+		new File("/dev/bus/usb"),
+	};
+
+	/**
+	 * Android multi-user environment is fucked up.  Multiple mount points
+	 * under /storage/emulated that point to same filesystem
+	 * /storage/emulated/legacy, /storage/emulated/[integer user value]
+	 * Then add dozens of symlinks, making searching an absolute nightmare
+	 * For now assume symlink and skip anything under /storage/emulated
+	 */
+	private static final File[] SKIP_ROOTS =
+	{
+		new File("/storage/emulated")
+	};
 
 	protected RawFilter rawFilter = new RawFilter();
 	private XmpFilter xmpFilter = new XmpFilter();
@@ -85,17 +120,50 @@ public abstract class GalleryActivity extends ActionBarActivity
     protected ContentProviderClient mMetaProvider;
     protected Handler licenseHandler;
 
+	// Identifies a particular Loader being used in this component
+	private static final int URL_LOADER = 0;
+
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		// mProgressDialog.setCanceledOnTouchOutside(true);
         mShareIntent = new Intent(Intent.ACTION_SEND);
         mShareIntent.setType("image/*");
         mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         mMetaProvider = getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
+
+		getLoaderManager().initLoader(URL_LOADER, null, this);
+	}
+
+	/*
+	* Callback that's invoked when the system has initialized the Loader and
+	* is ready to start the query. This usually happens when initLoader() is
+	* called. The loaderID argument contains the ID value passed to the
+	* initLoader() call.
+	*/
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
+	{
+	/*
+	 * Takes action based on the ID of the Loader that's being created
+	 */
+		switch (loaderID) {
+			case URL_LOADER:
+				// Returns a new CursorLoader
+				return new CursorLoader(
+						this,   				// Parent activity context
+						Meta.Data.CONTENT_URI,  // Table to query
+						null,     				// Projection to return
+						null,            		// No selection clause
+						null,            		// No selection arguments
+						null             		// Default sort order
+				);
+			default:
+				// An invalid id was passed in
+				return null;
+		}
 	}
 
 	@Override
@@ -704,15 +772,38 @@ public abstract class GalleryActivity extends ActionBarActivity
 		}
 	}
 
+	@TargetApi(Build.VERSION_CODES.KITKAT)
 	@Override
 	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode)
 		{
-			case REQUEST_CODE_SHARE:
-//				clearSwapDir();
+			case REQUEST_CODE_WRITE_PERMISSION:
+				if (resultCode == RESULT_OK && data != null)
+				{
+					Uri treeUri = data.getData();
+					getContentResolver().takePersistableUriPermission(treeUri,
+							Intent.FLAG_GRANT_READ_URI_PERMISSION |
+							Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+				}
 				break;
 		}
+	}
+
+	protected void requestWritePermission()
+	{
+		getContentResolver().getPersistedUriPermissions();
+		if (Util.hasLollipop())
+        {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
+        }
+		else if (Util.hasKitkat())
+		{
+			//TODO: Warn User
+		}
+		// Prior versions will have permission
 	}
 
     protected void setShareUri(Uri share)
@@ -730,6 +821,216 @@ public abstract class GalleryActivity extends ActionBarActivity
         if (mShareProvider != null)
             mShareProvider.setShareIntent(mShareIntent);
     }
+
+	static ArrayList<ContentProviderOperation> mContentProviderOperations;
+	protected void scanRawFiles(File[] roots)
+	{
+		searchActive = true;
+		mContentProviderOperations = new ArrayList<>();
+		SearchTask st = new SearchTask();
+		st.execute(roots);
+	}
+
+	protected void scanRawFiles()
+	{
+		scanRawFiles(MOUNT_ROOTS);
+	}
+
+	//TODO: Could be used as a fallback deep search
+	protected void scanRawFiles(File searchRoot)
+	{
+		File[] root = {searchRoot};
+		scanRawFiles(root);
+	}
+
+	protected void onSearchResults()
+	{
+		getSupportActionBar().setSubtitle("Found " +  totalImages + " raw images...");
+	}
+
+	static int parsedImages;
+	static int totalImages;
+	protected void onImageParsed()
+	{
+		getSupportActionBar().setSubtitle("Processed " + parsedImages + " of " + totalImages);
+	}
+
+	public static boolean searchActive;
+	public class ParseMetaTask extends android.os.AsyncTask<File, Void, Void>
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			super.onPreExecute();
+			runOnUiThread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					getSupportActionBar().setTitle("Processing...");
+				}
+			});
+		}
+
+		@Override
+		protected Void doInBackground(File... params)
+		{
+			//TODO: Creation of an object here is unnecessary (did LocalImage just become static?)
+			MediaItem item = new LocalImage(GalleryActivity.this, params[0]);
+			item.readMetadata();
+			item.getContentValues();
+			mContentProviderOperations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+					.withValues(item.getContentValues())
+					.build());
+			++parsedImages;
+			publishProgress();
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values)
+		{
+			super.onProgressUpdate();
+			onImageParsed();
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid)
+		{
+			super.onPostExecute(aVoid);
+			if (parsedImages >= totalImages)
+			{
+				ApplyBatchTask abt = new ApplyBatchTask();
+				abt.execute();
+				searchActive = false;
+			}
+		}
+	}
+
+	public class ApplyBatchTask extends android.os.AsyncTask<Void, Void, Void>
+	{
+		@Override
+		protected Void doInBackground(Void... params)
+		{
+			try
+			{
+				// TODO: If I implement bulkInsert it's faster
+				getContentResolver().applyBatch(Meta.AUTHORITY, mContentProviderOperations);
+			} catch (RemoteException e)
+			{
+				//TODO: Notify user
+				e.printStackTrace();
+			} catch (OperationApplicationException e)
+			{
+				//TODO: Notify user
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid)
+		{
+			getSupportActionBar().setSubtitle("");
+			getLoaderManager().restartLoader(URL_LOADER, null, GalleryActivity.this);
+		}
+	}
+
+	public class SearchTask extends android.os.AsyncTask<File, Void, Void> implements OnCancelListener
+	{
+		boolean cancelled;
+
+		@Override
+		protected void onPreExecute()
+		{
+			super.onPreExecute();
+			getSupportActionBar().setTitle("Searching...");
+			totalImages = 0;
+			parsedImages = 0;
+		}
+
+		@Override
+		protected Void doInBackground(File... params)
+		{
+			Set<String> rawImages = new HashSet<>();
+			ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+			for (File root : params)
+			{
+				rawImages.addAll(search(root));
+				totalImages = rawImages.size();
+				publishProgress();
+			}
+
+			for (String raw : rawImages)
+			{
+				ParseMetaTask pmt = new ParseMetaTask();
+				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onProgressUpdate(Void... values)
+		{
+			GalleryActivity.this.onSearchResults();
+		}
+
+		public Collection<String> search(File dir)
+		{
+			Set<String> matches = new HashSet<>();
+			if (cancelled || dir == null)
+				return matches;
+			if (dir.listFiles() == null)
+				return matches;
+			// This is a hack to handle the jacked up filesystem
+			for (File skip : SKIP_ROOTS)
+			{
+				if (dir.equals(skip))
+					return matches;
+			}
+
+			// We must use a canonical path due to the fucked up multi-user/symlink setup
+			File[] rawFiles = dir.listFiles(rawFilter);
+			if (rawFiles != null && rawFiles.length > 0)
+			{
+				for (File raw: rawFiles)
+				{
+					try
+					{
+						matches.add(raw.getCanonicalPath());
+					} catch (IOException e)
+					{
+						// God this is ugly, just do nothing with an error.
+						e.printStackTrace();
+					}
+				}
+			}
+
+			// Recursion pass
+			for (File f : dir.listFiles())
+			{
+				if (f == null)
+					continue;
+
+				if (f.isDirectory() && f.canRead() && !f.isHidden())
+					matches.addAll(search(f));
+			}
+			return matches;
+		}
+
+		@Override
+		protected void onCancelled()
+		{
+			cancelled = true;
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
 
 	class XmpFilter implements FileFilter
 	{

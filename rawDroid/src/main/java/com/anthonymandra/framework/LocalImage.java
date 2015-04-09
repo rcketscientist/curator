@@ -183,35 +183,35 @@ public class LocalImage extends MetaMedia {
 
 		byte[] imageData = LibRaw.getThumb(mImage, exif);
 
-		try {
-			setThumbHeight(Integer.parseInt(exif[8]));
-			setThumbWidth(Integer.parseInt(exif[9]));
-			setHeight(Integer.parseInt(exif[10]));
-			setWidth(Integer.parseInt(exif[11]));
-		} catch (Exception e) {
-			Log.d(TAG, "Dimensions exif parse failed:", e);
-		}
-
-		makeLegacy = exif[0];
-		modelLegacy = exif[1];
-		apertureLegacy = exif[2];
-		focalLegacy = exif[3];
-		isoLegacy = exif[4];
-		shutterLegacy = exif[5];
-
-		try {
-			dateLegacy = mLibrawFormatter.parse(exif[6].trim());
-		} catch (Exception e) {
-			Log.d(TAG, "Date exif parse failed:", e);
-		}
-
-		try {
-			orientLegacy = Integer.parseInt(exif[7]);
-		} catch (Exception e) {
-			Log.d(TAG, "Orientation exif parse failed:", e);
-		}
+//		try {
+//			setThumbHeight(Integer.parseInt(exif[8]));
+//			setThumbWidth(Integer.parseInt(exif[9]));
+//			setHeight(Integer.parseInt(exif[10]));
+//			setWidth(Integer.parseInt(exif[11]));
+//		} catch (Exception e) {
+//			Log.d(TAG, "Dimensions exif parse failed:", e);
+//		}
+//
+//		makeLegacy = exif[0];
+//		modelLegacy = exif[1];
+//		apertureLegacy = exif[2];
+//		focalLegacy = exif[3];
+//		isoLegacy = exif[4];
+//		shutterLegacy = exif[5];
+//
+//		try {
+//			dateLegacy = mLibrawFormatter.parse(exif[6].trim());
+//		} catch (Exception e) {
+//			Log.d(TAG, "Date exif parse failed:", e);
+//		}
+//
+//		try {
+//			orientLegacy = Integer.parseInt(exif[7]);
+//		} catch (Exception e) {
+//			Log.d(TAG, "Orientation exif parse failed:", e);
+//		}
 		
-		putContent();
+//		putContent();
 
 		return imageData;
 	}

@@ -1,6 +1,8 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.os.Bundle;
@@ -172,6 +174,18 @@ public class LegacyViewerActivity extends ViewerActivity
 	public void incrementImageIndex()
 	{
 		++mImageIndex;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+	{
+
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader)
+	{
+
 	}
 
 	private class MyImageViewerModel implements ImageViewer.Model

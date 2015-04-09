@@ -1,5 +1,7 @@
 package com.anthonymandra.framework;
 
+import android.content.ContentValues;
+
 import java.io.FileNotFoundException;
 
 /**
@@ -84,4 +86,6 @@ public interface MetaObject {
     public int getThumbHeight();
 
     public void setThumbHeight(int thumbHeight);
+
+    ContentValues getContentValues();
 }

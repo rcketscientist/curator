@@ -71,6 +71,10 @@ public class Meta
 		public static final String THUMB_HEIGHT = "thumb_height";
 		public static final String THUMB_WIDTH = "thumb_width";
 
+		public static final String RATING = "rating";
+		public static final String SUBJECT = "subject";
+		public static final String LABEL = "label";
+
 		public static final String MEDIA_ID = "media_id";
 		/**
 		 * Name of the thumb data column.????

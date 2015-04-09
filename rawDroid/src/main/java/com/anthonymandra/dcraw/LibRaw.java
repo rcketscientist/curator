@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 public class LibRaw
 {
 	private static final String TAG = "LibRaw";
-	private static final int numThreads = 4;
+	private static final int numThreads = 8;
 
 	public static final Executor EXECUTOR = Executors./*newCachedThreadPool();*/newFixedThreadPool(numThreads);
 

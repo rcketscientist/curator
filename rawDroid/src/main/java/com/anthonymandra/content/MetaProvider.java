@@ -23,7 +23,7 @@ import java.util.Locale;
 public class MetaProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = "rawdroid.db";
-	static int DATABASE_VERSION = 5;
+	static int DATABASE_VERSION = 7;
 
 	public static final String META_TABLE_NAME = "meta";
 
@@ -85,9 +85,10 @@ public class MetaProvider extends ContentProvider
 					Meta.Data.MAKE 			    + " TEXT, "	+
 					Meta.Data.URI 			    + " TEXT UNIQUE," 	+
 					Meta.Data.THUMB_HEIGHT	    + " INTEGER," +
-					Meta.Data.THUMB_WIDTH	    + " INTEGER" +
-                    Meta.Data.THUMBNAIL_URI 	+ " TEXT UNIQUE," 	+
-                    Meta.Data.FULL_IMAGE_URI 	+ " TEXT UNIQUE" 	+ ");";
+					Meta.Data.THUMB_WIDTH	    + " INTEGER," +
+					Meta.Data.RATING			+ " REAL," +
+					Meta.Data.SUBJECT	    	+ " TEXT," +
+					Meta.Data.LABEL	    		+ " TEXT" +  ");";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 
@@ -179,7 +180,9 @@ public class MetaProvider extends ContentProvider
         
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         
-        long rowId = db.insert(META_TABLE_NAME, Data.NAME, values);
+//        long rowId = db.insert(META_TABLE_NAME, Data.NAME, values);
+		long rowId = db.insertWithOnConflict(META_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
         if (rowId > 0) 
         {
             Uri metaUri = ContentUris.withAppendedId(Data.CONTENT_URI, rowId);

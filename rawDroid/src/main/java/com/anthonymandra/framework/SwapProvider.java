@@ -166,6 +166,13 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         mMargins = new Margins(pref);
     }
 
+    public static Uri getSwapUri(File image)
+    {
+        return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
+                + Util.swapExtention(image.getName(), ".jpg") + "#"
+                + image.getPath());
+    }
+
     // //////////////////////////////////////////////////////////////
     // Not supported / used / required for this example
     // //////////////////////////////////////////////////////////////

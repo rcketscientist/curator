@@ -207,6 +207,7 @@
     <string name="about">About</string>
     <string name="usb">Find USB Mount</string>
     <string name="search">Search</string>
+    <string name="refresh">Refresh raw files</string>
     <string name="experimental">(Experimental)</string>
     <string name="imageFolders">Folders Containing Raw Images</string>
     <string name="indexing">Indexing Images</string>

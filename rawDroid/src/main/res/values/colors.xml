@@ -13,5 +13,17 @@
     <color name="photo_placeholder">#333</color>
     <color name="default_background">#000</color>
     <color name="bitmap_screennail_placeholder">#333</color>
+    <color name="startBlue">#449def</color>
+    <color name="endBlue">#2f6699</color>
+    <color name="startRed">#ef4444</color>
+    <color name="endRed">#992f2f</color>
+    <color name="startGreen">#70c656</color>
+    <color name="endGreen">#53933f</color>
+    <color name="startPurple">#a276eb</color>
+    <color name="endPurple">#6a3ab2</color>
+    <color name="startYellow">#fff3e100</color>
+    <color name="endYellow">#ffbb990d</color>
+    <color name="startOrange">#f3ae1b</color>
+    <color name="endOrange">#bb6008</color>
 
 </resources>

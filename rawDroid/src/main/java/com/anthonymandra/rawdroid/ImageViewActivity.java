@@ -1,6 +1,8 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.Loader;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -133,5 +135,17 @@ public class ImageViewActivity extends PhotoPage
     {
         super.setLicenseState(state);
         mPhotoView.setLicenseState(state);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+    {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CheckableRelativeLayout">
+        <!-- Defines the drawable to draw over the content.
+             This can be used as an overlay. -->
+        <attr name="foreground" format="reference|color"/>
+    </declare-styleable>
+
+</resources>

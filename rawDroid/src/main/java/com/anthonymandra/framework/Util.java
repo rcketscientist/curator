@@ -40,6 +40,7 @@ import com.anthonymandra.rawdroid.R;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -50,6 +51,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -718,6 +720,114 @@ public class Util
             {
                 cursor.close();
             }
+        }
+    }
+
+    public static boolean isSymlink(File file) {
+        try
+        {
+            File canon;
+            if (file.getParent() == null)
+            {
+                canon = file;
+            } else
+            {
+                File canonDir = file.getParentFile().getCanonicalFile();
+                canon = new File(canonDir, file.getName());
+            }
+            return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
+    }
+
+    public static File[] getStorageRoots()
+    {
+        File mnt = new File("/storage");
+        if (!mnt.exists())
+            mnt = new File("/mnt");
+
+        File[] roots = mnt.listFiles(new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.isDirectory() && pathname.exists()
+                        && pathname.canWrite() && !pathname.isHidden()
+                        && !isSymlink(pathname);
+            }
+        });
+        return roots;
+    }
+
+    public static List<File> getStoragePoints(File root)
+    {
+        List<File> matches = new ArrayList<>();
+
+        if (root == null)
+            return matches;
+
+        File[] contents = root.listFiles();
+        if (contents == null)
+            return matches;
+
+        for (File sub : contents)
+        {
+            if (sub.isDirectory())
+            {
+                if (isSymlink(sub))
+                    continue;
+
+                if (sub.exists()
+                    && sub.canWrite()
+                    && !sub.isHidden())
+                {
+                    matches.add(sub);
+                }
+                else
+                {
+                    matches.addAll(getStoragePoints(sub));
+                }
+            }
+        }
+        return matches;
+    }
+
+    public static List<File> getStorageRoots(String[] roots)
+    {
+        List<File> valid = new ArrayList<>();
+        for (String root : roots)
+        {
+            File check = new File(root);
+            if (check.exists())
+            {
+                valid.addAll(getStoragePoints(check));
+            }
+        }
+        return valid;
+    }
+
+    public static int getRotation(int orientation)
+    {
+        switch (orientation)
+        {
+            case 1:
+                return 0;
+            case 3:
+                return 180;
+            case 6:
+                return 90;
+            case 8:
+                return 270;
+            case 90:
+                return 90;
+            case 180:
+                return 180;
+            case 270:
+                return 270;
+            default:
+                return 0;
         }
     }
 }
