@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -7,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
@@ -18,8 +18,10 @@ import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.framework.AsyncTask;
+import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.framework.ViewlessCursorAdapter;
 
 import java.io.IOException;
 
@@ -28,7 +30,7 @@ public class LegacyViewerActivity extends ViewerActivity
 	private static final String TAG = LegacyViewerActivity.class.getSimpleName();
 
 	private ImageViewer mImageViewer;
-	private final MyImageViewerModel mModel = new MyImageViewerModel();
+	private MyImageViewerModel mModel;
 
 	private GLRootView mGLRootView;
 	private GLView mRootPane = new GLView()
@@ -54,11 +56,6 @@ public class LegacyViewerActivity extends ViewerActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        setContentView(R.layout.legacy_layout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
-        setSupportActionBar(toolbar);
-
-        initialize();
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
@@ -67,10 +64,23 @@ public class LegacyViewerActivity extends ViewerActivity
 		mImageViewer.setModel(mModel);
 		mImageViewer.setScaleListener(this);
 		mRootPane.addComponent(mImageViewer);
+		mModel = new MyImageViewerModel(this, null);
 		mModel.requestNextImageWithMeta();
 	}
 
-    @Override
+	@Override
+	public int getContentView()
+	{
+		return R.layout.legacy_layout;
+	}
+
+	@Override
+	protected Cursor getCursor()
+	{
+		return mModel.getCursor();
+	}
+
+	@Override
     protected void lookupViews() {
         super.lookupViews();
         mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
@@ -115,22 +125,23 @@ public class LegacyViewerActivity extends ViewerActivity
 
 	public void loadExif()
 	{
-		if (mImageIndex < 0 || mImageIndex >= mVisibleItems.size())
-			return;
-		MediaItem raw = getCurrentItem();
-		if (raw == null)
-			return;
-
-		new LoadMetadataTask().execute(raw);
+//		if (mImageIndex < 0 || mImageIndex >= mVisibleItems.size())
+//			return;
+//		MediaItem raw = getCurrentItem();
+//		if (raw == null)
+//			return;
+//
+//		new LoadMetadataTask().execute(raw);
+		populateMeta();
 	}
 
     @Override
 	public MediaItem getCurrentItem()
 	{
-		if (mImageIndex < 0 || mImageIndex >= mVisibleItems.size())
+		if (mImageIndex < 0 || mImageIndex >= mModel.getCount())
 		{
 			Toast.makeText(this, "Error 2x01: Failed to load requested image.  If this continues please email details leading to this bug!", Toast.LENGTH_LONG).show();
-			if (mVisibleItems.size() == 0)
+			if (mModel.getCount() == 0)
 			{
 				finish();
 			}
@@ -139,7 +150,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				mImageIndex = 0;
 			}
 		}
-		return mVisibleItems.get(mImageIndex);
+		return new LocalImage(this, mModel.getCursor());
 	}
 
     @Override
@@ -150,8 +161,8 @@ public class LegacyViewerActivity extends ViewerActivity
     @Override
 	protected void updateAfterDelete()
 	{
-		updateViewerItems();
-		if (mVisibleItems.size() == 0)
+//		updateViewerItems();
+		if (mModel.getCount() == 0)
 		{
 			onBackPressed();
 		}
@@ -162,7 +173,7 @@ public class LegacyViewerActivity extends ViewerActivity
 	@Override
 	protected void updateAfterRestore()
 	{
-		updateViewerItems();
+//		updateViewerItems();
 		mModel.refresh();
 	}
 
@@ -188,10 +199,15 @@ public class LegacyViewerActivity extends ViewerActivity
 
 	}
 
-	private class MyImageViewerModel implements ImageViewer.Model
+	private class MyImageViewerModel extends ViewlessCursorAdapter implements ImageViewer.Model
 	{
 		private BitmapRegionDecoder mLargeBitmap;
 		private Bitmap mScreenNails[] = new Bitmap[3]; // prev, curr, next
+
+		public MyImageViewerModel(Context context, Cursor cursor)
+		{
+			super(context, cursor);
+		}
 
 		public BitmapRegionDecoder getLargeBitmap()
 		{
@@ -280,7 +296,7 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void next()
 		{
-			if (mImageIndex >= mVisibleItems.size() - 1)
+			if (mImageIndex >= mCursor.getCount() - 1)
 			{
 				runOnUiThread(new Runnable()
 				{
@@ -374,7 +390,7 @@ public class LegacyViewerActivity extends ViewerActivity
 		{
 			Bitmap[] screenNails = mScreenNails;
 
-			if (mImageIndex >= mVisibleItems.size())
+			if (mImageIndex >= mCursor.getCount())
 			{
 				// swap out the deleted image
 				previous();
@@ -453,9 +469,10 @@ public class LegacyViewerActivity extends ViewerActivity
 			}
 
 			// Next, the next screen nail if not last image
-			if (mScreenNails[INDEX_NEXT] == null && !(mImageIndex >= mVisibleItems.size() - 1))
+			if (mScreenNails[INDEX_NEXT] == null && !(mImageIndex >= mCursor.getCount() - 1))
 			{
-                MediaItem next = mVisibleItems.get(mImageIndex + 1);
+				mCursor.moveToPosition(mImageIndex + 1);
+                MediaItem next = new LocalImage(LegacyViewerActivity.this, mCursor);
 				if (next != null)
 				{
 					SmallImageLoader sml = new SmallImageLoader();
@@ -467,7 +484,8 @@ public class LegacyViewerActivity extends ViewerActivity
 			// Next, the previous screen nail if not the first image
 			if (mScreenNails[INDEX_PREVIOUS] == null && mImageIndex > 0)
 			{
-                MediaItem previous = mVisibleItems.get(mImageIndex - 1);
+				mCursor.moveToPosition(mImageIndex - 1);
+                MediaItem previous = new LocalImage(LegacyViewerActivity.this, mCursor);
 				if (previous != null)
 				{
 					SmallImageLoader sml = new SmallImageLoader();

@@ -92,6 +92,7 @@ public abstract class ImageWorker extends CacheManager
 			// framework and slightly modified. Refer to the docs at the top of the class
 			// for more info on what was changed.
 			task.executeOnExecutor(LibRaw.EXECUTOR, image);
+//			task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, image);
 		}
 	}
 

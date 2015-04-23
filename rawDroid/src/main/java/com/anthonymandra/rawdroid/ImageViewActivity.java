@@ -22,7 +22,6 @@ public class ImageViewActivity extends PhotoPage
     @Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-    	mContentView = R.layout.viewer_layout;
 		super.onCreate(savedInstanceState);
 
         initialize();
@@ -30,8 +29,14 @@ public class ImageViewActivity extends PhotoPage
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
 	}
-    
-	@Override
+
+    @Override
+    public int getContentView()
+    {
+        return R.layout.viewer_layout;
+    }
+
+    @Override
 	protected void updateAfterDelete()
 	{
         mPhotoView.setDeleteOrRestore(true);
@@ -47,8 +52,9 @@ public class ImageViewActivity extends PhotoPage
 
 	private void updateImageSource()
 	{
-		updateViewerItems();
-		notifyContentChanged();
+        //TODO: Does this work?
+//		updateViewerItems();
+//		notifyContentChanged();
 	}
 
 	@Override
@@ -71,7 +77,7 @@ public class ImageViewActivity extends PhotoPage
     @Override
     public void onCommitDeleteImage(MediaItem toDelete)
     {
-        deleteImage(toDelete);
+        deleteImage(toDelete.getUri());
     }
 
     @Override
@@ -135,17 +141,5 @@ public class ImageViewActivity extends PhotoPage
     {
         super.setLicenseState(state);
         mPhotoView.setLicenseState(state);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
-    {
-
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader)
-    {
-
     }
 }

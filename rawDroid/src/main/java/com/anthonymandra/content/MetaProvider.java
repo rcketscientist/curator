@@ -15,15 +15,13 @@ import android.os.ParcelFileDescriptor;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
-import com.anthonymandra.content.Meta.Data;
-
 import java.io.FileNotFoundException;
 import java.util.Locale;
 
 public class MetaProvider extends ContentProvider
 {
 	public static final String DATABASE_NAME = "rawdroid.db";
-	static int DATABASE_VERSION = 7;
+	static int DATABASE_VERSION = 10;
 
 	public static final String META_TABLE_NAME = "meta";
 
@@ -84,11 +82,13 @@ public class MetaProvider extends ContentProvider
 					Meta.Data.ORIENTATION 	    + " INTEGER, " +
 					Meta.Data.MAKE 			    + " TEXT, "	+
 					Meta.Data.URI 			    + " TEXT UNIQUE," 	+
-					Meta.Data.THUMB_HEIGHT	    + " INTEGER," +
-					Meta.Data.THUMB_WIDTH	    + " INTEGER," +
 					Meta.Data.RATING			+ " REAL," +
 					Meta.Data.SUBJECT	    	+ " TEXT," +
-					Meta.Data.LABEL	    		+ " TEXT" +  ");";
+					Meta.Data.LABEL	    		+ " TEXT," +
+					Meta.Data.LENS_MODEL	    + " TEXT," +
+					Meta.Data.DRIVE_MODE	    + " TEXT," +
+					Meta.Data.EXPOSURE_MODE	    + " TEXT," +
+					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT" + ");";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 
@@ -110,11 +110,15 @@ public class MetaProvider extends ContentProvider
 		switch (match)
 		{
 			case META:
-				affected = db.delete(META_TABLE_NAME, (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+				affected = db.delete(META_TABLE_NAME,
+						(!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+						whereArgs);
 				break;
 			case META_ID:
 				long metaId = ContentUris.parseId(uri);
-				affected = db.delete(META_TABLE_NAME, BaseColumns._ID + "=" + metaId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""), whereArgs);
+				affected = db.delete(META_TABLE_NAME,
+						BaseColumns._ID + "=" + metaId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
+						whereArgs);
 				getContext().getContentResolver().notifyChange(uri, null);
 				break;
 			default:
@@ -185,7 +189,7 @@ public class MetaProvider extends ContentProvider
 
         if (rowId > 0) 
         {
-            Uri metaUri = ContentUris.withAppendedId(Data.CONTENT_URI, rowId);
+            Uri metaUri = ContentUris.withAppendedId(Meta.Data.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(metaUri, null);
             return metaUri;
         }

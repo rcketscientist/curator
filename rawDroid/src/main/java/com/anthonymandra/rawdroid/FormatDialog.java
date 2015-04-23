@@ -1,17 +1,26 @@
 package com.anthonymandra.rawdroid;
 
 import android.app.Dialog;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.RawObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FormatDialog extends Dialog
@@ -75,6 +84,7 @@ public class FormatDialog extends Dialog
 			int counter = 0;
 			int total = sourceFiles.size();
 			String format = "%0" + numDigits(total) + "d";
+			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 			if (selected != AdapterView.INVALID_POSITION)
 			{
 				switch (selected)
@@ -84,7 +94,7 @@ public class FormatDialog extends Dialog
 						{
 							++counter;
 							String baseName = customName + "-" + String.format(format, counter);
-							raw.rename(baseName);
+							operations.add(rename(raw, baseName));
 						}
 						break;
 					case 1:
@@ -92,7 +102,7 @@ public class FormatDialog extends Dialog
 						{
 							++counter;
 							String baseName = customName + " (" + String.format(format, counter) + " of " + total + ")";
-							raw.rename(baseName);
+							operations.add(rename(raw, baseName));
 						}
 						break;
 				}
@@ -100,8 +110,35 @@ public class FormatDialog extends Dialog
             if (listener != null)
                 listener.onCompleted();
 
+
+			try
+			{
+				// TODO: If I implement bulkInsert it's faster
+				getContext().getContentResolver().applyBatch(Meta.AUTHORITY, operations);
+			} catch (Exception e)
+			{
+				//TODO: This could automatically refresh.
+				Toast.makeText(getContext(), "ERROR updating gallery.  Please manually refresh.  Please contact me.", Toast.LENGTH_LONG).show();
+			}
+
 			dismiss();
 		}
+	}
+
+	private ContentProviderOperation rename(RawObject toRename, String baseName)
+	{
+		ContentValues c = new ContentValues();
+		String priorUri = toRename.getUri().toString();
+		toRename.rename(baseName);
+
+		c.put(Meta.Data.NAME, toRename.getName());
+		c.put(Meta.Data.URI, toRename.getUri().toString());
+
+		// Create the operation to update the contentprovider with the new name
+		return ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+				.withSelection(Meta.URI_COLUMN + "=?", new String[]{priorUri})
+				.withValues(c)
+				.build();
 	}
 
 	private class CancelListener implements android.view.View.OnClickListener

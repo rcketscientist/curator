@@ -317,5 +317,8 @@
     <string name="undo">UNDO</string>
     <string name="license">License</string>
     <string name="watermark">Watermark ( Pro )</string>
+    <string name="filterTitle">Filter</string>
+    <string name="drawer_open">filter open</string>
+    <string name="drawer_close">filter close</string>
 
 </resources>

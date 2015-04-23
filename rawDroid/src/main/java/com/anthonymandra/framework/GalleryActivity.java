@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -24,8 +23,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
@@ -33,8 +34,11 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.ImageViewActivity;
+import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawdroid.XmpBaseFragment;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -50,12 +54,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-/**
- * Activity that handles a recycling bin and UI updates.
- * 
- * @author amand_000
- * 
- */
 public abstract class GalleryActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@SuppressWarnings("unused")
@@ -106,22 +104,17 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
 	private MetaAlphaCompare metaCompare = new MetaAlphaCompare();
 
-	protected List<File> mFolders = new ArrayList<>();
-	protected List<MediaItem> mRawImages = new ArrayList<>();
-	protected List<MediaItem> mNativeImages = new ArrayList<>();
-	protected List<MediaItem> mXmpFiles = new ArrayList<>();
-	protected List<MediaItem> mUnknownFiles = new ArrayList<>();
-	protected List<MediaItem> mVisibleItems = new ArrayList<>();
-
-	protected File mCurrentPath;
-
     protected ShareActionProvider mShareProvider;
     protected Intent mShareIntent;
-    protected ContentProviderClient mMetaProvider;
     protected Handler licenseHandler;
 
 	// Identifies a particular Loader being used in this component
-	private static final int URL_LOADER = 0;
+	public static final int META_LOADER_ID = 0;
+	public static final String META_BUNDLE_KEY = "meta_bundle";
+	public static final String META_PROJECTION_KEY = "projection";
+	public static final String META_SELECTION_KEY = "selection";
+	public static final String META_SELECTION_ARGS_KEY = "selection_args";
+	public static final String META_SORT_ORDER_KEY = "sort_order";
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -132,9 +125,112 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
         mShareIntent.setType("image/*");
         mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        mMetaProvider = getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
 
-		getLoaderManager().initLoader(URL_LOADER, null, this);
+		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(META_BUNDLE_KEY), this);
+	}
+
+	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp)
+	{
+		StringBuilder selection = new StringBuilder();
+		List<String> selectionArgs = new ArrayList<>();
+		boolean requiresAnd = false;
+
+		if (xmp.label != null && xmp.label.length > 0)
+		{
+			requiresAnd = true;
+			selection.append(makeMultipleSelection(Meta.Data.LABEL, xmp.label.length));
+			for (String label : xmp.label)
+			{
+				selectionArgs.add(label);
+			}
+		}
+		if (xmp.subject.length > 0)
+		{
+			if (requiresAnd)
+				selection.append(" AND ");
+			requiresAnd = true;
+			selection.append(makeMultipleSelection(Meta.Data.SUBJECT, xmp.subject.length));
+			for (String subject : xmp.subject)
+			{
+				selectionArgs.add(subject);
+			}
+		}
+		if (!Double.isNaN(xmp.rating))
+		{
+			if (requiresAnd)
+				selection.append(" AND ");
+
+			selection.append(Meta.Data.RATING).append(" = ?");
+			selectionArgs.add(Double.toString(xmp.rating));
+		}
+
+		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), null);
+	}
+
+	String makeMultipleSelection(String column, int arguments)
+	{
+		StringBuilder selection = new StringBuilder();
+		selection.append(column)
+				.append(" IN (")
+				.append(makePlaceholders(arguments))
+				.append(")");
+		return selection.toString();
+	}
+
+	String makePlaceholders(int len) {
+		StringBuilder sb = new StringBuilder(len * 2 - 1);
+		sb.append("?");
+		for (int i = 1; i < len; i++)
+			sb.append(",?");
+		return sb.toString();
+	}
+
+	/**
+	 * Updates any filled parameters.  Retains existing parameters if null.
+	 * @param projection
+	 * @param selection
+	 * @param selectionArgs
+	 * @param sortOrder
+	 */
+	public void updateMetaLoader(@Nullable String[] projection,@Nullable  String selection, @Nullable  String[] selectionArgs,@Nullable  String sortOrder)
+	{
+		Bundle metaLoader = getCurrentMetaLoaderBundle();
+		if (projection != null)
+			metaLoader.putStringArray(META_PROJECTION_KEY, projection);
+		if (selection != null)
+			metaLoader.putString(META_SELECTION_KEY, selection);
+		if (selectionArgs != null)
+			metaLoader.putStringArray(META_SELECTION_ARGS_KEY, selectionArgs);
+		if (sortOrder != null)
+			metaLoader.putString(META_SORT_ORDER_KEY, sortOrder);
+		getLoaderManager().restartLoader(GalleryActivity.META_LOADER_ID, metaLoader, this);
+	}
+
+	/**
+	 * Gets a bundle of the existing MetaLoader parameters
+	 * @return
+	 */
+	public Bundle getCurrentMetaLoaderBundle()
+	{
+		Loader<Cursor> c = getLoaderManager().getLoader(META_LOADER_ID);
+		CursorLoader cl = (CursorLoader) c;
+		Bundle metaLoader = createMetaLoaderBundle(
+				cl.getProjection(),
+				cl.getSelection(),
+				cl.getSelectionArgs(),
+				cl.getSortOrder()
+		);
+		return metaLoader;
+	}
+
+	public static Bundle createMetaLoaderBundle(String[] projection, String selection, String[] selectionArgs, String sortOrder)
+	{
+		Bundle metaLoader = new Bundle();
+		metaLoader.putString(META_SELECTION_KEY, selection);
+		metaLoader.putStringArray(META_SELECTION_ARGS_KEY, selectionArgs);
+		metaLoader.putString(META_SORT_ORDER_KEY, sortOrder);
+		metaLoader.putStringArray(META_PROJECTION_KEY, projection);
+		return metaLoader;
 	}
 
 	/*
@@ -146,19 +242,34 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
 	{
-	/*
-	 * Takes action based on the ID of the Loader that's being created
-	 */
+		String[] projection = null;
+		String selection = null;
+		String[] selectionArgs = null;
+		String sort = null;
+
+		// Populate the database with filter (selection) from the previous app
+		if (bundle != null)
+		{
+			projection = bundle.getStringArray(META_PROJECTION_KEY);
+			selection = bundle.getString(META_SELECTION_KEY);
+			selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
+			sort = bundle.getString(META_SORT_ORDER_KEY);
+		}
+
+		/*
+		 * Takes action based on the ID of the Loader that's being created
+		 */
 		switch (loaderID) {
-			case URL_LOADER:
+			case META_LOADER_ID:
 				// Returns a new CursorLoader
+
 				return new CursorLoader(
 						this,   				// Parent activity context
 						Meta.Data.CONTENT_URI,  // Table to query
-						null,     				// Projection to return
-						null,            		// No selection clause
-						null,            		// No selection arguments
-						null             		// Default sort order
+						projection,				// Projection to return
+						selection,       		// No selection clause
+						selectionArgs, 			// No selection arguments
+						sort         			// Default sort order
 				);
 			default:
 				// An invalid id was passed in
@@ -187,162 +298,10 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	protected void onDestroy()
 	{
 		super.onDestroy();
-        clearSwapDir();
+		clearSwapDir();
 		if (recycleBin != null)
 			recycleBin.closeCache();
 		recycleBin = null;
-		if (mMetaProvider != null)
-			mMetaProvider.release();
-	}
-
-	protected void updateGalleryItems()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean showXmp = prefs.getBoolean(FullSettingsActivity.KEY_ShowXmpFiles, false);
-		boolean showUnknown = prefs.getBoolean(FullSettingsActivity.KEY_ShowUnknownFiles, false);
-		boolean showNative = prefs.getBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-
-		mVisibleItems.clear();
-		mVisibleItems.addAll(mRawImages);
-		if (showNative)
-			mVisibleItems.addAll(mNativeImages);
-		if (showXmp)
-			mVisibleItems.addAll(mXmpFiles);
-		if (showUnknown)
-			mVisibleItems.addAll(mUnknownFiles);
-
-		if (mVisibleItems.size() == 0 && mVisibleItems.size() < mNativeImages.size())
-		{
-			Toast.makeText(this, R.string.warningGenericImagesOff, Toast.LENGTH_LONG).show();
-		}
-	}
-
-	protected int findMediaByFilename(String filename)
-	{
-		for (RawObject raw : mRawImages)
-		{
-			if (raw.getFilePath().equals(filename))
-			{
-				return mRawImages.indexOf(raw);
-			}
-		}
-
-		for (RawObject generic : mNativeImages)
-		{
-			if (generic.getFilePath().equals(filename))
-			{
-				return mRawImages.size() + mNativeImages.indexOf(generic);
-			}
-		}
-
-		return FILE_NOT_FOUND;
-	}
-
-    protected int findVisibleByFilename(String filename)
-    {
-        for (RawObject media: mVisibleItems)
-        {
-            if (media.getFilePath().equals(filename))
-            {
-                return mVisibleItems.indexOf(media);
-            }
-        }
-
-        return FILE_NOT_FOUND;
-    }
-
-
-    protected int getImageId(RawObject media)
-	{
-		if (mRawImages.contains(media))
-		{
-			return mRawImages.indexOf(media);
-		}
-		if (mNativeImages.contains(media))
-		{
-			return mRawImages.size() + mNativeImages.indexOf(media);
-		}
-		return FILE_NOT_FOUND;
-	}
-
-	protected void clearSubLists()
-	{
-		mFolders.clear();
-		mXmpFiles.clear();
-		mNativeImages.clear();
-		mRawImages.clear();
-		mUnknownFiles.clear();
-	}
-
-	protected boolean setPath(File newPath)
-	{
-		mCurrentPath = newPath;
-		return processLocalFolder();
-	}
-
-	protected void setSingleImage(File image)
-	{
-		addFile(image, false);
-	}
-
-    private void addFileInternal(File file)
-    {
-        if (rawFilter.accept(file))
-        {
-            mRawImages.add(new LocalImage(this, file));
-        }
-        else if (nativeFilter.accept(file))
-        {
-            mNativeImages.add(new LocalImage(this, file));
-        }
-        else if (xmpFilter.accept(file))
-        {
-            mXmpFiles.add(new LocalImage(this, file));
-        }
-        else if (file.isDirectory() && !file.isHidden() && file.canRead())
-        {
-            mFolders.add(file);
-        }
-        else
-        {
-            mUnknownFiles.add(new LocalImage(this, file));
-        }
-    }
-
-    private void sortCollections()
-    {
-        Collections.sort(mFolders, alphaCompare);
-        Collections.sort(mRawImages, metaCompare);
-        Collections.sort(mNativeImages, metaCompare);
-        Collections.sort(mXmpFiles, metaCompare);
-        Collections.sort(mUnknownFiles, metaCompare);
-    }
-
-	protected boolean processLocalFolder()
-	{
-		if (!mCurrentPath.exists() || !mCurrentPath.isDirectory() || mCurrentPath.listFiles() == null)
-		{
-			return false;
-		}
-
-		clearSubLists();
-
-		for (File file : mCurrentPath.listFiles())
-		{
-            addFileInternal(file);
-		}
-
-        sortCollections();
-
-		return true;
-	}
-
-	protected void addFile(File file, boolean sort)
-	{
-        addFileInternal(file);
-
-        if (sort)
-            sortCollections();
 	}
 
 	/**
@@ -436,7 +395,8 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 					File toRestore = new File(filename);
 					BufferedInputStream restore = new BufferedInputStream(recycleBin.getFile(filename));
 					Util.write(toRestore, restore);
-					addFile(toRestore, true);
+//					addFile(toRestore, true);
+					addDatabaseReference(new LocalImage(GalleryActivity.this, toRestore));
 				}
 				// Ideally just update the sub lists on each restore.
 				updateAfterRestore();
@@ -466,18 +426,64 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		return new File(mSwapDir, filename);
 	}
 
+	protected Intent getViewerIntent()
+	{
+		Intent viewer = new Intent();
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		if (!settings.contains(FullSettingsActivity.KEY_UseLegacyViewer))
+		{
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean(FullSettingsActivity.KEY_UseLegacyViewer, !Util.hasHoneycomb());
+			editor.apply();
+		}
+
+		if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
+		{
+			viewer.setClass(this, LegacyViewerActivity.class);
+		}
+		else
+		{
+			viewer.setClass(this, ImageViewActivity.class);
+		}
+		return viewer;
+	}
+
 	public static File getKeywordFile(Context context)
 	{
 		return new File(context.getFilesDir().getAbsolutePath(), "keywords.txt");
 	}
 
-	protected boolean removeImage(RawObject toRemove)
+	protected boolean removeDatabaseReference(RawObject toRemove)
 	{
-		return mRawImages.remove(toRemove)
-		    || mNativeImages.remove(toRemove)
-		    || mXmpFiles.remove(toRemove)
-		    || mUnknownFiles.remove(toRemove)
-		    || mVisibleItems.remove(toRemove);
+		int rowsDeleted = getContentResolver().delete(Meta.Data.CONTENT_URI, Meta.Data.URI + " = ?", new String[] {toRemove.getUri().toString()});
+		return rowsDeleted > 0;
+	}
+
+	protected boolean addDatabaseReference(RawObject toAdd)
+	{
+		Uri created = getContentResolver().insert(Meta.Data.CONTENT_URI, ImageUtils.getContentValues(this, toAdd.getUri()));
+		return created != null;
+	}
+
+
+	/**
+	 * Placeholder class TODO: Remove all references
+	 */
+	private List<MediaItem> getImageListFromUriList(List<Uri> uris)
+	{
+		List<MediaItem> images = new ArrayList<>();
+		for (Uri u: uris)
+			images.add(getImageFromUri(u));
+		return images;
+	}
+
+	/**
+	 * Placeholder class TODO: Remove all references
+	 */
+	private MediaItem getImageFromUri(Uri uri)
+	{
+		File f = new File(uri.getPath());
+		return  new LocalImage(this, f);
 	}
 
 	/**
@@ -487,15 +493,15 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	 *            file to delete.
 	 * @return true currently (possibly return success later on)
 	 */
-	protected void deleteImage(final MediaItem toDelete)
+	protected void deleteImage(final Uri toDelete)
 	{
-		List<MediaItem> itemsToDelete = new ArrayList<>();
+		List<Uri> itemsToDelete = new ArrayList<>();
 		itemsToDelete.add(toDelete);
 		deleteImages(itemsToDelete);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void deleteImages(final List<MediaItem> itemsToDelete)
+	protected void deleteImages(final List<Uri> itemsToDelete)
 	{
 		if (itemsToDelete.size() == 0)
 		{
@@ -509,9 +515,11 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		Boolean justDelete;
 		String message;
 		long spaceRequired = 0;
-		for (RawObject toDelete : itemsToDelete)
+		for (Uri toDelete : itemsToDelete)
 		{
-			spaceRequired += toDelete.getFileSize();
+			File f = new File(toDelete.getPath());
+			if (f.exists())
+				spaceRequired += f.length();
 		}
 
 		// Go straight to delete if
@@ -571,13 +579,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			new RecycleTask().execute(itemsToDelete);
 		}
 	}
-
-    protected void requestWebIntent()
-    {
-        Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse("http://www.novoda.com"));
-        startActivity(viewIntent);
-    }
-
+	
     @TargetApi(21)
     protected void requestEmailIntent()
     {
@@ -611,7 +613,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	 */
 	protected abstract void updateAfterRestore();
 
-	protected class RecycleTask extends AsyncTask<List<MediaItem>, Integer, Boolean> implements OnCancelListener
+	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -621,16 +623,16 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<MediaItem>... params)
+		protected Boolean doInBackground(final List<Uri>... params)
 		{
-			List<MediaItem> itemsToDelete = params[0];
+			List<MediaItem> itemsToDelete = getImageListFromUriList(params[0]);
 			mProgressDialog.setMax(itemsToDelete.size());
 			final List<RawObject> removed = new ArrayList<>();
 
 			for (RawObject image : itemsToDelete)
 			{
 				recycleBin.addFile(image);
-				removeImage(image);
+				removeDatabaseReference(image);
 			}
 
 			return removed.size() == itemsToDelete.size();
@@ -663,60 +665,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		}
 	}
 
-    protected class IndexTask extends AsyncTask<List<MediaItem>, Void, Void> implements OnCancelListener
-    {
-        private int currentItem;
-        public ProgressDialog indexDialog;
-
-        @Override
-        protected void onPreExecute()
-        {
-            indexDialog.setTitle(R.string.indexing);
-            indexDialog.setMessage(getString(R.string.indexingSummary));
-        }
-
-        @Override
-        protected Void doInBackground(final List<MediaItem>... params)
-        {
-            List<MediaItem> itemsToIndex = params[0];
-            int count = 1;
-            int total = itemsToIndex.size();
-            for (MediaItem image : itemsToIndex)
-            {
-                image.readMetadata();
-                publishProgress();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result)
-        {
-            mProgressDialog.dismiss();
-            updateAfterDelete();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values)
-        {
-            indexDialog.incrementProgressBy(1);
-        }
-
-        @Override
-        protected void onCancelled()
-        {
-//            updateAfterDelete();
-        }
-
-        @Override
-        public void onCancel(DialogInterface dialog)
-        {
-            // Need to cancel onPause()?
-//            this.cancel(true);
-        }
-    }
-
-	protected class DeleteTask extends AsyncTask<List<MediaItem>, Integer, Boolean> implements OnCancelListener
+	protected class DeleteTask extends AsyncTask<List<Uri>, Integer, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -728,9 +677,9 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<MediaItem>... params)
+		protected Boolean doInBackground(final List<Uri>... params)
 		{
-			List<MediaItem> itemsToDelete = params[0];
+			List<MediaItem> itemsToDelete = getImageListFromUriList(params[0]);
 			mProgressDialog.setMax(itemsToDelete.size());
 			final List<RawObject> removed = new ArrayList<>();
 
@@ -738,7 +687,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			{
 				if (image.delete())
 				{
-					removeImage(image);
+					removeDatabaseReference(image);
 					removed.add(image);
 				}
 			}
@@ -875,12 +824,8 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		@Override
 		protected Void doInBackground(File... params)
 		{
-			//TODO: Creation of an object here is unnecessary (did LocalImage just become static?)
-			MediaItem item = new LocalImage(GalleryActivity.this, params[0]);
-			item.readMetadata();
-			item.getContentValues();
 			mContentProviderOperations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
-					.withValues(item.getContentValues())
+					.withValues(ImageUtils.getContentValues(GalleryActivity.this, Uri.fromFile(params[0])))
 					.build());
 			++parsedImages;
 			publishProgress();
@@ -932,7 +877,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		protected void onPostExecute(Void aVoid)
 		{
 			getSupportActionBar().setSubtitle("");
-			getLoaderManager().restartLoader(URL_LOADER, null, GalleryActivity.this);
+			getLoaderManager().restartLoader(META_LOADER_ID, null, GalleryActivity.this);
 		}
 	}
 
@@ -964,7 +909,9 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			for (String raw : rawImages)
 			{
 				ParseMetaTask pmt = new ParseMetaTask();
+//				pmt.execute(new File(raw));
 				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
+//				pmt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new File(raw));
 			}
 
 			return null;

@@ -2,6 +2,7 @@ package com.anthonymandra.framework;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,7 @@ import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.dcraw.TiffDecoder;
@@ -44,6 +46,14 @@ public class LocalImage extends MetaMedia {
 	public LocalImage(Context context, File image) {
 		super(context, Uri.fromFile(image), nextVersionNumber());
 		mImage = image;
+	}
+
+	public LocalImage(Context context, Uri image) {
+		this(context, new File(image.getPath()));
+	}
+
+	public LocalImage(Context context, Cursor image) {
+		this(context, Uri.parse(image.getString(Meta.URI_COLUMN)));
 	}
 
 	// TEMPORARY to avoid full rewrite during testing
@@ -269,7 +279,7 @@ public class LocalImage extends MetaMedia {
 
 	private File getXmpFile() {
 		if (mXmp == null)
-            mXmp = getAssociatedFile("xmp");
+			mXmp = getAssociatedFile("xmp");
 
 		return mXmp;
 	}
@@ -318,12 +328,7 @@ public class LocalImage extends MetaMedia {
 	@Override
 	public boolean copy(File destination) {
 		if (mXmp != null) {
-			File xmpDest = new File(destination, mXmp.getName());
-			BufferedInputStream xmpStream = getXmpInputStream();
-			if (xmpStream != null) {
-				Util.copy(xmpStream, xmpDest);
-				Utils.closeSilently(xmpStream);
-			}
+			Util.copy(mImage, new File(destination, mXmp.getName()));
 		}
 
 		if (mImage == null) {

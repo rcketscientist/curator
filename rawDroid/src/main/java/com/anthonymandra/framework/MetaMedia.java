@@ -76,7 +76,7 @@ public abstract class MetaMedia extends MediaItem
         }
         catch (FileNotFoundException e)
         {
-            Toast.makeText(mContext, "XMP file could not be created.  Thank Google for disabling write access in Android 4.4+.  You can root to fix, or use a card reader.", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "XMP file could not be created.  Google disabled write access in Android 4.4+.  You can root to fix, or use a card reader.", Toast.LENGTH_LONG).show();
         }
         // readXmp(); // When we delete fields we must reread to update.
 	}
@@ -536,8 +536,6 @@ public abstract class MetaMedia extends MediaItem
 		cv.put(Meta.Data.WHITE_BALANCE, getWhiteBalance());
 		cv.put(Meta.Data.WIDTH, width);
 		cv.put(Meta.Data.URI, getUri().toString());
-		cv.put(Meta.Data.THUMB_HEIGHT, thumbHeight);
-		cv.put(Meta.Data.THUMB_WIDTH, thumbWidth);
 		cv.put(Meta.Data.RATING, getRating());
 		cv.put(Meta.Data.SUBJECT, convertArrayToString(getSubject()));
 		cv.put(Meta.Data.LABEL, getLabel());
@@ -579,8 +577,6 @@ public abstract class MetaMedia extends MediaItem
 	{
 		width = meta.getInt(Meta.WIDTH_COLUMN);
 		height = meta.getInt(Meta.HEIGHT_COLUMN);
-		thumbWidth = meta.getInt(Meta.THUMB_WIDTH_COLUMN);
-		thumbHeight = meta.getInt(Meta.THUMB_HEIGHT_COLUMN);
 		orientLegacy = meta.getInt(Meta.ORIENTATION_COLUMN);
 		apertureLegacy = meta.getString(Meta.APERTURE_COLUMN);
 		shutterLegacy = meta.getString(Meta.EXPOSURE_COLUMN);		

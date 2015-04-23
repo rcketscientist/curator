@@ -106,9 +106,6 @@ public class PhotoView extends GLView {
         // MediaItem, depending on the value of focus hint direction.
         int FOCUS_HINT_NEXT = 0;
         int FOCUS_HINT_PREVIOUS = 1;
-        void setFocusHintDirection(int direction);
-        void setFocusHintPath(Uri path);
-
         MediaItem getCurrentItem();
     }
 
@@ -1059,8 +1056,6 @@ public class PhotoView extends GLView {
         mFilmMode = enabled;
         mPositionController.setFilmMode(mFilmMode);
         mModel.setNeedFullImage(!enabled);
-        mModel.setFocusHintDirection(
-                mFilmMode ? Model.FOCUS_HINT_PREVIOUS : Model.FOCUS_HINT_NEXT);
         mListener.onFilmModeChanged(enabled);
     }
 

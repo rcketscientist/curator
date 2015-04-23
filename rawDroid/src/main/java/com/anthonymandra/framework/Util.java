@@ -807,27 +807,4 @@ public class Util
         }
         return valid;
     }
-
-    public static int getRotation(int orientation)
-    {
-        switch (orientation)
-        {
-            case 1:
-                return 0;
-            case 3:
-                return 180;
-            case 6:
-                return 90;
-            case 8:
-                return 270;
-            case 90:
-                return 90;
-            case 180:
-                return 180;
-            case 270:
-                return 270;
-            default:
-                return 0;
-        }
-    }
 }

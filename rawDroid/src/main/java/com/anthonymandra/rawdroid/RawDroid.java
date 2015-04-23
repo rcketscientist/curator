@@ -3,16 +3,18 @@ package com.anthonymandra.rawdroid;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -29,12 +31,13 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,8 +50,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Checkable;
 import android.widget.CursorAdapter;
 import android.widget.GridView;
@@ -56,7 +57,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,11 +66,13 @@ import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
+import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.RawObject;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.Util;
+import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.widget.LoadingImageView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
@@ -88,7 +90,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -149,8 +150,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	private static final int REQUEST_EXPORT_THUMB_DIR = 15;
     private static final int REQUEST_UPDATE_PHOTO = 16;
 
-	// File system objects
-	private ArrayAdapter<SpinnerFile> navAdapter;
+	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
+
 	public static final File START_PATH = new File("/mnt");
 	private static final File ROOT = new File("/");
 	private Parcelable gridState;
@@ -181,6 +182,9 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
     private Toolbar mToolbar;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private DrawerLayout mDrawerLayout;
+	private XmpFilterFragment mXmpFilter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -191,6 +195,18 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.drawable.icon);
+
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerToggle = new ActionBarDrawerToggle(
+				this, mDrawerLayout,
+				mToolbar,
+				R.string.drawer_open,  /* "open drawer" description */
+				R.string.drawer_close  /* "close drawer" description */);
+
+		// Set the drawer toggle as the DrawerListener
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
 		doFirstRun();
 
@@ -238,9 +254,18 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		setImageCountTitle();
 
+		loadXmpFilter();
+
 		//TODO: Kills the image load
 //		if (Util.hasLollipop())
 //			requestWritePermission();
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState)
+	{
+		super.onPostCreate(savedInstanceState);
+		mDrawerToggle.syncState();
 	}
 
 	private void doFirstRun()
@@ -280,6 +305,35 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
             builder.show();
         }
+	}
+
+	private void loadXmpFilter()
+	{
+		// Do I need to remove it?
+		if (mXmpFilter != null)
+		{
+			FragmentManager fm = getFragmentManager();
+			FragmentTransaction ft = fm.beginTransaction();
+			ft.remove(getFragmentManager().findFragmentByTag(XmpEditFragment.FRAGMENT_TAG));
+			ft.commitAllowingStateLoss();
+			fm.executePendingTransactions();
+		}
+
+		mXmpFilter = new XmpFilterFragment();
+		mXmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.XmpFilterChangedListener()
+		{
+			@Override
+			public void onXmpFilterChanged(XmpBaseFragment.XmpValues xmp)
+			{
+				updateMetaLoaderXmp(xmp);
+			}
+		});
+
+		FragmentManager fm = getFragmentManager();
+		FragmentTransaction ft = fm.beginTransaction();
+		ft.add(R.id.xmpFilterContainer, mXmpFilter, XmpEditFragment.FRAGMENT_TAG);
+		ft.commitAllowingStateLoss();
+		fm.executePendingTransactions();
 	}
 
 	private void getKeywords()
@@ -324,24 +378,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			{
 				e.printStackTrace();
 			}
-		}
-	}
-
-	/**
-	 * Notifies the gallery that data has changed, generally called from {@link #updateLocalFiles()}
-	 */
-	private void updateGallery()
-	{
-		//TODO: Doubt this is needed going forward
-		if (mGalleryAdapter != null)
-		{
-			runOnUiThread(new Runnable()
-			{
-				public void run()
-				{
-					mGalleryAdapter.notifyDataSetChanged();
-				}
-			});
 		}
 	}
 
@@ -430,16 +466,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             case REQUEST_UPDATE_PHOTO:
                 if (resultCode == RESULT_OK && data != null)
                 {
-                    handlePhotoUpdate(data.getData());
+                    handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0));
                 }
 		}
 	}
 
-    private void handlePhotoUpdate(Uri photo)
+    private void handlePhotoUpdate(int index)
     {
-        int index = findMediaByFilename(photo.getPath());
-        if (index > 0)
-            mImageGrid.smoothScrollToPosition(index);
+		mImageGrid.smoothScrollToPosition(index);
     }
 
 	private void handleImportDirResult(final String destinationPath)
@@ -450,11 +484,12 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             showWriteAccessError();
         }
 
-		if (destination.equals(mCurrentPath))
-		{
-			Toast.makeText(this, R.string.warningSourceEqualsDestination, Toast.LENGTH_LONG).show();
-			return;
-		}
+		//TODO: Confirm this still works (code that should handle is in the copy task)
+//		if (destination.equals(mCurrentPath))
+//		{
+//			Toast.makeText(this, R.string.warningSourceEqualsDestination, Toast.LENGTH_LONG).show();
+//			return;
+//		}
 
 		long importSize = getSelectedImageSize();
 		if (destination.getFreeSpace() < importSize)
@@ -545,12 +580,9 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);	//TODO: Does this clear?
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
-			case R.id.gallery_usb:
-//				requestUsb();
-				return true;
 			case R.id.context_delete:
 				storeSelectionForIntent();
-				deleteImages(getImageListFromUriList(mItemsForIntent));
+				deleteImages(mItemsForIntent);
 				return true;
 			case R.id.contextExportThumbs:
 				storeSelectionForIntent();
@@ -569,12 +601,10 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				return true;
 			case R.id.gallerySelectAll:
             case R.id.contextSelectAll:
-				mGalleryAdapter.selectAll();
+				selectAll();
 				return false;
-			case R.id.gallerySearch:
+			case R.id.galleryRefresh:
 				scanRawFiles();
-//				SearchTask st = new SearchTask();
-//				st.execute();
 				return true;
 			case R.id.galleryContact:
 				requestEmailIntent();
@@ -585,6 +615,9 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			case R.id.galleryAbout:
 				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
 				changeLogDialog.show(Constants.VariantCode == 8);
+				return true;
+			case R.id.gallerySd:
+				requestWritePermission();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -637,39 +670,31 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 	private void requestImportImageLocation()
 	{
-        Intent intent;
-//        if (Util.hasLollipop())
-//        {
-//            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-//            startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
-//        }
-//        else
-//        {
-            intent = new Intent(this, FileManagerActivity.class);
-            intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
-//            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
+        Intent intent = new Intent(this, FileManagerActivity.class);
+		intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
 
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
-            File importLocation = mCurrentPath;
-            if (recentImport != null)
-            {
-                importLocation = new File(recentImport);
-                if (!importLocation.exists())
-                {
-                    importLocation = mCurrentPath;
-                }
-            }
-            if (importLocation == null)
-                importLocation = START_PATH;
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
 
-            // Construct URI from file name.
-            intent.setData(Uri.fromFile(importLocation));
+		//TODO: Better start location?
+		File importLocation = ROOT;
+		if (recentImport != null)
+		{
+			importLocation = new File(recentImport);
+			if (!importLocation.exists())
+			{
+				importLocation = ROOT;
+			}
+		}
+		if (importLocation == null)
+			importLocation = START_PATH;
 
-            // Set fancy title and button (optional)
-            intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
-            intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
-//        }
+		// Construct URI from file name.
+		intent.setData(Uri.fromFile(importLocation));
+
+		// Set fancy title and button (optional)
+		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
+		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
 
 		try
 		{
@@ -684,47 +709,29 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
     private void requestExportThumbLocation()
     {
-        Intent intent;
-//        if (Util.hasLollipop())
-//        {
-//            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-//            startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
-//        }
-//        else
-//        {
-//            intent = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
-            intent = new Intent(this, FileManagerActivity.class);
-            intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-            String recentExport = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
+        Intent intent = new Intent(this, FileManagerActivity.class);
+		intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		String recentExport = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
 
-            File exportLocation = mCurrentPath;
-            if (recentExport != null)
-            {
-                exportLocation = new File(recentExport);
-                if (!exportLocation.exists())
-                {
-                    exportLocation = mCurrentPath;
-                }
-            }
+		//TODO: Better start location?
+		File exportLocation = ROOT;
+		if (recentExport != null)
+		{
+			exportLocation = new File(recentExport);
+			if (!exportLocation.exists())
+			{
+				exportLocation = ROOT;
+			}
+		}
 
-            // Construct URI from file name.
-            intent.setData(Uri.fromFile(exportLocation));
+		// Construct URI from file name.
+		intent.setData(Uri.fromFile(exportLocation));
 
-            // Set fancy title and button (optional)
-            intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
-            intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
-//        }
-
-        try
-        {
-            startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
-        }
-        catch (ActivityNotFoundException e)
-        {
-            // No compatible file manager was found.
-            Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
-        }
+		// Set fancy title and button (optional)
+		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
+		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
+		startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
     }
 
 	private void requestSettings()
@@ -736,30 +743,15 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	@Override
 	protected void updateAfterDelete()
 	{
-		updateLocalFiles();
+		//TODO: Does the database update?
+//		updateLocalFiles();
 	}
 
 	@Override
 	protected void updateAfterRestore()
 	{
-		updateLocalFiles();
-	}
-
-	/**
-	 * Reprocess the files and updates the gallery
-	 */
-	protected void updateLocalFiles()
-	{
-		// if (processLocalFolder())
-		// {
-		updateGalleryItems();
-		updateGallery();
-		// }
-		// else
-		// {
-		// Toast.makeText(this, R.string.warningInvalidPath, Toast.LENGTH_LONG).show();
-		// updatePath(START_PATH);
-		// }
+		//TODO: Does the database update?
+//		updateLocalFiles();
 	}
 
 	@Override
@@ -816,36 +808,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		return false;
 	}
 
-	static class ViewHolder
-	{
-		public TextView filename;
-		public LoadingImageView image;
-	}
-
-	/**
-	 * Extension of {@link File} that overrides toString to return name as opposed to path.
-	 * 
-	 * @author amand_000
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	private class SpinnerFile extends File
-	{
-		public SpinnerFile(String path)
-		{
-			super(path);
-		}
-
-		@Override
-		public String toString()
-		{
-			if (this.getName().equals(""))
-				return "root";
-			else
-				return this.getName();
-		}
-	}
-
 	private final class GalleryActionMode implements ActionMode.Callback
 	{
 		@Override
@@ -892,12 +854,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 	public class GalleryAdapter extends CursorAdapter
 	{
+		//TODO: prepopulate colors
 		private final Context mContext;
 		private final LayoutInflater mInflater;
 		protected int mItemHeight = 0;
 		protected int mNumColumns = 0;
 		protected GridView.LayoutParams mImageViewLayoutParams;
 		private Set<Uri> mSelectedItems = new HashSet<>();
+		private Set<Long> mSelectedIds = new HashSet<>();
 		private TreeSet<Integer> mSelectedPositions = new TreeSet<>();
 
 		public GalleryAdapter(Context context, Cursor c)
@@ -944,14 +908,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			RatingBar rating = (RatingBar) view.getTag(R.id.galleryRatingBar);
 			rating.setRating(cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING)));
 
-			Uri uri = Uri.parse(cursor.getString(cursor.getColumnIndex(Meta.Data.URI)));
-			String labelString = cursor.getString(cursor.getColumnIndex(Meta.Data.LABEL));
-			int rotation = Util.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.Data.ORIENTATION)));
+			Uri uri = Uri.parse(cursor.getString(Meta.URI_COLUMN));
+			String labelString = cursor.getString(Meta.LABEL_COLUMN);
+			int rotation = ImageUtils.getRotation(cursor.getInt(Meta.ORIENTATION_COLUMN));
 			imageView.setRotation(rotation);
 
 			if (labelString != null)
 			{
-				switch (labelString)
+				switch (labelString.toLowerCase())
 				{
 					case "purple":
 						view.setBackgroundColor(getResources().getColor(R.color.startPurple));
@@ -1088,7 +1052,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		/**
 		 * Add a selection without updating the view
-		 * This will genereally require a call to notifyDataSetChanged()
+		 * This will generally require a call to notifyDataSetChanged()
 		 * @param uri of selection
 		 * @param position of selection
 		 */
@@ -1096,12 +1060,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		{
 			mSelectedItems.add(uri);
 			mSelectedPositions.add(position);
+			mSelectedIds.add(getItemId(position));
 		}
 
 		private void removeSelection(View view, Uri uri, int position)
 		{
 			mSelectedItems.remove(uri);
 			mSelectedPositions.remove(position);
+			mSelectedIds.remove(getItemId(position));
 			((Checkable)view).setChecked(false);
 		}
 
@@ -1152,7 +1118,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		public void selectAll()
 		{
-			startContextualActionBar();
 			if (getCursor().moveToFirst())
 			{
 				do
@@ -1167,15 +1132,21 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		public void startMultiSelectMode()
 		{
-			mGalleryAdapter.clearSelection(); // Ensure we don't have any stragglers
+			clearSelection(); // Ensure we don't have any stragglers
 			multiSelectMode = true;
 		}
 
 		public void endMultiSelectMode()
 		{
 			multiSelectMode = false;
-			mGalleryAdapter.clearSelection();
+			clearSelection();
 		}
+	}
+
+	public void selectAll()
+	{
+		startContextualActionBar();
+		mGalleryAdapter.selectAll();
 	}
 
 	private void startContextualActionBar()
@@ -1224,22 +1195,24 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             return;
         }
 
-        Intent viewer = new Intent(this, ViewerChooser.class);
-        viewer.setData(uri);
+		Intent viewer = getViewerIntent();
+		viewer.setData(uri);
+
+		Bundle options = new Bundle();
         if (Util.hasJellyBean())
         {
             // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
             // show plus the thumbnail image in GridView is cropped. so using
             // makeScaleUpAnimation() instead.
-            ActivityOptions options =
-                    ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
-            startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options.toBundle());
-        }
-        else
-        {
-            startActivityForResult(viewer, REQUEST_UPDATE_PHOTO);
+            options.putAll(
+					ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
         }
 
+		Bundle metaLoader = getCurrentMetaLoaderBundle();
+		viewer.putExtra(META_BUNDLE_KEY, metaLoader);
+		viewer.putExtra(ViewerActivity.VIEWER_IMAGE_INDEX, position);
+
+		startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options);
 	}
 
 	@Override
@@ -1265,6 +1238,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	private class CopyImageTask extends AsyncTask<List<MediaItem>, String, Boolean> implements OnCancelListener
 	{
 		private ProgressDialog importProgress;
+		private List<String> skipped = new ArrayList<>();
 		private File mDestination;
 		List<String> failed = new ArrayList<>();
 
@@ -1296,6 +1270,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			for (MediaItem toCopy : copyList)
 			{
 				publishProgress(toCopy.getName());
+				// Skip a file if it's the same location
+				File intendedDestination = new File(mDestination, toCopy.getName());
+				if (intendedDestination.exists())
+				{
+					skipped.add(intendedDestination.getName());
+					continue;
+				}
+
 				boolean result = toCopy.copy(mDestination);
 				if (!result)
 				{
@@ -1390,7 +1372,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             if (Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
             	processWatermark = true;
-                watermark = Util.getDemoWatermark(RawDroid.this, copyList.get(0).getThumbWidth());
+				//TODO: Since this is calling Width it's only accurate if we use full decode.
+                watermark = Util.getDemoWatermark(RawDroid.this, copyList.get(0).getWidth());
                 waterData = Util.getBitmapBytes(watermark);
                 waterWidth = watermark.getWidth();
                 waterHeight = watermark.getHeight();
@@ -1480,7 +1463,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	public void runTutorial()
 	{
         tutorialStage = 0;
-		previousPath = mCurrentPath;
+		//FIXME
+//		previousPath = mCurrentPath;
         File tutorialDirectory = Util.getDiskCacheDir(this, "tutorial");
         if (!tutorialDirectory.exists())
         {
@@ -1561,10 +1545,11 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
                     setTutorialNoShowcase();
 					break;
 				case 5: // Find Images
+					// FIXME: NOT NEEDED
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialFindTitle));
                     tutorial.setContentText(getString(R.string.tutorialFindUSBText));
-                    setTutorialActionView(R.id.gallery_usb, false);
+//                    setTutorialActionView(R.id.gallery_usb, false);
 					break;
 				case 6: // Find Import
                     closeOptionsMenu(); //if overflow was shown
@@ -1585,7 +1570,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				case 9: // Find Images
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindImagesText));
-                    setTutorialActionView(R.id.gallerySearch, false);
+                    setTutorialActionView(R.id.galleryRefresh, false);
 					break;
 				case 10: // Long Select
                     tutorial.setScaleMultiplier(1.5f);
@@ -1852,7 +1837,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
                 || key.equals(FullSettingsActivity.KEY_ShowNativeFiles)
                 || key.equals(FullSettingsActivity.KEY_ShowUnknownFiles))
 		{
-			updateLocalFiles();
+			//FIXME: Setting currently useless
+//			updateLocalFiles();
 		}
 	}
 }

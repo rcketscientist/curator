@@ -8,16 +8,17 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -34,14 +35,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.RawDroid;
-import com.anthonymandra.rawdroid.ViewerChooser;
-import com.anthonymandra.rawdroid.XmpFragment;
+import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.widget.HistogramView;
 
 import org.openintents.filemanager.FileManagerActivity;
@@ -62,12 +63,13 @@ public abstract class ViewerActivity extends GalleryActivity implements
     protected static final int REQUEST_CODE_KEYWORDS = 2;
     protected static final int REQUEST_CODE_EDIT = 3;
 
+    public static String VIEWER_IMAGE_INDEX = "viewer_image";
+
     protected HistogramView histView;
     protected View metaFragment;
     protected View navFragment;
     protected View viewerLayout;
     protected View metaPanel;
-    protected ImageButton buttonRotate;
     protected ImageButton buttonPrev;
     protected ImageButton buttonNext;
     protected View navigationPanel;
@@ -112,7 +114,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     protected Timer autoHide;
 
     protected boolean showSidebar = false;
-    protected XmpFragment xmpFrag;
+    protected XmpEditFragment xmpFrag;
 
     protected boolean isInterfaceHidden;
 
@@ -131,20 +133,24 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
-
         super.onCreate(savedInstanceState);
-        mImageIndex = setPathFromIntent();
+        setContentView(getContentView());
+        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
+        setSupportActionBar(toolbar);
+        initialize();
 
-        if (mImageIndex == -1)
-        {
-            Toast.makeText(this, "Unable to locate imported image, restarting...", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, RawDroid.class));
-            finish();
-        }
-
+        mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, 0);
         licenseHandler = new ViewerLicenseHandler(this);
     }
+
+
+    /**
+     * Subclasses must define the layout id here.  It will be loaded in {@link #onCreate}.
+     * The layout should conform to viewer template (xmp, meta, historgram, etc).
+     * @return The resource id of the layout to load
+     */
+    public abstract int getContentView();
+    protected abstract Cursor getCursor();
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
@@ -213,72 +219,76 @@ public abstract class ViewerActivity extends GalleryActivity implements
         displayHeight = metrics.heightPixels;
     }
 
-    protected int setPathFromIntent()
-    {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        Uri data = getIntent().getData();
-        if (data == null)
-        {
-            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-            finish();
-        }
-
-        String path;
-        if (data.getAuthority().equals(MediaStore.AUTHORITY))
-        {
-            //Attempt to acquire the file
-            path = Util.getRealPathFromURI(this, data);
-        }
-        else
-        {
-            path = data.getPath();
-        }
-
-        @SuppressWarnings("ConstantConditions")
-        File input = new File(path);
-        if (!input.exists())
-        {
-            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-            finish();
-        }
-
-        if (Util.isNative(input))
-        {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-            editor.apply();
-        }
-
-        int indexHint;
-        if (input.isDirectory())
-        {
-            setPath(input);
-        }
-        else
-        {
-            File parent = input.getParentFile();
-            if (parent.exists())
-                setPath(parent);
-            else
-                setSingleImage(input);
-        }
-
-        updateViewerItems();
-
-        indexHint = findVisibleByFilename(input.getPath());
-        if (indexHint == FILE_NOT_FOUND)
-        {
-            indexHint = 0;
-            if (mVisibleItems.size() == 0)
-            {
-                Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-                finish();
-            }
-        }
-
-        return indexHint;
-    }
+    //TODO: If I revive external open then we need MediaStore/Path code
+//    protected int setPathFromIntent()
+//    {
+//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//
+//        Uri data = getIntent().getData();
+//        if (data == null)
+//        {
+//            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
+//            finish();
+//        }
+//
+//        String path;
+//        if (data.getAuthority().equals(MediaStore.AUTHORITY))
+//        {
+//            //FIXME:
+//            Toast.makeText(this, "Disabled in beta, sorry.", Toast.LENGTH_LONG).show();
+//            finish();
+//            //Attempt to acquire the file
+//            path = Util.getRealPathFromURI(this, data);
+//        }
+//        else
+//        {
+//            path = data.getPath();
+//        }
+//
+//        @SuppressWarnings("ConstantConditions")
+//        File input = new File(path);
+//        if (!input.exists())
+//        {
+//            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
+//            finish();
+//        }
+//
+//        if (Util.isNative(input))
+//        {
+//            SharedPreferences.Editor editor = settings.edit();
+//            editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
+//            editor.apply();
+//        }
+//
+//        int indexHint;
+//        if (input.isDirectory())
+//        {
+//            setPath(input);
+//        }
+//        else
+//        {
+//            File parent = input.getParentFile();
+//            if (parent.exists())
+//                setPath(parent);
+//            else
+//                setSingleImage(input);
+//        }
+//
+//        updateViewerItems();
+//
+//        indexHint = findVisibleByFilename(input.getPath());
+////        if (indexHint == FILE_NOT_FOUND)
+////        {
+////            indexHint = 0;
+////            if (mVisibleItems.size() == 0)
+////            {
+////                Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
+////                finish();
+////            }
+////        }
+//
+//        return indexHint;
+//    }
 
     @Override
     public void onBackPressed() {
@@ -528,7 +538,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateImageDetails()
     {
-        new LoadMetadataTask().execute(getCurrentItem());
+        populateMeta();
         updateHistogram(getCurrentBitmap());
     }
 
@@ -540,12 +550,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
         mHistogramTask.execute(bitmap);
     }
 
-    protected void populateExif(MediaItem meta)
+    protected void populateMeta()
     {
         if (autoHide != null)
             autoHide.cancel();
 
-        if (metaDate == null || meta == null)
+        if (metaDate == null)
         {
             Toast.makeText(this,
                     "Could not access metadata views, please email me!",
@@ -553,26 +563,38 @@ public abstract class ViewerActivity extends GalleryActivity implements
             return;
         }
 
-        metaDate.setText(meta.getDateTime());
-        metaModel.setText(meta.getModel());
-        metaIso.setText(meta.getIso());
-        metaExposure.setText(meta.getExposure());
-        metaAperture.setText(meta.getFNumber());
-        metaFocal.setText(meta.getFocalLength());
-        metaDimensions.setText(meta.getWidth() + " x " + meta.getHeight());//meta.getImageWidth() + " x " + meta.getImageHeight());
-        metaAlt.setText(meta.getAltitude());
-        metaFlash.setText(meta.getFlash());
-        metaLat.setText(meta.getLatitude());
-        metaLon.setText(meta.getLongitude());
-        metaName.setText(meta.getName());
-        metaWb.setText(meta.getWhiteBalance());
-        metaLens.setText(meta.getLensModel());
-        metaDriveMode.setText(meta.getDriveMode());
-        metaExposureMode.setText(meta.getExposureMode());
-        metaExposureProgram.setText(meta.getExposureProgram());
+        Cursor cursor = getCursor();
+
+        // Assuming cursor is pointing properly...
+        metaDate.setText(cursor.getString(Meta.TIMESTAMP_COLUMN));
+        metaModel.setText(cursor.getString(Meta.MODEL_COLUMN));
+        metaIso.setText(cursor.getString(Meta.ISO_COLUMN));
+        metaExposure.setText(cursor.getString(Meta.EXPOSURE_COLUMN));
+        metaAperture.setText(cursor.getString(Meta.APERTURE_COLUMN));
+        metaFocal.setText(cursor.getString(Meta.FOCAL_LENGTH_COLUMN));
+        metaDimensions.setText(cursor.getString(Meta.WIDTH_COLUMN) + " x " + cursor.getString(Meta.HEIGHT_COLUMN));
+        metaAlt.setText(cursor.getString(Meta.ALTITUDE_COLUMN));
+        metaFlash.setText(cursor.getString(Meta.FLASH_COLUMN));
+        metaLat.setText(cursor.getString(Meta.LATITUDE_COLUMN));
+        metaLon.setText(cursor.getString(Meta.LONGITUDE_COLUMN));
+        metaName.setText(cursor.getString(Meta.NAME_COLUMN));
+        metaWb.setText(cursor.getString(Meta.WHITE_BALANCE_COLUMN));
+        metaLens.setText(cursor.getString(Meta.LENS_MODEL_COLUMN));
+        metaDriveMode.setText(cursor.getString(Meta.DRIVE_MODE_COLUMN));
+        metaExposureMode.setText(cursor.getString(Meta.EXPOSURE_MODE_COLUMN));
+        metaExposureProgram.setText(cursor.getString(Meta.EXPOSURE_PROGRAM_COLUMN));
 
         autoHide = new Timer();
         autoHide.schedule(new AutoHideMetaTask(), 3000);
+
+        if (PreferenceManager.getDefaultSharedPreferences(ViewerActivity.this).getBoolean(FullSettingsActivity.KEY_ShowImageInterface,
+                RawDroid.PREFS_AUTO_INTERFACE_DEFAULT))
+        {
+            showPanels();
+        }
+
+        if (xmpFrag != null && xmpFrag.isAdded())
+            xmpFrag.setMediaObject(new LocalImage(this, cursor));
     }
 
     private void hideSidebar()
@@ -597,39 +619,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
         public void run()
         {
             hidePanels();
-        }
-    }
-
-    /**
-     * Process the current image for meta data.
-     *
-     * @author amand_000
-     *
-     */
-    public class LoadMetadataTask extends AsyncTask<MediaItem, Void, MediaItem>
-    {
-        @Override
-        protected MediaItem doInBackground(MediaItem... params)
-        {
-            MediaItem current = params[0];
-            if (current != null)
-                current.readMetadata();
-            return current;
-        }
-
-        @Override
-        protected void onPostExecute(MediaItem result)
-        {
-            populateExif(result);
-
-            if (PreferenceManager.getDefaultSharedPreferences(ViewerActivity.this).getBoolean(FullSettingsActivity.KEY_ShowImageInterface,
-                    RawDroid.PREFS_AUTO_INTERFACE_DEFAULT))
-            {
-                showPanels();
-            }
-
-            if (xmpFrag != null && xmpFrag.isAdded())
-                xmpFrag.setMediaObject(result);
         }
     }
 
@@ -688,10 +677,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
     {
         Intent intent = new Intent(this, FileManagerActivity.class);
         intent.setAction(FileManagerIntents.ACTION_PICK_FILE);
-//        Intent intent = new Intent(FileManagerIntents.ACTION_PICK_FILE);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         String startPath = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
-        MediaItem media = getCurrentItem();
+
+//        String name = getCurrentItem().getString(Meta.NAME_COLUMN);
+        String name = getCurrentItem().getName();
 
         if (startPath == null)
         {
@@ -699,7 +689,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
 
         File saveFile = new File(
-                Util.swapExtention(startPath + File.separator + media.getName(), ".jpg"));
+                Util.swapExtention(startPath + File.separator + name, ".jpg"));
 
         // Construct URI from file name.
         intent.setData(Uri.fromFile(saveFile));
@@ -766,7 +756,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 tagImage();
                 return true;
             case R.id.view_delete:
-                deleteImage(getCurrentItem());
+                deleteImage(getCurrentItem().getUri());
                 return true;
             case R.id.view_recycle:
                 showRecycleBin();
@@ -792,12 +782,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
     	{
 	        FragmentManager fm = getFragmentManager();
 	        FragmentTransaction ft = fm.beginTransaction();
-	        ft.remove(getFragmentManager().findFragmentByTag(XmpFragment.FRAGMENT_TAG));
+	        ft.remove(getFragmentManager().findFragmentByTag(XmpEditFragment.FRAGMENT_TAG));
 	        ft.commitAllowingStateLoss();
 	        fm.executePendingTransactions();
     	}
     	
-    	xmpFrag = new XmpFragment();
+    	xmpFrag = new XmpEditFragment();
     	int container;
     	boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         if (isPortrait)
@@ -811,7 +801,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
          
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.add(container, xmpFrag, XmpFragment.FRAGMENT_TAG);      
+        ft.add(container, xmpFrag, XmpEditFragment.FRAGMENT_TAG);
         ft.commitAllowingStateLoss();
         fm.executePendingTransactions();
         
@@ -974,7 +964,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 hidePanels();
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                xmpFrag = XmpFragment.newInstance(getCurrentItem());
+                xmpFrag = XmpEditFragment.newInstance(getCurrentItem());
                 transaction.add(R.id.viewerLayout, xmpFrag);
                 transaction.addToBackStack(null);
                 transaction.commitAllowingStateLoss();
@@ -982,16 +972,18 @@ public abstract class ViewerActivity extends GalleryActivity implements
         }
     }
 
-    protected void updateViewerItems()
-    {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean showNative = prefs.getBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-
-        mVisibleItems.clear();
-        mVisibleItems.addAll(mRawImages);
-        if (showNative)
-            mVisibleItems.addAll(mNativeImages);
-    }
+    //TODO: Should not be needed anymore
+//    protected void updateViewerItems()
+//    {
+//
+//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//        boolean showNative = prefs.getBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
+//
+//        mVisibleItems.clear();
+//        mVisibleItems.addAll(mRawImages);
+//        if (showNative)
+//            mVisibleItems.addAll(mNativeImages);
+//    }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
@@ -999,7 +991,8 @@ public abstract class ViewerActivity extends GalleryActivity implements
         setMetaVisibility();
         MediaItem media = getCurrentItem();
 
-        if (key.equals(FullSettingsActivity.KEY_ShowNativeFiles))
+        //FIXME: Show native files?
+/*        if (key.equals(FullSettingsActivity.KEY_ShowNativeFiles))
         {
             updateViewerItems();
 
@@ -1017,10 +1010,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 }
             }
         }
-        else if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
+        else*/ if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
         {
-            Intent viewer = new Intent(this, ViewerChooser.class);
+            Intent viewer = getViewerIntent();
             viewer.setData(media.getUri());
+            //TODO: finish() before startActivity???
             finish();
             startActivity(viewer);
         }
@@ -1028,12 +1022,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void setImageFocus()
     {
-        MediaItem current = getCurrentItem();
-        if (current == null)
-            return;
-
+//        MediaItem current = getCurrentItem();
+//        if (current == null)
+//            return;
         Intent data = new Intent();
-        data.setData(current.getUri());
+        data.putExtra(RawDroid.GALLERY_INDEX_EXTRA, mImageIndex);
         setResult(RESULT_OK, data);
     }
 

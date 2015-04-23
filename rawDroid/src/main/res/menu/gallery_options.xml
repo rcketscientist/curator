@@ -8,10 +8,9 @@
         app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
-        android:id="@+id/gallery_usb"
-        android:icon="@drawable/ic_action_usb"
-        android:orderInCategory="11"
-        app:showAsAction="ifRoom"
+        android:id="@+id/gallerySd"
+        android:icon="@android:drawable/ic_menu_gallery"
+        app:showAsAction="always"
         android:title="@string/usb"/>
     <item
         android:id="@+id/gallery_recycle"
@@ -20,7 +19,7 @@
         app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
     <item
-        android:id="@+id/gallerySearch"
+        android:id="@+id/galleryRefresh"
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="10"
         app:showAsAction="ifRoom"

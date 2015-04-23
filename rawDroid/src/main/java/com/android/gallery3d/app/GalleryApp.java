@@ -16,6 +16,8 @@
 
 package com.android.gallery3d.app;
 
+import android.content.Context;
+
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.ImageCacheService;
 import com.android.gallery3d.ui.GLRoot;
@@ -28,4 +30,6 @@ public interface GalleryApp extends GalleryContext
 
     void addContentListener(ContentListener listener);
     void removeContentListener(ContentListener listener);
+
+    public Context getAndroidContext();
 }

@@ -3,51 +3,51 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-    <RadioGroup
-        android:id="@+id/radioGroupColorKey"
+    <LinearLayout
+        android:id="@+id/labelGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <RadioButton
-            android:id="@+id/radioBlue"
+        <CheckBox
+            android:id="@+id/blueLabel"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:background="@drawable/button_blue"
             android:button="@null" />
 
-        <RadioButton
-            android:id="@+id/radioRed"
+        <CheckBox
+            android:id="@+id/redLabel"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:background="@drawable/button_red"
             android:button="@null" />
 
-        <RadioButton
-            android:id="@+id/radioGreen"
+        <CheckBox
+            android:id="@+id/greenLabel"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:background="@drawable/button_green"
             android:button="@null" />
 
-        <RadioButton
-            android:id="@+id/radioYellow"
+        <CheckBox
+            android:id="@+id/yellowLabel"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:background="@drawable/button_yellow"
             android:button="@null" />
 
-        <RadioButton
-            android:id="@+id/radioPurple"
+        <CheckBox
+            android:id="@+id/purpleLabel"
             android:layout_width="46dp"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
             android:background="@drawable/button_purple"
             android:button="@null" />
-    </RadioGroup>
+    </LinearLayout>
 
 </merge>

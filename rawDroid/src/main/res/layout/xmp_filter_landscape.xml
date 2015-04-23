@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/RelativeLayout1"
+                android:layout_width="256dp"
+                android:layout_height="match_parent"
+                android:background="#111">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/filterTitle"
+        android:id="@+id/filterTitle"
+        android:layout_alignParentTop="true"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/filterTitle"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="2dp"/>
+
+    <include
+        layout="@layout/xmp_base_landscape"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/clearFilterButton"
+        android:layout_below="@+id/divider"/>
+
+    <Button
+        android:id="@+id/clearFilterButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/clear"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

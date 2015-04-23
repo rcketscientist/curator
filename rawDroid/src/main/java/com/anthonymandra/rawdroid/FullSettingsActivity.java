@@ -28,6 +28,7 @@ import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -307,16 +308,10 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			return;
 		}
 
-		try
-		{
-			BufferedInputStream source = new BufferedInputStream(new FileInputStream(sourcePath));
-			Util.copy(source, GalleryActivity.getKeywordFile(this));
+		if (Util.copy(new File(sourcePath), GalleryActivity.getKeywordFile(this)))
 			Toast.makeText(this, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show();
-		}
-		catch (IOException e)
-		{
+		else
 			Toast.makeText(this, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
-		}
 	}
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

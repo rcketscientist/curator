@@ -18,6 +18,8 @@ package com.android.gallery3d.app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,9 +58,8 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
     protected PhotoView mPhotoView;
-    protected Model mModel;
+    protected PhotoDataAdapter mModel;
 
-    private int mCurrentIndex = 0;
     private Handler mHandler;
     private MediaItem mCurrentPhoto = null;
     private boolean mIsActive;
@@ -69,8 +70,6 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     private static final long DEFERRED_UPDATE_MS = 250;
     private boolean mDeferredUpdateWaiting = false;
     private long mDeferUpdateUntil = Long.MAX_VALUE;
-
-    protected int mContentView;
 
     private final GLView mRootPane = new GLView() {
         @Override
@@ -83,10 +82,6 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(mContentView);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
-        setSupportActionBar(toolbar);
 
         mPhotoView = new PhotoView(this);
         mPhotoView.setListener(this);
@@ -128,28 +123,32 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
             }
         };
 
-        mCurrentIndex = setPathFromIntent();
-        if (mCurrentIndex == -1)
-        {
-            Toast.makeText(this, "Unable to locate imported image, restarting...", Toast.LENGTH_LONG).show();
-            startActivity(new Intent(this, RawDroid.class));
-            finish();
-        }
-
-        PhotoDataAdapter pda = new PhotoDataAdapter(
-                this, mPhotoView, mVisibleItems, mCurrentIndex,
-                -1, false, false);
-        mModel = pda;
+        mModel = new PhotoDataAdapter(this, mPhotoView, null, mImageIndex);
+        mModel.setDataListener(this);
         mPhotoView.setModel(mModel);
+    }
 
-        pda.setDataListener(this);
+    @Override
+    protected Cursor getCursor()
+    {
+        return mModel.getCursor();
+    }
 
-        mPhotoView.setFilmMode(mVisibleItems.size() > 1);
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
+    {
+        mModel.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+        mModel.swapCursor(null);
     }
 
     @Override
     public void onPhotoChanged(int index, Uri item) {
-        mCurrentIndex = index;
+        mImageIndex = index;
 
         if (!mSkipUpdateCurrentPhoto) {
             if (item != null) {
@@ -214,40 +213,11 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         }
 
         int supported = item.getSupportedOperations();
-        boolean playVideo = ((supported & MediaItem.SUPPORT_PLAY) != 0);
         boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
 
-        if (playVideo) {
-            // determine if the point is at center (1/6) of the photo view.
-            // (The position of the "play" icon is at center (1/6) of the photo)
-            int w = mPhotoView.getWidth();
-            int h = mPhotoView.getHeight();
-            playVideo = (Math.abs(x - w / 2) * 12 <= w)
-                && (Math.abs(y - h / 2) * 12 <= h);
-        }
-
-        if (playVideo) {
-//            if (mSecureAlbum == null) {
-//                playVideo(mActivity, item.getPlayUri(), item.getName());
-//            } else {
-//                mActivity.getStateManager().finishState(this);
-//            }
-        } else if (goBack) {
+        if (goBack) {
             onBackPressed();
         }
-    }
-
-    public void playVideo(Activity activity, Uri uri, String title) {
-//        try {
-//            Intent intent = new Intent(Intent.ACTION_VIEW)
-//                    .setDataAndType(uri, "video/*")
-//                    .putExtra(Intent.EXTRA_TITLE, title)
-//                    .putExtra(MovieActivity.KEY_TREAT_UP_AS_BACK, true);
-//            activity.startActivityForResult(intent, REQUEST_PLAY_VIDEO);
-//        } catch (ActivityNotFoundException e) {
-//            Toast.makeText(activity, activity.getString(R.string.video_err),
-//                    Toast.LENGTH_SHORT).show();
-//        }
     }
 
     @Override
@@ -273,11 +243,6 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     public void onFilmModeChanged(boolean enabled) {
     }
 
-    private void transitionFromAlbumPageIfNeeded() {
-        mModel.moveTo(mCurrentIndex);
-        mPhotoView.setFilmMode(false);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -285,8 +250,6 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
         if (mModel == null) {
             finish();
         }
-
-        transitionFromAlbumPageIfNeeded();
 
         getGLRoot().freeze();
         mIsActive = true;

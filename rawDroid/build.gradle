@@ -7,7 +7,7 @@ def versionBuild = 0
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "19.1.0"
+    buildToolsVersion '21.1.2'
 
     lintOptions {
         checkReleaseBuilds false
@@ -97,10 +97,10 @@ dependencies {
     compile project(':inscription')
     compile project(':treeviewlistandroid')
     compile project(':metadata-extractor')
-//    compile project(':metaDataExtractor')
+    //    compile project(':metaDataExtractor')
     compile project(':oIFileManager')
     compile 'com.android.support:support-v4:21.0.3'
-//    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    //    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.android.support:recyclerview-v7:21.0.0'
     compile 'com.android.support:gridlayout-v7:21.0.0'
