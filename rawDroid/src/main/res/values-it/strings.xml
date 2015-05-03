@@ -111,7 +111,8 @@
 <string name="prefTitleImageInterface">Visualizza automaticamente l\'interfaccia</string>
 <string name="prefSummaryImageInterface">quando cambia immagine</string>
 <string name="prefTitleRecycleBin">Grandezza del cestino</string>
-<string name="prefSummaryRecycleBin">Spazio allocato nel cestino (Default: 50 MB, min: 30 MB, max: 500MB) \nFare attenzione alle dimensioni, 500MB sono  oltre il 6% su un dispositivo di 8GB!</string>
+<string name="prefSummaryRecycleBin">Spazio allocato nel cestino (Default: 50 MB, min: 30 MB, max: 500MB) 
+\nFare attenzione alle dimensioni, 500MB sono  oltre il 6% su un dispositivo di 8GB!</string>
 <string name="prefTitleFilter">Filtro Exif</string>
 <string name="prefTitleComingSoon">Prossimamente</string>
 <string name="prefTitleDeleteConfirmation"> Conferma Eliminazione</string>
@@ -190,20 +191,25 @@
 <string name="tutorialRename">Questo rinomina tutti i file selezionati con un modello selezionato.</string>
 <string name="tutorialImport">Questo consente di importare le immagini selezionate per una nuova destinazione</string>
 <string name="tutorialExport">Per esportare le immagini selezionate come una miniatura compressa in jpeg.</string>
-<string name="tutorialStart">Benvenuti nel tutorial di Rawdroid! \nApprezzo tutti feedback, a volte è difficile spiegare una operazione o azione ai profani :).</string>
+<string name="tutorialStart">Benvenuti nel tutorial di Rawdroid! 
+\nApprezzo tutti feedback, a volte è difficile spiegare una operazione o azione ai profani :).</string>
 <string name="tutorialConnectTitle">Come collegare Immagini</string>
 <string name="tutorialConnect1">Ci sono tre modi per accedere ai dati:</string>
 <string name="tutorialConnect2">1. Più veloce: Trasferire le immagini sul dispositivo tramite connessione PC. Ovviamente non è un utilizzo ideale.</string>
-<string name="tutorialConnect3">2. Veloce: Collegare la scheda di memoria con un lettore di schede e il cavo OTG. Un solo lettore di schede di unico formato e migliore. \n\ ta. Alcuni dispositivi richiedono root. Il mio nexus ha il root. Io uso "StickMount" per connettersi. Maggiori dettagli sul sito.</string>
+<string name="tutorialConnect3">2. Veloce: Collegare la scheda di memoria con un lettore di schede e il cavo OTG. Un solo lettore di schede di unico formato e migliore. 
+\n\ ta. Alcuni dispositivi richiedono root. Il mio nexus ha il root. Io uso "StickMount" per connettersi. Maggiori dettagli sul sito.</string>
 <string name="tutorialConnect3a">\ Ta. Alcuni dispositivi richiedono root. Il mio nexus ha il root. Io uso "StickMount" per connettersi. Maggiori dettagli sul sito.</string>
-<string name="tutorialConnect4">3. Lento: Collegare la fotocamera con un cavo OTG. A causa di limiti di Android non possiamo scrivere su fotocamere, questo importera le immagini sul tuo dispositivo. \nIl dispositivo deve disporre di sufficiente memoria. Maggiori dettagli sul sito.</string>
+<string name="tutorialConnect4">3. Lento: Collegare la fotocamera con un cavo OTG. A causa di limiti di Android non possiamo scrivere su fotocamere, questo importera le immagini sul tuo dispositivo. 
+\nIl dispositivo deve disporre di sufficiente memoria. Maggiori dettagli sul sito.</string>
 <string name="tutorialConnect5">4. Eventuakmente aggiungerò il supporto di rete.</string>
 <string name="tutorialMemoryTitle">Problemi di memoria</string>
-<string name="tutorialMemory">Se si dispone di un dispositivo più vecchio che va in crash, e probabile che la causa sia scarsità di memoria. \nraccomando il root e l\'utilizzo di "VM Heap Tool" per aumentare più memoria.</string>
+<string name="tutorialMemory">Se si dispone di un dispositivo più vecchio che va in crash, e probabile che la causa sia scarsità di memoria. 
+\nraccomando il root e l\'utilizzo di "VM Heap Tool" per aumentare più memoria.</string>
 <string name="tutorialPath">Questo è il percorso corrente. È possibile spostarsi rapidamente nella  finestra a cascata.</string>
 <string name="tutorialActionLongPressTitle">Barra delle azioni Aiuto</string>
 <string name="tutorialActionLongPress">Premere a lungo per visualizzare  breve descrizione.</string>
 <string name="tutorialUsbTitle"> cerca  USB Mountata</string>
 <string name="tutorialUsb">questo effettuerà la ricerca mount point noti per la tutti i dispositivi USB. Se il dispositivo non viene trovato si prega di e-mail a mount point ex/mnt/weird/device/usb</string>
+    <string name="Name_ascending">Nome \u25BC</string>
 
 </resources>

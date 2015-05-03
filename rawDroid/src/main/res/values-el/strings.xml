@@ -98,7 +98,8 @@
 
 <!-- Preferences -->
 <string name="prefTitleRecycleBin">Μέγεθος Κάδου Ανακύκλωσης</string>
-<string name="prefSummaryRecycleBin">Διατεθειμένος χώρος στον Κάδο Ανακύκλωσης (Προεπιλογή: 50MB, Ελάχιστο: 30ΜΒ, Μέγιστο: 500ΜΒ)\nΠροσοχή στον ορισμό του μεγέθους: 500ΜΒ είναι πάνω από το 6% της μνήμης μιας συσκευής των 8GB!</string>
+<string name="prefSummaryRecycleBin">Διατεθειμένος χώρος στον Κάδο Ανακύκλωσης (Προεπιλογή: 50MB, Ελάχιστο: 30ΜΒ, Μέγιστο: 500ΜΒ)
+\nΠροσοχή στον ορισμό του μεγέθους: 500ΜΒ είναι πάνω από το 6% της μνήμης μιας συσκευής των 8GB!</string>
 <string name="prefTitleFilter">Φίλτρα Exif</string>
 <string name="prefTitleComingSoon">Προσεχώς</string>
 <string name="prefTitleDeleteConfirmation">Επιβεβαίωση Διαγραφής</string>
@@ -146,5 +147,6 @@
 <string name="tutorialSelectModeTitle">Λειτουργία Επιλογής</string>
 <string name="tutorialSelectMode">Μπήκαμε στην λειτουργία Επιλογής!</string>
 <string name="tutorialSelectBetweenTitle">Επιλογή μεταξύ</string>
+    <string name="Name_ascending">Όνομα \u25BC</string>
 
 </resources>

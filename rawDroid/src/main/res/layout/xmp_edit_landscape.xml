@@ -1,44 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:id="@+id/RelativeLayout1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="256dp"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <include
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    layout="@layout/xmp_base_landscape"
-    android:layout_above="@+id/linearLayoutXmpButtons"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"/>
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/linearLayoutXmpButtons"
-        android:layout_width="wrap_content"
+        android:id="@+id/titlebar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/editTitle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_weight="1"
+            android:gravity="left|bottom"
+            android:text="@string/editTitle"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <Button
-            android:id="@+id/buttonClear"
+            android:id="@+id/clearButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/clear" />
-
-        <Button
-            android:id="@+id/buttonReuseXmp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/reuse" />
-
+            android:gravity="end"
+            android:text="@string/clear"/>
     </LinearLayout>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/labelAndRating"
+        android:layout_below="@+id/titlebar"
+        android:background="@android:color/darker_gray"/>
 
+    <include
+        android:id="@+id/labelAndRating"
+        layout="@layout/xmp_core"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/divider"/>
+
+    <fragment
+        android:id="@+id/keywordFragment"
+        android:name="com.anthonymandra.rawdroid.KeywordEditFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonReuseXmp"
+        android:layout_below="@+id/labelAndRating"
+        tools:layout="@layout/xmp_subject_edit"/>
+
+    <Button
+        android:id="@+id/buttonReuseXmp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_weight="1"
+        android:text="@string/reuse"/>
 
 </RelativeLayout>

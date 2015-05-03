@@ -97,8 +97,9 @@
 <string name="cyan">洋紅</string>
 <string name="purple">紫</string>
 <string name="yellow">黃</string>
+    <string name="Name_ascending">名稱 \u25BC</string>
 
-<!-- Tutorials -->
+    <!-- Tutorials -->
 
 
 </resources>

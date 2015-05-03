@@ -19,4 +19,11 @@
         <item>Upper Left</item>
         <item>Upper Right</item>
     </string-array>
+
+    <string-array name="sortValues">
+        <item>@string/Name_ascending</item>
+        <item>@string/Name_descending</item>
+        <item>@string/Date_ascending</item>
+        <item>@string/Date_descending</item>
+    </string-array>
 </resources>

@@ -101,8 +101,9 @@
 <string name="warningInvalidLabel">不可用标签。标签可以在设置里更改</string>
 <string name="warningInvalidSidebar">侧边栏不可调用，请重新打开。</string>
 <string name="warningNoUSB">没有发现外接储存设备。如果你确定设备已连接，请用邮件联系rawdroid@anthonymandra.com.</string>
+    <string name="Name_ascending">文件名 \u25BC</string>
 
-<!-- Preferences -->
+    <!-- Preferences -->
 
 
 

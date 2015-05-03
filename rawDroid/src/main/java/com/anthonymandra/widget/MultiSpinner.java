@@ -7,6 +7,7 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -81,10 +82,10 @@ public class MultiSpinner extends Spinner implements OnMultiChoiceClickListener/
 
 	private void parsePreference()
 	{
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
-		// For GUI
-		if (sp == null)
+		if (isInEditMode())
 			return;
+
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
 		String pref = sp.getString(FullSettingsActivity.KEY_CustomKeywords, "");
 		items = new ArrayList<>();
 		Collections.addAll(items, pref.split(delimiter));

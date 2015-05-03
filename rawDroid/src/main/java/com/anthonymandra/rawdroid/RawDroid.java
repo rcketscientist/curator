@@ -3,12 +3,9 @@ package com.anthonymandra.rawdroid;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -83,12 +80,9 @@ import com.inscription.WhatsNewDialog;
 import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -172,8 +166,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	// Selection support
 	private boolean multiSelectMode;
 
-	public static File keywords;
-
 	private int mDisplayWidth;
 	private int mDisplayHeight;
 
@@ -184,7 +176,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
     private Toolbar mToolbar;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
-	private XmpFilterFragment mXmpFilter;
+//	private XmpFilterFragment mXmpFilter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -193,12 +185,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
+		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.drawable.icon);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerToggle = new ActionBarDrawerToggle(
-				this, mDrawerLayout,
+				this,
+				mDrawerLayout,
 				mToolbar,
 				R.string.drawer_open,  /* "open drawer" description */
 				R.string.drawer_close  /* "close drawer" description */);
@@ -245,8 +239,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
         PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
 
-		getKeywords();
-
 		mGalleryAdapter = new GalleryAdapter(this, null);
 		mImageGrid.setAdapter(mGalleryAdapter);
 
@@ -266,6 +258,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	{
 		super.onPostCreate(savedInstanceState);
 		mDrawerToggle.syncState();
+		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
 	}
 
 	private void doFirstRun()
@@ -309,76 +302,15 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 	private void loadXmpFilter()
 	{
-		// Do I need to remove it?
-		if (mXmpFilter != null)
-		{
-			FragmentManager fm = getFragmentManager();
-			FragmentTransaction ft = fm.beginTransaction();
-			ft.remove(getFragmentManager().findFragmentByTag(XmpEditFragment.FRAGMENT_TAG));
-			ft.commitAllowingStateLoss();
-			fm.executePendingTransactions();
-		}
-
-		mXmpFilter = new XmpFilterFragment();
-		mXmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.XmpFilterChangedListener()
+		XmpFilterFragment xmpFilter = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
+		xmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
 		{
 			@Override
-			public void onXmpFilterChanged(XmpBaseFragment.XmpValues xmp)
+			public void onMetaFilterChanged(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, XmpFilterFragment.SortColumns sortColumn)
 			{
-				updateMetaLoaderXmp(xmp);
+				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, sortColumn);
 			}
 		});
-
-		FragmentManager fm = getFragmentManager();
-		FragmentTransaction ft = fm.beginTransaction();
-		ft.add(R.id.xmpFilterContainer, mXmpFilter, XmpEditFragment.FRAGMENT_TAG);
-		ft.commitAllowingStateLoss();
-		fm.executePendingTransactions();
-	}
-
-	private void getKeywords()
-	{
-		keywords = getKeywordFile(this);
-		if (!keywords.exists())
-		{
-			Toast.makeText(this, "Keywords file not found.  Generic created for testing.  Import in options.", Toast.LENGTH_LONG).show();
-			try
-			{
-				BufferedWriter bw = new BufferedWriter(new FileWriter(keywords));
-				bw.write("Europe");
-				bw.newLine();
-				bw.write("\tFrance");
-				bw.newLine();
-				bw.write("\tItaly");
-				bw.newLine();
-				bw.write("\t\tRome");
-				bw.newLine();
-				bw.write("\t\tVenice");
-				bw.newLine();
-				bw.write("\tGermany");
-				bw.newLine();
-				bw.write("South America");
-				bw.newLine();
-				bw.write("\tBrazil");
-				bw.newLine();
-				bw.write("\tChile");
-				bw.newLine();
-				bw.write("United States");
-				bw.newLine();
-				bw.write("\tNew Jersey");
-				bw.newLine();
-				bw.write("\t\tTrenton");
-				bw.newLine();
-				bw.write("\tVirginia");
-				bw.newLine();
-				bw.write("\t\tRichmond");
-				bw.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
@@ -577,7 +509,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				return true;
 			case R.id.galleryClearCache:
 				mImageDecoder.clearCache();
-				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);	//TODO: Does this clear?
+				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
 			case R.id.context_delete:

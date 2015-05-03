@@ -1,8 +1,6 @@
 package com.anthonymandra.framework;
 
 import android.annotation.TargetApi;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -14,18 +12,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -111,10 +107,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
     protected TableRow rowExposureMode;
     protected TableRow rowExposureProgram;
 
+    protected XmpEditFragment mXmpFragment;
+
     protected Timer autoHide;
 
     protected boolean showSidebar = false;
-    protected XmpEditFragment xmpFrag;
+
 
     protected boolean isInterfaceHidden;
 
@@ -137,6 +135,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         setContentView(getContentView());
         Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
         mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, 0);
@@ -199,7 +198,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         setMetaVisibility();
         setDisplayMetrics();
         attachButtons();
-        setActionBar();
+//        setActionBar();
     }
 
     protected void setWatermark(boolean demo)
@@ -292,11 +291,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     @Override
     public void onBackPressed() {
-    	if (showSidebar)
-    	{
-    		hideSidebar();
-    		return;
-    	}
+        if (!mXmpFragment.isHidden())
+        {
+            toggleEditXmpFragment();
+            return;
+        }
 
     	setImageFocus();
     	super.onBackPressed();
@@ -387,40 +386,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
         rowDriveMode = (TableRow) findViewById(R.id.rowDriveMode);
         rowExposureMode = (TableRow) findViewById(R.id.rowExposureMode);
         rowExposureProgram = (TableRow) findViewById(R.id.rowExposureProgram);
-        
-        loadXmpPanel();
+        mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
+        toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
     }
 
     protected void onZoomLockChanged(boolean locked) {
         // no base implementation
-    }
-
-    protected void setActionBar()
-    {
-        final ActionBar actionBar = getSupportActionBar();
-
-        int actionBarHeight = 0;
-        // Calculate ActionBar height
-        TypedValue tv = new TypedValue();
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true))
-        {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-        }
-
-//        final View sideBarWrapper = findViewById(R.id.frameLayoutSidebar);
-        final View sideBarWrapper = findViewById(R.id.xmpRightContainer);
-        if (sideBarWrapper != null) // Portrait doesn't require the wrapper
-        {
-            ((ViewGroup.MarginLayoutParams) sideBarWrapper.getLayoutParams()).setMargins(0, actionBarHeight, 0, 0);
-            sideBarWrapper.requestLayout();
-        }
-
-//        ((ViewGroup.MarginLayoutParams) metaFragment.getLayoutParams()).setMargins(0, actionBarHeight, 0, 0);
-//        metaFragment.requestLayout();
-
-        // Hide title text and set home as up
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.translucent_black_rect));
     }
 
     protected void attachButtons()
@@ -593,23 +564,39 @@ public abstract class ViewerActivity extends GalleryActivity implements
             showPanels();
         }
 
-        if (xmpFrag != null && xmpFrag.isAdded())
-            xmpFrag.setMediaObject(new LocalImage(this, cursor));
+        if (mXmpFragment != null && mXmpFragment.isAdded())
+            mXmpFragment.setMediaObject(cursor);
+    }
+
+    private void toggleEditXmpFragment()
+    {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (mXmpFragment.isHidden())
+        {
+            ft.show(mXmpFragment);
+            ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left);
+        }
+        else
+        {
+            ft.hide(mXmpFragment);
+            ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        }
+        ft.commit();
     }
 
     private void hideSidebar()
     {
     	showSidebar = false;
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.hide(xmpFrag);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.hide(mXmpFragment);
         transaction.commitAllowingStateLoss();
     }
 
     private void showSidebar()
     {
     	showSidebar = true;
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.show(xmpFrag);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.show(mXmpFragment);
         transaction.commitAllowingStateLoss();
     }
 
@@ -712,7 +699,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        loadXmpPanel();                       
         updateImageDetails();   // For small screens this will fix the meta panel shape
     }
 
@@ -769,49 +755,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-    
-    private void loadXmpPanel()
-    {
-        if (!getResources().getBoolean(R.bool.hasTwoPanes))
-        {
-        	return;
-        }
-    	if (xmpFrag != null)
-    	{
-	        FragmentManager fm = getFragmentManager();
-	        FragmentTransaction ft = fm.beginTransaction();
-	        ft.remove(getFragmentManager().findFragmentByTag(XmpEditFragment.FRAGMENT_TAG));
-	        ft.commitAllowingStateLoss();
-	        fm.executePendingTransactions();
-    	}
-    	
-    	xmpFrag = new XmpEditFragment();
-    	int container;
-    	boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        if (isPortrait)
-        {
-        	container = R.id.xmpBottomContainer;
-        }
-        else
-        {
-        	container = R.id.xmpRightContainer;
-        }
-         
-        FragmentManager fm = getFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(container, xmpFrag, XmpEditFragment.FRAGMENT_TAG);
-        ft.commitAllowingStateLoss();
-        fm.executePendingTransactions();
-        
-        if (showSidebar)
-        {
-        	showSidebar();
-        }
-        else
-        {
-        	hideSidebar();
         }
     }
 
@@ -937,39 +880,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     private void tagImage()
     {
-        if (getResources().getBoolean(R.bool.hasTwoPanes))
-        {
-            if (xmpFrag.isVisible())
-            {
-                hideSidebar();
-            }
-            else
-            {
-                if (autoHide != null)
-                    autoHide.cancel();
-                hidePanels();
-                showSidebar();
-            }
-        }
-        else
-        {
-            if (xmpFrag != null && xmpFrag.isAdded())
-            {
-                onBackPressed();
-            }
-            else
-            {
-                if (autoHide != null)
-                    autoHide.cancel();
-                hidePanels();
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                xmpFrag = XmpEditFragment.newInstance(getCurrentItem());
-                transaction.add(R.id.viewerLayout, xmpFrag);
-                transaction.addToBackStack(null);
-                transaction.commitAllowingStateLoss();
-            }
-        }
+        toggleEditXmpFragment();
     }
 
     //TODO: Should not be needed anymore

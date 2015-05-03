@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/mainLayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/black">
+<RelativeLayout
+    android:id="@+id/mainLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
 
     <include
+        layout="@layout/image_viewer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/xmpRightContainer"
-        android:layout_above="@+id/xmpBottomContainer"
-        layout="@layout/image_viewer" />
-    
-   	<FrameLayout
-   	    android:id="@+id/xmpRightContainer"
-        android:layout_width="wrap_content"
+        android:layout_toStartOf="@+id/editFragment"/>
+
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+        android:layout_width="@dimen/xmp_filter_width"
         android:layout_height="match_parent"
-        android:layout_alignParentRight="true"  />
-   	
-   	<FrameLayout
-   	    android:id="@+id/xmpBottomContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"  />
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/viewerToolbar"
+        android:layout_gravity="end"
+        tools:layout="@layout/xmp_edit_landscape"/>
 
     <android.support.v7.widget.Toolbar
-        android:layout_width="wrap_content"
         android:id="@+id/viewerToolbar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentLeft="false"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="false" />
+        android:background="@drawable/translucent_black_rect"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
 </RelativeLayout>

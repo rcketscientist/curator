@@ -106,7 +106,8 @@
 <string name="prefTitleImageInterface">Interface automatisch anzeigen</string>
 <string name="prefSummaryImageInterface">beim Bildwechsel</string>
 <string name="prefTitleRecycleBin">Papierkorb Grösse</string>
-<string name="prefSummaryRecycleBin">Dem Papierkorb zugewiesene Größe (Standard: 50MB, Min: 30MB, Max: 500MB)\nVorsichtig mit der Größe: 500MB sind mehr als 6% eines 8GB Speichers!</string>
+<string name="prefSummaryRecycleBin">Dem Papierkorb zugewiesene Größe (Standard: 50MB, Min: 30MB, Max: 500MB)
+\nVorsichtig mit der Größe: 500MB sind mehr als 6% eines 8GB Speichers!</string>
 <string name="prefTitleFilter">Exif Filter</string>
 <string name="prefTitleComingSoon">demnächst</string>
 <string name="prefTitleDeleteConfirmation">Bestätigung beim Löschen</string>
@@ -140,7 +141,11 @@
 <string name="emptyRecycleBin">Papierkorb leeren</string>
 <string name="exportThumbnails">Bildvorschauen exportieren</string>
 <string name="shareWith">Teilen mit...</string>
-<string name="ratingRequest">Falls dir RawDroid gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.\n\nSollte deine bisherige Wertung wegen eines Fehlers sein, der mittlerweile behoben wurde, aktualisiere doch bitte deine Bewertung.\n\nVielen Dank für deine Unterstützung!</string>
+<string name="ratingRequest">Falls dir RawDroid gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.
+\n
+\nSollte deine bisherige Wertung wegen eines Fehlers sein, der mittlerweile behoben wurde, aktualisiere doch bitte deine Bewertung.
+\n
+\nVielen Dank für deine Unterstützung!</string>
 <string name="cont">weiter</string>
 <string name="convertingFiles">konvertiere Dateien...</string>
 <string name="importingImages">importiere Bilder...</string>
@@ -178,4 +183,5 @@
 <string name="unit_mm">mm</string>
 <string name="loading">Lade\u2026</string>
 <string name="no_thumbnail">Keine Thumbnails (Miniaturen)</string>
+    <string name="Name_ascending">Name \u25BC</string>
 </resources>

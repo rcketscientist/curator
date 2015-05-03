@@ -215,9 +215,9 @@ public class ImageUtils
 
     public static String strSeparator = "__,__";
     public static String convertArrayToString(String[] array){
-        String str = "";
         if (array == null)
-            return str;
+            return null;
+        String str = "";
         for (int i = 0;i<array.length; i++) {
             str = str+array[i];
             // Do not append comma at the end of last element
@@ -228,6 +228,8 @@ public class ImageUtils
         return str;
     }
     public static String[] convertStringToArray(String str){
+        if (str == null)
+            return null;
         String[] arr = str.split(strSeparator);
         return arr;
     }

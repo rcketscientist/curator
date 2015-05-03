@@ -1,18 +1,12 @@
 [submodule "oIFileManager"]
 	path = oIFileManager
 	url = https://github.com/rcketscientist/oi-filemanager-library.git
-[submodule "metaDataExtractor"]
-	path = metaDataExtractor
-	url = https://AMandra@code.google.com/r/amandra-xmp/
 [submodule "showcaseView"]
 	path = showcaseView
 	url = https://github.com/rcketscientist/ShowcaseView.git
 [submodule "inscription"]
 	path = inscription
 	url = https://github.com/rcketscientist/Inscription.git
-[submodule "treeviewlistandroid"]
-	path = treeviewlistandroid
-	url = https://github.com/rcketscientist/tree-view-list-android.git
 [submodule "rawDroid/src/main/jni/LibRaw"]
 	path = rawDroid/src/main/jni/LibRaw
 	url = https://github.com/rcketscientist/LibRaw.git
@@ -25,3 +19,6 @@
 [submodule "metadata-extractor"]
 	path = metadata-extractor
 	url = https://github.com/rcketscientist/metadata-extractor.git
+[submodule "dynamicGrid"]
+	path = dynamicGrid
+	url = https://github.com/askerov/DynamicGrid.git

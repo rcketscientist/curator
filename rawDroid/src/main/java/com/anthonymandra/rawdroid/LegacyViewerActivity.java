@@ -71,7 +71,7 @@ public class LegacyViewerActivity extends ViewerActivity
 	@Override
 	public int getContentView()
 	{
-		return R.layout.legacy_layout;
+		return R.layout.legacy_twopane;
 	}
 
 	@Override

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/keyword_entry"
+    android:background="@drawable/keyword_border_selector"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:maxLines="2"
+    android:minLines="2"
+    android:gravity="center_vertical|center_horizontal"
+    android:textAppearance="@android:style/TextAppearance.Medium"
+                 android:text="Test"
+                 android:textColor="@drawable/keyword_text_selector">
+</CheckedTextView>

@@ -1,121 +1,71 @@
 package com.anthonymandra.rawdroid;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.SparseArray;
-import android.view.LayoutInflater;
+import android.support.v4.app.Fragment;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.RadioGroup;
-import android.widget.RatingBar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.MediaItem;
-import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.GalleryActivity;
-import com.anthonymandra.framework.ImageUtils;
-import com.anthonymandra.widget.MultiSpinner;
+import com.anthonymandra.widget.RatingBar;
 import com.anthonymandra.widget.XmpLabelGroup;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.xmp.XmpDirectory;
-import com.drew.metadata.xmp.XmpWriter;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-
-import pl.polidea.treeview.AbstractTreeViewAdapter;
-import pl.polidea.treeview.InMemoryTreeStateManager;
-import pl.polidea.treeview.TreeBuilder;
-import pl.polidea.treeview.TreeNodeInfo;
-import pl.polidea.treeview.TreeStateManager;
-import pl.polidea.treeview.TreeViewList;
 
 public abstract class XmpBaseFragment extends Fragment
 {
 	private static final String TAG = XmpBaseFragment.class.getSimpleName();
-	public static final String FRAGMENT_TAG = "XmpEditFragment";
 
-	private Set<String> selectedKeywords = new HashSet<>();
 	private RatingBar mRatingBar;
-	private TreeAdapter mKeywordAdapter;
 	private XmpLabelGroup colorKey;
-	private MultiSpinner customKeywords;
-
-	/**
-	 * Since RatingBar must have a value this defines no value
-	 */
-	boolean isRatingNull = true;
+	private KeywordBaseFragment mKeywordFragment;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
+	}
 
-		mRatingBar = ((RatingBar) getActivity().findViewById(R.id.ratingBar));
-		colorKey = (XmpLabelGroup) getActivity().findViewById(R.id.colorKey);
-		customKeywords = (MultiSpinner) getActivity().findViewById(R.id.multiSpinnerKeywords);
-
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState)
+	{
+		super.onViewCreated(view, savedInstanceState);
+		mRatingBar = ((RatingBar) view.findViewById(R.id.ratingBar));
+		colorKey = (XmpLabelGroup) view.findViewById(R.id.colorKey);
+		mKeywordFragment = (KeywordBaseFragment) getChildFragmentManager().findFragmentById(R.id.keywordFragment);
 		attachButtons();
-		createTreeView();
 	}
 
 	protected void clear()
 	{
-		// Not sure how these can be null, but it happens from time to time
-		if (selectedKeywords != null)
-			selectedKeywords.clear();
-		if (mKeywordAdapter != null)
-			mKeywordAdapter.refresh();
+		mKeywordFragment.clearSelectedKeywords();
 		if (colorKey != null)
 			colorKey.clearCheck();
 		if (mRatingBar != null)
-			mRatingBar.setRating(0);
-		if (customKeywords != null)
-			customKeywords.clearSelected();
-		isRatingNull = true;
+			mRatingBar.clearCheck();
 	}
 
 	protected String[] getSubject()
 	{
-		Set<String>	allKeywords = new HashSet<>();
-		allKeywords.addAll(selectedKeywords);
-		allKeywords.addAll(customKeywords.getSelected());
-		return allKeywords.toArray(new String[allKeywords.size()]);
+		Collection<String> selectedKeywords = mKeywordFragment.getSelectedKeywords();
+		if (selectedKeywords.size() == 0)
+			return null;
+		return selectedKeywords.toArray(new String[selectedKeywords.size()]);
 	}
 
-	protected double getRating()
+	protected Integer[] getRatings()
 	{
-		if (isRatingNull)
-			return Double.NaN;
-		else
-			return mRatingBar.getRating();
+		List<Integer> ratings = mRatingBar.getCheckedRatings();
+		if (ratings.size() == 0)
+			return null;
+		return ratings.toArray(new Integer[ratings.size()]);
 	}
 
-	protected String[] getColorLabel()
+	protected String[] getColorLabels()
 	{
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		List<XmpLabelGroup.Labels> checked = colorKey.getCheckedLabels();
@@ -151,8 +101,8 @@ public abstract class XmpBaseFragment extends Fragment
 	protected XmpValues getXmp()
 	{
 		XmpValues xmp = new XmpValues();
-		xmp.label = getColorLabel();
-		xmp.rating = getRating();
+		xmp.label = getColorLabels();
+		xmp.rating = getRatings();
 		xmp.subject = getSubject();
 		return xmp;
 	}
@@ -161,17 +111,15 @@ public abstract class XmpBaseFragment extends Fragment
 	{
 		setColorLabel(xmp.label);
 		setSubject(xmp.subject);
-		setRating((float)xmp.rating);
+		setRating(xmp.rating);
 	}
 
-	protected void setRating(float rating)
+	protected void setRating(Integer[] ratings)
 	{
-		if (!Double.isNaN(rating))
-			mRatingBar.setRating(rating);
+		if (ratings != null)
+			mRatingBar.setRating(ratings);
 		else
-		{
-			isRatingNull = true;
-		}
+			mRatingBar.clearCheck();
 	}
 
 	protected void onXmpChanged(XmpValues xmp) { }
@@ -215,75 +163,29 @@ public abstract class XmpBaseFragment extends Fragment
 	protected void setMultiselect(boolean enable)
 	{
 		colorKey.setMultiselect(enable);
+		mRatingBar.setMultiselect(enable);
 	}
 
 	protected void setSubject(String[] subject)
 	{
 		if (subject != null)
 		{
-			selectedKeywords.addAll(Arrays.asList(subject));
-			mKeywordAdapter.notifyDataSetChanged();
-			customKeywords.setSelected(Arrays.asList(subject));
+			mKeywordFragment.setSelectedKeywords(Arrays.asList(subject));
 		}
-	}
-
-	private void createTreeView()
-	{
-		TreeStateManager<ParentChild> manager = new InMemoryTreeStateManager<>();
-		TreeBuilder<ParentChild> tree = new TreeBuilder<>(manager);
-		int numberOfLevels = 0;
-		BufferedReader readbuffer = null;
-		try
+		else
 		{
-			File keywords = GalleryActivity.getKeywordFile(getActivity());
-			if (keywords == null)
-				return;
-			readbuffer = new BufferedReader(new FileReader(keywords));
-			String line;
-			SparseArray<String> parents = new SparseArray<>();
-			parents.put(-1, null);
-			while ((line = readbuffer.readLine()) != null)
-			{
-				String tokens[] = line.split("\t");
-				int level = tokens.length - 1;
-				String node = tokens[level];
-				parents.put(level, node);
-				numberOfLevels = Math.max(numberOfLevels, level + 1);
-				ParentChild pair = new ParentChild<>(parents.get(level - 1), node);
-				tree.sequentiallyAddNextNode(pair, level);
-			}
-		}
-		catch (Exception e)
-		{
-			Toast.makeText(getActivity(), R.string.errorKeywordRequired, Toast.LENGTH_SHORT).show();
-		}
-		finally
-		{
-            Utils.closeSilently(readbuffer);
-		}
-
-		manager.collapseChildren(null);
-
-		TreeViewList treeView = (TreeViewList) getActivity().findViewById(R.id.keywordTreeView);
-		mKeywordAdapter = new TreeAdapter(getActivity(), manager, numberOfLevels);
-
-		if (numberOfLevels > 0)
-		{
-			treeView.setAdapter(mKeywordAdapter);
-			treeView.setCollapsedDrawable(getResources().getDrawable(R.drawable.plus_white));
-			treeView.setExpandedDrawable(getResources().getDrawable(R.drawable.minus_white));
+			mKeywordFragment.clearSelectedKeywords();
 		}
 	}
 
 	private void attachButtons()
 	{
 		// Ratings
-		mRatingBar.setOnRatingBarChangeListener(new OnRatingBarChangeListener()
+		mRatingBar.setOnRatingSelectionChangedListener(new RatingBar.OnRatingSelectionChangedListener()
 		{
 			@Override
-			public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser)
+			public void onRatingSelectionChanged(List<Integer> checked)
 			{
-				isRatingNull = false;
 				onXmpChanged(getXmp());
 			}
 		});
@@ -295,129 +197,18 @@ public abstract class XmpBaseFragment extends Fragment
 				onXmpChanged(getXmp());
 			}
 		});
-
-		customKeywords.setSelection(0, false);		// This stops onItemSelected firing on creation
-		customKeywords.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+		mKeywordFragment.setOnKeywordsSelectedListener(new KeywordEditFragment.OnKeywordsSelectedListener()
 		{
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-			{
-				onXmpChanged(getXmp());
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent)
-			{
-				onXmpChanged(getXmp());
+			public void onKeywordsSelected(Collection<String> selectedKeywords)
+			{onXmpChanged(getXmp());
 			}
 		});
 	}
 
-	class TreeAdapter extends AbstractTreeViewAdapter<ParentChild> implements CompoundButton.OnCheckedChangeListener
-	{
-		protected int iconWidth = 0;
-
-		public TreeAdapter(final Activity host, final TreeStateManager<ParentChild> treeStateManager, final int numberOfLevels)
-		{
-			super(host, treeStateManager, numberOfLevels);
-		}
-
-		@Override
-		public void setCollapsedDrawable(Drawable collapsedDrawable)
-		{
-			iconWidth = Math.max(iconWidth, collapsedDrawable.getIntrinsicWidth());
-			super.setCollapsedDrawable(collapsedDrawable);
-		}
-
-		@Override
-		public void setExpandedDrawable(Drawable expandedDrawable)
-		{
-			iconWidth = Math.max(iconWidth, expandedDrawable.getIntrinsicWidth());
-			super.setExpandedDrawable(expandedDrawable);
-		}
-
-		@Override
-		protected int calculateIndentation(TreeNodeInfo<ParentChild> nodeInfo)
-		{
-			return getIndentWidth() * nodeInfo.getLevel() + iconWidth;
-		}
-
-		@Override
-		protected void calculateIndentWidth()
-		{
-			// No need to calculate
-		}
-
-		@Override
-		public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked)
-		{
-			final String id = (String) buttonView.getTag();
-			changeSelected(isChecked, id);
-			onXmpChanged(getXmp());
-		}
-
-		private void changeSelected(final boolean isChecked, final String id)
-		{
-			if (isChecked)
-			{
-				selectedKeywords.add(id);
-			}
-			else
-			{
-				selectedKeywords.remove(id);
-			}
-		}
-
-		@Override
-		public long getItemId(int position)
-		{
-			return 0;
-		}
-
-		@Override
-		public View getNewChildView(TreeNodeInfo treeNodeInfo)
-		{
-			View view = getActivity().getLayoutInflater().inflate(R.layout.treeview_item, null, false);
-			return updateView(view, treeNodeInfo);
-		}
-
-		@Override
-		public View updateView(View view, TreeNodeInfo treeNodeInfo)
-		{
-			final TextView descriptionView = (TextView) view.findViewById(R.id.textViewTreeViewDescription);
-
-			String name = (String) ((ParentChild) treeNodeInfo.getId()).getChild();
-			boolean selected = selectedKeywords.contains(name);
-			descriptionView.setText(name);
-			final CheckBox box = (CheckBox) view.findViewById(R.id.checkBoxTreeView);
-			box.setTag(name);
-			box.setOnCheckedChangeListener(null); // We don't want view updates to loop check change
-			box.setChecked(selected);
-			box.setOnCheckedChangeListener(this);
-			return view;
-		}
-
-		@Override
-		public void handleItemClick(final View view, final Object id)
-		{
-			final ParentChild pairId = (ParentChild) id;
-			final TreeNodeInfo<ParentChild> info = getManager().getNodeInfo(pairId);
-			if (info.isWithChildren())
-			{
-				super.handleItemClick(view, id);
-			}
-			else
-			{
-				final ViewGroup vg = (ViewGroup) view;
-				final CheckBox cb = (CheckBox) vg.findViewById(R.id.checkBoxTreeView);
-				cb.performClick();
-			}
-		}
-	}
-
 	public class XmpValues
 	{
-		public double rating;
+		public Integer[] rating;
 		public String[] label;
 		public String[] subject;
 	}

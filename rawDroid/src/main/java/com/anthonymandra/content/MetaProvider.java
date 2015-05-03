@@ -46,9 +46,9 @@ public class MetaProvider extends ContentProvider
 
 	private DatabaseHelper dbHelper;
 
-	private static class DatabaseHelper extends SQLiteOpenHelper
+	public static class DatabaseHelper extends SQLiteOpenHelper
 	{
-		private DatabaseHelper(Context context)
+		public DatabaseHelper(Context context)
 		{
 			super(context, META_TABLE_NAME, null, DATABASE_VERSION);
 		}
@@ -110,9 +110,7 @@ public class MetaProvider extends ContentProvider
 		switch (match)
 		{
 			case META:
-				affected = db.delete(META_TABLE_NAME,
-						(!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
-						whereArgs);
+				affected = db.delete(META_TABLE_NAME, where, whereArgs);
 				break;
 			case META_ID:
 				long metaId = ContentUris.parseId(uri);
@@ -184,7 +182,7 @@ public class MetaProvider extends ContentProvider
         
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         
-//        long rowId = db.insert(META_TABLE_NAME, Data.NAME, values);
+//        long rowId = db.insert(META_TABLE_NAME, Data.KEYWORD_NAME, values);
 		long rowId = db.insertWithOnConflict(META_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         if (rowId > 0) 
@@ -221,10 +219,10 @@ public class MetaProvider extends ContentProvider
 //
 //	private void verifyValues(ContentValues values)
 //	{
-//		if (!values.containsKey(Metadata.Values.NAME))
+//		if (!values.containsKey(Metadata.Values.KEYWORD_NAME))
 //		{
 //			Resources r = Resources.getSystem();
-//			values.put(Metadata.Values.NAME, r.getString(android.R.string.untitled));
+//			values.put(Metadata.Values.KEYWORD_NAME, r.getString(android.R.string.untitled));
 //		}
 //
 //		// Make sure that the fields are all set (missing a lot currently)...
@@ -245,8 +243,7 @@ public class MetaProvider extends ContentProvider
 	{
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(META_TABLE_NAME);
-//        qb.setProjectionMap(notesProjectionMap);
- 
+
         switch (sUriMatcher.match(uri)) {    
             case META:
                 break;

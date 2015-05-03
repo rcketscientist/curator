@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:id="@+id/viewerLayout"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/viewerLayout"
              android:layout_width="wrap_content"
-             android:layout_height="wrap_content">
+             android:layout_height="wrap_content"
+                tools:showIn="@layout/viewer_twopane">
 
     <com.android.gallery3d.ui.GLRootView
         android:id="@+id/gl_root_view"
@@ -24,7 +26,6 @@
         android:id="@+id/navPanel"
         layout="@layout/nav_panel"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"/>
@@ -32,7 +33,6 @@
     <include
         android:id="@+id/metaPanel"
         layout="@layout/meta_panel"
-        android:layout_marginLeft="0dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/viewerToolbar"/>

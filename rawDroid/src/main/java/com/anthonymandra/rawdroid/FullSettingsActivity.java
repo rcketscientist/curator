@@ -308,7 +308,8 @@ public class FullSettingsActivity extends PreferenceActivity implements OnShared
 			return;
 		}
 
-		if (Util.copy(new File(sourcePath), GalleryActivity.getKeywordFile(this)))
+        // FIXME:
+		if (Util.copy(new File(sourcePath), new File(getFilesDir().getAbsolutePath(), "keywords.txt")))
 			Toast.makeText(this, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show();
 		else
 			Toast.makeText(this, R.string.resultImportFailed, Toast.LENGTH_LONG).show();

@@ -26,7 +26,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
@@ -39,6 +38,7 @@ import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpBaseFragment;
+import com.anthonymandra.rawdroid.XmpFilterFragment;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -47,7 +47,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +114,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	public static final String META_SELECTION_KEY = "selection";
 	public static final String META_SELECTION_ARGS_KEY = "selection_args";
 	public static final String META_SORT_ORDER_KEY = "sort_order";
+	public static final String META_DEFAULT_SORT = Meta.Data.NAME + " ASC";
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -129,45 +129,71 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(META_BUNDLE_KEY), this);
 	}
 
-	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp)
+	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, XmpFilterFragment.SortColumns sortColumn)
 	{
 		StringBuilder selection = new StringBuilder();
 		List<String> selectionArgs = new ArrayList<>();
-		boolean requiresAnd = false;
+		boolean requiresJoiner= false;
+		String joiner = andTrueOrFalse ? " AND " : " OR ";
 
-		if (xmp.label != null && xmp.label.length > 0)
+		if (xmp != null)
 		{
-			requiresAnd = true;
-			selection.append(makeMultipleSelection(Meta.Data.LABEL, xmp.label.length));
-			for (String label : xmp.label)
+			if (xmp.label != null && xmp.label.length > 0)
 			{
-				selectionArgs.add(label);
+				requiresJoiner = true;
+				selection.append(createMultipleIN(Meta.Data.LABEL, xmp.label.length));
+				for (String label : xmp.label)
+				{
+					selectionArgs.add(label);
+				}
+			}
+			if (xmp.subject != null && xmp.subject.length > 0)
+			{
+				if (requiresJoiner)
+					selection.append(joiner);
+				requiresJoiner = true;
+				selection.append(createMultipleLike(Meta.Data.SUBJECT, xmp.subject, selectionArgs, joiner));
+			}
+			if (xmp.rating != null && xmp.rating.length > 0)
+			{
+				if (requiresJoiner)
+					selection.append(joiner);
+
+				selection.append(createMultipleIN(Meta.Data.RATING, xmp.rating.length));
+				for (int rating : xmp.rating)
+				{
+					selectionArgs.add(Double.toString((double)rating));
+				}
 			}
 		}
-		if (xmp.subject.length > 0)
-		{
-			if (requiresAnd)
-				selection.append(" AND ");
-			requiresAnd = true;
-			selection.append(makeMultipleSelection(Meta.Data.SUBJECT, xmp.subject.length));
-			for (String subject : xmp.subject)
-			{
-				selectionArgs.add(subject);
-			}
-		}
-		if (!Double.isNaN(xmp.rating))
-		{
-			if (requiresAnd)
-				selection.append(" AND ");
 
-			selection.append(Meta.Data.RATING).append(" = ?");
-			selectionArgs.add(Double.toString(xmp.rating));
+		String order = sortAscending ? " ASC" : " DESC";
+		String sort;
+		switch (sortColumn)
+		{
+			case Date: sort = Meta.Data.TIMESTAMP + order; break;
+			case Name: sort = Meta.Data.NAME + order; break;
+			default: sort = Meta.Data.NAME + " ASC";
 		}
 
-		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), null);
+		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort);
 	}
 
-	String makeMultipleSelection(String column, int arguments)
+	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner)
+	{
+		StringBuilder selection = new StringBuilder();
+		for (int i = 0; i < likes.length; i++)
+		{
+			if (i > 0) selection.append(joiner);
+			selection.append(column)
+					.append(" LIKE ?");
+			selectionArgs.add("%" + likes[i] + "%");
+		}
+
+		return selection.toString();
+	}
+
+	String createMultipleIN(String column, int arguments)
 	{
 		StringBuilder selection = new StringBuilder();
 		selection.append(column)
@@ -242,27 +268,27 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
 	{
-		String[] projection = null;
-		String selection = null;
-		String[] selectionArgs = null;
-		String sort = null;
-
-		// Populate the database with filter (selection) from the previous app
-		if (bundle != null)
-		{
-			projection = bundle.getStringArray(META_PROJECTION_KEY);
-			selection = bundle.getString(META_SELECTION_KEY);
-			selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
-			sort = bundle.getString(META_SORT_ORDER_KEY);
-		}
-
 		/*
 		 * Takes action based on the ID of the Loader that's being created
 		 */
 		switch (loaderID) {
 			case META_LOADER_ID:
-				// Returns a new CursorLoader
 
+				String[] projection = null;
+				String selection = null;
+				String[] selectionArgs = null;
+				String sort = META_DEFAULT_SORT;
+
+				// Populate the database with filter (selection) from the previous app
+				if (bundle != null)
+				{
+					projection = bundle.getStringArray(META_PROJECTION_KEY);
+					selection = bundle.getString(META_SELECTION_KEY);
+					selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
+					sort = bundle.getString(META_SORT_ORDER_KEY);
+				}
+
+				// Returns a new CursorLoader
 				return new CursorLoader(
 						this,   				// Parent activity context
 						Meta.Data.CONTENT_URI,  // Table to query
@@ -448,14 +474,12 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		return viewer;
 	}
 
-	public static File getKeywordFile(Context context)
-	{
-		return new File(context.getFilesDir().getAbsolutePath(), "keywords.txt");
-	}
-
 	protected boolean removeDatabaseReference(RawObject toRemove)
 	{
-		int rowsDeleted = getContentResolver().delete(Meta.Data.CONTENT_URI, Meta.Data.URI + " = ?", new String[] {toRemove.getUri().toString()});
+		int rowsDeleted = getContentResolver().delete(
+				Meta.Data.CONTENT_URI,
+				Meta.Data.URI + " = ?",
+				new String[] {toRemove.getUri().toString()});
 		return rowsDeleted > 0;
 	}
 
@@ -579,7 +603,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			new RecycleTask().execute(itemsToDelete);
 		}
 	}
-	
+
     @TargetApi(21)
     protected void requestEmailIntent()
     {

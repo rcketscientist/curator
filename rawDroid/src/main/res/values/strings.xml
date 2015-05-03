@@ -318,7 +318,13 @@
     <string name="license">License</string>
     <string name="watermark">Watermark ( Pro )</string>
     <string name="filterTitle">Filter</string>
+    <string name="editTitle">Edit</string>
     <string name="drawer_open">filter open</string>
     <string name="drawer_close">filter close</string>
+    <string name="sortTitle">Sort:</string>
+    <string name="Name_ascending">Name \u25BC</string>
+    <string name="Name_descending">Name \u25B2</string>
+    <string name="Date_ascending">Date \u25BC</string>
+    <string name="Date_descending">Date \u25B2</string>
 
 </resources>

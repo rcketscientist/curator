@@ -108,7 +108,8 @@
 <string name="prefTitleImageInterface">表示の自動更新</string>
 <string name="prefSummaryImageInterface">画像が変化した時に更新します。</string>
 <string name="prefTitleRecycleBin">ゴミ箱のサイズ</string>
-<string name="prefSummaryRecycleBin">ゴミ箱に割り当てる容量(標準: 50MB, 最小: 30MB, 最大: 500MB)\n容量に注意してください。500MBは8GB端末の容量の6%以上を占めます。</string>
+<string name="prefSummaryRecycleBin">ゴミ箱に割り当てる容量(標準: 50MB, 最小: 30MB, 最大: 500MB)
+\n容量に注意してください。500MBは8GB端末の容量の6%以上を占めます。</string>
 <string name="prefTitleFilter">Exifフィルター</string>
 <string name="prefTitleComingSoon">近日公開</string>
 <string name="prefTitleDeleteConfirmation">削除の確認</string>
@@ -168,7 +169,11 @@
 <string name="emptyRecycleBin">ゴミ箱を空にする</string>
 <string name="exportThumbnails">サムネイル出力</string>
 <string name="shareWith">共有</string>
-<string name="ratingRequest">Rawdroidをお楽しみいただいているなら評価にご協力をお願いします。\n\nもし修正済みのバグを元に評価されている場合は評価の更新をお願いします。\n\nご協力に感謝します！</string>
+<string name="ratingRequest">Rawdroidをお楽しみいただいているなら評価にご協力をお願いします。
+\n
+\nもし修正済みのバグを元に評価されている場合は評価の更新をお願いします。
+\n
+\nご協力に感謝します！</string>
 <string name="intentPending">保留中のアクションがあります。続行しますか？</string>
 <string name="cont">続行</string>
 <string name="convertingFiles">ファイル変換中...</string>
@@ -212,13 +217,18 @@
 <string name="tutorialRename">全ての選択されたファイルを選択したテンプレートでリネームします。</string>
 <string name="tutorialImport">新たなコピー先に選択画像をインポートします。</string>
 <string name="tutorialExport">選択された画像を圧縮されたjpgサムネイルとして出力します。</string>
-<string name="tutorialStart">Rawdroidのチュートリアルへようこそ！\n専門的な事柄について初心者の方に分かりやすく説明する為、このチュートリアルに対してのフィードバックを歓迎します(*・ω・)v</string>
+<string name="tutorialStart">Rawdroidのチュートリアルへようこそ！
+\n専門的な事柄について初心者の方に分かりやすく説明する為、このチュートリアルに対してのフィードバックを歓迎します(*・ω・)v</string>
 <string name="tutorialConnectTitle">画像にアクセスするには</string>
 <string name="tutorialConnect1">データにアクセスするには3つの方法があります。:</string>
 <string name="tutorialConnect2">1. 最も早い方法: PCを介して端末に画像を送信する。理想的な方法ではありません。</string>
-<string name="tutorialConnect3">2. 早い方法: メディアカードリーダーとOTGケーブルを利用してメディアカードを接続する。シングルフォーマットのカードリーダーが最適です。\n注: 一部の端末はrootをとっている必要があります。私のnexus機がそうでした。"StickMount"を使用して接続しています。訳者はNexus Media Importerを使用しています。\n詳細はwebサイトをご覧ください。</string>
+<string name="tutorialConnect3">2. 早い方法: メディアカードリーダーとOTGケーブルを利用してメディアカードを接続する。シングルフォーマットのカードリーダーが最適です。
+\n注: 一部の端末はrootをとっている必要があります。私のnexus機がそうでした。"StickMount"を使用して接続しています。訳者はNexus Media Importerを使用しています。
+\n詳細はwebサイトをご覧ください。</string>
 <string name="tutorialConnect3a">注: 一部の端末はrootをとっている必要があります。私のnexus機がそうでした。"StickMount"を使用して接続しています。詳細はwebサイトをご覧ください。</string>
-<string name="tutorialConnect4">3. 遅い方法: OTGケーブルを使用してカメラと接続する。\nandroidの制限により、カメラに書き込むことはできません。端末に画像をインポートするものです。\n端末には十分なストレージ容量が必要です。さらに詳しくはwebサイトをご覧ください。</string>
+<string name="tutorialConnect4">3. 遅い方法: OTGケーブルを使用してカメラと接続する。
+\nandroidの制限により、カメラに書き込むことはできません。端末に画像をインポートするものです。
+\n端末には十分なストレージ容量が必要です。さらに詳しくはwebサイトをご覧ください。</string>
 <string name="tutorialConnect5">4. 最終的にはネットワークのサポートを追加する予定です。</string>
 <string name="tutorialMemoryTitle">メモリの問題</string>
 <string name="tutorialMemory">古い端末を使用していてクラッシュが起る場合、恐らくメモリの制限によるものです。メモリを多く使えるようにする為"VM Heap Tool"を利用する事をおすすめします。</string>
@@ -235,5 +245,6 @@
 <string name="undo">元に戻す</string>
 <string name="license">ライセンス</string>
 <string name="watermark">ウォーターマーク(Pro)</string>
+    <string name="Name_ascending">ファイル名 \u25BC</string>
 
 </resources>

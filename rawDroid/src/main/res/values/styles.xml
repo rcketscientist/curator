@@ -51,13 +51,6 @@
         <item name="android:gravity">center</item>
     </style>
 
-<!--    <style name="GalleryShowcaseTheme" parent="@style/ShowcaseView.Light">
-        <item name="sv_backgroundColor">#B4FFFFFF</item>
-        <item name="sv_titleTextColor">#ffbb33</item>
-        <item name="sv_detailTextColor">#000000</item>
-         <item name="backgroundColor">#33ffbb33</item>
-    </style>-->
-
     <style name="GalleryTheme" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/black</item>
@@ -83,6 +76,10 @@
 
     <style name="TutorialTitle" parent="TextAppearance.ShowcaseView.Title">
         <item name="android:textColor">#00801A</item>
+    </style>
+
+    <style name="RightAlignDropDownItem" parent="Base.Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:gravity">end</item>
     </style>
 
     <style name="GalleryRatingBar" parent="@android:style/Widget.RatingBar">

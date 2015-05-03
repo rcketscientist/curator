@@ -104,7 +104,8 @@
 <string name="prefTitleImageInterface">Mostrar automáticamente el display</string>
 <string name="prefSummaryImageInterface">cuando cambie la imagen</string>
 <string name="prefTitleRecycleBin">Tamaño de la Papelera</string>
-<string name="prefSummaryRecycleBin">Espacio para dedicar a la papelera (Por defecto: 50MB, Min: 30MB, Max: 500MB)\nTenga cuidado con el tamaño, 500MB es alrededor del 6% de un dispositivo de 8GB) </string>
+<string name="prefSummaryRecycleBin">Espacio para dedicar a la papelera (Por defecto: 50MB, Min: 30MB, Max: 500MB)
+\nTenga cuidado con el tamaño, 500MB es alrededor del 6% de un dispositivo de 8GB) </string>
 <string name="prefTitleFilter">Filtro Exif</string>
 <string name="prefTitleComingSoon">En Breve</string>
 <string name="prefTitleDeleteConfirmation">Confirmación de Borrado</string>
@@ -132,7 +133,9 @@
 <string name="emptyRecycleBin">Vaciar Papelera</string>
 <string name="exportThumbnails">Exportar Miniaturas</string>
 <string name="shareWith">Compartir con ...</string>
-<string name="ratingRequest">Si le ha gustado RawDroid, por favor dedique un momento a valorarlo.\nSi ya lo ha valorado basándose en un fallo que ha sido solucionado, actualice su valoración.\n¡Gracias por su ayuda!</string>
+<string name="ratingRequest">Si le ha gustado RawDroid, por favor dedique un momento a valorarlo.
+\nSi ya lo ha valorado basándose en un fallo que ha sido solucionado, actualice su valoración.
+\n¡Gracias por su ayuda!</string>
 <string name="intentPending">Tiene una acción pendiente, ¿desea continuar?</string>
 <string name="cont">Continuar</string>
 <string name="convertingFiles">Convirtiendo Archivos ...</string>
@@ -170,20 +173,24 @@
 <string name="tutorialRename">Esto renombrará todad las imágenes seleccionadas con una plantilla especificada</string>
 <string name="tutorialImport">Esto importará las imágenes seleccionadas a un destino nuevo</string>
 <string name="tutorialExport">Esto exportará las imágenes seleccionadas comprimidas como una miniatura jpg</string>
-<string name="tutorialStart">¡Bienvenido al tutorial de RawDroid!\nAprecio cualquier comentario, a veces dificil de explicar para los neófitos :).</string>
+<string name="tutorialStart">¡Bienvenido al tutorial de RawDroid!
+\nAprecio cualquier comentario, a veces dificil de explicar para los neófitos :).</string>
 <string name="tutorialConnectTitle">Cómo Conectar Imágenes</string>
 <string name="tutorialConnect1">Hay tres formas de acceder a los datos:</string>
 <string name="tutorialConnect2">1. La más rápida: Tranferir lsa imágenes a su dispositivo a través de la conexión a un PC. Evidentemente, no es lo idóneo.</string>
-<string name="tutorialConnect3">2. Rápida: Conectar la tarjeta a través de un lector USB, usando un cable OTG. Un lector de tarjetas de formato único es lo mejor.\n\ta. Algunos dispositivos necesitan Root, como mi nexus. Yo utilizo "StickMount" para conectar. Mas detalles en el website.</string>
+<string name="tutorialConnect3">2. Rápida: Conectar la tarjeta a través de un lector USB, usando un cable OTG. Un lector de tarjetas de formato único es lo mejor.
+\n\ta. Algunos dispositivos necesitan Root, como mi nexus. Yo utilizo "StickMount" para conectar. Mas detalles en el website.</string>
 <string name="tutorialConnect3a">\ta. Algunos dispositivos necesitan Root, como mi nexus. Yo utilizo "StickMount" para conectar. Mas detalles en el website.</string>
 <string name="tutorialConnect4">3. Lento: Conectar su cámara con un cable OTG. Actualmente trabajo en la velocidad (Actualizaré pronto)</string>
 <string name="tutorialConnect5">4. Tengo idea de añadir soporte de red.</string>
 <string name="tutorialMemoryTitle">Problemas de Memoria</string>
-<string name="tutorialMemory">Si dispone de un antiguo dispositivo que se cuelga, posiblemente sea debido a limitaciones de memoria.\nRecomiendo rutearlo y usar "VM Heap Tool" para prmitir usar mas memoria.</string>
+<string name="tutorialMemory">Si dispone de un antiguo dispositivo que se cuelga, posiblemente sea debido a limitaciones de memoria.
+\nRecomiendo rutearlo y usar "VM Heap Tool" para prmitir usar mas memoria.</string>
 <string name="tutorialPath">Esta es la ruta actual. Puede navegar rápidamente a través de las listas desplegables.</string>
 <string name="tutorialActionLongPressTitle">Barra de Ayuda</string>
 <string name="tutorialActionLongPress">Una pulsación prolongada sobre un elemento muestra una pequeña descripción</string>
 <string name="tutorialUsbTitle">Búsqueda de elementos USB montados</string>
 <string name="tutorialUsb">Esto buscará los soportes montados en dispositivos USB. Si los dispositivos conectados no los encuentra, por favor envie un email con la ruta de montaje por ej. "/mnt/weird/device/usb"</string>
+    <string name="Name_ascending">Nombre \u25BC</string>
 
 </resources>

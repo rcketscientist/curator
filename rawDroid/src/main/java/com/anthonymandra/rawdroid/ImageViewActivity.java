@@ -33,7 +33,7 @@ public class ImageViewActivity extends PhotoPage
     @Override
     public int getContentView()
     {
-        return R.layout.viewer_layout;
+        return R.layout.viewer_twopane;
     }
 
     @Override
@@ -52,6 +52,8 @@ public class ImageViewActivity extends PhotoPage
 
 	private void updateImageSource()
 	{
+        // Refresh the cursor
+        getLoaderManager().restartLoader(META_LOADER_ID, getCurrentMetaLoaderBundle(), this);
         //TODO: Does this work?
 //		updateViewerItems();
 //		notifyContentChanged();
@@ -70,8 +72,8 @@ public class ImageViewActivity extends PhotoPage
 	public void onCurrentImageUpdated()
 	{
         super.onCurrentImageUpdated();
-        setShareUri(getCurrentItem().getSwapUri());
-		updateImageDetails();
+//        setShareUri(getCurrentItem().getSwapUri());
+//		updateImageDetails();
 	}
 
     @Override
@@ -87,6 +89,7 @@ public class ImageViewActivity extends PhotoPage
 	public void onPhotoChanged(int index, Uri path)
 	{
         super.onPhotoChanged(index, path);
+        setShareUri(getCurrentItem().getSwapUri());
 		updateImageDetails();
 	}
 

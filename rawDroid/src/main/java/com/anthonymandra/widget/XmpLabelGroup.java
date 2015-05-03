@@ -79,11 +79,14 @@ public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnChec
 
     public void clearCheck()
     {
+        mPauseListener = true;
         mBlue.setChecked(false);
         mRed.setChecked(false);
         mGreen.setChecked(false);
         mYellow.setChecked(false);
         mPurple.setChecked(false);
+        mPauseListener = false;
+        mListener.onLabelSelectionChanged(getCheckedLabels());
     }
 
     public List<Labels> getCheckedLabels()

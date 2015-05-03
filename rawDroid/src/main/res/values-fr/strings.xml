@@ -174,5 +174,6 @@
 <string name="tutorialSelectBetweenTitle">Choisir entre</string>
 <string name="tutorialConnect1">Il y a trois façon d\\\'acceder aux données</string>
 <string name="tutorialUsbTitle">Recherche périphérique USB.</string>
+    <string name="Name_ascending">Nom \u25BC</string>
 
 </resources>
