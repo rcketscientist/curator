@@ -127,6 +127,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
+    /**
+     * Since initial image configuration can occur BEFORE image generation
+     * this flag allows us to specifically update a null histogram.  Without
+     * flag, histogram could be regenerated for each layer (thumb, big, full raw, etc)
+     */
+    protected boolean mRequiresHistogramUpdate;
     protected HistogramTask mHistogramTask;
 
     @Override
@@ -515,6 +521,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateHistogram(Bitmap bitmap)
     {
+        if (bitmap == null) {
+            mRequiresHistogramUpdate = true;
+            return;
+        }
+        mRequiresHistogramUpdate = false;
         if (mHistogramTask != null)
             mHistogramTask.cancel(true);
         mHistogramTask = new HistogramTask();

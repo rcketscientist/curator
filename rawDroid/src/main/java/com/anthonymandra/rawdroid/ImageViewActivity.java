@@ -72,8 +72,8 @@ public class ImageViewActivity extends PhotoPage
 	public void onCurrentImageUpdated()
 	{
         super.onCurrentImageUpdated();
-//        setShareUri(getCurrentItem().getSwapUri());
-//		updateImageDetails();
+        if (mRequiresHistogramUpdate)
+            updateHistogram(getCurrentBitmap());
 	}
 
     @Override
