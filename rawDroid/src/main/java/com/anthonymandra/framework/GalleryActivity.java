@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.content.UriPermission;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -770,9 +771,13 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	protected void checkWriteAccess()
 	{
 		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean skipWarning = settings.getBoolean(PREFERENCE_SKIP_WRITE_WARNING, false);
+		if (skipWarning)
+			return;
+
 		if (Util.hasLollipop())
 		{
-			getContentResolver().getPersistedUriPermissions();
+			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.writeAccessTitle);
@@ -792,6 +797,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 				}
 			});
 			builder.show();
+
 		}
 		else if (Util.hasKitkat())
 		{
@@ -803,13 +809,14 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 				public void onClick(DialogInterface dialog, int which)
 				{
 					// Do nothing, just a warning
-					SharedPreferences.Editor editor = settings.edit();
-					editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
-					editor.apply();
 				}
 			});
 			builder.show();
 		}
+
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
+		editor.apply();
 	}
 
 	protected void requestWritePermission()

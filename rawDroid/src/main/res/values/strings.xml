@@ -60,6 +60,7 @@
     <string name="licensed">Licensed</string>
     <string name="unlicensed">Unlicensed</string>
     <string name="error">Error</string>
+    <string name="match">Match</string>
 
     <!-- Error Messages -->
     <string name="errorKeywordRequired">Invalid keyword file</string>
