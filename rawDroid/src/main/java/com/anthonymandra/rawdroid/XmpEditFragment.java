@@ -99,28 +99,29 @@ public class XmpEditFragment extends XmpBaseFragment
 				new FileOutputStream(
 						ImageUtils.getXmpFile(xmp)
 				));
-		try
-		{
-			final Metadata meta = new Metadata();
-			meta.addDirectory(new XmpDirectory());
-			updateSubject(meta, lastWrittenXmp.Subject);
-			updateRating(meta, lastWrittenXmp.Rating);
-			updateLabel(meta, lastWrittenXmp.Label);
 
-			new Thread(new Runnable()
+		final Metadata meta = new Metadata();
+		meta.addDirectory(new XmpDirectory());
+		updateSubject(meta, lastWrittenXmp.Subject);
+		updateRating(meta, lastWrittenXmp.Rating);
+		updateLabel(meta, lastWrittenXmp.Label);
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
 			{
-				@Override
-				public void run()
+				try
 				{
 					if (meta.containsDirectoryOfType(XmpDirectory.class))
 						XmpWriter.write(os, meta);
 				}
-			}).start();
-		}
-		finally
-		{
-			Utils.closeSilently(os);
-		}
+				finally
+				{
+					Utils.closeSilently(os);
+				}
+			}
+		}).start();
 	}
 
 	public static void updateRating(Metadata meta, Integer rating)
