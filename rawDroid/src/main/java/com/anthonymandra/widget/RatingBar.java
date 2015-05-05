@@ -21,7 +21,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
     private OnRatingSelectionChangedListener mListener;
     private boolean mMultiSelect = false;
     private boolean mPauseListener = false;
-    private int mRating;
+    Integer mRating = null;
     CheckBox mOne, mTwo, mThree, mFour, mFive;
 
     public RatingBar(Context context) { this(context, null); }
@@ -64,6 +64,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
 
     private void clear()
     {
+        mRating = null;
         mOne.setChecked(false);
         mTwo.setChecked(false);
         mThree.setChecked(false);
@@ -84,10 +85,12 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
             checked.add(2);
         if (mOne.isChecked())
             checked.add(1);
+        if (mRating != null && mRating == 0)
+            checked.add(0);
         return checked;
     }
 
-    public int getRating()
+    public Integer getRating()
     {
         return mRating;
     }
@@ -129,7 +132,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
         }
     }
 
-    public void setRating(int rating)
+    public void setRating(Integer rating)
     {
         mRating = rating;
         if (!mMultiSelect)

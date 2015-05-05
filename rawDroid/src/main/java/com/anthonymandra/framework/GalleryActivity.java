@@ -65,6 +65,8 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	private static final int REQUEST_CODE_SHARE = 00;
 	private static final int REQUEST_CODE_WRITE_PERMISSION = 01;
 
+	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
+
 	protected RecycleBin recycleBin;
 	protected File mSwapDir;
 
@@ -764,19 +766,59 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		}
 	}
 
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	protected void checkWriteAccess()
+	{
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		if (Util.hasLollipop())
+		{
+			getContentResolver().getPersistedUriPermissions();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.requestWriteAccess);
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing
+				}
+			});
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					requestWritePermission();
+				}
+			});
+			builder.show();
+		}
+		else if (Util.hasKitkat())
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.kitkatWriteIssue);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing, just a warning
+					SharedPreferences.Editor editor = settings.edit();
+					editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
+					editor.apply();
+				}
+			});
+			builder.show();
+		}
+	}
+
 	protected void requestWritePermission()
 	{
-		getContentResolver().getPersistedUriPermissions();
 		if (Util.hasLollipop())
         {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
         }
-		else if (Util.hasKitkat())
-		{
-			//TODO: Warn User
-		}
-		// Prior versions will have permission
 	}
 
     protected void setShareUri(Uri share)
@@ -934,7 +976,8 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			{
 				ParseMetaTask pmt = new ParseMetaTask();
 //				pmt.execute(new File(raw));
-				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
+				pmt.execute(new File(raw));
+//				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
 //				pmt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new File(raw));
 			}
 

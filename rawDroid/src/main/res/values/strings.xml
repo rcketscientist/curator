@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">RawDroid</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="positive">Accept</string>
     <string name="negative">Decline</string>
     <string name="neutral">Cancel</string>
@@ -27,7 +29,6 @@
     <string name="save">Save</string>
     <string name="save_success">Save successful</string>
     <string name="save_fail">Save failed</string>
-    <string name="decode_locked">Decoder has frozen, restart required. Use "Recent" to jump back to this folder.  If this continues please email rawdroid@anthonymandra.com.</string>
     <string name="no_filemanager_installed">No file manager</string>
     <string name="contact">Contact</string>
 
@@ -216,6 +217,13 @@
     <string name="welcomeTitle">Welcome to RawDroid!</string>
     <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
     <string name="welcomeTutorial">Would you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
+    <string name="writeAccessTitle">Write Access Disabled</string>
+    <string name="requestWriteAccess">Google disabled write access.  You may grant Rawdroid write access in the following window.  If you decline Rawdroid will be view images but will be unable to write metadata, delete, save thumbnails, etc.  Rawdroid will ONLY be able to access the folder you select, so the safest bet is to choose the whole sd card restoring previous access permissions to Rawdroid.  Write access is used ONLY for actions related to image workflow.</string>
+    <string name="kitkatWriteIssue">Google disabled write access in Android 4.4.  Without write access you cannot edit metadata, write xmp, delete, etc.  You have three options:\n
+    1) Use an external reader connected via OTG USB.\n
+    2) Upgrade to 5.0.  There is a fix in 5.0.\n
+    3) Root your device and apply a fix.\n
+    </string>
     
     <!-- Colors for xmp -->
     <string name="red">Red</string>

@@ -270,10 +270,10 @@ public class ImageUtils
         return result;
     }
 
-    private static double getDouble(Metadata meta, Class type, int tag)
+    private static Double getDouble(Metadata meta, Class type, int tag)
     {
         Directory dir = meta.getFirstDirectoryOfType(type);
-        double result = Double.NaN;
+        Double result = null;
         if (dir == null)
             return result;
         try
@@ -451,7 +451,7 @@ public class ImageUtils
         return getDescription(meta, GpsDirectory.class, GpsDirectory.TAG_LONGITUDE);
     }
 
-    private static double getRating(Metadata meta)
+    private static Double getRating(Metadata meta)
     {
         return getDouble(meta, XmpDirectory.class, XmpDirectory.TAG_RATING);
     }

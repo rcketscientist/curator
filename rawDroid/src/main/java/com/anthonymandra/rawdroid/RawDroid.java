@@ -248,9 +248,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		loadXmpFilter();
 
-		//TODO: Kills the image load
-//		if (Util.hasLollipop())
-//			requestWritePermission();
+		checkWriteAccess();
 	}
 
 	@Override
@@ -272,14 +270,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.welcomeTitle);
-            builder.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
                     // Do nothing
                 }
             });
-            builder.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which)
                 {
