@@ -40,14 +40,14 @@ public class ImageViewActivity extends PhotoPage
 	protected void updateAfterDelete()
 	{
         mPhotoView.setDeleteOrRestore(true);
-		updateImageSource();
+//		updateImageSource();
 	}
 
     @Override
 	protected void updateAfterRestore()
 	{
         mPhotoView.setDeleteOrRestore(true);
-		updateImageSource();
+//		updateImageSource();
 	}
 
 	private void updateImageSource()

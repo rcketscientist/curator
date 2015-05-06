@@ -972,6 +972,14 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         updateSlidingWindow();
     }
 
+    @Override
+    public Cursor swapCursor(Cursor newCursor)
+    {
+        Cursor c = super.swapCursor(newCursor);
+        if (mReloadTask != null) mReloadTask.notifyDirty();
+        return c;
+    }
+
     private class ReloadTask extends Thread {
         private volatile boolean mActive = true;
         private volatile boolean mDirty = true;
