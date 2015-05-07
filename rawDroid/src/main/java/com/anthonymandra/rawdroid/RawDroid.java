@@ -380,6 +380,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			//Update last shown version
 			final SharedPreferences.Editor edit = prefs.edit();
 			edit.putInt(PREFS_LAST_BETA_VERSION, getAppVersionCode());
+			edit.apply();
 		}
 
 		mImageDecoder.setExitTasksEarly(false);
