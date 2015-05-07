@@ -62,7 +62,7 @@ public class AppRater
 					public void onClick(DialogInterface dialog, int which)
 					{
 						editor.putBoolean("dontshowagain", true);
-						editor.commit();
+						editor.apply();
                         Intent store = Util.getStoreIntent(mContext, APP_PNAME);
                         if (store != null)
                             mContext.startActivity(store);
@@ -86,7 +86,7 @@ public class AppRater
 						if (editor != null)
 						{
 							editor.putBoolean("dontshowagain", true);
-							editor.commit();
+							editor.apply();
 						}
 						dialog.dismiss();
 

@@ -11,7 +11,8 @@
         android:id="@+id/gallerySd"
         android:icon="@android:drawable/ic_menu_gallery"
         app:showAsAction="always"
-        android:title="@string/usb"/>
+        android:enabled="false"
+        android:title="Request Write Permission"/>
     <item
         android:id="@+id/gallery_recycle"
         android:icon="@drawable/recycle"
@@ -28,7 +29,7 @@
         android:orderInCategory="20">
         <menu>
             <item
-                android:id="@+id/galleryContact"
+                android:id="@+id/contact"
                 android:icon="@android:drawable/ic_menu_send"
                 android:orderInCategory="31"
                 app:showAsAction="never"
@@ -46,15 +47,15 @@
                 app:showAsAction="never"
                 android:title="@string/tutorial"/>
             <item
-                android:id="@+id/galleryAbout"
-                android:icon="@android:drawable/ic_menu_search"
+                android:id="@+id/about"
+                android:icon="@android:drawable/ic_menu_info_details"
                 android:orderInCategory="34"
                 app:showAsAction="never"
                 android:title="@string/about"/>
         </menu>
     </item>
     <item
-        android:id="@+id/gallerySettings"
+        android:id="@+id/settings"
         android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="21"
         app:showAsAction="never"

@@ -27,12 +27,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.ImageViewActivity;
 import com.anthonymandra.rawdroid.LegacyViewerActivity;
@@ -40,6 +42,7 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpBaseFragment;
 import com.anthonymandra.rawdroid.XmpFilterFragment;
+import com.inscription.ChangeLogDialog;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -333,6 +336,27 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		recycleBin = null;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle item selection
+		switch (item.getItemId())
+		{
+			case R.id.contact:
+				requestEmailIntent();
+				return true;
+			case R.id.about:
+				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
+				changeLogDialog.show(Constants.VariantCode == 8);
+				return true;
+			case R.id.settings:
+				requestSettings();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
 	/**
 	 * Create swap directory or clear the contents
 	 */
@@ -608,10 +632,16 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	}
 
     @TargetApi(21)
-    protected void requestEmailIntent()
+	protected void requestEmailIntent() {requestEmailIntent(null);}
+    protected void requestEmailIntent(String subject)
     {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto","rawdroid@anthonymandra.com", null));
+
+		if (subject != null)
+		{
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		}
 
         StringBuilder body = new StringBuilder();
         body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
@@ -629,6 +659,12 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
         emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
         startActivity(Intent.createChooser(emailIntent, "Send email..."));
     }
+
+	private void requestSettings()
+	{
+		Intent settings = new Intent(this, FullSettingsActivity.class);
+		startActivity(settings);
+	}
 
 	/**
 	 * Updates the UI after a delete.
@@ -989,6 +1025,35 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			}
 
 			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid)
+		{
+			super.onPostExecute(aVoid);
+			if (totalImages == 0)
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
+				builder.setTitle(R.string.zeroSearchTitle);
+				builder.setMessage(R.string.zeroSearchSummary);
+				builder.setNegativeButton(R.string.neutral, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						// Do nothing
+					}
+				});
+				builder.setPositiveButton(R.string.contact, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						requestEmailIntent("Zero Search Results");
+					}
+				});
+				builder.show();
+			}
 		}
 
 		@Override

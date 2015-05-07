@@ -758,21 +758,15 @@ public abstract class ViewerActivity extends GalleryActivity implements
             case R.id.view_recycle:
                 showRecycleBin();
                 return true;
-            case R.id.viewSettings:
-                startSettings();
-                return true;
-            case R.id.viewHelp:
-                Toast.makeText(this, R.string.prefTitleComingSoon, Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.viewSettings:
+//                startSettings();
+//                return true;
+//            case R.id.viewHelp:
+//                Toast.makeText(this, R.string.prefTitleComingSoon, Toast.LENGTH_SHORT).show();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void startSettings()
-    {
-        Intent settings = new Intent(ViewerActivity.this, FullSettingsActivity.class);
-        startActivity(settings);
     }
 
     private void editImage()

@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -33,8 +35,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -108,6 +112,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	public static final String PREFS_MOST_RECENT_SAVE = "mostRecentSave";
 	public static final String PREFS_MOST_RECENT_IMPORT = "mostRecentImport";
 	public static final String PREFS_VERSION_NUMBER = "prefVersionNumber";
+	public static final String PREFS_SHOW_FILTER_HINT = "prefShowFilterHint";
+	public static final String PREFS_LAST_BETA_VERSION = "prefLastBetaVersion";
 	public static final String IMAGE_CACHE_DIR = "thumbs";
 	public static final String[] USB_LOCATIONS = new String[]
 	{
@@ -248,7 +254,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		loadXmpFilter();
 
-		checkWriteAccess();
+//		checkWriteAccess();
 	}
 
 	@Override
@@ -257,6 +263,15 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		super.onPostCreate(savedInstanceState);
 		mDrawerToggle.syncState();
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
+
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+		if (settings.getBoolean(PREFS_SHOW_FILTER_HINT, true))
+		{
+			mDrawerLayout.openDrawer(Gravity.START);
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean(PREFS_SHOW_FILTER_HINT, false);
+			editor.apply();
+		}
 	}
 
 	private void doFirstRun()
@@ -316,6 +331,9 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	{
 		mGalleryAdapter.swapCursor(cursor);
 		setImageCountTitle();
+
+		if (mGalleryAdapter.getCount() == 0)
+			offerInitDatabase();
 	}
 
 	@Override
@@ -341,8 +359,30 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		final WhatsNewDialog whatsNewDialog = new WhatsNewDialog(this);
 		whatsNewDialog.show(Constants.VariantCode == 8);
 
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		final int versionShown = prefs.getInt(PREFS_LAST_BETA_VERSION, 0);
+		if (versionShown != getAppVersionCode())
+		{
+			AlertDialog.Builder builder =
+					new AlertDialog.Builder(this).
+							setTitle(R.string.betaWelcomeTitle).
+							setMessage(Html.fromHtml(getString(R.string.betaWelcomeMessage))).
+							setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
+							{
+								@Override
+								public void onClick(DialogInterface dialog, int which)
+								{
+									//Do nothing
+								}
+							});
+			builder.create().show();
+
+			//Update last shown version
+			final SharedPreferences.Editor edit = prefs.edit();
+			edit.putInt(PREFS_LAST_BETA_VERSION, getAppVersionCode());
+		}
+
 		mImageDecoder.setExitTasksEarly(false);
-		Log.i(TAG, "onResume");
 	}
 
 	@Override
@@ -351,14 +391,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		super.onPause();
 		mImageDecoder.setExitTasksEarly(true);
 		mImageDecoder.flushCache();
-		Log.i(TAG, "onPause");
-	}
-
-	@Override
-	public void onStop()
-	{
-		super.onStop();
-		Log.i(TAG, "onStop");
 	}
 
 	@Override
@@ -366,6 +398,43 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	{
 		super.onDestroy();
 		mImageDecoder.closeCache();
+	}
+
+	//Get the current app version
+	private int getAppVersionCode() {
+		try {
+			final PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			return packageInfo.versionCode;
+		} catch (PackageManager.NameNotFoundException ignored) {
+			return 0;
+		}
+	}
+
+	private void offerInitDatabase()
+	{
+		ImageView image = new ImageView(this);
+		image.setImageResource(R.drawable.ic_action_refresh);
+
+		AlertDialog.Builder builder =
+				new AlertDialog.Builder(this).
+						setTitle(R.string.offerSearchTitle).
+						setMessage(R.string.offerSearchMessage).
+						setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								scanRawFiles();
+							}
+						}).
+						setNegativeButton(R.string.neutral, new DialogInterface.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								//do nothing
+							}
+						}).
+								setView(image);
+		builder.create().show();
 	}
 
 	protected void setImageCountTitle()
@@ -522,9 +591,9 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				storeSelectionForIntent();
 				requestImportImageLocation();
 				return true;
-			case R.id.gallerySettings:
-				requestSettings();
-				return true;
+//			case R.id.gallerySettings:
+//				requestSettings();
+//				return true;
 			case R.id.gallery_recycle:
             case R.id.context_recycle:
 				showRecycleBin();
@@ -536,16 +605,16 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			case R.id.galleryRefresh:
 				scanRawFiles();
 				return true;
-			case R.id.galleryContact:
-				requestEmailIntent();
-				return true;
+//			case R.id.galleryContact:
+//				requestEmailIntent();
+//				return true;
 			case R.id.galleryTutorial:
 				runTutorial();
 				return true;
-			case R.id.galleryAbout:
-				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
-				changeLogDialog.show(Constants.VariantCode == 8);
-				return true;
+//			case R.id.galleryAbout:
+//				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
+//				changeLogDialog.show(Constants.VariantCode == 8);
+//				return true;
 			case R.id.gallerySd:
 				requestWritePermission();
 				return true;
@@ -663,12 +732,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
 		startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
     }
-
-	private void requestSettings()
-	{
-		Intent settings = new Intent(this, FullSettingsActivity.class);
-		startActivity(settings);
-	}
 
 	@Override
 	protected void updateAfterDelete()
