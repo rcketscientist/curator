@@ -208,7 +208,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 
-		doFirstRun();
+//		doFirstRun();
 
 		AppRater.app_launched(this);
 

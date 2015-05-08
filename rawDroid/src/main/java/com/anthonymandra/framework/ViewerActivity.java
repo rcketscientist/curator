@@ -5,6 +5,8 @@ import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -46,6 +48,7 @@ import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -774,13 +777,32 @@ public abstract class ViewerActivity extends GalleryActivity implements
         MediaItem media = getCurrentItem();
 
         Intent action = new Intent(Intent.ACTION_EDIT);
-        action.setType("image/jpeg");
+        action.setData(media.getUri());
+        action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        action.setType("*/*");
 
+        // If an editor can handle raw
+        if (intentExists(action))
+        {
+            Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
+            startActivityForResult(chooser, REQUEST_CODE_EDIT);
+            return;
+        }
+
+        // Otherwise convert
+//        action.setType("image/jpeg");   // Not sure why I'm resetting type here...
         action.setDataAndType(media.getSwapUri(), "image/*");
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 //        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
+    }
+
+    private boolean intentExists(Intent intent)
+    {
+//        String mime = getContentResolver().getType(intent.getData());
+        List<ResolveInfo> ri = getPackageManager().queryIntentActivities(intent, 0);
+        return intent.resolveActivity(getPackageManager()) != null;
     }
 
     @Override

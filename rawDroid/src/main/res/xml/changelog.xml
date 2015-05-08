@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="3.0.0"
-             versioncode="30000"
-             summary="Feature Release: Zoom lock, Quick delete"
-             date="30 MAR 2015">
-        <change>Feature(Pro): Zoom lock for comparison in viewer</change>
-        <change>Feature(Pro): Quickly delete in filmstrip mode (farthest zoom) by flinging image upward</change>
+    <release version="3.9.0"
+             versioncode="39000"
+             summary="Beta: Filter/Search framework"
+             date="07 MAY 2015">
+        <change>Feature: New database framework</change>
+        <change>Feature: Filter gallery by xmp</change>
+        <change>Feature: Sort by name or date</change>
+        <change>Feature: Search device for images</change>
+        <change>Feature: Gallery can display label/rating</change>
     </release>
     <release version="2.9.2"
              versioncode="29200"
