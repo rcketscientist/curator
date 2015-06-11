@@ -157,7 +157,6 @@ public class KeywordDataSource extends PathDataSource
 
                 ContentValues cv = new ContentValues();
                 cv.put(KEYWORD_NAME, name);
-                cv.put(KEYWORD_RECENT, System.currentTimeMillis());
 
                 long childId = insert(parents.get(depth - 1), cv);
                 parents.put(depth, childId);

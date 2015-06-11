@@ -11,7 +11,7 @@
         android:id="@+id/gallerySd"
         android:icon="@android:drawable/ic_menu_gallery"
         app:showAsAction="always"
-        android:enabled="false"
+        android:enabled="true"
         android:title="Request Write Permission"/>
     <item
         android:id="@+id/gallery_recycle"

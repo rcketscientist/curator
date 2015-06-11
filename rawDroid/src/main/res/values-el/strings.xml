@@ -5,29 +5,18 @@
 <string name="positive">Επιβεβαίωση</string>
 <string name="negative">Απόρριψη</string>
 <string name="neutral">Ακύρωση</string>
-<string name="DecodeAll">Αποδικωποίηση όλων</string>
-<string name="file">Αρχείο</string>
 <string name="save_as">Αποθήκευση ως...</string>
 <string name="export">Εξαγωγή</string>
 <string name="wallpaper">Ορισμός ως ταπετσαρία</string>
 <string name="edit">Επεξεργασία με...</string>
-<string name="multi_select">Πολλαπλή επιλογή</string>
 <string name="selectAll">Επιλογή όλων</string>
 <string name="help">Βοήθεια</string>
 <string name="delete">Διαγραφή</string>
 <string name="view_tag">Ετικέτα</string>
-<string name="menu_exit">Έξοδος</string>
-<string name="button_Recent">Πρόσφατα</string>
-<string name="lastUsedFolder">Τελευταίος Φάκελος</string>
-<string name="accessDenied">Δεν επιτρέπεται η πρόσβαση </string>
-<string name="grid_reset">Επαναφορά ρυθμίσεων</string>
-<string name="bad_source">Το αρχείο δε βρέθηκε</string>
 <string name="rename">Μετονομασία</string>
 <string name="format_prompt">Διαμόρφωση</string>
 <string name="save">Αποθήκευση</string>
 <string name="save_success">Επιτυχής αποθήκευση</string>
-<string name="save_fail">Αποτυχία αποθήκευσης</string>
-<string name="decode_locked">Ο αποδικωποιητής κόλλησε, χρειάζεται επανεκκίνηση. Χρησιμοποίηστε το "Πρόσφατα" για να επιστρέψεται πίσω σε αυτό το φάκελο. Αν το πρόβλημα συνεχίσει παρακαλώ επικοινωνίστε στο: rawdroid@anthonymandra.com</string>
 <string name="no_filemanager_installed">Δεν υπάρχει πρόγραμμα διαχείρησης αρχείων</string>
 
 <!-- <item>Custom Name - Original Number</item> -->
@@ -35,24 +24,15 @@
 <string name="Date">Ημερ/νία</string>
 <string name="Name">Όνομα</string>
 <string name="settings">Ρυθμίσεις</string>
-<string name="importKeywords">Εισαγωγή λέξεων-κλειδιών </string>
-<string name="importImages">Εισαγωγή εικόνων</string>
 <string name="chooseDestination">Επιλογή Προορισμού</string>
 <string name="choosefile">Επιλογή Αρχείου</string>
 <string name="import1">Εισαγωγή</string>
-<string name="all">ΟΛΑ</string>
-<string name="selected">ΕΠΙΛΕΓΜΕΝΑ</string>
 <string name="renameImages">Μετονομασία εικόνων</string>
 <string name="view">Προβολή</string>
 <string name="gallery">Γκάλερι</string>
-<string name="image">Εικόνα</string>
 <string name="firstImage">Πρώτη εικόνα</string>
 <string name="lastImage">Τελευταία εικόνα</string>
-<string name="licensed">αδειοδοτημένο</string>
 <string name="unlicensed">χωρίς άδεια χρήσης</string>
-
-<!-- Error Messages -->
-<string name="errorKeywordRequired">Άκυρο αρχείο λέξεων-κλειδιών</string>
 
 <!-- Meta -->
 <string name="altitude">Υψόμετρο</string>
@@ -76,32 +56,23 @@
 <!-- Results -->
 <string name="resultImportSuccessful">Επιτυχής εισαγωγή</string>
 <string name="resultImportFailed">Αποτυχία εισαγωγής</string>
-<string name="resultDeleteSucceded">Επιτυχής διαγραφή  επιλεγμένων εικόνων.</string>
 <string name="resultWallpaperFailed">Αποτυχία ορισμού ταπετσαρίας.</string>
 
 <!-- Warnings -->
-<string name="warningNoFolderDecoded">Δεν υπάρχει ακόμα αποδικωποιημένος φάκελος.</string>
 <string name="warningFileWrongFormat">Λάθος τύπος αρχείου.</string>
 <string name="warningNoItemsSelected">Δεν υπάρχουν επιλεγμένα στοιχεία.</string>
-<string name="warningInvalidPath">Η διαδρομή δεν είναι πλεον διαθέσιμη, επανεκκίνηση...</string>
 <string name="warningNotEnoughSpace">Δεν υπάρχει αρκετός διαθέσιμος χώρος για ολόκληρο το φάκελο.</string>
-<string name="warningSourceEqualsDestination">Αδύνατη η εισαγωγή στον ίδιο φάκελο.</string>
 <string name="warningDeleteExceedsRecycle">Το διαγραμμένο αρχείο είναι μεγαλύτερο του κάδου ανακύκλωσης. Να γίνει οριστική διαγραφή; (Σημ: Το μέγεθος του κάδου μπορεί να αλλάξει στις ρυθμίσεις)</string>
-<string name="warningRecycleMtp">Ο κάδος ανακύκλωσης δεν υποστιρίζει το USB ακόμα. Η διαγραφή θα είναι οριστική.</string>
 <string name="warningDeleteDirect">Τα αρχεία θα διαγραφούν οριστικά.</string>
 <string name="warningNoRecycleBin">Δεν υπάρχει κάδος ανακύκλωσης. Τα αρχεία θα διαγραφούν οριστικά.</string>
 <string name="warningGenericImagesOff">Οι γενικές εικόνες (πχ: .jpg) είναι απενεργοποιημένες.</string>
-<string name="warningInvalidMeta">Άκυρα metadata (Παρακαλώ στείλτε με email το προβληματικό αρχείο)</string>
 <string name="warningInvalidLabel">είναι μια έγκυρη ετικέτα. Μπορείτε να προσαρμόσετε τις ετικέτες από τις ρυθμίσεις.</string>
-<string name="warningLicenseAllow">Άδεια χρήσης: Ευχαριστώ για την υποστήριξή σας!</string>
-<string name="warningFailedToGetStream">Προειδοποίηση: Αποτυχία λήψης της ροής εικόνων. Αν το πρόβλημα συνεχίσει παρακαλώ επικοινωνίστε στο: rawdroid@anthonymandra.com</string>
 
 <!-- Preferences -->
 <string name="prefTitleRecycleBin">Μέγεθος Κάδου Ανακύκλωσης</string>
 <string name="prefSummaryRecycleBin">Διατεθειμένος χώρος στον Κάδο Ανακύκλωσης (Προεπιλογή: 50MB, Ελάχιστο: 30ΜΒ, Μέγιστο: 500ΜΒ)
 \nΠροσοχή στον ορισμό του μεγέθους: 500ΜΒ είναι πάνω από το 6% της μνήμης μιας συσκευής των 8GB!</string>
 <string name="prefTitleFilter">Φίλτρα Exif</string>
-<string name="prefTitleComingSoon">Προσεχώς</string>
 <string name="prefTitleDeleteConfirmation">Επιβεβαίωση Διαγραφής</string>
 <string name="prefSummaryDeleteConfirmation">Αν απενεργοποιηθεί, οι διαγραφές δεν θα χρειάζονται επιβεβαίωση ακόμα και αν ξεπερνάνε το μέγεθος του Κάδου Ανακύκλωσης.</string>
 <string name="prefTitleUseRecycleBin">Χρήση Κάδου Ανακύκλωσης</string>
@@ -109,25 +80,16 @@
 <string name="prefTitleShowXmpFiles">Προβολή αρχείων XMP</string>
 
 
-<string name="cont">Συνέχεια</string>
-<string name="convertingFiles">Μετατροπή Αρχείων...</string>
 <string name="importingImages">Εισαγωγή εικόνων...</string>
 <string name="exportingThumb">Εξαγωγή Μικρογραφιών...</string>
 <string name="deletingFiles">Διαγραφή Αρχείων...</string>
 <string name="recyclingFiles">Μεταφορά αρχείων στον Κάδο Ανακύκλωσης...</string>
-<string name="cancelled">Ακυρώθηκε</string>
 <string name="clear">Καθαρισμός</string>
-<string name="write">Εγγραφή</string>
 <string name="reuse">Επαναχρησιμοποίηση</string>
 <string name="customKeywords">Προσαρμοσμένες λέξεις-κλειδιά</string>
 <string name="addKeyword">Προσθήκη λέξης-κλειδιού</string>
-<string name="select">Επιλογή</string>
 <string name="directory">Φάκελος</string>
-<string name="about">Περί</string>
-<string name="usb">Εύσρεση USB</string>
 <string name="search">Αναζήτηση</string>
-<string name="experimental">(Πειραματικό)</string>
-<string name="imageFolders">Οι φάκελοι περιέχουν αρχεία RAW</string>
 
 <!-- Colors for xmp -->
 <string name="red">Κόκκινο</string>

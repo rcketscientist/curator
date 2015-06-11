@@ -62,6 +62,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.GalleryActivity;
@@ -78,7 +79,6 @@ import com.anthonymandra.widget.LoadingImageView;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
-import com.inscription.ChangeLogDialog;
 import com.inscription.WhatsNewDialog;
 
 import org.openintents.filemanager.FileManagerActivity;
@@ -87,6 +87,8 @@ import org.openintents.intents.FileManagerIntents;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -193,7 +195,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setLogo(R.drawable.icon);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerToggle = new ActionBarDrawerToggle(
@@ -253,6 +255,22 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		setImageCountTitle();
 
 		loadXmpFilter();
+
+		if (getIntent().getData() != null)
+		{
+			try
+			{
+				InputStream is = getContentResolver().openInputStream(getIntent().getData());
+
+				// Attempt to import keywords
+				// TODO: We should check the format first
+				KeywordProvider.importKeywords(this, new InputStreamReader(is));
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 //		checkWriteAccess();
 	}

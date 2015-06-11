@@ -24,8 +24,6 @@ public class ImageViewActivity extends PhotoPage
 	{
 		super.onCreate(savedInstanceState);
 
-        initialize();
-
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
 	}

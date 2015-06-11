@@ -39,6 +39,8 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
+import com.anthonymandra.content.Meta;
+import com.anthonymandra.content.MetaProvider;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
 
@@ -159,15 +161,17 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
 
     private final GalleryApp mActivity;
     private long mMediaVersion = 0;
+    private Uri mUri;
 
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
-        Cursor cursor, int position) {
+        Cursor cursor, int position, Uri uri) {
         super(activity.getAndroidContext(), cursor);
 		mActivity = activity;
         mPhotoView = Utils.checkNotNull(view);
         mPosition = position;
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
+        mUri = uri;
 
         Arrays.fill(mChanges, MediaObject.INVALID_DATA_VERSION);
 
@@ -646,9 +650,10 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
 
 		// 1. Find the most wanted request and start it (if not already started).
 		Future<?> task = null;
-        for (int i = 0; i < sImageFetchSeq.length; i++) {
-            int offset = sImageFetchSeq[i].indexOffset;
-            int bit = sImageFetchSeq[i].imageBit;
+        for (ImageFetch aSImageFetchSeq : sImageFetchSeq)
+        {
+            int offset = aSImageFetchSeq.indexOffset;
+            int bit = aSImageFetchSeq.imageBit;
             if (bit == BIT_FULL_IMAGE && !mNeedFullImage) continue;
             task = startTaskIfNeeded(currentIndex + offset, bit);
             if (task != null) break;
@@ -976,6 +981,20 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     public Cursor swapCursor(Cursor newCursor)
     {
         Cursor c = super.swapCursor(newCursor);
+        if (mPosition == -1)
+        {
+            int position = 0;
+            mCursor.moveToFirst();
+            while(mCursor.moveToNext())
+            {
+                position++;
+                if (mCursor.getString(Meta.URI_COLUMN).equals(mUri.toString()))
+                {
+                    mPosition = position;
+                    break;
+                }
+            }
+        }
         if (mReloadTask != null) mReloadTask.notifyDirty();
         return c;
     }

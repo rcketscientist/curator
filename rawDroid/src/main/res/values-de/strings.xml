@@ -5,29 +5,18 @@
 <string name="positive">Annehmen</string>
 <string name="negative">Ablehnen</string>
 <string name="neutral">Abbrechen</string>
-<string name="DecodeAll">Alles Dekodieren</string>
-<string name="file">Datei</string>
 <string name="save_as">Speichern unter ...</string>
 <string name="export">Exportieren</string>
 <string name="wallpaper">Als Hintergrund wählen</string>
 <string name="edit">Bearbeiten mit ...</string>
-<string name="multi_select">Mehrfachauswahl</string>
 <string name="selectAll">alle auswählen</string>
 <string name="help">Hilfe</string>
 <string name="delete">Löschen</string>
 <string name="view_tag">Beschriftung</string>
-<string name="menu_exit">Beenden</string>
-<string name="button_Recent">Vorhergehende</string>
-<string name="lastUsedFolder">zuletzt benutzter Ordner</string>
-<string name="accessDenied">Zugriff verweigert</string>
-<string name="grid_reset">Bild zurücksetzen</string>
-<string name="bad_source">Quelldatei nicht gefunden</string>
 <string name="rename">Umbenennen</string>
 <string name="format_prompt">Formatieren</string>
 <string name="save">Speichern</string>
 <string name="save_success">Speichern erfolgreich</string>
-<string name="save_fail">Speichern nicht möglich</string>
-<string name="decode_locked">Der Dekoder ist abgestürzt. Benutzen sie Vorhergehende um in zurück ins Verzeichnis zu wechseln. Wenn dieser Fehler wieder auftritt, schreiben Sie bitte eine E-Mail an: rawdroid@anthonymandra.com</string>
 <string name="no_filemanager_installed">Kein Datei-Manager</string>
 
 <string-array name="format_array">
@@ -39,26 +28,19 @@
 <string name="Date">Datum</string>
 <string name="Name">Name</string>
 <string name="settings">Einstellungen</string>
-<string name="importKeywords">Stichwörter importieren</string>
-<string name="importImages">Bilder importieren</string>
 <string name="chooseDestination">Ziel auswählen</string>
 <string name="choosefile">Datei auswählen</string>
 <string name="import1">Importieren</string>
-<string name="all">ALLE</string>
-<string name="selected">AUSGEWÄHLTE</string>
+
 <string name="renameImages">Bilder umbenannt</string>
 <string name="view">Anzeigen</string>
 <string name="gallery">Galerie</string>
 <string name="viewer">Betrachter</string>
-<string name="image">Bild</string>
 <string name="storage">Speicherort </string>
 <string name="firstImage">Erstes Bild</string>
 <string name="lastImage">Letztes Bild</string>
 <string name="licensed">lizenziert</string>
 <string name="unlicensed">unlizenziert</string>
-
-<!-- Error Messages -->
-<string name="errorKeywordRequired">Geladene Stichwörterdatei erforderlich</string>
 
 <!-- Meta -->
 <string name="altitude">Höhe</string>
@@ -82,25 +64,17 @@
 <!-- Results -->
 <string name="resultImportSuccessful">Import erfolgreich.</string>
 <string name="resultImportFailed">Import nicht möglich.</string>
-<string name="resultDeleteSucceded">Ausgewählte Bilder erfolgreich gelöscht.</string>
 <string name="resultWallpaperFailed">Hintergrundbild konnte nicht gesetzt werden.</string>
 
 <!-- Warnings -->
-<string name="warningNoFolderDecoded">Sie haben noch kein Verzeichnis dekodiert.</string>
 <string name="warningFileWrongFormat">Das Dateiformat ist nicht gültig.</string>
 <string name="warningNoItemsSelected">Kein Objekt ausgewählt.</string>
-<string name="warningInvalidPath">Der Pfad ist nicht mehr verfügbar. Starte neu ...</string>
 <string name="warningNotEnoughSpace">Nicht genügend Speicher um das ganze Verzeichnis zu importieren.</string>
-<string name="warningSourceEqualsDestination">Es kann nicht ins selbe Verzeichnis importiert werden.</string>
 <string name="warningDeleteExceedsRecycle">Die zu löschenden Dateien sind zu groß für den Papierkorb. Unwiderruflich Löschen? (Tipp: Die Größe kann in den Einstellungen angepasst werden)</string>
-<string name="warningRecycleMtp">Der Papierkorb unterstützt momentan kein USB. Das Löschen ist unwiderruflich.</string>
 <string name="warningDeleteDirect">Die Dateien werden direkt gelöscht.</string>
 <string name="warningNoRecycleBin">Kein Papierkorb vorhanden. Die Dateien werden direkt gelöscht.</string>
 <string name="warningGenericImagesOff">allgemeine Bilder (.jpg) sind in den Einstellungen deaktiviert</string>
-<string name="warningInvalidMeta">ungültige Metadaten</string>
 <string name="warningInvalidLabel">ist ein ungültiger Etikett. Bezeichnungen können in den Einstellungen angepasst werden</string>
-<string name="warningLicenseDeny">Lizenz: Viel Spaß mit der Demo</string>
-<string name="warningLicenseAllow">Lizenz: Danke für Ihren Kauf !</string>
 
 <!-- Preferences -->
 <string name="prefTitleImageInterface">Interface automatisch anzeigen</string>
@@ -109,7 +83,6 @@
 <string name="prefSummaryRecycleBin">Dem Papierkorb zugewiesene Größe (Standard: 50MB, Min: 30MB, Max: 500MB)
 \nVorsichtig mit der Größe: 500MB sind mehr als 6% eines 8GB Speichers!</string>
 <string name="prefTitleFilter">Exif Filter</string>
-<string name="prefTitleComingSoon">demnächst</string>
 <string name="prefTitleDeleteConfirmation">Bestätigung beim Löschen</string>
 <string name="prefSummaryDeleteConfirmation">Falls deaktiviert, wird ohne Bestätigung gelöscht - selbst bei Dateien, die zu groß für den Papierkorb sind.</string>
 <string name="prefTitleUseRecycleBin">Papierkorb verwenden</string>
@@ -121,8 +94,6 @@
 <string name="prefTitleShowUnknownFiles">Unbekannte Dateiformate anzeigen</string>
 <string name="prefSummaryShowUnknownFiles">Zeigt auch Dateien an, die RawDroid nicht verarbeiten kann.</string>
 <string name="prefTitleImportKeywords">Schlagwörter importieren</string>
-<string name="prefTitleClearGalleryCache">Zwischenspeicher der Galerie löschen</string>
-<string name="prefSummaryClearGalleryCache">Hier klicken, um den Zwischenspeicher für Vorschauen in der Galerie zu löschen.</string>
 <string name="prefTitleShowNav">zeige Navigation</string>
 <string name="prefTitleShowMeta">zeige Metadaten</string>
 <string name="prefTitleShowHist">zeige Histogramm</string>
@@ -146,24 +117,16 @@
 \nSollte deine bisherige Wertung wegen eines Fehlers sein, der mittlerweile behoben wurde, aktualisiere doch bitte deine Bewertung.
 \n
 \nVielen Dank für deine Unterstützung!</string>
-<string name="cont">weiter</string>
-<string name="convertingFiles">konvertiere Dateien...</string>
 <string name="importingImages">importiere Bilder...</string>
 <string name="exportingThumb">exportiere Minibilder...</string>
 <string name="deletingFiles">Dateien löschen</string>
 <string name="recyclingFiles">lösche Dateien...</string>
-<string name="cancelled">abbrechen</string>
 <string name="clear">löschen</string>
-<string name="write">schreiben</string>
 <string name="reuse">wieder benutzen</string>
 <string name="customKeywords">benutzerdefinierte Schlüsselwörter</string>
 <string name="addKeyword">Schlüsselwort hinzufügen</string>
-<string name="select">auswählen</string>
-<string name="directory">Verzeichnis</string>
 <string name="about">über</string>
 <string name="search">suche</string>
-<string name="experimental">experimentell</string>
-<string name="imageFolders">Ordner mit RAW Bildern</string>
 
 <!-- Colors for xmp -->
 <string name="red">Rot</string>
@@ -181,7 +144,6 @@
 <string name="tutorialUsb">Durchsuche alle bekannten USB-Geräte. Wenn Dein Gerät nicht erkannt wird, schicke eine mail mit dem mount point, z.B. "/mnt/weird/device/usb"</string>
 
 <string name="unit_mm">mm</string>
-<string name="loading">Lade\u2026</string>
 <string name="no_thumbnail">Keine Thumbnails (Miniaturen)</string>
     <string name="Name_ascending">Name \u25BC</string>
 </resources>

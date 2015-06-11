@@ -267,6 +267,8 @@ public class MetaProvider extends ContentProvider
 	{
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count;
+
+		//TODO: Not currently dealing with ids, but should have an id version
         switch (sUriMatcher.match(uri)) {
             case META:
                 count = db.update(META_TABLE_NAME, values, where, whereArgs);

@@ -4,18 +4,14 @@
 <string name="app_name">RawDroid</string>
 <string name="neutral">Отмена</string>
 <string name="DecodeAll">Декодировать все</string>
-<string name="file">файл</string>
 <string name="save_as">сохранить как...</string>
 <string name="wallpaper">Установить как фон</string>
 <string name="edit">Редактировать в...</string>
 <string name="help">помощь</string>
 <string name="delete">Удалить</string>
-<string name="menu_exit">выход</string>
-<string name="accessDenied">Доступ закрыт</string>
 <string name="rename">переименовать</string>
 <string name="save">сохранить</string>
 <string name="save_success">Сохранено</string>
-<string name="save_fail">Ошибка сохранения</string>
 
 <string-array name="format_array">
 <item></item>

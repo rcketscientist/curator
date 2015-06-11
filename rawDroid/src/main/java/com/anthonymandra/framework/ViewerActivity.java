@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
@@ -147,7 +148,29 @@ public abstract class ViewerActivity extends GalleryActivity implements
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
-        mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, 0);
+        mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, -1);
+
+        if (mImageIndex == -1)
+        {
+            // This was not initiated internally (view intent)
+            // Attempt to add the uri in the intent
+
+            String path;
+            Uri data = getIntent().getData();
+            if (data.getAuthority().equals(MediaStore.AUTHORITY))
+            {
+                //Attempt to acquire the file
+                path = Util.getRealPathFromURI(this, data);
+            }
+            else
+            {
+                path = data.getPath();
+            }
+
+            LocalImage image = new LocalImage(this, new File(path));
+            addDatabaseReference(image);
+        }
+
         licenseHandler = new ViewerLicenseHandler(this);
     }
 
@@ -776,24 +799,21 @@ public abstract class ViewerActivity extends GalleryActivity implements
     {
         MediaItem media = getCurrentItem();
 
+//        Intent action = new Intent();
         Intent action = new Intent(Intent.ACTION_EDIT);
+//        action.setType("*/*");
         action.setData(media.getUri());
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        action.setType("*/*");
+        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-        // If an editor can handle raw
-        if (intentExists(action))
-        {
-            Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
-            startActivityForResult(chooser, REQUEST_CODE_EDIT);
-            return;
-        }
+        // Convert if no editor for raw exists
+//        if (!intentExists(action))
+//        {
+//            action.setDataAndType(media.getSwapUri(), "image/jpeg");
+//        }
 
         // Otherwise convert
-//        action.setType("image/jpeg");   // Not sure why I'm resetting type here...
-        action.setDataAndType(media.getSwapUri(), "image/*");
-        action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
     }

@@ -25,14 +25,13 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -57,7 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public abstract class GalleryActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>
+public abstract class GalleryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@SuppressWarnings("unused")
 	private static final String TAG = GalleryActivity.class.getSimpleName();
