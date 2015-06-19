@@ -196,17 +196,29 @@ public class Util
 //		return (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif"));
 //	}
 
+    public static  boolean isRaw(File file)
+    {
+        return containsString(ImageConstants.RAW_EXT, file);
+    }
+
     public static boolean isNative(File file)
     {
-        String filename = file.getName().toLowerCase();
-        return (filename.endsWith("jpg") || filename.endsWith("jpeg")
-                || filename.endsWith("png") || filename.endsWith("bmp") || filename.endsWith("gif"));
+        return containsString(ImageConstants.COMMON_EXT, file);
     }
 
     public static boolean isTiffImage(File file)
     {
-        String filename = file.getName().toLowerCase();
-        return (filename.endsWith(".tif") || filename.endsWith(".tiff"));
+        return containsString(ImageConstants.TIFF_EXT, file);
+    }
+
+    private static boolean containsString(String[] extensions, File file)
+    {
+        for (String ext : extensions)
+        {
+            if (file.getName().toLowerCase().endsWith(ext.toLowerCase()))
+                return true;
+        }
+        return false;
     }
 
     /**

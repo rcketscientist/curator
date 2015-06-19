@@ -75,11 +75,6 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 
 	protected ProgressDialog mProgressDialog;
 
-	private static final String[] RAW_EXT = new String[]
-	{ ".3fr", ".ari", ".arw", ".bay", ".crw", ".cr2", ".cap", ".dcs", ".dcr", ".dng", ".drf", ".eip", ".erf", ".fff", ".iiq", ".k25", ".kdc", ".mdc", ".mef",
-			".mos", ".mrw", ".nef", ".nrw", ".obm", ".orf", ".pef", ".ptx", ".pxn", ".r3d", ".raf", ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf", ".srw",
-			".tif", ".tiff", ".x3f" };
-
 	private static final File[] MOUNT_ROOTS =
 	{
 		new File("/mnt"),
@@ -969,11 +964,7 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 			{
 				// TODO: If I implement bulkInsert it's faster
 				getContentResolver().applyBatch(Meta.AUTHORITY, mContentProviderOperations);
-			} catch (RemoteException e)
-			{
-				//TODO: Notify user
-				e.printStackTrace();
-			} catch (OperationApplicationException e)
+			} catch (RemoteException | OperationApplicationException e)
 			{
 				//TODO: Notify user
 				e.printStackTrace();
@@ -993,6 +984,10 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 	{
 		boolean cancelled;
 
+		Set<String> rawImages = new HashSet<>();
+		Set<String> commonImages = new HashSet<>();
+		Set<String> tiffImages = new HashSet<>();
+
 		@Override
 		protected void onPreExecute()
 		{
@@ -1005,11 +1000,10 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		@Override
 		protected Void doInBackground(File... params)
 		{
-			Set<String> rawImages = new HashSet<>();
 			ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 			for (File root : params)
 			{
-				rawImages.addAll(search(root));
+				search(root);
 				totalImages = rawImages.size();
 				publishProgress();
 			}
@@ -1017,7 +1011,6 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 			for (String raw : rawImages)
 			{
 				ParseMetaTask pmt = new ParseMetaTask();
-//				pmt.execute(new File(raw));
 				pmt.execute(new File(raw));
 //				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
 //				pmt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new File(raw));
@@ -1061,18 +1054,17 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 			GalleryActivity.this.onSearchResults();
 		}
 
-		public Collection<String> search(File dir)
+		public void search(File dir)
 		{
-			Set<String> matches = new HashSet<>();
 			if (cancelled || dir == null)
-				return matches;
+				return;
 			if (dir.listFiles() == null)
-				return matches;
+				return;
 			// This is a hack to handle the jacked up filesystem
 			for (File skip : SKIP_ROOTS)
 			{
 				if (dir.equals(skip))
-					return matches;
+					return;
 			}
 
 			// We must use a canonical path due to the fucked up multi-user/symlink setup
@@ -1083,7 +1075,7 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 				{
 					try
 					{
-						matches.add(raw.getCanonicalPath());
+						rawImages.add(raw.getCanonicalPath());
 					} catch (IOException e)
 					{
 						// God this is ugly, just do nothing with an error.
@@ -1092,6 +1084,24 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 				}
 			}
 
+			File[] commonFiles = dir.listFiles(nativeFilter);
+			if (commonFiles != null && commonFiles.length > 0)
+			{
+				for (File common: commonFiles)
+				{
+					try
+					{
+						commonImages.add(common.getCanonicalPath());
+					} catch (IOException e)
+					{
+						// God this is ugly, just do nothing with an error.
+						e.printStackTrace();
+					}
+				}
+			}
+
+			//TODO: TIFF
+
 			// Recursion pass
 			for (File f : dir.listFiles())
 			{
@@ -1099,9 +1109,8 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 					continue;
 
 				if (f.isDirectory() && f.canRead() && !f.isHidden())
-					matches.addAll(search(f));
+					search(f);
 			}
-			return matches;
 		}
 
 		@Override
@@ -1129,17 +1138,8 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 	
 	class RawFilter implements FileFilter
 	{
-		@SuppressLint("DefaultLocale")
 		@Override
-		public boolean accept(File file)
-		{
-			for (String ext : RAW_EXT)
-			{
-				if (file.getName().toLowerCase().endsWith(ext.toLowerCase()))
-					return true;
-			}
-			return false;
-		}
+		public boolean accept(File file) { return Util.isRaw(file); }
 	}
 
 	class NativeFilter implements FileFilter

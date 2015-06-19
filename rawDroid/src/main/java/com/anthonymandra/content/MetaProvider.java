@@ -89,7 +89,8 @@ public class MetaProvider extends ContentProvider
 					Meta.Data.LENS_MODEL	    + " TEXT," +
 					Meta.Data.DRIVE_MODE	    + " TEXT," +
 					Meta.Data.EXPOSURE_MODE	    + " TEXT," +
-					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT" + ");";
+					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT" +
+					Meta.Data.TYPE				+ " INTEGER" +");";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 

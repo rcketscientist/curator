@@ -160,10 +160,10 @@ public class ImageUtils
      * @param uri
      * @return
      */
-    public static ContentValues getContentValues(Context c, Uri uri)
+    public static ContentValues getContentValues(Context c, Uri uri, int type)
     {
         Metadata meta = readMetadata(c, uri);
-        return getContentValues(uri, meta);
+        return getContentValues(uri, meta, type);
     }
 
     /**
@@ -172,7 +172,7 @@ public class ImageUtils
      * @param meta
      * @return
      */
-    public static ContentValues getContentValues(Uri uri, Metadata meta)
+    public static ContentValues getContentValues(Uri uri, Metadata meta, int type)
     {
         final ContentValues cv = new ContentValues();
         File image = new File(uri.getPath());
@@ -210,6 +210,7 @@ public class ImageUtils
         cv.put(Meta.Data.DRIVE_MODE, getDriveMode(meta));
         cv.put(Meta.Data.EXPOSURE_MODE, getExposureMode(meta));
         cv.put(Meta.Data.EXPOSURE_PROGRAM, getExposureProgram(meta));
+        cv.put(Meta.Data.TYPE, type);
         return cv;
     }
 
