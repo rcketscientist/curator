@@ -137,7 +137,7 @@ public class LicenseManager extends License {
         }
 
         if (!settings.contains(firstInstall)) {
-            settings.edit().putLong(firstInstall, System.currentTimeMillis()).commit();
+            settings.edit().putLong(firstInstall, System.currentTimeMillis()).apply();
         }
         long installTime = settings.getLong(firstInstall, 0);
 

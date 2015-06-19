@@ -5,29 +5,18 @@
 <string name="positive">接受</string>
 <string name="negative">拒绝</string>
 <string name="neutral">取消</string>
-<string name="DecodeAll">全部解码</string>
-<string name="file">文件</string>
 <string name="save_as">另存为...</string>
 <string name="export">导出</string>
 <string name="wallpaper">设为壁纸</string>
 <string name="edit">用其他应用编辑...</string>
-<string name="multi_select">多选</string>
 <string name="selectAll">全选</string>
 <string name="help">帮助</string>
 <string name="delete">删除</string>
 <string name="view_tag">标签</string>
-<string name="menu_exit">退出</string>
-<string name="button_Recent">最近</string>
-<string name="lastUsedFolder">最后使用的文件夹</string>
-<string name="accessDenied">无权限</string>
-<string name="grid_reset">恢复原图</string>
-<string name="bad_source">找不到原文件</string>
 <string name="rename">重命名</string>
 <string name="format_prompt">格式</string>
 <string name="save">保存</string>
 <string name="save_success">保存成功</string>
-<string name="save_fail">保存失败</string>
-<string name="decode_locked">解码失败，需重启此应用。可以通过点击＂最近＂按钮回到此文件夹。如果仍有问题，请发电子邮件到rawdroid@anthonymandra.com.</string>
 <string name="no_filemanager_installed">没有文件管理器</string>
 
 <string-array name="format_array">
@@ -39,26 +28,18 @@
 <string name="Date">日期</string>
 <string name="Name">文件名</string>
 <string name="settings">设置</string>
-<string name="importKeywords">导入关键词</string>
-<string name="importImages">导入图像</string>
 <string name="chooseDestination">选择导出文件夹</string>
 <string name="choosefile">选择文件</string>
 <string name="import1">导入</string>
-<string name="all">所有</string>
-<string name="selected">已选的</string>
 <string name="renameImages">重命名图像</string>
 <string name="view">浏览</string>
 <string name="gallery">相册</string>
 <string name="viewer">浏览器</string>
-<string name="image">照片</string>
 <string name="storage">储存</string>
 <string name="firstImage">第一副图像</string>
 <string name="lastImage">最后副图像</string>
 <string name="licensed">授权的</string>
 <string name="unlicensed">未授权的</string>
-
-<!-- Error Messages -->
-<string name="errorKeywordRequired">不可用的关键词文件</string>
 
 <!-- Meta -->
 <string name="altitude">海拔</string>
@@ -82,25 +63,17 @@
 <!-- Results -->
 <string name="resultImportSuccessful">导入成功</string>
 <string name="resultImportFailed">导入失败</string>
-<string name="resultDeleteSucceded">选择的图像已成功删除</string>
 <string name="resultWallpaperFailed">设置墙纸失败</string>
 
 <!-- Warnings -->
-<string name="warningNoFolderDecoded">你还没有解码的文件夹</string>
 <string name="warningFileWrongFormat">文件格式不对</string>
 <string name="warningNoItemsSelected">没有图片被选择</string>
-<string name="warningInvalidPath">路径不正确，重启...</string>
 <string name="warningNotEnoughSpace">没有足够的空间来导入整个文件夹</string>
-<string name="warningSourceEqualsDestination">无法导入到同一文件夹</string>
 <string name="warningDeleteExceedsRecycle">回收站空间已满，永久删除（注意：回收站大小可以在设置里更改）</string>
-<string name="warningRecycleMtp">回收站不支持外接设备，永久删除</string>
 <string name="warningDeleteDirect">直接删除文件</string>
 <string name="warningNoRecycleBin">回收站不可用，永久删除文件</string>
 <string name="warningGenericImagesOff">通用图像格式（例如，jpg）已经被禁用</string>
-<string name="warningInvalidMeta">不可用的元数据（请用邮件发送此文件）</string>
 <string name="warningInvalidLabel">不可用标签。标签可以在设置里更改</string>
-<string name="warningInvalidSidebar">侧边栏不可调用，请重新打开。</string>
-<string name="warningNoUSB">没有发现外接储存设备。如果你确定设备已连接，请用邮件联系rawdroid@anthonymandra.com.</string>
     <string name="Name_ascending">文件名 \u25BC</string>
 
     <!-- Preferences -->

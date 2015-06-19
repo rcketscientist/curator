@@ -1,11 +1,13 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +19,8 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
-import com.anthonymandra.framework.KeywordDataSource;
-import com.anthonymandra.framework.SimpleCursorLoader;
+import com.anthonymandra.content.KeywordProvider;
+import com.anthonymandra.framework.PathEnumerationProvider;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +36,7 @@ import java.util.Map;
 public class KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final int KEYWORD_LOADER_ID = 1;
-    private KeywordDataSource mDataSource;
+//    private KeywordDataSource mDataSource;
     private SimpleCursorAdapter mAdapter;
     private GridView mGrid;
     private Map<Long, String> mSelectedKeywords = new HashMap<>();
@@ -52,9 +54,9 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        mDataSource = new KeywordDataSource(getActivity());
+//        mDataSource = new KeywordDataSource(getActivity());
         getLoaderManager().initLoader(KEYWORD_LOADER_ID, null, this);
-        String[] from = new String[] { KeywordDataSource.KEYWORD_NAME };
+        String[] from = new String[] { KeywordProvider.Data.KEYWORD_NAME };
         int[] to = new int[] { R.id.keyword_entry };
         mAdapter = new SelectCursorAdapter(getActivity(), R.layout.keyword_entry, null,
                 from, to, 0);
@@ -77,34 +79,45 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                 {
                     if (((Checkable)view).isChecked())
                     {
-                        selectedTree = mDataSource.getDescendants(id);
+                        selectedTree = getActivity().getContentResolver().query(
+                                ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
+                                null,
+                                PathEnumerationProvider.DESCENDANTS_QUERY_SELECTION,
+                                null, null);
                         while(selectedTree.moveToNext())
                         {
-                            mSelectedKeywords.remove(selectedTree.getLong(KeywordDataSource.COLUMN_ID));
+                            mSelectedKeywords.remove(selectedTree.getLong(KeywordProvider.Data.COLUMN_ID));
                         }
                         mAdapter.notifyDataSetChanged();
                     }
                     else
                     {
                         long time = System.currentTimeMillis(); // We all ancestors of single selection to share insert time
-                        selectedTree = mDataSource.getAncestors(id);
+                        selectedTree = getActivity().getContentResolver().query(
+                                ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
+                                null,
+                                PathEnumerationProvider.ANCESTORS_QUERY_SELECTION,
+                                null, null);
                         Cursor keywords = mAdapter.getCursor();
                         while (selectedTree.moveToNext())
                         {
                             keywords.moveToPosition(-1);
-                            long selectedId = selectedTree.getLong(KeywordDataSource.COLUMN_ID);
+                            long selectedId = selectedTree.getLong(KeywordProvider.Data.COLUMN_ID);
                             while (keywords.moveToNext())
                             {
-                                if (keywords.getLong(KeywordDataSource.COLUMN_ID) == selectedId)
+                                if (keywords.getLong(KeywordProvider.Data.COLUMN_ID) == selectedId)
                                 {
-                                    mSelectedKeywords.put(selectedId, keywords.getString(KeywordDataSource.COLUMN_NAME));
+                                    mSelectedKeywords.put(selectedId, keywords.getString(KeywordProvider.Data.COLUMN_NAME));
                                     ContentValues cv = new ContentValues();
-                                    cv.put(KeywordDataSource.KEYWORD_RECENT, time);
-                                    mDataSource.update(selectedId, cv);
+                                    cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
+                                    getActivity().getContentResolver().update(
+                                            ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, selectedId),
+                                            cv,
+                                            null, null);
                                 }
                             }
                         }
-                        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
+//                        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
                     }
                 }
                 finally
@@ -120,8 +133,9 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         });
         mGrid.setAdapter(mAdapter);
 
-        if (mDataSource.getCount() < 1)
-            generateKeywordTemplate();
+        //TODO: Do I still want a generic keyword set?
+//        if (getActivity().getContentResolver()..getCount() < 1)
+//            generateKeywordTemplate();
     }
 
     @Override
@@ -134,9 +148,9 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
             case KEYWORD_LOADER_ID:
 
                 // Returns a new CursorLoader
-                return new SimpleCursorLoader(
+                return new CursorLoader(
                         getActivity(),      	            // Parent activity context
-                        mDataSource,                        // Table to query
+                        KeywordProvider.Data.CONTENT_URI,   // Table to query
                         null,				                // Projection to return
                         null,       		                // No selection clause
                         null, 			                    // No selection arguments
@@ -173,16 +187,24 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         }
         else
         {
+            long time = System.currentTimeMillis(); //Keep the time the same for these entries
             for (String select : selected)
             {
-                Cursor c = mDataSource.query(
+                Cursor c = getActivity().getContentResolver().query(
+                        KeywordProvider.Data.CONTENT_URI,
                         null,
-                        KeywordDataSource.KEYWORD_NAME + " = ?",
+                        KeywordProvider.Data.KEYWORD_NAME + " = ?",
                         new String[]{select},
                         null);
                 if (c.moveToFirst())
                 {
-                    long id = c.getLong(KeywordDataSource.COLUMN_ID);
+                    long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
+                    ContentValues cv = new ContentValues();
+                    cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
+                    int rowsAffected = getActivity().getContentResolver().update(
+                            ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
+                            cv,
+                            null, null);    //TODO: Might want to make this async
                     mSelectedKeywords.put(id, select);
                 } else
                 {
@@ -201,7 +223,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
 
     public boolean importKeywords(Reader keywordList)
     {
-        return mDataSource.importKeywords(keywordList);
+        return KeywordProvider.importKeywords(getActivity(), keywordList);
     }
 
     class SelectCursorAdapter extends SimpleCursorAdapter
@@ -216,7 +238,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         public void bindView(View view, Context context, Cursor cursor)
         {
             super.bindView(view, context, cursor);
-            long id = cursor.getLong(KeywordDataSource.COLUMN_ID);
+            long id = cursor.getLong(KeywordProvider.Data.COLUMN_ID);
             ((Checkable) view).setChecked(mSelectedKeywords.get(id) != null);
         }
     }

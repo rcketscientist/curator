@@ -20,6 +20,7 @@ import java.util.Locale;
 
 public class MetaProvider extends ContentProvider
 {
+	private static final String TAG = MetaProvider.class.getSimpleName();
 	public static final String DATABASE_NAME = "rawdroid.db";
 	static int DATABASE_VERSION = 10;
 
@@ -88,7 +89,8 @@ public class MetaProvider extends ContentProvider
 					Meta.Data.LENS_MODEL	    + " TEXT," +
 					Meta.Data.DRIVE_MODE	    + " TEXT," +
 					Meta.Data.EXPOSURE_MODE	    + " TEXT," +
-					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT" + ");";
+					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT" +
+					Meta.Data.TYPE				+ " INTEGER" +");";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 
@@ -117,12 +119,12 @@ public class MetaProvider extends ContentProvider
 				affected = db.delete(META_TABLE_NAME,
 						BaseColumns._ID + "=" + metaId + (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : ""),
 						whereArgs);
-				getContext().getContentResolver().notifyChange(uri, null);
 				break;
 			default:
 				throw new IllegalArgumentException("unknown meta element: " + uri);
 		}
 
+		getContext().getContentResolver().notifyChange(uri, null);
 		return affected;
 	}
 
@@ -266,6 +268,8 @@ public class MetaProvider extends ContentProvider
 	{
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count;
+
+		//TODO: Not currently dealing with ids, but should have an id version
         switch (sUriMatcher.match(uri)) {
             case META:
                 count = db.update(META_TABLE_NAME, values, where, whereArgs);

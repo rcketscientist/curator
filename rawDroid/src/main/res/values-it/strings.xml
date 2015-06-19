@@ -5,29 +5,18 @@
 <string name="positive">Accetta</string>
 <string name="negative">Declino</string>
 <string name="neutral">Annullare</string>
-<string name="DecodeAll">Decodificare tutti</string>
-<string name="file">File</string>
 <string name="save_as">Salva con nome</string>
 <string name="export">Esportazione</string>
 <string name="wallpaper">Imposta sfondo</string>
 <string name="edit">Montare con.....</string>
-<string name="multi_select">Multi selezione</string>
 <string name="selectAll">Seleziona tutti</string>
 <string name="help">Aiuto</string>
 <string name="delete">Cancella</string>
 <string name="view_tag">Vista tag etichetta</string>
-<string name="menu_exit">Uscire</string>
-<string name="button_Recent">Recenti</string>
-<string name="lastUsedFolder">Ultima cartella utilizzata</string>
-<string name="accessDenied">Accesso Negato</string>
-<string name="grid_reset">Ripristina immagine</string>
-<string name="bad_source">il file sorgente non e\' stato trovato</string>
 <string name="rename">Rinominare</string>
 <string name="format_prompt">Formato</string>
 <string name="save">Salva </string>
 <string name="save_success">Salvataggio avvenuto</string>
-<string name="save_fail">Salvataggio fallito</string>
-<string name="decode_locked">Decodificazione  bloccata, Riavvio Richiesto. Utilizzare  INDIETRO per tornare alla Cartella.  Se continua Così SI Prega di inviare mail a rawdroid@anthonymandra.com email</string>
 <string name="no_filemanager_installed">Nessun file manager installato</string>
 
 <string-array name="format_array">
@@ -39,26 +28,18 @@
 <string name="Date">Data</string>
 <string name="Name">Nome</string>
 <string name="settings">Impostazioni</string>
-<string name="importKeywords">Importa parola chiave</string>
-<string name="importImages">Importa Immagini</string>
 <string name="chooseDestination">Seleziona DESTINAZIONE</string>
 <string name="choosefile">Scegli File</string>
 <string name="import1">Importazione</string>
-<string name="all">Tutti</string>
-<string name="selected">SELEZIONATO</string>
 <string name="renameImages">Rinomina Immagini</string>
 <string name="view">Visualizza</string>
 <string name="gallery">Galleria</string>
 <string name="viewer">Visualizzatore</string>
-<string name="image">Immagine</string>
 <string name="storage">Memoria</string>
 <string name="firstImage">Prima Immagine</string>
 <string name="lastImage">Ultima Immagine</string>
 <string name="licensed">Licenza</string>
 <string name="unlicensed">Senza Licenza</string>
-
-<!-- Error Messages -->
-<string name="errorKeywordRequired"> Parola chiave o licenza non valido</string>
 
 <!-- Meta -->
 <string name="altitude">Altitudine</string>
@@ -82,30 +63,18 @@
 <!-- Results -->
 <string name="resultImportSuccessful">Importazione riuscita</string>
 <string name="resultImportFailed">Importazione non riuscita.</string>
-<string name="resultDeleteSucceded">Le immagini selezionate sono state cancellate.</string>
 <string name="resultWallpaperFailed">Impossibile impostare lo sfondo</string>
 
 <!-- Warnings -->
-<string name="warningNoFolderDecoded">Non hai ancora decodificato la cartella</string>
 <string name="warningFileWrongFormat">Il file non è nel formato corretto.</string>
 <string name="warningNoItemsSelected">Nessun oggetto selezionato.</string>
-<string name="warningInvalidPath">Percorso non più disponibile, sto ricominciando...</string>
 <string name="warningNotEnoughSpace">Manca lo spazio per importare l\'intera cartella.</string>
-<string name="warningSourceEqualsDestination">Non si può importare nella stessa cartella.</string>
 <string name="warningDeleteExceedsRecycle">File eliminato supera  dimensioni . Eliminare per sempre? (Nota: il formato può essere modificato nelle impostazioni)</string>
-<string name="warningRecycleMtp">Cestino non supporta USB in questo momento. La cancellazione è permanente</string>
 <string name="warningDeleteDirect">I file saranno cancellati direttamente</string>
 <string name="warningNoRecycleBin">Cestino non esiste. I file saranno cancellati direttamente</string>
 <string name="warningGenericImagesOff">Immagini generiche (es: jpg) sono state disabilitate nelle impostazioni.</string>
-<string name="warningInvalidMeta">Metadati non validi (Si prega di inviare e-mail del file incriminato).</string>
 <string name="warningInvalidLabel">è un etichetta non valida. Le etichette possono essere personalizzate nelle impostazioni.</string>
 <string name="warningInvalidSidebar">Attivazione barra laterale non valido, si prega di riprovare</string>
-<string name="warningNoUSB">Nessun USB o periferica  trovato  Se si conosce quale dispositivo è montato, si prega di inviare mail a  rawdroid@anthonymandra.com  con la posizione per addizione.</string>
-<string name="warningLicenseError">Controllo Licenza non valida</string>
-<string name="warningLicenseDeny">Licenza: Godetevi la demo!</string>
-<string name="warningLicenseAllow">Licenza: Grazie per il vostro sostegno!</string>
-<string name="warningFailedToGetStream">Attenzione: Impossibile ottenere il flusso di immagini. Se continua così si prega di inviare e-mail: rawdroid@anthonymandra.com</string>
-<string name="warningShareFail"> Impossibile completare condividi</string>
 
 <!-- Preferences -->
 <string name="prefTitleImageInterface">Visualizza automaticamente l\'interfaccia</string>
@@ -114,7 +83,6 @@
 <string name="prefSummaryRecycleBin">Spazio allocato nel cestino (Default: 50 MB, min: 30 MB, max: 500MB) 
 \nFare attenzione alle dimensioni, 500MB sono  oltre il 6% su un dispositivo di 8GB!</string>
 <string name="prefTitleFilter">Filtro Exif</string>
-<string name="prefTitleComingSoon">Prossimamente</string>
 <string name="prefTitleDeleteConfirmation"> Conferma Eliminazione</string>
 <string name="prefSummaryDeleteConfirmation">Se  disabiliti cancella non richiederà la conferma, anche se superano dimensioni del cestino.</string>
 <string name="prefTitleUseRecycleBin">Utilizzare Cestino</string>
@@ -127,8 +95,6 @@
 <string name="prefSummaryShowUnknownFiles">Questo vi mostrerà i file che RawDroid non elabora.</string>
 <string name="prefTitleImportKeywords">Importa parole chiave</string>
 <string name="prefSummaryImportKeywords">Clicca per importare un file di parole chiave delimitato da tabulazioni, come quella esportata da Lightroom.</string>
-<string name="prefTitleClearGalleryCache">Cancella Cache Galleria</string>
-<string name="prefSummaryClearGalleryCache">Premi per cancellare la cache delle miniature galleria.</string>
 <string name="prefTitleShowNav">Mostra  navigazione</string>
 <string name="prefTitleShowMeta">Mostra i metadati</string>
 <string name="prefTitleShowHist">Mostra Istogramma</string>
@@ -148,26 +114,16 @@
 <string name="exportThumbnails">Miniature di esportazione</string>
 <string name="shareWith">Condividi con </string>
 <string name="ratingRequest">Se vi piace  RawDroid si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
-<string name="intentPending">Hai una operazione in corso, vuoi continuare?</string>
-<string name="cont">Continuare</string>
-<string name="convertingFiles">Conversione di file ...</string>
 <string name="importingImages">Importazione di immagini ...</string>
 <string name="exportingThumb">Esportazione Miniature...</string>
 <string name="deletingFiles">Eliminazione dei file....</string>
 <string name="recyclingFiles">Riciclaggio dei file.....</string>
-<string name="cancelled">Annullato</string>
 <string name="clear">Cancella</string>
-<string name="write">Scrivere</string>
 <string name="reuse">Riutiòlizzare</string>
 <string name="customKeywords">Parola chiave personalizzata</string>
 <string name="addKeyword">Aggiungi parola chiave</string>
-<string name="select">Selezionare</string>
-<string name="directory">Directory</string>
 <string name="about">Circa</string>
-<string name="usb"> Trova USB montata</string>
 <string name="search">Ricerca</string>
-<string name="experimental">(sperimentale)</string>
-<string name="imageFolders">Cartelle contenenti immagini RAW</string>
 
 <!-- Colors for xmp -->
 <string name="red">Red</string>

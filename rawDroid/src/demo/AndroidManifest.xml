@@ -18,5 +18,12 @@
             android:exported="true">
         </provider>
 
+        <provider
+            android:name="com.anthonymandra.content.KeywordProvider"
+            android:authorities="com.anthonymandra.rawdroid.KeywordProvider"
+            android:grantUriPermissions="true"
+            android:exported="true">
+        </provider>
+
     </application>
 </manifest>

@@ -5,6 +5,8 @@ import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
@@ -46,6 +49,7 @@ import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -127,6 +131,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
+    /**
+     * Since initial image configuration can occur BEFORE image generation
+     * this flag allows us to specifically update a null histogram.  Without
+     * flag, histogram could be regenerated for each layer (thumb, big, full raw, etc)
+     */
+    protected boolean mRequiresHistogramUpdate;
     protected HistogramTask mHistogramTask;
 
     @Override
@@ -138,7 +148,29 @@ public abstract class ViewerActivity extends GalleryActivity implements
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
-        mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, 0);
+        mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, -1);
+
+        if (mImageIndex == -1)
+        {
+            // This was not initiated internally (view intent)
+            // Attempt to add the uri in the intent
+
+            String path;
+            Uri data = getIntent().getData();
+            if (data.getAuthority().equals(MediaStore.AUTHORITY))
+            {
+                //Attempt to acquire the file
+                path = Util.getRealPathFromURI(this, data);
+            }
+            else
+            {
+                path = data.getPath();
+            }
+
+            LocalImage image = new LocalImage(this, new File(path));
+            addDatabaseReference(image);
+        }
+
         licenseHandler = new ViewerLicenseHandler(this);
     }
 
@@ -515,6 +547,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateHistogram(Bitmap bitmap)
     {
+        if (bitmap == null) {
+            mRequiresHistogramUpdate = true;
+            return;
+        }
+        mRequiresHistogramUpdate = false;
         if (mHistogramTask != null)
             mHistogramTask.cancel(true);
         mHistogramTask = new HistogramTask();
@@ -747,35 +784,45 @@ public abstract class ViewerActivity extends GalleryActivity implements
             case R.id.view_recycle:
                 showRecycleBin();
                 return true;
-            case R.id.viewSettings:
-                startSettings();
-                return true;
-            case R.id.viewHelp:
-                Toast.makeText(this, R.string.prefTitleComingSoon, Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.viewSettings:
+//                startSettings();
+//                return true;
+//            case R.id.viewHelp:
+//                Toast.makeText(this, R.string.prefTitleComingSoon, Toast.LENGTH_SHORT).show();
+//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void startSettings()
-    {
-        Intent settings = new Intent(ViewerActivity.this, FullSettingsActivity.class);
-        startActivity(settings);
     }
 
     private void editImage()
     {
         MediaItem media = getCurrentItem();
 
+//        Intent action = new Intent();
         Intent action = new Intent(Intent.ACTION_EDIT);
-        action.setType("image/jpeg");
-
-        action.setDataAndType(media.getSwapUri(), "image/*");
+//        action.setType("*/*");
+        action.setData(media.getUri());
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        // Convert if no editor for raw exists
+//        if (!intentExists(action))
+//        {
+//            action.setDataAndType(media.getSwapUri(), "image/jpeg");
+//        }
+
+        // Otherwise convert
+
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
+    }
+
+    private boolean intentExists(Intent intent)
+    {
+//        String mime = getContentResolver().getType(intent.getData());
+        List<ResolveInfo> ri = getPackageManager().queryIntentActivities(intent, 0);
+        return intent.resolveActivity(getPackageManager()) != null;
     }
 
     @Override

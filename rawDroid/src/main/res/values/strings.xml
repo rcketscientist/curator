@@ -2,32 +2,24 @@
 <resources>
 
     <string name="app_name">RawDroid</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="positive">Accept</string>
     <string name="negative">Decline</string>
     <string name="neutral">Cancel</string>
-    <string name="DecodeAll">Decode All</string>
-    <string name="file">File</string>
     <string name="save_as">Save JPEG</string>
     <string name="export">Export</string>
     <string name="wallpaper">Set as wallpaper</string>
     <string name="edit">Edit with...</string>
-    <string name="multi_select">Multi-Select</string>
     <string name="selectAll">Select All</string>
     <string name="help">Help</string>
     <string name="delete">Delete</string>
     <string name="view_tag">Tag</string>
-    <string name="menu_exit">Exit</string>
-    <string name="button_Recent">Recent</string>
     <string name="lastUsedFolder">Last Used Folder</string>
-    <string name="accessDenied">Access denied</string>
-    <string name="grid_reset">Reset Image</string>
-    <string name="bad_source">Source file could not be found</string>
     <string name="rename">Rename</string>
     <string name="format_prompt">Format</string>
     <string name="save">Save</string>
     <string name="save_success">Save successful</string>
-    <string name="save_fail">Save failed</string>
-    <string name="decode_locked">Decoder has frozen, restart required. Use "Recent" to jump back to this folder.  If this continues please email rawdroid@anthonymandra.com.</string>
     <string name="no_filemanager_installed">No file manager</string>
     <string name="contact">Contact</string>
 
@@ -40,28 +32,19 @@
     <string name="Date">Date</string>
     <string name="Name">Name</string>
     <string name="settings">Settings</string>
-    <string name="importKeywords">Import Keywords</string>
-    <string name="importImages">Import Images</string>
     <string name="moveImages">Move Images</string>
     <string name="chooseDestination">Choose Destination</string>
     <string name="choosefile">Choose File</string>
     <string name="import1">Import</string>
-    <string name="all">ALL</string>
-    <string name="selected">SELECTED</string>
     <string name="renameImages">Rename Images</string>
     <string name="view">View</string>
     <string name="gallery">Gallery</string>
     <string name="viewer">Viewer</string>
-    <string name="image">Image</string>
     <string name="storage">Storage</string>
     <string name="firstImage">First Image</string>
     <string name="lastImage">Last Image</string>
-    <string name="licensed">Licensed</string>
     <string name="unlicensed">Unlicensed</string>
-    <string name="error">Error</string>
-
-    <!-- Error Messages -->
-    <string name="errorKeywordRequired">Invalid keyword file</string>
+    <string name="match">Match</string>
 
     <!-- Meta -->
     <string name="altitude">Altitude</string>
@@ -85,27 +68,17 @@
     <!-- Results -->
     <string name="resultImportSuccessful">Import successful.</string>
     <string name="resultImportFailed">Import failed.</string>
-    <string name="resultDeleteSucceded">Selected images deleted successfully.</string>
     <string name="resultWallpaperFailed">Failed to set wallpaper.</string>
 
     <!-- Warnings -->
-    <string name="warningNoFolderDecoded">You have not decoded a folder yet.</string>
     <string name="warningFileWrongFormat">File is not the correct format.</string>
     <string name="warningNoItemsSelected">No items selected.</string>
-    <string name="warningInvalidPath">Path no longer available, restarting...</string>
     <string name="warningNotEnoughSpace">Not enough space to import entire folder.</string>
-    <string name="warningSourceEqualsDestination">Cannot import into same directory.</string>
     <string name="warningDeleteExceedsRecycle">Deleted file exceeds recycle bin size.  Delete permanently?  (Note: Size can be edited in settings)</string>
-    <string name="warningRecycleMtp">Recycle bin does not support usb at this time.  Delete is permanent.</string>
     <string name="warningDeleteDirect">Files will be deleted directly.</string>
     <string name="warningNoRecycleBin">Recycle bin does not exist. Files will be deleted directly.</string>
     <string name="warningGenericImagesOff">Generic images (ex: jpg) have been disabled in settings.</string>
-    <string name="warningInvalidMeta">Invalid metadata (Please email offending file).</string>
     <string name="warningInvalidLabel">is an invalid label.  Labels can be customized in settings.</string>
-    <string name="warningInvalidSidebar">Sidebar instance has become invalid, please reopen.</string>
-    <string name="warningNoUSB">No usb media found.  If you know the device is mounted, please email rawdroid@anthonymandra.com with the location for addition.</string>
-    <string name="warningFailedToGetStream">Warning: Failed to get image stream.  If this continues please email:rawdroid@anthonymandra.com</string>
-    <string name="warningShareFail">Share could not be completed.</string>
     <string name="warningBlankWatermark">You tried to apply an empty watermark.  Please add text.</string>
     <string name="warningKitKat">Unfortunately your device is running Android 4.4+.  Google disabled writing to sdcards in this version.  There are two options to continue using sdcards:\n1:Use an external card reader.\n2:Root your device to fix it.\n\nWithout a fix you CANNOT edit, save or create metadata on sdcards.</string>
     <string name="warningWriteDisabled">You have selected a folder that has write access disabled.</string>
@@ -119,7 +92,6 @@
     <string name="prefTitleRecycleBin">Recycle Bin Size</string>
     <string name="prefSummaryRecycleBin">Space allocated to recycle bin (Default: 50MB, Min: 30MB, Max: 500MB)\nBe careful with size, 500MB is over 6% of an 8GB device!</string>
     <string name="prefTitleFilter">Exif Filter</string>
-    <string name="prefTitleComingSoon">Coming Soon</string>
     <string name="prefTitleDeleteConfirmation">Delete Confirmation</string>
     <string name="prefSummaryDeleteConfirmation">If disabled deletes will not require confirmation even if they exceed recycle bin size.</string>
     <string name="prefTitleUseRecycleBin">Use Recycle Bin</string>
@@ -132,8 +104,6 @@
     <string name="prefSummaryShowUnknownFiles">This will show files that RawDroid does not process.</string>
     <string name="prefTitleImportKeywords">Import Keywords</string>
     <string name="prefSummaryImportKeywords">Click to import a tab-delimited keyword file, such as that exported from Lightroom.</string>
-    <string name="prefTitleClearGalleryCache">Clear Gallery Cache</string>
-    <string name="prefSummaryClearGalleryCache">Click to clear the gallery thumbnail cache.</string>
     <string name="prefTitleUseLegacyViewer">Use Legacy Viewer</string>
     <string name="prefSummaryUseLegacyViewer">Check only if you experience issues with the default viewer.\nPlease email me if this is necessary.</string>
     <string name="prefTitleShowNav">Show Navigation</string>
@@ -189,33 +159,38 @@
     <string name="exportThumbnails">Export Thumbnails</string>
     <string name="shareWith">Share with…</string>
     <string name="ratingRequest">If you enjoy using RawDroid please take a moment to rate it.\n\nIf you\'ve rated based on a bug that is now fixed please update your rating.\n\nThanks for your support!</string>
-    <string name="intentPending">You have an action pending, do you want to continue?</string>
-    <string name="cont">Continue</string>
-    <string name="convertingFiles">Converting Files...</string>
     <string name="importingImages">Importing Images...</string>
     <string name="exportingThumb">Exporting Thumbnails...</string>
     <string name="deletingFiles">Deleting Files...</string>
     <string name="recyclingFiles">Recycling Files...</string>
-    <string name="cancelled">Cancelled</string>
     <string name="clear">Clear</string>
-    <string name="write">Write</string>
     <string name="reuse">Reuse</string>
     <string name="customKeywords">Custom Keywords</string>
     <string name="addKeyword">Add Keyword</string>
-    <string name="select">Select</string>
-    <string name="directory">Directory</string>
     <string name="about">About</string>
-    <string name="usb">Find USB Mount</string>
     <string name="search">Search</string>
-    <string name="refresh">Refresh raw files</string>
-    <string name="experimental">(Experimental)</string>
-    <string name="imageFolders">Folders Containing Raw Images</string>
-    <string name="indexing">Indexing Images</string>
-    <string name="indexingSummary">Search requires indexing images</string>
-    
+
     <string name="welcomeTitle">Welcome to RawDroid!</string>
     <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
     <string name="welcomeTutorial">Would you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
+    <string name="writeAccessTitle">Write Access Disabled</string>
+    <string name="requestWriteAccess">Google disabled write access.  You may grant Rawdroid write access in the following window.  If you decline Rawdroid will be view images but will be unable to write metadata, delete, save thumbnails, etc.  Rawdroid will ONLY be able to access the folder you select, so the safest bet is to choose the whole sd card restoring previous access permissions to Rawdroid.  Write access is used ONLY for actions related to image workflow.</string>
+    <string name="kitkatWriteIssue">Google disabled write access in Android 4.4.  Without write access you cannot edit metadata, write xmp, delete, etc.  You have three options:\n
+    1) Use an external reader connected via OTG USB.\n
+    2) Upgrade to 5.0.  There is a fix in 5.0.\n
+    3) Root your device and apply a fix.\n
+    </string>
+    <string name="zeroSearchTitle">Zero Images Found</string>
+    <string name="zeroSearchSummary">No images were found.  If you know there are images on the device, please contact me to investigate why search failed.  Thank you for testing the beta!</string>
+    <string name="offerSearchTitle">Initial Search</string>
+    <string name="offerSearchMessage">Empty database detected.  Would you like to search the device for images?  You may manually search by pressing the following menu item.</string>
+    <string name="betaWelcomeTitle">Thank you for joining the beta!</string>
+    <string name="betaWelcomeMessage">Welcome to the Rawdroid 4.0 beta.  The beta is built upon a completely redesigned framework.  At the expense of initially processing images you now have the benefit of instantaneous filter and search (coming soon), as well as an even faster browsing and viewing experience.\n\n
+        <b>This is still a very early beta, so please do not use this to process your precious images on your next trip.</b>\n\n
+        With a change this massive and the multitude of devices this app services, your assistance in this beta is invaluable.\n
+        Do not hesitate to post a bug/enhancement on the issue-tracker (there is a link where you signed up for the beta).\n\n
+        <b>Thank You!</b>
+    </string>
     
     <!-- Colors for xmp -->
     <string name="red">Red</string>
@@ -224,18 +199,13 @@
     <string name="cyan">Cyan</string>
     <string name="purple">Purple</string>
     <string name="yellow">Yellow</string>
-    
+
     <!-- Locations -->
     <string name="margins">Margins</string>
-    <string name="center">Center</string>
 	<string name="lowerLeft">Lower Left</string>
 	<string name="lowerRight">Lower Right</string>
 	<string name="upperLeft">Upper Left</string>
 	<string name="upperRight">Upper Right</string>
-    <string name="top">Top</string>
-    <string name="bottom">Bottom</string>
-    <string name="right">Right</string>
-    <string name="left">Left</string>
     <string name="next">Next</string>
     
     <!-- Tutorials -->
@@ -309,12 +279,8 @@
     <string name="tutorialActionLongPress">Long press action items to see a short description.</string>
     <string name="tutorialUsbTitle">USB Mount Search</string>
     <string name="tutorialUsb">This will search known mount points for any USB devices.  If your device is not found please email the mount point ex:"/mnt/weird/device/usb"</string>
-    
-    <string name="unit_mm">mm</string>
-    <string name="loading">Loading\u2026</string>
+
     <string name="no_thumbnail">No thumbnail</string>
-    <string name="deleted">Deleted</string>
-    <string name="undo">UNDO</string>
     <string name="license">License</string>
     <string name="watermark">Watermark ( Pro )</string>
     <string name="filterTitle">Filter</string>

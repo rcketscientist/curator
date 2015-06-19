@@ -123,7 +123,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
             }
         };
 
-        mModel = new PhotoDataAdapter(this, mPhotoView, null, mImageIndex);
+        mModel = new PhotoDataAdapter(this, mPhotoView, null, mImageIndex, getIntent().getData());
         mModel.setDataListener(this);
         mPhotoView.setModel(mModel);
     }

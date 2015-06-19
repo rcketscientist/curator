@@ -24,8 +24,6 @@ public class ImageViewActivity extends PhotoPage
 	{
 		super.onCreate(savedInstanceState);
 
-        initialize();
-
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
 	}
@@ -40,14 +38,14 @@ public class ImageViewActivity extends PhotoPage
 	protected void updateAfterDelete()
 	{
         mPhotoView.setDeleteOrRestore(true);
-		updateImageSource();
+//		updateImageSource();
 	}
 
     @Override
 	protected void updateAfterRestore()
 	{
         mPhotoView.setDeleteOrRestore(true);
-		updateImageSource();
+//		updateImageSource();
 	}
 
 	private void updateImageSource()
@@ -72,8 +70,8 @@ public class ImageViewActivity extends PhotoPage
 	public void onCurrentImageUpdated()
 	{
         super.onCurrentImageUpdated();
-//        setShareUri(getCurrentItem().getSwapUri());
-//		updateImageDetails();
+        if (mRequiresHistogramUpdate)
+            updateHistogram(getCurrentBitmap());
 	}
 
     @Override

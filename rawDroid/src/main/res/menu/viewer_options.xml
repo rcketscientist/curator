@@ -51,18 +51,29 @@
         android:icon="@drawable/ic_action_labels"
         app:showAsAction="always"
         android:title="@string/view_tag"/>
+    <item android:title="@string/help"
+        android:orderInCategory="40">
+        <menu>
+            <item
+                android:id="@+id/contact"
+                android:icon="@android:drawable/ic_menu_send"
+                android:orderInCategory="31"
+                app:showAsAction="never"
+                android:title="@string/contact"/>
+            <item
+                android:id="@+id/about"
+                android:icon="@android:drawable/ic_menu_search"
+                android:orderInCategory="34"
+                app:showAsAction="never"
+                android:title="@string/about"/>
+        </menu>
+    </item>
     <item
-        android:id="@+id/viewSettings"
-        android:orderInCategory="28"
+        android:id="@+id/settings"
+        android:orderInCategory="49"
         android:icon="@android:drawable/ic_menu_preferences"
         app:showAsAction="ifRoom"
         android:title="@string/settings"/>
-    <item
-        android:id="@+id/viewHelp"
-        android:orderInCategory="29"
-        android:icon="@android:drawable/ic_menu_help"
-        app:showAsAction="ifRoom"
-        android:title="@string/help"/>
     <item
         android:id="@+id/viewShare"
         android:orderInCategory="14"

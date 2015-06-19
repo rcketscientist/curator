@@ -5,29 +5,18 @@
 <string name="positive">Akceptuj</string>
 <string name="negative">Odrzuć</string>
 <string name="neutral">Anuluj</string>
-<string name="DecodeAll">Dekoduj wszystko</string>
-<string name="file">Plik</string>
 <string name="save_as">Zapisz jako...</string>
 <string name="export">Eksportuj</string>
 <string name="wallpaper">Ustaw jako tapetę</string>
 <string name="edit">Edytuj używając...</string>
-<string name="multi_select">Wybór wielokrotny</string>
 <string name="selectAll">Wybierz wszystko</string>
 <string name="help">Pomoc</string>
 <string name="delete">Kasuj</string>
 <string name="view_tag">Tag</string>
-<string name="menu_exit">Wyjście</string>
-<string name="button_Recent">Poprzedni</string>
-<string name="lastUsedFolder">Ostatnio używany folder</string>
-<string name="accessDenied">Brak dostępu</string>
-<string name="grid_reset">Wyzeruj obraz</string>
-<string name="bad_source">Plik źródłowy nie może być znaleziony</string>
 <string name="rename">Zmień nazwę</string>
 <string name="format_prompt">Format</string>
 <string name="save">Zapisz</string>
 <string name="save_success">Zapisano z powodzeniem</string>
-<string name="save_fail">Zapis zakończony niepowodzeniem</string>
-<string name="decode_locked">Dekoder przestał działać. Użyj "poprzednie" aby wrócić do tego katalogu. Jeżeli problem będzie się powtarzał, zgłoś go po adresem rawdroid@antonymandra.com.</string>
 <string name="no_filemanager_installed">Brak menadżera plików</string>
 
 <string-array name="format_array">
@@ -39,26 +28,19 @@
 <string name="Date">Data</string>
 <string name="Name">Nazwa</string>
 <string name="settings">Ustawienia</string>
-<string name="importKeywords">Import słów kluczowych</string>
-<string name="importImages">Import obrazów</string>
 <string name="chooseDestination">Wybierz miejsce docelowe</string>
 <string name="choosefile">Wybierz plik</string>
 <string name="import1">Import</string>
-<string name="all">Wszystkie</string>
-<string name="selected">Wybrane</string>
+
 <string name="renameImages">Zmiana nazwy obrazów</string>
 <string name="view">Podgląd</string>
 <string name="gallery">Galeria</string>
 <string name="viewer">Podgląd</string>
-<string name="image">Obraz</string>
 <string name="storage">Dysk</string>
 <string name="firstImage">Pierwszy obraz</string>
 <string name="lastImage">Ostatni obraz</string>
 <string name="licensed">licencjonowany</string>
 <string name="unlicensed">nielicencjonowany</string>
-
-<!-- Error Messages -->
-<string name="errorKeywordRequired">Wymaga załadowania pliku ze słowami kluczowymi</string>
 
 <!-- Meta -->
 <string name="altitude">Wysokość</string>
@@ -82,30 +64,17 @@
 <!-- Results -->
 <string name="resultImportSuccessful">Importowanie zakończone powodzeniem.</string>
 <string name="resultImportFailed">Importowanie nie powiodło się.</string>
-<string name="resultDeleteSucceded">Wybrane obrazy skasowano z powodzeniem.</string>
 <string name="resultWallpaperFailed">Ustawienie tapety nie powiodło się.</string>
 
 <!-- Warnings -->
-<string name="warningNoFolderDecoded">Nie zdekodowałeś katalogu.</string>
 <string name="warningFileWrongFormat">Plik ma niewłaściwy format.</string>
 <string name="warningNoItemsSelected">Nie wybrano elementów.</string>
-<string name="warningInvalidPath">Ścieżka niedostępna, ponowne uruchomienie...</string>
 <string name="warningNotEnoughSpace">Brak miejsca do zaimportownia całego katalogu.</string>
-<string name="warningSourceEqualsDestination">Import do tego samego katalogu jest niemożliwy.</string>
 <string name="warningDeleteExceedsRecycle">Kasowane pliki nie mieszczą się w koszu. Usunąć bezpowrotnie? (Uwaga: Wielkość może być edytowana w ustawieniach programu)</string>
-<string name="warningRecycleMtp">Obecnie kosz nie obsługuje USB. Kasowanie jest bezpowrotne. </string>
 <string name="warningDeleteDirect">Obrazy będą kasowane bezpośrednio.</string>
 <string name="warningNoRecycleBin">Kosz nie istnieje. Obrazy będą bezpośrednio kasowane.</string>
 <string name="warningGenericImagesOff">Typowe pliki obrazów (n.p. jpg) zostały wyłączone w ustawieniach.</string>
-<string name="warningInvalidMeta">Błędne metadane (proszę, prześlij wywołujący błąd plik mailem).</string>
 <string name="warningInvalidLabel">Etykieta jest nieprawidłowa. Jeżeli sądzisz, że powinny być obsługiwane, napisz o tym do mnie.</string>
-<string name="warningInvalidSidebar">Boczna belka przestała działać, uruchom ponownie.</string>
-<string name="warningNoUSB">Nie znaleziono nośnika usb. Jeżeli wiesz, że został takowy zamontowany, wyślij maila na adres rawdroid@antonymandra.com z lokalizacją do dodania.</string>
-<string name="warningLicenseError">Niepowodzenie sprawdzania licencji. Domyślnie poprzednie sprawdzenie:</string>
-<string name="warningLicenseDeny">Licencja: dobrej zabawy z wersją demonstracyjną!</string>
-<string name="warningLicenseAllow">Licencja: dziękuję za wsparcie!</string>
-<string name="warningFailedToGetStream">Uwaga: Pobranie strumienia obrazu nie powiodło się. Jeżeli problem będzie się powtarzał, proszę o email:rawdroid@anthonymandra.com</string>
-<string name="warningShareFail">Udostępniani nie może być zakończone.</string>
 
 <!-- Preferences -->
 <string name="prefTitleImageInterface">Automatycznie wyświetl interfejs</string>
@@ -114,7 +83,6 @@
 <string name="prefSummaryRecycleBin">Przestrzeń zarezerwowana dla kosza (standardowo: 50MB, Min.:30MB, Max.: 500MB)
 \nOstrożnie z wielkością 500MB, to ponad 6% pojemności urządzenia z pamięcią 8GB!</string>
 <string name="prefTitleFilter">Filtr Exif</string>
-<string name="prefTitleComingSoon">Już wkrótce</string>
 <string name="prefTitleDeleteConfirmation">Potwierdzenie kasowania</string>
 <string name="prefSummaryDeleteConfirmation">Gdy wyłączone, kasowanie nie wymaga potwierdzenia, nawet gdy przekroczona będzie wielkość kosza.</string>
 <string name="prefTitleUseRecycleBin">Używaj kosza</string>
@@ -127,8 +95,6 @@
 <string name="prefSummaryShowUnknownFiles">Wskazuje, że RawDroid nie przetwarza.</string>
 <string name="prefTitleImportKeywords">Importuj słowa kluczowe</string>
 <string name="prefSummaryImportKeywords">Kliknij aby importować plik słów kluczowych rozdzielonych znakami tabulacji, tak jak zostały wyeksportowane z programu Lightroom.</string>
-<string name="prefTitleClearGalleryCache">Oczyść pamięć podręczną galerii</string>
-<string name="prefSummaryClearGalleryCache">Kliknij aby oczyścić pamięć podręczną miniatur galerii.</string>
 <string name="prefTitleShowNav">Pokaż Nawigację</string>
 <string name="prefTitleShowMeta">Pokaż Metadane</string>
 <string name="prefTitleShowHist">Pokaż histogram</string>
@@ -150,26 +116,16 @@
 <string name="ratingRequest">Jeżeli spodobał Ci się RawDroid, proszę poświęć chwilę na jego ocenę.
 \nJeżeli na Twoją ocenę miał wpływ błąd, który został naprawiony, to proszę abyś zaktualizował swoją ocenę.
 \nDziękuję za wsparcie. </string>
-<string name="intentPending">Masz niezakończone akcje, czy chcesz kontynuować?</string>
-<string name="cont">Kontynuuj</string>
-<string name="convertingFiles">Konwertuję pliki...</string>
 <string name="importingImages">Importuję obrazy...</string>
 <string name="exportingThumb">Eksportuję miniatury...</string>
 <string name="deletingFiles">Kasuję pliki...</string>
 <string name="recyclingFiles">Odzyskuję pliki...</string>
-<string name="cancelled">Anulowany</string>
 <string name="clear">Wyczyść</string>
-<string name="write">Zapisz</string>
 <string name="reuse">Użyj ponownie</string>
 <string name="customKeywords">Niestandardowe słowa kluczowe</string>
 <string name="addKeyword">Dodaj słowo kluczowe</string>
-<string name="select">Wybierz</string>
-<string name="directory">Katalog</string>
 <string name="about">O programie</string>
-<string name="usb">Znajdź zamontowany USB</string>
 <string name="search">Szukaj</string>
-<string name="experimental">(eksperymentalny)</string>
-<string name="imageFolders">Foldery zawierające pliki RAW</string>
 
 <!-- Colors for xmp -->
 <string name="red">Czerwony</string>
@@ -213,7 +169,6 @@
 <string name="tutorialUsb">Przeszuka wszystkie znane punkty montowania dla każdego z urządzeń USB. Jeżeli urządzenie nie zostaje znalezione, przyślij mi mailem ścieżkę punktu montowania, np.:"/mnt/weird/device/usb"  </string>
 
 <string name="unit_mm">mm</string>
-<string name="loading">Czytam</string>
 <string name="no_thumbnail">Bez miniatur</string>
     <string name="Name_ascending">Nazwa \u25BC</string>
 </resources>

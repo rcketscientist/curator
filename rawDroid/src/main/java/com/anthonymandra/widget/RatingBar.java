@@ -21,7 +21,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
     private OnRatingSelectionChangedListener mListener;
     private boolean mMultiSelect = false;
     private boolean mPauseListener = false;
-    private int mRating;
+    Integer mRating = null;
     CheckBox mOne, mTwo, mThree, mFour, mFive;
 
     public RatingBar(Context context) { this(context, null); }
@@ -64,6 +64,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
 
     private void clear()
     {
+        mRating = null;
         mOne.setChecked(false);
         mTwo.setChecked(false);
         mThree.setChecked(false);
@@ -84,10 +85,12 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
             checked.add(2);
         if (mOne.isChecked())
             checked.add(1);
+        if (mRating != null && mRating == 0)
+            checked.add(0);
         return checked;
     }
 
-    public int getRating()
+    public Integer getRating()
     {
         return mRating;
     }
@@ -100,21 +103,37 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
 
         if (!mMultiSelect)
         {
-            mPauseListener = true;
-            clear();
+            Integer intendedRating = null;
             switch(buttonView.getId())
             {
-                case R.id.rating1: setRating(1); break;
-                case R.id.rating2: setRating(2); break;
-                case R.id.rating3: setRating(3); break;
-                case R.id.rating4: setRating(4); break;
-                case R.id.rating5: setRating(5); break;
-                default: setRating(-1); break;
+                case R.id.rating1: intendedRating = 1; break;
+                case R.id.rating2: intendedRating = 2; break;
+                case R.id.rating3: intendedRating = 3; break;
+                case R.id.rating4: intendedRating = 4; break;
+                case R.id.rating5: intendedRating = 5; break;
+            }
+
+            // When selecting an already selected rating, clear instead
+            // When selecting a lower or higher rating set the rating
+            // Ex: 3 set, 2 intended, set to 2
+            // 3 set, 3 intended, clear
+            // 3 set, 4 intended, set to
+            if (isChecked || intendedRating != null && !intendedRating.equals(mRating))
+            {
+                setRating(intendedRating);
+                return; // setRating already handled listener updates
+            }
+            else
+            {
+                mPauseListener = true;
+                clear();
+                mPauseListener = false;
             }
         }
-        mPauseListener = false;
+
         mListener.onRatingSelectionChanged(getCheckedRatings());
     }
+
 
     public void setRating(Integer[] ratings)
     {
@@ -129,9 +148,8 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
         }
     }
 
-    public void setRating(int rating)
+    public void setRating(Integer rating)
     {
-        mRating = rating;
         if (!mMultiSelect)
         {
             mPauseListener = true;
@@ -162,6 +180,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
                 default: break;
             }
         }
+        mRating = rating;
     }
 
     public void setOnRatingSelectionChangedListener(OnRatingSelectionChangedListener listener)

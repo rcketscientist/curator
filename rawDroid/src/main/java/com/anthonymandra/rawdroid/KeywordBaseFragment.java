@@ -3,7 +3,8 @@ package com.anthonymandra.rawdroid;
 
 import android.support.v4.app.Fragment;
 
-import com.anthonymandra.framework.KeywordDataSource;
+
+import com.anthonymandra.content.KeywordProvider;
 
 import java.util.Collection;
 
@@ -15,9 +16,9 @@ public abstract class KeywordBaseFragment extends Fragment
     }
 
     public static final String ORDER_BY =
-            KeywordDataSource.KEYWORD_RECENT    + " DESC, " +   // Order by recent selection
-            KeywordDataSource.KEYWORD_DEPTH     + " ASC, "  +   // Order by depth Animal > Dog
-            KeywordDataSource.KEYWORD_NAME      + " ASC";       // Order by A > Z
+            KeywordProvider.Data.KEYWORD_RECENT    + " DESC, " +   // Order by recent selection
+//            KeywordProvider.Data.KEYWORD_DEPTH     + " ASC, "  +   // Order by depth Animal > Dog
+            KeywordProvider.Data.KEYWORD_NAME      + " ASC";       // Order by A > Z
 
     protected OnKeywordsSelectedListener mListener;
 

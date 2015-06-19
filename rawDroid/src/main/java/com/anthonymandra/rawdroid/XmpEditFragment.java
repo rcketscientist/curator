@@ -70,8 +70,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	{
 		// Avoid writing blank xmp on already empty xmp, but
 		// Allow writing blank when cleared
-		boolean hasModifications = hasModifications();
-		if (!hasModifications)
+		if (!hasModifications())
 		{
 			return;
 		}
@@ -100,28 +99,29 @@ public class XmpEditFragment extends XmpBaseFragment
 				new FileOutputStream(
 						ImageUtils.getXmpFile(xmp)
 				));
-		try
-		{
-			final Metadata meta = new Metadata();
-			meta.addDirectory(new XmpDirectory());
-			updateSubject(meta, lastWrittenXmp.Subject);
-			updateRating(meta, lastWrittenXmp.Rating);
-			updateLabel(meta, lastWrittenXmp.Label);
 
-			new Thread(new Runnable()
+		final Metadata meta = new Metadata();
+		meta.addDirectory(new XmpDirectory());
+		updateSubject(meta, lastWrittenXmp.Subject);
+		updateRating(meta, lastWrittenXmp.Rating);
+		updateLabel(meta, lastWrittenXmp.Label);
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
 			{
-				@Override
-				public void run()
+				try
 				{
 					if (meta.containsDirectoryOfType(XmpDirectory.class))
 						XmpWriter.write(os, meta);
 				}
-			}).start();
-		}
-		finally
-		{
-			Utils.closeSilently(os);
-		}
+				finally
+				{
+					Utils.closeSilently(os);
+				}
+			}
+		}).start();
 	}
 
 	public static void updateRating(Metadata meta, Integer rating)
@@ -134,6 +134,9 @@ public class XmpEditFragment extends XmpBaseFragment
         }
         else
 		{
+			if (xmp == null)
+				meta.addDirectory(new XmpDirectory());
+
 			xmp.updateDouble(XmpDirectory.TAG_RATING, rating);
         }
     }
@@ -149,6 +152,9 @@ public class XmpEditFragment extends XmpBaseFragment
         }
         else
 		{
+			if (xmp == null)
+				meta.addDirectory(new XmpDirectory());
+
 			xmp.updateString(XmpDirectory.TAG_LABEL, label);
         }
     }
@@ -163,6 +169,9 @@ public class XmpEditFragment extends XmpBaseFragment
         }
         else
         {
+			if (xmp == null)
+				meta.addDirectory(new XmpDirectory());
+
             xmp.updateStringArray(XmpDirectory.TAG_SUBJECT, subject);
         }
     }
@@ -174,33 +183,12 @@ public class XmpEditFragment extends XmpBaseFragment
 			return null;
 		}
 
-//		Cursor c = null;
-//		try
-//		{
-//			c = getActivity().getContentResolver().query(
-//					Meta.Data.CONTENT_URI,
-//					null,
-//					Meta.Data.URI + " = ?",
-//					new String[]{currentUri.toString()},
-//					null);
-//
-//			if (c == null)
-//			{
-//				return null;
-//			}
-
-			XmpEditValues xmp = new XmpEditValues();
-//			c.moveToFirst();    // Can only be one result
-			xmp.Label = c.getString(Meta.LABEL_COLUMN);
-			xmp.Subject = ImageUtils.convertStringToArray(c.getString(Meta.SUBJECT_COLUMN));
-			double rating = c.getDouble(Meta.RATING_COLUMN);
-			xmp.Rating = Double.isNaN(rating) ? null : (int)rating;
-			return xmp;
-//		}
-//		finally
-//		{
-//			Utils.closeSilently(c);
-//		}
+		XmpEditValues xmp = new XmpEditValues();
+		xmp.Label = c.getString(Meta.LABEL_COLUMN);
+		xmp.Subject = ImageUtils.convertStringToArray(c.getString(Meta.SUBJECT_COLUMN));
+		String rating = c.getString(Meta.RATING_COLUMN);  //Use string since double returns 0 for null
+		xmp.Rating = rating == null ? null : (int) Double.parseDouble(rating);
+		return xmp;
 	}
 
 	/**
@@ -280,7 +268,7 @@ public class XmpEditFragment extends XmpBaseFragment
 		boolean bothRatingNull = widgetRating == null && originalXmp.Rating == null;
 		boolean bothSubjectNull = widgetSubject == null && originalXmp.Subject == null;
 
-		if (!bothRatingNull && widgetRating != originalXmp.Rating)
+		if (!bothRatingNull)
 		{
 			if (widgetRating == null)
 				return true;
@@ -302,7 +290,6 @@ public class XmpEditFragment extends XmpBaseFragment
 				return true;
 		}
 		return false;
-//        return !bothSubjectNull && !Arrays.equals(widgetSubject, originalXmp.Subject);
     }
 
 	private void attachButtons()

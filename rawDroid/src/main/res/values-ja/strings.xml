@@ -5,29 +5,18 @@
 <string name="positive">了解</string>
 <string name="negative">断る</string>
 <string name="neutral">キャンセル</string>
-<string name="DecodeAll">全てデコード</string>
-<string name="file">ファイル</string>
 <string name="save_as">JPEGで保存</string>
 <string name="export">出力</string>
 <string name="wallpaper">壁紙に設定</string>
 <string name="edit">編集</string>
-<string name="multi_select">複数選択</string>
 <string name="selectAll">全て選択</string>
 <string name="help">ヘルプ</string>
 <string name="delete">削除</string>
 <string name="view_tag">タグ</string>
-<string name="menu_exit">終了</string>
-<string name="button_Recent">最近</string>
-<string name="lastUsedFolder">最後に使用したフォルダ</string>
-<string name="accessDenied">アクセス拒否</string>
-<string name="grid_reset">画像リセット</string>
-<string name="bad_source">画像が見つかりません</string>
 <string name="rename">リネーム</string>
 <string name="format_prompt">フォーマット</string>
 <string name="save">保存</string>
 <string name="save_success">保存完了</string>
-<string name="save_fail">保存失敗</string>
-<string name="decode_locked">デコーダがフリーズした為、再起動してください。このフォルダに戻るためには「最近」を使用してください。この症状が続く場合はrawdroid@anthonymandra.comまでメールを送ってください。</string>
 <string name="no_filemanager_installed">ファイルマネージャーがありません</string>
 
 <!-- <item>Custom Name - Original Number</item> -->
@@ -35,27 +24,18 @@
 <string name="Date">撮影日時</string>
 <string name="Name">ファイル名</string>
 <string name="settings">設定</string>
-<string name="importKeywords">キーワードをインポート</string>
-<string name="importImages">画像インポート</string>
 <string name="chooseDestination">コピー先を選択</string>
 <string name="choosefile">ファイル選択</string>
 <string name="import1">インポート</string>
-<string name="all">全て</string>
-<string name="selected">選択済み</string>
 <string name="renameImages">画像をリネーム</string>
 <string name="view">ビュー</string>
 <string name="gallery">ギャラリー</string>
 <string name="viewer">ビューワー</string>
-<string name="image">画像</string>
 <string name="storage">ストレージ</string>
 <string name="firstImage">最初の画像</string>
 <string name="lastImage">最後の画像</string>
-<string name="licensed">ライセンスあり</string>
 <string name="unlicensed">ライセンスなし</string>
 <string name="error">エラー</string>
-
-<!-- Error Messages -->
-<string name="errorKeywordRequired">ロードされたキーワードファイルが必要です。</string>
 
 <!-- Meta -->
 <string name="altitude">標高</string>
@@ -79,30 +59,17 @@
 <!-- Results -->
 <string name="resultImportSuccessful">インポート成功</string>
 <string name="resultImportFailed">インポート失敗</string>
-<string name="resultDeleteSucceded">選択した画像を削除しました。</string>
 <string name="resultWallpaperFailed">壁紙に設定できませんでした。</string>
 
 <!-- Warnings -->
-<string name="warningNoFolderDecoded">フォルダーをまだデコードしていません。</string>
-<string name="warningFileWrongFormat">ファイルが正しい形式ではありません。</string>
+\<string name="warningFileWrongFormat">ファイルが正しい形式ではありません。</string>
 <string name="warningNoItemsSelected">何も選択されていません。</string>
-<string name="warningInvalidPath">パスが取得できませんでした。再起動中です。</string>
 <string name="warningNotEnoughSpace">フォルダ全体をインポートする容量がありません。</string>
-<string name="warningSourceEqualsDestination">同じディレクトリにインポートできません。</string>
 <string name="warningDeleteExceedsRecycle">削除されたファイルはゴミ箱のサイズを超えています。完全に削除しますか？(注: ゴミ箱のサイズは設定で変更できます。)</string>
-<string name="warningRecycleMtp">現在ゴミ箱はUSBをサポートしていません。完全な削除になります。</string>
 <string name="warningDeleteDirect">ファイルは直接削除されます。</string>
 <string name="warningNoRecycleBin">ゴミ箱が存在しません。ファイルは直接削除されます。</string>
 <string name="warningGenericImagesOff">一般的な画像(例:JPG)は設定で無効になっています。</string>
-<string name="warningInvalidMeta">無効なメタデータ。(問題のファイルをメールしてください。)</string>
 <string name="warningInvalidLabel">は無効なラベルです。ラベルは設定から変更できます。</string>
-<string name="warningInvalidSidebar">サイドバーのインスタンスが無効になりました。もう一度開いてください。</string>
-<string name="warningNoUSB">USBメディアが見つかりません。デバイスがマウントされている場合rawdroid@anthonymandra.comまでご連絡ください。</string>
-<string name="warningLicenseError">ライセンスの確認を失敗しました。前回確認した状態に設定します:</string>
-<string name="warningLicenseDeny">ライセンス: デモ版をお楽しみください！</string>
-<string name="warningLicenseAllow">ライセンス: ご支持いただきありがとうございます！</string>
-<string name="warningFailedToGetStream">警告: 画像ストリームの取得に失敗しました。もしこれが続くようでしたらrawdroid@anthonymandra.comまでメールしてください。</string>
-<string name="warningShareFail">共有を完了できませんでした。</string>
 
 <!-- Preferences -->
 <string name="prefTitleImageInterface">表示の自動更新</string>
@@ -111,7 +78,6 @@
 <string name="prefSummaryRecycleBin">ゴミ箱に割り当てる容量(標準: 50MB, 最小: 30MB, 最大: 500MB)
 \n容量に注意してください。500MBは8GB端末の容量の6%以上を占めます。</string>
 <string name="prefTitleFilter">Exifフィルター</string>
-<string name="prefTitleComingSoon">近日公開</string>
 <string name="prefTitleDeleteConfirmation">削除の確認</string>
 <string name="prefSummaryDeleteConfirmation">無効にした場合、ファイルがゴミ箱のサイズを超えても削除の確認はありません。</string>
 <string name="prefTitleUseRecycleBin">ゴミ箱の使用</string>
@@ -124,15 +90,12 @@
 <string name="prefSummaryShowUnknownFiles">Rawdroidが処理しないファイルを表示します。</string>
 <string name="prefTitleImportKeywords">キーワードのインポート</string>
 <string name="prefSummaryImportKeywords">Lightroomから出力したタブ区切りのキーワードファイルをインポートします。</string>
-<string name="prefTitleClearGalleryCache">ギャラリーのキャッシュを削除</string>
-<string name="prefSummaryClearGalleryCache">クリックでギャラリーのキャッシュを削除します。</string>
 <string name="prefTitleUseLegacyViewer">旧ビューワーを使用</string>
 <string name="prefSummaryUseLegacyViewer">デフォルトのビューワーに問題がある場合のみチェックを入れてください。これが必要な場合はメールで知らせてください。</string>
 <string name="prefTitleShowNav">「送り」「戻し」ボタンの表示</string>
 <string name="prefTitleShowMeta">メタデータの表示</string>
 <string name="prefTitleShowHist">ヒストグラムの表示</string>
 <string name="prefSummaryLicenseError">Googleサーバーとの通信にエラーが発生しました。申し訳ありませんが、後ほど再試行してください。</string>
-<string name="prefSummaryNoProvider">サーパにアクセスできませんでした。Rawdroid proがインストールされていますか？</string>
 <string name="prefSummaryLicense">全ての機能が利用できます。ご支援に感謝します！</string>
 <string name="prefTitleManualLicense">ライセンスチェック</string>
 <string name="prefSummaryManualLicense">手動でライセンスを確認する場合にクリックします。インターネット接続が必要です。</string>
@@ -142,8 +105,6 @@
 <string name="prefTitleWatermarkSize">透かしテキストサイズ</string>
 <string name="prefTitleWatermarkLocation">透かしの位置</string>
 <string name="prefTitleWatermarkAlpha">透かしの透明度</string>
-<string name="prefTitleContact">お問合せ</string>
-<string name="prefSummaryContact">クリックしてメールを送ってください。</string>
 
 <string name="buypro">機能のロックを解除し速度向上するために、クリックしてRawdroid Proにアップグレードしてください。</string>
 
@@ -174,26 +135,16 @@
 \nもし修正済みのバグを元に評価されている場合は評価の更新をお願いします。
 \n
 \nご協力に感謝します！</string>
-<string name="intentPending">保留中のアクションがあります。続行しますか？</string>
-<string name="cont">続行</string>
-<string name="convertingFiles">ファイル変換中...</string>
 <string name="importingImages">画像インポート中...</string>
 <string name="exportingThumb">サムネイル出力中...</string>
 <string name="deletingFiles">ファイル削除中...</string>
 <string name="recyclingFiles">リサイクル中...</string>
-<string name="cancelled">キャンセルしました</string>
 <string name="clear">クリア</string>
-<string name="write">書込</string>
 <string name="reuse">再利用</string>
 <string name="customKeywords">キーワードの編集</string>
 <string name="addKeyword">キーワードの追加</string>
-<string name="select">選択</string>
-<string name="directory">ディレクトリ</string>
 <string name="about">このアプリについて</string>
-<string name="usb">USBマウント探索</string>
 <string name="search">検索</string>
-<string name="experimental">(実験的)</string>
-<string name="imageFolders">Raw画像を含むフォルダ</string>
 
 <!-- Colors for xmp -->
 <string name="red">赤</string>
@@ -239,10 +190,7 @@
 <string name="tutorialUsb">任意のUSB機器の既知のマウントポイントを探索します。もし機器が見つからない場合はマウントポイントをメールしてください。(例: "/mnt/weird/device/usb")</string>
 
 <string name="unit_mm">mm</string>
-<string name="loading">ロード中\u2026</string>
 <string name="no_thumbnail">サムネイルがありません</string>
-<string name="deleted">削除済み</string>
-<string name="undo">元に戻す</string>
 <string name="license">ライセンス</string>
 <string name="watermark">ウォーターマーク(Pro)</string>
     <string name="Name_ascending">ファイル名 \u25BC</string>

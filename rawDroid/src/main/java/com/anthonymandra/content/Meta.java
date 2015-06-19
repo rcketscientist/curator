@@ -34,7 +34,11 @@ public class Meta
 	public static final int DRIVE_MODE_COLUMN = 23;
 	public static final int EXPOSURE_MODE_COLUMN = 23;
 	public static final int EXPOSURE_PROGRAM_COLUMN = 23;
+	public static final int TYPE = 24;
 
+	public static final int RAW = 0;
+	public static final int COMMON = 1;
+	public static final int TIFF = 2;
 
 	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_META;
 
@@ -83,6 +87,8 @@ public class Meta
 		public static final String DRIVE_MODE = "drive_mode";
 		public static final String EXPOSURE_MODE = "exposure_mode";
 		public static final String EXPOSURE_PROGRAM = "exposure_program";
+
+		public static final String TYPE  = "type";
 
 		public static final String MEDIA_ID = "media_id";
 		/**

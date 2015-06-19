@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.content.UriPermission;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -24,14 +25,15 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.ImageViewActivity;
 import com.anthonymandra.rawdroid.LegacyViewerActivity;
@@ -39,6 +41,7 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpBaseFragment;
 import com.anthonymandra.rawdroid.XmpFilterFragment;
+import com.inscription.ChangeLogDialog;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -53,7 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public abstract class GalleryActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<Cursor>
+public abstract class GalleryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>
 {
 	@SuppressWarnings("unused")
 	private static final String TAG = GalleryActivity.class.getSimpleName();
@@ -65,15 +68,12 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	private static final int REQUEST_CODE_SHARE = 00;
 	private static final int REQUEST_CODE_WRITE_PERMISSION = 01;
 
+	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
+
 	protected RecycleBin recycleBin;
 	protected File mSwapDir;
 
 	protected ProgressDialog mProgressDialog;
-
-	private static final String[] RAW_EXT = new String[]
-	{ ".3fr", ".ari", ".arw", ".bay", ".crw", ".cr2", ".cap", ".dcs", ".dcr", ".dng", ".drf", ".eip", ".erf", ".fff", ".iiq", ".k25", ".kdc", ".mdc", ".mef",
-			".mos", ".mrw", ".nef", ".nrw", ".obm", ".orf", ".pef", ".ptx", ".pxn", ".r3d", ".raf", ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf", ".srw",
-			".tif", ".tiff", ".x3f" };
 
 	private static final File[] MOUNT_ROOTS =
 	{
@@ -328,6 +328,27 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		if (recycleBin != null)
 			recycleBin.closeCache();
 		recycleBin = null;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle item selection
+		switch (item.getItemId())
+		{
+			case R.id.contact:
+				requestEmailIntent();
+				return true;
+			case R.id.about:
+				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
+				changeLogDialog.show(Constants.VariantCode == 8);
+				return true;
+			case R.id.settings:
+				requestSettings();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	/**
@@ -605,10 +626,16 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	}
 
     @TargetApi(21)
-    protected void requestEmailIntent()
+	protected void requestEmailIntent() {requestEmailIntent(null);}
+    protected void requestEmailIntent(String subject)
     {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto","rawdroid@anthonymandra.com", null));
+
+		if (subject != null)
+		{
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		}
 
         StringBuilder body = new StringBuilder();
         body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
@@ -626,6 +653,12 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
         emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
         startActivity(Intent.createChooser(emailIntent, "Send email..."));
     }
+
+	private void requestSettings()
+	{
+		Intent settings = new Intent(this, FullSettingsActivity.class);
+		startActivity(settings);
+	}
 
 	/**
 	 * Updates the UI after a delete.
@@ -764,19 +797,65 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		}
 	}
 
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	protected void checkWriteAccess()
+	{
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean skipWarning = settings.getBoolean(PREFERENCE_SKIP_WRITE_WARNING, false);
+		if (skipWarning)
+			return;
+
+		if (Util.hasLollipop())
+		{
+			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.requestWriteAccess);
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing
+				}
+			});
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					requestWritePermission();
+				}
+			});
+			builder.show();
+
+		}
+		else if (Util.hasKitkat())
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.kitkatWriteIssue);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing, just a warning
+				}
+			});
+			builder.show();
+		}
+
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
+		editor.apply();
+	}
+
 	protected void requestWritePermission()
 	{
-		getContentResolver().getPersistedUriPermissions();
 		if (Util.hasLollipop())
         {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
             startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
         }
-		else if (Util.hasKitkat())
-		{
-			//TODO: Warn User
-		}
-		// Prior versions will have permission
 	}
 
     protected void setShareUri(Uri share)
@@ -885,11 +964,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			{
 				// TODO: If I implement bulkInsert it's faster
 				getContentResolver().applyBatch(Meta.AUTHORITY, mContentProviderOperations);
-			} catch (RemoteException e)
-			{
-				//TODO: Notify user
-				e.printStackTrace();
-			} catch (OperationApplicationException e)
+			} catch (RemoteException | OperationApplicationException e)
 			{
 				//TODO: Notify user
 				e.printStackTrace();
@@ -909,6 +984,10 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	{
 		boolean cancelled;
 
+		Set<String> rawImages = new HashSet<>();
+		Set<String> commonImages = new HashSet<>();
+		Set<String> tiffImages = new HashSet<>();
+
 		@Override
 		protected void onPreExecute()
 		{
@@ -921,11 +1000,10 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 		@Override
 		protected Void doInBackground(File... params)
 		{
-			Set<String> rawImages = new HashSet<>();
 			ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 			for (File root : params)
 			{
-				rawImages.addAll(search(root));
+				search(root);
 				totalImages = rawImages.size();
 				publishProgress();
 			}
@@ -933,12 +1011,41 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			for (String raw : rawImages)
 			{
 				ParseMetaTask pmt = new ParseMetaTask();
-//				pmt.execute(new File(raw));
-				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
+				pmt.execute(new File(raw));
+//				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
 //				pmt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new File(raw));
 			}
 
 			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid)
+		{
+			super.onPostExecute(aVoid);
+			if (totalImages == 0)
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
+				builder.setTitle(R.string.zeroSearchTitle);
+				builder.setMessage(R.string.zeroSearchSummary);
+				builder.setNegativeButton(R.string.neutral, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						// Do nothing
+					}
+				});
+				builder.setPositiveButton(R.string.contact, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						requestEmailIntent("Zero Search Results");
+					}
+				});
+				builder.show();
+			}
 		}
 
 		@Override
@@ -947,18 +1054,17 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 			GalleryActivity.this.onSearchResults();
 		}
 
-		public Collection<String> search(File dir)
+		public void search(File dir)
 		{
-			Set<String> matches = new HashSet<>();
 			if (cancelled || dir == null)
-				return matches;
+				return;
 			if (dir.listFiles() == null)
-				return matches;
+				return;
 			// This is a hack to handle the jacked up filesystem
 			for (File skip : SKIP_ROOTS)
 			{
 				if (dir.equals(skip))
-					return matches;
+					return;
 			}
 
 			// We must use a canonical path due to the fucked up multi-user/symlink setup
@@ -969,7 +1075,7 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 				{
 					try
 					{
-						matches.add(raw.getCanonicalPath());
+						rawImages.add(raw.getCanonicalPath());
 					} catch (IOException e)
 					{
 						// God this is ugly, just do nothing with an error.
@@ -978,6 +1084,24 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 				}
 			}
 
+			File[] commonFiles = dir.listFiles(nativeFilter);
+			if (commonFiles != null && commonFiles.length > 0)
+			{
+				for (File common: commonFiles)
+				{
+					try
+					{
+						commonImages.add(common.getCanonicalPath());
+					} catch (IOException e)
+					{
+						// God this is ugly, just do nothing with an error.
+						e.printStackTrace();
+					}
+				}
+			}
+
+			//TODO: TIFF
+
 			// Recursion pass
 			for (File f : dir.listFiles())
 			{
@@ -985,9 +1109,8 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 					continue;
 
 				if (f.isDirectory() && f.canRead() && !f.isHidden())
-					matches.addAll(search(f));
+					search(f);
 			}
-			return matches;
 		}
 
 		@Override
@@ -1015,17 +1138,8 @@ public abstract class GalleryActivity extends ActionBarActivity implements Loade
 	
 	class RawFilter implements FileFilter
 	{
-		@SuppressLint("DefaultLocale")
 		@Override
-		public boolean accept(File file)
-		{
-			for (String ext : RAW_EXT)
-			{
-				if (file.getName().toLowerCase().endsWith(ext.toLowerCase()))
-					return true;
-			}
-			return false;
-		}
+		public boolean accept(File file) { return Util.isRaw(file); }
 	}
 
 	class NativeFilter implements FileFilter

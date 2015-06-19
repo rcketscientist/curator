@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 def versionMajor = 3
-def versionMinor = 0
+def versionMinor = 9
 def versionPatch = 0
 def versionBuild = 0
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.2'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
     lintOptions {
         checkReleaseBuilds false
@@ -70,24 +70,30 @@ android {
         // These fields handle flavorized authorities for providers
         final FIELD_META = "PROVIDER_AUTHORITY_META"
         final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
+        final FIELD_KEYWORD = "PROVIDER_AUTHORITY_KEYWORD"
         final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
         final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
+        final PROVIDER_KEYWORD = "\"com.anthonymandra.content.KeywordProvider\""
         final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
         final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
+        final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
         demo {
             applicationId 'com.anthonymandra.rawdroid'
             buildConfigField "String", FIELD_META, PROVIDER_META
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD
         }
         pro {
             applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
         proAmazon {
             applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
     }
 }

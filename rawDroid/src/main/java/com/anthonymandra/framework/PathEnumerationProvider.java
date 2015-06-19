@@ -1,51 +1,68 @@
 package com.anthonymandra.framework;
 
+import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.Nullable;
+import android.net.Uri;
+import android.provider.BaseColumns;
+import android.text.TextUtils;
+
+import com.anthonymandra.content.Meta;
 
 import java.util.UUID;
 
-public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSource
+public abstract class PathEnumerationProvider extends ContentProvider
 {
     public abstract String getTableName();
     public abstract SQLiteOpenHelper getDbHelper();
     public abstract String getColumnId();
     public abstract String getColumnPath();
     public abstract String getColumnDepth();
+    public abstract String getParentId();
+
+    public static final String ANCESTORS_QUERY_SELECTION = "ancestors";
+    public static final String DESCENDANTS_QUERY_SELECTION = "descendants";
 
     private static final String PATH_DELIMITER = "/";
 
-    /**
-     * Insert a root node
-     * @param initialValues
-     * @return
-     */
-    public long insert(ContentValues initialValues)
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
-        return insert(-1, initialValues);
+        if (ANCESTORS_QUERY_SELECTION.equals(selection))
+        {
+            return getAncestors(ContentUris.parseId(uri));
+        }
+        else if (DESCENDANTS_QUERY_SELECTION.equals(selection))
+        {
+            return getDescendants(ContentUris.parseId(uri));
+        }
+        else
+        {
+            SQLiteDatabase db = getDbHelper().getReadableDatabase();
+            return db.query(getTableName(), projection, selection, selectionArgs, null, null, sortOrder);
+        }
     }
 
-    /**
-     * Insert a child node
-     * @param parentId row ID of parent
-     * @param initialValues
-     * @return
-     */
-    public long insert(long parentId, ContentValues initialValues)
+    @Override
+    public Uri insert(Uri uri, ContentValues initialValues)
     {
         String parentPath = PATH_DELIMITER;  // Default path defines a root node
         int parentDepth = -1;
         SQLiteDatabase db = getDbHelper().getWritableDatabase();
-        if (parentId != -1)
+        if (initialValues.containsKey(getParentId()))
         {
             Cursor parent = db.query(getTableName(),
                     new String[]{getColumnPath(), getColumnDepth()},
                     getColumnId() + " = ?",
-                    new String[]{Long.toString(parentId)},
+                    new String[]{initialValues.getAsString(getParentId())},
                     null, null, null);
+
+            initialValues.remove(getParentId());    // Remove the id since it's not an actual column
 
             // If parent lookup succeeds set the path
             if (parent.moveToFirst())
@@ -60,54 +77,24 @@ public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSou
 
         long childId = db.insert(getTableName(), null, initialValues);
         if (childId == -1)
-            return -1;
+            return null;
 
         // Add the child id to the parent's path
         String childPath = parentPath + childId + PATH_DELIMITER;
         // Update the child entry with its full path
         initialValues.put(getColumnPath(), childPath);
         initialValues.put(getColumnDepth(), parentDepth + 1);
-        db.update(getTableName(), initialValues, getColumnId() + " = ?",
+        int rowsAffected = db.update(getTableName(), initialValues, getColumnId() + " = ?",
                 new String[] {Long.toString(childId)});
 
+        if (rowsAffected > 0)
+        {
+            Uri metaUri = ContentUris.withAppendedId(Meta.Data.CONTENT_URI, childId);
+            getContext().getContentResolver().notifyChange(metaUri, null);
+            return metaUri;
+        }
 
-
-        return childId;
-    }
-
-    public int update(long id, ContentValues cv)
-    {
-        SQLiteDatabase db = getDbHelper().getWritableDatabase();
-        return db.update(getTableName(), cv, getColumnId() + "=?", new String[] { Long.toString(id) });
-    }
-
-    public int update(ContentValues cv, String where, String[] whereArgs)
-    {
-        SQLiteDatabase db = getDbHelper().getWritableDatabase();
-        return db.update(getTableName(), cv, where, whereArgs);
-    }
-
-    public int delete(long id)
-    {
-        SQLiteDatabase db = getDbHelper().getWritableDatabase();
-        return db.delete(getTableName(), getColumnId() + "=?", new String[]{Long.toString(id)});
-    }
-
-    public int delete(String where, String[] whereArgs)
-    {
-        SQLiteDatabase db = getDbHelper().getWritableDatabase();
-        return db.delete(getTableName(), where, whereArgs);
-    }
-
-    public Cursor query(@Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String order)
-    {
-        SQLiteDatabase db = getDbHelper().getReadableDatabase();
-        return db.query(getTableName(), projection, selection, selectionArgs, null, null, order);
-    }
-
-    public Cursor query()
-    {
-        return query(null, null, null, null);
+        throw new SQLException("Failed to insert row into " + uri);
     }
 
     /**
@@ -115,7 +102,7 @@ public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSou
      * @param id child row id
      * @return
      */
-    public Cursor getAncestors(long id)
+    protected Cursor getAncestors(long id)
     {
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
         Cursor child = db.query(getTableName(), null,
@@ -136,7 +123,7 @@ public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSou
      * @param id parent row id
      * @return
      */
-    public Cursor getDescendants(long id)
+    protected Cursor getDescendants(long id)
     {
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
         Cursor parent = db.query(getTableName(), null,
