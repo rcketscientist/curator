@@ -3,9 +3,9 @@ package com.anthonymandra.framework;
 import android.annotation.TargetApi;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -33,6 +33,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.gallery3d.app.DataListener;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
@@ -55,7 +56,8 @@ import java.util.TimerTask;
 
 public abstract class ViewerActivity extends GalleryActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener,
-        ScaleChangedListener {
+        ScaleChangedListener, DataListener
+{
 
     private static final String TAG = ViewerActivity.class.getSimpleName();
 
@@ -115,15 +117,15 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected Timer autoHide;
 
-    protected boolean showSidebar = false;
-
-
     protected boolean isInterfaceHidden;
 
     public static int displayWidth;
     public static int displayHeight;
 
     protected int mImageIndex;
+
+    protected XmpEditFragment.XmpEditValues mPendingXmpChanges;
+    protected Uri mCurrentUri;
 
     public abstract MediaItem getCurrentItem();
     public abstract Bitmap getCurrentBitmap();
@@ -209,6 +211,45 @@ public abstract class ViewerActivity extends GalleryActivity implements
         if (Constants.VariantCode < 12)
         {
             setWatermark(true);
+        }
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
+        writeXmpModifications();    // If the lifecycle changes commit pending changes
+    }
+
+    @Override
+    public void onPhotoChanged(int index, Uri item)
+    {
+        if (mCurrentUri != null && mPendingXmpChanges != null)
+        {
+            writeXmpModifications();
+        }
+        mCurrentUri = item;
+
+        setShareUri(getCurrentItem().getSwapUri());
+        updateImageDetails();
+    }
+
+    protected void writeXmpModifications()
+    {
+        if (mCurrentUri != null && mPendingXmpChanges != null)
+        {
+            ContentValues cv = new ContentValues();
+            cv.put(Meta.Data.LABEL, mPendingXmpChanges.Label);
+            cv.put(Meta.Data.RATING, mPendingXmpChanges.Rating);
+            cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(mPendingXmpChanges.Subject));
+
+            getContentResolver().update(
+                    Meta.Data.CONTENT_URI,
+                    cv, Meta.Data.URI + " = ?",
+                    new String[]{mCurrentUri.toString()});
+
+            writeXmp(Uri.parse(getCursor().getString(Meta.URI_COLUMN)), mPendingXmpChanges);
+            mPendingXmpChanges = null;
         }
     }
 
@@ -438,6 +479,17 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 onZoomLockChanged(isChecked);
             }
         });
+        mXmpFragment.setListener(new XmpEditFragment.MetaChangedListener()
+        {
+            @Override
+            public void onMetaChanged(Integer rating, String label, String[] subject)
+            {
+                mPendingXmpChanges = new XmpEditFragment.XmpEditValues();
+                mPendingXmpChanges.Label = label;
+                mPendingXmpChanges.Subject = subject;
+                mPendingXmpChanges.Rating = rating;
+            }
+        });
     }
 
     @Override
@@ -592,6 +644,12 @@ public abstract class ViewerActivity extends GalleryActivity implements
         metaExposureMode.setText(cursor.getString(Meta.EXPOSURE_MODE_COLUMN));
         metaExposureProgram.setText(cursor.getString(Meta.EXPOSURE_PROGRAM_COLUMN));
 
+        String rating = cursor.getString(Meta.RATING_COLUMN);  //Use string since double returns 0 for null
+        mXmpFragment.initXmp(
+                rating == null ? null : (int) Double.parseDouble(rating),
+                ImageUtils.convertStringToArray(cursor.getString(Meta.SUBJECT_COLUMN)),
+                cursor.getString(Meta.LABEL_COLUMN));
+
         autoHide = new Timer();
         autoHide.schedule(new AutoHideMetaTask(), 3000);
 
@@ -601,8 +659,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
             showPanels();
         }
 
-        if (mXmpFragment != null && mXmpFragment.isAdded())
-            mXmpFragment.setMediaObject(cursor);
+//        writeXmpModifications();    //TODO: This would be best handled as an image changed listener, rather than leveraging meta update
     }
 
     private void toggleEditXmpFragment()
@@ -619,22 +676,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
             ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
         ft.commit();
-    }
-
-    private void hideSidebar()
-    {
-    	showSidebar = false;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.hide(mXmpFragment);
-        transaction.commitAllowingStateLoss();
-    }
-
-    private void showSidebar()
-    {
-    	showSidebar = true;
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.show(mXmpFragment);
-        transaction.commitAllowingStateLoss();
     }
 
     class AutoHideMetaTask extends TimerTask

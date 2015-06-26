@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.Toast;
 
+import com.anthonymandra.framework.MPTTDataSource;
 import com.anthonymandra.widget.RatingBar;
 import com.anthonymandra.widget.XmpLabelGroup;
 
@@ -23,6 +24,7 @@ public abstract class XmpBaseFragment extends Fragment
 	private RatingBar mRatingBar;
 	private XmpLabelGroup colorKey;
 	private KeywordBaseFragment mKeywordFragment;
+	private boolean mPauseListener = false;
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
@@ -107,21 +109,6 @@ public abstract class XmpBaseFragment extends Fragment
 		return xmp;
 	}
 
-	protected void setXmp(XmpValues xmp)
-	{
-		setColorLabel(xmp.label);
-		setSubject(xmp.subject);
-		setRating(xmp.rating);
-	}
-
-	protected void setRating(Integer[] ratings)
-	{
-		if (ratings != null)
-			mRatingBar.setRating(ratings);
-		else
-			mRatingBar.clearCheck();
-	}
-
 	protected void onXmpChanged(XmpValues xmp) { }
 
 	protected void setColorLabel(String[] labels)
@@ -160,6 +147,55 @@ public abstract class XmpBaseFragment extends Fragment
 		}
 	}
 
+	protected void setXmp(XmpValues xmp)
+	{
+		setXmp(xmp.rating, xmp.label, xmp.subject);
+	}
+
+	protected void setXmp(Integer[] rating, String[] label, String[] subject)
+	{
+		mPauseListener = true;
+		setColorLabel(label);
+		setSubject(subject);
+		setRating(rating);
+		mPauseListener = false;
+		dispatchChanges();
+	}
+
+	/**
+	 * Silently set the xmp without firing onXmpChanged
+	 * @param xmp
+	 */
+	protected void initXmp(XmpValues xmp)
+	{
+		mPauseListener = true;
+		setXmp(xmp);
+		mPauseListener = false;
+	}
+
+	/**
+	 * Silently set the xmp without firing onXmpChanged
+	 * @param rating
+	 * @param label
+	 * @param subject
+	 */
+	protected void initXmp(Integer[] rating, String[] label, String[] subject)
+	{
+		mPauseListener = true;
+		setColorLabel(label);
+		setSubject(subject);
+		setRating(rating);
+		mPauseListener = false;
+	}
+
+	protected void setRating(Integer[] ratings)
+	{
+		if (ratings != null)
+			mRatingBar.setRating(ratings);
+		else
+			mRatingBar.clearCheck();
+	}
+
 	protected void setMultiselect(boolean enable)
 	{
 		colorKey.setMultiselect(enable);
@@ -186,7 +222,7 @@ public abstract class XmpBaseFragment extends Fragment
 			@Override
 			public void onRatingSelectionChanged(List<Integer> checked)
 			{
-				onXmpChanged(getXmp());
+				dispatchChanges();
 			}
 		});
 		colorKey.setOnLabelSelectionChangedListener(new XmpLabelGroup.OnLabelSelectionChangedListener()
@@ -194,19 +230,26 @@ public abstract class XmpBaseFragment extends Fragment
 			@Override
 			public void onLabelSelectionChanged(List<XmpLabelGroup.Labels> checked)
 			{
-				onXmpChanged(getXmp());
+				dispatchChanges();
 			}
 		});
 		mKeywordFragment.setOnKeywordsSelectedListener(new KeywordEditFragment.OnKeywordsSelectedListener()
 		{
 			@Override
 			public void onKeywordsSelected(Collection<String> selectedKeywords)
-			{onXmpChanged(getXmp());
+			{
+				dispatchChanges();
 			}
 		});
 	}
 
-	public class XmpValues
+	private void dispatchChanges()
+	{
+		if (!mPauseListener)
+			onXmpChanged(getXmp());
+	}
+
+	public static class XmpValues
 	{
 		public Integer[] rating;
 		public String[] label;

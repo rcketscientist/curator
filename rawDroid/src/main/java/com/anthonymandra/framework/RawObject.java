@@ -7,9 +7,6 @@ import com.anthonymandra.dcraw.LibRaw.Margins;
 import java.io.File;
 import java.io.InputStream;
 
-/**
- * Created by amand_000 on 8/9/13.
- */
 public interface RawObject {
 
     public boolean isDirectory();

@@ -35,6 +35,7 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
 
 import java.io.BufferedOutputStream;
@@ -196,9 +197,22 @@ public class Util
 //		return (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif"));
 //	}
 
-    public static  boolean isRaw(File file)
+    public static int getImageType(File file)
+    {
+        if (isRaw(file)) return Meta.RAW;
+        if (isNative(file)) return Meta.COMMON;
+        if (isTiffImage(file)) return Meta.TIFF;
+        return -1;
+    }
+
+    public static boolean isRaw(File file)
     {
         return containsString(ImageConstants.RAW_EXT, file);
+    }
+
+    public static boolean isJpeg(File file)
+    {
+        return containsString(ImageConstants.JPEG_EXT, file);
     }
 
     public static boolean isNative(File file)

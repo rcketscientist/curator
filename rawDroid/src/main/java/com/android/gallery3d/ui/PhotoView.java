@@ -46,10 +46,6 @@ public class PhotoView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "PhotoView";
     private final int mPlaceholderColor;
-
-    public static final int INVALID_SIZE = -1;
-    public static final long INVALID_DATA_VERSION =
-            MediaObject.INVALID_DATA_VERSION;
     private boolean mDeleteOrRestore;
     private boolean mIsPro;
 
@@ -764,18 +760,6 @@ public class PhotoView extends GLView {
 
             if (mFilmMode && !mDownInScrolling) {
                 switchToHitPicture((int) (x + 0.5f), (int) (y + 0.5f));
-
-                // If this is a lock screen photo, let the listener handle the
-                // event. Tapping on lock screen photo should take the user
-                // directly to the lock screen.
-                MediaItem item = mModel.getMediaItem(0);
-                int supported = 0;
-                if (item != null) supported = item.getSupportedOperations();
-                if ((supported & MediaItem.SUPPORT_ACTION) == 0) {
-                    setFilmMode(false);
-                    mIgnoreUpEvent = true;
-                    return true;
-                }
             }
 
             if (mListener != null) {
@@ -836,7 +820,7 @@ public class PhotoView extends GLView {
             return true;
         }
 
-        private int calculateDeltaY(float delta) {
+        private int calculateDeltaY(double delta) {
             // don't let items that can't be deleted be dragged more than
             // maxScrollDistance, and make it harder and harder to drag.
             int size = getHeight();
@@ -845,7 +829,7 @@ public class PhotoView extends GLView {
                 delta = delta > 0 ? maxScrollDistance : -maxScrollDistance;
             } else {
                 delta = maxScrollDistance *
-                        FloatMath.sin((delta / size) * (float) (Math.PI / 2));
+                        Math.sin((delta / size) * (Math.PI / 2));
             }
             return (int) (delta + 0.5f);
         }

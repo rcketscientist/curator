@@ -27,7 +27,6 @@ import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.glrenderer.TiledTexture;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.ScreenNail;
@@ -40,12 +39,10 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.content.MetaProvider;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
@@ -131,10 +128,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     // mPosition triggers the data loading and image loading.
     private int mPosition;
 
-    // mChanges keeps the version number (of MediaItem) about the images. If any
-    // of the version number changes, we notify the view. This is used after a
-    // database reload or mPosition changes.
-    private final long mChanges[] = new long[IMAGE_CACHE_SIZE];
     // mPaths keeps the corresponding Path (of MediaItem) for the images. This
     // is used to determine the item movement.
     private final Uri mPaths[] = new Uri[IMAGE_CACHE_SIZE];
@@ -145,14 +138,9 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     private final PhotoView mPhotoView;
     private ReloadTask mReloadTask;
 
-    private long mSourceVersion = MediaObject.INVALID_DATA_VERSION;
     private Uri mItemPath;
     private boolean mIsActive;
     private boolean mNeedFullImage;
-
-    public interface DataListener extends LoadingListener {
-        void onPhotoChanged(int index, Uri path);
-    }
 
     private DataListener mDataListener;
 
@@ -160,7 +148,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     private final TiledTexture.Uploader mUploader;
 
     private final GalleryApp mActivity;
-    private long mMediaVersion = 0;
     private Uri mUri;
 
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
@@ -172,8 +159,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
         mUri = uri;
-
-        Arrays.fill(mChanges, MediaObject.INVALID_DATA_VERSION);
 
         mUploader = new TiledTexture.Uploader(activity.getGLRoot());
 
@@ -217,12 +202,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         return null;
     }
 
-    private long getVersion(int index) {
-        MediaItem item = getItemInternal(index);
-        if (item == null) return MediaObject.INVALID_DATA_VERSION;
-        return item.getDataVersion();
-    }
-
     private Uri getPath(int index) {
         MediaItem item = getItemInternal(index);
         if (item == null) return null;
@@ -230,18 +209,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     }
 
     private void fireDataChange() {
-        // First check if data actually changed.
-        boolean changed = false;
-        for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-            long newVersion = getVersion(mPosition + i);
-            if (mChanges[i + SCREEN_NAIL_MAX] != newVersion) {
-                mChanges[i + SCREEN_NAIL_MAX] = newVersion;
-                changed = true;
-            }
-        }
-
-        if (!changed) return;
-
         // Now calculate the fromIndex array. fromIndex represents the item
         // movement. It records the index where the picture come from. The
         // special value Integer.MAX_VALUE means it's a new picture.
@@ -664,12 +631,12 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
             if (entry.screenNailTask != null && entry.screenNailTask != task) {
 				entry.screenNailTask.cancel();
 				entry.screenNailTask = null;
-                entry.requestedScreenNail = MediaObject.INVALID_DATA_VERSION;
+                entry.screenNailProcessed = false;
 			}
             if (entry.fullImageTask != null && entry.fullImageTask != task) {
 				entry.fullImageTask.cancel();
 				entry.fullImageTask = null;
-                entry.requestedFullImage = MediaObject.INVALID_DATA_VERSION;
+                entry.fullImageProcessed = false;
 			}
 		}
 	}
@@ -723,18 +690,18 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         if (entry == null) return null;
 		MediaItem item = mData[index % DATA_CACHE_SIZE];
 		Utils.assertTrue(item != null);
-		long version = item.getDataVersion();
 
         if (which == BIT_SCREEN_NAIL && entry.screenNailTask != null
-                && entry.requestedScreenNail == version) {
+                && entry.screenNailProcessed) {
             return entry.screenNailTask;
         } else if (which == BIT_FULL_IMAGE && entry.fullImageTask != null
-                && entry.requestedFullImage == version) {
+                && entry.fullImageProcessed
+                ) {
             return entry.fullImageTask;
         }
 
-        if (which == BIT_SCREEN_NAIL && entry.requestedScreenNail != version) {
-            entry.requestedScreenNail = version;
+        if (which == BIT_SCREEN_NAIL && !entry.screenNailProcessed) {
+            entry.screenNailProcessed = true;
             entry.screenNailTask = mThreadPool.submit(
                     new ScreenNailJob(item),
                     new ScreenNailListener(item));
@@ -742,10 +709,8 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
             return entry.screenNailTask;
         }
         // We assume it's supported
-        if (which == BIT_FULL_IMAGE && entry.requestedFullImage != version
-                /*&& (item.getSupportedOperations()
-                & MediaItem.SUPPORT_FULL_IMAGE) != 0*/) {
-            entry.requestedFullImage = version;
+        if (which == BIT_FULL_IMAGE && !entry.fullImageProcessed ) {
+            entry.fullImageProcessed = true;
             entry.fullImageTask = mThreadPool.submit(
                     new FullImageJob(item),
                     new FullImageListener(item));
@@ -770,9 +735,9 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
                         entry.fullImageTask = null;
                     }
                     entry.fullImage = null;
-					entry.requestedFullImage = MediaItem.INVALID_DATA_VERSION;
+					entry.fullImageProcessed = false;
 				}
-                if (entry.requestedScreenNail != item.getDataVersion()) {
+                if (!entry.screenNailProcessed) {
                     // This ScreenNail is outdated, we want to update it if it's
                     // still a placeholder.
                     if (entry.screenNail instanceof TiledScreenNail) {
@@ -848,8 +813,8 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
 		public ScreenNail screenNail;
 		public Future<ScreenNail> screenNailTask;
 		public Future<BitmapRegionDecoder> fullImageTask;
-        public long requestedScreenNail = MediaObject.INVALID_DATA_VERSION;
-        public long requestedFullImage = MediaObject.INVALID_DATA_VERSION;
+        public boolean screenNailProcessed;
+        public boolean fullImageProcessed;
 		public boolean failToLoad = false;
 	}
 
@@ -874,7 +839,7 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     }
 
     private static class UpdateInfo {
-		public long version;
+//		public long version;
 		public boolean reloadContent;
 		public Uri target;
 		public int contentStart;
@@ -898,7 +863,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         public UpdateInfo call() throws Exception {
             // TODO: Try to load some data in first update
             UpdateInfo info = new UpdateInfo();
-            info.version = mSourceVersion;
             info.reloadContent = needContentReload();
             info.target = mItemPath;
             info.contentStart = mContentStart;
@@ -918,7 +882,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         @Override
         public Void call() throws Exception {
             UpdateInfo info = mUpdateInfo;
-            mSourceVersion = info.version;
 
             if (info.size != getCount()) {
                 if (mContentEnd > getCount()) mContentEnd = getCount();
@@ -995,10 +958,26 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
                 }
             }
         }
+        fireDataChange();
         if (mReloadTask != null) mReloadTask.notifyDirty();
         return c;
     }
 
+    /*
+     * The thread model of ReloadTask
+     *      *
+     * [Reload Task]       [Main Thread]
+     *       |                   |
+     * getUpdateInfo() -->       |           (synchronous call)
+     *     (wait) <----    getUpdateInfo()
+     *       |                   |
+     *   Load Data               |
+     *       |                   |
+     * updateContent() -->       |           (synchronous call)
+     *     (wait)          updateContent()
+     *       |                   |
+     *       |                   |
+     */
     private class ReloadTask extends Thread {
         private volatile boolean mActive = true;
         private volatile boolean mDirty = true;
@@ -1021,74 +1000,25 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
                         continue;
                     }
                 }
-//                mPhotoView.setFilmMode(mCursor.getCount() > 1);
+
+                /**
+                 * TODO: Compare impact of reload on xmp changes
+                 * Swipe applies xmp, causes swap cursor, causes dirty, causes reload
+                 * What's the impact of reloading items for xmp, we only really need to reload
+                 * for deletes I think.
+                 */
                 mDirty = false;
                 UpdateInfo info = executeAndWait(new GetUpdateInfo());
 				updateLoading(true);
-//                long version = mSource.reload();
-                if (info.version != mMediaVersion) {
-					info.reloadContent = true;
-					info.size = getCount();
-				}
-                if (!info.reloadContent) continue;
+
 				info.items = getMediaItem(
 					info.contentStart, info.contentEnd);
-
-                //TODO: We're assuming indexing works within the database.  Check this.
-//				int index = INDEX_NOT_FOUND;
-//
-//                // First try to focus on the given hint path if there is one.
-//                if (mFocusHintPath != null) {
-//                    index = findIndexOfPathInCache(info, mFocusHintPath);
-//                    mFocusHintPath = null;
-//                }
-//
-//                // Otherwise try to see if the currently focused item can be found.
-//				if (index == INDEX_NOT_FOUND) {
-//					MediaItem item = findCurrentMediaItem(info);
-//					if (item != null && item.getUri().equals(info.target)) {
-//						index = info.indexHint;
-//                    } else {
-//                        index = findIndexOfTarget(info);
-//                    }
-//                }
-//
-//                // The image has been deleted. Focus on the next image (keep
-//                // mPosition unchanged) or the previous image (decrease
-//                // mPosition by 1). In page mode we want to see the next
-//                // image, so we focus on the next one. In film mode we want the
-//                // later images to shift left to fill the empty space, so we
-//                // focus on the previous image (so it will not move). In any
-//                // case the index needs to be limited to [0, mSize).
-//                if (index == INDEX_NOT_FOUND) {
-//                    index = info.indexHint;
-//                    int focusHintDirection = mFocusHintDirection;
-//                    if (index == (mCameraIndex + 1)) {
-//                        focusHintDirection = FOCUS_HINT_NEXT;
-//                    }
-//                    if (focusHintDirection == FOCUS_HINT_PREVIOUS
-//                            && index > 0) {
-//                        index--;
-//                    }
-//                }
-
-                // Don't change index if mSize == 0
-//                if (mSize > 0) {
-//                    if (index >= mSize) index = mSize - 1;
-//                }
-                // AJM: UpdateContent controls mSize which is called after this. Therefore
-                // we weren't moving backwards on a last delete.  Changing to mSource.size
-                // keeps the previous check current
-//                if (mSource.getCount() > 0) {
-//                    if (index >= mSource.getCount()) index = mSource.getCount() - 1;
-//                }
 
                 executeAndWait(new UpdateContent(info));
             }
 		}
 
         public synchronized void notifyDirty() {
-            ++mMediaVersion;
             mDirty = true;
             notifyAll();
         }
@@ -1097,53 +1027,5 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
             mActive = false;
             notifyAll();
         }
-
-        //TODO: Should be unnecessary if database indexing works
-//        private MediaItem findCurrentMediaItem(UpdateInfo info) {
-//			ArrayList<MediaItem> items = info.items;
-//			int index = info.indexHint - info.contentStart;
-//			return index < 0 || index >= items.size() ? null : items.get(index);
-//		}
-//
-//        private int findIndexOfTarget(UpdateInfo info) {
-//            if (info.target == null) return info.indexHint;
-//			ArrayList<MediaItem> items = info.items;
-//
-//			// First, try to find the item in the data just loaded
-//            if (items != null) {
-//                int i = findIndexOfPathInCache(info, info.target);
-//				if (i != INDEX_NOT_FOUND) return i;
-//			}
-//
-//			// Not found, find it in mSource.
-//			// return mSource.getIndexOfItem(info.target, info.indexHint);
-//			return findIndexInSource(info.target, info.indexHint);
-//		}
-//
-//		private int findIndexInSource(Uri path, int hint)
-//		{
-//            if (!mSource.contains(hint))
-//                return INDEX_NOT_FOUND;
-//			if (mSource.get(hint).getUri().equals(path))
-//				return hint;
-//
-//			for (int i = 0, n = mSource.size(); i < n; ++i)
-//			{
-//				if (mSource.get(i).getUri().equals(path))
-//					return i;
-//			}
-//			return INDEX_NOT_FOUND;
-//		}
-
-//		private int findIndexOfPathInCache(UpdateInfo info, Uri path) {
-//			ArrayList<MediaItem> items = info.items;
-//			for (int i = 0, n = items.size(); i < n; ++i) {
-//				MediaItem item = items.get(i);
-//				if (item != null && item.getUri().equals(path))	{
-//					return i + info.contentStart;
-//				}
-//			}
-//			return INDEX_NOT_FOUND;
-//		}
 	}
 }

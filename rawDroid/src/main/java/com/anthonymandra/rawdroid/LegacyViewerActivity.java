@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -108,6 +109,13 @@ public class LegacyViewerActivity extends ViewerActivity
 	}
 
 	@Override
+	public void onPhotoChanged(int index, Uri item)
+	{
+		super.onPhotoChanged(index, item);
+
+	}
+
+	@Override
 	public void onPause()
 	{
 		super.onPause();
@@ -190,13 +198,25 @@ public class LegacyViewerActivity extends ViewerActivity
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
 	{
-
+		//TODO
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader)
 	{
+		//TODO
+	}
 
+	@Override
+	public void onLoadingStarted()
+	{
+		//unneeded
+	}
+
+	@Override
+	public void onLoadingFinished(boolean loadingFailed)
+	{
+		//unneeded
 	}
 
 	private class MyImageViewerModel extends ViewlessCursorAdapter implements ImageViewer.Model
@@ -419,7 +439,6 @@ public class LegacyViewerActivity extends ViewerActivity
 				mScreenNails[offset] = screenNail;
 				mImageViewer.notifyScreenNailInvalidated(offset);
 			}
-			// requestNextImage();
 		}
 
 		public void updateLargeImage(int index, BitmapRegionDecoder largeBitmap)
@@ -439,19 +458,13 @@ public class LegacyViewerActivity extends ViewerActivity
 				// We need to update the estimated width and height
 				mImageViewer.notifyScreenNailInvalidated(INDEX_CURRENT);
 			}
-			// requestNextImage();
 		}
 
 		public void requestNextImageWithMeta()
 		{
-			// mImageViewer.setRotation(0);
             setShareUri(getCurrentItem().getSwapUri());
 			loadExif();
-			requestNextImage();
-		}
 
-		public void requestNextImage()
-		{
 			// First request the current screen nail
 			if (mScreenNails[INDEX_CURRENT] == null)
 			{
@@ -460,7 +473,6 @@ public class LegacyViewerActivity extends ViewerActivity
 				{
 					CurrentImageLoader cml = new CurrentImageLoader();
 					cml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex, current);
-					// return;
 				}
 			}
 			else
@@ -477,7 +489,6 @@ public class LegacyViewerActivity extends ViewerActivity
 				{
 					SmallImageLoader sml = new SmallImageLoader();
 					sml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex + 1, next);
-					// return;
 				}
 			}
 
@@ -490,7 +501,6 @@ public class LegacyViewerActivity extends ViewerActivity
 				{
 					SmallImageLoader sml = new SmallImageLoader();
 					sml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex - 1, previous);
-					// return;
 				}
 			}
 
@@ -502,7 +512,6 @@ public class LegacyViewerActivity extends ViewerActivity
 				{
 					LargeImageLoader lml = new LargeImageLoader();
 					lml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex, current);
-					// return;
 				}
 			}
 		}

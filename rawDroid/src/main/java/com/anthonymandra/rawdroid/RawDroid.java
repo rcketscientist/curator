@@ -29,8 +29,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
@@ -184,7 +186,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
     private Toolbar mToolbar;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
-//	private XmpFilterFragment mXmpFilter;
+	private SwipeRefreshLayout mSwipeRefresh;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -196,6 +198,16 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+
+		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+		{
+			@Override
+			public void onRefresh()
+			{
+				scanRawFiles();
+			}
+		});
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerToggle = new ActionBarDrawerToggle(
@@ -254,8 +266,6 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 		setImageCountTitle();
 
-		loadXmpFilter();
-
 		if (getIntent().getData() != null)
 		{
 			try
@@ -264,7 +274,17 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
 				// Attempt to import keywords
 				// TODO: We should check the format first
-				KeywordProvider.importKeywords(this, new InputStreamReader(is));
+				boolean success = KeywordProvider.importKeywords(this, new InputStreamReader(is));
+				int message;
+				if (success)
+				{
+					message = R.string.resultImportSuccessful;
+				}
+				else
+				{
+					message = R.string.resultImportFailed;
+				}
+				Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 			}
 			catch (FileNotFoundException e)
 			{
@@ -282,10 +302,12 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		mDrawerToggle.syncState();
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
 
+		loadXmpFilter();	//must be done here due to fragment/activity lifecycle
+
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 		if (settings.getBoolean(PREFS_SHOW_FILTER_HINT, true))
 		{
-			mDrawerLayout.openDrawer(Gravity.START);
+			mDrawerLayout.openDrawer(GravityCompat.START);
 			SharedPreferences.Editor editor = settings.edit();
 			editor.putBoolean(PREFS_SHOW_FILTER_HINT, false);
 			editor.apply();
@@ -337,17 +359,26 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		xmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
 		{
 			@Override
-			public void onMetaFilterChanged(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, XmpFilterFragment.SortColumns sortColumn)
+			public void onMetaFilterChanged(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
 			{
-				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, sortColumn);
+				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, segregateByType,  sortColumn);
 			}
 		});
+
+		// load filter data initially (must be done here due to
+		updateMetaLoaderXmp(
+				xmpFilter.getXmpValues(),
+				xmpFilter.getAndOr(),
+				xmpFilter.getAscending(),
+				xmpFilter.getSegregate(),
+				xmpFilter.getSortCoumn());
 	}
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
 	{
 		mGalleryAdapter.swapCursor(cursor);
+		mSwipeRefresh.setRefreshing(false);
 		setImageCountTitle();
 
 		if (mGalleryAdapter.getCount() == 0)
@@ -402,12 +433,14 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		}
 
 		mImageDecoder.setExitTasksEarly(false);
+		mGalleryAdapter.notifyDataSetChanged();
 	}
 
 	@Override
 	public void onPause()
 	{
 		super.onPause();
+		mImageDecoder.setPauseWork(false);
 		mImageDecoder.setExitTasksEarly(true);
 		mImageDecoder.flushCache();
 	}

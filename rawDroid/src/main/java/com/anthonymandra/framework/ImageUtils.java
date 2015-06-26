@@ -160,6 +160,19 @@ public class ImageUtils
      * @param uri
      * @return
      */
+    public static ContentValues getContentValues(Context c, Uri uri)
+    {
+        Metadata meta = readMetadata(c, uri);
+        return getContentValues(uri, meta, Util.getImageType(new File(uri.getPath())));
+    }
+
+    //TODO: Perhaps this makes more sense in the meta provider itself?
+    /**
+     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * @param c
+     * @param uri
+     * @return
+     */
     public static ContentValues getContentValues(Context c, Uri uri, int type)
     {
         Metadata meta = readMetadata(c, uri);
@@ -242,7 +255,7 @@ public class ImageUtils
     private static String getDescription(Metadata meta, Class type, int tag)
     {
         Directory dir = meta.getFirstDirectoryOfType(type);
-        if (dir == null)
+        if (dir == null || !dir.containsTag(tag))
             return null;
         return dir.getDescription(tag);
     }
@@ -250,7 +263,7 @@ public class ImageUtils
     private static String[] getStringArray(Metadata meta, Class type, int tag)
     {
         Directory dir = meta.getFirstDirectoryOfType(type);
-        if (dir == null)
+        if (dir == null || !dir.containsTag(tag))
             return null;
         return dir.getStringArray(tag);
     }
@@ -259,7 +272,7 @@ public class ImageUtils
     {
         Directory dir = meta.getFirstDirectoryOfType(type);
         int result = 0;
-        if (dir == null)
+        if (dir == null || !dir.containsTag(tag))
             return result;
         try
         {
@@ -275,7 +288,7 @@ public class ImageUtils
     {
         Directory dir = meta.getFirstDirectoryOfType(type);
         Double result = null;
-        if (dir == null)
+        if (dir == null || !dir.containsTag(tag))
             return result;
         try
         {
@@ -479,52 +492,88 @@ public class ImageUtils
     {
 
     }
-//    public static void updateRating(Metadata meta, double rating)
-//    {
-//        checkXmpDirectory(meta);
-//
-//        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
-//        if (Double.isNaN(rating))
-//        {
-//            if (xmp != null)
-//                xmp.deleteProperty(XmpDirectory.TAG_RATING);
-//        }
-//        else
-//        {
-//            xmp.updateDouble(XmpDirectory.TAG_RATING, rating);
-//        }
-//    }
-//
-//    public static  void updateLabel(Metadata meta, String label)
-//    {
-//        checkXmpDirectory(meta);
-//
-//        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
-//        if (label == null)
-//        {
-//            if (xmp != null)
-//                xmp.deleteProperty(XmpDirectory.TAG_LABEL);
-//
-//        }
-//        else
-//        {
-//            xmp.updateString(XmpDirectory.TAG_LABEL, label);
-//        }
-//    }
-//
-//    public static  void updateSubject(Metadata meta, String[] subject)
-//    {
-//        checkXmpDirectory(meta);
-//
-//        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
-//        if (subject.length == 0)
-//        {
-//            if (xmp != null)
-//                xmp.deleteProperty(XmpDirectory.TAG_SUBJECT);
-//        }
-//        else
-//        {
-//            xmp.updateStringArray(XmpDirectory.TAG_SUBJECT, subject);
-//        }
-//    }
+
+    public static void updateRating(Metadata meta, Integer rating)
+    {
+        updateXmpDouble(meta, XmpDirectory.TAG_RATING, rating == null ? null : rating.doubleValue());
+    }
+
+    public static void updateRating(Metadata meta, Double rating)
+    {
+        updateXmpDouble(meta, XmpDirectory.TAG_RATING, rating);
+    }
+
+    public static void updateLabel(Metadata meta, String label)
+    {
+        updateXmpString(meta, XmpDirectory.TAG_LABEL, label);
+    }
+
+    public static void updateSubject(Metadata meta, String[] subject)
+    {
+        updateXmpStringArray(meta, XmpDirectory.TAG_SUBJECT, subject);
+    }
+
+    private static void updateXmpString(Metadata meta, int tag, String value)
+    {
+        checkXmpDirectory(meta);
+
+        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+        if (value == null)
+        {
+            if (xmp != null)
+                xmp.deleteProperty(tag);
+        }
+        else
+        {
+            xmp.updateString(tag, value);
+        }
+    }
+
+    private static void updateXmpStringArray(Metadata meta, int tag, String[] value)
+    {
+        checkXmpDirectory(meta);
+
+        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+        if (value == null  || value.length == 0)
+        {
+            if (xmp != null)
+                xmp.deleteProperty(tag);
+        }
+        else
+        {
+            xmp.updateStringArray(tag, value);
+        }
+    }
+
+    private static void updateXmpDouble(Metadata meta, int tag, Double value)
+    {
+        checkXmpDirectory(meta);
+
+        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+        if (value == null)
+        {
+            if (xmp != null)
+                xmp.deleteProperty(tag);
+        }
+        else
+        {
+            xmp.updateDouble(tag, value);
+        }
+    }
+
+    private static void updateXmpInteger(Metadata meta, int tag, Integer value)
+    {
+        checkXmpDirectory(meta);
+
+        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+        if (value == null)
+        {
+            if (xmp != null)
+                xmp.deleteProperty(tag);
+        }
+        else
+        {
+            xmp.updateInt(tag, value);
+        }
+    }
 }

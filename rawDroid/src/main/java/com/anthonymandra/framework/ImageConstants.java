@@ -9,6 +9,8 @@ public class ImageConstants
                     ".r3d", ".raf", ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf", ".srw",
                     ".tif", ".tiff", ".x3f" };
 
+    public static final String[] JPEG_EXT = new String[] { ".jpg", "jpeg" };
+
     public static final String[] COMMON_EXT = new String[] { ".jpg", "jpeg", ".png", ".bmp"};
 
     public static final String[] TIFF_EXT = new String[] {".tiff", ".tif" };

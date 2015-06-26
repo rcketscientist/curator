@@ -31,14 +31,6 @@ public abstract class MediaItem extends MediaObject {
     public static final int TYPE_THUMBNAIL = 1;
     public static final int TYPE_MICROTHUMBNAIL = 2;
 
-    public static final int CACHED_IMAGE_QUALITY = 95;
-
-    public static final int IMAGE_READY = 0;
-    public static final int IMAGE_WAIT = 1;
-    public static final int IMAGE_ERROR = -1;
-
-    public static final String MIME_TYPE_JPEG = "image/jpeg";
-
     private static final int BYTESBUFFE_POOL_SIZE = 4;
     private static final int BYTESBUFFER_SIZE = 200 * 1024;
 
@@ -54,14 +46,9 @@ public abstract class MediaItem extends MediaObject {
     public abstract Job<Bitmap> requestImage(GalleryApp app, int type);
     public abstract Job<BitmapRegionDecoder> requestLargeImage();
 
-    public MediaItem(Uri path, long version) {
-        super(path, version);
+    public MediaItem(Uri path) {
+        super(path);
     }
-
-    public long getDateInMs() {
-        return 0;
-    }
-
     public String getName() {
         return null;
     }
@@ -74,10 +61,6 @@ public abstract class MediaItem extends MediaObject {
     public String[] getTags() {
         return null;
     }
-
-//    public Face[] getFaces() {
-//        return null;
-//    }
 
     // The rotation of the full-resolution image. By default, it returns the value of
     // getRotation().
@@ -103,12 +86,6 @@ public abstract class MediaItem extends MediaObject {
     // Returns 0, 0 if the information is not available.
     public abstract int getWidth();
     public abstract int getHeight();
-
-    // This is an alternative for requestImage() in PhotoPage. If this
-    // is implemented, you don't need to implement requestImage().
-    public ScreenNail getScreenNail() {
-        return null;
-    }
 
     public static int getTargetSize(int type) {
         switch (type) {

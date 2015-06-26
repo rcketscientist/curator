@@ -103,6 +103,8 @@ public class DecodeUtils {
 		options.inJustDecodeBounds = false;
 	}
 
+
+
     public static Bitmap decodeThumbnail(
             JobContext jc, String filePath, Options options, int targetSize, int type) {
 		FileInputStream fis = null;
@@ -141,7 +143,7 @@ public class DecodeUtils {
 			final int MAX_PIXEL_COUNT = 640000; // 400 x 1600
             if ((w / options.inSampleSize) * (h / options.inSampleSize) > MAX_PIXEL_COUNT) {
                 options.inSampleSize = BitmapUtils.computeSampleSize(
-                        FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
+                        (float) Math.sqrt(MAX_PIXEL_COUNT / (w * h)));
 		}
         } else {
 			// For screen nail, we only want to keep the longer side >= targetSize.
@@ -366,7 +368,7 @@ public class DecodeUtils {
             final int MAX_PIXEL_COUNT = 640000; // 400 x 1600
             if ((w / options.inSampleSize) * (h / options.inSampleSize) > MAX_PIXEL_COUNT) {
                 options.inSampleSize = BitmapUtils.computeSampleSize(
-                        FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
+                        (float) Math.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
             }
         } else {
             // For screen nail, we only want to keep the longer side >= targetSize.
@@ -414,7 +416,7 @@ public class DecodeUtils {
             final int MAX_PIXEL_COUNT = 640000; // 400 x 1600
             if ((w / options.inSampleSize) * (h / options.inSampleSize) > MAX_PIXEL_COUNT) {
                 options.inSampleSize = BitmapUtils.computeSampleSize(
-                        FloatMath.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
+                        (float) Math.sqrt((float) MAX_PIXEL_COUNT / (w * h)));
             }
         } else {
             // For screen nail, we only want to keep the longer side >= targetSize.

@@ -1,40 +1,43 @@
 package com.anthonymandra.rawdroid;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.android.gallery3d.common.Utils;
-import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.ImageUtils;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.xmp.XmpDirectory;
-import com.drew.metadata.xmp.XmpWriter;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
 
 public class XmpEditFragment extends XmpBaseFragment
 {
 	private static final String TAG = XmpEditFragment.class.getSimpleName();
 	public static final String FRAGMENT_TAG = "XmpEditFragment";
 
-	Uri currentUri;
+	private MetaChangedListener mListener;
+	public interface MetaChangedListener
+	{
+		void onMetaChanged(Integer rating, String label, String[] subject);
+	}
 
-	XmpEditValues lastWrittenXmp = new XmpEditValues();
-	XmpEditValues originalXmp;
+	public void setListener(MetaChangedListener listener)
+	{
+		mListener = listener;
+	}
 
-	private boolean hasWritten = false;
+	@Override
+	protected void onXmpChanged(XmpValues xmp)
+	{
+		super.onXmpChanged(xmp);
+
+		recentXmp = new XmpEditValues();
+		recentXmp.Subject = xmp.subject;
+		recentXmp.Rating = formatRating(xmp.rating);
+		recentXmp.Label = formatLabel(xmp.label);
+		mListener.onMetaChanged(
+				recentXmp.Rating,
+				recentXmp.Label,
+				recentXmp.Subject);
+	}
+
+	XmpEditValues recentXmp;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -49,169 +52,9 @@ public class XmpEditFragment extends XmpBaseFragment
 		attachButtons();
 	}
 
-	@Override
-	public void onStop()
-	{
-		super.onStop();
-		writeCurrentXmp();
-	}
-
-	public void setMediaObject(Cursor image)
-	{
-		if (originalXmp != null)
-			writeCurrentXmp();
-		clear();
-		originalXmp = parseXmp(image);
-		currentUri = Uri.parse(image.getString(Meta.URI_COLUMN));
-		setXmp(originalXmp);
-	}
-
-	private void writeCurrentXmp()
-	{
-		// Avoid writing blank xmp on already empty xmp, but
-		// Allow writing blank when cleared
-		if (!hasModifications())
-		{
-			return;
-		}
-
-		lastWrittenXmp.Label = getLabel();
-		lastWrittenXmp.Rating = getRating();
-		lastWrittenXmp.Subject = getSubject();
-		hasWritten = true;
-
-		boolean success = updateContent(lastWrittenXmp);
-
-        try
-        {
-			writeXmp();
-        }
-        catch (FileNotFoundException e)
-        {
-            Toast.makeText(getActivity(), "XMP file could not be created.  Google disabled write access in Android 4.4+.  You can root to fix, or use a card reader.", Toast.LENGTH_LONG).show();
-        }
-    }
-
-	public void writeXmp() throws FileNotFoundException
-	{
-		File xmp = ImageUtils.getXmpFile(new File(currentUri.getPath()));
-		final OutputStream os = new BufferedOutputStream(
-				new FileOutputStream(
-						ImageUtils.getXmpFile(xmp)
-				));
-
-		final Metadata meta = new Metadata();
-		meta.addDirectory(new XmpDirectory());
-		updateSubject(meta, lastWrittenXmp.Subject);
-		updateRating(meta, lastWrittenXmp.Rating);
-		updateLabel(meta, lastWrittenXmp.Label);
-
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					if (meta.containsDirectoryOfType(XmpDirectory.class))
-						XmpWriter.write(os, meta);
-				}
-				finally
-				{
-					Utils.closeSilently(os);
-				}
-			}
-		}).start();
-	}
-
-	public static void updateRating(Metadata meta, Integer rating)
-    {
-        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
-        if (rating == null)
-        {
-            if (xmp != null)
-                xmp.deleteProperty(XmpDirectory.TAG_RATING);
-        }
-        else
-		{
-			if (xmp == null)
-				meta.addDirectory(new XmpDirectory());
-
-			xmp.updateDouble(XmpDirectory.TAG_RATING, rating);
-        }
-    }
-
-    public static void updateLabel(Metadata meta, String label)
-    {
-        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
-        if (label == null)
-        {
-            if (xmp != null)
-                xmp.deleteProperty(XmpDirectory.TAG_LABEL);
-
-        }
-        else
-		{
-			if (xmp == null)
-				meta.addDirectory(new XmpDirectory());
-
-			xmp.updateString(XmpDirectory.TAG_LABEL, label);
-        }
-    }
-
-    public static void updateSubject(Metadata meta, String[] subject)
-    {
-        XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
-        if (subject == null)
-        {
-            if (xmp != null)
-                xmp.deleteProperty(XmpDirectory.TAG_SUBJECT);
-        }
-        else
-        {
-			if (xmp == null)
-				meta.addDirectory(new XmpDirectory());
-
-            xmp.updateStringArray(XmpDirectory.TAG_SUBJECT, subject);
-        }
-    }
-
-	private XmpEditValues parseXmp(Cursor c)
-	{
-		if (c == null)
-		{
-			return null;
-		}
-
-		XmpEditValues xmp = new XmpEditValues();
-		xmp.Label = c.getString(Meta.LABEL_COLUMN);
-		xmp.Subject = ImageUtils.convertStringToArray(c.getString(Meta.SUBJECT_COLUMN));
-		String rating = c.getString(Meta.RATING_COLUMN);  //Use string since double returns 0 for null
-		xmp.Rating = rating == null ? null : (int) Double.parseDouble(rating);
-		return xmp;
-	}
-
-	/**
-	 * Update the data source
-	 * @param xmp
-	 * @return
-	 */
-	private boolean updateContent(XmpEditValues xmp)
-	{
-		ContentValues cv = new ContentValues();
-		cv.put(Meta.Data.LABEL, xmp.Label);
-		cv.put(Meta.Data.RATING, xmp.Rating);
-		cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(xmp.Subject));
-
-		return getActivity().getContentResolver().update(
-				Meta.Data.CONTENT_URI,
-				cv, Meta.Data.URI + " = ?",
-				new String[]{currentUri.toString()}) > 0;
-	}
-
 	private void clearXmp()
 	{
-		setXmp(new XmpEditValues());
+		setXmp((Integer) null, null, null);
 		clear();
 	}
 
@@ -225,14 +68,6 @@ public class XmpEditFragment extends XmpBaseFragment
 		return label != null ? label[0] : null;
 	}
 
-	protected void setColorLabel(String label)
-	{
-		if (label == null)
-			setColorLabel((String[]) null);
-		else
-			setColorLabel(new String[]{label});
-	}
-
 	/**
 	 * Convenience method for single select XmpLabelGroup
 	 * @return
@@ -243,54 +78,72 @@ public class XmpEditFragment extends XmpBaseFragment
 		return ratings != null ? ratings[0] : null;
 	}
 
-	protected void setRating(Integer rating)
+	protected Integer formatRating(Integer[] ratings)
+	{
+		if (ratings == null)
+			return null;
+		else
+			return ratings[0];
+	}
+
+	protected Integer[] formatRating(Integer rating)
 	{
 		if (rating == null)
-			setRating((Integer[]) null);
+			return null;
 		else
-			setRating(new Integer[]{rating});
+			return new Integer[]{rating};
 	}
 
-	protected void setXmp(XmpEditValues xmp)
+	protected String formatLabel(String[] labels)
 	{
-		setColorLabel(xmp.Label);
-		setSubject(xmp.Subject);
-		setRating(xmp.Rating);
+		if (labels == null)
+			return null;
+		else
+			return labels[0];
 	}
 
-	private boolean hasModifications()
+	protected String[] formatLabel(String label)
 	{
-		Integer widgetRating = getRating();
-		String widgetLabel = getLabel();
-		String[] widgetSubject = getSubject();
+		if (label == null)
+			return null;
+		else
+			return new String[]{label};
+	}
 
-		boolean bothLabelNull = widgetLabel == null && originalXmp.Label == null;
-		boolean bothRatingNull = widgetRating == null && originalXmp.Rating == null;
-		boolean bothSubjectNull = widgetSubject == null && originalXmp.Subject == null;
+	public void setRating(int rating)
+	{
+		super.setRating(formatRating(rating));
+	}
 
-		if (!bothRatingNull)
-		{
-			if (widgetRating == null)
-				return true;
-			if (!widgetRating.equals(originalXmp.Rating))
-				return true;
-		}
-		if (!bothLabelNull)
-		{
-			if (widgetLabel == null)
-				return true;
-			if (!widgetLabel.equals(originalXmp.Label))
-				return true;
-		}
-		if (!bothSubjectNull)
-		{
-			if (widgetSubject == null)
-				return true;
-			if (!Arrays.equals(widgetSubject, originalXmp.Subject))
-				return true;
-		}
-		return false;
-    }
+	public void setLabel(String label)
+	{
+		super.setColorLabel(formatLabel(label));
+	}
+
+	public void setSubject(String[] subject)
+	{
+		super.setSubject(subject);
+	}
+
+	/**
+	 * Silently set xmp without firing listeners
+	 * @param rating
+	 * @param subject
+	 * @param label
+	 */
+	public void initXmp(Integer rating, String[] subject, String label)
+	{
+		super.initXmp(formatRating(rating),
+				formatLabel(label),
+				subject);
+	}
+
+	public void setXmp(Integer rating, String[] subject, String label)
+	{
+		super.setXmp(formatRating(rating),
+				formatLabel(label),
+				subject);
+	}
 
 	private void attachButtons()
 	{
@@ -299,9 +152,9 @@ public class XmpEditFragment extends XmpBaseFragment
 			@Override
 			public void onClick(View v)
 			{
-				if (hasWritten)
+				if (recentXmp != null)
 				{
-					setXmp(lastWrittenXmp);
+					setXmp(recentXmp.Rating, recentXmp.Subject, recentXmp.Label);
 				}
 			}
 		});
@@ -319,10 +172,10 @@ public class XmpEditFragment extends XmpBaseFragment
 	/**
 	 * Default values indicate no xmp
 	 */
-	private class XmpEditValues
+	public static class XmpEditValues
 	{
-		Integer Rating = null;
-		String[] Subject = null;
-		String Label = null;
+		public Integer Rating = null;
+		public String[] Subject = null;
+		public String Label = null;
 	}
 }

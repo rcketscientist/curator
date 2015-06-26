@@ -117,7 +117,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                                 }
                             }
                         }
-//                        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
+                        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
                     }
                 }
                 finally
@@ -188,6 +188,8 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         else
         {
             long time = System.currentTimeMillis(); //Keep the time the same for these entries
+            mSelectedKeywords.clear();
+
             for (String select : selected)
             {
                 Cursor c = getActivity().getContentResolver().query(
@@ -212,7 +214,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                 }
             }
         }
-        mAdapter.notifyDataSetChanged();
+        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, this);
     }
 
     public void clearSelectedKeywords()

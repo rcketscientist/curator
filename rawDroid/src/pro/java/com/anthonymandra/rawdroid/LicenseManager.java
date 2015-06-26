@@ -17,9 +17,6 @@ import com.google.android.vending.licensing.LicenseCheckerCallback;
 import com.google.android.vending.licensing.ServerManagedPolicy;
 import com.google.android.vending.licensing.ValidationException;
 
-/**
- * Created by amand_000 on 9/10/13.
- */
 public class LicenseManager extends License {
     private static final String TAG = LicenseManager.class.getSimpleName();
 

@@ -24,9 +24,6 @@ import com.anthonymandra.rawdroid.R;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-/**
- * Created by amand_000 on 9/12/13.
- */
 public class SwapProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener  {
     private static final String TAG = SwapProvider.class.getSimpleName();
 
@@ -71,7 +68,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 //If it's a native file, just share it directly.
                 if (Util.isNative(input))
                 {
-                    return ParcelFileDescriptor.open(input, ParcelFileDescriptor.MODE_READ_WRITE);
+                    return ParcelFileDescriptor.open(input, modeToMode(mode));
                 }
 
                 File swapFile = new File(Util.getDiskCacheDir(getContext(),
@@ -154,6 +151,35 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 throw new FileNotFoundException("Unsupported uri: " + uri.toString());
         }
     }
+
+    /**
+     * Copied from ContentResolver.java
+     */
+    private static int modeToMode(String mode) {
+        int modeBits;
+        if ("r".equals(mode)) {
+            modeBits = ParcelFileDescriptor.MODE_READ_ONLY;
+        } else if ("w".equals(mode) || "wt".equals(mode)) {
+            modeBits = ParcelFileDescriptor.MODE_WRITE_ONLY
+                    | ParcelFileDescriptor.MODE_CREATE
+                    | ParcelFileDescriptor.MODE_TRUNCATE;
+        } else if ("wa".equals(mode)) {
+            modeBits = ParcelFileDescriptor.MODE_WRITE_ONLY
+                    | ParcelFileDescriptor.MODE_CREATE
+                    | ParcelFileDescriptor.MODE_APPEND;
+        } else if ("rw".equals(mode)) {
+            modeBits = ParcelFileDescriptor.MODE_READ_WRITE
+                    | ParcelFileDescriptor.MODE_CREATE;
+        } else if ("rwt".equals(mode)) {
+            modeBits = ParcelFileDescriptor.MODE_READ_WRITE
+                    | ParcelFileDescriptor.MODE_CREATE
+                    | ParcelFileDescriptor.MODE_TRUNCATE;
+        } else {
+            throw new IllegalArgumentException("Invalid mode: " + mode);
+        }
+        return modeBits;
+    }
+
 
     private void updateWatermark()
     {

@@ -80,17 +80,6 @@ public class ImageViewActivity extends PhotoPage
         deleteImage(toDelete.getUri());
     }
 
-    @Override
-	/**
-	 * This occurs whenever the current image changes.
-	 */
-	public void onPhotoChanged(int index, Uri path)
-	{
-        super.onPhotoChanged(index, path);
-        setShareUri(getCurrentItem().getSwapUri());
-		updateImageDetails();
-	}
-
     private WeakHashMap<ContentListener, Object> mListeners =
             new WeakHashMap<>();
 

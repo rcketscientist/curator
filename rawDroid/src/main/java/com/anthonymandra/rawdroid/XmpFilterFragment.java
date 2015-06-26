@@ -1,11 +1,15 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
@@ -14,7 +18,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     private MetaFilterChangedListener mListener;
     public interface MetaFilterChangedListener
     {
-        void onMetaFilterChanged(XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, SortColumns sortColumn);
+        void onMetaFilterChanged(XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, SortColumns sortColumn);
     }
 
     public enum SortColumns
@@ -29,9 +33,16 @@ public class XmpFilterFragment extends XmpBaseFragment
      */
     private boolean mPauseListener;
     private boolean mAndTrueOrFalse;
-    private boolean mSortAscending = true;
-    private SortColumns mSortColumn = SortColumns.Name;
+    private boolean mSortAscending;
+    private boolean mSegregateByType;
+    private SortColumns mSortColumn;
     private XmpValues mXmpValues;
+
+    private final String mPrefName = "galleryFilter";
+    private final String mPrefRelational = "relational";
+    private final String mPrefAscending = "ascending";
+    private final String mPrefColumn = "column";
+    private final String mPrefSegregate = "segregate";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -45,6 +56,13 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
         super.onActivityCreated(savedInstanceState);
         setMultiselect(true);
+
+        SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
+        mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false);
+        mSortAscending = pref.getBoolean(mPrefAscending, true);
+        mSortColumn = SortColumns.valueOf(pref.getString(mPrefColumn, SortColumns.Name.toString()));
+        mSegregateByType = pref.getBoolean(mPrefSegregate, true);
+
         attachButtons();
     }
 
@@ -110,6 +128,17 @@ public class XmpFilterFragment extends XmpBaseFragment
                 //Do nothing
             }
         });
+
+        CheckBox segregate = (CheckBox) getActivity().findViewById(R.id.segregateCheckBox);
+        segregate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                mSegregateByType = isChecked;
+                dispatchChange();
+            }
+        });
     }
 
     private void setAndOr(int checkedId)
@@ -123,6 +152,31 @@ public class XmpFilterFragment extends XmpBaseFragment
                 mAndTrueOrFalse = false;
                 break;
         }
+    }
+
+    public boolean getAndOr()
+    {
+        return mAndTrueOrFalse;
+    }
+
+    public boolean getSegregate()
+    {
+        return mSegregateByType;
+    }
+
+    public SortColumns getSortCoumn()
+    {
+        return mSortColumn;
+    }
+
+    public boolean getAscending()
+    {
+        return mSortAscending;
+    }
+
+    public XmpValues getXmpValues()
+    {
+        return mXmpValues;
     }
 
     public void registerXmpFilterChangedListener(MetaFilterChangedListener listener)
@@ -147,7 +201,17 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
         if (mListener != null && !mPauseListener)
         {
-            mListener.onMetaFilterChanged(mXmpValues, mAndTrueOrFalse, mSortAscending, mSortColumn);
+            SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+
+            editor.putBoolean(mPrefAscending, mSortAscending);
+            editor.putBoolean(mPrefRelational, mAndTrueOrFalse);
+            editor.putString(mPrefColumn, mSortColumn.toString());
+            editor.putBoolean(mPrefSegregate, mSegregateByType);
+
+            editor.apply();
+
+            mListener.onMetaFilterChanged(mXmpValues, mAndTrueOrFalse, mSortAscending, mSegregateByType, mSortColumn);
         }
     }
 }

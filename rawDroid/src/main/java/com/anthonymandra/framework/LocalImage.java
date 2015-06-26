@@ -44,7 +44,7 @@ public class LocalImage extends MetaMedia {
 	File mXmp;
 
 	public LocalImage(Context context, File image) {
-		super(context, Uri.fromFile(image), nextVersionNumber());
+		super(context, Uri.fromFile(image));
 		mImage = image;
 	}
 
@@ -369,17 +369,6 @@ public class LocalImage extends MetaMedia {
 
 			// try to decode from JPEG EXIF
 			if (type == MetaMedia.TYPE_MICROTHUMBNAIL) {
-				// ExifInterface exif = null;
-				// byte [] thumbData = null;
-				// try {
-				// exif = new ExifInterface(mLocalFilePath);
-				// if (exif != null) {
-				// thumbData = exif.getThumbnail();
-				// }
-				// } catch (Throwable t) {
-				// Log.w(TAG, "fail to get exif thumb", t);
-				// }
-				// if (thumbData != null) {
 				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData,
 						options, targetSize);
 				if (bitmap != null)
@@ -416,11 +405,6 @@ public class LocalImage extends MetaMedia {
 	@Override
 	public Uri getUri() {
 		return Uri.fromFile(mImage);
-	}
-
-	@Override
-	public long getDataVersion() {
-		return mDataVersion;
 	}
 
 	@Override

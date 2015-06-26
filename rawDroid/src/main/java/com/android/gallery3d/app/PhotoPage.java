@@ -16,8 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -25,18 +23,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
-import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawdroid.RawDroid;
 
 public abstract class PhotoPage extends AbstractGalleryActivity implements
-        PhotoView.Listener, GalleryApp, PhotoDataAdapter.DataListener{
+        PhotoView.Listener, GalleryApp{
     private static final String TAG = "PhotoPage";
 
 //    private static final int MSG_HIDE_BARS = 1;
@@ -147,7 +141,9 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     }
 
     @Override
-    public void onPhotoChanged(int index, Uri item) {
+    public void onPhotoChanged(int index, Uri item)
+    {
+        super.onPhotoChanged(index, item);
         mImageIndex = index;
 
         if (!mSkipUpdateCurrentPhoto) {
@@ -205,20 +201,7 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
     //  Callbacks from PhotoView
     ////////////////////////////////////////////////////////////////////////////
     @Override
-    public void onSingleTapUp(int x, int y) {
-        MediaItem item = mModel.getMediaItem(0);
-        if (item == null) {
-            // item is not ready or it is camera preview, ignore
-            return;
-        }
-
-        int supported = item.getSupportedOperations();
-        boolean goBack = ((supported & MediaItem.SUPPORT_BACK) != 0);
-
-        if (goBack) {
-            onBackPressed();
-        }
-    }
+    public void onSingleTapUp(int x, int y) { }
 
     @Override
     public void onPause() {

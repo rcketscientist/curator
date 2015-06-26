@@ -1,12 +1,12 @@
 package com.anthonymandra.framework;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -30,8 +30,10 @@ import android.support.v7.widget.ShareActionProvider;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -40,16 +42,23 @@ import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpBaseFragment;
+import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.rawdroid.XmpFilterFragment;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.xmp.XmpDirectory;
+import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -98,6 +107,7 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 	};
 
 	protected RawFilter rawFilter = new RawFilter();
+	protected JpegFilter jpegFilter = new JpegFilter();
 	private XmpFilter xmpFilter = new XmpFilter();
 	private NativeFilter nativeFilter = new NativeFilter();
 	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
@@ -122,14 +132,14 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mShareIntent = new Intent(Intent.ACTION_SEND);
-        mShareIntent.setType("image/*");
+        mShareIntent.setType("image/jpeg");
         mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(META_BUNDLE_KEY), this);
 	}
 
-	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, XmpFilterFragment.SortColumns sortColumn)
+	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
 	{
 		StringBuilder selection = new StringBuilder();
 		List<String> selectionArgs = new ArrayList<>();
@@ -168,15 +178,20 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		}
 
 		String order = sortAscending ? " ASC" : " DESC";
-		String sort;
+		StringBuilder sort = new StringBuilder();
+
+		if (segregateByType)
+		{
+			sort.append(Meta.Data.TYPE).append(" ASC, ");
+		}
 		switch (sortColumn)
 		{
-			case Date: sort = Meta.Data.TIMESTAMP + order; break;
-			case Name: sort = Meta.Data.NAME + order; break;
-			default: sort = Meta.Data.NAME + " ASC";
+			case Date: sort.append(Meta.Data.TIMESTAMP).append(order); break;
+			case Name: sort.append(Meta.Data.NAME).append(order); break;
+			default: sort.append(Meta.Data.NAME).append(" ASC");
 		}
 
-		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort);
+		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
 	}
 
 	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner)
@@ -351,6 +366,83 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		}
 	}
 
+	protected void writeXmp(Uri toWrite, XmpEditFragment.XmpEditValues values)
+	{
+		List<Uri> placeholder = new ArrayList<>();
+		placeholder.add(toWrite);
+		writeXmp(placeholder, values);
+	}
+
+	protected void writeXmp(List<Uri> toWrite, XmpEditFragment.XmpEditValues values)
+	{
+		final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
+		for (Uri write: toWrite)
+		{
+			File xmp = ImageUtils.getXmpFile(new File(write.getPath()));
+			final OutputStream os;
+			try
+			{
+				os = new BufferedOutputStream(
+                        new FileOutputStream(
+                                ImageUtils.getXmpFile(xmp)
+                        ));
+			} catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+				continue; 	// TODO: ignore for now
+			}
+
+			final Metadata meta = new Metadata();
+			meta.addDirectory(new XmpDirectory());
+			ImageUtils.updateSubject(meta, values.Subject);
+			ImageUtils.updateRating(meta, values.Rating);
+			ImageUtils.updateLabel(meta, values.Label);
+
+			ContentValues cv = new ContentValues();
+			cv.put(Meta.Data.LABEL, values.Label);
+			cv.put(Meta.Data.RATING, values.Rating);
+			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+
+			databaseUpdates.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+					.withValues(ImageUtils.getContentValues(GalleryActivity.this, write))
+					.build());
+
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						if (meta.containsDirectoryOfType(XmpDirectory.class))
+							XmpWriter.write(os, meta);
+					}
+					finally
+					{
+						Utils.closeSilently(os);
+					}
+				}
+			}).start();
+		}
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					// TODO: If I implement bulkInsert it's faster
+					getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
+				} catch (RemoteException | OperationApplicationException e)
+				{
+					//TODO: Notify user
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
 	/**
 	 * Create swap directory or clear the contents
 	 */
@@ -506,10 +598,11 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 
 	protected boolean addDatabaseReference(RawObject toAdd)
 	{
-		Uri created = getContentResolver().insert(Meta.Data.CONTENT_URI, ImageUtils.getContentValues(this, toAdd.getUri()));
+		Uri created = getContentResolver().insert(
+				Meta.Data.CONTENT_URI,
+				ImageUtils.getContentValues(this, toAdd.getUri()));
 		return created != null;
 	}
-
 
 	/**
 	 * Placeholder class TODO: Remove all references
@@ -625,9 +718,10 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		}
 	}
 
-    @TargetApi(21)
 	protected void requestEmailIntent() {requestEmailIntent(null);}
-    protected void requestEmailIntent(String subject)
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	protected void requestEmailIntent(String subject)
     {
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                 "mailto","rawdroid@anthonymandra.com", null));
@@ -875,12 +969,17 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
     }
 
 	static ArrayList<ContentProviderOperation> mContentProviderOperations;
+	private static int foldersRemaining = 0;	//TODO: This is ghetto
 	protected void scanRawFiles(File[] roots)
 	{
 		searchActive = true;
 		mContentProviderOperations = new ArrayList<>();
-		SearchTask st = new SearchTask();
-		st.execute(roots);
+		foldersRemaining = roots.length;
+		for (File root : roots)
+		{
+			SearchTask st = new SearchTask();
+			st.executeOnExecutor(LibRaw.EXECUTOR, root);
+		}
 	}
 
 	protected void scanRawFiles()
@@ -897,7 +996,7 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 
 	protected void onSearchResults()
 	{
-		getSupportActionBar().setSubtitle("Found " +  totalImages + " raw images...");
+		getSupportActionBar().setSubtitle("Found " +  totalImages + " images...");
 	}
 
 	static int parsedImages;
@@ -908,7 +1007,11 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 	}
 
 	public static boolean searchActive;
-	public class ParseMetaTask extends android.os.AsyncTask<File, Void, Void>
+
+	/**
+	 * Takes a File,type(int) pair to avoid parsing the ext twice
+	 */
+	public class ParseMetaTask extends android.os.AsyncTask<Object, Void, Void>
 	{
 		@Override
 		protected void onPreExecute()
@@ -925,10 +1028,12 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		}
 
 		@Override
-		protected Void doInBackground(File... params)
+		protected Void doInBackground(Object... params)
 		{
+			File image =(File) 	params[0];
+			int type = 	(int) 	params[1];
 			mContentProviderOperations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
-					.withValues(ImageUtils.getContentValues(GalleryActivity.this, Uri.fromFile(params[0])))
+					.withValues(ImageUtils.getContentValues(GalleryActivity.this, Uri.fromFile(image), type))
 					.build());
 			++parsedImages;
 			publishProgress();
@@ -985,7 +1090,7 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		boolean cancelled;
 
 		Set<String> rawImages = new HashSet<>();
-		Set<String> commonImages = new HashSet<>();
+		Set<String> jpegImages = new HashSet<>();	// For now this is jpeg only, not sure I'll revive png, etc.
 		Set<String> tiffImages = new HashSet<>();
 
 		@Override
@@ -1000,20 +1105,11 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		@Override
 		protected Void doInBackground(File... params)
 		{
-			ArrayList<ContentProviderOperation> ops = new ArrayList<>();
 			for (File root : params)
 			{
 				search(root);
-				totalImages = rawImages.size();
+				totalImages += rawImages.size() + jpegImages.size() + tiffImages.size();
 				publishProgress();
-			}
-
-			for (String raw : rawImages)
-			{
-				ParseMetaTask pmt = new ParseMetaTask();
-				pmt.execute(new File(raw));
-//				pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw));
-//				pmt.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new File(raw));
 			}
 
 			return null;
@@ -1023,7 +1119,8 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		protected void onPostExecute(Void aVoid)
 		{
 			super.onPostExecute(aVoid);
-			if (totalImages == 0)
+			--foldersRemaining;
+			if (foldersRemaining == 0 && totalImages == 0)
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(GalleryActivity.this);
 				builder.setTitle(R.string.zeroSearchTitle);
@@ -1045,6 +1142,24 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 					}
 				});
 				builder.show();
+			}
+			else
+			{
+				for (String raw : rawImages)
+				{
+					ParseMetaTask pmt = new ParseMetaTask();
+					pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(raw), Meta.RAW);
+				}
+				for (String common : jpegImages)
+				{
+					ParseMetaTask pmt = new ParseMetaTask();
+					pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(common), Meta.COMMON);
+				}
+				for (String tiff : tiffImages)
+				{
+					ParseMetaTask pmt = new ParseMetaTask();
+					pmt.executeOnExecutor(LibRaw.EXECUTOR, new File(tiff), Meta.TIFF);
+				}
 			}
 		}
 
@@ -1084,14 +1199,14 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 				}
 			}
 
-			File[] commonFiles = dir.listFiles(nativeFilter);
-			if (commonFiles != null && commonFiles.length > 0)
+			File[] jpegFiles = dir.listFiles(jpegFilter);
+			if (jpegFiles != null && jpegFiles.length > 0)
 			{
-				for (File common: commonFiles)
+				for (File common: jpegFiles)
 				{
 					try
 					{
-						commonImages.add(common.getCanonicalPath());
+						jpegImages.add(common.getCanonicalPath());
 					} catch (IOException e)
 					{
 						// God this is ugly, just do nothing with an error.
@@ -1135,7 +1250,13 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 			return filename.toLowerCase(Locale.US).endsWith(".xmp");
 		}
 	}
-	
+
+	class JpegFilter implements FileFilter
+	{
+		@Override
+		public boolean accept(File file) { return Util.isJpeg(file); }
+	}
+
 	class RawFilter implements FileFilter
 	{
 		@Override

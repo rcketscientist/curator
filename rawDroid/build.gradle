@@ -7,7 +7,7 @@ def versionBuild = 0
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    buildToolsVersion '23.0.0rc2'
 
     lintOptions {
         checkReleaseBuilds false
@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         minSdkVersion 11    // Changed for showcaseview, 10 is 0.17% of users
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
 
@@ -41,6 +41,20 @@ android {
         }
     }
 
+    // Added for databinding, but holding off until I see if it can use cursors
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] //disable automatic ndk-build call (currently ignores android.mk and too limited to replace in gradle atm)
+//        jni.srcDirs = [
+//                "/src/main/jni",
+//                "/src/main/jni/libjpeg"
+//                ]
+    }
+
     signingConfigs {
         release {
             storeFile file("../key/my-release-key.keystore")
@@ -56,14 +70,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
         }
-    }
-
-    sourceSets.main {
-        jni.srcDirs = [] //disable automatic ndk-build call (currently ignores android.mk and too limited to replace in gradle atm)
-//        jni.srcDirs = [
-//                "/src/main/jni",
-//                "/src/main/jni/libjpeg"
-//                ]
     }
 
     productFlavors {
@@ -103,8 +109,8 @@ dependencies {
     compile project(':inscription')
     compile project(':metadata-extractor')
     compile project(':oIFileManager')
-    compile 'com.android.support:support-v4:22.1.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:recyclerview-v7:22.1.1'
-    compile 'com.android.support:gridlayout-v7:22.1.1'
+    compile 'com.android.support:support-v4:22.2.0'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:gridlayout-v7:22.2.0'
 }

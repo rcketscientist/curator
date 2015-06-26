@@ -60,8 +60,8 @@ public abstract class MetaMedia extends MediaItem
     protected SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
     protected Context mContext;
 
-    public MetaMedia(Context context, Uri path, long version) {
-        super(path, version);
+    public MetaMedia(Context context, Uri path) {
+        super(path);
         mContext = context;
     }
 
