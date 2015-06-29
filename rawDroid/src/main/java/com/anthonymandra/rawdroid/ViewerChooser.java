@@ -15,7 +15,7 @@ public class ViewerChooser extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent viewer = new Intent();
+        Intent viewer = getIntent();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (!settings.contains(FullSettingsActivity.KEY_UseLegacyViewer))
         {
@@ -33,8 +33,10 @@ public class ViewerChooser extends Activity {
             viewer.setClass(this, ImageViewActivity.class);
         }
 
-        viewer.setData(getIntent().getData());
-        startActivityForResult(viewer, REQUEST_VIEWER);
+//        viewer.setData(getIntent().getData());
+        viewer.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);   //Ensure result is passed to caller
+        startActivity(viewer);
+        finish();
     }
 
     /**

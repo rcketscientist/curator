@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import android.widget.RatingBar.OnRatingBarChangeListener;
 import android.widget.Toast;
 
-import com.anthonymandra.framework.MPTTDataSource;
 import com.anthonymandra.widget.RatingBar;
 import com.anthonymandra.widget.XmpLabelGroup;
 

@@ -6,7 +6,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -50,7 +49,6 @@ import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -154,9 +152,10 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
         if (mImageIndex == -1)
         {
+            mImageIndex = 0;
+
             // This was not initiated internally (view intent)
             // Attempt to add the uri in the intent
-
             String path;
             Uri data = getIntent().getData();
             if (data.getAuthority().equals(MediaStore.AUTHORITY))
@@ -169,8 +168,11 @@ public abstract class ViewerActivity extends GalleryActivity implements
                 path = data.getPath();
             }
 
-            LocalImage image = new LocalImage(this, new File(path));
-            addDatabaseReference(image);
+            File file = new File(path);
+            Uri uri = Uri.fromFile(file);
+            LocalImage image = new LocalImage(this, file);
+            Uri entry = addDatabaseReference(image);
+            getIntent().setData(uri);   // reset the data with a file uri
         }
 
         licenseHandler = new ViewerLicenseHandler(this);
@@ -840,29 +842,24 @@ public abstract class ViewerActivity extends GalleryActivity implements
     {
         MediaItem media = getCurrentItem();
 
-//        Intent action = new Intent();
         Intent action = new Intent(Intent.ACTION_EDIT);
-//        action.setType("*/*");
-        action.setData(media.getUri());
-        action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        action.setDataAndType(media.getUri(), "");
 
         // Convert if no editor for raw exists
-//        if (!intentExists(action))
-//        {
-//            action.setDataAndType(media.getSwapUri(), "image/jpeg");
-//        }
+        if (!intentExists(action))
+        {
+            action.setDataAndType(media.getSwapUri(), "image/jpeg");
+            action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
 
         // Otherwise convert
-
         Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
     }
 
     private boolean intentExists(Intent intent)
     {
-//        String mime = getContentResolver().getType(intent.getData());
-        List<ResolveInfo> ri = getPackageManager().queryIntentActivities(intent, 0);
         return intent.resolveActivity(getPackageManager()) != null;
     }
 

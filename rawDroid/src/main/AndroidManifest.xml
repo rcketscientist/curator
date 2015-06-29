@@ -46,14 +46,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
         </activity>
         
         <activity 
@@ -266,6 +258,27 @@
         </activity>
         
         <activity android:name=".FullSettingsActivity" />
+
+        <activity-alias android:name=".ImportKeywords"
+                        android:enabled="true"
+                        android:exported="true"
+                        android:icon="@mipmap/ic_launcher"
+                        android:label="Import Keywords"
+
+                        android:targetActivity="com.anthonymandra.rawdroid.RawDroid" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="*" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="*/*" />
+                <data android:pathPattern="/.*\\.txt" />
+                <data android:pathPattern="/.*\\.TXT" />
+            </intent-filter>
+
+        </activity-alias>
 
     </application>
 

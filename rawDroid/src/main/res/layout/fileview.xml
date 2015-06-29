@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:src="@drawable/icon"
+        android:src="@mipmap/ic_launcher"
         />
 
     <RatingBar

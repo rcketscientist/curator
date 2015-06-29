@@ -103,6 +103,7 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 	 */
 	private static final File[] SKIP_ROOTS =
 	{
+		//TODO: Create an additional regex string list to skip folders like */Android/, */data/
 		new File("/storage/emulated")
 	};
 
@@ -596,12 +597,11 @@ public abstract class GalleryActivity extends AppCompatActivity implements Loade
 		return rowsDeleted > 0;
 	}
 
-	protected boolean addDatabaseReference(RawObject toAdd)
+	protected Uri addDatabaseReference(RawObject toAdd)
 	{
-		Uri created = getContentResolver().insert(
+		return getContentResolver().insert(
 				Meta.Data.CONTENT_URI,
 				ImageUtils.getContentValues(this, toAdd.getUri()));
-		return created != null;
 	}
 
 	/**

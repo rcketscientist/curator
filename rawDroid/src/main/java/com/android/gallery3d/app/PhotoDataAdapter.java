@@ -191,7 +191,8 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
             }
         };
 
-        updateSlidingWindow();
+        if (cursor != null)
+            swapCursor(cursor);
     }
 
     private MediaItem getItemInternal(int index) {
@@ -944,21 +945,35 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     public Cursor swapCursor(Cursor newCursor)
     {
         Cursor c = super.swapCursor(newCursor);
-        if (mPosition == -1)
+        if (newCursor == null)
+            return c;
+
+        // Search for the uri if position isn't valid
+        mCursor.moveToPosition(mPosition);
+        if (!mCursor.getString(Meta.URI_COLUMN).equals(mUri.toString()))
         {
-            int position = 0;
+            // TODO: Should we throw an error if we can't find the uri, for now settle with zero
+            boolean found = false;
             mCursor.moveToFirst();
-            while(mCursor.moveToNext())
+            while (mCursor.moveToNext())
             {
-                position++;
                 if (mCursor.getString(Meta.URI_COLUMN).equals(mUri.toString()))
                 {
-                    mPosition = position;
+                    mPosition = mCursor.getPosition();
+                    found = true;
                     break;
                 }
             }
+            if (!found)
+                mPosition = 0;
+
+            updateSlidingWindow();
         }
-        fireDataChange();
+        else
+        {
+            fireDataChange();
+        }
+
         if (mReloadTask != null) mReloadTask.notifyDirty();
         return c;
     }

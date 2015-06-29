@@ -1240,7 +1240,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             return;
         }
 
-		Intent viewer = getViewerIntent();
+		Intent viewer = new Intent(this, ViewerChooser.class);//getViewerIntent();
 		viewer.setData(uri);
 
 		Bundle options = new Bundle();

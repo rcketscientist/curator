@@ -36,7 +36,6 @@ import java.util.Map;
 public class KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final int KEYWORD_LOADER_ID = 1;
-//    private KeywordDataSource mDataSource;
     private SimpleCursorAdapter mAdapter;
     private GridView mGrid;
     private Map<Long, String> mSelectedKeywords = new HashMap<>();
@@ -54,7 +53,6 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-//        mDataSource = new KeywordDataSource(getActivity());
         getLoaderManager().initLoader(KEYWORD_LOADER_ID, null, this);
         String[] from = new String[] { KeywordProvider.Data.KEYWORD_NAME };
         int[] to = new int[] { R.id.keyword_entry };
