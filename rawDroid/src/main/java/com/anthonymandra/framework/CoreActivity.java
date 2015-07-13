@@ -1,0 +1,815 @@
+package com.anthonymandra.framework;
+
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
+import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
+import android.content.UriPermission;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.MediaItem;
+import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.rawdroid.Constants;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.ImageViewActivity;
+import com.anthonymandra.rawdroid.LegacyViewerActivity;
+import com.anthonymandra.rawdroid.LicenseManager;
+import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawdroid.XmpEditFragment;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.xmp.XmpDirectory;
+import com.drew.metadata.xmp.XmpWriter;
+import com.inscription.ChangeLogDialog;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
+public abstract class CoreActivity extends AppCompatActivity
+{
+	@SuppressWarnings("unused")
+	private static final String TAG = CoreActivity.class.getSimpleName();
+
+	public static final String SWAP_BIN_DIR = "swap";
+    public static final String RECYCLE_BIN_DIR = "recycle";
+	public static final int FILE_NOT_FOUND = -1;
+
+	private static final int REQUEST_CODE_SHARE = 00;
+	private static final int REQUEST_CODE_WRITE_PERMISSION = 01;
+
+	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
+
+	protected RecycleBin recycleBin;
+	protected File mSwapDir;
+
+	protected ProgressDialog mProgressDialog;
+
+	protected RawFilter rawFilter = new RawFilter();
+	protected JpegFilter jpegFilter = new JpegFilter();
+	private XmpFilter xmpFilter = new XmpFilter();
+	private NativeFilter nativeFilter = new NativeFilter();
+	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
+	private MetaAlphaCompare metaCompare = new MetaAlphaCompare();
+
+    protected ShareActionProvider mShareProvider;
+    protected Intent mShareIntent;
+    protected Handler licenseHandler;
+
+	// Identifies a particular Loader being used in this component
+	public static final int META_LOADER_ID = 0;
+	public static final String EXTRA_META_BUNDLE = "meta_bundle";
+	public static final String META_PROJECTION_KEY = "projection";
+	public static final String META_SELECTION_KEY = "selection";
+	public static final String META_SELECTION_ARGS_KEY = "selection_args";
+	public static final String META_SORT_ORDER_KEY = "sort_order";
+	public static final String META_DEFAULT_SORT = Meta.Data.NAME + " ASC";
+
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		mShareIntent = new Intent(Intent.ACTION_SEND);
+		mShareIntent.setType("image/jpeg");
+		mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+        LicenseManager.getLicense(getBaseContext(), licenseHandler);
+		createSwapDir();
+		createRecycleBin();
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		if (recycleBin != null)
+			recycleBin.flushCache();
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		clearSwapDir();
+		if (recycleBin != null)
+			recycleBin.closeCache();
+		recycleBin = null;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// Handle item selection
+		switch (item.getItemId())
+		{
+			case R.id.contact:
+				requestEmailIntent();
+				return true;
+			case R.id.about:
+				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
+				changeLogDialog.show(Constants.VariantCode == 8);
+				return true;
+			case R.id.settings:
+				requestSettings();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	protected void writeXmp(Uri toWrite, XmpEditFragment.XmpEditValues values)
+	{
+		List<Uri> placeholder = new ArrayList<>();
+		placeholder.add(toWrite);
+		writeXmp(placeholder, values);
+	}
+
+	protected void writeXmp(List<Uri> toWrite, XmpEditFragment.XmpEditValues values)
+	{
+		final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
+		for (Uri write: toWrite)
+		{
+			File xmp = ImageUtils.getXmpFile(new File(write.getPath()));
+			final OutputStream os;
+			try
+			{
+				os = new BufferedOutputStream(
+                        new FileOutputStream(
+                                ImageUtils.getXmpFile(xmp)
+                        ));
+			} catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+				continue; 	// TODO: ignore for now
+			}
+
+			final Metadata meta = new Metadata();
+			meta.addDirectory(new XmpDirectory());
+			ImageUtils.updateSubject(meta, values.Subject);
+			ImageUtils.updateRating(meta, values.Rating);
+			ImageUtils.updateLabel(meta, values.Label);
+
+			ContentValues cv = new ContentValues();
+			cv.put(Meta.Data.LABEL, values.Label);
+			cv.put(Meta.Data.RATING, values.Rating);
+			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+
+			databaseUpdates.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+					.withValues(ImageUtils.getContentValues(CoreActivity.this, write))
+					.build());
+
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						if (meta.containsDirectoryOfType(XmpDirectory.class))
+							XmpWriter.write(os, meta);
+					}
+					finally
+					{
+						Utils.closeSilently(os);
+					}
+				}
+			}).start();
+		}
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					// TODO: If I implement bulkInsert it's faster
+					getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
+				} catch (RemoteException | OperationApplicationException e)
+				{
+					//TODO: Notify user
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	/**
+	 * Create swap directory or clear the contents
+	 */
+	protected void createSwapDir()
+	{
+		mSwapDir = Util.getDiskCacheDir(this, SWAP_BIN_DIR);
+		if (!mSwapDir.exists())
+		{
+			mSwapDir.mkdirs();
+		}
+	}
+
+	protected void clearSwapDir()
+	{
+		if (mSwapDir == null)
+			return;
+
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				final File[] swapFiles = mSwapDir.listFiles();
+                if (swapFiles != null)
+                {
+                    for (File toDelete : swapFiles)
+                    {
+                        toDelete.delete();
+                    }
+                }
+			}
+		}).start();
+	}
+
+	protected void createRecycleBin()
+	{
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+		Boolean useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true);
+        int binSizeMb;
+        try
+        {
+		    binSizeMb = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(FullSettingsActivity.KEY_RecycleBinSize,
+				Integer.toString(FullSettingsActivity.defRecycleBin)));
+        }
+        catch (NumberFormatException e)
+        {
+            binSizeMb = 0;
+        }
+		if (useRecycle)
+		{
+			recycleBin = new RecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024);
+		}
+	}
+
+	protected void showRecycleBin()
+	{
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		Boolean useRecycle = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true);
+		if (!useRecycle || recycleBin == null)
+		{
+			return;
+		}
+		final List<String> keys = recycleBin.getKeys();
+		final List<String> filesToRestore = new ArrayList<>(keys.size());
+		new AlertDialog.Builder(this).setTitle(R.string.recycleBin).setNegativeButton(R.string.emptyRecycleBin, new Dialog.OnClickListener()
+		{
+
+			public void onClick(DialogInterface dialog, int which)
+			{
+				recycleBin.clearCache();
+			}
+
+		}).setNeutralButton(R.string.neutral, new Dialog.OnClickListener()
+		{
+
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				// cancel, do nothing
+			}
+		}).setPositiveButton(R.string.restoreFile, new Dialog.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				List<MediaItem> success = new ArrayList<>();
+				for (String filename : filesToRestore)
+				{
+					File toRestore = new File(filename);
+					BufferedInputStream restore = new BufferedInputStream(recycleBin.getFile(filename));
+					Util.write(toRestore, restore);
+					addImage(new LocalImage(CoreActivity.this, toRestore));
+				}
+				// Ideally just update the sub lists on each restore.
+				updateAfterRestore();
+			}
+		}).setMultiChoiceItems(keys.toArray(new String[keys.size()]), null, new DialogInterface.OnMultiChoiceClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which, boolean isChecked)
+			{
+				if (isChecked)
+					filesToRestore.add(keys.get(which));
+				else
+					filesToRestore.remove(keys.get(which));
+			}
+		}).show();
+	}
+
+	/**
+	 * Gets the swap directory and clears existing files in the process
+	 * 
+	 * @param filename
+	 *            name of the file to add to swap
+	 * @return file link to new swap file
+	 */
+	protected File getSwapFile(String filename)
+	{
+		return new File(mSwapDir, filename);
+	}
+
+	protected Intent getViewerIntent()
+	{
+		Intent viewer = new Intent();
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		if (!settings.contains(FullSettingsActivity.KEY_UseLegacyViewer))
+		{
+			SharedPreferences.Editor editor = settings.edit();
+			editor.putBoolean(FullSettingsActivity.KEY_UseLegacyViewer, !Util.hasHoneycomb());
+			editor.apply();
+		}
+
+		if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
+		{
+			viewer.setClass(this, LegacyViewerActivity.class);
+		}
+		else
+		{
+			viewer.setClass(this, ImageViewActivity.class);
+		}
+		return viewer;
+	}
+
+	/**
+	 * Placeholder class TODO: Remove all references
+	 */
+	private List<MediaItem> getImageListFromUriList(List<Uri> uris)
+	{
+		List<MediaItem> images = new ArrayList<>();
+		for (Uri u: uris)
+			images.add(getImageFromUri(u));
+		return images;
+	}
+
+	/**
+	 * Placeholder class TODO: Remove all references
+	 */
+	private MediaItem getImageFromUri(Uri uri)
+	{
+		File f = new File(uri.getPath());
+		return  new LocalImage(this, f);
+	}
+
+	/**
+	 * Deletes a file and determines if a recycle is necessary.
+	 * 
+	 * @param toDelete
+	 *            file to delete.
+	 * @return true currently (possibly return success later on)
+	 */
+	protected void deleteImage(final Uri toDelete)
+	{
+		List<Uri> itemsToDelete = new ArrayList<>();
+		itemsToDelete.add(toDelete);
+		deleteImages(itemsToDelete);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected void deleteImages(final List<Uri> itemsToDelete)
+	{
+		if (itemsToDelete.size() == 0)
+		{
+			Toast.makeText(getBaseContext(), R.string.warningNoItemsSelected, Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		Boolean deleteConfirm = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true);
+		Boolean useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true);
+		Boolean justDelete;
+		String message;
+		long spaceRequired = 0;
+		for (Uri toDelete : itemsToDelete)
+		{
+			File f = new File(toDelete.getPath());
+			if (f.exists())
+				spaceRequired += f.length();
+		}
+
+		// Go straight to delete if
+		// 1. MTP (unsupported)
+		// 2. Recycle is set to off
+		// 3. For some reason the bin is null
+//		if (itemsToDelete.get(0) instanceof MtpImage)
+//		{
+//			justDelete = true;
+//			message = getString(R.string.warningRecycleMtp);
+//		}
+		/* else */
+        if (!useRecycle)
+		{
+			justDelete = true;
+			message = getString(R.string.warningDeleteDirect);
+		}
+		else if (recycleBin == null)
+		{
+			justDelete = true;
+			message = getString(R.string.warningNoRecycleBin);
+		}
+		else
+		{
+			justDelete = false;
+			message = getString(R.string.warningDeleteExceedsRecycle); // This message applies to deletes exceeding bin size
+		}
+
+		if (justDelete || recycleBin.getBinSize() < spaceRequired)
+		{
+			if (deleteConfirm)
+			{
+				new AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
+						.setNeutralButton(R.string.neutral, new Dialog.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								// cancel, do nothing
+							}
+						}).setPositiveButton(R.string.delete, new Dialog.OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								new DeleteTask().execute(itemsToDelete);
+							}
+						}).show();
+			}
+			else
+			{
+				new DeleteTask().execute(itemsToDelete);
+			}
+		}
+		else
+		{
+			new RecycleTask().execute(itemsToDelete);
+		}
+	}
+
+	protected void requestEmailIntent() {requestEmailIntent(null);}
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	protected void requestEmailIntent(String subject)
+    {
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","rawdroid@anthonymandra.com", null));
+
+		if (subject != null)
+		{
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		}
+
+        StringBuilder body = new StringBuilder();
+        body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
+        body.append("Version:   ").append(BuildConfig.VERSION_NAME).append("\n");
+        body.append("Make:      ").append(Build.MANUFACTURER).append("\n");
+        body.append("Model:     ").append(Build.MODEL).append("\n");
+        if (Util.hasLollipop())
+            body.append("ABI:       ").append(Build.SUPPORTED_ABIS).append("\n");
+        else
+            body.append("ABI:       ").append(Build.CPU_ABI).append("\n");
+        body.append("Android:   ").append(Build.DISPLAY).append("\n");
+        body.append("SDK:       ").append(Build.VERSION.SDK_INT).append("\n\n");
+        body.append("---Please don't remove this data---").append("\n\n");
+
+        emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+    }
+
+	private void requestSettings()
+	{
+		Intent settings = new Intent(this, FullSettingsActivity.class);
+		startActivity(settings);
+	}
+
+	protected abstract void addImage(MediaItem item);
+	protected abstract void removeImage(MediaItem item);
+
+	/**
+	 * Updates the UI after a delete.
+	 */
+	protected abstract void updateAfterDelete();
+
+	/**
+	 * Updates the UI after a restore.
+	 */
+	protected abstract void updateAfterRestore();
+
+	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Boolean> implements OnCancelListener
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			mProgressDialog.setTitle(R.string.recyclingFiles);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Boolean doInBackground(final List<Uri>... params)
+		{
+			List<MediaItem> itemsToDelete = getImageListFromUriList(params[0]);
+			mProgressDialog.setMax(itemsToDelete.size());
+			final List<RawObject> removed = new ArrayList<>();
+
+			for (MediaItem image : itemsToDelete)
+			{
+				recycleBin.addFile(image);
+				removeImage(image);
+			}
+
+			return removed.size() == itemsToDelete.size();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			mProgressDialog.dismiss();
+			updateAfterDelete();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values)
+		{
+			mProgressDialog.setProgress(values[0]);
+			// setSupportProgress(values[0]);
+		}
+
+		@Override
+		protected void onCancelled()
+		{
+			updateAfterDelete();
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
+
+	protected class DeleteTask extends AsyncTask<List<Uri>, Integer, Boolean> implements OnCancelListener
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			mProgressDialog = new ProgressDialog(CoreActivity.this);
+			mProgressDialog.setTitle(R.string.deletingFiles);
+			mProgressDialog.setOnCancelListener(this);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Boolean doInBackground(final List<Uri>... params)
+		{
+			List<MediaItem> itemsToDelete = getImageListFromUriList(params[0]);
+			mProgressDialog.setMax(itemsToDelete.size());
+			final List<RawObject> removed = new ArrayList<>();
+
+			for (MediaItem image : itemsToDelete)
+			{
+				if (image.delete())
+				{
+					removeImage(image);
+					removed.add(image);
+				}
+			}
+			return removed.size() == itemsToDelete.size();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			mProgressDialog.dismiss();
+			updateAfterDelete();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values)
+		{
+			mProgressDialog.setProgress(values[0]);
+			// setSupportProgress(values[0]);
+		}
+
+		@Override
+		protected void onCancelled()
+		{
+			updateAfterDelete();
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.KITKAT)
+	@Override
+	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode)
+		{
+			case REQUEST_CODE_WRITE_PERMISSION:
+				if (resultCode == RESULT_OK && data != null)
+				{
+					Uri treeUri = data.getData();
+					getContentResolver().takePersistableUriPermission(treeUri,
+							Intent.FLAG_GRANT_READ_URI_PERMISSION |
+							Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+				}
+				break;
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	protected void checkWriteAccess()
+	{
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean skipWarning = settings.getBoolean(PREFERENCE_SKIP_WRITE_WARNING, false);
+		if (skipWarning)
+			return;
+
+		if (Util.hasLollipop())
+		{
+			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.requestWriteAccess);
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing
+				}
+			});
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					requestWritePermission();
+				}
+			});
+			builder.show();
+
+		}
+		else if (Util.hasKitkat())
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.kitkatWriteIssue);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing, just a warning
+				}
+			});
+			builder.show();
+		}
+
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
+		editor.apply();
+	}
+
+	protected void requestWritePermission()
+	{
+		if (Util.hasLollipop())
+        {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
+        }
+	}
+
+    protected void setShareUri(Uri share)
+    {
+        mShareIntent.setAction(Intent.ACTION_SEND);
+        mShareIntent.putExtra(Intent.EXTRA_STREAM, share);
+        if (mShareProvider != null)
+            mShareProvider.setShareIntent(mShareIntent);
+    }
+
+    protected void setShareUri(ArrayList<Uri> shares)
+    {
+        mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        mShareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, shares);
+        if (mShareProvider != null)
+            mShareProvider.setShareIntent(mShareIntent);
+    }
+
+	class XmpFilter implements FileFilter
+	{
+		@Override
+		public boolean accept(File file)
+		{
+			String filename = file.getName();
+			return filename.toLowerCase(Locale.US).endsWith(".xmp");
+		}
+	}
+
+	class JpegFilter implements FileFilter
+	{
+		@Override
+		public boolean accept(File file) { return Util.isJpeg(file); }
+	}
+
+	class RawFilter implements FileFilter
+	{
+		@Override
+		public boolean accept(File file) { return Util.isRaw(file); }
+	}
+
+	class NativeFilter implements FileFilter
+	{
+		@Override
+		public boolean accept(File file)
+		{
+			return Util.isNative(file);
+		}
+	}
+
+	class FileAlphaCompare implements Comparator<File>
+	{
+		// Comparator interface requires defining compare method.
+		@Override
+		public int compare(File filea, File fileb)
+		{
+			return filea.getName().compareToIgnoreCase(fileb.getName());
+		}
+	}
+
+	class MetaAlphaCompare implements Comparator<RawObject>
+	{
+		// Comparator interface requires defining compare method.
+		@Override
+		public int compare(RawObject filea, RawObject fileb)
+		{
+			return filea.getName().compareToIgnoreCase(fileb.getName());
+		}
+	}
+
+    public static class LicenseHandler extends Handler{
+        private final WeakReference<Context> mContext;
+        public LicenseHandler(Context context)
+        {
+            mContext = new WeakReference<>(context);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+            if (state.toString().startsWith("modified"))
+            {
+                for (int i=0; i < 3; i++)
+                    Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+            }
+            else if (state == License.LicenseState.error)
+            {
+                Toast.makeText(mContext.get(), "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+}

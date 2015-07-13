@@ -53,6 +53,7 @@ public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSou
                 parentPath = parent.getString(parent.getColumnIndex(getColumnPath())) + PATH_DELIMITER;
                 parentDepth = parent.getInt(parent.getColumnIndex(getColumnDepth()));
             }
+            parent.close();
         }
 
         // Since the column is unique we must put a unique placeholder
@@ -125,6 +126,7 @@ public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSou
 
         child.moveToFirst();
         String path = child.getString(child.getColumnIndex(getColumnPath()));
+        child.close();
         return db.query(getTableName(), null,
                 "? LIKE " + getColumnPath() + " || '%'",
                 new String[]{path},
@@ -145,6 +147,7 @@ public abstract class PathDataSource implements SimpleCursorLoader.CursorDataSou
                 null, null, null);
 
         parent.moveToFirst();
+        parent.close();
         String path = parent.getString(parent.getColumnIndex(getColumnPath()));
         return db.query(getTableName(), null,
                 getColumnPath() + " LIKE ?" +  " || '%'",

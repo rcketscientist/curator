@@ -3,8 +3,11 @@ package com.anthonymandra.framework;
 import android.annotation.TargetApi;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -15,6 +18,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -40,7 +44,7 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawdroid.RawDroid;
+import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.widget.HistogramView;
 
@@ -49,10 +53,12 @@ import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class ViewerActivity extends GalleryActivity implements
+public abstract class ViewerActivity extends CoreActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener,
         ScaleChangedListener, DataListener
 {
@@ -63,7 +69,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
     protected static final int REQUEST_CODE_KEYWORDS = 2;
     protected static final int REQUEST_CODE_EDIT = 3;
 
-    public static String VIEWER_IMAGE_INDEX = "viewer_image";
+    public static String EXTRA_START_INDEX = "viewer_index";
+    public static String EXTRA_START_URI = "viewer_start_uri";
+    public static String EXTRA_URIS = "viewer_uris";
 
     protected HistogramView histView;
     protected View metaFragment;
@@ -131,6 +139,9 @@ public abstract class ViewerActivity extends GalleryActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
+    private IntentFilter mResponseIntentFilter = new IntentFilter();
+    protected List<MediaItem> mMediaItems = new ArrayList<>();
+
     /**
      * Since initial image configuration can occur BEFORE image generation
      * this flag allows us to specifically update a null histogram.  Without
@@ -148,14 +159,46 @@ public abstract class ViewerActivity extends GalleryActivity implements
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
-        mImageIndex = getIntent().getIntExtra(VIEWER_IMAGE_INDEX, -1);
+        if (getIntent().hasExtra(EXTRA_URIS))
+        {
+            mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
 
-        if (mImageIndex == -1)
+            String[] uris = getIntent().getStringArrayExtra(EXTRA_URIS);
+            for (String uri : uris)
+            {
+                mMediaItems.add(new LocalImage(this, Uri.parse(uri)));
+            }
+        }
+        else if (getIntent().hasExtra(EXTRA_META_BUNDLE))
+        {
+            mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
+
+            Bundle dbQuery = getIntent().getBundleExtra(EXTRA_META_BUNDLE);
+            Cursor c = getContentResolver().query(
+                Meta.Data.CONTENT_URI,
+                dbQuery.getStringArray(META_PROJECTION_KEY),
+                dbQuery.getString(META_SELECTION_KEY),
+                dbQuery.getStringArray(META_SELECTION_ARGS_KEY),
+                dbQuery.getString(META_SORT_ORDER_KEY));
+            if (c.getCount() < 1)
+            {
+                c.close();
+                //TODO: Error message.
+                return;
+            }
+            else
+            {
+                while(c.moveToNext())
+                {
+                    mMediaItems.add(new LocalImage(this, Uri.parse(c.getString(Meta.URI_COLUMN))));
+                }
+            }
+            c.close();
+        }
+        else  // External intent
         {
             mImageIndex = 0;
 
-            // This was not initiated internally (view intent)
-            // Attempt to add the uri in the intent
             String path;
             Uri data = getIntent().getData();
             if (data.getAuthority().equals(MediaStore.AUTHORITY))
@@ -169,11 +212,34 @@ public abstract class ViewerActivity extends GalleryActivity implements
             }
 
             File file = new File(path);
-            Uri uri = Uri.fromFile(file);
+            Uri uri = Uri.fromFile(new File(path));
             LocalImage image = new LocalImage(this, file);
-            Uri entry = addDatabaseReference(image);
-            getIntent().setData(uri);   // reset the data with a file uri
+            mMediaItems.add(image);
+//            Uri entry = addDatabaseReference(image);
+//            getIntent().setData(uri);   // reset the data with a file uri
         }
+
+        mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_UPDATE);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                switch(intent.getAction())
+                {
+                    case MetaService.BROADCAST_IMAGE_UPDATE:
+                        Uri processed = Uri.parse(intent.getStringExtra(MetaService.EXTRA_URI));
+                        if (processed.equals(mCurrentUri))
+                        {
+                            Cursor c = getMetaCursor();
+                            c.moveToFirst();
+                            populateMeta(c);
+                            c.close();
+                        }
+                        break;
+                }
+            }
+        }, mResponseIntentFilter);
 
         licenseHandler = new ViewerLicenseHandler(this);
     }
@@ -185,7 +251,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
      * @return The resource id of the layout to load
      */
     public abstract int getContentView();
-    protected abstract Cursor getCursor();
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
@@ -250,7 +315,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
                     cv, Meta.Data.URI + " = ?",
                     new String[]{mCurrentUri.toString()});
 
-            writeXmp(Uri.parse(getCursor().getString(Meta.URI_COLUMN)), mPendingXmpChanges);
+            writeXmp(getCurrentItem().getUri(), mPendingXmpChanges);
             mPendingXmpChanges = null;
         }
     }
@@ -276,6 +341,18 @@ public abstract class ViewerActivity extends GalleryActivity implements
 //        setActionBar();
     }
 
+    @Override
+    protected void addImage(MediaItem item)
+    {
+        mMediaItems.remove(item);
+    }
+
+    @Override
+    protected void removeImage(MediaItem item)
+    {
+        mMediaItems.add(item);
+    }
+
     protected void setWatermark(boolean demo)
     {
         View watermark = findViewById(R.id.watermark);
@@ -292,77 +369,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
         displayWidth = metrics.widthPixels;
         displayHeight = metrics.heightPixels;
     }
-
-    //TODO: If I revive external open then we need MediaStore/Path code
-//    protected int setPathFromIntent()
-//    {
-//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-//
-//        Uri data = getIntent().getData();
-//        if (data == null)
-//        {
-//            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-//            finish();
-//        }
-//
-//        String path;
-//        if (data.getAuthority().equals(MediaStore.AUTHORITY))
-//        {
-//            //FIXME:
-//            Toast.makeText(this, "Disabled in beta, sorry.", Toast.LENGTH_LONG).show();
-//            finish();
-//            //Attempt to acquire the file
-//            path = Util.getRealPathFromURI(this, data);
-//        }
-//        else
-//        {
-//            path = data.getPath();
-//        }
-//
-//        @SuppressWarnings("ConstantConditions")
-//        File input = new File(path);
-//        if (!input.exists())
-//        {
-//            Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-//            finish();
-//        }
-//
-//        if (Util.isNative(input))
-//        {
-//            SharedPreferences.Editor editor = settings.edit();
-//            editor.putBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-//            editor.apply();
-//        }
-//
-//        int indexHint;
-//        if (input.isDirectory())
-//        {
-//            setPath(input);
-//        }
-//        else
-//        {
-//            File parent = input.getParentFile();
-//            if (parent.exists())
-//                setPath(parent);
-//            else
-//                setSingleImage(input);
-//        }
-//
-//        updateViewerItems();
-//
-//        indexHint = findVisibleByFilename(input.getPath());
-////        if (indexHint == FILE_NOT_FOUND)
-////        {
-////            indexHint = 0;
-////            if (mVisibleItems.size() == 0)
-////            {
-////                Toast.makeText(this, "Path could not be found, please email me if this continues", Toast.LENGTH_LONG).show();
-////                finish();
-////            }
-////        }
-//
-//        return indexHint;
-//    }
 
     @Override
     public void onBackPressed() {
@@ -595,8 +601,29 @@ public abstract class ViewerActivity extends GalleryActivity implements
 
     protected void updateImageDetails()
     {
-        populateMeta();
+        // If the meta is processed populate it
+        Cursor c = getMetaCursor();
+        c.moveToFirst();
+        if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
+        {
+            populateMeta(c);
+        }
+        else
+        {
+            // Otherwise, queue a high priority parse
+            MetaWakefulReceiver.startPriorityMetaService(this, mCurrentUri);
+        }
+        c.close();
         updateHistogram(getCurrentBitmap());
+    }
+
+    protected Cursor getMetaCursor()
+    {
+        return getContentResolver().query(Meta.Data.CONTENT_URI,
+                null,
+                Meta.Data.URI + "=?",
+                new String[]{getCurrentItem().getUri().toString()},
+                null);
     }
 
     protected void updateHistogram(Bitmap bitmap)
@@ -612,7 +639,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         mHistogramTask.execute(bitmap);
     }
 
-    protected void populateMeta()
+    protected void populateMeta(Cursor cursor)
     {
         if (autoHide != null)
             autoHide.cancel();
@@ -624,8 +651,6 @@ public abstract class ViewerActivity extends GalleryActivity implements
                     Toast.LENGTH_LONG).show();
             return;
         }
-
-        Cursor cursor = getCursor();
 
         // Assuming cursor is pointing properly...
         metaDate.setText(cursor.getString(Meta.TIMESTAMP_COLUMN));
@@ -656,7 +681,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         autoHide.schedule(new AutoHideMetaTask(), 3000);
 
         if (PreferenceManager.getDefaultSharedPreferences(ViewerActivity.this).getBoolean(FullSettingsActivity.KEY_ShowImageInterface,
-                RawDroid.PREFS_AUTO_INTERFACE_DEFAULT))
+                GalleryActivity.PREFS_AUTO_INTERFACE_DEFAULT))
         {
             showPanels();
         }
@@ -745,7 +770,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
         Intent intent = new Intent(this, FileManagerActivity.class);
         intent.setAction(FileManagerIntents.ACTION_PICK_FILE);
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        String startPath = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
+        String startPath = settings.getString(GalleryActivity.PREFS_MOST_RECENT_SAVE, null);
 
 //        String name = getCurrentItem().getString(Meta.NAME_COLUMN);
         String name = getCurrentItem().getName();
@@ -890,7 +915,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
     {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, dest.getParent());
+        editor.putString(GalleryActivity.PREFS_MOST_RECENT_SAVE, dest.getParent());
         editor.apply();
 
         boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
@@ -1022,7 +1047,7 @@ public abstract class ViewerActivity extends GalleryActivity implements
 //        if (current == null)
 //            return;
         Intent data = new Intent();
-        data.putExtra(RawDroid.GALLERY_INDEX_EXTRA, mImageIndex);
+        data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, mImageIndex);
         setResult(RESULT_OK, data);
     }
 

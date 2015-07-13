@@ -19,7 +19,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import com.anthonymandra.framework.GalleryActivity;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.widget.SeekBarPreference;
@@ -27,10 +26,7 @@ import com.anthonymandra.widget.SeekBarPreference;
 import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.List;
 
 @SuppressWarnings("deprecation")

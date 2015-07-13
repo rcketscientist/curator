@@ -17,9 +17,11 @@ import com.android.legacy.ui.GLRootView;
 import com.android.legacy.ui.GLView;
 import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.LocalImage;
+import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
@@ -76,12 +78,6 @@ public class LegacyViewerActivity extends ViewerActivity
 	}
 
 	@Override
-	protected Cursor getCursor()
-	{
-		return mModel.getCursor();
-	}
-
-	@Override
     protected void lookupViews() {
         super.lookupViews();
         mGLRootView = (GLRootView) findViewById(R.id.gl_root_view);
@@ -112,7 +108,6 @@ public class LegacyViewerActivity extends ViewerActivity
 	public void onPhotoChanged(int index, Uri item)
 	{
 		super.onPhotoChanged(index, item);
-
 	}
 
 	@Override
@@ -133,14 +128,19 @@ public class LegacyViewerActivity extends ViewerActivity
 
 	public void loadExif()
 	{
-//		if (mImageIndex < 0 || mImageIndex >= mVisibleItems.size())
-//			return;
-//		MediaItem raw = getCurrentItem();
-//		if (raw == null)
-//			return;
-//
-//		new LoadMetadataTask().execute(raw);
-		populateMeta();
+		// If the meta is processed populate it
+		Cursor c = getMetaCursor();
+		c.moveToFirst();
+		if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
+		{
+			populateMeta(c);
+		}
+		else
+		{
+			// Otherwise, queue a high priority parse
+			MetaWakefulReceiver.startPriorityMetaService(this, mCurrentUri);
+		}
+		c.close();
 	}
 
     @Override
@@ -169,7 +169,7 @@ public class LegacyViewerActivity extends ViewerActivity
     @Override
 	protected void updateAfterDelete()
 	{
-//		updateViewerItems();
+		mMediaItems.remove(getCurrentItem()); //TODO: This is dangerous! Just a kludge for now.
 		if (mModel.getCount() == 0)
 		{
 			onBackPressed();
@@ -193,18 +193,6 @@ public class LegacyViewerActivity extends ViewerActivity
 	public void incrementImageIndex()
 	{
 		++mImageIndex;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor data)
-	{
-		//TODO
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader)
-	{
-		//TODO
 	}
 
 	@Override

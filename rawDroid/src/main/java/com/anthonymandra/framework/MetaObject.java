@@ -4,88 +4,85 @@ import android.content.ContentValues;
 
 import java.io.FileNotFoundException;
 
-/**
- * Created by amand_000 on 8/10/13.
- */
 public interface MetaObject {
 
-    public void clearXmp();
+    void clearXmp();
 
-    public void writeXmp() throws FileNotFoundException;
+    void writeXmp() throws FileNotFoundException;
 
-    public boolean readMetadata();
+    boolean readMetadata();
 
-    public String getAperture();
+    String getAperture();
 
-    public String getExposure();
+    String getExposure();
 
-    public String getImageHeight();
+    String getImageHeight();
 
-    public String getImageWidth();
+    String getImageWidth();
 
-    public String getFocalLength();
+    String getFocalLength();
 
-    public String getFlash();
+    String getFlash();
 
-    public String getShutterSpeed();
+    String getShutterSpeed();
 
-    public String getWhiteBalance();
+    String getWhiteBalance();
 
-    public String getExposureProgram();
+    String getExposureProgram();
 
-    public String getExposureMode();
+    String getExposureMode();
 
-    public String getLensMake();
+    String getLensMake();
 
-    public String getLensModel();
+    String getLensModel();
 
-    public String getDriveMode();
+    String getDriveMode();
 
-    public String getIso();
+    String getIso();
 
-    public String getFNumber();
+    String getFNumber();
 
-    public String getDateTime();
+    String getDateTime();
 
-    public String getMake();
+    String getMake();
 
-    public String getModel();
+    String getModel();
 
-    public int getOrientation();
+    int getOrientation();
 
-    public String getAltitude();
+    String getAltitude();
 
-    public String getLatitude();
+    String getLatitude();
 
-    public String getLongitude();
+    String getLongitude();
 
-    public double getRating();
+    double getRating();
 
-    public String getLabel();
+    String getLabel();
 
-    public String[] getSubject();
+    String[] getSubject();
 
-    public void setRating(double rating);
+    void setRating(double rating);
 
-    public void setLabel(String label);
+    void setLabel(String label);
 
-    public void setSubject(String[] subject);
+    void setSubject(String[] subject);
 
-    public int getWidth();
+    int getWidth();
 
-    public void setWidth(int width);
+    void setWidth(int width);
 
-    public int getHeight();
+    int getHeight();
 
-    public void setHeight(int height);
+    void setHeight(int height);
 
-    public int getThumbWidth();
+    int getThumbWidth();
 
-    public void setThumbWidth(int thumbWidth);
+    void setThumbWidth(int thumbWidth);
 
-    public int getThumbHeight();
+    int getThumbHeight();
 
-    public void setThumbHeight(int thumbHeight);
+    void setThumbHeight(int thumbHeight);
 
     ContentValues getContentValues();
 }

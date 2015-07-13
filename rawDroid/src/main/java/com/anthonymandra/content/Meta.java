@@ -17,7 +17,7 @@ public class Meta
 	public static final int FLASH_COLUMN = 6;
 	public static final int FOCAL_LENGTH_COLUMN = 7;
 	public static final int ISO_COLUMN = 8;
-	public static final int WHITE_BALANCE_COLUMN = 8;
+	public static final int WHITE_BALANCE_COLUMN = 9;
 	public static final int HEIGHT_COLUMN = 10;
 	public static final int WIDTH_COLUMN = 11;
 	public static final int LATITUDE_COLUMN = 12;
@@ -32,9 +32,10 @@ public class Meta
 	public static final int LABEL_COLUMN = 21;
 	public static final int LENS_MODEL_COLUMN = 22;
 	public static final int DRIVE_MODE_COLUMN = 23;
-	public static final int EXPOSURE_MODE_COLUMN = 23;
-	public static final int EXPOSURE_PROGRAM_COLUMN = 23;
-	public static final int TYPE = 24;
+	public static final int EXPOSURE_MODE_COLUMN = 24;
+	public static final int EXPOSURE_PROGRAM_COLUMN = 25;
+	public static final int TYPE_COLUMN = 26;
+	public static final int PROCESSED_COLUMN = 27;
 
 	public static final int RAW = 0;
 	public static final int COMMON = 1;
@@ -89,6 +90,7 @@ public class Meta
 		public static final String EXPOSURE_PROGRAM = "exposure_program";
 
 		public static final String TYPE  = "type";
+		public static final String PROCESSED  = "processed";
 
 		public static final String MEDIA_ID = "media_id";
 		/**

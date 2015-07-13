@@ -222,8 +222,8 @@ public class CameraImportActivity extends Activity
 				Toast.makeText(CameraImportActivity.this, failures, Toast.LENGTH_LONG).show();
 			}
 
-			Intent rawdroid = new Intent(CameraImportActivity.this, RawDroid.class);
-			rawdroid.putExtra(RawDroid.KEY_STARTUP_DIR, destination.getPath());
+			Intent rawdroid = new Intent(CameraImportActivity.this, GalleryActivity.class);
+			rawdroid.putExtra(GalleryActivity.KEY_STARTUP_DIR, destination.getPath());
 			startActivity(rawdroid);
 		}
 
@@ -248,14 +248,14 @@ public class CameraImportActivity extends Activity
         intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
-		File importLocation = RawDroid.START_PATH;
+		String recentImport = settings.getString(GalleryActivity.PREFS_MOST_RECENT_IMPORT, null);
+		File importLocation = GalleryActivity.START_PATH;
 		if (recentImport != null)
 		{
 			importLocation = new File(recentImport);
 			if (!importLocation.exists())
 			{
-				importLocation = RawDroid.START_PATH;
+				importLocation = GalleryActivity.START_PATH;
 			}
 		}
 
@@ -299,7 +299,7 @@ public class CameraImportActivity extends Activity
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(RawDroid.PREFS_MOST_RECENT_IMPORT, destination.getPath());
+		editor.putString(GalleryActivity.PREFS_MOST_RECENT_IMPORT, destination.getPath());
 		editor.apply();
 
 		getMtpDevice();

@@ -72,7 +72,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 }
 
                 File swapFile = new File(Util.getDiskCacheDir(getContext(),
-                        GalleryActivity.SWAP_BIN_DIR),
+                        CoreActivity.SWAP_BIN_DIR),
                         uri.getLastPathSegment());
                         
                 // Don't keep recreating the swap file

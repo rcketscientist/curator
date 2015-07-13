@@ -199,6 +199,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                 if (c.moveToFirst())
                 {
                     long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
+                    c.close();
                     ContentValues cv = new ContentValues();
                     cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
                     int rowsAffected = getActivity().getContentResolver().update(

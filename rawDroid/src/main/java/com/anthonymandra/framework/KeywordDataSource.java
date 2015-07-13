@@ -141,6 +141,8 @@ public class KeywordDataSource extends PathDataSource
                     c.moveToFirst();
                     List<String> synonyms = new ArrayList<>();
                     String[] activeSynonyms = ImageUtils.convertStringToArray(c.getString(c.getColumnIndex(KEYWORD_SYNONYMS)));
+                    c.close();
+
                     if (activeSynonyms == null)
                         continue;
 

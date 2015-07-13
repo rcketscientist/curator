@@ -571,6 +571,7 @@ public abstract class MetaMedia extends MediaItem
 		}
 		
 		loadContent(meta);
+		meta.close();
 	}
 	
 	protected void loadContent(Cursor meta)

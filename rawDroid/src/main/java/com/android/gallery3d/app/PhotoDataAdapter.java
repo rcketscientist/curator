@@ -45,11 +45,12 @@ import com.anthonymandra.framework.ViewlessCursorAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
+public class PhotoDataAdapter implements Model {
     @SuppressWarnings("unused")
     private static final String TAG = "PhotoDataAdapter";
 
@@ -136,6 +137,7 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     private final ThreadPool mThreadPool;
 
     private final PhotoView mPhotoView;
+    private final List<MediaItem> mSource;
     private ReloadTask mReloadTask;
 
     private Uri mItemPath;
@@ -148,17 +150,15 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     private final TiledTexture.Uploader mUploader;
 
     private final GalleryApp mActivity;
-    private Uri mUri;
 
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
-        Cursor cursor, int position, Uri uri) {
-        super(activity.getAndroidContext(), cursor);
+        List<MediaItem> mediaSet, int position, Uri uri) {
 		mActivity = activity;
+        mSource = Utils.checkNotNull(mediaSet);
         mPhotoView = Utils.checkNotNull(view);
         mPosition = position;
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
-        mUri = uri;
 
         mUploader = new TiledTexture.Uploader(activity.getGLRoot());
 
@@ -191,8 +191,7 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
             }
         };
 
-        if (cursor != null)
-            swapCursor(cursor);
+        updateSlidingWindow();
     }
 
     private MediaItem getItemInternal(int index) {
@@ -510,14 +509,6 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
     @Override
     public int getCurrentIndex() {
         return mPosition;
-    }
-
-    @Override
-    public Cursor getCursor()
-    {
-        // Move cursor to current image
-        mCursor.moveToPosition(mPosition);
-        return mCursor;
     }
 
     @Override
@@ -924,59 +915,14 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
 
 		for (int i = start; i <= start + count; i++)
 		{
-			if (i >= 0 && i < mCursor.getCount())
+			if (i >= 0 && i < getCount())
 			{
-                mCursor.moveToPosition(i);
-				result.add(new LocalImage(mActivity.getAndroidContext(), mCursor));
+				result.add(mSource.get(i));
 			}
 		}
 
 		return result;
 	}
-
-    @Override
-    public void notifyDataSetChanged()
-    {
-        super.notifyDataSetChanged();
-        updateSlidingWindow();
-    }
-
-    @Override
-    public Cursor swapCursor(Cursor newCursor)
-    {
-        Cursor c = super.swapCursor(newCursor);
-        if (newCursor == null)
-            return c;
-
-        // Search for the uri if position isn't valid
-        mCursor.moveToPosition(mPosition);
-        if (!mCursor.getString(Meta.URI_COLUMN).equals(mUri.toString()))
-        {
-            // TODO: Should we throw an error if we can't find the uri, for now settle with zero
-            boolean found = false;
-            mCursor.moveToFirst();
-            while (mCursor.moveToNext())
-            {
-                if (mCursor.getString(Meta.URI_COLUMN).equals(mUri.toString()))
-                {
-                    mPosition = mCursor.getPosition();
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                mPosition = 0;
-
-            updateSlidingWindow();
-        }
-        else
-        {
-            fireDataChange();
-        }
-
-        if (mReloadTask != null) mReloadTask.notifyDirty();
-        return c;
-    }
 
     /*
      * The thread model of ReloadTask
@@ -1009,7 +955,7 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
         public void run() {
             while (mActive) {
                 synchronized (this) {
-                    if (!mDirty && mActive || !mDataValid) {
+                    if (!mDirty && mActive) {
                         updateLoading(false);
                         Utils.waitWithoutInterrupt(this);
                         continue;
@@ -1043,4 +989,9 @@ public class PhotoDataAdapter extends ViewlessCursorAdapter implements Model {
             notifyAll();
         }
 	}
+
+    private int getCount()
+    {
+        return mSource.size();
+    }
 }

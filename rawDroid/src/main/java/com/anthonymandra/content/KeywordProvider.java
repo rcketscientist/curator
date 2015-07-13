@@ -243,6 +243,7 @@ public class KeywordProvider extends PathEnumerationProvider
                     List<String> synonyms = new ArrayList<>();
                     String[] activeSynonyms = ImageUtils.convertStringToArray(
                             c.getString(c.getColumnIndex(Data.KEYWORD_SYNONYMS)));
+                    c.close();
                     if (activeSynonyms == null)
                         continue;
 

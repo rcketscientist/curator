@@ -33,8 +33,8 @@ import com.android.photos.data.GalleryBitmapPool;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.rawdroid.R;
 
-public abstract class AbstractGalleryActivity extends ViewerActivity implements GalleryApp {
-    private static final String TAG = "AbstractGalleryActivity";
+public abstract class AbstractCoreActivity extends ViewerActivity implements GalleryApp {
+    private static final String TAG = "AbstractCoreActivity";
     private GLRootView mGLRootView;
     private ImageCacheService mImageCacheService;
     private Object mLock = new Object();

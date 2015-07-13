@@ -70,6 +70,7 @@ public abstract class PathEnumerationProvider extends ContentProvider
                 parentPath = parent.getString(parent.getColumnIndex(getColumnPath())) + PATH_DELIMITER;
                 parentDepth = parent.getInt(parent.getColumnIndex(getColumnDepth()));
             }
+            parent.close();
         }
 
         // Since the column is unique we must put a unique placeholder
@@ -112,6 +113,8 @@ public abstract class PathEnumerationProvider extends ContentProvider
 
         child.moveToFirst();
         String path = child.getString(child.getColumnIndex(getColumnPath()));
+        child.close();
+
         return db.query(getTableName(), null,
                 "? LIKE " + getColumnPath() + " || '%'",
                 new String[]{path},
@@ -133,6 +136,8 @@ public abstract class PathEnumerationProvider extends ContentProvider
 
         parent.moveToFirst();
         String path = parent.getString(parent.getColumnIndex(getColumnPath()));
+        parent.close();
+
         return db.query(getTableName(), null,
                 getColumnPath() + " LIKE ?" +  " || '%'",
                 new String[] {path},

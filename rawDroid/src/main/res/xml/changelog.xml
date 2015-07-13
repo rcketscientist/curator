@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.9.1.8"
+             versioncode="39108"
+             summary="Beta: Filter/Search framework"
+             date="29 JUN 2015">
+        <change>Enhancement: Better image intent handling</change>
+        <change>Enhancement: Rawdroid will now automatically import .txt keywords from external apps</change>
+        <change>Enhancement: Viewer cleanup related to db</change>
+        <change>Enhancement: Support jpeg again</change>
+        <change>Enhancement: Segregate jpeg and raw images</change>
+        <change>Feature: Swipe to refresh</change>
+    </release>
     <release version="3.9.0"
              versioncode="39000"
              summary="Beta: Filter/Search framework"

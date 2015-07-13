@@ -79,6 +79,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment
                 uniqueKeywords.add(keyword);
             }
         }
+        cursor.close();
 
         mDataSource.addAll(uniqueKeywords);
         mDataSource.remove(""); //Remove the blank

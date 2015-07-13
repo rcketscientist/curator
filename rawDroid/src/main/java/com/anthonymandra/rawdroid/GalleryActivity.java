@@ -3,12 +3,16 @@ package com.anthonymandra.rawdroid;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -29,10 +33,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
@@ -40,7 +45,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +61,7 @@ import android.widget.Checkable;
 import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -67,13 +72,16 @@ import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
-import com.anthonymandra.framework.GalleryActivity;
+import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.LocalImage;
+import com.anthonymandra.framework.MetaService;
+import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.RawObject;
+import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
@@ -98,10 +106,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class RawDroid extends GalleryActivity implements OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener
+public class GalleryActivity extends CoreActivity implements OnItemClickListener, OnItemLongClickListener, OnScrollListener,
+        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>
 {
-	private static final String TAG = RawDroid.class.getSimpleName();
+	private static final String TAG = GalleryActivity.class.getSimpleName();
+
+	private IntentFilter mResponseIntentFilter = new IntentFilter();
 
 	public static final String KEY_STARTUP_DIR = "keyStartupDir";
 
@@ -149,6 +159,29 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             "/storage/usbdisk2"
     };
 
+	private static final String[] MOUNT_ROOTS =
+	{
+			"/mnt",
+			"/Removable",
+			"/udisk",
+			"/usbStorage",
+			"/storage",
+			"/dev/bus/usb",
+	};
+
+	/**
+	 * Android multi-user environment is fucked up.  Multiple mount points
+	 * under /storage/emulated that point to same filesystem
+	 * /storage/emulated/legacy, /storage/emulated/[integer user value]
+	 * Then add dozens of symlinks, making searching an absolute nightmare
+	 * For now assume symlink and skip anything under /storage/emulated
+	 */
+	private static final String[] SKIP_ROOTS =
+	{
+			//TODO: Create an additional regex string list to skip folders like */Android/, */data/
+			"/storage/emulated"
+	};
+
 	// Request codes
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 12;
 	private static final int REQUEST_EXPORT_THUMB_DIR = 15;
@@ -184,9 +217,13 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
     private Toolbar mToolbar;
+	private ProgressBar mProgressBar;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
-	private SwipeRefreshLayout mSwipeRefresh;
+//	private SwipeRefreshLayout mSwipeRefresh;
+	private static int mParsedImages;
+
+	private boolean isFirstDatabaseLoad = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -196,18 +233,19 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		setContentView(R.layout.gallery);
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
+		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
 
-		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
-		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-		{
-			@Override
-			public void onRefresh()
-			{
-				scanRawFiles();
-			}
-		});
+//		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+//		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+//		{
+//			@Override
+//			public void onRefresh()
+//			{
+//				scanRawFiles();
+//			}
+//		});
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerToggle = new ActionBarDrawerToggle(
@@ -264,6 +302,40 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
         licenseHandler = new LicenseHandler(this);
 
+		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
+		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND);
+		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
+		{
+			@Override
+			public void onReceive(Context context, Intent intent)
+			{
+				switch(intent.getAction())
+				{
+					case MetaService.BROADCAST_IMAGE_PARSED:
+						mParsedImages++;
+						mToolbar.setSubtitle(new StringBuilder()
+								.append("Processed ")
+								.append(mParsedImages)
+								.append(" of ")
+								.append(mGalleryAdapter.getCount()));
+						break;
+					case MetaService.BROADCAST_PARSE_COMPLETE:
+						mProgressBar.setVisibility(View.GONE);
+						mToolbar.setSubtitle("");
+						break;
+					case SearchService.BROADCAST_FOUND:
+//						mSwipeRefresh.setRefreshing(false);
+						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGES);
+						mParsedImages = 0;
+						for (String image : images)
+						{
+							MetaWakefulReceiver.startMetaService(GalleryActivity.this, Uri.fromFile(new File(image)));
+						}
+						break;
+				}
+			}
+		}, mResponseIntentFilter);
 		setImageCountTitle();
 
 		if (getIntent().getData() != null)
@@ -293,7 +365,188 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		}
 
 //		checkWriteAccess();
+		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
 	}
+
+	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
+	{
+		StringBuilder selection = new StringBuilder();
+		List<String> selectionArgs = new ArrayList<>();
+		boolean requiresJoiner= false;
+		String joiner = andTrueOrFalse ? " AND " : " OR ";
+
+		if (xmp != null)
+		{
+			if (xmp.label != null && xmp.label.length > 0)
+			{
+				requiresJoiner = true;
+				selection.append(createMultipleIN(Meta.Data.LABEL, xmp.label.length));
+				for (String label : xmp.label)
+				{
+					selectionArgs.add(label);
+				}
+			}
+			if (xmp.subject != null && xmp.subject.length > 0)
+			{
+				if (requiresJoiner)
+					selection.append(joiner);
+				requiresJoiner = true;
+				selection.append(createMultipleLike(Meta.Data.SUBJECT, xmp.subject, selectionArgs, joiner));
+			}
+			if (xmp.rating != null && xmp.rating.length > 0)
+			{
+				if (requiresJoiner)
+					selection.append(joiner);
+
+				selection.append(createMultipleIN(Meta.Data.RATING, xmp.rating.length));
+				for (int rating : xmp.rating)
+				{
+					selectionArgs.add(Double.toString((double)rating));
+				}
+			}
+		}
+
+		String order = sortAscending ? " ASC" : " DESC";
+		StringBuilder sort = new StringBuilder();
+
+		if (segregateByType)
+		{
+			sort.append(Meta.Data.TYPE).append(" ASC, ");
+		}
+		switch (sortColumn)
+		{
+			case Date: sort.append(Meta.Data.TIMESTAMP).append(order); break;
+			case Name: sort.append(Meta.Data.NAME).append(order); break;
+			default: sort.append(Meta.Data.NAME).append(" ASC");
+		}
+
+		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
+	}
+
+	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner)
+	{
+		StringBuilder selection = new StringBuilder();
+		for (int i = 0; i < likes.length; i++)
+		{
+			if (i > 0) selection.append(joiner);
+			selection.append(column)
+					.append(" LIKE ?");
+			selectionArgs.add("%" + likes[i] + "%");
+		}
+
+		return selection.toString();
+	}
+
+	String createMultipleIN(String column, int arguments)
+	{
+		StringBuilder selection = new StringBuilder();
+		selection.append(column)
+				.append(" IN (")
+				.append(makePlaceholders(arguments))
+				.append(")");
+		return selection.toString();
+	}
+
+	String makePlaceholders(int len) {
+		StringBuilder sb = new StringBuilder(len * 2 - 1);
+		sb.append("?");
+		for (int i = 1; i < len; i++)
+			sb.append(",?");
+		return sb.toString();
+	}
+
+	/**
+	 * Updates any filled parameters.  Retains existing parameters if null.
+	 * @param projection
+	 * @param selection
+	 * @param selectionArgs
+	 * @param sortOrder
+	 */
+	public void updateMetaLoader(@Nullable String[] projection,@Nullable  String selection, @Nullable  String[] selectionArgs,@Nullable  String sortOrder)
+	{
+		Bundle metaLoader = getCurrentMetaLoaderBundle();
+		if (projection != null)
+			metaLoader.putStringArray(META_PROJECTION_KEY, projection);
+		if (selection != null)
+			metaLoader.putString(META_SELECTION_KEY, selection);
+		if (selectionArgs != null)
+			metaLoader.putStringArray(META_SELECTION_ARGS_KEY, selectionArgs);
+		if (sortOrder != null)
+			metaLoader.putString(META_SORT_ORDER_KEY, sortOrder);
+		getLoaderManager().restartLoader(CoreActivity.META_LOADER_ID, metaLoader, this);
+	}
+
+	/**
+	 * Gets a bundle of the existing MetaLoader parameters
+	 * @return
+	 */
+	public Bundle getCurrentMetaLoaderBundle()
+	{
+		Loader<Cursor> c = getLoaderManager().getLoader(META_LOADER_ID);
+		CursorLoader cl = (CursorLoader) c;
+		Bundle metaLoader = createMetaLoaderBundle(
+				cl.getProjection(),
+				cl.getSelection(),
+				cl.getSelectionArgs(),
+				cl.getSortOrder()
+		);
+		return metaLoader;
+	}
+
+	public static Bundle createMetaLoaderBundle(String[] projection, String selection, String[] selectionArgs, String sortOrder)
+	{
+		Bundle metaLoader = new Bundle();
+		metaLoader.putString(META_SELECTION_KEY, selection);
+		metaLoader.putStringArray(META_SELECTION_ARGS_KEY, selectionArgs);
+		metaLoader.putString(META_SORT_ORDER_KEY, sortOrder);
+		metaLoader.putStringArray(META_PROJECTION_KEY, projection);
+		return metaLoader;
+	}
+
+	/*
+	* Callback that's invoked when the system has initialized the Loader and
+	* is ready to start the query. This usually happens when initLoader() is
+	* called. The loaderID argument contains the ID value passed to the
+	* initLoader() call.
+	*/
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
+	{
+		/*
+		 * Takes action based on the ID of the Loader that's being created
+		 */
+		switch (loaderID) {
+			case META_LOADER_ID:
+
+				String[] projection = null;
+				String selection = null;
+				String[] selectionArgs = null;
+				String sort = META_DEFAULT_SORT;
+
+				// Populate the database with filter (selection) from the previous app
+				if (bundle != null)
+				{
+					projection = bundle.getStringArray(META_PROJECTION_KEY);
+					selection = bundle.getString(META_SELECTION_KEY);
+					selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
+					sort = bundle.getString(META_SORT_ORDER_KEY);
+				}
+
+				// Returns a new CursorLoader
+				return new CursorLoader(
+						this,   				// Parent activity context
+						Meta.Data.CONTENT_URI,  // Table to query
+						projection,				// Projection to return
+						selection,       		// No selection clause
+						selectionArgs, 			// No selection arguments
+						sort         			// Default sort order
+				);
+			default:
+				// An invalid id was passed in
+				return null;
+		}
+	}
+
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState)
@@ -378,11 +631,11 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
 	{
 		mGalleryAdapter.swapCursor(cursor);
-		mSwipeRefresh.setRefreshing(false);
 		setImageCountTitle();
 
-		if (mGalleryAdapter.getCount() == 0)
+		if (isFirstDatabaseLoad && mGalleryAdapter.getCount() == 0)
 			offerInitDatabase();
+		isFirstDatabaseLoad = false;
 	}
 
 	@Override
@@ -494,6 +747,12 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		getSupportActionBar().setTitle(mGalleryAdapter.getCount() + " Images");
 	}
 
+	protected void scanRawFiles()
+	{
+		mProgressBar.setVisibility(View.VISIBLE);
+		SearchService.startActionSearch(GalleryActivity.this, MOUNT_ROOTS, SKIP_ROOTS);
+	}
+
 	@Override
 	public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
@@ -587,7 +846,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(RawDroid.PREFS_MOST_RECENT_SAVE, destination.getPath());
+        editor.putString(GalleryActivity.PREFS_MOST_RECENT_SAVE, destination.getPath());
         editor.apply();
 
         CopyThumbTask ct = new CopyThumbTask(destination);
@@ -655,6 +914,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				selectAll();
 				return false;
 			case R.id.galleryRefresh:
+				//TODO: probably don't want to delete existing
+				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);
 				scanRawFiles();
 				return true;
 //			case R.id.galleryContact:
@@ -725,7 +986,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
 
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentImport = settings.getString(RawDroid.PREFS_MOST_RECENT_IMPORT, null);
+		String recentImport = settings.getString(GalleryActivity.PREFS_MOST_RECENT_IMPORT, null);
 
 		//TODO: Better start location?
 		File importLocation = ROOT;
@@ -763,7 +1024,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
         Intent intent = new Intent(this, FileManagerActivity.class);
 		intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentExport = settings.getString(RawDroid.PREFS_MOST_RECENT_SAVE, null);
+		String recentExport = settings.getString(GalleryActivity.PREFS_MOST_RECENT_SAVE, null);
 
 		//TODO: Better start location?
 		File exportLocation = ROOT;
@@ -788,15 +1049,41 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 	@Override
 	protected void updateAfterDelete()
 	{
-		//TODO: Does the database update?
-//		updateLocalFiles();
+		// Not needed with a cursorloader
 	}
 
 	@Override
 	protected void updateAfterRestore()
 	{
-		//TODO: Does the database update?
-//		updateLocalFiles();
+		// Not needed with a cursorloader
+	}
+
+	@Override
+	protected void addImage(MediaItem item)
+	{
+		addDatabaseReference(item);
+	}
+
+	@Override
+	protected void removeImage(MediaItem item)
+	{
+		removeDatabaseReference(item);
+	}
+
+	protected boolean removeDatabaseReference(RawObject toRemove)
+	{
+		int rowsDeleted = getContentResolver().delete(
+				Meta.Data.CONTENT_URI,
+				Meta.Data.URI + " = ?",
+				new String[] {toRemove.getUri().toString()});
+		return rowsDeleted > 0;
+	}
+
+	protected Uri addDatabaseReference(RawObject toAdd)
+	{
+		return getContentResolver().insert(
+				Meta.Data.CONTENT_URI,
+				ImageUtils.getContentValues(this, toAdd.getUri()));
 	}
 
 	@Override
@@ -864,7 +1151,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			if (actionItem != null)
 			{
 				mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
-				mShareProvider.setOnShareTargetSelectedListener(RawDroid.this);
+				mShareProvider.setOnShareTargetSelectedListener(GalleryActivity.this);
 				mShareProvider.setShareIntent(mShareIntent);
 			}
 
@@ -1254,8 +1541,8 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
         }
 
 		Bundle metaLoader = getCurrentMetaLoaderBundle();
-		viewer.putExtra(META_BUNDLE_KEY, metaLoader);
-		viewer.putExtra(ViewerActivity.VIEWER_IMAGE_INDEX, position);
+		viewer.putExtra(EXTRA_META_BUNDLE, metaLoader);
+		viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position);
 
 		startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options);
 	}
@@ -1296,7 +1583,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		@Override
 		protected void onPreExecute()
 		{
-			importProgress = new ProgressDialog(RawDroid.this);
+			importProgress = new ProgressDialog(GalleryActivity.this);
 			importProgress.setTitle(R.string.importingImages);
 			importProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			importProgress.setCanceledOnTouchOutside(true);
@@ -1347,7 +1634,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 				{
 					failures += fail + ", ";
 				}
-				Toast.makeText(RawDroid.this, failures, Toast.LENGTH_LONG).show();
+				Toast.makeText(GalleryActivity.this, failures, Toast.LENGTH_LONG).show();
 			}
 			importProgress.dismiss();
 		}
@@ -1387,7 +1674,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 		@Override
 		protected void onPreExecute()
 		{
-			importProgress = new ProgressDialog(RawDroid.this);
+			importProgress = new ProgressDialog(GalleryActivity.this);
 			importProgress.setTitle(R.string.exportingThumb);
 			importProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			importProgress.setCanceledOnTouchOutside(true);
@@ -1401,7 +1688,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 			List<MediaItem> copyList = params[0];
 			importProgress.setMax(copyList.size());
 			
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(RawDroid.this);
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(GalleryActivity.this);
             boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
             String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
             int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
@@ -1418,7 +1705,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
             {
             	processWatermark = true;
 				//TODO: Since this is calling Width it's only accurate if we use full decode.
-                watermark = Util.getDemoWatermark(RawDroid.this, copyList.get(0).getWidth());
+                watermark = Util.getDemoWatermark(GalleryActivity.this, copyList.get(0).getWidth());
                 waterData = Util.getBitmapBytes(watermark);
                 waterWidth = watermark.getWidth();
                 waterHeight = watermark.getHeight();
@@ -1429,7 +1716,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
                 processWatermark = true;
                 if (watermarkText.isEmpty())
                 {
-                    Toast.makeText(RawDroid.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+                    Toast.makeText(GalleryActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
                     processWatermark = false;
                 }
                 else
@@ -1478,7 +1765,7 @@ public class RawDroid extends GalleryActivity implements OnItemClickListener, On
 					failures += fail + ", ";
 				}
 				failures += "\nIf you are watermarking, check settings/sizes!";
-				Toast.makeText(RawDroid.this, failures, Toast.LENGTH_LONG).show();
+				Toast.makeText(GalleryActivity.this, failures, Toast.LENGTH_LONG).show();
 			}
 			importProgress.dismiss();
 		}

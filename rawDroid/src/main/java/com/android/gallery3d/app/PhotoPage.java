@@ -29,7 +29,7 @@ import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
 
-public abstract class PhotoPage extends AbstractGalleryActivity implements
+public abstract class PhotoPage extends AbstractCoreActivity implements
         PhotoView.Listener, GalleryApp{
     private static final String TAG = "PhotoPage";
 
@@ -117,27 +117,9 @@ public abstract class PhotoPage extends AbstractGalleryActivity implements
             }
         };
 
-        mModel = new PhotoDataAdapter(this, mPhotoView, null, mImageIndex, getIntent().getData());
+        mModel = new PhotoDataAdapter(this, mPhotoView, mMediaItems, mImageIndex, getIntent().getData());
         mModel.setDataListener(this);
         mPhotoView.setModel(mModel);
-    }
-
-    @Override
-    protected Cursor getCursor()
-    {
-        return mModel.getCursor();
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data)
-    {
-        mModel.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader)
-    {
-        mModel.swapCursor(null);
     }
 
     @Override

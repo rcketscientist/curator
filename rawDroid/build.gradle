@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 
 def versionMajor = 3
 def versionMinor = 9
-def versionPatch = 0
-def versionBuild = 0
+def versionPatch = 1
+def versionBuild = 8
 
 android {
     compileSdkVersion 22
@@ -21,6 +21,7 @@ android {
         targetSdkVersion 22
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
+        // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
 
         ndk {
             moduleName "libraw"
@@ -42,10 +43,10 @@ android {
     }
 
     // Added for databinding, but holding off until I see if it can use cursors
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_7
+//        targetCompatibility JavaVersion.VERSION_1_7
+//    }
 
     sourceSets.main {
         jni.srcDirs = [] //disable automatic ndk-build call (currently ignores android.mk and too limited to replace in gradle atm)

@@ -224,6 +224,7 @@ public class ImageUtils
         cv.put(Meta.Data.EXPOSURE_MODE, getExposureMode(meta));
         cv.put(Meta.Data.EXPOSURE_PROGRAM, getExposureProgram(meta));
         cv.put(Meta.Data.TYPE, type);
+        cv.put(Meta.Data.PROCESSED, true);
         return cv;
     }
 

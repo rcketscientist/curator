@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.anthonymandra.rawdroid">
+    package="com.anthonymandra.rawdroid" >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_STORAGE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-feature
         android:name="android.hardware.usb.host"
@@ -35,42 +36,44 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        tools:replace="icon, label">
-        
+        tools:replace="icon, label" >
         <activity
-            android:name=".RawDroid"
+            android:name=".GalleryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
             android:theme="@style/GalleryTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <activity 
+        <activity
             android:name=".CameraImportActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
+            android:configChanges="keyboardHidden|orientation|screenSize" >
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
+
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
-        
-        <activity
-            android:name=".ViewerChooser" >
+        <activity android:name=".ViewerChooser" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
@@ -154,14 +157,18 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
@@ -247,29 +254,30 @@
         <activity
             android:name=".LegacyViewerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/GalleryTheme"/>
+            android:theme="@style/GalleryTheme" />
         <activity
             android:name=".ImageViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/GalleryTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".RawDroid" />
+                android:value=".GalleryActivity" />
         </activity>
-        
         <activity android:name=".FullSettingsActivity" />
 
-        <activity-alias android:name=".ImportKeywords"
-                        android:enabled="true"
-                        android:exported="true"
-                        android:icon="@mipmap/ic_launcher"
-                        android:label="Import Keywords"
-
-                        android:targetActivity="com.anthonymandra.rawdroid.RawDroid" >
+        <activity-alias
+            android:name=".ImportKeywords"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="Import Keywords"
+            android:targetActivity=".GalleryActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:host="*" />
                 <data android:scheme="file" />
                 <data android:scheme="content" />
@@ -277,9 +285,21 @@
                 <data android:pathPattern="/.*\\.txt" />
                 <data android:pathPattern="/.*\\.TXT" />
             </intent-filter>
-
         </activity-alias>
 
+        <service
+            android:name="com.anthonymandra.framework.MetaService"
+            android:exported="false" >
+        </service>
+        <service
+            android:name="com.anthonymandra.framework.SearchService"
+            android:exported="false" >
+        </service>
+        <receiver
+            android:name="com.anthonymandra.framework.MetaWakefulReceiver"
+            android:enabled="true"
+            android:exported="false" >
+        </receiver>
     </application>
 
 </manifest>

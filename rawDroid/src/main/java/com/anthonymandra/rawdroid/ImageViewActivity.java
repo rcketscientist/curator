@@ -38,23 +38,14 @@ public class ImageViewActivity extends PhotoPage
 	protected void updateAfterDelete()
 	{
         mPhotoView.setDeleteOrRestore(true);
-//		updateImageSource();
+        notifyContentChanged();
 	}
 
     @Override
 	protected void updateAfterRestore()
 	{
         mPhotoView.setDeleteOrRestore(true);
-//		updateImageSource();
-	}
-
-	private void updateImageSource()
-	{
-        // Refresh the cursor
-        getLoaderManager().restartLoader(META_LOADER_ID, getCurrentMetaLoaderBundle(), this);
-        //TODO: Does this work?
-//		updateViewerItems();
-//		notifyContentChanged();
+        notifyContentChanged();
 	}
 
 	@Override

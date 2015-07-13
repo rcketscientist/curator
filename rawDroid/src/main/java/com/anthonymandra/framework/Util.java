@@ -205,6 +205,28 @@ public class Util
         return -1;
     }
 
+    public static class JpegFilter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file) { return Util.isJpeg(file); }
+    }
+
+    public static class RawFilter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file) { return Util.isRaw(file); }
+    }
+
+    public static class ImageFilter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file)
+        {
+            return Util.isRaw(file) || Util.isJpeg(file);
+        }
+    }
+
+
     public static boolean isRaw(File file)
     {
         return containsString(ImageConstants.RAW_EXT, file);
