@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.view.MenuItem;
@@ -47,6 +48,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -152,6 +154,27 @@ public abstract class CoreActivity extends AppCompatActivity
 		}
 	}
 
+	protected void runCleanDatabase()
+	{
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					ImageUtils.cleanDatabase(CoreActivity.this);
+				} catch (RemoteException e)
+				{
+					e.printStackTrace();
+				} catch (OperationApplicationException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
 	protected void writeXmp(Uri toWrite, XmpEditFragment.XmpEditValues values)
 	{
 		List<Uri> placeholder = new ArrayList<>();
@@ -164,20 +187,6 @@ public abstract class CoreActivity extends AppCompatActivity
 		final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
 		for (Uri write: toWrite)
 		{
-			File xmp = ImageUtils.getXmpFile(new File(write.getPath()));
-			final OutputStream os;
-			try
-			{
-				os = new BufferedOutputStream(
-                        new FileOutputStream(
-                                ImageUtils.getXmpFile(xmp)
-                        ));
-			} catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-				continue; 	// TODO: ignore for now
-			}
-
 			final Metadata meta = new Metadata();
 			meta.addDirectory(new XmpDirectory());
 			ImageUtils.updateSubject(meta, values.Subject);
@@ -192,6 +201,22 @@ public abstract class CoreActivity extends AppCompatActivity
 			databaseUpdates.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
 					.withValues(ImageUtils.getContentValues(CoreActivity.this, write))
 					.build());
+
+			final File xmp = ImageUtils.getXmpFile(new File(write.getPath()));
+			final DocumentFile xmpDoc = FileUtil.getDocumentFile(this, xmp, false, true);
+			final OutputStream os;
+			try
+			{
+				os = getContentResolver().openOutputStream(xmpDoc.getUri());
+//				os = new BufferedOutputStream(
+//                        new FileOutputStream(
+//                                ImageUtils.getXmpFile(xmp)
+//                        ));
+			} catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+				continue; 	// TODO: ignore for now
+			}
 
 			new Thread(new Runnable()
 			{
@@ -321,7 +346,7 @@ public abstract class CoreActivity extends AppCompatActivity
 					File toRestore = new File(filename);
 					BufferedInputStream restore = new BufferedInputStream(recycleBin.getFile(filename));
 					Util.write(toRestore, restore);
-					addImage(new LocalImage(CoreActivity.this, toRestore));
+					addImage(Uri.fromFile(toRestore));
 				}
 				// Ideally just update the sub lists on each restore.
 				updateAfterRestore();
@@ -523,8 +548,8 @@ public abstract class CoreActivity extends AppCompatActivity
 		startActivity(settings);
 	}
 
-	protected abstract void addImage(MediaItem item);
-	protected abstract void removeImage(MediaItem item);
+	protected abstract void addImage(Uri item);
+	protected abstract void removeImage(Uri item);
 
 	/**
 	 * Updates the UI after a delete.
@@ -536,7 +561,7 @@ public abstract class CoreActivity extends AppCompatActivity
 	 */
 	protected abstract void updateAfterRestore();
 
-	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Boolean> implements OnCancelListener
+	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Void> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -546,23 +571,21 @@ public abstract class CoreActivity extends AppCompatActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<Uri>... params)
+		protected Void doInBackground(final List<Uri>... params)
 		{
-			List<MediaItem> itemsToDelete = getImageListFromUriList(params[0]);
-			mProgressDialog.setMax(itemsToDelete.size());
-			final List<RawObject> removed = new ArrayList<>();
+			mProgressDialog.setMax(params[0].size());
 
-			for (MediaItem image : itemsToDelete)
+			for (Uri toRecycle : params[0])
 			{
-				recycleBin.addFile(image);
-				removeImage(image);
+				recycleBin.addFile(toRecycle);
+				removeImage(toRecycle);
 			}
 
-			return removed.size() == itemsToDelete.size();
+			return null;
 		}
 
 		@Override
-		protected void onPostExecute(Boolean result)
+		protected void onPostExecute(Void result)
 		{
 			mProgressDialog.dismiss();
 			updateAfterDelete();
@@ -602,19 +625,18 @@ public abstract class CoreActivity extends AppCompatActivity
 		@Override
 		protected Boolean doInBackground(final List<Uri>... params)
 		{
-			List<MediaItem> itemsToDelete = getImageListFromUriList(params[0]);
-			mProgressDialog.setMax(itemsToDelete.size());
-			final List<RawObject> removed = new ArrayList<>();
+			mProgressDialog.setMax(params[0].size());
+			final List<Uri> removed = new ArrayList<>();
 
-			for (MediaItem image : itemsToDelete)
+			for (Uri toDelete : params[0])
 			{
-				if (image.delete())
+				if (ImageUtils.delete(CoreActivity.this, new File(toDelete.getPath())))
 				{
-					removeImage(image);
-					removed.add(image);
+					removeImage(toDelete);
+					removed.add(toDelete);
 				}
 			}
-			return removed.size() == itemsToDelete.size();
+			return removed.size() == params[0].size();
 		}
 
 		@Override
@@ -657,7 +679,47 @@ public abstract class CoreActivity extends AppCompatActivity
 					Uri treeUri = data.getData();
 					getContentResolver().takePersistableUriPermission(treeUri,
 							Intent.FLAG_GRANT_READ_URI_PERMISSION |
-							Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+									Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+					FileUtil.setTreeUri(this, treeUri);
+
+					// TODO: Start write test
+					File testFile = new File("/mnt/extSdCard/_WriteTest/_test.txt");
+					DocumentFile testDoc = FileUtil.getDocumentFile(this, testFile, false, true);
+
+					OutputStream outStream = null;
+					try
+					{
+						outStream = getContentResolver().openOutputStream(testDoc.getUri());
+						outStream.write("A long time ago...".getBytes());
+					} catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+					finally
+					{
+						Utils.closeSilently(outStream);
+					}
+					// TODO: End write test
+
+//					// Create a new file and write into it
+//					DocumentFile pickedDir = DocumentFile.fromTreeUri(this, treeUri);
+//					DocumentFile test = DocumentFile.fromFile(new File("/storage/extSdCard/_WriteTest/test.txt"));
+//					DocumentFile newFile = pickedDir.createFile("text/plain", "My Novel");
+//					OutputStream out = null;
+//					try
+//					{
+//						out = getContentResolver().openOutputStream(newFile.getUri());
+//						out.write("A long time ago...".getBytes());
+//						out.close();
+//					} catch (FileNotFoundException e)
+//					{
+//						e.printStackTrace();
+//					} catch (IOException e)
+//					{
+//						e.printStackTrace();
+//					}
+
 				}
 				break;
 		}

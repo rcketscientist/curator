@@ -6,21 +6,26 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.anthonymandra.content.Meta;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class SearchService extends IntentService
 {
+	private static final String TAG = SearchService.class.getSimpleName();
     /**
      * Broadcast ID when parsing is complete
      */
@@ -34,18 +39,29 @@ public class SearchService extends IntentService
     private static final String ACTION_SEARCH = "com.anthonymandra.framework.action.ACTION_SEARCH";
     private static final String EXTRA_ROOTS = "com.anthonymandra.framework.extra.EXTRA_ROOTS";
     private static final String EXTRA_SKIP = "com.anthonymandra.framework.extra.EXTRA_SKIP";
-    // This could make it generic, but skip for now
-//    private static final String EXTRA_EXT = "com.anthonymandra.framework.extra.EXTRA_EXT";
+
+	/**
+	 * Since 'external storage' exists in triplicate on 4.2+,
+	 * what we do is skip these roots UNLESS they are contained in
+	 * Environment.getExternalStorageDirectory().  For that case we
+	 * scan ONLY that directly.  This ensures unambiguous paths and
+	 * adherence to the "official" mount point...ugh
+	 */
+	private static final String[] SKIP_ROOTS =
+			{
+					"/storage/emulated",
+					"/mnt/sdcard"
+			};
 
     private static final Set<String> images = new HashSet<>();
+	private File mExternalStorageDir;
 
-    public static void startActionSearch(Context context, String[] roots, String[] skip)//, String[] ext)
+    public static void startActionSearch(Context context, String[] roots, String[] skip)
     {
         Intent intent = new Intent(context, SearchService.class);
         intent.setAction(ACTION_SEARCH);
         intent.putExtra(EXTRA_ROOTS, roots);
         intent.putExtra(EXTRA_SKIP, skip);
-//        intent.putExtra(EXTRA_EXT, ext);
         context.startService(intent);
     }
 
@@ -64,25 +80,26 @@ public class SearchService extends IntentService
             {
                 final String[] root = intent.getStringArrayExtra(EXTRA_ROOTS);
                 final String[] skip = intent.getStringArrayExtra(EXTRA_SKIP);
-//                final String[] ext = intent.getStringArrayExtra(EXTRA_SKIP);
                 handleActionSearch(root, skip);//, ext);
             }
         }
     }
 
-    private void handleActionSearch(String[] roots, String[] skip)//, String[] ext)
+    private void handleActionSearch(String[] roots, String[] alwaysExcludeDir)
     {
-        List<File> skipFiles = new ArrayList<>();
+	    // Ensure 'official' storage is part of our search list
+	    mExternalStorageDir = Environment.getExternalStorageDirectory();
+	    Set<String> rootDirs = new HashSet<>(Arrays.asList(roots));
+	    rootDirs.add(mExternalStorageDir.getPath());
+
         images.clear();
 
-        for (String toSkip : skip)
-            skipFiles.add(new File(toSkip));
-        for (String root : roots)
-            search(new File(root), skipFiles.toArray(new File[skipFiles.size()]));
+        for (String root : rootDirs)
+            search(new File(root), alwaysExcludeDir);
 
+	    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
         if (images.size() > 0)
         {
-            ArrayList<ContentProviderOperation> operations = new ArrayList<>();
             for (String image : images)
             {
                 File file = new File(image);
@@ -103,43 +120,89 @@ public class SearchService extends IntentService
                 //TODO: Notify user
                 e.printStackTrace();
             }
-
-            Intent broadcast = new Intent(BROADCAST_FOUND)
-                    .putExtra(EXTRA_IMAGES, images.toArray(new String[images.size()]));
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
+
+	    Intent broadcast = new Intent(BROADCAST_FOUND)
+			    .putExtra(EXTRA_IMAGES, images.toArray(new String[operations.size()]));
+	    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
     }
 
-    public static void search(File dir, File[] skipFiles)//, String[] ext)
+	/**
+	 *
+	 * @param dir Directory to recursively search
+	 * @param alwaysExcludeDir These roots are skipped absolutely even if they are the official storage
+	 */
+    public void search(File dir, String[] alwaysExcludeDir)
     {
         if (dir == null)
             return;
         if (dir.listFiles() == null)
             return;
 
-        Util.ImageFilter imageFilter = new Util.ImageFilter();
+	    boolean isExternalStorage;
+	    isExternalStorage = dir.getPath().startsWith(mExternalStorageDir.getPath());
 
-        // This is a hack to handle the jacked up filesystem
-        for (File skip : skipFiles)
+	    // We must always deal with canonical to avoid the redundant mount points
+	    String canonPath = FileUtil.getCanonicalPathSilently(dir);
+
+	    /**
+	     * We obey these skip locations unless they are the official storage
+	     * This should avoid all the emulated mount points in 4.2+
+	     */
+	    if (!isExternalStorage)
+	    {
+		    for (String skip : SKIP_ROOTS)
+		    {
+			    if (canonPath.startsWith(skip))
+				    return;
+		    }
+	    }
+	    else
+	    {
+		    Log.d(TAG, "ExternalStorage: dir= " + dir.getPath() + ", canon= " + canonPath);
+	    }
+
+	    /**
+	     * We always obey these exclusions even if they are the official storage
+	     * The user can choose to ignore the internal storage in favor of external sd for example
+	     */
+        for (String skip : alwaysExcludeDir)
         {
-            if (dir.equals(skip))
-                return;
+            if (canonPath.startsWith(skip))
+	            return;
         }
 
-        // We must use a canonical path due to the fucked up multi-user/symlink setup
+	    Log.d(TAG, "Processed: dir= " + dir.getPath() + ", canon= " + canonPath);
+
+	    Util.ImageFilter imageFilter = new Util.ImageFilter();
         File[] imageFiles = dir.listFiles(imageFilter);
         if (imageFiles != null && imageFiles.length > 0)
         {
             for (File raw: imageFiles)
             {
-                try
+                Cursor cursor = ImageUtils.getMetaCursor(this, Uri.fromFile(raw));
+                // Check if meta is already processed
+                if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
                 {
-                    images.add(raw.getCanonicalPath());
-                } catch (IOException e)
-                {
-                    // God this is ugly, just do nothing with an error.
-                    e.printStackTrace();
+                    continue;
                 }
+	            String path = raw.getPath();
+
+	            /**
+	             * If it's not the external storage we use the canonical path
+	             * The reason for this is that the official storage doesn't have canonical paths,
+	             * so we process getPath only for Environment.getExternalStorageDirectory()
+	             * while skipping alternate mount points
+	             *
+	             * However, the external sd card has canonical paths, but arbitrary
+	             * manufacturer mount points, so for everything else we use canonical
+	             *
+	             * All this ensures we get one and only one copy
+	             */
+	            if (!isExternalStorage)
+		            path = FileUtil.getCanonicalPathSilently(raw);
+
+                images.add(path);
             }
         }
 
@@ -150,7 +213,7 @@ public class SearchService extends IntentService
                 continue;
 
             if (f.isDirectory() && f.canRead() && !f.isHidden())
-                search(f, skipFiles);
+                search(f, alwaysExcludeDir);
         }
     }
 

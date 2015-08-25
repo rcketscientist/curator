@@ -1,8 +1,13 @@
 package com.anthonymandra.framework;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
@@ -27,10 +32,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class ImageUtils
 {
     private static String TAG = ImageUtils.class.getSimpleName();
+    private static SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
+
     public static Metadata readMetadata(Context c, Uri uri)
     {
         Metadata meta = readMeta(c, uri);
@@ -50,7 +59,7 @@ public class ImageUtils
         try
         {
             image = c.getContentResolver().openInputStream(uri);
-            meta = ImageMetadataReader.readMetadata(image);
+            meta = ImageMetadataReader.readMetadata(image);  //TODO: possibly replace with exiv, too much overhead
         }
         catch (ImageProcessingException e)
         {
@@ -114,6 +123,14 @@ public class ImageUtils
     /**
      * --- File Association Helpers ----------------------------------------------------------------
      */
+
+    public static boolean delete(Context context, File f) {
+        if (hasXmpFile(f))
+            FileUtil.deleteFile(context, getXmpFile(f));
+        if (hasJpgFile(f))
+            FileUtil.deleteFile(context, getJpgFile(f));
+        return FileUtil.deleteFile(context, f);
+    }
 
     private static boolean hasXmpFile(File f) {
         return getXmpFile(f).exists();
@@ -179,6 +196,81 @@ public class ImageUtils
         return getContentValues(uri, meta, type);
     }
 
+    public static Cursor getMetaCursor(Context c, Uri uri)
+    {
+        return c.getContentResolver().query(Meta.Data.CONTENT_URI,
+		        null,
+		        Meta.Data.URI + "=?",
+		        new String[]{uri.toString()},
+		        null);
+    }
+
+    public static boolean isProcessed(Context c, Uri uri)
+    {
+        Cursor cursor = ImageUtils.getMetaCursor(c, uri);
+        boolean isProcessed = cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0;
+        cursor.close();
+        return isProcessed;
+    }
+
+    /**
+     * Remove db entries for files that are no longer present.  This should be threaded.
+     * @param c
+     * @throws RemoteException
+     * @throws OperationApplicationException
+     */
+    public static void cleanDatabase(final Context c) throws RemoteException, OperationApplicationException
+    {
+        final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+        Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null);
+        while (cursor.moveToNext())
+        {
+            String uriString = cursor.getString(Meta.URI_COLUMN);
+            Uri uri = Uri.parse(uriString);
+            File file = new File(uri.getPath());
+            if (!file.exists())
+            {
+                operations.add(ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
+                        .withSelection(Meta.Data.URI + "=?", new String[]{uriString}).build());
+            }
+        }
+        // TODO: If I implement bulkInsert it's faster
+        c.getContentResolver().applyBatch(Meta.AUTHORITY, operations);
+    }
+
+
+    public static void setExifValues(final Uri uri, final Context c, final String[] exif)
+    {
+            Cursor cursor = getMetaCursor(c, uri);
+            cursor.moveToFirst();
+            ContentValues values = new ContentValues();
+
+            // Check if meta is already processed
+            if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
+            {
+                return;
+            }
+            ContentValues cv = new ContentValues();
+            try
+            {
+                /*
+                For now only include image related information.  As this is a parse related
+                to the processing of the image for display this is reasonable.  It avoids
+                constant flickering as the timestamps cause a database update.
+                 */
+                cv.put(Meta.Data.HEIGHT, Integer.parseInt(exif[10]));
+                cv.put(Meta.Data.WIDTH, Integer.parseInt(exif[11]));
+                cv.put(Meta.Data.ORIENTATION, Integer.parseInt(exif[7]));
+//                    cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[6].trim()).getTime());
+            }
+            catch (Exception e)
+            {
+                Log.d(TAG, "Exif parse failed:", e);
+            }
+            c.getContentResolver().update(Meta.Data.CONTENT_URI, cv, Meta.Data.URI + "=?",
+		            new String[]{uri.toString()});
+    }
+
     /**
      * Convert given meta into ContentValues for {@link com.anthonymandra.content.MetaProvider}
      * @param uri
@@ -225,6 +317,8 @@ public class ImageUtils
         cv.put(Meta.Data.EXPOSURE_PROGRAM, getExposureProgram(meta));
         cv.put(Meta.Data.TYPE, type);
         cv.put(Meta.Data.PROCESSED, true);
+	    cv.put(Meta.Data.PARENT, new File(uri.getPath()).getParent());
+
         return cv;
     }
 
@@ -487,11 +581,6 @@ public class ImageUtils
     {
         if (!meta.containsDirectoryOfType(XmpDirectory.class))
             meta.addDirectory(new XmpDirectory());
-    }
-
-    private static void writeXmp(Uri uri)
-    {
-
     }
 
     public static void updateRating(Metadata meta, Integer rating)

@@ -84,7 +84,7 @@
     <string name="warningWriteDisabled">You have selected a folder that has write access disabled.</string>
     <string name="warningWriteDisabledKitKat">You have selected a folder that has write access disabled.  Google disabled sdcard write access in Android 4.4.</string>
     <string name="warningAccessError">Access Error</string>
-
+	<string name="warningNoImages">No new images found.  Your can clear cache (Help:Clear Thumbnail Cache) to force reset.</string>
 
     <!-- Preferences -->
     <string name="prefTitleImageInterface">Automatically display interface</string>
@@ -169,6 +169,10 @@
     <string name="addKeyword">Add Keyword</string>
     <string name="about">About</string>
     <string name="search">Search</string>
+    <string name="excludeFolder">Exclude Folder</string>
+	<string name="excludedFolders">Excluded Folders</string>
+	<string name="excludedSummary">Folders that are not scanned for images</string>
+    <string name="excludedMessage">Tap to remove folders from the exclusion list</string>
 
     <string name="welcomeTitle">Welcome to RawDroid!</string>
     <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>

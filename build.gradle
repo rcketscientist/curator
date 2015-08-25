@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:1.3.0-beta3"
+        classpath 'com.android.tools.build:gradle:1.2.3'
         // Gonna wait on binding till I can see if it's easy to integrate a cursor.
         // This will get integrated into the plugin anyway.
 //        classpath "com.android.databinding:dataBinder:1.0-rc0"

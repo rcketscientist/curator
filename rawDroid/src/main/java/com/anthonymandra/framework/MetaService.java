@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
@@ -14,6 +15,15 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import com.anthonymandra.content.Meta;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -42,6 +52,11 @@ public class MetaService extends ThreadedPriorityIntentService
     public static final String BROADCAST_IMAGE_UPDATE = "com.anthonymandra.framework.action.BROADCAST_IMAGE_UPDATE";
 
     /**
+     * Broadcast ID after processing, before database is updated
+     */
+    public static final String BROADCAST_PROCESSING_COMPLETE = "com.anthonymandra.framework.action.BROADCAST_PROCESSING_COMPLETE";
+
+    /**
      * Intent ID to request parsing of image meta data
      */
     public static final String ACTION_PARSE = "com.anthonymandra.framework.action.ACTION_PARSE";
@@ -56,7 +71,59 @@ public class MetaService extends ThreadedPriorityIntentService
      */
     public static final String EXTRA_URI = "com.anthonymandra.framework.extra.EXTRA_URI";
 
+    /**
+     * Intent extra containing number of completed jobs in current parse
+     */
+    public static final String EXTRA_COMPLETED_JOBS = "com.anthonymandra.framework.extra.EXTRA_COMPLETED_JOBS";
+
+    /**
+     * Intent extra containing number of completed jobs in current parse
+     */
+    public static final String EXTRA_TOTAL_JOBS = "com.anthonymandra.framework.extra.EXTRA_TOTAL_JOBS";
+
     private final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
+
+    /**
+     * The default thread factory
+     */
+    static class MetaThreadFactory implements ThreadFactory
+    {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        MetaThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() :
+                    Thread.currentThread().getThreadGroup();
+            namePrefix = "MetaService-" +
+                    poolNumber.getAndIncrement() +
+                    "-thread-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.MIN_PRIORITY)
+                t.setPriority(Thread.MIN_PRIORITY);
+            return t;
+        }
+    }
+
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        setThreadPool(new ThreadPoolExecutor(
+                0, Runtime.getRuntime().availableProcessors(),
+                60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                new MetaThreadFactory()));
+    }
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -91,6 +158,14 @@ public class MetaService extends ThreadedPriorityIntentService
     private void handleActionParse(Intent intent)
     {
         Uri uri = intent.getData();
+        Cursor cursor = ImageUtils.getMetaCursor(this, uri);
+        // Check if meta is already processed
+        if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
+        {
+            WakefulBroadcastReceiver.completeWakefulIntent(intent);
+            return;
+        }
+
         ContentValues values = ImageUtils.getContentValues(this, uri);
 
         // If this is a high priority request then add to db immediately
@@ -101,13 +176,19 @@ public class MetaService extends ThreadedPriorityIntentService
                     Meta.Data.URI + " = ?",
                     new String[]{uri.toString()});
 
-            Intent broadcast = new Intent(BROADCAST_IMAGE_UPDATE).putExtra(EXTRA_URI, uri.toString());
+            Intent broadcast = new Intent(BROADCAST_IMAGE_UPDATE)
+                    .putExtra(EXTRA_URI, uri.toString())
+                    .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
+                    .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
         else
         {
             addUpdate(values);
-            Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED).putExtra(EXTRA_URI, uri.toString());
+            Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
+                    .putExtra(EXTRA_URI, uri.toString())
+                    .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
+                    .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
 
@@ -133,6 +214,8 @@ public class MetaService extends ThreadedPriorityIntentService
         super.onStop();
         try
         {
+            Intent broadcast = new Intent(BROADCAST_PROCESSING_COMPLETE);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
             //TODO: Is it possible that the thread this originated from could be reclaimed losing the update?
             processUpdates(0);
         }

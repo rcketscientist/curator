@@ -39,8 +39,8 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
-import com.anthonymandra.framework.ViewlessCursorAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,9 +125,9 @@ public class PhotoDataAdapter implements Model {
     private int mActiveStart = 0;
     private int mActiveEnd = 0;
 
-    // mPosition is the "center" image the user is viewing. The change of
-    // mPosition triggers the data loading and image loading.
-    private int mPosition;
+    // mCurrentIndex is the "center" image the user is viewing. The change of
+    // mCurrentIndex triggers the data loading and image loading.
+    private int mCurrentIndex;
 
     // mPaths keeps the corresponding Path (of MediaItem) for the images. This
     // is used to determine the item movement.
@@ -137,7 +137,7 @@ public class PhotoDataAdapter implements Model {
     private final ThreadPool mThreadPool;
 
     private final PhotoView mPhotoView;
-    private final List<MediaItem> mSource;
+    private final List<Uri> mSource;
     private ReloadTask mReloadTask;
 
     private Uri mItemPath;
@@ -152,11 +152,11 @@ public class PhotoDataAdapter implements Model {
     private final GalleryApp mActivity;
 
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
-        List<MediaItem> mediaSet, int position, Uri uri) {
+        List<Uri> mediaSet, int position) {
 		mActivity = activity;
         mSource = Utils.checkNotNull(mediaSet);
         mPhotoView = Utils.checkNotNull(view);
-        mPosition = position;
+        mCurrentIndex = position;
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
 
@@ -221,7 +221,7 @@ public class PhotoDataAdapter implements Model {
 
         // Update the mPaths array.
         for (int i = 0; i < N; ++i) {
-            mPaths[i] = getPath(mPosition + i - SCREEN_NAIL_MAX);
+            mPaths[i] = getPath(mCurrentIndex + i - SCREEN_NAIL_MAX);
         }
 
         // Calculate the fromIndex array.
@@ -242,8 +242,8 @@ public class PhotoDataAdapter implements Model {
             fromIndex[i] = (j < N) ? j - SCREEN_NAIL_MAX : Integer.MAX_VALUE;
         }
 
-        mPhotoView.notifyDataChange(fromIndex, -mPosition,
-                getCount() - 1 - mPosition);
+        mPhotoView.notifyDataChange(fromIndex, -mCurrentIndex,
+                getCount() - 1 - mCurrentIndex);
     }
 
     public void setDataListener(DataListener listener) {
@@ -275,7 +275,7 @@ public class PhotoDataAdapter implements Model {
         }
 
         for (int i = -SCREEN_NAIL_MAX; i <= SCREEN_NAIL_MAX; ++i) {
-			if (path.equals(getPath(mPosition + i))) {
+			if (path.equals(getPath(mCurrentIndex + i))) {
                 if (i == 0) updateTileProvider(entry);
                 mPhotoView.notifyImageChange(i);
                 break;
@@ -296,7 +296,7 @@ public class PhotoDataAdapter implements Model {
         entry.fullImageTask = null;
         entry.fullImage = future.get();
         if (entry.fullImage != null) {
-            if (path.equals(getPath(mPosition))) {
+            if (path.equals(getPath(mCurrentIndex))) {
                 updateTileProvider(entry);
                 mPhotoView.notifyImageChange(0);
             }
@@ -351,8 +351,8 @@ public class PhotoDataAdapter implements Model {
     }
 
     private void updateCurrentIndex(int index) {
-        if (mPosition == index) return;
-        mPosition = index;
+        if (mCurrentIndex == index) return;
+        mCurrentIndex = index;
         updateSlidingWindow();
 
         MediaItem item = mData[index % DATA_CACHE_SIZE];
@@ -370,7 +370,7 @@ public class PhotoDataAdapter implements Model {
     }
 
     private void uploadScreenNail(int offset) {
-        int index = mPosition + offset;
+        int index = mCurrentIndex + offset;
         if (index < mActiveStart || index >= mActiveEnd) return;
 
         MediaItem item = getImage(index);
@@ -402,7 +402,7 @@ public class PhotoDataAdapter implements Model {
 
     @Override
     public ScreenNail getScreenNail(int offset) {
-        int index = mPosition + offset;
+        int index = mCurrentIndex + offset;
         if (index < 0 || index >= getCount() || !mIsActive) return null;
         Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
@@ -424,22 +424,40 @@ public class PhotoDataAdapter implements Model {
 
     @Override
     public void getImageSize(int offset, PhotoView.Size size) {
-        MediaItem item = getImage(mPosition + offset);
-        if (item == null) {
-            size.width = 0;
-            size.height = 0;
-        } else {
-            size.width = item.getWidth();
-            size.height = item.getHeight();
-//			size.width = item.getThumbWidth();
-//			size.height = item.getThumbHeight();
-        }
+        Cursor c = getCursor(offset);
+        if (c == null)
+            return;
+
+        size.height = c.getInt(Meta.HEIGHT_COLUMN);
+        size.width = c.getInt(Meta.WIDTH_COLUMN);
+        c.close();
+    }
+
+    private Cursor getCursor(int offset)
+    {
+        MediaItem item = getImage(mCurrentIndex + offset);
+        if (item == null)
+            return null;
+
+        Cursor c = mActivity.getAndroidContext().getContentResolver().query(Meta.Data.CONTENT_URI,
+                null,
+                Meta.Data.URI + "=?",
+                new String[]{item.getUri().toString()},
+                null);
+
+        return c.moveToFirst() ? c : null;
     }
 
     @Override
-    public int getImageRotation(int offset) {
-        MediaItem item = getImage(mPosition + offset);
-        return (item == null) ? 0 : item.getFullImageRotation();
+    public int getImageRotation(int offset)
+    {
+        Cursor c = getCursor(offset);
+        if (c == null || !c.moveToFirst())
+            return 0;
+
+        int rotation = ImageUtils.getRotation(c.getInt(Meta.ORIENTATION_COLUMN));
+        c.close();
+        return rotation;
     }
 
     @Override
@@ -460,7 +478,7 @@ public class PhotoDataAdapter implements Model {
 
     @Override
     public int getLoadingState(int offset) {
-        ImageEntry entry = mImageCache.get(getPath(mPosition + offset));
+        ImageEntry entry = mImageCache.get(getPath(mCurrentIndex + offset));
         if (entry == null) return LOADING_INIT;
         if (entry.failToLoad) return LOADING_FAIL;
         if (entry.screenNail != null) return LOADING_COMPLETE;
@@ -508,12 +526,12 @@ public class PhotoDataAdapter implements Model {
 
     @Override
     public int getCurrentIndex() {
-        return mPosition;
+        return mCurrentIndex;
     }
 
     @Override
 	public MediaItem getMediaItem(int offset) {
-		int index = mPosition + offset;
+		int index = mCurrentIndex + offset;
 		if (index >= mContentStart && index < mContentEnd) {
 			return mData[index % DATA_CACHE_SIZE];
 		}
@@ -524,7 +542,7 @@ public class PhotoDataAdapter implements Model {
 	public void setCurrentPhoto(Uri path, int position) {
         if (mItemPath == path) return;
 		mItemPath = path;
-		mPosition = position;
+		mCurrentIndex = position;
 		updateSlidingWindow();
 		updateImageCache();
 		fireDataChange();
@@ -543,7 +561,7 @@ public class PhotoDataAdapter implements Model {
     }
 
     private void updateTileProvider() {
-        ImageEntry entry = mImageCache.get(getPath(mPosition));
+        ImageEntry entry = mImageCache.get(getPath(mCurrentIndex));
         if (entry == null) { // in loading
             mTileProvider.clear();
         } else {
@@ -571,7 +589,7 @@ public class PhotoDataAdapter implements Model {
 
     private void updateSlidingWindow() {
         // 1. Update the image window
-        int start = Utils.clamp(mPosition - IMAGE_CACHE_SIZE / 2,
+        int start = Utils.clamp(mCurrentIndex - IMAGE_CACHE_SIZE / 2,
                 0, Math.max(0, getCount() - IMAGE_CACHE_SIZE));
         int end = Math.min(getCount(), start + IMAGE_CACHE_SIZE);
 
@@ -581,7 +599,7 @@ public class PhotoDataAdapter implements Model {
         mActiveEnd = end;
 
         // 2. Update the data window
-        start = Utils.clamp(mPosition - DATA_CACHE_SIZE / 2,
+        start = Utils.clamp(mCurrentIndex - DATA_CACHE_SIZE / 2,
                 0, Math.max(0, getCount() - DATA_CACHE_SIZE));
         end = Math.min(getCount(), start + DATA_CACHE_SIZE);
         if (mContentStart > mActiveStart || mContentEnd < mActiveEnd
@@ -600,7 +618,7 @@ public class PhotoDataAdapter implements Model {
     private void updateImageRequests() {
         if (!mIsActive) return;
 
-		int currentIndex = mPosition;
+		int currentIndex = mCurrentIndex;
 		MediaItem item = mData[currentIndex % DATA_CACHE_SIZE];
 		if (item == null || !item.getUri().equals(mItemPath)) {
 			// current item mismatch - don't request image
@@ -721,7 +739,7 @@ public class PhotoDataAdapter implements Model {
 			ImageEntry entry = mImageCache.get(path);
 			toBeRemoved.remove(path);
             if (entry != null) {
-                if (Math.abs(i - mPosition) > 1) {
+                if (Math.abs(i - mCurrentIndex) > 1) {
                     if (entry.fullImageTask != null) {
                         entry.fullImageTask.cancel();
                         entry.fullImageTask = null;
@@ -847,7 +865,7 @@ public class PhotoDataAdapter implements Model {
             for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
                 if (mData[i % DATA_CACHE_SIZE] == null) return true;
             }
-			MediaItem current = mData[mPosition % DATA_CACHE_SIZE];
+			MediaItem current = mData[mCurrentIndex % DATA_CACHE_SIZE];
 			return current == null || !current.getUri().equals(mItemPath);
 		}
 
@@ -893,7 +911,7 @@ public class PhotoDataAdapter implements Model {
             }
 
 			// update mItemPath
-			MediaItem current = mData[mPosition % DATA_CACHE_SIZE];
+			MediaItem current = mData[mCurrentIndex % DATA_CACHE_SIZE];
 			mItemPath = current == null ? null : current.getUri();
 
 			updateImageCache();
@@ -901,7 +919,7 @@ public class PhotoDataAdapter implements Model {
 			updateImageRequests();
 
             if (mDataListener != null) {
-                mDataListener.onPhotoChanged(mPosition, mItemPath);
+                mDataListener.onPhotoChanged(mCurrentIndex, mItemPath);
             }
 
 			fireDataChange();
@@ -917,7 +935,7 @@ public class PhotoDataAdapter implements Model {
 		{
 			if (i >= 0 && i < getCount())
 			{
-				result.add(mSource.get(i));
+				result.add(new LocalImage(mActivity.getAndroidContext(), mSource.get(i)));
 			}
 		}
 
@@ -962,12 +980,6 @@ public class PhotoDataAdapter implements Model {
                     }
                 }
 
-                /**
-                 * TODO: Compare impact of reload on xmp changes
-                 * Swipe applies xmp, causes swap cursor, causes dirty, causes reload
-                 * What's the impact of reloading items for xmp, we only really need to reload
-                 * for deletes I think.
-                 */
                 mDirty = false;
                 UpdateInfo info = executeAndWait(new GetUpdateInfo());
 				updateLoading(true);

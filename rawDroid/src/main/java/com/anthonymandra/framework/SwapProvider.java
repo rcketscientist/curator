@@ -136,12 +136,10 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                             @Override
                             public void run()
                             {
-                                Toast.makeText(getContext(), "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "Thumbnail generation failed.", Toast.LENGTH_LONG).show();
                             }
                         } );
                     }
-
-
                 }
 
                 return ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);

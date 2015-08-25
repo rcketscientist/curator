@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -139,8 +140,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
-    private IntentFilter mResponseIntentFilter = new IntentFilter();
-    protected List<MediaItem> mMediaItems = new ArrayList<>();
+    protected List<Uri> mMediaItems = new ArrayList<>();
 
     /**
      * Since initial image configuration can occur BEFORE image generation
@@ -166,7 +166,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             String[] uris = getIntent().getStringArrayExtra(EXTRA_URIS);
             for (String uri : uris)
             {
-                mMediaItems.add(new LocalImage(this, Uri.parse(uri)));
+                mMediaItems.add(Uri.parse(uri));
             }
         }
         else if (getIntent().hasExtra(EXTRA_META_BUNDLE))
@@ -190,7 +190,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             {
                 while(c.moveToNext())
                 {
-                    mMediaItems.add(new LocalImage(this, Uri.parse(c.getString(Meta.URI_COLUMN))));
+                    mMediaItems.add(Uri.parse(c.getString(Meta.URI_COLUMN)));
                 }
             }
             c.close();
@@ -213,33 +213,11 @@ public abstract class ViewerActivity extends CoreActivity implements
 
             File file = new File(path);
             Uri uri = Uri.fromFile(new File(path));
-            LocalImage image = new LocalImage(this, file);
-            mMediaItems.add(image);
+//            LocalImage image = new LocalImage(this, file);
+            mMediaItems.add(uri);
 //            Uri entry = addDatabaseReference(image);
 //            getIntent().setData(uri);   // reset the data with a file uri
         }
-
-        mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_UPDATE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
-        {
-            @Override
-            public void onReceive(Context context, Intent intent)
-            {
-                switch(intent.getAction())
-                {
-                    case MetaService.BROADCAST_IMAGE_UPDATE:
-                        Uri processed = Uri.parse(intent.getStringExtra(MetaService.EXTRA_URI));
-                        if (processed.equals(mCurrentUri))
-                        {
-                            Cursor c = getMetaCursor();
-                            c.moveToFirst();
-                            populateMeta(c);
-                            c.close();
-                        }
-                        break;
-                }
-            }
-        }, mResponseIntentFilter);
 
         licenseHandler = new ViewerLicenseHandler(this);
     }
@@ -342,13 +320,13 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @Override
-    protected void addImage(MediaItem item)
+    protected void addImage(Uri item)
     {
         mMediaItems.remove(item);
     }
 
     @Override
-    protected void removeImage(MediaItem item)
+    protected void removeImage(Uri item)
     {
         mMediaItems.add(item);
     }
@@ -599,30 +577,24 @@ public abstract class ViewerActivity extends CoreActivity implements
             hidePanels();
     }
 
+    protected void updateMetaData()
+    {
+        LoadMetadataTask task = new LoadMetadataTask();
+        task.execute(getCurrentItem().getUri());
+    }
+
     protected void updateImageDetails()
     {
-        // If the meta is processed populate it
-        Cursor c = getMetaCursor();
-        c.moveToFirst();
-        if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
-        {
-            populateMeta(c);
-        }
-        else
-        {
-            // Otherwise, queue a high priority parse
-            MetaWakefulReceiver.startPriorityMetaService(this, mCurrentUri);
-        }
-        c.close();
+        updateMetaData();
         updateHistogram(getCurrentBitmap());
     }
 
-    protected Cursor getMetaCursor()
+    protected Cursor getMetaCursor(Uri uri)
     {
         return getContentResolver().query(Meta.Data.CONTENT_URI,
                 null,
                 Meta.Data.URI + "=?",
-                new String[]{getCurrentItem().getUri().toString()},
+                new String[]{uri.toString()},
                 null);
     }
 
@@ -639,7 +611,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         mHistogramTask.execute(bitmap);
     }
 
-    protected void populateMeta(Cursor cursor)
+    protected void populateMeta(ContentValues cursor)
     {
         if (autoHide != null)
             autoHide.cancel();
@@ -653,29 +625,29 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
 
         // Assuming cursor is pointing properly...
-        metaDate.setText(cursor.getString(Meta.TIMESTAMP_COLUMN));
-        metaModel.setText(cursor.getString(Meta.MODEL_COLUMN));
-        metaIso.setText(cursor.getString(Meta.ISO_COLUMN));
-        metaExposure.setText(cursor.getString(Meta.EXPOSURE_COLUMN));
-        metaAperture.setText(cursor.getString(Meta.APERTURE_COLUMN));
-        metaFocal.setText(cursor.getString(Meta.FOCAL_LENGTH_COLUMN));
-        metaDimensions.setText(cursor.getString(Meta.WIDTH_COLUMN) + " x " + cursor.getString(Meta.HEIGHT_COLUMN));
-        metaAlt.setText(cursor.getString(Meta.ALTITUDE_COLUMN));
-        metaFlash.setText(cursor.getString(Meta.FLASH_COLUMN));
-        metaLat.setText(cursor.getString(Meta.LATITUDE_COLUMN));
-        metaLon.setText(cursor.getString(Meta.LONGITUDE_COLUMN));
-        metaName.setText(cursor.getString(Meta.NAME_COLUMN));
-        metaWb.setText(cursor.getString(Meta.WHITE_BALANCE_COLUMN));
-        metaLens.setText(cursor.getString(Meta.LENS_MODEL_COLUMN));
-        metaDriveMode.setText(cursor.getString(Meta.DRIVE_MODE_COLUMN));
-        metaExposureMode.setText(cursor.getString(Meta.EXPOSURE_MODE_COLUMN));
-        metaExposureProgram.setText(cursor.getString(Meta.EXPOSURE_PROGRAM_COLUMN));
+        metaDate.setText(cursor.getAsString(Meta.Data.TIMESTAMP));
+        metaModel.setText(cursor.getAsString(Meta.Data.MODEL));
+        metaIso.setText(cursor.getAsString(Meta.Data.ISO));
+        metaExposure.setText(cursor.getAsString(Meta.Data.EXPOSURE));
+        metaAperture.setText(cursor.getAsString(Meta.Data.APERTURE));
+        metaFocal.setText(cursor.getAsString(Meta.Data.FOCAL_LENGTH));
+        metaDimensions.setText(cursor.getAsString(Meta.Data.WIDTH) + " x " + cursor.getAsString(Meta.Data.HEIGHT));
+        metaAlt.setText(cursor.getAsString(Meta.Data.ALTITUDE));
+        metaFlash.setText(cursor.getAsString(Meta.Data.FLASH));
+        metaLat.setText(cursor.getAsString(Meta.Data.LATITUDE));
+        metaLon.setText(cursor.getAsString(Meta.Data.LONGITUDE));
+        metaName.setText(cursor.getAsString(Meta.Data.NAME));
+        metaWb.setText(cursor.getAsString(Meta.Data.WHITE_BALANCE));
+        metaLens.setText(cursor.getAsString(Meta.Data.LENS_MODEL));
+        metaDriveMode.setText(cursor.getAsString(Meta.Data.DRIVE_MODE));
+        metaExposureMode.setText(cursor.getAsString(Meta.Data.EXPOSURE_MODE));
+        metaExposureProgram.setText(cursor.getAsString(Meta.Data.EXPOSURE_PROGRAM));
 
-        String rating = cursor.getString(Meta.RATING_COLUMN);  //Use string since double returns 0 for null
+        String rating = cursor.getAsString(Meta.Data.RATING);  //Use string since double returns 0 for null
         mXmpFragment.initXmp(
                 rating == null ? null : (int) Double.parseDouble(rating),
-                ImageUtils.convertStringToArray(cursor.getString(Meta.SUBJECT_COLUMN)),
-                cursor.getString(Meta.LABEL_COLUMN));
+                ImageUtils.convertStringToArray(cursor.getAsString(Meta.Data.SUBJECT)),
+                cursor.getAsString(Meta.Data.LABEL));
 
         autoHide = new Timer();
         autoHide.schedule(new AutoHideMetaTask(), 3000);
@@ -703,6 +675,57 @@ public abstract class ViewerActivity extends CoreActivity implements
             ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
         ft.commit();
+    }
+
+    public class LoadMetadataTask extends AsyncTask<Uri, Void, ContentValues>
+    {
+        @Override
+        protected ContentValues doInBackground(Uri... params)
+        {
+            final Uri uri = params[0];
+            long initialTime = System.currentTimeMillis();
+
+            // If the meta is processed populate it
+            Cursor c = getMetaCursor(uri);
+            c.moveToFirst();
+            ContentValues values = new ContentValues();
+
+            // Check if meta is already processed
+            if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
+            {
+                long preCursorConvert = System.currentTimeMillis();
+                DatabaseUtils.cursorRowToContentValues(c, values);
+                Log.d(TAG, "cursorRowToContentValues: " + (System.currentTimeMillis() - preCursorConvert));
+            }
+            else
+            {
+                long preContentValues = System.currentTimeMillis();
+                final ContentValues cv = ImageUtils.getContentValues(ViewerActivity.this, uri);
+                values = cv;
+                Log.d(TAG, "getContentValues: " + (System.currentTimeMillis() - preContentValues));
+                new Thread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        getContentResolver().update(Meta.Data.CONTENT_URI,
+                                cv,
+                                Meta.Data.URI + " = ?",
+                                new String[]{uri.toString()});
+                    }
+                }).start();
+            }
+            c.close();
+            Log.d(TAG, "LoadMetadataTask: " + (System.currentTimeMillis() - initialTime));
+
+            return values;
+        }
+
+        @Override
+        protected void onPostExecute(ContentValues result)
+        {
+            populateMeta(result);
+        }
     }
 
     class AutoHideMetaTask extends TimerTask
@@ -968,9 +991,14 @@ public abstract class ViewerActivity extends CoreActivity implements
         }	
 		
 		if (!success)
-			Toast.makeText(this, "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
+        {
+            Toast.makeText(this, "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
+        }
 		else
-			Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
+        {
+            addImage(Uri.fromFile(dest));
+            //Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setWallpaper()

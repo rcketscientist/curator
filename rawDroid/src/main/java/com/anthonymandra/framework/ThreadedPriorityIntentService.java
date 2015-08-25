@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ThreadedPriorityIntentService extends Service
 {
@@ -49,6 +50,8 @@ public abstract class ThreadedPriorityIntentService extends Service
 
     private final ConcurrentHashMap<Integer, Boolean> mTasks = new ConcurrentHashMap<Integer, Boolean>();
     private final Handler mUiThreadHandler = new Handler(Looper.getMainLooper());
+    private final AtomicInteger mCompletedJobs = new AtomicInteger();
+    private final AtomicInteger mTotalJobs = new AtomicInteger();
 
     private class Task implements Runnable
     {
@@ -61,6 +64,7 @@ public abstract class ThreadedPriorityIntentService extends Service
                 final QueueItem item = mQueue.take();
                 startId = item.startId;
                 onHandleIntent(item.intent);
+                mCompletedJobs.incrementAndGet();
             }
             catch (InterruptedException e)
             {
@@ -100,6 +104,12 @@ public abstract class ThreadedPriorityIntentService extends Service
     @Override
     public void onStart(Intent intent, int startId)
     {
+        // Clear the completed jobs on the first job we receive
+        if (mQueue.isEmpty())
+        {
+            resetCounters();
+        }
+
         final QueueItem item = new QueueItem();
         item.intent = intent;
         item.startId = startId;
@@ -108,11 +118,28 @@ public abstract class ThreadedPriorityIntentService extends Service
         final int priority = getPriority(intent);
         item.priority = priority;
         mQueue.add(item);
+        mTotalJobs.incrementAndGet();
 
         //  Multithread: Add to task list and fire on executor
         mLatestStartId = startId;
         mTasks.put(startId, Boolean.TRUE);
         mPool.execute(new Task());
+    }
+
+    private final void resetCounters()
+    {
+        mTotalJobs.set(0);
+        mCompletedJobs.set(0);
+    }
+
+    protected final int getCompletedJobs()
+    {
+        return mCompletedJobs.get();
+    }
+
+    protected final int getTotalJobs()
+    {
+        return mTotalJobs.get();
     }
 
     protected final int getPriority(Intent intent)
@@ -206,6 +233,7 @@ public abstract class ThreadedPriorityIntentService extends Service
      */
     public final void stopMe(int startId)
     {
+        resetCounters();
         onStop();
         stopSelf(startId);
     }

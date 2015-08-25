@@ -36,6 +36,7 @@ public class Meta
 	public static final int EXPOSURE_PROGRAM_COLUMN = 25;
 	public static final int TYPE_COLUMN = 26;
 	public static final int PROCESSED_COLUMN = 27;
+	public static final int PARENT_COLUMN = 28;
 
 	public static final int RAW = 0;
 	public static final int COMMON = 1;
@@ -91,6 +92,7 @@ public class Meta
 
 		public static final String TYPE  = "type";
 		public static final String PROCESSED  = "processed";
+		public static final String PARENT  = "parent";
 
 		public static final String MEDIA_ID = "media_id";
 		/**

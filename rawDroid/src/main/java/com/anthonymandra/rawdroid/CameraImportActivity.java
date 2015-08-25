@@ -22,6 +22,8 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.anthonymandra.framework.AsyncTask;
+import com.anthonymandra.framework.FileUtil;
+import com.anthonymandra.framework.Util;
 
 import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
@@ -198,7 +200,19 @@ public class CameraImportActivity extends Activity
                 if (endFile.exists())
                     continue;   //skip files if re-importing
 
-				boolean success = mMtpDevice.importFile(objectHandle, endFile.getPath());
+				boolean success;
+				// KitKat and higher require the extra step of importing to the cache then moving
+				if (Util.hasKitkat())
+				{
+					File tmp = new File(getExternalCacheDir(), name);
+					mMtpDevice.importFile(objectHandle, tmp.getPath());
+					success = FileUtil.moveFile(CameraImportActivity.this, tmp, endFile);
+				}
+				else
+				{
+					success = mMtpDevice.importFile(objectHandle, endFile.getPath());
+				}
+
 				if (!success)
 					failures.add(name);
 				publishProgress();

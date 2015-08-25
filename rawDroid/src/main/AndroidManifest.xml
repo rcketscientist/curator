@@ -263,7 +263,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".GalleryActivity" />
         </activity>
-        <activity android:name=".FullSettingsActivity" />
+        <activity android:name=".FullSettingsActivity"
+                  android:theme="@style/Theme.AppCompat" />
 
         <activity-alias
             android:name=".ImportKeywords"

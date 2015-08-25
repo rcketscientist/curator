@@ -73,6 +73,7 @@ import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.CoreActivity;
+import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.ImageUtils;
@@ -169,18 +170,21 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			"/dev/bus/usb",
 	};
 
-	/**
-	 * Android multi-user environment is fucked up.  Multiple mount points
-	 * under /storage/emulated that point to same filesystem
-	 * /storage/emulated/legacy, /storage/emulated/[integer user value]
-	 * Then add dozens of symlinks, making searching an absolute nightmare
-	 * For now assume symlink and skip anything under /storage/emulated
-	 */
-	private static final String[] SKIP_ROOTS =
-	{
-			//TODO: Create an additional regex string list to skip folders like */Android/, */data/
-			"/storage/emulated"
-	};
+	private static final String[] TEST_ROOTS =
+			{
+					"/storage/emulated",
+			};
+
+	private static final String[] GALLERY_PROJECTION =
+			{
+					Meta.Data._ID,
+					Meta.Data.URI,
+					Meta.Data.ORIENTATION,
+					Meta.Data.RATING,
+					Meta.Data.SUBJECT,
+					Meta.Data.TIMESTAMP,
+					Meta.Data.LABEL
+			};
 
 	// Request codes
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 12;
@@ -236,6 +240,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+
+		Set<String> blocked = PreferenceManager.getDefaultSharedPreferences(this).getStringSet(getString(R.string.KEY_EXCLUDED_FOLDERS), new HashSet<String>());
 
 //		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 //		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -316,9 +322,12 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						mParsedImages++;
 						mToolbar.setSubtitle(new StringBuilder()
 								.append("Processed ")
-								.append(mParsedImages)
+								.append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
 								.append(" of ")
-								.append(mGalleryAdapter.getCount()));
+								.append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1)));//mGalleryAdapter.getCount()));
+						break;
+					case MetaService.BROADCAST_PROCESSING_COMPLETE:
+						mToolbar.setSubtitle("Updating...");
 						break;
 					case MetaService.BROADCAST_PARSE_COMPLETE:
 						mProgressBar.setVisibility(View.GONE);
@@ -328,9 +337,17 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 //						mSwipeRefresh.setRefreshing(false);
 						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGES);
 						mParsedImages = 0;
-						for (String image : images)
+						if (images.length == 0)
 						{
-							MetaWakefulReceiver.startMetaService(GalleryActivity.this, Uri.fromFile(new File(image)));
+							Toast.makeText(GalleryActivity.this, R.string.warningNoImages, Toast.LENGTH_LONG).show();
+							mProgressBar.setVisibility(View.GONE);
+						}
+						else
+						{
+							for (String image : images)
+							{
+								MetaWakefulReceiver.startMetaService(GalleryActivity.this, Uri.fromFile(new File(image)));
+							}
 						}
 						break;
 				}
@@ -518,7 +535,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		switch (loaderID) {
 			case META_LOADER_ID:
 
-				String[] projection = null;
+				String[] projection = null;//GALLERY_PROJECTION;
 				String selection = null;
 				String[] selectionArgs = null;
 				String sort = META_DEFAULT_SORT;
@@ -569,7 +586,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	private void doFirstRun()
 	{
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         if (settings.getBoolean("isFirstRun", true))
         {
             SharedPreferences.Editor editor = settings.edit();
@@ -614,7 +631,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			@Override
 			public void onMetaFilterChanged(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
 			{
-				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, segregateByType,  sortColumn);
+				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, segregateByType, sortColumn);
 			}
 		});
 
@@ -750,7 +767,17 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	protected void scanRawFiles()
 	{
 		mProgressBar.setVisibility(View.VISIBLE);
-		SearchService.startActionSearch(GalleryActivity.this, MOUNT_ROOTS, SKIP_ROOTS);
+		runCleanDatabase();
+
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = prefs.edit();
+		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
+		// You must make a copy of the returned preference set or changes will not be recognized
+		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
+		SearchService.startActionSearch(
+				GalleryActivity.this,
+				/*TEST_ROOTS,*/MOUNT_ROOTS,
+				excludedFolders.toArray(new String[excludedFolders.size()]));
 	}
 
 	@Override
@@ -793,13 +820,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
         {
             showWriteAccessError();
         }
-
-		//TODO: Confirm this still works (code that should handle is in the copy task)
-//		if (destination.equals(mCurrentPath))
-//		{
-//			Toast.makeText(this, R.string.warningSourceEqualsDestination, Toast.LENGTH_LONG).show();
-//			return;
-//		}
 
 		long importSize = getSelectedImageSize();
 		if (destination.getFreeSpace() < importSize)
@@ -902,9 +922,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				storeSelectionForIntent();
 				requestImportImageLocation();
 				return true;
-//			case R.id.gallerySettings:
-//				requestSettings();
-//				return true;
 			case R.id.gallery_recycle:
             case R.id.context_recycle:
 				showRecycleBin();
@@ -914,25 +931,49 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				selectAll();
 				return false;
 			case R.id.galleryRefresh:
-				//TODO: probably don't want to delete existing
-				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);
 				scanRawFiles();
 				return true;
-//			case R.id.galleryContact:
-//				requestEmailIntent();
-//				return true;
 			case R.id.galleryTutorial:
 				runTutorial();
 				return true;
-//			case R.id.galleryAbout:
-//				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
-//				changeLogDialog.show(Constants.VariantCode == 8);
-//				return true;
 			case R.id.gallerySd:
 				requestWritePermission();
 				return true;
+			case R.id.contextBlockFolder:
+				addExcludedFolder();
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
+		}
+	}
+
+	private void addExcludedFolder()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = prefs.edit();
+		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
+		// You must make a copy of the returned preference set or changes will not be recognized
+		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
+
+		for (Uri uri : mGalleryAdapter.getSelectedItems())
+		{
+			File file = new File(uri.getPath());
+
+			/**
+			 * We need canonical here, otherwise we could exclude one copy of an image only to allow the other(s)
+			 * ie: /storage/extSdCard and /mnt/extSdCard point to the same physical memory
+			 */
+			File canon = new File(FileUtil.getCanonicalPathSilently(file));
+			excludedFolders.add(canon.getParent());
+		}
+
+		boolean success = editor.putStringSet(key, excludedFolders).commit();
+		if (success);
+		{
+			getContentResolver().delete(Meta.Data.CONTENT_URI,
+					createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
+					excludedFolders.toArray(new String[excludedFolders.size()]));
+			scanRawFiles();
 		}
 	}
 
@@ -1059,31 +1100,31 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	}
 
 	@Override
-	protected void addImage(MediaItem item)
+	protected void addImage(Uri item)
 	{
 		addDatabaseReference(item);
 	}
 
 	@Override
-	protected void removeImage(MediaItem item)
+	protected void removeImage(Uri item)
 	{
 		removeDatabaseReference(item);
 	}
 
-	protected boolean removeDatabaseReference(RawObject toRemove)
+	protected boolean removeDatabaseReference(Uri toRemove)
 	{
 		int rowsDeleted = getContentResolver().delete(
 				Meta.Data.CONTENT_URI,
 				Meta.Data.URI + " = ?",
-				new String[] {toRemove.getUri().toString()});
+				new String[] {toRemove.toString()});
 		return rowsDeleted > 0;
 	}
 
-	protected Uri addDatabaseReference(RawObject toAdd)
+	protected Uri addDatabaseReference(Uri toAdd)
 	{
 		return getContentResolver().insert(
 				Meta.Data.CONTENT_URI,
-				ImageUtils.getContentValues(this, toAdd.getUri()));
+				ImageUtils.getContentValues(this, toAdd));
 	}
 
 	@Override
@@ -1184,9 +1225,31 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		}
 	}
 
+//	public final static class GalleryViewHolder extends RecyclerView.ViewHolder
+//	{
+//		LoadingImageView imageView;
+//		TextView fileName;
+//		View label;
+//		RatingBar ratingBar;
+//
+//		public GalleryViewHolder(View itemView)
+//		{
+//			super(itemView);
+//			imageView = (LoadingImageView) itemView.getTag(R.id.webImageView);
+//			fileName = (TextView) itemView.getTag(R.id.filenameView);
+//			label = (View) itemView.getTag(R.id.label);
+//			ratingBar= (RatingBar) itemView.getTag(R.id.galleryRatingBar);
+//		}
+//	}
+
 	public class GalleryAdapter extends CursorAdapter
 	{
-		//TODO: prepopulate colors
+		private final int purple = getResources().getColor(R.color.startPurple);
+		private final int blue = getResources().getColor(R.color.startBlue);
+		private final int yellow = getResources().getColor(R.color.startYellow);
+		private final int green = getResources().getColor(R.color.startGreen);
+		private final int red = getResources().getColor(R.color.startRed);
+
 		private final Context mContext;
 		private final LayoutInflater mInflater;
 		protected int mItemHeight = 0;
@@ -1198,7 +1261,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		public GalleryAdapter(Context context, Cursor c)
 		{
-			super(context, c, false);
+			super(context, c, 0);
 			mContext = context;
 			mInflater = LayoutInflater.from(context);
 
@@ -1237,42 +1300,63 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			LoadingImageView imageView = (LoadingImageView) view.getTag(R.id.webImageView);
 			TextView fileName = (TextView) view.getTag(R.id.filenameView);
 			View label = (View) view.getTag(R.id.label);
-			RatingBar rating = (RatingBar) view.getTag(R.id.galleryRatingBar);
-			rating.setRating(cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING)));
+			RatingBar ratingBar= (RatingBar) view.getTag(R.id.galleryRatingBar);
 
-			Uri uri = Uri.parse(cursor.getString(Meta.URI_COLUMN));
-			String labelString = cursor.getString(Meta.LABEL_COLUMN);
-			int rotation = ImageUtils.getRotation(cursor.getInt(Meta.ORIENTATION_COLUMN));
+			final int rotation = ImageUtils.getRotation(cursor.getInt(Meta.ORIENTATION_COLUMN));
+			final Float rating = Float.valueOf(cursor.getFloat(Meta.RATING_COLUMN));
+			final Uri uri = Uri.parse(cursor.getString(Meta.URI_COLUMN));
+			final String labelString = cursor.getString(Meta.LABEL_COLUMN);
+
+			Uri currentUri = (Uri) fileName.getTag();
+			final int oldRotation = (int) imageView.getRotation();
+			final String oldLabel = (String) label.getTag();
+			final Float oldRating = (Float) ratingBar.getTag();
+
+			// If nothing relevant has changed do nothing
+			// This avoids flickering for every db update
+			if (uri.equals(currentUri) &&
+				(labelString != null ? labelString.equals(oldLabel) : oldLabel == null) &&
+				rotation == oldRotation &&
+				rating.equals(oldRating))
+			{
+				return;
+			}
+
+			label.setTag(labelString);
+			ratingBar.setTag(rating);
+			fileName.setTag(uri);
+
 			imageView.setRotation(rotation);
+			ratingBar.setRating(cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING)));
 
 			if (labelString != null)
 			{
 				switch (labelString.toLowerCase())
 				{
 					case "purple":
-						view.setBackgroundColor(getResources().getColor(R.color.startPurple));
+						view.setBackgroundColor(purple);
 						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(getResources().getColor(R.color.startPurple));
+						label.setBackgroundColor(purple);
 						break;
 					case "blue":
-						view.setBackgroundColor(getResources().getColor(R.color.startBlue));
+						view.setBackgroundColor(blue);
 						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(getResources().getColor(R.color.startBlue));
+						label.setBackgroundColor(blue);
 						break;
 					case "yellow":
-						view.setBackgroundColor(getResources().getColor(R.color.startYellow));
+						view.setBackgroundColor(yellow);
 						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(getResources().getColor(R.color.startYellow));
+						label.setBackgroundColor(yellow);
 						break;
 					case "green":
-						view.setBackgroundColor(getResources().getColor(R.color.startGreen));
+						view.setBackgroundColor(green);
 						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(getResources().getColor(R.color.startGreen));
+						label.setBackgroundColor(green);
 						break;
 					case "red":
-						view.setBackgroundColor(getResources().getColor(R.color.startRed));
+						view.setBackgroundColor(red);
 						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(getResources().getColor(R.color.startRed));
+						label.setBackgroundColor(red);
 						break;
 					default:
 						view.setBackgroundColor(0);
@@ -1744,7 +1828,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                 }				
 
 				if (!success)
+				{
 					failed.add(toExport.getName());
+				}
+				else
+				{
+					addImage(Uri.fromFile(thumbDest));
+				}
 					
 				publishProgress();
 			}
@@ -1791,12 +1881,10 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	}
 
     int tutorialStage;
-	File previousPath;
 	public void runTutorial()
 	{
         tutorialStage = 0;
 		//FIXME
-//		previousPath = mCurrentPath;
         File tutorialDirectory = Util.getDiskCacheDir(this, "tutorial");
         if (!tutorialDirectory.exists())
         {

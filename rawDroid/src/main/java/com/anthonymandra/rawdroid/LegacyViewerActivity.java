@@ -128,19 +128,7 @@ public class LegacyViewerActivity extends ViewerActivity
 
 	public void loadExif()
 	{
-		// If the meta is processed populate it
-		Cursor c = getMetaCursor();
-		c.moveToFirst();
-		if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
-		{
-			populateMeta(c);
-		}
-		else
-		{
-			// Otherwise, queue a high priority parse
-			MetaWakefulReceiver.startPriorityMetaService(this, mCurrentUri);
-		}
-		c.close();
+		updateMetaData();
 	}
 
     @Override

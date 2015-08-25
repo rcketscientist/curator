@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="KEY_SD_CARD_ROOT">KEY_SD_CARD_ROOT</string>
+	<string name="KEY_EXCLUDED_FOLDERS">KEY_EXCLUDED_FOLDERS</string>
+</resources>

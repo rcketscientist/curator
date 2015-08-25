@@ -17,6 +17,7 @@
 package com.anthonymandra.framework;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -53,6 +54,7 @@ public class RecycleBin
 	private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 20; // 20MB
 	private static final int DISK_CACHE_INDEX = 0;
 
+	private Context mContext;
 	private DiskLruCache mDiskLruCache;
 	private final Object mDiskCacheLock = new Object();
 	private boolean mDiskCacheStarting = true;
@@ -70,19 +72,18 @@ public class RecycleBin
 	 */
 	public RecycleBin(Context context, String uniqueName, int maxSize)
 	{
+		mContext = context;
 		mDiskCacheSize = maxSize;
 		mDiskCacheDir = Util.getDiskCacheDir(context, uniqueName);
 		initDiskCache();
 	}
 
 	/**
-	 * {@link RecycleBin#addFile(RawObject)}
-	 * 
-	 * @param recycledItem
+	 * {@link RecycleBin#addFile(Uri)}
 	 */
-	private void addFileInternal(RawObject recycledItem)
+	private void addFileInternal(Uri toRecycle)
 	{
-		if (recycledItem == null)
+		if (toRecycle == null)
 		{
 			return;
 		}
@@ -93,7 +94,7 @@ public class RecycleBin
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 			{
-				final String key = fileToKey(recycledItem.getFilePath());
+				final String key = fileToKey(toRecycle.getPath());//recycledItem.getFilePath());
 				BufferedOutputStream out = null;
 				BufferedInputStream bis = null;
 				try
@@ -106,7 +107,7 @@ public class RecycleBin
 					final DiskLruCache.Editor editor = bin.edit(key);
 					if (editor != null)
 					{
-                        bis = new BufferedInputStream(new FileInputStream(recycledItem.getFilePath()));
+                        bis = new BufferedInputStream(new FileInputStream(toRecycle.getPath()));
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
 
                         byte[] buffer = new byte[1024];
@@ -117,7 +118,9 @@ public class RecycleBin
                             out.write(buffer, 0, length);
                         }
 						editor.commit();
-						recycledItem.delete();
+						// TODO: Ideally this delete is an overridable method that calls file.delete by default
+						// A subclass ImageRecycleBin could call the following line in an overridden delete().
+						ImageUtils.delete(mContext, new File(toRecycle.getPath()));
 					}
 				}
 				catch (final IOException e)
@@ -478,10 +481,10 @@ public class RecycleBin
 		}
 	}
 
-	public class AddFileTask extends AsyncTask<RawObject, Void, Void>
+	public class AddFileTask extends AsyncTask<Uri, Void, Void>
 	{
 		@Override
-		protected Void doInBackground(RawObject... params)
+		protected Void doInBackground(Uri... params)
 		{
 			addFileInternal(params[0]);
 			return null;
@@ -509,7 +512,7 @@ public class RecycleBin
 	 * @param recycledItem
 	 *            File to recycle and delete
 	 */
-	public void addFile(RawObject recycledItem)
+	public void addFile(Uri recycledItem)
 	{
 		new AddFileTask().execute(recycledItem);
 	}

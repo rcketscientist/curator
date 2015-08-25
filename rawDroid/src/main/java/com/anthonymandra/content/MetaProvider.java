@@ -22,7 +22,7 @@ public class MetaProvider extends ContentProvider
 {
 	private static final String TAG = MetaProvider.class.getSimpleName();
 	public static final String DATABASE_NAME = "rawdroid.db";
-	static int DATABASE_VERSION = 13;
+	static int DATABASE_VERSION = 14;
 
 	public static final String META_TABLE_NAME = "meta";
 
@@ -91,7 +91,8 @@ public class MetaProvider extends ContentProvider
 					Meta.Data.EXPOSURE_MODE	    + " TEXT," +
 					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT," +
 					Meta.Data.TYPE				+ " INTEGER," +
-					Meta.Data.PROCESSED			+ " INTEGER" +");";
+					Meta.Data.PROCESSED			+ " INTEGER," +
+					Meta.Data.PARENT            + " TEXT);";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 

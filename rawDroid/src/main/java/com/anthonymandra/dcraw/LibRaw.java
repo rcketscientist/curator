@@ -10,13 +10,18 @@ import com.anthonymandra.rawdroid.FullSettingsActivity;
 import java.io.File;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class LibRaw
 {
 	private static final String TAG = "LibRaw";
-	private static final int numThreads = 8;
 
-	public static final Executor EXECUTOR = Executors./*newCachedThreadPool();*/newFixedThreadPool(numThreads);
+	public static final Executor EXECUTOR = new ThreadPoolExecutor(
+			0, Runtime.getRuntime().availableProcessors(),
+			60L, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<Runnable>());
 
 	static
 	{
@@ -60,11 +65,11 @@ public class LibRaw
 
 	// Write thumb
 	public static native boolean writeThumbBuffer
-        (byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, String destination);
+        (byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination);
 	public static native boolean writeThumbFile
-        (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, String destination);
+        (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination);
 	public static native boolean writeThumbFileWatermark
-        (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, String destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
+        (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
 
 	// Get raw bitmap
     private static native byte[] getImageFile
@@ -80,8 +85,9 @@ public class LibRaw
 	private static native BitmapRegionDecoder getRawFromBuffer(byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
 	// Write raw tiff
-	public static native boolean writeRawFromBuffer(byte[] buffer, String destination);
-	public static native boolean writeRawFromFile(String source, String destination);
+	//TODO: Disabled until I figure out how to use DocumentFile in these
+//	public static native boolean writeRawFromBuffer(byte[] buffer, String destination);
+//	public static native boolean writeRawFromFile(String source, String destination);
 
 	public static boolean canDecode(byte[] buffer)
 	{

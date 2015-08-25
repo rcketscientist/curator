@@ -117,7 +117,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
             }
         };
 
-        mModel = new PhotoDataAdapter(this, mPhotoView, mMediaItems, mImageIndex, getIntent().getData());
+        mModel = new PhotoDataAdapter(this, mPhotoView, mMediaItems, mImageIndex);
         mModel.setDataListener(this);
         mPhotoView.setModel(mModel);
     }

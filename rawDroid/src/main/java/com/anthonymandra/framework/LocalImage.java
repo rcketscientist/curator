@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
@@ -69,7 +71,8 @@ public class LocalImage extends MetaMedia {
     /* Error prone */
     @Override
     public boolean moveImage(File location) {
-        return mImage.renameTo(location);
+	    return FileUtil.moveFile(mContext, mImage, location);
+//        return mImage.renameTo(location);
     }
 
     private byte[] getImageBytes()
@@ -102,10 +105,13 @@ public class LocalImage extends MetaMedia {
 	@Override
 	public boolean delete() {
 		if (hasXmpFile())
-			getXmpFile().delete();
+			FileUtil.deleteFile(mContext, getXmpFile());
+//			getXmpFile().delete();
         if (hasJpgFile())
-            getJpgFile().delete();
-		return mImage.delete();
+	        FileUtil.deleteFile(mContext, getJpgFile());
+//            getJpgFile().delete();
+		return FileUtil.deleteFile(mContext, mImage);
+//		return mImage.delete();
 	}
 
 	@Override
@@ -192,6 +198,8 @@ public class LocalImage extends MetaMedia {
 		String[] exif = new String[12];
 
 		byte[] imageData = LibRaw.getThumb(mImage, exif);
+		// We actually want this to happen synchronously to avoid flickering due to double updates (view, db) (this doesn't stop flickering..)
+//		ImageUtils.setExifValues(getUri(), mContext, exif);
 
 //		try {
 //			setThumbHeight(Integer.parseInt(exif[8]));
@@ -263,7 +271,8 @@ public class LocalImage extends MetaMedia {
 
         String rename = baseName + ext;
         File renameFile = new File(mImage.getParent(), rename);
-        return original.renameTo(renameFile);
+	    return FileUtil.moveFile(mContext, original, renameFile);
+//        return original.renameTo(renameFile);
     }
 
 	public boolean hasXmp() {
@@ -328,14 +337,16 @@ public class LocalImage extends MetaMedia {
 	@Override
 	public boolean copy(File destination) {
 		if (mXmp != null) {
-			Util.copy(mImage, new File(destination, mXmp.getName()));
+			FileUtil.copyFile(mContext, mXmp, new File(destination, mXmp.getName()));
+//			Util.copy(mImage, new File(destination, mXmp.getName()));
 		}
 
 		if (mImage == null) {
 			return false;
 		}
 
-		return Util.copy(mImage, new File(destination, mImage.getName()));
+		return FileUtil.copyFile(mContext, mImage, new File(destination, mImage.getName()));
+//		return Util.copy(mImage, new File(destination, mImage.getName()));
 	}
 
 	@Override
@@ -439,13 +450,41 @@ public class LocalImage extends MetaMedia {
 
 	@Override
 	public boolean writeThumb(File destination) {
-		return LibRaw.writeThumbFile(mImage.getPath(), 100, Bitmap.Config.ARGB_8888, CompressFormat.JPEG, destination.getPath());
+		ParcelFileDescriptor pfd = null;
+		try
+		{
+			DocumentFile dest = FileUtil.getDocumentFile(mContext, destination, false, true);
+			pfd = mContext.getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			return LibRaw.writeThumbFile(mImage.getPath(), 100, Bitmap.Config.ARGB_8888, CompressFormat.JPEG, pfd.getFd());
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+		finally
+		{
+			Utils.closeSilently(pfd);
+		}
 	}
 
 	@Override
 	public boolean writeThumbWatermark(File destination, byte[] waterMap,
 			int waterWidth, int waterHeight, Margins waterMargins) {
-		return LibRaw.writeThumbFileWatermark(mImage.getPath(), 100, Bitmap.Config.ARGB_8888, CompressFormat.JPEG, destination.getPath(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+		ParcelFileDescriptor pfd = null;
+		try
+		{
+			DocumentFile dest = FileUtil.getDocumentFile(mContext, destination, false, true);
+			pfd = mContext.getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			return LibRaw.writeThumbFileWatermark(mImage.getPath(), 100, Bitmap.Config.ARGB_8888, CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+		finally
+		{
+			Utils.closeSilently(pfd);
+		}
 	}
 
 }
