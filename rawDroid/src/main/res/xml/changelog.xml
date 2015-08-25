@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.9.5.0"
+             versioncode="39500"
+             summary="Beta: Document API and search improvements"
+             date="29 JUN 2015">
+        <change>Enhancement: Better search algorithm</change>
+        <change>Feature: Meta processing background service</change>
+        <change>Feature: Exclude folders from search</change>
+        <change>Feature: SD card write permission on 5.0</change>
+    </release>
     <release version="3.9.1.8"
              versioncode="39108"
              summary="Beta: Filter/Search framework"
