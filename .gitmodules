@@ -22,3 +22,6 @@
 [submodule "dynamicGrid"]
 	path = dynamicGrid
 	url = https://github.com/askerov/DynamicGrid.git
+[submodule "twoway-view"]
+	path = twoway-view
+	url = https://github.com/rcketscientist/twoway-view.git

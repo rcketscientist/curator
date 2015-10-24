@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MetaService extends ThreadedPriorityIntentService
 {
+    //TODO: May need to handle Android 6.0 Doze issues.
     /**
      * Broadcast ID when all parsing is complete
      */

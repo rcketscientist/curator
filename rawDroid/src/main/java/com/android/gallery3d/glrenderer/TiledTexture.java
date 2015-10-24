@@ -65,7 +65,7 @@ public class TiledTexture implements Texture {
 
     public static class Uploader implements OnGLIdleListener {
         private final ArrayDeque<TiledTexture> mTextures =
-                new ArrayDeque<>(INIT_CAPACITY);
+                new ArrayDeque<TiledTexture>(INIT_CAPACITY);
 
         private final GLRoot mGlRoot;
         private boolean mIsQueued = false;
@@ -129,18 +129,25 @@ public class TiledTexture implements Texture {
 
         @Override
         protected Bitmap onGetBitmap() {
-            int x = BORDER_SIZE - offsetX;
-            int y = BORDER_SIZE - offsetY;
-            int r = bitmap.getWidth() + x;
-            int b = bitmap.getHeight() + y;
-            sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
+            // make a local copy of the reference to the bitmap,
+            // since it might be null'd in a different thread. b/8694871
+            Bitmap localBitmapRef = bitmap;
             bitmap = null;
 
-            // draw borders if need
-            if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
-            if (y > 0) sCanvas.drawLine(0, y - 1, TILE_SIZE, y - 1, sPaint);
-            if (r < CONTENT_SIZE) sCanvas.drawLine(r, 0, r, TILE_SIZE, sPaint);
-            if (b < CONTENT_SIZE) sCanvas.drawLine(0, b, TILE_SIZE, b, sPaint);
+            if (localBitmapRef != null) {
+                int x = BORDER_SIZE - offsetX;
+                int y = BORDER_SIZE - offsetY;
+                int r = localBitmapRef.getWidth() + x;
+                int b = localBitmapRef.getHeight() + y;
+                sCanvas.drawBitmap(localBitmapRef, x, y, sBitmapPaint);
+                localBitmapRef = null;
+
+                // draw borders if need
+                if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
+                if (y > 0) sCanvas.drawLine(0, y - 1, TILE_SIZE, y - 1, sPaint);
+                if (r < CONTENT_SIZE) sCanvas.drawLine(r, 0, r, TILE_SIZE, sPaint);
+                if (b < CONTENT_SIZE) sCanvas.drawLine(0, b, TILE_SIZE, b, sPaint);
+            }
 
             return sUploadBitmap;
         }
@@ -186,7 +193,7 @@ public class TiledTexture implements Texture {
                 // time. When scrolling, we need to draw several tiles on the screen
                 // at the same time. It may cause a UI jank even these textures has
                 // been uploaded.
-                if (!hasBeenLoad) next.draw(canvas, 0, 0);  //TODO: AJM: This line generates the upper-left thumb glitch
+                if (!hasBeenLoad) next.draw(canvas, 0, 0);
             }
         }
         return mUploadIndex == mTiles.length;
@@ -195,7 +202,7 @@ public class TiledTexture implements Texture {
     public TiledTexture(Bitmap bitmap) {
         mWidth = bitmap.getWidth();
         mHeight = bitmap.getHeight();
-        ArrayList<Tile> list = new ArrayList<>();
+        ArrayList<Tile> list = new ArrayList<Tile>();
 
         for (int x = 0, w = mWidth; x < w; x += CONTENT_SIZE) {
             for (int y = 0, h = mHeight; y < h; y += CONTENT_SIZE) {

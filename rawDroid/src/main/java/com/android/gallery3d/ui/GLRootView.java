@@ -96,10 +96,10 @@ public class GLRootView extends GLSurfaceView
     private volatile boolean mRenderRequested = false;
 
     private final ArrayList<CanvasAnimation> mAnimations =
-            new ArrayList<>();
+            new ArrayList<CanvasAnimation>();
 
     private final ArrayDeque<OnGLIdleListener> mIdleListeners =
-            new ArrayDeque<>();
+            new ArrayDeque<OnGLIdleListener>();
 
     private final IdleRunner mIdleRunner = new IdleRunner();
 
@@ -411,6 +411,9 @@ public class GLRootView extends GLSurfaceView
         rotateCanvas(-mCompensation);
         if (mContentView != null) {
            mContentView.render(mCanvas);
+        } else {
+            // Make sure we always draw something to prevent displaying garbage
+            mCanvas.clearBuffer();
         }
         mCanvas.restore();
 

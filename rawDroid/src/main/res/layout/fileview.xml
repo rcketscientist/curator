@@ -15,9 +15,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:src="@mipmap/ic_launcher"
-        />
+        android:layout_gravity="center"/>
 
     <RatingBar
         android:id="@+id/galleryRatingBar"

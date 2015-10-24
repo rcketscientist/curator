@@ -123,19 +123,10 @@ public class ImageUtils
     /**
      * --- File Association Helpers ----------------------------------------------------------------
      */
-
-    public static boolean delete(Context context, File f) {
-        if (hasXmpFile(f))
-            FileUtil.deleteFile(context, getXmpFile(f));
-        if (hasJpgFile(f))
-            FileUtil.deleteFile(context, getJpgFile(f));
-        return FileUtil.deleteFile(context, f);
-    }
-
-    private static boolean hasXmpFile(File f) {
+    public static boolean hasXmpFile(File f) {
         return getXmpFile(f).exists();
     }
-    private static boolean hasJpgFile(File f) {
+    public static boolean hasJpgFile(File f) {
         return getJpgFile(f).exists();
     }
 
@@ -144,7 +135,7 @@ public class ImageUtils
         return getAssociatedFile(f, "xmp");
     }
 
-    private static File getJpgFile(File f)
+    public static File getJpgFile(File f)
     {
         return getAssociatedFile(f, "jpg");
     }

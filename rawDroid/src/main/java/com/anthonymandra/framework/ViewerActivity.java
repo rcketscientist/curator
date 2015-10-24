@@ -3,11 +3,8 @@ package com.anthonymandra.framework;
 import android.annotation.TargetApi;
 import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -19,7 +16,6 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -320,15 +316,15 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @Override
-    protected void addImage(Uri item)
+    protected void onImageAdded(Uri item)
     {
-        mMediaItems.remove(item);
+        mMediaItems.add(item);
     }
 
     @Override
-    protected void removeImage(Uri item)
+    protected void onImageRemoved(Uri item)
     {
-        mMediaItems.add(item);
+        mMediaItems.remove(item);
     }
 
     protected void setWatermark(boolean demo)
@@ -996,7 +992,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
 		else
         {
-            addImage(Uri.fromFile(dest));
+            onImageAdded(Uri.fromFile(dest));
             //Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
         }
     }

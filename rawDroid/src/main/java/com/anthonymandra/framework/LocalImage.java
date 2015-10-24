@@ -335,21 +335,6 @@ public class LocalImage extends MetaMedia {
 	}
 
 	@Override
-	public boolean copy(File destination) {
-		if (mXmp != null) {
-			FileUtil.copyFile(mContext, mXmp, new File(destination, mXmp.getName()));
-//			Util.copy(mImage, new File(destination, mXmp.getName()));
-		}
-
-		if (mImage == null) {
-			return false;
-		}
-
-		return FileUtil.copyFile(mContext, mImage, new File(destination, mImage.getName()));
-//		return Util.copy(mImage, new File(destination, mImage.getName()));
-	}
-
-	@Override
 	public Uri getSwapUri() {
 		return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
 				+ Util.swapExtention(mImage.getName(), ".jpg") + "#"

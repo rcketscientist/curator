@@ -20,6 +20,8 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import javax.microedition.khronos.opengles.GL11;
+
 //
 // GLCanvas gives a convenient interface to draw using OpenGL.
 //
@@ -94,27 +96,27 @@ public interface GLCanvas {
             BasicTexture texture, int x, int y, int width, int height);
 
     public abstract void drawMesh(BasicTexture tex, int x, int y, int xyBuffer,
-                                  int uvBuffer, int indexBuffer, int indexCount);
+            int uvBuffer, int indexBuffer, int indexCount);
 
     // Draws the source rectangle part of the texture to the target rectangle.
     public abstract void drawTexture(BasicTexture texture, RectF source, RectF target);
 
     // Draw a texture with a specified texture transform.
     public abstract void drawTexture(BasicTexture texture, float[] mTextureTransform,
-                                     int x, int y, int w, int h);
+                int x, int y, int w, int h);
 
     // Draw two textures to the specified rectangle. The actual texture used is
     // from * (1 - ratio) + to * ratio
     // The two textures must have the same size.
     public abstract void drawMixed(BasicTexture from, int toColor,
-                                   float ratio, int x, int y, int w, int h);
+            float ratio, int x, int y, int w, int h);
 
     // Draw a region of a texture and a specified color to the specified
     // rectangle. The actual color used is from * (1 - ratio) + to * ratio.
     // The region of the texture is defined by parameter "src". The target
     // rectangle is specified by parameter "target".
     public abstract void drawMixed(BasicTexture from, int toColor,
-                                   float ratio, RectF src, RectF target);
+            float ratio, RectF src, RectF target);
 
     // Unloads the specified texture from the canvas. The resource allocated
     // to draw the texture will be released. The specified texture will return
@@ -175,8 +177,8 @@ public interface GLCanvas {
      * @param type The texture type (e.g. GL_UNSIGNED_BYTE)
      */
     public abstract void texSubImage2D(BasicTexture texture, int xOffset, int yOffset,
-                                       Bitmap bitmap,
-                                       int format, int type);
+            Bitmap bitmap,
+            int format, int type);
 
     /**
      * Generates buffers and uploads the buffer data.

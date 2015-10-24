@@ -21,8 +21,8 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.provider.DocumentFile;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -43,34 +43,41 @@ import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-public abstract class CoreActivity extends AppCompatActivity
+public abstract class CoreActivity extends DocumentActivity
 {
+	private enum WriteActions
+	{
+		COPY,
+		DELETE,
+		RECYCLE,
+		RESTORE,
+		WRITE_XMP
+	}
+
 	@SuppressWarnings("unused")
 	private static final String TAG = CoreActivity.class.getSimpleName();
 
 	public static final String SWAP_BIN_DIR = "swap";
-    public static final String RECYCLE_BIN_DIR = "recycle";
+	public static final String RECYCLE_BIN_DIR = "recycle";
 	public static final int FILE_NOT_FOUND = -1;
 
 	private static final int REQUEST_CODE_SHARE = 00;
-	private static final int REQUEST_CODE_WRITE_PERMISSION = 01;
+	private static final int REQUEST_PREFIX = 2000;
 
 	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
 
-	protected RecycleBin recycleBin;
+	protected DocumentRecycleBin recycleBin;
 	protected File mSwapDir;
 
 	protected ProgressDialog mProgressDialog;
@@ -82,9 +89,9 @@ public abstract class CoreActivity extends AppCompatActivity
 	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
 	private MetaAlphaCompare metaCompare = new MetaAlphaCompare();
 
-    protected ShareActionProvider mShareProvider;
-    protected Intent mShareIntent;
-    protected Handler licenseHandler;
+	protected ShareActionProvider mShareProvider;
+	protected Intent mShareIntent;
+	protected Handler licenseHandler;
 
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
@@ -110,7 +117,7 @@ public abstract class CoreActivity extends AppCompatActivity
 	protected void onResume()
 	{
 		super.onResume();
-        LicenseManager.getLicense(getBaseContext(), licenseHandler);
+		LicenseManager.getLicense(getBaseContext(), licenseHandler);
 		createSwapDir();
 		createRecycleBin();
 	}
@@ -154,6 +161,24 @@ public abstract class CoreActivity extends AppCompatActivity
 		}
 	}
 
+	@Override
+	protected void onResumeWriteAction(Enum callingMethod, Object[] callingParameters)
+	{
+		switch ((WriteActions)callingMethod)
+		{
+			case DELETE:
+				new DeleteTask().execute((List<Uri>) callingParameters[0]);
+				break;
+			case RECYCLE:
+				new RecycleTask().execute((List<Uri>) callingParameters[0]);
+				break;
+			case WRITE_XMP:
+				new WriteXmpTask().execute(callingParameters);
+				break;
+		}
+		clearWriteResume();
+	}
+
 	protected void runCleanDatabase()
 	{
 		new Thread(new Runnable()
@@ -182,76 +207,26 @@ public abstract class CoreActivity extends AppCompatActivity
 		writeXmp(placeholder, values);
 	}
 
-	protected void writeXmp(List<Uri> toWrite, XmpEditFragment.XmpEditValues values)
+	protected void writeXmp(List<Uri> images, XmpEditFragment.XmpEditValues values)
 	{
-		final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
-		for (Uri write: toWrite)
+		new WriteXmpTask().execute(images, values);
+	}
+
+	/**
+	 * Updates the metadata database.  This should be run in the background.
+	 * @param databaseUpdates database updates
+	 */
+	protected void updateMetaDatabase(ArrayList<ContentProviderOperation> databaseUpdates)
+	{
+		try
 		{
-			final Metadata meta = new Metadata();
-			meta.addDirectory(new XmpDirectory());
-			ImageUtils.updateSubject(meta, values.Subject);
-			ImageUtils.updateRating(meta, values.Rating);
-			ImageUtils.updateLabel(meta, values.Label);
-
-			ContentValues cv = new ContentValues();
-			cv.put(Meta.Data.LABEL, values.Label);
-			cv.put(Meta.Data.RATING, values.Rating);
-			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
-
-			databaseUpdates.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
-					.withValues(ImageUtils.getContentValues(CoreActivity.this, write))
-					.build());
-
-			final File xmp = ImageUtils.getXmpFile(new File(write.getPath()));
-			final DocumentFile xmpDoc = FileUtil.getDocumentFile(this, xmp, false, true);
-			final OutputStream os;
-			try
-			{
-				os = getContentResolver().openOutputStream(xmpDoc.getUri());
-//				os = new BufferedOutputStream(
-//                        new FileOutputStream(
-//                                ImageUtils.getXmpFile(xmp)
-//                        ));
-			} catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-				continue; 	// TODO: ignore for now
-			}
-
-			new Thread(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					try
-					{
-						if (meta.containsDirectoryOfType(XmpDirectory.class))
-							XmpWriter.write(os, meta);
-					}
-					finally
-					{
-						Utils.closeSilently(os);
-					}
-				}
-			}).start();
+			// TODO: If I implement bulkInsert it's faster
+			getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
+		} catch (RemoteException | OperationApplicationException e)
+		{
+			//TODO: Notify user
+			e.printStackTrace();
 		}
-
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					// TODO: If I implement bulkInsert it's faster
-					getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
-				} catch (RemoteException | OperationApplicationException e)
-				{
-					//TODO: Notify user
-					e.printStackTrace();
-				}
-			}
-		}).start();
 	}
 
 	/**
@@ -277,13 +252,13 @@ public abstract class CoreActivity extends AppCompatActivity
 			public void run()
 			{
 				final File[] swapFiles = mSwapDir.listFiles();
-                if (swapFiles != null)
-                {
-                    for (File toDelete : swapFiles)
-                    {
-                        toDelete.delete();
-                    }
-                }
+				if (swapFiles != null)
+				{
+					for (File toDelete : swapFiles)
+					{
+						toDelete.delete();
+					}
+				}
 			}
 		}).start();
 	}
@@ -293,19 +268,18 @@ public abstract class CoreActivity extends AppCompatActivity
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Boolean useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true);
-        int binSizeMb;
-        try
-        {
-		    binSizeMb = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(FullSettingsActivity.KEY_RecycleBinSize,
-				Integer.toString(FullSettingsActivity.defRecycleBin)));
-        }
-        catch (NumberFormatException e)
-        {
-            binSizeMb = 0;
-        }
+		int binSizeMb;
+		try
+		{
+			binSizeMb = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(FullSettingsActivity.KEY_RecycleBinSize,
+					Integer.toString(FullSettingsActivity.defRecycleBin)));
+		} catch (NumberFormatException e)
+		{
+			binSizeMb = 0;
+		}
 		if (useRecycle)
 		{
-			recycleBin = new RecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024);
+			recycleBin = new DocumentRecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024);
 		}
 	}
 
@@ -319,56 +293,48 @@ public abstract class CoreActivity extends AppCompatActivity
 		}
 		final List<String> keys = recycleBin.getKeys();
 		final List<String> filesToRestore = new ArrayList<>(keys.size());
-		new AlertDialog.Builder(this).setTitle(R.string.recycleBin).setNegativeButton(R.string.emptyRecycleBin, new Dialog.OnClickListener()
-		{
-
-			public void onClick(DialogInterface dialog, int which)
+		new AlertDialog.Builder(this).setTitle(R.string.recycleBin)
+			.setNegativeButton(R.string.emptyRecycleBin, new Dialog.OnClickListener()
 			{
-				recycleBin.clearCache();
-			}
-
-		}).setNeutralButton(R.string.neutral, new Dialog.OnClickListener()
-		{
-
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				// cancel, do nothing
-			}
-		}).setPositiveButton(R.string.restoreFile, new Dialog.OnClickListener()
-		{
-			@Override
-			public void onClick(DialogInterface dialog, int which)
-			{
-				List<MediaItem> success = new ArrayList<>();
-				for (String filename : filesToRestore)
+				public void onClick(DialogInterface dialog, int which)
 				{
-					File toRestore = new File(filename);
-					BufferedInputStream restore = new BufferedInputStream(recycleBin.getFile(filename));
-					Util.write(toRestore, restore);
-					addImage(Uri.fromFile(toRestore));
+					recycleBin.clearCache();
 				}
-				// Ideally just update the sub lists on each restore.
-				updateAfterRestore();
-			}
-		}).setMultiChoiceItems(keys.toArray(new String[keys.size()]), null, new DialogInterface.OnMultiChoiceClickListener()
-		{
-			@Override
-			public void onClick(DialogInterface dialog, int which, boolean isChecked)
+			})
+			.setNeutralButton(R.string.neutral, new Dialog.OnClickListener()
 			{
-				if (isChecked)
-					filesToRestore.add(keys.get(which));
-				else
-					filesToRestore.remove(keys.get(which));
-			}
-		}).show();
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// cancel, do nothing
+				}
+			})
+			.setPositiveButton(R.string.restoreFile, new Dialog.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					restoreFiles(filesToRestore);
+				}
+			})
+			.setMultiChoiceItems(keys.toArray(new String[keys.size()]), null, new DialogInterface.OnMultiChoiceClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which, boolean isChecked)
+				{
+					if (isChecked)
+						filesToRestore.add(keys.get(which));
+					else
+						filesToRestore.remove(keys.get(which));
+				}
+			})
+			.show();
 	}
 
 	/**
 	 * Gets the swap directory and clears existing files in the process
-	 * 
-	 * @param filename
-	 *            name of the file to add to swap
+	 *
+	 * @param filename name of the file to add to swap
 	 * @return file link to new swap file
 	 */
 	protected File getSwapFile(String filename)
@@ -387,7 +353,7 @@ public abstract class CoreActivity extends AppCompatActivity
 			editor.apply();
 		}
 
-		if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
+		if (settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
 		{
 			viewer.setClass(this, LegacyViewerActivity.class);
 		}
@@ -404,7 +370,7 @@ public abstract class CoreActivity extends AppCompatActivity
 	private List<MediaItem> getImageListFromUriList(List<Uri> uris)
 	{
 		List<MediaItem> images = new ArrayList<>();
-		for (Uri u: uris)
+		for (Uri u : uris)
 			images.add(getImageFromUri(u));
 		return images;
 	}
@@ -415,14 +381,13 @@ public abstract class CoreActivity extends AppCompatActivity
 	private MediaItem getImageFromUri(Uri uri)
 	{
 		File f = new File(uri.getPath());
-		return  new LocalImage(this, f);
+		return new LocalImage(this, f);
 	}
 
 	/**
 	 * Deletes a file and determines if a recycle is necessary.
-	 * 
-	 * @param toDelete
-	 *            file to delete.
+	 *
+	 * @param toDelete file to delete.
 	 * @return true currently (possibly return success later on)
 	 */
 	protected void deleteImage(final Uri toDelete)
@@ -464,7 +429,7 @@ public abstract class CoreActivity extends AppCompatActivity
 //			message = getString(R.string.warningRecycleMtp);
 //		}
 		/* else */
-        if (!useRecycle)
+		if (!useRecycle)
 		{
 			justDelete = true;
 			message = getString(R.string.warningDeleteDirect);
@@ -485,21 +450,21 @@ public abstract class CoreActivity extends AppCompatActivity
 			if (deleteConfirm)
 			{
 				new AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
-						.setNeutralButton(R.string.neutral, new Dialog.OnClickListener()
+					.setNeutralButton(R.string.neutral, new Dialog.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
 						{
-							@Override
-							public void onClick(DialogInterface dialog, int which)
-							{
-								// cancel, do nothing
-							}
-						}).setPositiveButton(R.string.delete, new Dialog.OnClickListener()
+							// cancel, do nothing
+						}
+					}).setPositiveButton(R.string.delete, new Dialog.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
 						{
-							@Override
-							public void onClick(DialogInterface dialog, int which)
-							{
-								new DeleteTask().execute(itemsToDelete);
-							}
-						}).show();
+							new DeleteTask().execute(itemsToDelete);
+						}
+					}).show();
 			}
 			else
 			{
@@ -512,35 +477,38 @@ public abstract class CoreActivity extends AppCompatActivity
 		}
 	}
 
-	protected void requestEmailIntent() {requestEmailIntent(null);}
+	protected void requestEmailIntent()
+	{
+		requestEmailIntent(null);
+	}
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	protected void requestEmailIntent(String subject)
-    {
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                "mailto","rawdroid@anthonymandra.com", null));
+	{
+		Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+				"mailto", "rawdroid@anthonymandra.com", null));
 
 		if (subject != null)
 		{
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
 		}
 
-        StringBuilder body = new StringBuilder();
-        body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
-        body.append("Version:   ").append(BuildConfig.VERSION_NAME).append("\n");
-        body.append("Make:      ").append(Build.MANUFACTURER).append("\n");
-        body.append("Model:     ").append(Build.MODEL).append("\n");
-        if (Util.hasLollipop())
-            body.append("ABI:       ").append(Build.SUPPORTED_ABIS).append("\n");
-        else
-            body.append("ABI:       ").append(Build.CPU_ABI).append("\n");
-        body.append("Android:   ").append(Build.DISPLAY).append("\n");
-        body.append("SDK:       ").append(Build.VERSION.SDK_INT).append("\n\n");
-        body.append("---Please don't remove this data---").append("\n\n");
+		StringBuilder body = new StringBuilder();
+		body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
+		body.append("Version:   ").append(BuildConfig.VERSION_NAME).append("\n");
+		body.append("Make:      ").append(Build.MANUFACTURER).append("\n");
+		body.append("Model:     ").append(Build.MODEL).append("\n");
+		if (Util.hasLollipop())
+			body.append("ABI:       ").append(Build.SUPPORTED_ABIS).append("\n");
+		else
+			body.append("ABI:       ").append(Build.CPU_ABI).append("\n");
+		body.append("Android:   ").append(Build.DISPLAY).append("\n");
+		body.append("SDK:       ").append(Build.VERSION.SDK_INT).append("\n\n");
+		body.append("---Please don't remove this data---").append("\n\n");
 
-        emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
-        startActivity(Intent.createChooser(emailIntent, "Send email..."));
-    }
+		emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
+		startActivity(Intent.createChooser(emailIntent, "Send email..."));
+	}
 
 	private void requestSettings()
 	{
@@ -548,182 +516,22 @@ public abstract class CoreActivity extends AppCompatActivity
 		startActivity(settings);
 	}
 
-	protected abstract void addImage(Uri item);
-	protected abstract void removeImage(Uri item);
+	/**
+	 * Fires after individual items are successfully added.  This will fire multiple times in a batch.
+	 * @param item added item
+	 */
+	protected abstract void onImageAdded(Uri item);
 
 	/**
-	 * Updates the UI after a delete.
+	 * Fires after individual items are successfully deleted.  This will fire multiple times in a batch.
+	 * @param item deleted item
 	 */
-	protected abstract void updateAfterDelete();
+	protected abstract void onImageRemoved(Uri item);
 
 	/**
-	 * Updates the UI after a restore.
+	 * Fires after all actions of a batch (or single) change to the image set are complete.
 	 */
-	protected abstract void updateAfterRestore();
-
-	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Void> implements OnCancelListener
-	{
-		@Override
-		protected void onPreExecute()
-		{
-			mProgressDialog.setTitle(R.string.recyclingFiles);
-			mProgressDialog.show();
-		}
-
-		@Override
-		protected Void doInBackground(final List<Uri>... params)
-		{
-			mProgressDialog.setMax(params[0].size());
-
-			for (Uri toRecycle : params[0])
-			{
-				recycleBin.addFile(toRecycle);
-				removeImage(toRecycle);
-			}
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			mProgressDialog.dismiss();
-			updateAfterDelete();
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values)
-		{
-			mProgressDialog.setProgress(values[0]);
-			// setSupportProgress(values[0]);
-		}
-
-		@Override
-		protected void onCancelled()
-		{
-			updateAfterDelete();
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			this.cancel(true);
-		}
-	}
-
-	protected class DeleteTask extends AsyncTask<List<Uri>, Integer, Boolean> implements OnCancelListener
-	{
-		@Override
-		protected void onPreExecute()
-		{
-			mProgressDialog = new ProgressDialog(CoreActivity.this);
-			mProgressDialog.setTitle(R.string.deletingFiles);
-			mProgressDialog.setOnCancelListener(this);
-			mProgressDialog.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(final List<Uri>... params)
-		{
-			mProgressDialog.setMax(params[0].size());
-			final List<Uri> removed = new ArrayList<>();
-
-			for (Uri toDelete : params[0])
-			{
-				if (ImageUtils.delete(CoreActivity.this, new File(toDelete.getPath())))
-				{
-					removeImage(toDelete);
-					removed.add(toDelete);
-				}
-			}
-			return removed.size() == params[0].size();
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			mProgressDialog.dismiss();
-			updateAfterDelete();
-		}
-
-		@Override
-		protected void onProgressUpdate(Integer... values)
-		{
-			mProgressDialog.setProgress(values[0]);
-			// setSupportProgress(values[0]);
-		}
-
-		@Override
-		protected void onCancelled()
-		{
-			updateAfterDelete();
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			this.cancel(true);
-		}
-	}
-
-	@TargetApi(Build.VERSION_CODES.KITKAT)
-	@Override
-	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
-	{
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode)
-		{
-			case REQUEST_CODE_WRITE_PERMISSION:
-				if (resultCode == RESULT_OK && data != null)
-				{
-					Uri treeUri = data.getData();
-					getContentResolver().takePersistableUriPermission(treeUri,
-							Intent.FLAG_GRANT_READ_URI_PERMISSION |
-									Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-					FileUtil.setTreeUri(this, treeUri);
-
-					// TODO: Start write test
-					File testFile = new File("/mnt/extSdCard/_WriteTest/_test.txt");
-					DocumentFile testDoc = FileUtil.getDocumentFile(this, testFile, false, true);
-
-					OutputStream outStream = null;
-					try
-					{
-						outStream = getContentResolver().openOutputStream(testDoc.getUri());
-						outStream.write("A long time ago...".getBytes());
-					} catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-					finally
-					{
-						Utils.closeSilently(outStream);
-					}
-					// TODO: End write test
-
-//					// Create a new file and write into it
-//					DocumentFile pickedDir = DocumentFile.fromTreeUri(this, treeUri);
-//					DocumentFile test = DocumentFile.fromFile(new File("/storage/extSdCard/_WriteTest/test.txt"));
-//					DocumentFile newFile = pickedDir.createFile("text/plain", "My Novel");
-//					OutputStream out = null;
-//					try
-//					{
-//						out = getContentResolver().openOutputStream(newFile.getUri());
-//						out.write("A long time ago...".getBytes());
-//						out.close();
-//					} catch (FileNotFoundException e)
-//					{
-//						e.printStackTrace();
-//					} catch (IOException e)
-//					{
-//						e.printStackTrace();
-//					}
-
-				}
-				break;
-		}
-	}
+	protected abstract void onImageSetChanged();
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	protected void checkWriteAccess()
@@ -740,18 +548,20 @@ public abstract class CoreActivity extends AppCompatActivity
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.writeAccessTitle);
 			builder.setMessage(R.string.requestWriteAccess);
-			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+			{
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
 					// Do nothing
 				}
 			});
-			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+			{
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					requestWritePermission();
+//					requestWritePermission();
 				}
 			});
 			builder.show();
@@ -762,7 +572,8 @@ public abstract class CoreActivity extends AppCompatActivity
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.writeAccessTitle);
 			builder.setMessage(R.string.kitkatWriteIssue);
-			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
+			{
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
@@ -777,30 +588,21 @@ public abstract class CoreActivity extends AppCompatActivity
 		editor.apply();
 	}
 
-	protected void requestWritePermission()
+	protected void setShareUri(Uri share)
 	{
-		if (Util.hasLollipop())
-        {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
-        }
+		mShareIntent.setAction(Intent.ACTION_SEND);
+		mShareIntent.putExtra(Intent.EXTRA_STREAM, share);
+		if (mShareProvider != null)
+			mShareProvider.setShareIntent(mShareIntent);
 	}
 
-    protected void setShareUri(Uri share)
-    {
-        mShareIntent.setAction(Intent.ACTION_SEND);
-        mShareIntent.putExtra(Intent.EXTRA_STREAM, share);
-        if (mShareProvider != null)
-            mShareProvider.setShareIntent(mShareIntent);
-    }
-
-    protected void setShareUri(ArrayList<Uri> shares)
-    {
-        mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-        mShareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, shares);
-        if (mShareProvider != null)
-            mShareProvider.setShareIntent(mShareIntent);
-    }
+	protected void setShareUri(ArrayList<Uri> shares)
+	{
+		mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
+		mShareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, shares);
+		if (mShareProvider != null)
+			mShareProvider.setShareIntent(mShareIntent);
+	}
 
 	class XmpFilter implements FileFilter
 	{
@@ -815,13 +617,19 @@ public abstract class CoreActivity extends AppCompatActivity
 	class JpegFilter implements FileFilter
 	{
 		@Override
-		public boolean accept(File file) { return Util.isJpeg(file); }
+		public boolean accept(File file)
+		{
+			return Util.isJpeg(file);
+		}
 	}
 
 	class RawFilter implements FileFilter
 	{
 		@Override
-		public boolean accept(File file) { return Util.isRaw(file); }
+		public boolean accept(File file)
+		{
+			return Util.isRaw(file);
+		}
 	}
 
 	class NativeFilter implements FileFilter
@@ -853,25 +661,399 @@ public abstract class CoreActivity extends AppCompatActivity
 		}
 	}
 
-    public static class LicenseHandler extends Handler{
-        private final WeakReference<Context> mContext;
-        public LicenseHandler(Context context)
-        {
-            mContext = new WeakReference<>(context);
-        }
+	public static class LicenseHandler extends Handler
+	{
+		private final WeakReference<Context> mContext;
 
-        @Override
-        public void handleMessage(Message msg) {
-            License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-            if (state.toString().startsWith("modified"))
-            {
-                for (int i=0; i < 3; i++)
-                    Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
-            }
-            else if (state == License.LicenseState.error)
-            {
-                Toast.makeText(mContext.get(), "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
+		public LicenseHandler(Context context)
+		{
+			mContext = new WeakReference<>(context);
+		}
+
+		@Override
+		public void handleMessage(Message msg)
+		{
+			License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+			if (state.toString().startsWith("modified"))
+			{
+				for (int i = 0; i < 3; i++)
+					Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+			}
+			else if (state == License.LicenseState.error)
+			{
+				Toast.makeText(mContext.get(), "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
+			}
+		}
+	}
+
+	/**
+	 * File operation tasks
+	 */
+
+	protected void
+
+	/**
+	 * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
+	 * @param fromImage source image
+	 * @param toImage target image
+	 * @return success
+	 * @throws WritePermissionException
+	 */
+	private boolean copy(File fromImage, File toImage) throws WritePermissionException
+	{
+		if (ImageUtils.hasXmpFile(fromImage))
+			copyFile(ImageUtils.getXmpFile(fromImage), ImageUtils.getXmpFile(toImage));
+		if (ImageUtils.hasJpgFile(fromImage))
+			copyFile(ImageUtils.getJpgFile(fromImage), ImageUtils.getJpgFile(toImage));
+		return copyFile(fromImage, toImage);
+	}
+
+
+	//TODO: Double check if we want custom AsyncTask here
+
+	protected class CopyTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			mProgressDialog = new ProgressDialog(CoreActivity.this);
+			mProgressDialog.setTitle(R.string.importingImages);
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			mProgressDialog.setCanceledOnTouchOutside(true);
+			mProgressDialog.setOnCancelListener(this);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Boolean doInBackground(Object... params)
+		{
+			boolean totalSuccess = true;
+			List<Uri> totalImages = (List<Uri>) params[0];
+			File destinationFolder = (File) params[1];
+
+			List<Uri> remainingImages = new ArrayList<>();
+			Collections.copy(remainingImages, totalImages);
+
+			mProgressDialog.setMax(totalImages.size());
+
+			for (Uri toCopy : totalImages)
+			{
+				File from = new File(toCopy.getPath());
+				String filename = from.getName();
+				File to = new File(destinationFolder, filename);
+
+				publishProgress(filename);
+
+				// Skip a file if it's the same location
+				if (to.exists()) continue;
+
+				try
+				{
+					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
+
+					totalSuccess &= copy(from, to);
+					remainingImages.remove(toCopy);
+					onImageAdded(toCopy);
+				} catch (WritePermissionException e)
+				{
+					e.printStackTrace();
+					// We'll be automatically requesting write permission so kill this process
+					return false;
+				}
+				publishProgress();
+			}
+			return totalSuccess;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			mProgressDialog.dismiss();
+
+			if (result)
+				clearWriteResume();
+
+			onImageSetChanged();
+		}
+
+		@Override
+		protected void onProgressUpdate(String... values)
+		{
+			if (values.length > 0)
+			{
+				mProgressDialog.setMessage(values[0]);
+			}
+			else
+			{
+				mProgressDialog.incrementProgressBy(1);
+			}
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
+
+	private boolean delete(File image) throws WritePermissionException
+	{
+		if (ImageUtils.hasXmpFile(image))
+			deleteFile(ImageUtils.getXmpFile(image));
+		if (ImageUtils.hasJpgFile(image))
+			deleteFile(ImageUtils.getJpgFile(image));
+		return deleteFile(image);
+	}
+
+	protected class DeleteTask extends AsyncTask<List<Uri>, Integer, Boolean>
+			implements OnCancelListener
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			mProgressDialog = new ProgressDialog(CoreActivity.this);
+			mProgressDialog.setTitle(R.string.deletingFiles);
+			mProgressDialog.setOnCancelListener(this);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Boolean doInBackground(final List<Uri>... params)
+		{
+			// Create a copy to keep track of completed deletions in case this needs to be restarted
+			// to request write permission
+			final List<Uri> totalDeletes = params[0];
+			List<Uri> remainingDeletes = new ArrayList<>();
+			Collections.copy(remainingDeletes, totalDeletes);
+
+			mProgressDialog.setMax(totalDeletes.size());
+			final List<Uri> removed = new ArrayList<>();
+
+			for (Uri toDelete : totalDeletes)
+			{
+				try
+				{
+					setWriteResume(WriteActions.DELETE, new Object[]{remainingDeletes});
+					if (delete(new File(toDelete.getPath())))
+					{
+						onImageRemoved(toDelete);
+						remainingDeletes.remove(toDelete);
+						removed.add(toDelete);
+					}
+				}
+				catch (WritePermissionException e)
+				{
+					e.printStackTrace();
+					// We'll be automatically requesting write permission so kill this process
+					return false;
+				}
+			}
+			return removed.size() == totalDeletes.size();
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result)
+				clearWriteResume();
+
+			mProgressDialog.dismiss();
+			onImageSetChanged();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values)
+		{
+			mProgressDialog.setProgress(values[0]);
+			// setSupportProgress(values[0]);
+		}
+
+		@Override
+		protected void onCancelled()
+		{
+			onImageSetChanged();
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
+
+	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Void> implements OnCancelListener
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			mProgressDialog.setTitle(R.string.recyclingFiles);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Void doInBackground(final List<Uri>... params)
+		{
+			// Create a copy to keep track of completed deletions in case this needs to be restarted
+			// to request write permission
+			final List<Uri> totalRecycles = params[0];
+			List<Uri> remainingRecycles = new ArrayList<>();
+			Collections.copy(remainingRecycles, totalRecycles);
+
+			mProgressDialog.setMax(remainingRecycles.size());
+
+			for (Uri toRecycle : totalRecycles)
+			{
+				setWriteResume(WriteActions.RECYCLE, new Object[]{remainingRecycles});
+				recycleBin.addFile(toRecycle);
+				remainingRecycles.remove(toRecycle);
+				onImageRemoved(toRecycle);
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result)
+		{
+			mProgressDialog.dismiss();
+			onImageSetChanged();
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values)
+		{
+			mProgressDialog.setProgress(values[0]);
+			// setSupportProgress(values[0]);
+		}
+
+		@Override
+		protected void onCancelled()
+		{
+			onImageSetChanged();
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
+
+	protected void restoreFiles(List<String> toRestore)
+	{
+		new RestoreTask().execute(toRestore);
+	}
+
+	protected class RestoreTask extends AsyncTask<List<String>, Integer, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(final List<String>... params)
+		{
+			// Create a copy to keep track of completed deletions in case this needs to be restarted
+			// to request write permission
+			final List<String> totalRestores = params[0];
+			List<String> remainingRestores = new ArrayList<>();
+			Collections.copy(remainingRestores, totalRestores);
+
+			//TODO: This must be it's own task
+			List<MediaItem> success = new ArrayList<>();
+			for (String filename : totalRestores)
+			{
+				File toRestore = new File(filename);
+				try
+				{
+					setWriteResume(WriteActions.RESTORE, new Object[]{remainingRestores});
+					moveFile(recycleBin.getFile(filename), toRestore);
+					onImageAdded(Uri.fromFile(toRestore));
+				}
+				catch (WritePermissionException e)
+				{
+					e.printStackTrace();
+					return false;
+				}
+			}
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result)
+				clearWriteResume();
+
+			onImageSetChanged();
+		}
+	}
+
+	protected class WriteXmpTask extends AsyncTask<Object, Integer, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(final Object... params)
+		{
+			final List<Uri> totalImages = (List<Uri>) params[0];
+			final XmpEditFragment.XmpEditValues values = (XmpEditFragment.XmpEditValues) params[1];
+			final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
+
+			List<Uri> remainingImages = new ArrayList<>();
+			Collections.copy(remainingImages, totalImages);
+
+			for (Uri image : totalImages)
+			{
+				final Metadata meta = new Metadata();
+				meta.addDirectory(new XmpDirectory());
+				ImageUtils.updateSubject(meta, values.Subject);
+				ImageUtils.updateRating(meta, values.Rating);
+				ImageUtils.updateLabel(meta, values.Label);
+
+				ContentValues cv = new ContentValues();
+				cv.put(Meta.Data.LABEL, values.Label);
+				cv.put(Meta.Data.RATING, values.Rating);
+				cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+
+				databaseUpdates.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
+						.build());
+
+				final File xmp = ImageUtils.getXmpFile(new File(image.getPath()));
+				final DocumentFile xmpDoc;
+				try
+				{
+					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
+					xmpDoc = getDocumentFile(xmp, false, true);
+					remainingImages.remove(image);
+				}
+				catch (WritePermissionException e)
+				{
+					// Write pending updates, method will resume with remainingImages
+					updateMetaDatabase(databaseUpdates);
+					return false;
+				}
+
+				OutputStream os = null;
+				try
+				{
+					os = getContentResolver().openOutputStream(xmpDoc.getUri());
+					if (meta.containsDirectoryOfType(XmpDirectory.class))
+						XmpWriter.write(os, meta);
+				} catch (FileNotFoundException e)
+				{
+					e.printStackTrace();
+				}
+				finally
+				{
+					Utils.closeSilently(os);
+				}
+			}
+
+			updateMetaDatabase(databaseUpdates);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result)
+				clearWriteResume();
+		}
+	}
 }

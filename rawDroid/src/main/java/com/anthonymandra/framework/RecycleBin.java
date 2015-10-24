@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This class holds our bitmap caches (memory and disk).
+ * This class holds our discarded images
  */
 public class RecycleBin
 {
@@ -63,7 +63,7 @@ public class RecycleBin
 	private List<ImageUpdateListener> listeners = new ArrayList<>();
 
 	/**
-	 * Creating a new ImageCache object using the default parameters.
+	 * Create new recycling bin with the default parameters.
 	 * 
 	 * @param context
 	 *            The context to use
@@ -79,9 +79,21 @@ public class RecycleBin
 	}
 
 	/**
-	 * {@link RecycleBin#addFile(Uri)}
+	 * Deletes the given file.  This should be overridden if necessary to handle file system changes.
+	 * @param toDelete file to delete
+	 * @return success
+	 * @throws IOException the base method does not throw, but the exception is available for subclasses
 	 */
-	private void addFileInternal(Uri toRecycle)
+	protected boolean deleteFile(File toDelete) throws IOException
+	{
+		return toDelete.delete();
+	}
+
+	/**
+	 * Adds a file to the recycling bin synchronously.  Recommended to be called asynchronously,
+	 * such as with {@link #addFileAsync(Uri), which will automatically run m AsyncTask}
+	 */
+	public void addFile(Uri toRecycle)
 	{
 		if (toRecycle == null)
 		{
@@ -94,7 +106,7 @@ public class RecycleBin
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 			{
-				final String key = fileToKey(toRecycle.getPath());//recycledItem.getFilePath());
+				final String key = fileToKey(toRecycle.getPath());
 				BufferedOutputStream out = null;
 				BufferedInputStream bis = null;
 				try
@@ -118,9 +130,7 @@ public class RecycleBin
                             out.write(buffer, 0, length);
                         }
 						editor.commit();
-						// TODO: Ideally this delete is an overridable method that calls file.delete by default
-						// A subclass ImageRecycleBin could call the following line in an overridden delete().
-						ImageUtils.delete(mContext, new File(toRecycle.getPath()));
+						deleteFile(new File(toRecycle.getPath()));
 					}
 				}
 				catch (final IOException e)
@@ -143,7 +153,7 @@ public class RecycleBin
 	 *            Unique identifier for which item to get
 	 * @return The bitmap if found in cache, null otherwise
 	 */
-	public InputStream getFile(String data)
+	public InputStream getInputStream(String data)
 	{
 		final String key = fileToKey(data);
 		synchronized (mDiskCacheLock)
@@ -179,40 +189,44 @@ public class RecycleBin
 		}
 	}
 
-//	/**
-//	 * A hashing method that changes a string (like a URL) into a hash suitable for using as a disk filename.
-//	 */
-//	public static String hashKeyForDisk(String key)
-//	{
-//		String cacheKey;
-//		try
-//		{
-//			final MessageDigest mDigest = MessageDigest.getInstance("MD5");
-//			mDigest.update(key.getBytes());
-//			cacheKey = bytesToHexString(mDigest.digest());
-//		}
-//		catch (NoSuchAlgorithmException e)
-//		{
-//			cacheKey = String.valueOf(key.hashCode());
-//		}
-//		return cacheKey;
-//	}
-//
-//	private static String bytesToHexString(byte[] bytes)
-//	{
-//		// http://stackoverflow.com/questions/332079
-//		StringBuilder sb = new StringBuilder();
-//		for (int i = 0; i < bytes.length; i++)
-//		{
-//			String hex = Integer.toHexString(0xFF & bytes[i]);
-//			if (hex.length() == 1)
-//			{
-//				sb.append('0');
-//			}
-//			sb.append(hex);
-//		}
-//		return sb.toString();
-//	}
+	/**
+	 * Get from disk cache.
+	 *
+	 * @param data
+	 *            Unique identifier for which item to get
+	 * @return The bitmap if found in cache, null otherwise
+	 */
+	public File getFile(String data)
+	{
+		final String key = fileToKey(data);
+		synchronized (mDiskCacheLock)
+		{
+			while (mDiskCacheStarting)
+			{
+				try
+				{
+					mDiskCacheLock.wait();
+				}
+				catch (InterruptedException e)
+				{
+				}
+			}
+
+			final DiskLruCache bin = getDiskCache();
+			if (bin != null)
+			{
+				try
+				{
+					return bin.getFile(key, DISK_CACHE_INDEX);
+				}
+				catch (final IOException e)
+				{
+					Log.e(TAG, "getFileFromBin - " + e);
+				}
+			}
+			return null;
+		}
+	}
 
 	public static String keyToFile(String key)
 	{
@@ -224,73 +238,7 @@ public class RecycleBin
 		return file.replaceAll(File.separator, pathReplacement).replaceAll(" ", spaceReplacement);
 	}
 
-	/**
-	 * Locate an existing instance of this Fragment or if not found, create and add it using FragmentManager.
-	 * 
-	 * @param fm
-	 *            The FragmentManager manager to use.
-	 * @return The existing instance of the Fragment or the new instance if just created.
-	 */
-	public static RetainFragment findOrCreateRetainFragment(FragmentManager fm)
-	{
-		// Check to see if we have retained the worker fragment.
-		RetainFragment mRetainFragment = (RetainFragment) fm.findFragmentByTag(TAG);
-
-		// If not retained (or first time running), we need to create and add it.
-		if (mRetainFragment == null)
-		{
-			mRetainFragment = new RetainFragment();
-			fm.beginTransaction().add(mRetainFragment, TAG).commitAllowingStateLoss();
-		}
-
-		return mRetainFragment;
-	}
-
-	/**
-	 * A simple non-UI Fragment that stores a single Object and is retained over configuration changes. It will be used to retain the ImageCache
-	 * object.
-	 */
-	public static class RetainFragment extends Fragment
-	{
-		private Object mObject;
-
-		/**
-		 * Empty constructor as per the Fragment documentation
-		 */
-		public RetainFragment()
-		{
-		}
-
-		@Override
-		public void onCreate(Bundle savedInstanceState)
-		{
-			super.onCreate(savedInstanceState);
-
-			// Make sure this Fragment is retained over a configuration change
-			setRetainInstance(true);
-		}
-
-		/**
-		 * Store a single object in this Fragment.
-		 * 
-		 * @param object
-		 *            The object to store
-		 */
-		public void setObject(Object object)
-		{
-			mObject = object;
-		}
-
-		/**
-		 * Get the stored object.
-		 * 
-		 * @return The stored object
-		 */
-		public Object getObject()
-		{
-			return mObject;
-		}
-	}
+	// AJM: Removed the retain fragment logic
 
 	public List<String> getKeys()
 	{
@@ -486,7 +434,7 @@ public class RecycleBin
 		@Override
 		protected Void doInBackground(Uri... params)
 		{
-			addFileInternal(params[0]);
+			addFile(params[0]);
 			return null;
 		}
 	}
@@ -512,7 +460,7 @@ public class RecycleBin
 	 * @param recycledItem
 	 *            File to recycle and delete
 	 */
-	public void addFile(Uri recycledItem)
+	public void addFileAsync(Uri recycledItem)
 	{
 		new AddFileTask().execute(recycledItem);
 	}

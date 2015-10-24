@@ -53,7 +53,7 @@ public class ProfileData {
 
     public ProfileData() {
         mRoot = new Node(null, -1);  // The id of the root node is unused.
-        mNameToId = new HashMap<>();
+        mNameToId = new HashMap<String, Integer>();
     }
 
     public void reset() {
@@ -80,7 +80,7 @@ public class ProfileData {
         Node node = mRoot;
         for (int i = stack.length - 1; i >= 0; i--) {
             if (node.children == null) {
-                node.children = new ArrayList<>();
+                node.children = new ArrayList<Node>();
             }
 
             int id = ids[i];

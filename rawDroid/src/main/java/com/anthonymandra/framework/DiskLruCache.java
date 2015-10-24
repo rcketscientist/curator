@@ -475,6 +475,32 @@ public final class DiskLruCache implements Closeable {
     }
 
     /**
+     * Returns a snapshot of the entry named {@code key}, or null if it doesn't
+     * exist is not currently readable. If a value is returned, it is moved to
+     * the head of the LRU queue.
+     */
+    public synchronized File getFile(String key, int index) throws IOException {
+        checkNotClosed();
+        validateKey(key);
+        Entry entry = lruEntries.get(key);
+        if (entry == null) {
+            return null;
+        }
+
+        if (!entry.readable) {
+            return null;
+        }
+
+        redundantOpCount++;
+        journalWriter.append(READ + ' ').append(key).append('\n');
+        if (journalRebuildRequired()) {
+            executorService.submit(cleanupCallable);
+        }
+
+        return entry.getCleanFile(index);
+    }
+
+    /**
      * Returns an editor for the entry named {@code key}, or null if another
      * edit is in progress.
      */

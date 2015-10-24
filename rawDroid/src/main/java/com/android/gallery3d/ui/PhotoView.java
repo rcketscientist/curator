@@ -20,10 +20,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.animation.AccelerateInterpolator;
 
@@ -31,7 +29,6 @@ import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
-import com.android.gallery3d.data.MediaObject;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.ResourceTexture;
 import com.android.gallery3d.glrenderer.StringTexture;
@@ -46,7 +43,7 @@ public class PhotoView extends GLView {
     @SuppressWarnings("unused")
     private static final String TAG = "PhotoView";
     private final int mPlaceholderColor;
-    private boolean mDeleteOrRestore;
+    private boolean mUpdateForContentChange;
     private boolean mIsPro;
 
     public static class Size {
@@ -352,16 +349,16 @@ public class PhotoView extends GLView {
 
         invalidate();
 
-        if (mDeleteOrRestore)
+        if (mUpdateForContentChange)
         {
-            mDeleteOrRestore = false;
+            mUpdateForContentChange = false;
             snapback();
         }
     }
     
-    public void setDeleteOrRestore(boolean deleteOrRestore)
+    public void setUpdateForContentChange(boolean updateForContentChange)
     {
-        mDeleteOrRestore = deleteOrRestore;
+        mUpdateForContentChange = updateForContentChange;
     }
 
     public void notifyImageChange(int index) {

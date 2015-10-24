@@ -26,9 +26,9 @@ public class TextureUploader implements OnGLIdleListener {
     private static final int QUOTA_PER_FRAME = 1;
 
     private final ArrayDeque<UploadedTexture> mFgTextures =
-            new ArrayDeque<>(INIT_CAPACITY);
+            new ArrayDeque<UploadedTexture>(INIT_CAPACITY);
     private final ArrayDeque<UploadedTexture> mBgTextures =
-            new ArrayDeque<>(INIT_CAPACITY);
+            new ArrayDeque<UploadedTexture>(INIT_CAPACITY);
     private final GLRoot mGLRoot;
     private volatile boolean mIsQueued = false;
 

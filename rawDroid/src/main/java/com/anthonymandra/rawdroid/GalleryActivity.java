@@ -45,7 +45,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,15 +56,10 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Checkable;
-import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.data.MediaItem;
@@ -86,7 +80,7 @@ import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
-import com.anthonymandra.widget.LoadingImageView;
+import com.anthonymandra.widget.GalleryAdapter;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -105,10 +99,10 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class GalleryActivity extends CoreActivity implements OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>
+        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>,
+		GalleryAdapter.OnSelectionUpdatedListener
 {
 	private static final String TAG = GalleryActivity.class.getSimpleName();
 
@@ -272,16 +266,10 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		inTutorial = false;
 
 		mDisplayWidth = metrics.widthPixels;
 		mDisplayHeight = metrics.heightPixels;
-
-        inTutorial = false;
-
-		mImageGrid = ((GridView) findViewById(R.id.gridview));
-		mImageGrid.setOnScrollListener(this);
-		mImageGrid.setOnItemClickListener(this);
-		mImageGrid.setOnItemLongClickListener(this);
 
 		ImageCacheParams cacheParams = new ImageCacheParams(this, IMAGE_CACHE_DIR);
 
@@ -289,13 +277,21 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		cacheParams.setMemCacheSizePercent(this, 0.15f);
 
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
+		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+
 		mImageDecoder = new ImageDecoder(this, mImageThumbSize);
 		mImageDecoder.setFolderImage(R.drawable.android_folder);
 		mImageDecoder.setUnknownImage(R.drawable.ic_unknown_file);
 		mImageDecoder.addImageCache(getFragmentManager(), cacheParams);
 
-		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
-		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
+		mGalleryAdapter = new GalleryAdapter(this, null, mImageDecoder);
+		mGalleryAdapter.setOnSelectionListener(this);
+
+		mImageGrid = ((GridView) findViewById(R.id.gridview));
+		mImageGrid.setOnScrollListener(this);
+		mImageGrid.setOnItemClickListener(this);
+		mImageGrid.setOnItemLongClickListener(this);
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
@@ -303,7 +299,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
         PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
 
-		mGalleryAdapter = new GalleryAdapter(this, null);
 		mImageGrid.setAdapter(mGalleryAdapter);
 
         licenseHandler = new LicenseHandler(this);
@@ -595,19 +590,21 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.welcomeTitle);
-            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    // Do nothing
-                }
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+            {
+	            @Override
+	            public void onClick(DialogInterface dialog, int which)
+	            {
+		            // Do nothing
+	            }
             });
-            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which)
-                {
-                    runTutorial();
-                }
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+            {
+	            @Override
+	            public void onClick(DialogInterface dialog, int which)
+	            {
+		            runTutorial();
+	            }
             });
 
             if (Constants.VariantCode > 9)
@@ -833,8 +830,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		editor.putString(PREFS_MOST_RECENT_IMPORT, destination.getPath());
 		editor.apply();
 
-		CopyImageTask ct = new CopyImageTask(destination);
-		ct.execute(getImageListFromUriList(mItemsForIntent));
+		new CopyTask().execute(mItemsForIntent, destination);
 	}
 
 	private long getSelectedImageSize()
@@ -1005,19 +1001,19 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		FormatDialog dialog = new FormatDialog(this, getImageListFromUriList(mItemsForIntent));
         dialog.setTitle(getString(R.string.renameImages));
         dialog.setDialogListener(new FormatDialog.DialogListener()
-		{
-			@Override //FIXME: Rename needs to update the database!
-			public void onCompleted()
-			{
+        {
+	        @Override //FIXME: Rename needs to update the database!
+	        public void onCompleted()
+	        {
 //				updatePath(mCurrentPath);
-			}
+	        }
 
-			@Override
-			public void onCanceled()
-			{
-				//Do nothing
-			}
-		});
+	        @Override
+	        public void onCanceled()
+	        {
+		        //Do nothing
+	        }
+        });
         dialog.show();
 	}
 
@@ -1088,25 +1084,19 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
     }
 
 	@Override
-	protected void updateAfterDelete()
+	protected void onImageSetChanged()
 	{
 		// Not needed with a cursorloader
 	}
 
 	@Override
-	protected void updateAfterRestore()
-	{
-		// Not needed with a cursorloader
-	}
-
-	@Override
-	protected void addImage(Uri item)
+	protected void onImageAdded(Uri item)
 	{
 		addDatabaseReference(item);
 	}
 
 	@Override
-	protected void removeImage(Uri item)
+	protected void onImageRemoved(Uri item)
 	{
 		removeDatabaseReference(item);
 	}
@@ -1137,6 +1127,31 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		else
 		{
 			super.onBackPressed();
+		}
+	}
+
+	@Override
+	public void onSelectionUpdated(Set<Uri> selectedUris)
+	{
+		ArrayList<Uri> arrayUri = new ArrayList<>();
+		for (Uri selection : selectedUris)
+		{
+			arrayUri.add(SwapProvider.getSwapUri(new File(selection.getPath())));
+		}
+
+		int selectionCount = selectedUris.size();
+		if (mContextMode != null)
+		{
+			mContextMode.setTitle("Select Items");
+			mContextMode.setSubtitle(selectionCount + " selected");
+		}
+		if (selectionCount == 1)
+		{
+			setShareUri(arrayUri.get(0));
+		}
+		else if (selectionCount > 1)
+		{
+			setShareUri(arrayUri);
 		}
 	}
 
@@ -1220,342 +1235,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		public void onDestroyActionMode(ActionMode mode)
 		{
 			inActionMode = false;
-			mGalleryAdapter.endMultiSelectMode();
+			endMultiSelectMode();
             mContextMode = null;
-		}
-	}
-
-//	public final static class GalleryViewHolder extends RecyclerView.ViewHolder
-//	{
-//		LoadingImageView imageView;
-//		TextView fileName;
-//		View label;
-//		RatingBar ratingBar;
-//
-//		public GalleryViewHolder(View itemView)
-//		{
-//			super(itemView);
-//			imageView = (LoadingImageView) itemView.getTag(R.id.webImageView);
-//			fileName = (TextView) itemView.getTag(R.id.filenameView);
-//			label = (View) itemView.getTag(R.id.label);
-//			ratingBar= (RatingBar) itemView.getTag(R.id.galleryRatingBar);
-//		}
-//	}
-
-	public class GalleryAdapter extends CursorAdapter
-	{
-		private final int purple = getResources().getColor(R.color.startPurple);
-		private final int blue = getResources().getColor(R.color.startBlue);
-		private final int yellow = getResources().getColor(R.color.startYellow);
-		private final int green = getResources().getColor(R.color.startGreen);
-		private final int red = getResources().getColor(R.color.startRed);
-
-		private final Context mContext;
-		private final LayoutInflater mInflater;
-		protected int mItemHeight = 0;
-		protected int mNumColumns = 0;
-		protected GridView.LayoutParams mImageViewLayoutParams;
-		private Set<Uri> mSelectedItems = new HashSet<>();
-		private Set<Long> mSelectedIds = new HashSet<>();
-		private TreeSet<Integer> mSelectedPositions = new TreeSet<>();
-
-		public GalleryAdapter(Context context, Cursor c)
-		{
-			super(context, c, 0);
-			mContext = context;
-			mInflater = LayoutInflater.from(context);
-
-			mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
-			if (getNumColumns() == 0)
-			{
-				final int numColumns = (int) Math.floor(mDisplayWidth / (mImageThumbSize + mImageThumbSpacing));
-				if (numColumns > 0)
-				{
-					final int columnWidth = (mDisplayWidth / numColumns) - mImageThumbSpacing;
-					setNumColumns(numColumns);
-					setItemHeight(columnWidth);
-				}
-			}
-		}
-
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			final View view = mInflater.inflate(R.layout.fileview, parent, false);
-			view.setLayoutParams(mImageViewLayoutParams);
-
-			LoadingImageView image = (LoadingImageView) view.findViewById(R.id.webImageView);
-			image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-			view.setTag(R.id.webImageView, image);
-			view.setTag(R.id.filenameView, view.findViewById(R.id.filenameView));
-			view.setTag(R.id.galleryRatingBar, view.findViewById(R.id.galleryRatingBar));
-			view.setTag(R.id.label, view.findViewById(R.id.label));
-			return view;
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor)
-		{
-			LoadingImageView imageView = (LoadingImageView) view.getTag(R.id.webImageView);
-			TextView fileName = (TextView) view.getTag(R.id.filenameView);
-			View label = (View) view.getTag(R.id.label);
-			RatingBar ratingBar= (RatingBar) view.getTag(R.id.galleryRatingBar);
-
-			final int rotation = ImageUtils.getRotation(cursor.getInt(Meta.ORIENTATION_COLUMN));
-			final Float rating = Float.valueOf(cursor.getFloat(Meta.RATING_COLUMN));
-			final Uri uri = Uri.parse(cursor.getString(Meta.URI_COLUMN));
-			final String labelString = cursor.getString(Meta.LABEL_COLUMN);
-
-			Uri currentUri = (Uri) fileName.getTag();
-			final int oldRotation = (int) imageView.getRotation();
-			final String oldLabel = (String) label.getTag();
-			final Float oldRating = (Float) ratingBar.getTag();
-
-			// If nothing relevant has changed do nothing
-			// This avoids flickering for every db update
-			if (uri.equals(currentUri) &&
-				(labelString != null ? labelString.equals(oldLabel) : oldLabel == null) &&
-				rotation == oldRotation &&
-				rating.equals(oldRating))
-			{
-				return;
-			}
-
-			label.setTag(labelString);
-			ratingBar.setTag(rating);
-			fileName.setTag(uri);
-
-			imageView.setRotation(rotation);
-			ratingBar.setRating(cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING)));
-
-			if (labelString != null)
-			{
-				switch (labelString.toLowerCase())
-				{
-					case "purple":
-						view.setBackgroundColor(purple);
-						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(purple);
-						break;
-					case "blue":
-						view.setBackgroundColor(blue);
-						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(blue);
-						break;
-					case "yellow":
-						view.setBackgroundColor(yellow);
-						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(yellow);
-						break;
-					case "green":
-						view.setBackgroundColor(green);
-						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(green);
-						break;
-					case "red":
-						view.setBackgroundColor(red);
-						label.setVisibility(View.VISIBLE);
-						label.setBackgroundColor(red);
-						break;
-					default:
-						view.setBackgroundColor(0);
-						label.setVisibility(View.GONE);
-						break;
-				}
-			}
-			else
-			{
-				view.setBackgroundColor(0);
-				label.setVisibility(View.GONE);
-			}
-			File image = new File(uri.getPath());
-			fileName.setText(cursor.getString(cursor.getColumnIndex(Meta.Data.NAME)));
-			mImageDecoder.loadImage(new LocalImage(mContext, image), imageView);
-			((Checkable) view).setChecked(mSelectedItems.contains(uri));
-		}
-
-		public MediaItem getImage(int position)
-		{
-			return new LocalImage(mContext, new File(getUri(position).getPath()));
-		}
-
-		private Uri getUri(int position)
-		{
-			Cursor c = (Cursor)getItem(position);
-			return Uri.parse(c.getString((c.getColumnIndex(Meta.Data.URI))));
-		}
-
-		public List<Uri> getSelectedItems()
-		{
-			return new ArrayList<Uri>(mSelectedItems);
-		}
-
-		public int getSelectedItemCount()
-		{
-			return mSelectedItems.size();
-		}
-
-		public void setItemHeight(int height)
-		{
-			if (height == mItemHeight)
-			{
-				return;
-			}
-			mItemHeight = height;
-			mImageViewLayoutParams = new GridView.LayoutParams(LayoutParams.MATCH_PARENT, mItemHeight);
-
-			if (mImageDecoder != null)
-				mImageDecoder.setImageSize(height);
-
-			notifyDataSetChanged();
-		}
-
-		public void setNumColumns(int numColumns)
-		{
-			mNumColumns = numColumns;
-		}
-
-		public int getNumColumns()
-		{
-			return mNumColumns;
-		}
-
-		public void addBetween(int start, int end)
-		{
-			for (int i = start; i <= end; i++)
-			{
-				if (getCursor().moveToPosition(i))
-				{
-					addSelection(getUri(i), i);
-				}
-			}
-			updateSelection();
-			notifyDataSetChanged();
-		}
-
-		public void addBetweenSelection(int position)
-		{
-			if (mSelectedPositions.size() > 0)
-			{
-				int first = mSelectedPositions.first();
-				int last = mSelectedPositions.last();
-				if (position > last)
-				{
-					addBetween(last, position);
-				}
-				else if (position < first)
-				{
-					addBetween(position, first);
-				}
-			}
-			else
-			{
-				addBetween(0, position);
-			}
-		}
-
-		/**
-		 * Add a selection and update the view
-		 * @param uri of selection
-		 * @param position of selection
-		 */
-		private void addSelection(View view, Uri uri, int position)
-		{
-			addSelection(uri, position);
-			((Checkable)view).setChecked(true);
-		}
-
-		/**
-		 * Add a selection without updating the view
-		 * This will generally require a call to notifyDataSetChanged()
-		 * @param uri of selection
-		 * @param position of selection
-		 */
-		private void addSelection(Uri uri, int position)
-		{
-			mSelectedItems.add(uri);
-			mSelectedPositions.add(position);
-			mSelectedIds.add(getItemId(position));
-		}
-
-		private void removeSelection(View view, Uri uri, int position)
-		{
-			mSelectedItems.remove(uri);
-			mSelectedPositions.remove(position);
-			mSelectedIds.remove(getItemId(position));
-			((Checkable)view).setChecked(false);
-		}
-
-		public void clearSelection()
-		{
-			mSelectedItems.clear();
-			mSelectedPositions.clear();
-			updateSelection();
-			notifyDataSetChanged();
-		}
-
-		public void toggleSelection(View v, int position)
-		{
-			Uri uri = getUri(position);
-			if (mSelectedItems.contains(uri))
-			{
-				removeSelection(v, uri, position);
-			}
-			else
-			{
-				addSelection(v, uri, position);
-			}
-			updateSelection();
-		}
-
-		public void updateSelection()
-		{
-			ArrayList<Uri> arrayUri = new ArrayList<>();
-			for (Uri selection : mSelectedItems)
-			{
-				arrayUri.add(SwapProvider.getSwapUri(new File(selection.getPath())));
-			}
-
-			if (mContextMode != null)
-			{
-				mContextMode.setTitle("Select Items");
-				mContextMode.setSubtitle(mSelectedItems.size() + " selected");
-			}
-			if (mSelectedItems.size() == 1)
-			{
-				setShareUri(arrayUri.get(0));
-			}
-			else if (mSelectedItems.size() > 1)
-			{
-				setShareUri(arrayUri);
-			}
-		}
-
-		public void selectAll()
-		{
-			if (getCursor().moveToFirst())
-			{
-				do
-				{
-					mSelectedItems.add(getUri(getCursor().getPosition()));
-				} while (getCursor().moveToNext());
-			}
-
-			updateSelection();
-			notifyDataSetChanged();
-		}
-
-		public void startMultiSelectMode()
-		{
-			clearSelection(); // Ensure we don't have any stragglers
-			multiSelectMode = true;
-		}
-
-		public void endMultiSelectMode()
-		{
-			multiSelectMode = false;
-			clearSelection();
 		}
 	}
 
@@ -1565,10 +1246,23 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mGalleryAdapter.selectAll();
 	}
 
+	public void startMultiSelectMode()
+	{
+		mGalleryAdapter.clearSelection(); // Ensure we don't have any stragglers
+		multiSelectMode = true;
+	}
+
+	public void endMultiSelectMode()
+	{
+		multiSelectMode = false;
+		mGalleryAdapter.clearSelection();
+	}
+
 	private void startContextualActionBar()
 	{
 		mContextMode = startSupportActionMode(new GalleryActionMode());
-		mGalleryAdapter.startMultiSelectMode();
+		mContextMode.setTitle("Select Items");
+		startMultiSelectMode();
 	}
 
 	@Override
@@ -1576,7 +1270,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	{
 		MediaItem media = mGalleryAdapter.getImage(position);
 
-		if (media == null || media.isDirectory())
+		if (media == null)
 			return false;
 
 		// If we're in multi-select select all items between
@@ -1648,98 +1342,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		else
 		{
 			mImageDecoder.setPauseWork(false);
-		}
-	}
-
-	private class CopyImageTask extends AsyncTask<List<MediaItem>, String, Boolean> implements OnCancelListener
-	{
-		private ProgressDialog importProgress;
-		private List<String> skipped = new ArrayList<>();
-		private File mDestination;
-		List<String> failed = new ArrayList<>();
-
-		public CopyImageTask(File destination)
-		{
-			super();
-			mDestination = destination;
-		}
-
-		@Override
-		protected void onPreExecute()
-		{
-			importProgress = new ProgressDialog(GalleryActivity.this);
-			importProgress.setTitle(R.string.importingImages);
-			importProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			importProgress.setCanceledOnTouchOutside(true);
-			importProgress.setOnCancelListener(this);
-			importProgress.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(List<MediaItem>... params)
-		{
-			boolean totalSuccess = true;
-			List<MediaItem> copyList = params[0];
-
-			importProgress.setMax(copyList.size());
-
-			for (MediaItem toCopy : copyList)
-			{
-				publishProgress(toCopy.getName());
-				// Skip a file if it's the same location
-				File intendedDestination = new File(mDestination, toCopy.getName());
-				if (intendedDestination.exists())
-				{
-					skipped.add(intendedDestination.getName());
-					continue;
-				}
-
-				boolean result = toCopy.copy(mDestination);
-				if (!result)
-				{
-					Log.e(TAG, "Error copying " + toCopy.getName());
-					failed.add(toCopy.getName());
-					totalSuccess = false;
-				}
-				publishProgress();
-			}
-			return totalSuccess;
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			mGalleryAdapter.notifyDataSetChanged();
-
-			if (failed.size() > 0)
-			{
-				String failures = "Failed files: ";
-				for (String fail : failed)
-				{
-					failures += fail + ", ";
-				}
-				Toast.makeText(GalleryActivity.this, failures, Toast.LENGTH_LONG).show();
-			}
-			importProgress.dismiss();
-		}
-
-		@Override
-		protected void onProgressUpdate(String... values)
-		{
-			if (values.length > 0)
-			{
-				importProgress.setMessage(values[0]);
-			}
-			else
-			{
-				importProgress.incrementProgressBy(1);
-			}
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			this.cancel(true);
 		}
 	}
 
@@ -1833,7 +1435,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				}
 				else
 				{
-					addImage(Uri.fromFile(thumbDest));
+					onImageAdded(Uri.fromFile(thumbDest));
 				}
 					
 				publishProgress();

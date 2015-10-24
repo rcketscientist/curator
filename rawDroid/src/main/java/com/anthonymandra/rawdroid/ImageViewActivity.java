@@ -1,10 +1,7 @@
 package com.anthonymandra.rawdroid;
 
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -35,16 +32,9 @@ public class ImageViewActivity extends PhotoPage
     }
 
     @Override
-	protected void updateAfterDelete()
+	protected void onImageSetChanged()
 	{
-        mPhotoView.setDeleteOrRestore(true);
-        notifyContentChanged();
-	}
-
-    @Override
-	protected void updateAfterRestore()
-	{
-        mPhotoView.setDeleteOrRestore(true);
+        mPhotoView.setUpdateForContentChange(true);
         notifyContentChanged();
 	}
 

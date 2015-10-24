@@ -22,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.anthonymandra.framework.AsyncTask;
+import com.anthonymandra.framework.DocumentActivity;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.Util;
 
@@ -33,12 +34,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-public class CameraImportActivity extends Activity
+public class CameraImportActivity extends DocumentActivity
 {
 	private static final int REQUEST_MTP_IMPORT_DIR = 3;
 
+	private enum WriteActions
+	{
+		IMPORT
+	}
+
 	private MtpDevice mMtpDevice;
-	private List<Integer> imageHandles = new ArrayList<>();
+//	private List<Integer> imageHandles = new ArrayList<>();
 	private int requiredSpace;
 	// private ProgressDialog mProgressDialog;
 	private File destination;
@@ -94,6 +100,7 @@ public class CameraImportActivity extends Activity
 		}
 
 		requiredSpace = 0;
+		List<Integer> imageHandles = new ArrayList<>();
 		for (int storageId : storageIds)
 		{
 			int[] handles = mMtpDevice.getObjectHandles(storageId, 0, 0);
@@ -167,7 +174,7 @@ public class CameraImportActivity extends Activity
 		}
 	}
 
-	protected class ImportTask extends AsyncTask<Void, Void, List<String>> implements OnCancelListener
+	protected class ImportTask extends AsyncTask<List<Integer>, Void, Boolean> implements OnCancelListener
 	{
 		private boolean cancelled;
 		private ProgressDialog mProgressDialog;
@@ -179,19 +186,24 @@ public class CameraImportActivity extends Activity
 			mProgressDialog.setTitle(R.string.importingImages);
 			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			mProgressDialog.setOnCancelListener(this);
-			mProgressDialog.setMax(imageHandles.size());
 			mProgressDialog.show();
 		}
 
 		@Override
-		protected List<String> doInBackground(Void... params)
+		protected Boolean doInBackground(List<Integer>... params)
 		{
-			final List<String> failures = new ArrayList<>();
+			final List<Integer> imageHandles = params[0];
+			mProgressDialog.setMax(imageHandles.size());    //Can this go here?  Otherwise just do work/total * 100
 
+			boolean totalSuccess = true;
 			for (int objectHandle : imageHandles)
 			{
 				if (cancelled)
-					return failures;
+				{
+					clearWriteResume();
+					return false;
+				}
+
 				MtpObjectInfo info = mMtpDevice.getObjectInfo(objectHandle);
 				if (info == null)
 					continue;
@@ -200,41 +212,38 @@ public class CameraImportActivity extends Activity
                 if (endFile.exists())
                     continue;   //skip files if re-importing
 
-				boolean success;
 				// KitKat and higher require the extra step of importing to the cache then moving
 				if (Util.hasKitkat())
 				{
-					File tmp = new File(getExternalCacheDir(), name);
-					mMtpDevice.importFile(objectHandle, tmp.getPath());
-					success = FileUtil.moveFile(CameraImportActivity.this, tmp, endFile);
+					try
+					{
+						File tmp = new File(getExternalCacheDir(), name);
+						mMtpDevice.importFile(objectHandle, tmp.getPath());
+						totalSuccess &= moveFile(tmp, endFile);
+					} catch (WritePermissionException e)
+					{
+						e.printStackTrace();
+						return false;
+					}
 				}
 				else
 				{
-					success = mMtpDevice.importFile(objectHandle, endFile.getPath());
+					totalSuccess &= mMtpDevice.importFile(objectHandle, endFile.getPath());
 				}
 
-				if (!success)
-					failures.add(name);
 				publishProgress();
 			}
-			return failures;
+			return totalSuccess;
 		}
 
 		@Override
-		protected void onPostExecute(List<String> failed)
+		protected void onPostExecute(Boolean success)
 		{
 			if(mProgressDialog != null && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
 
-			if (failed.size() > 0)
-			{
-				String failures = "Failed files: ";
-				for (String fail : failed)
-				{
-					failures += fail + ", ";
-				}
-				Toast.makeText(CameraImportActivity.this, failures, Toast.LENGTH_LONG).show();
-			}
+			if (success)
+				clearWriteResume();
 
 			Intent rawdroid = new Intent(CameraImportActivity.this, GalleryActivity.class);
 			rawdroid.putExtra(GalleryActivity.KEY_STARTUP_DIR, destination.getPath());
@@ -245,7 +254,6 @@ public class CameraImportActivity extends Activity
 		protected void onProgressUpdate(Void... values)
 		{
 			mProgressDialog.incrementProgressBy(1);
-			// setSupportProgress(values[0]);
 		}
 
 		@Override
@@ -307,6 +315,18 @@ public class CameraImportActivity extends Activity
 		}
 	}
 
+	@Override
+	protected void onResumeWriteAction(Enum callingMethod, Object[] callingParameters)
+	{
+		switch((WriteActions)callingMethod)
+		{
+			case IMPORT:
+				new ImportTask().execute((List<Integer>)callingParameters[0]);
+				break;
+		}
+		clearWriteResume();
+	}
+
 	private void handleImportDirResult(final String destinationPath)
 	{
 		destination = new File(destinationPath);
@@ -320,15 +340,5 @@ public class CameraImportActivity extends Activity
 
 		FindImagesTask fit = new FindImagesTask();
 		fit.execute();
-		// getImageFiles();
-		//
-		// if (destination.getFreeSpace() < requiredSpace)
-		// {
-		// Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-		// return;
-		// }
-		//
-		// ImportTask it = new ImportTask(destination);
-		// it.execute(imageHandles);
 	}
 }

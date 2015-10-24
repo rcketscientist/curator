@@ -95,7 +95,7 @@ public class ThreadPool {
     // Submit a job to the thread pool. The listener will be called when the
     // job is finished (or cancelled).
     public <T> Future<T> submit(Job<T> job, FutureListener<T> listener) {
-        Worker<T> w = new Worker<>(job, listener);
+        Worker<T> w = new Worker<T>(job, listener);
         mExecutor.execute(w);
         return w;
     }

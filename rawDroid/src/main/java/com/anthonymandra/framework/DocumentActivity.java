@@ -1,23 +1,35 @@
 package com.anthonymandra.framework;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.provider.DocumentFile;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.R;
 
 import java.io.File;
@@ -33,55 +45,46 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-//https://github.com/jeisfeld/Augendiagnose/
-
-/**
- * Utility class for helping parsing file systems.
- */
-public class FileUtil
+public abstract class DocumentActivity extends AppCompatActivity
 {
-	private static final String TAG = FileUtil.class.getSimpleName();
+	private static final String TAG = DocumentActivity.class.getSimpleName();
+	private static final int REQUEST_PREFIX = 1000;
+	private static final int REQUEST_CODE_WRITE_PERMISSION = REQUEST_PREFIX + 1;
+
+	protected Enum mCallingMethod;
+	protected Object[] mCallingParameters;
+
+	/**
+	 * This error is thrown when the application does not have appropriate permission to write.<br><br>
+	 *
+	 * It is recommended that any process that can catch this exception save the calling method via:<br>
+	 * {@link #setWriteMethod(Enum)},<br>
+	 * {@link #setWriteParameters(Object[])},<br>
+	 * {@link #setWriteResume(Enum, Object[])} (convenience method)<br><br>
+	 *
+	 * When this error is thrown the {@link DocumentActivity} will attempt
+	 * to request permission causing the activity to break at that point.  Upon receiving a
+	 * successful result it will attempt to restart a saved method.<br><br>
+	 *
+	 * As the described process requires a break to the activity in the form of
+	 * {@link Activity#startActivityForResult(Intent, int)} it is recommended that the
+	 * calling method break upon receiving this exception with the intention that it will
+	 * be completed by {@link DocumentActivity#onResumeWriteAction(Enum, Object[])}
+	 * after receiving permission.  It is the responsibility of the {@link DocumentActivity} s
+	 * ubclass to define {@link DocumentActivity#onResumeWriteAction(Enum, Object[])}.
+	 */
+	public class WritePermissionException extends IOException
+	{
+		public WritePermissionException(String message)
+		{
+			super(message);
+		}
+	}
+
 	/**
 	 * The name of the primary volume (LOLLIPOP).
 	 */
 	private static final String PRIMARY_VOLUME_NAME = "primary";
-
-	/**
-	 * Hide default constructor.
-	 */
-	private FileUtil() {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Determine the camera folder. There seems to be no Android API to work for real devices, so this is a best guess.
-	 *
-	 * @return the default camera folder.
-	 */
-	public static String getDefaultCameraFolder() {
-		File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-		if (path.exists()) {
-			File test1 = new File(path, "Camera/");
-			if (test1.exists()) {
-				path = test1;
-			}
-			else {
-				File test2 = new File(path, "100ANDRO/");
-				if (test2.exists()) {
-					path = test2;
-				}
-				else {
-					File test3 = new File(path, "100MEDIA/");
-					path = test3;
-				}
-			}
-		}
-		else {
-			File test3 = new File(path, "Camera/");
-			path = test3;
-		}
-		return path.getAbsolutePath();
-	}
 
 	/**
 	 * Copy a file. The target file may even be on external SD card for Kitkat.
@@ -92,7 +95,9 @@ public class FileUtil
 	 *            The target file
 	 * @return true if the copying was successful.
 	 */
-	public static boolean copyFile(final Context context, final File source, final File target) {
+	public boolean copyFile(final File source, final File target)
+			throws WritePermissionException
+	{
 		FileInputStream inStream = null;
 		OutputStream outStream = null;
 		FileChannel inChannel = null;
@@ -111,16 +116,16 @@ public class FileUtil
 			else {
 				if (Util.hasLollipop()) {
 					// Storage Access Framework
-					DocumentFile targetDocument = getLollipopDocument(context, target, false, true);
+					DocumentFile targetDocument = getLollipopDocument(target, false, true);
 					if (targetDocument == null)
 						return false;
 					outStream =
-							context.getContentResolver().openOutputStream(targetDocument.getUri());
+							getContentResolver().openOutputStream(targetDocument.getUri());
 				}
 				else if (Util.hasKitkat()) {
 					// Workaround for Kitkat ext SD card
-					Uri uri = MediaStoreUtil.getUriFromFile(context, target.getAbsolutePath());
-					outStream = context.getContentResolver().openOutputStream(uri);
+					Uri uri = MediaStoreUtil.getUriFromFile(this, target.getAbsolutePath());
+					outStream = getContentResolver().openOutputStream(uri);
 				}
 				else {
 					return false;
@@ -139,34 +144,14 @@ public class FileUtil
 		}
 		catch (Exception e) {
 			Log.e(TAG,
-					"Error when copying file from " + source.getAbsolutePath() + " to " + target.getAbsolutePath(), e);
+					"Error when copying file to " + target.getAbsolutePath(), e);
 			return false;
 		}
 		finally {
-			try {
-				inStream.close();
-			}
-			catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				outStream.close();
-			}
-			catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				inChannel.close();
-			}
-			catch (Exception e) {
-				// ignore exception
-			}
-			try {
-				outChannel.close();
-			}
-			catch (Exception e) {
-				// ignore exception
-			}
+			Utils.closeSilently(inStream);
+			Utils.closeSilently(outStream);
+			Utils.closeSilently(inChannel);
+			Utils.closeSilently(outChannel);
 		}
 		return true;
 	}
@@ -178,7 +163,9 @@ public class FileUtil
 	 *            the file to be deleted.
 	 * @return True if successfully deleted.
 	 */
-	public static boolean deleteFile(final Context context, final File file) {
+	public boolean deleteFile(final File file)
+			throws WritePermissionException
+	{
 		// First try the normal deletion.
 		if (file.delete()) {
 			return true;
@@ -186,7 +173,7 @@ public class FileUtil
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(context, file, false, true);
+			DocumentFile document = getLollipopDocument(file, false, true);
 			if (document == null)
 				return false;
 			return document.delete();
@@ -194,10 +181,10 @@ public class FileUtil
 
 		// Try the Kitkat workaround.
 		if (Util.hasKitkat()) {
-			ContentResolver resolver = context.getContentResolver();
+			ContentResolver resolver = getContentResolver();
 
 			try {
-				Uri uri = MediaStoreUtil.getUriFromFile(context, file.getAbsolutePath());
+				Uri uri = MediaStoreUtil.getUriFromFile(this, file.getAbsolutePath());
 				resolver.delete(uri, null, null);
 				return !file.exists();
 			}
@@ -219,15 +206,16 @@ public class FileUtil
 	 *            The target file
 	 * @return true if the copying was successful.
 	 */
-	public static boolean moveFile(final Context context, final File source, final File target) {
+	public boolean moveFile(final File source, final File target) throws WritePermissionException
+	{
 		// First try the normal rename.
 		if (source.renameTo(target)) {
 			return true;
 		}
 
-		boolean success = copyFile(context, source, target);
+		boolean success = copyFile(source, target);
 		if (success) {
-			success = deleteFile(context, source);
+			success = deleteFile(source);
 		}
 		return success;
 	}
@@ -241,7 +229,10 @@ public class FileUtil
 	 *            The target folder.
 	 * @return true if the renaming was successful.
 	 */
-	public static boolean renameFolder(final Context context, final File source, final File target) {
+	public boolean renameFolder(final File source,
+	                            final File target)
+			throws WritePermissionException
+	{
 		// First try the normal rename.
 		if (source.renameTo(target)) {
 			return true;
@@ -252,7 +243,7 @@ public class FileUtil
 
 		// Try the Storage Access Framework if it is just a rename within the same parent folder.
 		if (Util.hasLollipop() && source.getParent().equals(target.getParent())) {
-			DocumentFile document = getLollipopDocument(context, source, true, true);
+			DocumentFile document = getLollipopDocument(source, true, true);
 			if (document == null)
 				return false;
 			if (document.renameTo(target.getName())) {
@@ -261,7 +252,7 @@ public class FileUtil
 		}
 
 		// Try the manual way, moving files individually.
-		if (!mkdir(context, target)) {
+		if (!mkdir(target)) {
 			return false;
 		}
 
@@ -274,14 +265,14 @@ public class FileUtil
 		for (File sourceFile : sourceFiles) {
 			String fileName = sourceFile.getName();
 			File targetFile = new File(target, fileName);
-			if (!copyFile(context, sourceFile, targetFile)) {
+			if (!copyFile(sourceFile, targetFile)) {
 				// stop on first error
 				return false;
 			}
 		}
 		// Only after successfully copying all files, delete files on source folder.
 		for (File sourceFile : sourceFiles) {
-			if (!deleteFile(context, sourceFile)) {
+			if (!deleteFile(sourceFile)) {
 				// stop on first error
 				return false;
 			}
@@ -309,7 +300,9 @@ public class FileUtil
 	 *            The folder to be created.
 	 * @return True if creation was successful.
 	 */
-	public static boolean mkdir(final Context context, final File file) {
+	public boolean mkdir(final File file)
+			throws WritePermissionException
+	{
 		if (file.exists()) {
 			// nothing to create.
 			return file.isDirectory();
@@ -322,7 +315,7 @@ public class FileUtil
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(context, file, true, true);
+			DocumentFile document = getLollipopDocument(file, true, true);
 			if (document == null)
 				return false;
 			// getLollipopDocument implicitly creates the directory.
@@ -331,11 +324,11 @@ public class FileUtil
 
 		// Try the Kitkat workaround.
 		if (Util.hasKitkat()) {
-			ContentResolver resolver = context.getContentResolver();
+			ContentResolver resolver = getContentResolver();
 			File tempFile = new File(file, "dummyImage.jpg");
 
-			File dummySong = copyDummyFiles(context);
-			int albumId = MediaStoreUtil.getAlbumIdFromAudioFile(context, dummySong);
+			File dummySong = copyDummyFiles(this);
+			int albumId = MediaStoreUtil.getAlbumIdFromAudioFile(this, dummySong);
 			Uri albumArtUri = Uri.parse("content://media/external/audio/albumart/" + albumId);
 
 			ContentValues contentValues = new ContentValues();
@@ -354,7 +347,7 @@ public class FileUtil
 				return false;
 			}
 			finally {
-				FileUtil.deleteFile(context, tempFile);
+				deleteFile(tempFile);
 			}
 
 			return true;
@@ -371,7 +364,9 @@ public class FileUtil
 	 *
 	 * @return true if successful.
 	 */
-	public static boolean rmdir(final Context context, final File file) {
+	public boolean rmdir(final File file)
+			throws WritePermissionException
+	{
 		if (!file.exists()) {
 			return true;
 		}
@@ -391,7 +386,7 @@ public class FileUtil
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(context, file, true, true);
+			DocumentFile document = getLollipopDocument(file, true, true);
 			if (document == null)
 				return false;
 			return document.delete();
@@ -399,7 +394,7 @@ public class FileUtil
 
 		// Try the Kitkat workaround.
 		if (Util.hasKitkat()) {
-			ContentResolver resolver = context.getContentResolver();
+			ContentResolver resolver = getContentResolver();
 			ContentValues values = new ContentValues();
 			values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
 			resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
@@ -419,7 +414,9 @@ public class FileUtil
 	 *            the folder
 	 * @return true if successful.
 	 */
-	public static boolean deleteFilesInFolder(final Context context, final File folder) {
+	public boolean deleteFilesInFolder(final Context context, final File folder)
+			throws WritePermissionException
+	{
 		boolean totalSuccess = true;
 
 		String[] children = folder.list();
@@ -427,7 +424,7 @@ public class FileUtil
 			for (int i = 0; i < children.length; i++) {
 				File file = new File(folder, children[i]);
 				if (!file.isDirectory()) {
-					boolean success = FileUtil.deleteFile(context, file);
+					boolean success = deleteFile(file);
 					if (!success) {
 						Log.w(TAG, "Failed to delete file" + children[i]);
 						totalSuccess = false;
@@ -436,43 +433,6 @@ public class FileUtil
 			}
 		}
 		return totalSuccess;
-	}
-
-	/**
-	 * Delete a directory asynchronously.
-	 *
-	 * @param activity
-	 *            The activity calling this method.
-	 * @param file
-	 *            The folder name.
-	 * @param postActions
-	 *            Commands to be executed after success.
-	 */
-	public static void rmdirAsynchronously(final Activity activity, final File file, final Runnable postActions) {
-		new Thread() {
-			@Override
-			public void run() {
-				int retryCounter = 5; // MAGIC_NUMBER
-				while (!FileUtil.rmdir(activity.getApplicationContext(), file) && retryCounter > 0) {
-					try {
-						Thread.sleep(100); // MAGIC_NUMBER
-					}
-					catch (InterruptedException e) {
-						// do nothing
-					}
-					retryCounter--;
-				}
-				if (file.exists()) {
-					Toast.makeText(activity.getApplicationContext(), R.string.error_deleting_folder, Toast.LENGTH_SHORT).show();
-//					DialogUtil.displayError(activity, R.string.message_dialog_failed_to_delete_folder, false,
-//							file.getAbsolutePath());
-				}
-				else {
-					activity.runOnUiThread(postActions);
-				}
-
-			}
-		}.start();
 	}
 
 	/**
@@ -507,62 +467,16 @@ public class FileUtil
 		return result;
 	}
 
-	// Utility methods for Android 5
-
-	/**
-	 * Check for a directory if it is possible to create files within this directory, either via normal writing or via
-	 * Storage Access Framework.
-	 *
-	 * @param folder
-	 *            The directory
-	 * @return true if it is possible to write in this directory.
-	 */
-	public static boolean isWritableNormalOrSaf(final Context context, final File folder) {
-		// Verify that this is a directory.
-		if (!folder.exists() || !folder.isDirectory()) {
-			return false;
-		}
-
-		// Find a non-existing file in this directory.
-		int i = 0;
-		File file;
-		do {
-			String fileName = "AugendiagnoseDummyFile" + (++i);
-			file = new File(folder, fileName);
-		}
-		while (file.exists());
-
-		// First check regular writability
-		if (isWritable(file)) {
-			return true;
-		}
-
-		// Next check SAF writability.
-		DocumentFile document = getLollipopDocument(context, file, false, false);
-
-		if (document == null) {
-			return false;
-		}
-
-		// This should have created the file - otherwise something is wrong with access URL.
-		boolean result = document.canWrite() && file.exists();
-
-		// Ensure that the dummy file is not remaining.
-		document.delete();
-
-		return result;
-	}
-
 	/**
 	 * Get a list of external SD card paths. (Kitkat or higher.)
 	 *
 	 * @return A list of external SD card paths.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
-	private static String[] getExtSdCardPaths(Context context) {
+	private String[] getExtSdCardPaths() {
 		List<String> paths = new ArrayList<String>();
-		for (File file : context.getExternalFilesDirs("external")) {
-			if (file != null && !file.equals(context.getExternalFilesDir("external"))) {
+		for (File file : getExternalFilesDirs("external")) {
+			if (file != null && !file.equals(getExternalFilesDir("external"))) {
 				int index = file.getAbsolutePath().lastIndexOf("/Android/data");
 				if (index < 0) {
 					Log.w(TAG, "Unexpected external file dir: " + file.getAbsolutePath());
@@ -591,8 +505,8 @@ public class FileUtil
 	 *         null is returned.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
-	public static String getExtSdCardFolder(final Context context, final File file) {
-		String[] extSdPaths = getExtSdCardPaths(context);
+	public String getExtSdCardFolder(final File file) {
+		String[] extSdPaths = getExtSdCardPaths();
 		try {
 			for (int i = 0; i < extSdPaths.length; i++) {
 				if (file.getCanonicalPath().startsWith(extSdPaths[i])) {
@@ -614,8 +528,8 @@ public class FileUtil
 	 * @return true if on external sd card.
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
-	public static boolean isOnExtSdCard(final Context context, final File file) {
-		return getExtSdCardFolder(context, file) != null;
+	public boolean isOnExtSdCard(final File file) {
+		return getExtSdCardFolder(file) != null;
 	}
 
 	/**
@@ -630,9 +544,10 @@ public class FileUtil
 	 *            flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
-	public static DocumentFile getDocumentFile(final Context context, final File file,
-	                                           final boolean isDirectory,
-	                                           final boolean createDirectories)
+	public DocumentFile getDocumentFile(final File file,
+	                                    final boolean isDirectory,
+	                                    final boolean createDirectories)
+			throws WritePermissionException
 	{
 		// First try the normal way
 		if (isWritable(file))
@@ -641,14 +556,14 @@ public class FileUtil
 		}
 		else if (Util.hasLollipop())
 		{
-			return getLollipopDocument(context, file, isDirectory, createDirectories);
+			return getLollipopDocument(file, isDirectory, createDirectories);
 		}
 		else if (Util.hasKitkat())
 		{
 			// Workaround for Kitkat ext SD card
 			//TODO: This probably doesn't work
-			Uri uri = MediaStoreUtil.getUriFromFile(context, file.getAbsolutePath());
-			DocumentFile.fromSingleUri(context, uri);
+			Uri uri = MediaStoreUtil.getUriFromFile(this, file.getAbsolutePath());
+			DocumentFile.fromSingleUri(this, uri);
 		}
 		return null;
 	}
@@ -665,13 +580,18 @@ public class FileUtil
 	 *            flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
-	private static DocumentFile getLollipopDocument(final Context context, final File file,
-	                                                final boolean isDirectory,
-	                                                final boolean createDirectories) {
-		Uri treeUri = getTreeUri(context);
+	private DocumentFile getLollipopDocument(final File file,
+	                                         final boolean isDirectory,
+	                                         final boolean createDirectories)
+			throws WritePermissionException
+	{
+		Uri treeUri = getTreeUri();
 
 		if (treeUri == null)
-			return null;
+		{
+			requestWritePermission();
+			throw new WritePermissionException("Write permission not found.");
+		}
 
 		String fullPath = null;
 		try {
@@ -684,14 +604,14 @@ public class FileUtil
 		String baseFolder = null;
 
 		// First try to get the base folder via unofficial StorageVolume API from the URIs.
-		String treeBase = getFullPathFromTreeUri(context, treeUri);
+		String treeBase = getFullPathFromTreeUri(treeUri);
 		if (fullPath.startsWith(treeBase)) {
 			baseFolder = treeBase;
 		}
 
 		if (baseFolder == null) {
 			// Alternatively, take root folder from device and assume that base URI works.
-			baseFolder = getExtSdCardFolder(context, file);
+			baseFolder = getExtSdCardFolder(file);
 		}
 
 		if (baseFolder == null) {
@@ -701,7 +621,7 @@ public class FileUtil
 		String relativePath = fullPath.substring(baseFolder.length() + 1);
 
 		// start with root of SD card and then parse through document tree.
-		DocumentFile document = DocumentFile.fromTreeUri(context, treeUri);
+		DocumentFile document = DocumentFile.fromTreeUri(this, treeUri);
 
 		String[] parts = relativePath.split("\\/");
 		for (int i = 0; i < parts.length; i++) {
@@ -736,11 +656,11 @@ public class FileUtil
 	 *            The tree RI.
 	 * @return The path (without trailing file separator).
 	 */
-	private static String getFullPathFromTreeUri(final Context context, final Uri treeUri) {
+	private String getFullPathFromTreeUri(final Uri treeUri) {
 		if (treeUri == null) {
 			return null;
 		}
-		String volumePath = FileUtil.getVolumePath(context, FileUtil.getVolumeIdFromTreeUri(treeUri));
+		String volumePath = getVolumePath(getVolumeIdFromTreeUri(treeUri));
 		if (volumePath == null) {
 			return File.separator;
 		}
@@ -748,7 +668,7 @@ public class FileUtil
 			volumePath = volumePath.substring(0, volumePath.length() - 1);
 		}
 
-		String documentPath = FileUtil.getDocumentPathFromTreeUri(treeUri);
+		String documentPath = getDocumentPathFromTreeUri(treeUri);
 		if (documentPath.endsWith(File.separator)) {
 			documentPath = documentPath.substring(0, documentPath.length() - 1);
 		}
@@ -773,14 +693,14 @@ public class FileUtil
 	 *            The volume id.
 	 * @return The path.
 	 */
-	private static String getVolumePath(final Context context, final String volumeId) {
+	private String getVolumePath(final String volumeId) {
 		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			return null;
 		}
 
 		try {
 			StorageManager mStorageManager =
-					(StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+					(StorageManager) getSystemService(Context.STORAGE_SERVICE);
 
 			Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
 
@@ -936,17 +856,94 @@ public class FileUtil
 	 *
 	 * @return The tree URI.
 	 */
-	public static Uri getTreeUri(Context context) {
-		return getSharedPreferenceUri(context, R.string.KEY_SD_CARD_ROOT);
+	public Uri getTreeUri() {
+		// TODO: We could use getPersistedUriPermssions, much more complicated, but ideal
+		Uri rootUri = getSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT);
+		return getSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT);
 	}
 
 	/**
 	 * Store a persistent SAF tree uri
-	 * @param context
 	 */
-	public static void setTreeUri(Context context, Uri treeUri)
+	public void setTreeUri(Uri treeUri)
 	{
-		setSharedPreferenceUri(context, R.string.KEY_SD_CARD_ROOT, treeUri);
+		setSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT, treeUri);
+	}
+
+	protected void requestWritePermission()
+	{
+		if (Util.hasLollipop())
+		{
+			ImageView image = new ImageView(this);
+			image.setImageDrawable(getDrawable(R.drawable.document_api_guide));
+			AlertDialog.Builder builder =
+					new AlertDialog.Builder(this)
+							.setTitle(R.string.dialogWriteRequestTitle)
+							.setView(image);
+			final AlertDialog dialog = builder.create();
+			image.setOnClickListener(new View.OnClickListener()
+			{
+				@Override
+				public void onClick(View v)
+				{
+					Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+					startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
+					dialog.dismiss();
+				}
+			});
+			dialog.show();
+		}
+	}
+
+	@TargetApi(Build.VERSION_CODES.KITKAT)
+	@Override
+	protected void onActivityResult(final int requestCode, int resultCode, final Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		switch (requestCode)
+		{
+			case REQUEST_CODE_WRITE_PERMISSION:
+				if (resultCode == RESULT_OK && data != null)
+				{
+					Uri treeUri = data.getData();
+					getContentResolver().takePersistableUriPermission(treeUri,
+							Intent.FLAG_GRANT_READ_URI_PERMISSION |
+									Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+					setTreeUri(treeUri);
+
+					// This will resume any actions pending write permission
+					onResumeWriteAction(mCallingMethod, mCallingParameters);
+					// If an operation was interrupted to request this permission restart the operation
+//					if (mPendingOperation != null)
+//					{
+//						mPendingOperation.perform();
+//						mPendingOperation = null;
+//					}
+				}
+				break;
+		}
+	}
+
+	protected abstract void onResumeWriteAction(Enum callingMethod, Object[] callingParameters);
+	protected void setWriteMethod(Enum callingMethod)
+	{
+		mCallingMethod = callingMethod;
+	}
+
+	protected void setWriteParameters(Object[] callingParameters)
+	{
+		mCallingParameters = callingParameters;
+	}
+	protected void setWriteResume(Enum callingMethod, Object[] callingParameters)
+	{
+		setWriteMethod(callingMethod);
+		setWriteParameters(callingParameters);
+	}
+	protected void clearWriteResume()
+	{
+		setWriteMethod(null);
+		setWriteParameters(null);
 	}
 
 	/**
@@ -956,9 +953,9 @@ public class FileUtil
 	 *            the id of the shared preference.
 	 * @return the corresponding preference value.
 	 */
-	public static Uri getSharedPreferenceUri(final Context context, final int preferenceId) {
-		String uriString = PreferenceManager.getDefaultSharedPreferences(context)
-				.getString(context.getString(preferenceId), null);
+	public Uri getSharedPreferenceUri(final int preferenceId) {
+		String uriString = PreferenceManager.getDefaultSharedPreferences(this)
+				.getString(getString(preferenceId), null);
 
 		if (uriString == null) {
 			return null;
@@ -976,26 +973,14 @@ public class FileUtil
 	 * @param uri
 	 *            the target value of the preference.
 	 */
-	public static void setSharedPreferenceUri(final Context context, final int preferenceId, final Uri uri) {
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
+	public void setSharedPreferenceUri(final int preferenceId, final Uri uri) {
+		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		if (uri == null) {
-			editor.putString(context.getString(preferenceId), null);
+			editor.putString(getString(preferenceId), null);
 		}
 		else {
-			editor.putString(context.getString(preferenceId), uri.toString());
+			editor.putString(getString(preferenceId), uri.toString());
 		}
 		editor.commit();
-	}
-
-	public static String getCanonicalPathSilently(File file)
-	{
-		try
-		{
-			return file.getCanonicalPath();
-		}
-		catch (IOException e)
-		{
-			return file.getPath();
-		}
 	}
 }

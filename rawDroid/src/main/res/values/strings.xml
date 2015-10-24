@@ -174,6 +174,9 @@
 	<string name="excludedSummary">Folders that are not scanned for images</string>
     <string name="excludedMessage">Tap to remove folders from the exclusion list</string>
 
+    <!-- Dialogs -->
+    <string name="dialogWriteRequestTitle">Write Permission Guide</string>
+    <string name="dialogWriteRequestMessage">The following screen will grant Rawdroid write permission to the external SD card.  Choose the root directory 0000-0000 for full access.</string>
     <string name="welcomeTitle">Welcome to RawDroid!</string>
     <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
     <string name="welcomeTutorial">Would you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>

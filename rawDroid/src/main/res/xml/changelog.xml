@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="3.9.5.0"
+    <release version="3.9.5.1"
+             versioncode="39501"
+             summary="Beta: Memory leak patch"
+             date="16 SEPT 2015">
+        <change>Fix: Memory leak on large image sets</change>
+    </release>
+    <release version="3.9.5"
              versioncode="39500"
              summary="Beta: Document API and search improvements"
-             date="29 JUN 2015">
+             date="25 AUG 2015">
         <change>Enhancement: Better search algorithm</change>
         <change>Feature: Meta processing background service</change>
         <change>Feature: Exclude folders from search</change>

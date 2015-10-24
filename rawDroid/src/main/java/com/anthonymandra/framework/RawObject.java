@@ -34,8 +34,6 @@ public interface RawObject {
 
     public boolean rename(String baseName);
 
-    public boolean copy(File destination);
-
     public Uri getSwapUri();
     
     public boolean writeThumb(File destination);

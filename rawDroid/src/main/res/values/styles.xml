@@ -54,7 +54,7 @@
     <style name="GalleryTheme" parent="@style/Theme.AppCompat.NoActionBar">
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowBackground">@android:color/black</item>
-        <item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>
+        <!--<item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>-->
         <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
     </style>
 
@@ -64,19 +64,19 @@
         <item name="android:paddingRight">0dp</item>
     </style>
 
-    <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
-        <!--<item name="sv_backgroundColor">#8000A621</item>-->
-        <item name="sv_backgroundColor">#ded2ffcc</item>
-        <item name="sv_showcaseColor">#00801A</item>
-        <item name="sv_buttonText">Hide</item>
-        <item name="sv_tintButtonColor">false</item>
-        <item name="sv_titleTextAppearance">@style/TutorialTitle</item>
-        <!--<item name="sv_detailTextAppearance">@style/TutorialText</item>-->
-    </style>
+    <!--<style name="CustomShowcaseTheme" parent="ShowcaseView.Light">-->
+        <!--&lt;!&ndash;<item name="sv_backgroundColor">#8000A621</item>&ndash;&gt;-->
+        <!--<item name="sv_backgroundColor">#ded2ffcc</item>-->
+        <!--<item name="sv_showcaseColor">#00801A</item>-->
+        <!--<item name="sv_buttonText">Hide</item>-->
+        <!--<item name="sv_tintButtonColor">false</item>-->
+        <!--<item name="sv_titleTextAppearance">@style/TutorialTitle</item>-->
+        <!--&lt;!&ndash;<item name="sv_detailTextAppearance">@style/TutorialText</item>&ndash;&gt;-->
+    <!--</style>-->
 
-    <style name="TutorialTitle" parent="TextAppearance.ShowcaseView.Title">
-        <item name="android:textColor">#00801A</item>
-    </style>
+    <!--<style name="TutorialTitle" parent="TextAppearance.ShowcaseView.Title">-->
+        <!--<item name="android:textColor">#00801A</item>-->
+    <!--</style>-->
 
     <style name="RightAlignDropDownItem" parent="Base.Widget.AppCompat.DropDownItem.Spinner">
         <item name="android:gravity">end</item>

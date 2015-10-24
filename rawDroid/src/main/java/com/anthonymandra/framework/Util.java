@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -369,6 +370,16 @@ public class Util
         }
 
         return BitmapFactory.decodeStream(data, null, o);
+    }
+
+    public static Bitmap createBitmapToSize(Resources res, int resId, int width, int height)
+    {
+        Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, o);
+        o.inSampleSize = Util.getExactSampleSize(o, width, height);
+        o.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, o);
     }
 
     public static Bitmap createBitmapToSize(byte[] image, int width, int height)

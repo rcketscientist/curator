@@ -180,12 +180,11 @@ public class SearchService extends IntentService
         {
             for (File raw: imageFiles)
             {
-                Cursor cursor = ImageUtils.getMetaCursor(this, Uri.fromFile(raw));
-                // Check if meta is already processed
-                if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
+                if (ImageUtils.isProcessed(this, Uri.fromFile(raw)))
                 {
                     continue;
                 }
+
 	            String path = raw.getPath();
 
 	            /**

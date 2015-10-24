@@ -155,21 +155,13 @@ public class LegacyViewerActivity extends ViewerActivity
     }
 
     @Override
-	protected void updateAfterDelete()
+	protected void onImageSetChanged()
 	{
-		mMediaItems.remove(getCurrentItem()); //TODO: This is dangerous! Just a kludge for now.
 		if (mModel.getCount() == 0)
 		{
 			onBackPressed();
 		}
 
-		deleteToNext();
-	}
-
-	@Override
-	protected void updateAfterRestore()
-	{
-//		updateViewerItems();
 		mModel.refresh();
 	}
 
