@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -690,8 +692,6 @@ public abstract class CoreActivity extends DocumentActivity
 	 * File operation tasks
 	 */
 
-	protected void
-
 	/**
 	 * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
 	 * @param fromImage source image
@@ -711,7 +711,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	//TODO: Double check if we want custom AsyncTask here
 
-	protected class CopyTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
+	public class CopyTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -774,6 +774,137 @@ public abstract class CoreActivity extends DocumentActivity
 				clearWriteResume();
 
 			onImageSetChanged();
+		}
+
+		@Override
+		protected void onProgressUpdate(String... values)
+		{
+			if (values.length > 0)
+			{
+				mProgressDialog.setMessage(values[0]);
+			}
+			else
+			{
+				mProgressDialog.incrementProgressBy(1);
+			}
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
+	}
+
+	private class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
+	{
+		@Override
+		protected void onPreExecute()
+		{
+			mProgressDialog = new ProgressDialog(CoreActivity.this);
+			mProgressDialog.setTitle(R.string.exportingThumb);
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			mProgressDialog.setCanceledOnTouchOutside(true);
+			mProgressDialog.setOnCancelListener(this);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Boolean doInBackground(Object... params)
+		{
+			boolean totalSuccess = true;
+			List<Uri> totalImages = (List<Uri>) params[0];
+			File destinationFolder = (File) params[1];
+
+			List<Uri> remainingImages = new ArrayList<>();
+			Collections.copy(remainingImages, totalImages);
+
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
+			boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
+			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+			LibRaw.Margins margins = new LibRaw.Margins(pref);
+
+			Bitmap watermark;
+			byte[] waterData = null;
+			boolean processWatermark = false;
+			int waterWidth = 0, waterHeight = 0;
+
+			if (Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro)
+			{
+				processWatermark = true;
+				//TODO: Since this is calling Width it's only accurate if we use full decode.
+				watermark = Util.getDemoWatermark(CoreActivity.this, copyList.get(0).getWidth());
+				waterData = Util.getBitmapBytes(watermark);
+				waterWidth = watermark.getWidth();
+				waterHeight = watermark.getHeight();
+				margins = LibRaw.Margins.LowerRight;
+			}
+			else if (showWatermark)
+			{
+				processWatermark = true;
+				if (watermarkText.isEmpty())
+				{
+					Toast.makeText(CoreActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+					processWatermark = false;
+				}
+				else
+				{
+					watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+					waterData = Util.getBitmapBytes(watermark);
+					waterWidth = watermark.getWidth();
+					waterHeight = watermark.getHeight();
+				}
+			}
+
+			for (RawObject toExport : copyList)
+			{
+				publishProgress(toExport.getName());
+				File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
+
+				boolean success;
+				if (processWatermark)
+				{
+					success = toExport.writeThumbWatermark(thumbDest, waterData, waterWidth, waterHeight, margins);
+				}
+				else
+				{
+					success = toExport.writeThumb(thumbDest);
+				}
+
+				if (!success)
+				{
+					failed.add(toExport.getName());
+				}
+				else
+				{
+					onImageAdded(Uri.fromFile(thumbDest));
+				}
+
+				publishProgress();
+			}
+			return true; //not used.
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			//FIXME
+			mGalleryAdapter.notifyDataSetChanged();
+
+			if (failed.size() > 0)
+			{
+				String failures = "Failed files: ";
+				for (String fail : failed)
+				{
+					failures += fail + ", ";
+				}
+				failures += "\nIf you are watermarking, check settings/sizes!";
+				Toast.makeText(CoreActivity.this, failures, Toast.LENGTH_LONG).show();
+			}
+			mProgressDialog.dismiss();
 		}
 
 		@Override
