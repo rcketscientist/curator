@@ -19,9 +19,3 @@
 [submodule "metadata-extractor"]
 	path = metadata-extractor
 	url = https://github.com/rcketscientist/metadata-extractor.git
-[submodule "dynamicGrid"]
-	path = dynamicGrid
-	url = https://github.com/askerov/DynamicGrid.git
-[submodule "twoway-view"]
-	path = twoway-view
-	url = https://github.com/rcketscientist/twoway-view.git
