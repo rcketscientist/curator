@@ -19,12 +19,18 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
@@ -33,6 +39,7 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
+import com.anthonymandra.rawdroid.FormatDialog;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.ImageViewActivity;
 import com.anthonymandra.rawdroid.LegacyViewerActivity;
@@ -64,6 +71,7 @@ public abstract class CoreActivity extends DocumentActivity
 		DELETE,
 		RECYCLE,
 		RESTORE,
+		RENAME,
 		WRITE_XMP
 	}
 
@@ -174,9 +182,14 @@ public abstract class CoreActivity extends DocumentActivity
 			case RECYCLE:
 				new RecycleTask().execute((List<Uri>) callingParameters[0]);
 				break;
+			case RENAME:
+				new RenameTask().execute(callingParameters);
+				break;
 			case WRITE_XMP:
 				new WriteXmpTask().execute(callingParameters);
 				break;
+			default:
+				throw new NoSuchMethodError("Write Action:" + callingMethod + " is undefined.");
 		}
 		clearWriteResume();
 	}
@@ -518,6 +531,44 @@ public abstract class CoreActivity extends DocumentActivity
 		startActivity(settings);
 	}
 
+	int numDigits(int x)
+	{
+		return (x < 10 ? 1 : (x < 100 ? 2 : (x < 1000 ? 3 : (x < 10000 ? 4 : (x < 100000 ? 5 : (x < 1000000 ? 6 : (x < 10000000 ? 7 : (x < 100000000 ? 8
+				: (x < 1000000000 ? 9 : 10)))))))));
+	}
+
+	private void showRenameDialog(final List<Uri> itemsToRename)
+	{
+		final View dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null);
+		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
+		final EditText nameText = (EditText) dialogView.findViewById(R.id.editTextFormat);
+
+		final AlertDialog renameDialog = new AlertDialog.Builder(this)
+				.setTitle(getString(R.string.renameImages))
+				.setView(dialogView)
+				.setPositiveButton(R.string.rename, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						String customName = ((EditText) findViewById(R.id.editTextFormat)).getText().toString();
+						int selected = format.getSelectedItemPosition();
+						new RenameTask().execute(itemsToRename, selected, customName);
+					}
+				})
+				.setNegativeButton(R.string.neutral, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which) {}
+				}).create();
+
+//		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
+//		final EditText nameText = (EditText) dialogView.findViewById(R.id.editTextFormat);
+
+		renameDialog.setCanceledOnTouchOutside(true);
+		renameDialog.show();
+	}
+
 	/**
 	 * Fires after individual items are successfully added.  This will fire multiple times in a batch.
 	 * @param item added item
@@ -796,7 +847,44 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	private class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
+	protected boolean writeThumb(Uri source, File destination) {
+		ParcelFileDescriptor pfd = null;
+		try
+		{
+			DocumentFile dest = FileUtil.getDocumentFile(this, destination, false, true);
+			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+		finally
+		{
+			Utils.closeSilently(pfd);
+		}
+	}
+
+	protected boolean writeThumbWatermark(Uri source, File destination, byte[] waterMap,
+	                                   int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
+		ParcelFileDescriptor pfd = null;
+		try
+		{
+			DocumentFile dest = FileUtil.getDocumentFile(this, destination, false, true);
+			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+		}
+		catch(Exception e)
+		{
+			return false;
+		}
+		finally
+		{
+			Utils.closeSilently(pfd);
+		}
+	}
+
+	public class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -835,8 +923,9 @@ public abstract class CoreActivity extends DocumentActivity
 			if (Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro)
 			{
 				processWatermark = true;
-				//TODO: Since this is calling Width it's only accurate if we use full decode.
-				watermark = Util.getDemoWatermark(CoreActivity.this, copyList.get(0).getWidth());
+				// Just grab the first width and assume that will be sufficient for all images
+				final int width = getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "?", new String[] {totalImages.get(0).toString()}, null).getInt(Meta.WIDTH_COLUMN);
+				watermark = Util.getDemoWatermark(CoreActivity.this, width);
 				waterData = Util.getBitmapBytes(watermark);
 				waterWidth = watermark.getWidth();
 				waterHeight = watermark.getHeight();
@@ -859,51 +948,33 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
-			for (RawObject toExport : copyList)
+			boolean success = true;
+			for (Uri toExport : totalImages)
 			{
-				publishProgress(toExport.getName());
-				File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
+				File from = new File(toExport.getPath());
+				File thumbDest = new File(destinationFolder, Util.swapExtention(from.getName(), ".jpg"));
+				publishProgress(from.getName());
 
-				boolean success;
 				if (processWatermark)
 				{
-					success = toExport.writeThumbWatermark(thumbDest, waterData, waterWidth, waterHeight, margins);
+					success = writeThumbWatermark(from, thumbDest, waterData, waterWidth, waterHeight, margins) && success;
+					onImageAdded(Uri.fromFile(thumbDest));
 				}
 				else
 				{
-					success = toExport.writeThumb(thumbDest);
-				}
-
-				if (!success)
-				{
-					failed.add(toExport.getName());
-				}
-				else
-				{
+					success = writeThumb(from, thumbDest) && success;
 					onImageAdded(Uri.fromFile(thumbDest));
 				}
 
 				publishProgress();
 			}
-			return true; //not used.
+			return success; //not used.
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result)
 		{
-			//FIXME
-			mGalleryAdapter.notifyDataSetChanged();
-
-			if (failed.size() > 0)
-			{
-				String failures = "Failed files: ";
-				for (String fail : failed)
-				{
-					failures += fail + ", ";
-				}
-				failures += "\nIf you are watermarking, check settings/sizes!";
-				Toast.makeText(CoreActivity.this, failures, Toast.LENGTH_LONG).show();
-			}
+			onImageSetChanged();
 			mProgressDialog.dismiss();
 		}
 
@@ -1113,6 +1184,114 @@ public abstract class CoreActivity extends DocumentActivity
 				clearWriteResume();
 
 			onImageSetChanged();
+		}
+	}
+
+	public boolean renameImage(File source, String baseName) throws WritePermissionException
+	{
+		Boolean imageSuccess = true;
+		Boolean xmpSuccess = true;
+		Boolean jpgSuccess = true;
+
+		imageSuccess = renameAssociatedFile(source, baseName);
+		if (ImageUtils.hasXmpFile(source))
+		{
+			xmpSuccess = renameAssociatedFile(ImageUtils.getXmpFile(source), baseName);
+		}
+		if (ImageUtils.hasJpgFile(source))
+		{
+			jpgSuccess = renameAssociatedFile(ImageUtils.getJpgFile(source), baseName);
+		}
+
+		return imageSuccess && xmpSuccess && jpgSuccess;
+	}
+
+	public boolean renameAssociatedFile(File original, String baseName)
+			throws WritePermissionException
+	{
+		File renameFile = getRenamedFile(original, baseName);
+		return moveFile(original, renameFile);
+	}
+
+	public File getRenamedFile(File original, String baseName)
+	{
+		String filename = original.getName();
+		String ext = filename.substring(filename.lastIndexOf("."),
+				filename.length());
+
+		String rename = baseName + ext;
+		return new File(original.getParent(), rename);
+	}
+
+	protected class RenameTask extends AsyncTask<Object, Integer, Boolean>
+	{
+		@Override
+		protected Boolean doInBackground(final Object... params)
+		{
+			final List<Uri> totalImages = (List<Uri>) params[0];
+			final int format = (int) params[1];
+			final String customName = (String) params[2];
+
+			int counter = 0;
+			final int total = totalImages.size();
+			final String sequencer = "%0" + numDigits(total) + "d";
+			final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+
+			List<Uri> remainingImages = new ArrayList<>();
+			Collections.copy(remainingImages, totalImages);
+
+			try
+			{
+				for (Uri image : totalImages)
+				{
+					++counter;
+					setWriteResume(WriteActions.RENAME, new Object[]{
+							remainingImages,
+							format,
+							customName
+					});
+
+					String rename = null;
+					switch (format)
+					{
+						case 0:
+							rename = customName + "-" + String.format(sequencer, counter);
+							break;
+						case 1:
+							rename = customName + " (" + String.format(sequencer, counter) + " of " + total + ")";
+							break;
+					}
+
+					File imageFile = new File(image.getPath());
+
+					renameImage(imageFile, rename);
+					remainingImages.remove(image);
+					File renameFile = getRenamedFile(imageFile, rename);
+
+					ContentValues c = new ContentValues();
+					c.put(Meta.Data.NAME, renameFile.getName());
+					c.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
+
+					operations.add(
+							ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+									.withSelection(Meta.URI_COLUMN + "=?", new String[]{image.toString()})
+									.withValues(c)
+									.build());
+				}
+			} catch (WritePermissionException e)
+			{
+				e.printStackTrace();
+			}
+
+			updateMetaDatabase(operations);
+			return true;
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			if (result)
+				clearWriteResume();
 		}
 	}
 

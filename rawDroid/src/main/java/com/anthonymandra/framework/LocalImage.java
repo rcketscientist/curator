@@ -68,13 +68,6 @@ public class LocalImage extends MetaMedia {
         return getImageBytes();
 	}
 
-    /* Error prone */
-    @Override
-    public boolean moveImage(File location) {
-	    return FileUtil.moveFile(mContext, mImage, location);
-//        return mImage.renameTo(location);
-    }
-
     private byte[] getImageBytes()
     {
         byte[] dst = new byte[(int) mImage.length()];
@@ -99,20 +92,8 @@ public class LocalImage extends MetaMedia {
         }
 
         return LibRaw.getThumbWithWatermark(mImage, watermark, margins,
-                waterWidth, waterHeight);
+		        waterWidth, waterHeight);
     }
-
-	@Override
-	public boolean delete() {
-		if (hasXmpFile())
-			FileUtil.deleteFile(mContext, getXmpFile());
-//			getXmpFile().delete();
-        if (hasJpgFile())
-	        FileUtil.deleteFile(mContext, getJpgFile());
-//            getJpgFile().delete();
-		return FileUtil.deleteFile(mContext, mImage);
-//		return mImage.delete();
-	}
 
 	@Override
 	public String getName() {
@@ -432,44 +413,4 @@ public class LocalImage extends MetaMedia {
 		}
 		return true;
 	}
-
-	@Override
-	public boolean writeThumb(File destination) {
-		ParcelFileDescriptor pfd = null;
-		try
-		{
-			DocumentFile dest = FileUtil.getDocumentFile(mContext, destination, false, true);
-			pfd = mContext.getContentResolver().openFileDescriptor(dest.getUri(), "w");
-			return LibRaw.writeThumbFile(mImage.getPath(), 100, Bitmap.Config.ARGB_8888, CompressFormat.JPEG, pfd.getFd());
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			Utils.closeSilently(pfd);
-		}
-	}
-
-	@Override
-	public boolean writeThumbWatermark(File destination, byte[] waterMap,
-			int waterWidth, int waterHeight, Margins waterMargins) {
-		ParcelFileDescriptor pfd = null;
-		try
-		{
-			DocumentFile dest = FileUtil.getDocumentFile(mContext, destination, false, true);
-			pfd = mContext.getContentResolver().openFileDescriptor(dest.getUri(), "w");
-			return LibRaw.writeThumbFileWatermark(mImage.getPath(), 100, Bitmap.Config.ARGB_8888, CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			Utils.closeSilently(pfd);
-		}
-	}
-
 }

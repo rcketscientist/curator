@@ -11,8 +11,6 @@ public interface RawObject {
 
     public boolean isDirectory();
 
-    public boolean delete();
-
     public String getName();
 
     public String getFilePath();
@@ -25,8 +23,6 @@ public interface RawObject {
     public InputStream getImageStream();
     public byte[] getImage();
 
-    public boolean moveImage(File location);
-
     public byte[] getThumb();
 	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, Margins margins);
 
@@ -35,7 +31,4 @@ public interface RawObject {
     public boolean rename(String baseName);
 
     public Uri getSwapUri();
-    
-    public boolean writeThumb(File destination);
-    public boolean writeThumbWatermark(File destination, byte[] waterMap, int waterWidth, int waterHeight, Margins waterMargins);
 }

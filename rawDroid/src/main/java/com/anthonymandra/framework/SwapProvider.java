@@ -121,11 +121,11 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 	                boolean success;
 					if (processWatermark)
 					{
-						success = image.writeThumbWatermark(swapFile, waterData, waterWidth, waterHeight, margin);
+						success = writeThumbWatermark(image.getUri(), swapFile, waterData, waterWidth, waterHeight, margin);
 					}
 					else
 					{
-						success = image.writeThumb(swapFile);	
+						success = writeThumb(image.getUri(), swapFile);
 					}
 					
 					if (!success)

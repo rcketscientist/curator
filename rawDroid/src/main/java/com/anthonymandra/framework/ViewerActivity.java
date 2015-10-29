@@ -979,11 +979,11 @@ public abstract class ViewerActivity extends CoreActivity implements
         boolean success;
 		if (processWatermark)
 		{
-			success = source.writeThumbWatermark(dest, waterData, waterWidth, waterHeight, margins);
+			success = writeThumbWatermark(source.getUri(), dest, waterData, waterWidth, waterHeight, margins);
 		}
         else
         {
-        	success = source.writeThumb(dest);          
+        	success = writeThumb(source.getUri(), dest);
         }	
 		
 		if (!success)

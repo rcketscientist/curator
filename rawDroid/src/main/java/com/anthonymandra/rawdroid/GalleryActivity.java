@@ -865,8 +865,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
         editor.putString(GalleryActivity.PREFS_MOST_RECENT_SAVE, destination.getPath());
         editor.apply();
 
-        CopyThumbTask ct = new CopyThumbTask(destination);
-        ct.execute(getImageListFromUriList(mItemsForIntent));
+        CopyThumbTask ct = new CopyThumbTask();
+        ct.execute(getImageListFromUriList(mItemsForIntent), destination);
     }
 
     private void showWriteAccessError()
@@ -1087,6 +1087,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	protected void onImageSetChanged()
 	{
 		// Not needed with a cursorloader
+		//TODO: This could be used to batch adds/removes
 	}
 
 	@Override
@@ -1342,143 +1343,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		else
 		{
 			mImageDecoder.setPauseWork(false);
-		}
-	}
-
-	private class CopyThumbTask extends AsyncTask<List<MediaItem>, String, Boolean> implements OnCancelListener
-	{
-		private ProgressDialog importProgress;
-		private File mDestination;
-		List<String> failed = new ArrayList<>();
-
-		//TODO: This could be multithreaded.
-		public CopyThumbTask(File destination)
-		{
-			mDestination = destination;
-		}
-
-		@Override
-		protected void onPreExecute()
-		{
-			importProgress = new ProgressDialog(GalleryActivity.this);
-			importProgress.setTitle(R.string.exportingThumb);
-			importProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			importProgress.setCanceledOnTouchOutside(true);
-			importProgress.setOnCancelListener(this);
-			importProgress.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(List<MediaItem>... params)
-		{
-			List<MediaItem> copyList = params[0];
-			importProgress.setMax(copyList.size());
-			
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(GalleryActivity.this);
-            boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
-            String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
-            int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
-            String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-            Margins margins = new Margins(pref);
-            
-            Bitmap watermark;
-            byte[] waterData = null;
-            boolean processWatermark = false;
-            int waterWidth = 0, waterHeight = 0;
-            		
-            if (Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro)
-            {
-            	processWatermark = true;
-				//TODO: Since this is calling Width it's only accurate if we use full decode.
-                watermark = Util.getDemoWatermark(GalleryActivity.this, copyList.get(0).getWidth());
-                waterData = Util.getBitmapBytes(watermark);
-                waterWidth = watermark.getWidth();
-                waterHeight = watermark.getHeight();
-                margins = Margins.LowerRight;
-            }
-            else if (showWatermark)
-            {
-                processWatermark = true;
-                if (watermarkText.isEmpty())
-                {
-                    Toast.makeText(GalleryActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
-                    processWatermark = false;
-                }
-                else
-                {
-                    watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                    waterData = Util.getBitmapBytes(watermark);
-                    waterWidth = watermark.getWidth();
-                    waterHeight = watermark.getHeight();
-                }
-            }
-          
-			for (RawObject toExport : copyList)
-			{
-				publishProgress(toExport.getName());
-				File thumbDest = new File(mDestination, Util.swapExtention(toExport.getName(), ".jpg"));
-
-				boolean success;
-				if (processWatermark)
-				{
-					success = toExport.writeThumbWatermark(thumbDest, waterData, waterWidth, waterHeight, margins);
-				}
-                else
-                {
-                	success = toExport.writeThumb(thumbDest);          
-                }				
-
-				if (!success)
-				{
-					failed.add(toExport.getName());
-				}
-				else
-				{
-					onImageAdded(Uri.fromFile(thumbDest));
-				}
-					
-				publishProgress();
-			}
-			return true; //not used.
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			//FIXME
-			mGalleryAdapter.notifyDataSetChanged();
-
-			if (failed.size() > 0)
-			{
-				String failures = "Failed files: ";
-				for (String fail : failed)
-				{
-					failures += fail + ", ";
-				}
-				failures += "\nIf you are watermarking, check settings/sizes!";
-				Toast.makeText(GalleryActivity.this, failures, Toast.LENGTH_LONG).show();
-			}
-			importProgress.dismiss();
-		}
-
-		@Override
-		protected void onProgressUpdate(String... values)
-		{
-			if (values.length > 0)
-			{
-				importProgress.setMessage(values[0]);
-			}
-			else
-			{
-				importProgress.incrementProgressBy(1);
-			}
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			this.cancel(true);
 		}
 	}
 

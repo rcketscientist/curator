@@ -1,47 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linearLayout1"
-    android:layout_width="300dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="5dp" >
 
     <Spinner
         android:id="@+id/spinner1"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:prompt="@string/format_prompt" />
+        android:prompt="@string/format_prompt"
+        android:spinnerMode="dropdown"
+        android:entries="@array/format_array"/>
 
     <EditText
         android:id="@+id/editTextFormat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Custom Name" >
-
-        <requestFocus>
-        </requestFocus>
+        <requestFocus />
     </EditText>
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/buttonCancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/neutral" >
-        </Button>
-
-        <Button
-            android:id="@+id/buttonAccept"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/positive" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Ex:"
+        android:id="@+id/textViewExample"/>
 
 </LinearLayout>
