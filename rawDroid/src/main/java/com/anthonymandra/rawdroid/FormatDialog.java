@@ -61,11 +61,11 @@ public class FormatDialog extends Dialog
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 
-		Button accept = (Button) findViewById(R.id.buttonAccept);
-		accept.setOnClickListener(new AcceptListener());
-
-		Button cancel = (Button) findViewById(R.id.buttonCancel);
-		cancel.setOnClickListener(new CancelListener());
+//		Button accept = (Button) findViewById(R.id.buttonAccept);
+//		accept.setOnClickListener(new AcceptListener());
+//
+//		Button cancel = (Button) findViewById(R.id.buttonCancel);
+//		cancel.setOnClickListener(new CancelListener());
 	}
 
 	int numDigits(int x)
