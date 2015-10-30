@@ -957,12 +957,12 @@ public abstract class CoreActivity extends DocumentActivity
 
 				if (processWatermark)
 				{
-					success = writeThumbWatermark(from, thumbDest, waterData, waterWidth, waterHeight, margins) && success;
+					success = writeThumbWatermark(toExport, thumbDest, waterData, waterWidth, waterHeight, margins) && success;
 					onImageAdded(Uri.fromFile(thumbDest));
 				}
 				else
 				{
-					success = writeThumb(from, thumbDest) && success;
+					success = writeThumb(toExport, thumbDest) && success;
 					onImageAdded(Uri.fromFile(thumbDest));
 				}
 

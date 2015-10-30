@@ -11,9 +11,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.gallery3d.common.Utils;
+import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
@@ -22,7 +25,9 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 public class SwapProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener  {
     private static final String TAG = SwapProvider.class.getSimpleName();
@@ -178,7 +183,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         return modeBits;
     }
 
-
     private void updateWatermark()
     {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -188,6 +192,45 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         mWatermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
         mWatermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
         mMargins = new Margins(pref);
+    }
+
+    // It's safe to write these directly since it's app storage space
+    protected boolean writeThumb(Uri source, File destination)
+    {
+        ParcelFileDescriptor pfd = null;
+        try
+        {
+            pfd = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE);
+            return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        finally
+        {
+            Utils.closeSilently(pfd);
+        }
+    }
+
+    // It's safe to write these directly since it's app storage space
+    protected boolean writeThumbWatermark(Uri source, File destination, byte[] waterMap,
+                                          int waterWidth, int waterHeight, LibRaw.Margins waterMargins)
+    {
+        ParcelFileDescriptor pfd = null;
+        try
+        {
+            pfd = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE);
+            return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+        }
+        catch(Exception e)
+        {
+            return false;
+        }
+        finally
+        {
+            Utils.closeSilently(pfd);
+        }
     }
 
     public static Uri getSwapUri(File image)
