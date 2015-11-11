@@ -370,10 +370,10 @@ public class GalleryUtils {
 //        return R.string.select_image;
 //    }
 
-    public static boolean isPanorama(MediaItem item) {
-        if (item == null) return false;
-        int w = item.getWidth();
-        int h = item.getHeight();
-        return (h > 0 && w / h >= 2);
-    }
+//    public static boolean isPanorama(MediaItem item) {
+//        if (item == null) return false;
+//        int w = item.getWidth();
+//        int h = item.getHeight();
+//        return (h > 0 && w / h >= 2);
+//    }
 }

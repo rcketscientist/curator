@@ -9,8 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
@@ -26,18 +24,13 @@ import com.anthonymandra.dcraw.TiffDecoder;
 import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 
 public class LocalImage extends MetaMedia {
@@ -92,7 +85,7 @@ public class LocalImage extends MetaMedia {
         }
 
         return LibRaw.getThumbWithWatermark(mImage, watermark, margins,
-		        waterWidth, waterHeight);
+				waterWidth, waterHeight);
     }
 
 	@Override
@@ -216,45 +209,9 @@ public class LocalImage extends MetaMedia {
 	}
 
 	@Override
-	public BufferedOutputStream getXmpOutputStream() throws FileNotFoundException
-    {
-        return new BufferedOutputStream(new FileOutputStream(getXmpFile()));
-	}
-
-	@Override
 	public long getFileSize() {
 		return mImage.length();
 	}
-
-	@Override
-
-	public boolean rename(String baseName) {
-		Boolean success;
-
-        success = renameAssociatedFile(mImage, baseName);
-		if (hasXmpFile())
-        {
-            success = success && renameAssociatedFile(getXmpFile(), baseName);
-        }
-        if (hasJpgFile())
-        {
-            success = success && renameAssociatedFile(getJpgFile(), baseName);
-        }
-
-		return success;
-	}
-
-    public boolean renameAssociatedFile(File original, String baseName)
-    {
-        String filename = original.getName();
-        String ext = filename.substring(filename.lastIndexOf("."),
-                filename.length());
-
-        String rename = baseName + ext;
-        File renameFile = new File(mImage.getParent(), rename);
-	    return FileUtil.moveFile(mContext, original, renameFile);
-//        return original.renameTo(renameFile);
-    }
 
 	public boolean hasXmp() {
 		return hasXmpFile() || mMetadata.containsDirectoryOfType(XmpDirectory.class);
@@ -288,14 +245,6 @@ public class LocalImage extends MetaMedia {
 
         return new File(mImage.getParent(), name);
     }
-
-    public void writeXmp() throws FileNotFoundException
-    {
-		OutputStream os = getXmpOutputStream();
-
-		writeXmp(os);
-        Utils.closeSilently(os);
-	}
 
 	@Override
 	protected BufferedInputStream getXmpInputStream() {
@@ -392,25 +341,5 @@ public class LocalImage extends MetaMedia {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	private boolean writeThumb(byte[] source, File destination) {
-		if (source == null) {
-			return false;
-		}
-		FileChannel out = null;
-		try {
-			out = new FileOutputStream(destination).getChannel();
-			out.write(ByteBuffer.wrap(source));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		} finally {
-			Utils.closeSilently(out);
-		}
-		return true;
 	}
 }

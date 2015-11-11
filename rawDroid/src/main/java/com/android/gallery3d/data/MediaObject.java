@@ -22,7 +22,7 @@ import android.util.Log;
 import com.anthonymandra.framework.MetaObject;
 import com.anthonymandra.framework.RawObject;
 
-public abstract class MediaObject implements RawObject, MetaObject {
+public abstract class MediaObject implements RawObject {
     @SuppressWarnings("unused")
     private static final String TAG = "MediaObject";
 

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.UriPermission;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -50,6 +51,8 @@ public abstract class DocumentActivity extends AppCompatActivity
 	private static final String TAG = DocumentActivity.class.getSimpleName();
 	private static final int REQUEST_PREFIX = 1000;
 	private static final int REQUEST_CODE_WRITE_PERMISSION = REQUEST_PREFIX + 1;
+
+	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
 
 	protected Enum mCallingMethod;
 	protected Object[] mCallingParameters;
@@ -868,6 +871,61 @@ public abstract class DocumentActivity extends AppCompatActivity
 	public void setTreeUri(Uri treeUri)
 	{
 		setSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT, treeUri);
+	}
+
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+	protected void checkWriteAccess()
+	{
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		boolean skipWarning = settings.getBoolean(PREFERENCE_SKIP_WRITE_WARNING, false);
+		if (skipWarning)
+			return;
+
+		if (Util.hasLollipop())
+		{
+			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
+
+			android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.requestWriteAccess);
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing
+				}
+			});
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					requestWritePermission();
+				}
+			});
+			builder.show();
+
+		}
+		else if (Util.hasKitkat())
+		{
+			android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+			builder.setTitle(R.string.writeAccessTitle);
+			builder.setMessage(R.string.kitkatWriteIssue);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					// Do nothing, just a warning
+				}
+			});
+			builder.show();
+		}
+
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
+		editor.apply();
 	}
 
 	protected void requestWritePermission()

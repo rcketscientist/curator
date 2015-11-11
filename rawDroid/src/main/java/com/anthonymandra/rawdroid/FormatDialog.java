@@ -129,7 +129,7 @@ public class FormatDialog extends Dialog
 	{
 		ContentValues c = new ContentValues();
 		String priorUri = toRename.getUri().toString();
-		toRename.rename(baseName);
+//		toRename.rename(baseName);
 
 		c.put(Meta.Data.NAME, toRename.getName());
 		c.put(Meta.Data.URI, toRename.getUri().toString());

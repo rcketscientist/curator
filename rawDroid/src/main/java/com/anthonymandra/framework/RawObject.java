@@ -28,7 +28,5 @@ public interface RawObject {
 
     public long getFileSize();
 
-    public boolean rename(String baseName);
-
     public Uri getSwapUri();
 }

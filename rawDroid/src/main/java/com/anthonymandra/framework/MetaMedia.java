@@ -36,7 +36,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public abstract class MetaMedia extends MediaItem
+public abstract class MetaMedia extends MediaItem implements MetaObject
 {
 	private static final String TAG = MetaMedia.class.getSimpleName();
 
@@ -65,48 +65,9 @@ public abstract class MetaMedia extends MediaItem
         mContext = context;
     }
 
-	public void clearXmp()
-	{
-		setLabel(null);
-		setRating(Double.NaN);
-		setSubject(new String[0]);
-        try
-        {
-            resetXmp();
-        }
-        catch (FileNotFoundException e)
-        {
-            Toast.makeText(mContext, "XMP file could not be created.  Google disabled write access in Android 4.4+.  You can root to fix, or use a card reader.", Toast.LENGTH_LONG).show();
-        }
-        // readXmp(); // When we delete fields we must reread to update.
-	}
-
 	private boolean isLoaded = false;
 
 	public abstract boolean hasXmp();
-
-	protected void resetXmp() throws FileNotFoundException
-    {
-		BufferedOutputStream bos = getXmpOutputStream();
-
-		XmpWriter.write(bos, mMetadata);
-		mMetadata = new Metadata();
-		readXmp();
-        Utils.closeSilently(bos);
-	}
-
-	protected void writeXmp(final OutputStream os)
-	{
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				if (mMetadata.containsDirectoryOfType(XmpDirectory.class))
-					XmpWriter.write(os, mMetadata);
-			}
-		}).start();
-	}
 
 	public String getAperture()
 	{
@@ -457,109 +418,6 @@ public abstract class MetaMedia extends MediaItem
 	}
 
 	protected abstract BufferedInputStream getXmpInputStream();
-
-	protected abstract BufferedOutputStream getXmpOutputStream() throws FileNotFoundException;
-
-	public boolean readMetadata()
-	{
-		// Avoid reloading
-		if (!isLoaded)
-		{
-			boolean metaResult = readMeta();
-			boolean xmpResult = readXmp();
-            isLoaded = metaResult && xmpResult;
-		}
-
-		return isLoaded;
-	}
-
-	private boolean readMeta()
-	{
-		// Metadata
-		InputStream raw = getImageStream();
-		try
-		{
-			mMetadata = ImageMetadataReader.readMetadata(raw);
-//			putContent();
-			return true;
-		}
-		catch (ImageProcessingException e)
-		{
-			Log.w(TAG, "Failed to process file for meta data.", e);
-			return false;
-		}
-		catch (IOException e)
-		{
-			Log.w(TAG, "Failed to open file for meta data.", e);
-			return false;
-		}
-        catch (Exception e)
-        {
-            Log.w(TAG, "Unknown meta data error.", e);
-            return false;
-        }
-		finally
-		{
-            Utils.closeSilently(raw);
-		}
-	}
-	
-	protected void putContent()
-	{
-		final ContentValues cv = getContentValues();
-		
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				mContext.getContentResolver().insert(Meta.Data.CONTENT_URI, cv);
-			}
-		}).start();
-		
-	}
-
-	public ContentValues getContentValues()
-	{
-		final ContentValues cv = new ContentValues();
-		cv.put(Meta.Data.ALTITUDE, getAltitude());
-		cv.put(Meta.Data.APERTURE, getAperture());
-		cv.put(Meta.Data.EXPOSURE, getExposure());
-		cv.put(Meta.Data.FLASH, getFlash());
-		cv.put(Meta.Data.FOCAL_LENGTH, getFocalLength());
-		cv.put(Meta.Data.HEIGHT, height);
-		cv.put(Meta.Data.ISO, getIso());
-		cv.put(Meta.Data.LATITUDE, getLatitude());
-		cv.put(Meta.Data.LONGITUDE, getLongitude());
-		cv.put(Meta.Data.MODEL, getModel());
-		cv.put(Meta.Data.NAME, getName());
-		cv.put(Meta.Data.ORIENTATION, getOrientation());
-		cv.put(Meta.Data.TIMESTAMP, getDateTime());
-		cv.put(Meta.Data.WHITE_BALANCE, getWhiteBalance());
-		cv.put(Meta.Data.WIDTH, width);
-		cv.put(Meta.Data.URI, getUri().toString());
-		cv.put(Meta.Data.RATING, getRating());
-		cv.put(Meta.Data.SUBJECT, convertArrayToString(getSubject()));
-		cv.put(Meta.Data.LABEL, getLabel());
-		return cv;
-	}
-
-	public static String strSeparator = "__,__";
-	public static String convertArrayToString(String[] array){
-		String str = "";
-		if (array == null)
-			return str;
-		for (int i = 0;i<array.length; i++) {
-			str = str+array[i];
-			// Do not append comma at the end of last element
-			if(i<array.length-1){
-				str = str+strSeparator;
-			}
-		}
-		return str;
-	}
-	public static String[] convertStringToArray(String str){
-		String[] arr = str.split(strSeparator);
-		return arr;
-	}
 	
 	protected void getContent()
 	{

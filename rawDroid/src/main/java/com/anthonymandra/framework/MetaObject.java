@@ -1,16 +1,6 @@
 package com.anthonymandra.framework;
 
-import android.content.ContentValues;
-
-import java.io.FileNotFoundException;
-
 public interface MetaObject {
-
-    void clearXmp();
-
-    void writeXmp() throws FileNotFoundException;
-
-    boolean readMetadata();
 
     String getAperture();
 
@@ -83,6 +73,4 @@ public interface MetaObject {
     int getThumbHeight();
 
     void setThumbHeight(int thumbHeight);
-
-    ContentValues getContentValues();
 }

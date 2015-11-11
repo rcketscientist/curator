@@ -85,8 +85,6 @@ public abstract class CoreActivity extends DocumentActivity
 	private static final int REQUEST_CODE_SHARE = 00;
 	private static final int REQUEST_PREFIX = 2000;
 
-	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
-
 	protected DocumentRecycleBin recycleBin;
 	protected File mSwapDir;
 
@@ -585,61 +583,6 @@ public abstract class CoreActivity extends DocumentActivity
 	 * Fires after all actions of a batch (or single) change to the image set are complete.
 	 */
 	protected abstract void onImageSetChanged();
-
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	protected void checkWriteAccess()
-	{
-		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean skipWarning = settings.getBoolean(PREFERENCE_SKIP_WRITE_WARNING, false);
-		if (skipWarning)
-			return;
-
-		if (Util.hasLollipop())
-		{
-			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
-
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.writeAccessTitle);
-			builder.setMessage(R.string.requestWriteAccess);
-			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int which)
-				{
-					// Do nothing
-				}
-			});
-			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int which)
-				{
-//					requestWritePermission();
-				}
-			});
-			builder.show();
-
-		}
-		else if (Util.hasKitkat())
-		{
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.writeAccessTitle);
-			builder.setMessage(R.string.kitkatWriteIssue);
-			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
-			{
-				@Override
-				public void onClick(DialogInterface dialog, int which)
-				{
-					// Do nothing, just a warning
-				}
-			});
-			builder.show();
-		}
-
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putBoolean(PREFERENCE_SKIP_WRITE_WARNING, true);
-		editor.apply();
-	}
 
 	protected void setShareUri(Uri share)
 	{
