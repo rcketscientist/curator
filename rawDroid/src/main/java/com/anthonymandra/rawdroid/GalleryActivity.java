@@ -998,23 +998,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		storeSelectionForIntent();
 
-		FormatDialog dialog = new FormatDialog(this, getImageListFromUriList(mItemsForIntent));
-        dialog.setTitle(getString(R.string.renameImages));
-        dialog.setDialogListener(new FormatDialog.DialogListener()
-        {
-	        @Override //FIXME: Rename needs to update the database!
-	        public void onCompleted()
-	        {
-//				updatePath(mCurrentPath);
-	        }
-
-	        @Override
-	        public void onCanceled()
-	        {
-		        //Do nothing
-	        }
-        });
-        dialog.show();
+		showRenameDialog(mItemsForIntent);
 	}
 
 	private void requestImportImageLocation()

@@ -532,7 +532,7 @@ public abstract class CoreActivity extends DocumentActivity
 		startActivity(settings);
 	}
 
-	private void showRenameDialog(final List<Uri> itemsToRename)
+	protected void showRenameDialog(final List<Uri> itemsToRename)
 	{
 		final View dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null);
 		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
@@ -550,8 +550,28 @@ public abstract class CoreActivity extends DocumentActivity
 			@Override
 			public void afterTextChanged(Editable s)
 			{
-				exampleText.setText("Ex: " + formatRename(format.getSelectedItemPosition(), s.toString(), itemsToRename.size() - 1, itemsToRename.size()));
+				exampleText.setText(
+						"Ex: " + formatRename(format.getSelectedItemPosition(),
+								s.toString(),
+								itemsToRename.size() - 1,
+								itemsToRename.size()));
 			}
+		});
+
+		format.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+		{
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+			{
+				exampleText.setText(
+						"Ex: " + formatRename(format.getSelectedItemPosition(),
+								nameText.getText().toString(),
+								itemsToRename.size() - 1,
+								itemsToRename.size()));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {}
 		});
 
 		final AlertDialog renameDialog = new AlertDialog.Builder(this)
@@ -562,7 +582,7 @@ public abstract class CoreActivity extends DocumentActivity
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						String customName = ((EditText) findViewById(R.id.editTextFormat)).getText().toString();
+						String customName = nameText.getText().toString();
 						int selected = format.getSelectedItemPosition();
 						new RenameTask().execute(itemsToRename, selected, customName);
 					}
@@ -736,10 +756,9 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			boolean totalSuccess = true;
 			List<Uri> totalImages = (List<Uri>) params[0];
-			File destinationFolder = (File) params[1];
+			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
-			List<Uri> remainingImages = new ArrayList<>();
-			Collections.copy(remainingImages, totalImages);
+			File destinationFolder = (File) params[1];
 
 			mProgressDialog.setMax(totalImages.size());
 
@@ -858,10 +877,8 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			boolean totalSuccess = true;
 			List<Uri> totalImages = (List<Uri>) params[0];
+			List<Uri> remainingImages = new ArrayList<>(totalImages);
 			File destinationFolder = (File) params[1];
-
-			List<Uri> remainingImages = new ArrayList<>();
-			Collections.copy(remainingImages, totalImages);
 
 			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
 			boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
@@ -981,8 +998,7 @@ public abstract class CoreActivity extends DocumentActivity
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
 			final List<Uri> totalDeletes = params[0];
-			List<Uri> remainingDeletes = new ArrayList<>();
-			Collections.copy(remainingDeletes, totalDeletes);
+			List<Uri> remainingDeletes = new ArrayList<>(totalDeletes);
 
 			mProgressDialog.setMax(totalDeletes.size());
 			final List<Uri> removed = new ArrayList<>();
@@ -1053,17 +1069,16 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
-			final List<Uri> totalRecycles = params[0];
-			List<Uri> remainingRecycles = new ArrayList<>();
-			Collections.copy(remainingRecycles, totalRecycles);
+			final List<Uri> totalImages = params[0];
+			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
-			mProgressDialog.setMax(remainingRecycles.size());
+			mProgressDialog.setMax(remainingImages.size());
 
-			for (Uri toRecycle : totalRecycles)
+			for (Uri toRecycle : totalImages)
 			{
-				setWriteResume(WriteActions.RECYCLE, new Object[]{remainingRecycles});
+				setWriteResume(WriteActions.RECYCLE, new Object[]{remainingImages});
 				recycleBin.addFile(toRecycle);
-				remainingRecycles.remove(toRecycle);
+				remainingImages.remove(toRecycle);
 				onImageRemoved(toRecycle);
 			}
 
@@ -1109,18 +1124,17 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
-			final List<String> totalRestores = params[0];
-			List<String> remainingRestores = new ArrayList<>();
-			Collections.copy(remainingRestores, totalRestores);
+			final List<String> totalImages = params[0];
+			List<String> remainingImages = new ArrayList<>(totalImages);
 
 			//TODO: This must be it's own task
 			List<MediaItem> success = new ArrayList<>();
-			for (String filename : totalRestores)
+			for (String filename : totalImages)
 			{
 				File toRestore = new File(filename);
 				try
 				{
-					setWriteResume(WriteActions.RESTORE, new Object[]{remainingRestores});
+					setWriteResume(WriteActions.RESTORE, new Object[]{remainingImages});
 					moveFile(recycleBin.getFile(filename), toRestore);
 					onImageAdded(Uri.fromFile(toRestore));
 				}
@@ -1209,15 +1223,14 @@ public abstract class CoreActivity extends DocumentActivity
 		protected Boolean doInBackground(final Object... params)
 		{
 			final List<Uri> totalImages = (List<Uri>) params[0];
+			List<Uri> remainingImages = new ArrayList<>(totalImages);
+
 			final int format = (int) params[1];
 			final String customName = (String) params[2];
 
 			int counter = 0;
 			final int total = totalImages.size();
 			final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-
-			List<Uri> remainingImages = new ArrayList<>();
-			Collections.copy(remainingImages, totalImages);
 
 			try
 			{
@@ -1271,11 +1284,10 @@ public abstract class CoreActivity extends DocumentActivity
 		protected Boolean doInBackground(final Object... params)
 		{
 			final List<Uri> totalImages = (List<Uri>) params[0];
+			List<Uri> remainingImages = new ArrayList<>(totalImages);
+
 			final XmpEditFragment.XmpEditValues values = (XmpEditFragment.XmpEditValues) params[1];
 			final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
-
-			List<Uri> remainingImages = new ArrayList<>();
-			Collections.copy(remainingImages, totalImages);
 
 			for (Uri image : totalImages)
 			{
