@@ -8,6 +8,8 @@ import android.content.OperationApplicationException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,6 +29,7 @@ public class FormatDialog extends Dialog
 {
 	private List<? extends RawObject> sourceFiles;
 	private Spinner spinner;
+	private EditText editName;
 
 	private Context mContext;
     private DialogListener listener;
@@ -57,6 +60,29 @@ public class FormatDialog extends Dialog
 		// setTitle("Rename");
 
 		spinner = (Spinner) findViewById(R.id.spinner1);
+		editName = ((EditText) findViewById(R.id.editTextFormat));
+
+		editName.addTextChangedListener(new TextWatcher()
+		{
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after)
+			{
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count)
+			{
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+
+			}
+		});
+
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.format_array, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);

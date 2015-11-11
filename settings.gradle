@@ -1,6 +1,6 @@
 include ':metadata-extractor'
 include ':oIFileManager'
-include ':showcaseView:library'
+include ':showcaseView:ShowcaseView'
 include ':inscription'
 //include ':core'
 //include ':layouts'

@@ -174,7 +174,7 @@ model {
 //}
 
 dependencies {
-    compile project(':showcaseView:library')
+    compile project(':showcaseView:ShowcaseView')
     compile project(':inscription')
     compile project(':metadata-extractor')
     compile project(':oIFileManager')

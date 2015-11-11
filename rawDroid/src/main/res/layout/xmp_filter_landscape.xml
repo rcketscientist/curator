@@ -50,7 +50,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold"
         android:id="@+id/textView"
-        android:layout_above="@+id/labelAndRating"/>
+        android:layout_above="@+id/segregateCheckBox"/>
 
     <Spinner
         android:id="@+id/sortSpinner"

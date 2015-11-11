@@ -24,6 +24,8 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
@@ -529,17 +532,27 @@ public abstract class CoreActivity extends DocumentActivity
 		startActivity(settings);
 	}
 
-	int numDigits(int x)
-	{
-		return (x < 10 ? 1 : (x < 100 ? 2 : (x < 1000 ? 3 : (x < 10000 ? 4 : (x < 100000 ? 5 : (x < 1000000 ? 6 : (x < 10000000 ? 7 : (x < 100000000 ? 8
-				: (x < 1000000000 ? 9 : 10)))))))));
-	}
-
 	private void showRenameDialog(final List<Uri> itemsToRename)
 	{
 		final View dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null);
 		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
 		final EditText nameText = (EditText) dialogView.findViewById(R.id.editTextFormat);
+		final TextView exampleText = (TextView) dialogView.findViewById(R.id.textViewExample);
+
+		nameText.addTextChangedListener(new TextWatcher()
+		{
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				exampleText.setText("Ex: " + formatRename(format.getSelectedItemPosition(), s.toString(), itemsToRename.size() - 1, itemsToRename.size()));
+			}
+		});
 
 		final AlertDialog renameDialog = new AlertDialog.Builder(this)
 				.setTitle(getString(R.string.renameImages))
@@ -1166,6 +1179,30 @@ public abstract class CoreActivity extends DocumentActivity
 		return new File(original.getParent(), rename);
 	}
 
+	private static int numDigits(int x)
+	{
+		return (x < 10 ? 1 : (x < 100 ? 2 : (x < 1000 ? 3 : (x < 10000 ? 4 : (x < 100000 ? 5 : (x < 1000000 ? 6 : (x < 10000000 ? 7 : (x < 100000000 ? 8
+				: (x < 1000000000 ? 9 : 10)))))))));
+	}
+
+	private static String formatRename(int format, String baseName, int index, int total)
+	{
+		final String sequencer = "%0" + numDigits(total) + "d";
+
+		String rename = null;
+		switch (format)
+		{
+			case 0:
+				rename = baseName + "-" + String.format(sequencer, index);
+				break;
+			case 1:
+				rename = baseName + " (" + String.format(sequencer, index) + " of " + total + ")";
+				break;
+		}
+
+		return rename;
+	}
+
 	protected class RenameTask extends AsyncTask<Object, Integer, Boolean>
 	{
 		@Override
@@ -1177,7 +1214,6 @@ public abstract class CoreActivity extends DocumentActivity
 
 			int counter = 0;
 			final int total = totalImages.size();
-			final String sequencer = "%0" + numDigits(total) + "d";
 			final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
 			List<Uri> remainingImages = new ArrayList<>();
@@ -1194,16 +1230,7 @@ public abstract class CoreActivity extends DocumentActivity
 							customName
 					});
 
-					String rename = null;
-					switch (format)
-					{
-						case 0:
-							rename = customName + "-" + String.format(sequencer, counter);
-							break;
-						case 1:
-							rename = customName + " (" + String.format(sequencer, counter) + " of " + total + ")";
-							break;
-					}
+					String rename = formatRename(format, customName, counter, total);
 
 					File imageFile = new File(image.getPath());
 
