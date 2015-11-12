@@ -198,10 +198,15 @@ public class ImageUtils
 
     public static boolean isProcessed(Context c, Uri uri)
     {
-        Cursor cursor = ImageUtils.getMetaCursor(c, uri);
-        boolean isProcessed = cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0;
-        cursor.close();
-        return isProcessed;
+        final Cursor cursor = ImageUtils.getMetaCursor(c, uri);
+        try
+        {
+            return cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0;
+        }
+        finally
+        {
+            Utils.closeSilently(cursor);
+        }
     }
 
     /**
@@ -213,17 +218,25 @@ public class ImageUtils
     public static void cleanDatabase(final Context c) throws RemoteException, OperationApplicationException
     {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-        Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null);
-        while (cursor.moveToNext())
+
+        final Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null);
+        try
         {
-            String uriString = cursor.getString(Meta.URI_COLUMN);
-            Uri uri = Uri.parse(uriString);
-            File file = new File(uri.getPath());
-            if (!file.exists())
+            while (cursor.moveToNext())
             {
-                operations.add(ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
-                        .withSelection(Meta.Data.URI + "=?", new String[]{uriString}).build());
+                String uriString = cursor.getString(Meta.URI_COLUMN);
+                Uri uri = Uri.parse(uriString);
+                File file = new File(uri.getPath());
+                if (!file.exists())
+                {
+                    operations.add(ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
+                            .withSelection(Meta.Data.URI + "=?", new String[]{uriString}).build());
+                }
             }
+        }
+        finally
+        {
+            cursor.close();
         }
         // TODO: If I implement bulkInsert it's faster
         c.getContentResolver().applyBatch(Meta.AUTHORITY, operations);
@@ -232,7 +245,10 @@ public class ImageUtils
 
     public static void setExifValues(final Uri uri, final Context c, final String[] exif)
     {
-            Cursor cursor = getMetaCursor(c, uri);
+        final Cursor cursor = getMetaCursor(c, uri);
+
+        try
+        {
             cursor.moveToFirst();
             ContentValues values = new ContentValues();
 
@@ -241,25 +257,31 @@ public class ImageUtils
             {
                 return;
             }
-            ContentValues cv = new ContentValues();
-            try
-            {
-                /*
-                For now only include image related information.  As this is a parse related
-                to the processing of the image for display this is reasonable.  It avoids
-                constant flickering as the timestamps cause a database update.
-                 */
-                cv.put(Meta.Data.HEIGHT, Integer.parseInt(exif[10]));
-                cv.put(Meta.Data.WIDTH, Integer.parseInt(exif[11]));
-                cv.put(Meta.Data.ORIENTATION, Integer.parseInt(exif[7]));
+        }
+        finally
+        {
+            cursor.close();
+        }
+
+        ContentValues cv = new ContentValues();
+        try
+        {
+            /*
+            For now only include image related information.  As this is a parse related
+            to the processing of the image for display this is reasonable.  It avoids
+            constant flickering as the timestamps cause a database update.
+             */
+            cv.put(Meta.Data.HEIGHT, Integer.parseInt(exif[10]));
+            cv.put(Meta.Data.WIDTH, Integer.parseInt(exif[11]));
+            cv.put(Meta.Data.ORIENTATION, Integer.parseInt(exif[7]));
 //                    cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[6].trim()).getTime());
-            }
-            catch (Exception e)
-            {
-                Log.d(TAG, "Exif parse failed:", e);
-            }
-            c.getContentResolver().update(Meta.Data.CONTENT_URI, cv, Meta.Data.URI + "=?",
-		            new String[]{uri.toString()});
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, "Exif parse failed:", e);
+        }
+        c.getContentResolver().update(Meta.Data.CONTENT_URI, cv, Meta.Data.URI + "=?",
+                new String[]{uri.toString()});
     }
 
     /**

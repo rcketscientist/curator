@@ -73,6 +73,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                 mPauseListener = true;
 
                 Cursor selectedTree = null;
+                final Cursor keywords = mAdapter.getCursor();
                 try
                 {
                     if (((Checkable)view).isChecked())
@@ -96,7 +97,6 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                                 null,
                                 PathEnumerationProvider.ANCESTORS_QUERY_SELECTION,
                                 null, null);
-                        Cursor keywords = mAdapter.getCursor();
                         while (selectedTree.moveToNext())
                         {
                             keywords.moveToPosition(-1);
@@ -121,6 +121,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                 finally
                 {
                     Utils.closeSilently(selectedTree);
+                    Utils.closeSilently(keywords);
                 }
 
                 mPauseListener = false;

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +13,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
-import android.content.UriPermission;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -26,7 +26,6 @@ import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +41,6 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
-import com.anthonymandra.rawdroid.FormatDialog;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.ImageViewActivity;
 import com.anthonymandra.rawdroid.LegacyViewerActivity;
@@ -54,14 +52,12 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -237,7 +233,7 @@ public abstract class CoreActivity extends DocumentActivity
 		try
 		{
 			// TODO: If I implement bulkInsert it's faster
-			getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
+			ContentProviderResult[] results = getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
 		} catch (RemoteException | OperationApplicationException e)
 		{
 			//TODO: Notify user
@@ -1247,19 +1243,41 @@ public abstract class CoreActivity extends DocumentActivity
 
 					File imageFile = new File(image.getPath());
 
-					renameImage(imageFile, rename);
-					remainingImages.remove(image);
-					File renameFile = getRenamedFile(imageFile, rename);
+					if (renameImage(imageFile, rename))
+					{
+						remainingImages.remove(image);
+						File renameFile = getRenamedFile(imageFile, rename);
 
-					ContentValues c = new ContentValues();
-					c.put(Meta.Data.NAME, renameFile.getName());
-					c.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
+						ContentValues c = new ContentValues();
+						c.put(Meta.Data.NAME, renameFile.getName());
+						c.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
 
-					operations.add(
-							ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-									.withSelection(Meta.URI_COLUMN + "=?", new String[]{image.toString()})
-									.withValues(c)
-									.build());
+						//TODO: This needs to happen for every file type renamed
+						operations.add(
+								ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+										.withSelection(Meta.Data.URI + "=?", new String[]{image.toString()})
+										.withValues(c)
+										.build());
+
+						//TODO: Might be worth consideration to attach jpeg to raw entry
+						// However, would that make lone jpegs harder to manage?
+						if (ImageUtils.hasJpgFile(renameFile))
+						{
+							File originalJpeg = ImageUtils.getJpgFile(imageFile);
+							File renamedJpeg = ImageUtils.getJpgFile(renameFile);
+
+							ContentValues cv = new ContentValues();
+							cv.put(Meta.Data.NAME, renamedJpeg.getName());
+							cv.put(Meta.Data.URI, Uri.fromFile(renamedJpeg).toString());
+
+							//TODO: This needs to happen for every file type renamed
+							operations.add(
+									ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+											.withSelection(Meta.Data.URI + "=?", new String[]{Uri.fromFile(originalJpeg).toString()})
+											.withValues(cv)
+											.build());
+						}
+					}
 				}
 			} catch (WritePermissionException e)
 			{

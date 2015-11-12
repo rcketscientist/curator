@@ -159,9 +159,9 @@ public class MetaService extends ThreadedPriorityIntentService
     private void handleActionParse(Intent intent)
     {
         Uri uri = intent.getData();
-        Cursor cursor = ImageUtils.getMetaCursor(this, uri);
+
         // Check if meta is already processed
-        if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
+        if (ImageUtils.isProcessed(this, uri))
         {
             WakefulBroadcastReceiver.completeWakefulIntent(intent);
             return;

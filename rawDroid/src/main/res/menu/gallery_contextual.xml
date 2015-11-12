@@ -28,7 +28,7 @@
         android:title="@string/moveImages"/>
     <item
         android:id="@+id/contextRename"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_rename"
         android:orderInCategory="2"
         app:showAsAction="ifRoom"
         android:title="@string/rename"/>

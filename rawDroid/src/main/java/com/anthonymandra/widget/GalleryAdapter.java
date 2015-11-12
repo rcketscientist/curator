@@ -6,14 +6,18 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Checkable;
+import android.widget.CursorAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
-import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.rawdroid.R;
 
 import java.io.File;
