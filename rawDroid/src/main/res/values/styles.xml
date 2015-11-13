@@ -89,4 +89,8 @@
         <item name="android:maxHeight">14dip</item>
     </style>
 
+    <style name="FolderDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:listChoiceIndicatorMultiple">@drawable/visible_selector</item>
+    </style>
+
 </resources>

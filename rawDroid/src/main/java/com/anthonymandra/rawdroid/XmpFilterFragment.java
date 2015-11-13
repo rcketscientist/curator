@@ -2,6 +2,7 @@ package com.anthonymandra.rawdroid;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,7 +20,9 @@ import android.widget.Spinner;
 import com.anthonymandra.content.Meta;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class XmpFilterFragment extends XmpBaseFragment
 {
@@ -45,12 +48,14 @@ public class XmpFilterFragment extends XmpBaseFragment
     private boolean mSegregateByType;
     private SortColumns mSortColumn;
     private XmpValues mXmpValues;
+    private Set<String> mHiddenFolders;
 
     private final String mPrefName = "galleryFilter";
     private final String mPrefRelational = "relational";
     private final String mPrefAscending = "ascending";
     private final String mPrefColumn = "column";
     private final String mPrefSegregate = "segregate";
+    private final String mPrefHiddenFolders = "hiddenFolders";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -70,6 +75,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         mSortAscending = pref.getBoolean(mPrefAscending, true);
         mSortColumn = SortColumns.valueOf(pref.getString(mPrefColumn, SortColumns.Name.toString()));
         mSegregateByType = pref.getBoolean(mPrefSegregate, true);
+        mHiddenFolders = pref.getStringSet(mPrefHiddenFolders, new HashSet<String>());
 
         attachButtons();
     }
@@ -169,18 +175,43 @@ public class XmpFilterFragment extends XmpBaseFragment
             @Override
             public void onClick(View v)
             {
-                List<String> folders = new ArrayList<>();
+                final List<String> folders = new ArrayList<>();
                 Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
                         new String[] {"DISTINCT" + Meta.Data.PARENT}, null, null, null);
                 while (c.moveToNext())
                 {
-                    folders.add(c.getString(Meta.PARENT_COLUMN));
+                    String path = c.getString(Meta.PARENT_COLUMN);
+                    folders.add(path);
                 }
                 c.close();
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.
+                final boolean[] visible = new boolean[folders.size()];
+                int i = 0;
+                for (String path : folders)
+                {
+                    visible[i++] = mHiddenFolders.contains(path);
+                }
+
+//                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.FolderDialog);
+                builder.setMultiChoiceItems(
+                        folders.toArray(new CharSequence[folders.size()]),
+                        visible,
+                        new DialogInterface.OnMultiChoiceClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked)
+                            {
+                                if (isChecked)
+                                {
+                                    mHiddenFolders.add(folders.get(which));
+                                }
+                                else
+                                {
+                                    mHiddenFolders.remove(folders.get(which));
+                                }
+                            }
+                        }).show();
             }
         });
     }
