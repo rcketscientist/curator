@@ -1,17 +1,25 @@
 package com.anthonymandra.rawdroid;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+
+import com.anthonymandra.content.Meta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class XmpFilterFragment extends XmpBaseFragment
 {
@@ -111,13 +119,28 @@ public class XmpFilterFragment extends XmpBaseFragment
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 //TODO: This is really vulnerable to array index changes!
-                switch(position)
+                switch (position)
                 {
-                    case 0: mSortAscending = true; mSortColumn = SortColumns.Name; break;
-                    case 1: mSortAscending = false; mSortColumn = SortColumns.Name; break;
-                    case 2: mSortAscending = true; mSortColumn = SortColumns.Date; break;
-                    case 3: mSortAscending = false; mSortColumn = SortColumns.Date; break;
-                    default: mSortAscending = true; mSortColumn = SortColumns.Name; break;
+                    case 0:
+                        mSortAscending = true;
+                        mSortColumn = SortColumns.Name;
+                        break;
+                    case 1:
+                        mSortAscending = false;
+                        mSortColumn = SortColumns.Name;
+                        break;
+                    case 2:
+                        mSortAscending = true;
+                        mSortColumn = SortColumns.Date;
+                        break;
+                    case 3:
+                        mSortAscending = false;
+                        mSortColumn = SortColumns.Date;
+                        break;
+                    default:
+                        mSortAscending = true;
+                        mSortColumn = SortColumns.Name;
+                        break;
                 }
                 dispatchChange();
             }
@@ -137,6 +160,27 @@ public class XmpFilterFragment extends XmpBaseFragment
             {
                 mSegregateByType = isChecked;
                 dispatchChange();
+            }
+        });
+
+        Button folders = (Button) getActivity().findViewById(R.id.buttonFolders);
+        folders.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                List<String> folders = new ArrayList<>();
+                Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
+                        new String[] {"DISTINCT" + Meta.Data.PARENT}, null, null, null);
+                while (c.moveToNext())
+                {
+                    folders.add(c.getString(Meta.PARENT_COLUMN));
+                }
+                c.close();
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.
             }
         });
     }
