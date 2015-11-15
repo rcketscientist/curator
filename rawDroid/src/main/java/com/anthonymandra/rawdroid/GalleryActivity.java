@@ -380,52 +380,70 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
 	}
 
-	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
+	protected void updateMetaLoaderXmp(XmpFilter filter)
 	{
 		StringBuilder selection = new StringBuilder();
 		List<String> selectionArgs = new ArrayList<>();
 		boolean requiresJoiner= false;
-		String joiner = andTrueOrFalse ? " AND " : " OR ";
 
-		if (xmp != null)
+		final String AND = " AND ";
+		final String OR = " OR ";
+		String joiner = filter.andTrueOrFalse ? AND : OR;
+
+		if (filter.xmp != null)
 		{
-			if (xmp.label != null && xmp.label.length > 0)
+			if (filter.xmp.label != null && filter.xmp.label.length > 0)
 			{
 				requiresJoiner = true;
-				selection.append(createMultipleIN(Meta.Data.LABEL, xmp.label.length));
-				for (String label : xmp.label)
+
+				selection.append(createMultipleIN(Meta.Data.LABEL, filter.xmp.label.length));
+				for (String label : filter.xmp.label)
 				{
 					selectionArgs.add(label);
 				}
 			}
-			if (xmp.subject != null && xmp.subject.length > 0)
+			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
 				requiresJoiner = true;
-				selection.append(createMultipleLike(Meta.Data.SUBJECT, xmp.subject, selectionArgs, joiner));
+
+				selection.append(createMultipleLike(Meta.Data.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
 			}
-			if (xmp.rating != null && xmp.rating.length > 0)
+			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
+				requiresJoiner = true;
 
-				selection.append(createMultipleIN(Meta.Data.RATING, xmp.rating.length));
-				for (int rating : xmp.rating)
+				selection.append(createMultipleIN(Meta.Data.RATING, filter.xmp.rating.length));
+				for (int rating : filter.xmp.rating)
 				{
 					selectionArgs.add(Double.toString((double)rating));
 				}
 			}
 		}
+		if (filter.hiddenFolders != null && filter.hiddenFolders.size() > 0)
+		{
+			if (requiresJoiner)
+				selection.append(joiner);
+			requiresJoiner = true;
 
-		String order = sortAscending ? " ASC" : " DESC";
+			selection.append(createMultipleLike(Meta.Data.PARENT,
+					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
+					selectionArgs,
+					AND,    // Requires AND so multiple hides don't negate each other
+					true));
+		}
+
+		String order = filter.sortAscending ? " ASC" : " DESC";
 		StringBuilder sort = new StringBuilder();
 
-		if (segregateByType)
+		if (filter.segregateByType)
 		{
 			sort.append(Meta.Data.TYPE).append(" ASC, ");
 		}
-		switch (sortColumn)
+		switch (filter.sortColumn)
 		{
 			case Date: sort.append(Meta.Data.TIMESTAMP).append(order); break;
 			case Name: sort.append(Meta.Data.NAME).append(order); break;
@@ -435,14 +453,14 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
 	}
 
-	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner)
+	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner, boolean NOT)
 	{
 		StringBuilder selection = new StringBuilder();
 		for (int i = 0; i < likes.length; i++)
 		{
 			if (i > 0) selection.append(joiner);
 			selection.append(column)
-					.append(" LIKE ?");
+					.append(NOT ? " NOT LIKE ?" : " LIKE ?");
 			selectionArgs.add("%" + likes[i] + "%");
 		}
 
@@ -626,19 +644,14 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		xmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
 		{
 			@Override
-			public void onMetaFilterChanged(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
+			public void onMetaFilterChanged(XmpFilter filter)
 			{
-				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, segregateByType, sortColumn);
+				updateMetaLoaderXmp(filter);
 			}
 		});
 
 		// load filter data initially (must be done here due to
-		updateMetaLoaderXmp(
-				xmpFilter.getXmpValues(),
-				xmpFilter.getAndOr(),
-				xmpFilter.getAscending(),
-				xmpFilter.getSegregate(),
-				xmpFilter.getSortCoumn());
+		updateMetaLoaderXmp(xmpFilter.getXmpFilter());
 	}
 
 	@Override

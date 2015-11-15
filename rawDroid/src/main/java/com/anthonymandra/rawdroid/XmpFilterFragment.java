@@ -1,19 +1,28 @@
 package com.anthonymandra.rawdroid;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
@@ -29,13 +38,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     private MetaFilterChangedListener mListener;
     public interface MetaFilterChangedListener
     {
-        void onMetaFilterChanged(XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, SortColumns sortColumn);
-    }
-
-    public enum SortColumns
-    {
-        Name,
-        Date
+        void onMetaFilterChanged(XmpFilter xmpFilter);
     }
 
     /**
@@ -46,9 +49,10 @@ public class XmpFilterFragment extends XmpBaseFragment
     private boolean mAndTrueOrFalse;
     private boolean mSortAscending;
     private boolean mSegregateByType;
-    private SortColumns mSortColumn;
+    private XmpFilter.SortColumns mSortColumn;
     private XmpValues mXmpValues;
     private Set<String> mHiddenFolders;
+    private Set<String> mExcludedFolders;
 
     private final String mPrefName = "galleryFilter";
     private final String mPrefRelational = "relational";
@@ -56,6 +60,8 @@ public class XmpFilterFragment extends XmpBaseFragment
     private final String mPrefColumn = "column";
     private final String mPrefSegregate = "segregate";
     private final String mPrefHiddenFolders = "hiddenFolders";
+    private final String mPrefExcludedFolders = "excludedFolders";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -73,9 +79,10 @@ public class XmpFilterFragment extends XmpBaseFragment
         SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
         mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false);
         mSortAscending = pref.getBoolean(mPrefAscending, true);
-        mSortColumn = SortColumns.valueOf(pref.getString(mPrefColumn, SortColumns.Name.toString()));
+        mSortColumn = XmpFilter.SortColumns.valueOf(pref.getString(mPrefColumn, XmpFilter.SortColumns.Name.toString()));
         mSegregateByType = pref.getBoolean(mPrefSegregate, true);
         mHiddenFolders = pref.getStringSet(mPrefHiddenFolders, new HashSet<String>());
+        mExcludedFolders = pref.getStringSet(mPrefExcludedFolders, new HashSet<String>());
 
         attachButtons();
     }
@@ -129,23 +136,23 @@ public class XmpFilterFragment extends XmpBaseFragment
                 {
                     case 0:
                         mSortAscending = true;
-                        mSortColumn = SortColumns.Name;
+                        mSortColumn = XmpFilter.SortColumns.Name;
                         break;
                     case 1:
                         mSortAscending = false;
-                        mSortColumn = SortColumns.Name;
+                        mSortColumn = XmpFilter.SortColumns.Name;
                         break;
                     case 2:
                         mSortAscending = true;
-                        mSortColumn = SortColumns.Date;
+                        mSortColumn = XmpFilter.SortColumns.Date;
                         break;
                     case 3:
                         mSortAscending = false;
-                        mSortColumn = SortColumns.Date;
+                        mSortColumn = XmpFilter.SortColumns.Date;
                         break;
                     default:
                         mSortAscending = true;
-                        mSortColumn = SortColumns.Name;
+                        mSortColumn = XmpFilter.SortColumns.Name;
                         break;
                 }
                 dispatchChange();
@@ -169,49 +176,105 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        Button folders = (Button) getActivity().findViewById(R.id.buttonFolders);
-        folders.setOnClickListener(new View.OnClickListener()
+        final Button foldersButton = (Button) getActivity().findViewById(R.id.buttonFolders);
+        foldersButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                final List<String> folders = new ArrayList<>();
+                final List<String> paths = new ArrayList<>();
+                final List<String> sortedPaths = new ArrayList<>();
+
                 Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
-                        new String[] {"DISTINCT" + Meta.Data.PARENT}, null, null, null);
+                        new String[]{"DISTINCT " + Meta.Data.PARENT}, null, null,
+                        Meta.Data.PARENT + " ASC");
                 while (c.moveToNext())
                 {
-                    String path = c.getString(Meta.PARENT_COLUMN);
-                    folders.add(path);
+                    String path = c.getString(c.getColumnIndex(Meta.Data.PARENT));
+
+                    // We place the excluded folders at the end
+                    if (!mExcludedFolders.contains(path))
+                        paths.add(path);
                 }
                 c.close();
 
-                final boolean[] visible = new boolean[folders.size()];
-                int i = 0;
-                for (String path : folders)
+                // Place exclusions at the end
+                for (String exclusion : mExcludedFolders)
                 {
-                    visible[i++] = mHiddenFolders.contains(path);
+                    paths.add(exclusion);
                 }
 
-//                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.FolderDialog);
-                builder.setMultiChoiceItems(
-                        folders.toArray(new CharSequence[folders.size()]),
+                final boolean[] visible = new boolean[paths.size()];
+                int i = 0;
+                for (String path : paths)
+                {
+                    visible[i++] = !mExcludedFolders.contains(path) && !mHiddenFolders.contains(path);
+                }
+
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.FolderDialog);
+//                AlertDialog folderDialog = builder.setMultiChoiceItems(
+//                        paths.toArray(new CharSequence[paths.size()]),
+//                        visible,
+//                        new DialogInterface.OnMultiChoiceClickListener()
+//                        {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which, boolean isChecked)
+//                            {
+//                                if (isChecked)
+//                                {
+//                                    mHiddenFolders.remove(paths.get(which));
+//                                }
+//                                else
+//                                {
+//                                    mHiddenFolders.add(paths.get(which));
+//                                }
+//                                dispatchChange();
+//                            }
+//                        }).create();
+
+//                folderDialog.getWindow().setAttributes(layout);
+//                folderDialog.show();
+
+                final boolean[] excluded = new boolean[paths.size()];
+                i = 0;
+                for (String path : paths)
+                {
+                    excluded[i++] = mExcludedFolders.contains(path);
+                }
+
+                FolderDialog dialog = FolderDialog.newInstance(
+                        paths.toArray(new String[paths.size()]),
                         visible,
-                        new DialogInterface.OnMultiChoiceClickListener()
+                        excluded,
+                        foldersButton.getLeft(),
+                        foldersButton.getTop());
+                dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog);
+                dialog.setOnVisibilityChangedListener(new FolderAdapter.OnVisibilityChangedListener()
+                {
+                    @Override
+                    public void onVisibilityChanged(FolderVisibility visibility)
+                    {
+                        if (visibility.visible)
                         {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which, boolean isChecked)
-                            {
-                                if (isChecked)
-                                {
-                                    mHiddenFolders.add(folders.get(which));
-                                }
-                                else
-                                {
-                                    mHiddenFolders.remove(folders.get(which));
-                                }
-                            }
-                        }).show();
+                            mHiddenFolders.remove(visibility.Path);
+                        }
+                        else
+                        {
+                            mHiddenFolders.add(visibility.Path);
+                        }
+                        if (visibility.excluded)
+                        {
+                            mExcludedFolders.add(visibility.Path);
+                        }
+                        else
+                        {
+                            mExcludedFolders.remove(visibility.Path);
+                        }
+                        dispatchChange();
+                    }
+                });
+
+                dialog.show(getFragmentManager(), "diag");
             }
         });
     }
@@ -239,7 +302,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         return mSegregateByType;
     }
 
-    public SortColumns getSortCoumn()
+    public XmpFilter.SortColumns getSortCoumn()
     {
         return mSortColumn;
     }
@@ -252,6 +315,18 @@ public class XmpFilterFragment extends XmpBaseFragment
     public XmpValues getXmpValues()
     {
         return mXmpValues;
+    }
+
+    public XmpFilter getXmpFilter()
+    {
+        XmpFilter filter = new XmpFilter();
+        filter.andTrueOrFalse = mAndTrueOrFalse;
+        filter.hiddenFolders = mHiddenFolders;
+        filter.segregateByType = mSegregateByType;
+        filter.sortAscending = mSortAscending;
+        filter.sortColumn = mSortColumn;
+        filter.xmp = mXmpValues;
+        return filter;
     }
 
     public void registerXmpFilterChangedListener(MetaFilterChangedListener listener)
@@ -272,7 +347,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         dispatchChange();
     }
 
-    private void dispatchChange()
+    protected void dispatchChange()
     {
         if (mListener != null && !mPauseListener)
         {
@@ -283,10 +358,181 @@ public class XmpFilterFragment extends XmpBaseFragment
             editor.putBoolean(mPrefRelational, mAndTrueOrFalse);
             editor.putString(mPrefColumn, mSortColumn.toString());
             editor.putBoolean(mPrefSegregate, mSegregateByType);
+            editor.putStringSet(mPrefHiddenFolders, mHiddenFolders);
+            editor.putStringSet(mPrefExcludedFolders, mExcludedFolders);
 
             editor.apply();
 
-            mListener.onMetaFilterChanged(mXmpValues, mAndTrueOrFalse, mSortAscending, mSegregateByType, mSortColumn);
+            XmpFilter filter = getXmpFilter();
+
+            mListener.onMetaFilterChanged(filter);
+        }
+    }
+
+    public static class FolderDialog extends DialogFragment
+    {
+        public static final String ARG_PATHS = "paths";
+        public static final String ARG_VISIBLE = "visible";
+        public static final String ARG_EXCLUDED = "excluded";
+        public static final String ARG_X = "x";
+        public static final String ARG_Y = "y";
+
+        private final List<FolderVisibility> items = new ArrayList<>();
+
+        private FolderAdapter.OnVisibilityChangedListener mListener;
+        public void setOnVisibilityChangedListener(FolderAdapter.OnVisibilityChangedListener listener)
+        {
+            mListener = listener;
+        }
+
+        static FolderDialog newInstance(String[] paths, boolean[] visible, boolean[] excluded, int x, int y)
+        {
+            FolderDialog f = new FolderDialog();
+            Bundle args = new Bundle();
+            args.putStringArray(ARG_PATHS, paths);
+            args.putBooleanArray(ARG_VISIBLE, visible);
+            args.putBooleanArray(ARG_EXCLUDED, excluded);
+            args.putInt(ARG_X, x);
+            args.putInt(ARG_Y, y);
+
+            f.setArguments(args);
+            return f;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+        {
+            View v = inflater.inflate(R.layout.folder_visibility, container, false);
+            String[] paths = getArguments().getStringArray(ARG_PATHS);
+            boolean[] visible = getArguments().getBooleanArray(ARG_VISIBLE);
+            boolean[] excluded = getArguments().getBooleanArray(ARG_EXCLUDED);
+            int x = getArguments().getInt(ARG_X);
+            int y = getArguments().getInt(ARG_Y);
+
+            // Set the position of the dialog
+            Window window = getDialog().getWindow();
+            window.setGravity(Gravity.TOP|Gravity.START);
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.x = x;
+            params.y = y;
+            window.setAttributes(params);
+
+//            List<FolderVisibility> items = new ArrayList<>();
+            for (int i = 0; i < paths.length; i++)
+            {
+                FolderVisibility fv = new FolderVisibility();
+                fv.Path = paths[i];
+                fv.visible = visible[i];
+                fv.excluded = excluded[i];
+                items.add(fv);
+            }
+
+            FolderAdapter adapter = new FolderAdapter(v.getContext(), items);
+            adapter.setOnVisibilityChangedListener(mListener);
+            ListView listView = (ListView) v.findViewById(R.id.listViewVisibility);
+            listView.setAdapter(adapter);
+
+            return v;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Dialog dialog = super.onCreateDialog(savedInstanceState);
+
+            // request a window without the title
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            return dialog;
+        }
+    }
+
+    private static class FolderVisibility
+    {
+        String Path;
+        boolean visible;
+        boolean excluded;
+    }
+
+    private static class FolderAdapter extends ArrayAdapter<FolderVisibility>
+    {
+        public interface OnVisibilityChangedListener
+        {
+            void onVisibilityChanged(FolderVisibility visibility);
+        }
+
+        private class ViewHolder
+        {
+            private CheckBox path;
+        }
+
+        private OnVisibilityChangedListener mListener;
+        public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener)
+        {
+            mListener = listener;
+        }
+
+        public FolderAdapter(Context context, List<FolderVisibility> objects)
+        {
+            super(context, R.layout.folder_list_item, objects);
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent)
+        {
+            final ViewHolder viewHolder;
+            final FolderVisibility item = getItem(position);
+
+            if (convertView == null) {
+                convertView = LayoutInflater.from(this.getContext())
+                        .inflate(R.layout.folder_list_item, parent, false);
+
+                viewHolder = new ViewHolder();
+                viewHolder.path = (CheckBox) convertView.findViewById(R.id.checkBoxFolderPath);
+                viewHolder.path.setText(item.Path);
+                viewHolder.path.setChecked(item.visible);
+
+                if (item.excluded)
+                {
+                    viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                    viewHolder.path.setEnabled(false);
+                }
+//                else
+//                {
+//                    viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+//                    viewHolder.path.setEnabled(false);
+//                }
+
+                convertView.setTag(viewHolder);
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            ImageButton exclude = (ImageButton) convertView.findViewById(R.id.excludeButton);
+            exclude.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    FolderVisibility item = getItem(position);
+                    item.excluded = !item.excluded;
+                    item.visible = !item.excluded;
+
+                    insert(item, position);
+                    mListener.onVisibilityChanged(item);
+//                    viewHolder.path.setChecked(item.visible);
+                    notifyDataSetChanged();
+                }
+            });
+            viewHolder.path.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+            {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                {
+                    item.visible = isChecked;
+                    mListener.onVisibilityChanged(item);
+                }
+            });
+
+            return convertView;
         }
     }
 }
