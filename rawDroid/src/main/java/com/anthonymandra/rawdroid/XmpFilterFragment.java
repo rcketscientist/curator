@@ -454,6 +454,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     private static class FolderAdapter extends ArrayAdapter<FolderVisibility>
     {
+        List<FolderVisibility> mVisibility;
         public interface OnVisibilityChangedListener
         {
             void onVisibilityChanged(FolderVisibility visibility);
@@ -473,6 +474,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         public FolderAdapter(Context context, List<FolderVisibility> objects)
         {
             super(context, R.layout.folder_list_item, objects);
+            mVisibility = objects;
         }
 
         @Override
@@ -490,20 +492,21 @@ public class XmpFilterFragment extends XmpBaseFragment
                 viewHolder.path.setText(item.Path);
                 viewHolder.path.setChecked(item.visible);
 
-                if (item.excluded)
-                {
-                    viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                    viewHolder.path.setEnabled(false);
-                }
-//                else
-//                {
-//                    viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-//                    viewHolder.path.setEnabled(false);
-//                }
-
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
+            }
+
+            // If excluded disable visibility switch and strikethrough
+            if (item.excluded)
+            {
+                viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                viewHolder.path.setEnabled(false);
+            }
+            else
+            {
+                viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                viewHolder.path.setEnabled(true);
             }
 
             ImageButton exclude = (ImageButton) convertView.findViewById(R.id.excludeButton);
@@ -514,11 +517,9 @@ public class XmpFilterFragment extends XmpBaseFragment
                 {
                     FolderVisibility item = getItem(position);
                     item.excluded = !item.excluded;
-                    item.visible = !item.excluded;
+                    viewHolder.path.setChecked(!item.excluded);
 
-                    insert(item, position);
                     mListener.onVisibilityChanged(item);
-//                    viewHolder.path.setChecked(item.visible);
                     notifyDataSetChanged();
                 }
             });

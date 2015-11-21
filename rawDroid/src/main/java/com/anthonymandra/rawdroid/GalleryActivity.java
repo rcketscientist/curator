@@ -1402,34 +1402,34 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			switch (tutorialStage)
 			{
 				case 0: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialConnectTitle));
                     tutorial.setContentText(getString(R.string.tutorialConnectText1));
                     setTutorialNoShowcase();
 					break;
 				case 1: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText2));
                     setTutorialNoShowcase();
                     break;
 				case 2: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText3));
                     setTutorialNoShowcase();
 					break;
 				case 3: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText4));
                     setTutorialNoShowcase();
 					break;
 				case 4: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText5));
                     setTutorialNoShowcase();
 					break;
 				case 5: // Find Images
 					// FIXME: NOT NEEDED
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialFindTitle));
                     tutorial.setContentText(getString(R.string.tutorialFindUSBText));
 //                    setTutorialActionView(R.id.gallery_usb, false);
@@ -1441,22 +1441,22 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					break;
 				case 7: // Find Path
 					//FIXME: NOT NEEDED
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindPathText));
 //					setTutorialActionView(R.id.navSpinner, true);
 					break;
 				case 8: // Recent Folder
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialRecentFolderText));
                     setTutorialNoShowcase();
 					break;
 				case 9: // Find Images
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindImagesText));
                     setTutorialActionView(R.id.galleryRefresh, false);
 					break;
 				case 10: // Long Select
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
                     view = mImageGrid.getChildAt(0);
@@ -1470,7 +1470,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(0), 0, 0);
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
                     view = mImageGrid.getChildAt(2);
                     if (view != null)
@@ -1487,7 +1487,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						onItemClick(mImageGrid, mImageGrid.getChildAt(2), 2, 2);
 					}
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
                     // This is ghetto, I know the spinner lies UNDER the selection view
 					//FIXME: Need something to point at
@@ -1497,7 +1497,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (inActionMode)
 						mContextMode.finish();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectAll));
                     setTutorialActionView(R.id.gallerySelectAll, true);
 					break;
@@ -1508,7 +1508,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						mGalleryAdapter.selectAll();
 					}
 
-                    tutorial.setScaleMultiplier(1f);
+//                    tutorial.setScaleMultiplier(1f);
                     tutorial.setContentText(getString(R.string.tutorialExitSelectionText));
                     setTutorialHomeView(true);
 					break;
@@ -1516,7 +1516,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                     if (mContextMode != null)
                         mContextMode.finish();
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
                     view = mImageGrid.getChildAt(3);		//WTF index is backwards.
                     if (view != null)
@@ -1529,7 +1529,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (mGalleryAdapter.getSelectedItemCount() < 1)
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(1), 1, 1);
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
 
 					setTutorialHomeView(true);
@@ -1547,7 +1547,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(3), 3, 3);
 					}
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));
                     // This is ghetto, I know the spinner lies UNDER the selection view
 					//FIXME: need something to point at
@@ -1557,7 +1557,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRenameTitle));
                     tutorial.setContentText(getString(R.string.tutorialRenameText));
                     setTutorialActionView(R.id.contextRename, true);
@@ -1566,7 +1566,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialMoveTitle));
                     tutorial.setContentText(getString(R.string.tutorialMoveText));
                     setTutorialActionView(R.id.contextMoveImages, true);
@@ -1575,7 +1575,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
                     tutorial.setContentText(getString(R.string.tutorialExportText));
                     setTutorialActionView(R.id.contextExportThumbs, true);
@@ -1594,13 +1594,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                     if (mContextMode != null)
                         mContextMode.finish();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
                     tutorial.setContentText(getString(R.string.tutorialRecycleText));
                     setTutorialActionView(R.id.gallery_recycle, true);
                     break;
                 case 23: // Actionbar help
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle));
                     tutorial.setContentText(getString(R.string.tutorialActionbarHelpText));
                     setTutorialActionView(R.id.gallerySelectAll, true);

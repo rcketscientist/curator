@@ -178,12 +178,12 @@ dependencies {
     compile project(':inscription')
     compile project(':metadata-extractor')
     compile project(':oIFileManager')
-//    compile project(':core')
-//    compile project(':layouts')
+    //    compile project(':core')
+    //    compile project(':layouts')
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
-//    compile 'com.android.support:recyclerview-v7:22.2.1'
-//    compile 'com.android.support:gridlayout-v7:22.2.1'
-//    compile 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
-//    compile 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
+    //    compile 'com.android.support:recyclerview-v7:22.2.1'
+    //    compile 'com.android.support:gridlayout-v7:22.2.1'
+    //    compile 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
+    //    compile 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
 }
