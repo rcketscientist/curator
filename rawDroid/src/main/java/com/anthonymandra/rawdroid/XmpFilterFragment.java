@@ -1,14 +1,11 @@
 package com.anthonymandra.rawdroid;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -61,7 +58,6 @@ public class XmpFilterFragment extends XmpBaseFragment
     private final String mPrefSegregate = "segregate";
     private final String mPrefHiddenFolders = "hiddenFolders";
     private final String mPrefExcludedFolders = "excludedFolders";
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -315,6 +311,18 @@ public class XmpFilterFragment extends XmpBaseFragment
     public XmpValues getXmpValues()
     {
         return mXmpValues;
+    }
+
+    public Set<String> getExcludedFolders()
+    {
+        return mExcludedFolders;
+    }
+
+    public void addExcludedFolders(Set<String> exclusions)
+    {
+        mExcludedFolders.addAll(exclusions);
+        mHiddenFolders.addAll(exclusions);
+        dispatchChange();
     }
 
     public XmpFilter getXmpFilter()

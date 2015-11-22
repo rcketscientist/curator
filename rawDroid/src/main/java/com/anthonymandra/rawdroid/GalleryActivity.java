@@ -4,13 +4,11 @@ import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -27,7 +25,6 @@ import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,7 +41,6 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,17 +61,14 @@ import android.widget.Toast;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.ImageUtils;
-import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
-import com.anthonymandra.framework.RawObject;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.Util;
@@ -215,6 +208,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
     private Toolbar mToolbar;
+	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
@@ -640,8 +634,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	private void loadXmpFilter()
 	{
-		XmpFilterFragment xmpFilter = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
-		xmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
+		mXmpFilterFragment = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
+		mXmpFilterFragment.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
 		{
 			@Override
 			public void onMetaFilterChanged(XmpFilter filter)
@@ -651,7 +645,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		});
 
 		// load filter data initially (must be done here due to
-		updateMetaLoaderXmp(xmpFilter.getXmpFilter());
+		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
 	}
 
 	@Override
@@ -779,11 +773,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mProgressBar.setVisibility(View.VISIBLE);
 		runCleanDatabase();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
-		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
-		// You must make a copy of the returned preference set or changes will not be recognized
-		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
+		final Set<String> excludedFolders = mXmpFilterFragment.getExcludedFolders();
+
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//		SharedPreferences.Editor editor = prefs.edit();
+//		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
+//		// You must make a copy of the returned preference set or changes will not be recognized
+//		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
 		SearchService.startActionSearch(
 				GalleryActivity.this,
 				/*TEST_ROOTS,*/MOUNT_ROOTS,
@@ -976,14 +972,17 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			excludedFolders.add(canon.getParent());
 		}
 
-		boolean success = editor.putStringSet(key, excludedFolders).commit();
-		if (success);
-		{
-			getContentResolver().delete(Meta.Data.CONTENT_URI,
-					createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
-					excludedFolders.toArray(new String[excludedFolders.size()]));
-			scanRawFiles();
-		}
+		mXmpFilterFragment.addExcludedFolders(excludedFolders);
+//		getContentResolver().delete(Meta.Data.CONTENT_URI,
+//				createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
+//				excludedFolders.toArray(new String[excludedFolders.size()]));
+//		scanRawFiles();
+
+//		boolean success = editor.putStringSet(key, excludedFolders).commit();
+//		if (success);
+//		{
+//
+//		}
 	}
 
 	@Override

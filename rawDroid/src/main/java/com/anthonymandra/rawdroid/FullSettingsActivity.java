@@ -32,15 +32,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@SuppressWarnings("deprecation")
 public class FullSettingsActivity extends PreferenceActivity
 {
-	public static final String PREFS_STORAGE = "com.anthonymandra.rawdroid.PREFS_STORAGE";
-	public static final String PREFS_VIEW = "com.anthonymandra.rawdroid.PREFS_VIEW";
-	public static final String PREFS_METADATA = "com.anthonymandra.rawdroid.PREFS_METADATA";
-    public static final String PREFS_LICENSE = "com.anthonymandra.rawdroid.PREFS_LICENSE";
-    public static final String PREFS_WATERMARK = "com.anthonymandra.rawdroid.PREFS_WATERMARK";
-
 	public static final int REQUEST_CODE_PICK_KEYWORD_FILE = 1;
 
 	public static final String KEY_ShowImageInterface = "prefKeyShowImageInterface";
@@ -221,7 +214,6 @@ public class FullSettingsActivity extends PreferenceActivity
         public void onResume() {
             super.onResume();
             updateRecycleBin();
-
         }
 
 		@Override
