@@ -246,11 +246,4 @@ public abstract class XmpBaseFragment extends Fragment
 		if (!mPauseListener)
 			onXmpChanged(getXmp());
 	}
-
-	public static class XmpValues
-	{
-		public Integer[] rating;
-		public String[] label;
-		public String[] subject;
-	}
 }

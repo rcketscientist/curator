@@ -302,4 +302,8 @@
     <string name="segregate">Segregate by type</string>
     <string name="folders">Folders</string>
 
+    <string name="tapVisibility">to toggle the folder visibility</string>
+    <string name="tap">Tap</string>
+    <string name="tapExclude">to exclude a folder from all future searches</string>
+
 </resources>

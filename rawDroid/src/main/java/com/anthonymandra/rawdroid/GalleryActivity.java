@@ -4,13 +4,11 @@ import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
@@ -27,7 +25,6 @@ import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
@@ -44,7 +41,6 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,17 +61,14 @@ import android.widget.Toast;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.ImageUtils;
-import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
-import com.anthonymandra.framework.RawObject;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.Util;
@@ -215,6 +208,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	// private int tutorialStage;
 	private ShowcaseView tutorial;
     private Toolbar mToolbar;
+	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
 	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
@@ -380,52 +374,70 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
 	}
 
-	protected void updateMetaLoaderXmp(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
+	protected void updateMetaLoaderXmp(XmpFilter filter)
 	{
 		StringBuilder selection = new StringBuilder();
 		List<String> selectionArgs = new ArrayList<>();
 		boolean requiresJoiner= false;
-		String joiner = andTrueOrFalse ? " AND " : " OR ";
 
-		if (xmp != null)
+		final String AND = " AND ";
+		final String OR = " OR ";
+		String joiner = filter.andTrueOrFalse ? AND : OR;
+
+		if (filter.xmp != null)
 		{
-			if (xmp.label != null && xmp.label.length > 0)
+			if (filter.xmp.label != null && filter.xmp.label.length > 0)
 			{
 				requiresJoiner = true;
-				selection.append(createMultipleIN(Meta.Data.LABEL, xmp.label.length));
-				for (String label : xmp.label)
+
+				selection.append(createMultipleIN(Meta.Data.LABEL, filter.xmp.label.length));
+				for (String label : filter.xmp.label)
 				{
 					selectionArgs.add(label);
 				}
 			}
-			if (xmp.subject != null && xmp.subject.length > 0)
+			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
 				requiresJoiner = true;
-				selection.append(createMultipleLike(Meta.Data.SUBJECT, xmp.subject, selectionArgs, joiner));
+
+				selection.append(createMultipleLike(Meta.Data.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
 			}
-			if (xmp.rating != null && xmp.rating.length > 0)
+			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
+				requiresJoiner = true;
 
-				selection.append(createMultipleIN(Meta.Data.RATING, xmp.rating.length));
-				for (int rating : xmp.rating)
+				selection.append(createMultipleIN(Meta.Data.RATING, filter.xmp.rating.length));
+				for (int rating : filter.xmp.rating)
 				{
 					selectionArgs.add(Double.toString((double)rating));
 				}
 			}
 		}
+		if (filter.hiddenFolders != null && filter.hiddenFolders.size() > 0)
+		{
+			if (requiresJoiner)
+				selection.append(joiner);
+			requiresJoiner = true;
 
-		String order = sortAscending ? " ASC" : " DESC";
+			selection.append(createMultipleLike(Meta.Data.PARENT,
+					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
+					selectionArgs,
+					AND,    // Requires AND so multiple hides don't negate each other
+					true));
+		}
+
+		String order = filter.sortAscending ? " ASC" : " DESC";
 		StringBuilder sort = new StringBuilder();
 
-		if (segregateByType)
+		if (filter.segregateByType)
 		{
 			sort.append(Meta.Data.TYPE).append(" ASC, ");
 		}
-		switch (sortColumn)
+		switch (filter.sortColumn)
 		{
 			case Date: sort.append(Meta.Data.TIMESTAMP).append(order); break;
 			case Name: sort.append(Meta.Data.NAME).append(order); break;
@@ -435,14 +447,14 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
 	}
 
-	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner)
+	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner, boolean NOT)
 	{
 		StringBuilder selection = new StringBuilder();
 		for (int i = 0; i < likes.length; i++)
 		{
 			if (i > 0) selection.append(joiner);
 			selection.append(column)
-					.append(" LIKE ?");
+					.append(NOT ? " NOT LIKE ?" : " LIKE ?");
 			selectionArgs.add("%" + likes[i] + "%");
 		}
 
@@ -622,23 +634,18 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	private void loadXmpFilter()
 	{
-		XmpFilterFragment xmpFilter = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
-		xmpFilter.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
+		mXmpFilterFragment = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
+		mXmpFilterFragment.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
 		{
 			@Override
-			public void onMetaFilterChanged(XmpBaseFragment.XmpValues xmp, boolean andTrueOrFalse, boolean sortAscending, boolean segregateByType, XmpFilterFragment.SortColumns sortColumn)
+			public void onMetaFilterChanged(XmpFilter filter)
 			{
-				updateMetaLoaderXmp(xmp, andTrueOrFalse, sortAscending, segregateByType, sortColumn);
+				updateMetaLoaderXmp(filter);
 			}
 		});
 
 		// load filter data initially (must be done here due to
-		updateMetaLoaderXmp(
-				xmpFilter.getXmpValues(),
-				xmpFilter.getAndOr(),
-				xmpFilter.getAscending(),
-				xmpFilter.getSegregate(),
-				xmpFilter.getSortCoumn());
+		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
 	}
 
 	@Override
@@ -766,11 +773,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mProgressBar.setVisibility(View.VISIBLE);
 		runCleanDatabase();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
-		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
-		// You must make a copy of the returned preference set or changes will not be recognized
-		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
+		final Set<String> excludedFolders = mXmpFilterFragment.getExcludedFolders();
+
+//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+//		SharedPreferences.Editor editor = prefs.edit();
+//		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
+//		// You must make a copy of the returned preference set or changes will not be recognized
+//		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
 		SearchService.startActionSearch(
 				GalleryActivity.this,
 				/*TEST_ROOTS,*/MOUNT_ROOTS,
@@ -963,14 +972,17 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			excludedFolders.add(canon.getParent());
 		}
 
-		boolean success = editor.putStringSet(key, excludedFolders).commit();
-		if (success);
-		{
-			getContentResolver().delete(Meta.Data.CONTENT_URI,
-					createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
-					excludedFolders.toArray(new String[excludedFolders.size()]));
-			scanRawFiles();
-		}
+		mXmpFilterFragment.addExcludedFolders(excludedFolders);
+//		getContentResolver().delete(Meta.Data.CONTENT_URI,
+//				createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
+//				excludedFolders.toArray(new String[excludedFolders.size()]));
+//		scanRawFiles();
+
+//		boolean success = editor.putStringSet(key, excludedFolders).commit();
+//		if (success);
+//		{
+//
+//		}
 	}
 
 	@Override
@@ -1389,34 +1401,34 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			switch (tutorialStage)
 			{
 				case 0: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialConnectTitle));
                     tutorial.setContentText(getString(R.string.tutorialConnectText1));
                     setTutorialNoShowcase();
 					break;
 				case 1: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText2));
                     setTutorialNoShowcase();
                     break;
 				case 2: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText3));
                     setTutorialNoShowcase();
 					break;
 				case 3: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText4));
                     setTutorialNoShowcase();
 					break;
 				case 4: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText5));
                     setTutorialNoShowcase();
 					break;
 				case 5: // Find Images
 					// FIXME: NOT NEEDED
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialFindTitle));
                     tutorial.setContentText(getString(R.string.tutorialFindUSBText));
 //                    setTutorialActionView(R.id.gallery_usb, false);
@@ -1428,22 +1440,22 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					break;
 				case 7: // Find Path
 					//FIXME: NOT NEEDED
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindPathText));
 //					setTutorialActionView(R.id.navSpinner, true);
 					break;
 				case 8: // Recent Folder
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialRecentFolderText));
                     setTutorialNoShowcase();
 					break;
 				case 9: // Find Images
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindImagesText));
                     setTutorialActionView(R.id.galleryRefresh, false);
 					break;
 				case 10: // Long Select
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
                     view = mImageGrid.getChildAt(0);
@@ -1457,7 +1469,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(0), 0, 0);
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
                     view = mImageGrid.getChildAt(2);
                     if (view != null)
@@ -1474,7 +1486,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						onItemClick(mImageGrid, mImageGrid.getChildAt(2), 2, 2);
 					}
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
                     // This is ghetto, I know the spinner lies UNDER the selection view
 					//FIXME: Need something to point at
@@ -1484,7 +1496,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (inActionMode)
 						mContextMode.finish();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectAll));
                     setTutorialActionView(R.id.gallerySelectAll, true);
 					break;
@@ -1495,7 +1507,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						mGalleryAdapter.selectAll();
 					}
 
-                    tutorial.setScaleMultiplier(1f);
+//                    tutorial.setScaleMultiplier(1f);
                     tutorial.setContentText(getString(R.string.tutorialExitSelectionText));
                     setTutorialHomeView(true);
 					break;
@@ -1503,7 +1515,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                     if (mContextMode != null)
                         mContextMode.finish();
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
                     view = mImageGrid.getChildAt(3);		//WTF index is backwards.
                     if (view != null)
@@ -1516,7 +1528,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (mGalleryAdapter.getSelectedItemCount() < 1)
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(1), 1, 1);
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
 
 					setTutorialHomeView(true);
@@ -1534,7 +1546,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(3), 3, 3);
 					}
 
-                    tutorial.setScaleMultiplier(1.5f);
+//                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));
                     // This is ghetto, I know the spinner lies UNDER the selection view
 					//FIXME: need something to point at
@@ -1544,7 +1556,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRenameTitle));
                     tutorial.setContentText(getString(R.string.tutorialRenameText));
                     setTutorialActionView(R.id.contextRename, true);
@@ -1553,7 +1565,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialMoveTitle));
                     tutorial.setContentText(getString(R.string.tutorialMoveText));
                     setTutorialActionView(R.id.contextMoveImages, true);
@@ -1562,7 +1574,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
                     tutorial.setContentText(getString(R.string.tutorialExportText));
                     setTutorialActionView(R.id.contextExportThumbs, true);
@@ -1581,13 +1593,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                     if (mContextMode != null)
                         mContextMode.finish();
 
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
                     tutorial.setContentText(getString(R.string.tutorialRecycleText));
                     setTutorialActionView(R.id.gallery_recycle, true);
                     break;
                 case 23: // Actionbar help
-                    tutorial.setScaleMultiplier(0.5f);
+//                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle));
                     tutorial.setContentText(getString(R.string.tutorialActionbarHelpText));
                     setTutorialActionView(R.id.gallerySelectAll, true);
