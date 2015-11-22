@@ -98,7 +98,6 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected ShareActionProvider mShareProvider;
 	protected Intent mShareIntent;
-	protected Handler licenseHandler;
 
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
@@ -124,10 +123,12 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LicenseManager.getLicense(getBaseContext(), licenseHandler);
+		LicenseManager.getLicense(getBaseContext(), getLicenseHandler());
 		createSwapDir();
 		createRecycleBin();
 	}
+
+	protected abstract LicenseHandler getLicenseHandler();
 
 	@Override
 	protected void onPause()

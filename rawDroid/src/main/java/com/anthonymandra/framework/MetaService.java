@@ -115,16 +115,17 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-        setThreadPool(new ThreadPoolExecutor(
-                0, Runtime.getRuntime().availableProcessors(),
-                60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(),
-                new MetaThreadFactory()));
-    }
+    //TODO: For some reason this is ending up single threaded
+//    @Override
+//    public void onCreate()
+//    {
+//        super.onCreate();
+//        setThreadPool(new ThreadPoolExecutor(
+//                0, Runtime.getRuntime().availableProcessors(),
+//                60L, TimeUnit.SECONDS,
+//                new LinkedBlockingQueue<Runnable>(),
+//                new MetaThreadFactory()));
+//    }
 
     /**
      * Starts this service to perform action Foo with the given parameters. If

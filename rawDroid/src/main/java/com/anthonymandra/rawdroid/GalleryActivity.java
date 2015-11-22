@@ -295,8 +295,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		mImageGrid.setAdapter(mGalleryAdapter);
 
-        licenseHandler = new LicenseHandler(this);
-
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
 		mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND);
@@ -711,6 +709,12 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	}
 
 	@Override
+	protected LicenseHandler getLicenseHandler()
+	{
+		return new LicenseHandler(this);
+	}
+
+	@Override
 	public void onPause()
 	{
 		super.onPause();
@@ -977,12 +981,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 //				createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
 //				excludedFolders.toArray(new String[excludedFolders.size()]));
 //		scanRawFiles();
-
-//		boolean success = editor.putStringSet(key, excludedFolders).commit();
-//		if (success);
-//		{
-//
-//		}
 	}
 
 	@Override

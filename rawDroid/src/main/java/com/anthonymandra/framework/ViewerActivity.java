@@ -147,6 +147,12 @@ public abstract class ViewerActivity extends CoreActivity implements
     protected HistogramTask mHistogramTask;
 
     @Override
+    protected LicenseHandler getLicenseHandler()
+    {
+        return new ViewerLicenseHandler(this);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentView());
@@ -214,8 +220,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 //            Uri entry = addDatabaseReference(image);
 //            getIntent().setData(uri);   // reset the data with a file uri
         }
-
-        licenseHandler = new ViewerLicenseHandler(this);
     }
 
 
