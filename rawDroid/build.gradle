@@ -1,189 +1,86 @@
-apply plugin: 'com.android.model.application'
+apply plugin: 'com.android.application'
 
 def versionMajor = 3
 def versionMinor = 9
 def versionPatch = 5
 def versionBuild = 1
 
-model {
-    android {
-        compileSdkVersion = 22
-        buildToolsVersion = '22.0.1'
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
 
-        defaultConfig.with {
-            minSdkVersion.apiLevel = 11    // Changed for showcaseview, 10 is 0.17% of users
-            targetSdkVersion.apiLevel = 22
-            versionCode = versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-            versionName = "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
-            // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
-        }
-    }
-
-    android.ndk {
-        moduleName = "libraw"
-//        stl = "gnustl_static"
-////        CFlags += "-fexceptions -frtti"
-//        toolchainVersion = "4.9"
-//        cppFlags += "-fexceptions -frtti"
-    }
-
-    android.sources {
-        main {
-            jni {
-                source {
-                    srcDirs = ['src/main/none']
-                }
-            }
-            jniLibs {
-                source {
-                    srcDirs = ['src/main/libs']
-                }
-            }
-        }
-    }
-
-//    android.sources {
-//        main {
-//            jni {
-//                source {
-//                    srcDirs = ["libiconv",
-//                               "libiconv/include",
-//                               "src/main/jni/libiconv/lib",
-//                               "src/main/jni/libiconv/libcharset",
-//                               "src/main/jni/libiconv/libcharset/include" ]
-//                }
-//            }
-//        }
-//    }
-
-//    android.sources.main {
-//        jni.source.srcDirs += "/src/main/jni/libiconv"
-//        jni.source.srcDirs += "/src/main/jni/libiconv/include"
-//        jni.source.srcDirs += "/src/main/jni/libiconv/lib"
-//        jni.source.srcDirs += "/src/main/jni/libiconv/libcharset"
-//        jni.source.srcDirs += "/src/main/jni/libiconv/libcharset/include"
-//    }
-
-    android.lintOptions {
-        checkReleaseBuilds = false
+    lintOptions {
+        checkReleaseBuilds false
         // Or, if you prefer, you can continue to check for errors in release builds,
         // but continue the build even when errors are found:
-//        abortOnError = false
+//        abortOnError false
     }
 
-    def sc //huge hack
-    android.signingConfigs {
-        create("release") {
-            storeFile = file("../key/my-release-key.keystore")
-            storePassword = "***REMOVED***"
-            storeType = "JKS"
-            keyAlias = "alias_name"
-            keyPassword = "***REMOVED***"
-            sc = it
-        }
+    defaultConfig {
+        minSdkVersion 11    // Changed for showcaseview, 10 is 0.17% of users
+        targetSdkVersion 22
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
+        // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
     }
 
-    android.buildTypes {
+    signingConfigs {
         release {
-            minifyEnabled = true
-//            proguardFiles = getDefaultProguardFile('proguard-android.txt')
-//            proguardFiles += file('F:\\dev\\sdk\\tools\\proguard\\proguard-android.txt')
-            proguardFiles += file('proguard-rules.txt')
-//            signingConfig signingConfigs.release
-            signingConfig = sc
+            storeFile file("../key/my-release-key.keystore")
+            storePassword "***REMOVED***"
+            keyAlias "alias_name"
+            keyPassword "***REMOVED***"
         }
     }
 
-    // These fields handle flavorized authorities for providers
-    final FIELD_META = "PROVIDER_AUTHORITY_META"
-    final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
-    final FIELD_KEYWORD = "PROVIDER_AUTHORITY_KEYWORD"
-    final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
-    final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
-    final PROVIDER_KEYWORD = "\"com.anthonymandra.content.KeywordProvider\""
-    final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
-    final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
-    final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
+    }
 
-    android.productFlavors {
-        create("demo") {
-            applicationId = 'com.anthonymandra.rawdroid'
-            buildConfigFields.with {
-                create() {
-                    type = "String"
-                    name = FIELD_META
-                    value = PROVIDER_META
-                }
-                create() {
-                    type = "String"
-                    name = FIELD_SWAP
-                    value = PROVIDER_SWAP
-                }
-                create() {
-                    type = "String"
-                    name = FIELD_KEYWORD
-                    value = PROVIDER_KEYWORD
-                }
-            }
+    productFlavors {
+        // These fields handle flavorized authorities for providers
+        final FIELD_META = "PROVIDER_AUTHORITY_META"
+        final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
+        final FIELD_KEYWORD = "PROVIDER_AUTHORITY_KEYWORD"
+        final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
+        final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
+        final PROVIDER_KEYWORD = "\"com.anthonymandra.content.KeywordProvider\""
+        final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
+        final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
+        final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
+        demo {
+            applicationId 'com.anthonymandra.rawdroid'
+            buildConfigField "String", FIELD_META, PROVIDER_META
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD
         }
-        create("pro") {
-            applicationId = 'com.anthonymandra.rawdroidpro'
-            buildConfigFields.with {
-                create() {
-                    type = "String"
-                    name = FIELD_META
-                    value = PROVIDER_META_PRO
-                }
-                create() {
-                    type = "String"
-                    name = FIELD_SWAP
-                    value = PROVIDER_SWAP_PRO
-                }
-                create() {
-                    type = "String"
-                    name = FIELD_KEYWORD
-                    value = PROVIDER_KEYWORD_PRO
-                }
-            }
+        pro {
+            applicationId 'com.anthonymandra.rawdroidpro'
+            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
-        create("proAmazon") {
-            applicationId = 'com.anthonymandra.rawdroidpro'
-            buildConfigFields.with {
-                create() {
-                    type = "String"
-                    name = FIELD_META
-                    value = PROVIDER_META_PRO
-                }
-                create() {
-                    type = "String"
-                    name = FIELD_SWAP
-                    value = PROVIDER_SWAP_PRO
-                }
-                create() {
-                    type = "String"
-                    name = FIELD_KEYWORD
-                    value = PROVIDER_KEYWORD_PRO
-                }
-            }
+        proAmazon {
+            applicationId 'com.anthonymandra.rawdroidpro'
+            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
     }
 }
-
-//repositories {
-//    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-//}
 
 dependencies {
     compile project(':showcaseView:library')
     compile project(':inscription')
     compile project(':metadata-extractor')
     compile project(':oIFileManager')
-    //    compile project(':core')
-    //    compile project(':layouts')
+    compile project(':rawprocessor')
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     //    compile 'com.android.support:recyclerview-v7:22.2.1'
     //    compile 'com.android.support:gridlayout-v7:22.2.1'
-    //    compile 'org.lucasr.twowayview:core:1.0.0-SNAPSHOT@aar'
-    //    compile 'org.lucasr.twowayview:layouts:1.0.0-SNAPSHOT@aar'
 }

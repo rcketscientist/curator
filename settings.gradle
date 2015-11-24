@@ -1,11 +1,6 @@
 include ':metadata-extractor'
+include ':rawprocessor'
 include ':oIFileManager'
 include ':showcaseView:library'
 include ':inscription'
-//include ':core'
-//include ':layouts'
-//include ':dynamicGrid'
 include ':rawDroid'
-
-//project(':core').projectDir = new File('twoway-view/core')
-//project(':layouts').projectDir = new File('twoway-view/layouts')

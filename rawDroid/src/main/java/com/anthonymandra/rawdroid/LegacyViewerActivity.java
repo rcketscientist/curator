@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid;
 
 import android.content.Context;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,14 +16,12 @@ import com.android.legacy.ui.GLRootView;
 import com.android.legacy.ui.GLView;
 import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
-import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.LocalImage;
-import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
+import com.anthonymandra.rawprocessor.LibRaw;
 
 import java.io.IOException;
 

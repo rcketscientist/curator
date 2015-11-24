@@ -36,13 +36,13 @@ import android.widget.Toast;
 import com.android.gallery3d.app.DataListener;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw.Margins;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.XmpEditFragment;
+import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.widget.HistogramView;
 
 import org.openintents.filemanager.FileManagerActivity;
@@ -942,7 +942,11 @@ public abstract class ViewerActivity extends CoreActivity implements
         int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
         int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
         String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-        Margins margins = new Margins(settings);
+        int top = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
+        int bottom = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
+        int right = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
+        int left = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
+        LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
 
         MediaItem source = getCurrentItem();
 
@@ -957,7 +961,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             waterData = Util.getBitmapBytes(watermark);
             waterWidth = watermark.getWidth();
             waterHeight = watermark.getHeight();
-            margins = Margins.LowerRight;
+            margins = LibRaw.Margins.LowerRight;
         }
         else if (showWatermark)
         {

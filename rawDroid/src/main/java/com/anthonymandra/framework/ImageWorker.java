@@ -23,7 +23,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import com.anthonymandra.dcraw.LibRaw;
+import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
 
 import java.lang.ref.WeakReference;

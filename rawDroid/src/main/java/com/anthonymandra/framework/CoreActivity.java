@@ -38,7 +38,6 @@ import android.widget.Toast;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -47,6 +46,7 @@ import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
+import com.anthonymandra.rawprocessor.LibRaw;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpWriter;
@@ -882,7 +882,12 @@ public abstract class CoreActivity extends DocumentActivity
 			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
 			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
 			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-			LibRaw.Margins margins = new LibRaw.Margins(pref);
+
+			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
+			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
+			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
+			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
+			LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
 
 			Bitmap watermark;
 			byte[] waterData = null;
