@@ -28,3 +28,4 @@ build
 /rawDroid/build/outputs/apk/manifest-merger-demo-release-report.txt
 /captures
 Thumbs.db
+obj
