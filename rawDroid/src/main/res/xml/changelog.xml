@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.9.6.0"
+             versioncode="39600"
+             summary="Beta: Exclude/Filter by folder"
+             date="2 DEC 2015">
+        <change>Feature: Filter by folder</change>
+        <change>Feature: Exclude by folder</change>
+        <change>Feature: New crash analysis tool (requires Internet Permission)</change>
+        <change>Enhancement: All write actions should now be 5.0 compatible</change>
+    </release>
     <release version="3.9.5.1"
              versioncode="39501"
              summary="Beta: Memory leak patch"
