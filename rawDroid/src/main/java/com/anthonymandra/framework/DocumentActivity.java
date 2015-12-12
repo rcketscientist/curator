@@ -1,7 +1,6 @@
 package com.anthonymandra.framework;
 
 import android.annotation.TargetApi;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -10,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
@@ -19,16 +16,12 @@ import android.os.storage.StorageManager;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.R;
@@ -627,11 +620,12 @@ public abstract class DocumentActivity extends AppCompatActivity
 		// start with root of SD card and then parse through document tree.
 		DocumentFile document = DocumentFile.fromTreeUri(this, treeUri);
 		Crashlytics.setInt("Build", Build.VERSION.SDK_INT);
-		Crashlytics.setBool("documentIsNull", document == null );
 		Crashlytics.setString("relativePath", relativePath );
 		String[] parts = relativePath.split("\\/");
-		Crashlytics.setBool("partsIsNull", parts == null );
 		for (int i = 0; i < parts.length; i++) {
+			Crashlytics.setBool("documentIsNull", document == null );
+			Crashlytics.setString("parts[i]", parts[i] );
+
 			DocumentFile nextDocument = document.findFile(parts[i]);
 
 			if (nextDocument == null) {
@@ -648,6 +642,12 @@ public abstract class DocumentActivity extends AppCompatActivity
 				}
 				else {
 					nextDocument = document.createFile("image", parts[i]);
+					if (nextDocument == null)
+					{
+						Crashlytics.setString("parts[i]", parts[i] );
+						Crashlytics.log();
+						return null;
+					}
 				}
 			}
 			document = nextDocument;

@@ -1,8 +1,16 @@
 -keepattributes SourceFile,LineNumberTable
 
--injar libs/xmpcore-5.1.2.jar
+#-injar libs/xmpcore-5.1.2.jar
+-libraryjars libs
 
--keep class android.support.v7.widget.ShareActionProvider { *; } 
--keep class android.support.v7.widget.SearchView { *; }
+-keep class com.crashlytics.** { *; }
+-keep class com.crashlytics.android.**
+-keep public class * extends java.lang.Exception
 
--keep class com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragment** { *; }
+-keep class android.support.v4.** { *; }
+-keep interface android.support.v4.** { *; }
+
+-keep class android.support.v7.** { *; }
+-keep interface android.support.v7.** { *; }
+
+#-keep class com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragment** { *; }
