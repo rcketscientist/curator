@@ -74,11 +74,15 @@ import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.widget.GalleryAdapter;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.WhatsNewDialog;
 
+import io.fabric.sdk.android.Fabric;
 import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
@@ -221,6 +225,11 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Crashlytics crashlyticsKit = new Crashlytics.Builder()
+				.core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+				.build();
+
+		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
@@ -228,8 +237,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
-
-		Set<String> blocked = PreferenceManager.getDefaultSharedPreferences(this).getStringSet(getString(R.string.KEY_EXCLUDED_FOLDERS), new HashSet<String>());
 
 //		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 //		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -943,7 +950,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				scanRawFiles();
 				return true;
 			case R.id.galleryTutorial:
-				runTutorial();
+//				runTutorial();
 				return true;
 			case R.id.gallerySd:
 				requestWritePermission();
@@ -986,7 +993,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		mContextMode.finish(); // end the contextual action bar and multi-select mode
+		if (mContextMode != null)
+			mContextMode.finish(); // end the contextual action bar and multi-select mode
 		return false;
 	}
 

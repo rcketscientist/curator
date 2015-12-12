@@ -18,9 +18,8 @@ import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.dcraw.LibRaw;
-import com.anthonymandra.dcraw.LibRaw.Margins;
-import com.anthonymandra.dcraw.TiffDecoder;
+import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.rawprocessor.TiffDecoder;
 import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.BufferedInputStream;
@@ -79,7 +78,7 @@ public class LocalImage extends MetaMedia {
 
     @Override
     public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
-                                        int waterHeight, Margins margins) {
+                                        int waterHeight, LibRaw.Margins margins) {
         if (Util.isNative(getFile())) {
             return getImageBytes();
         }

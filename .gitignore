@@ -16,7 +16,6 @@ local.properties
 /gradle/gradle
 /gradle/gradlew.bat
 /gradle/gradlew
-build
 /rawDroid/src/main/obj
 /rawDroid/build/outputs/apk/rawDroid-pro-debug.apk
 /rawDroid/build/outputs/apk/rawDroid-pro-debug-unaligned.apk
@@ -27,3 +26,10 @@ build
 /rawDroid/build/outputs/apk/manifest-merger-proAmazon-release-report.txt
 /rawDroid/build/outputs/apk/manifest-merger-demo-release-report.txt
 /captures
+Thumbs.db
+obj
+/rawDroid/build/tmp
+/rawDroid/build/generated
+/rawDroid/build/intermediates
+/rawDroid/build/outputs/logs
+/build

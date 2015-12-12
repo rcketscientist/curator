@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.R;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -610,7 +611,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 		String treeBase = getFullPathFromTreeUri(treeUri);
 		if (fullPath.startsWith(treeBase)) {
 			baseFolder = treeBase;
-		}
+	}
 
 		if (baseFolder == null) {
 			// Alternatively, take root folder from device and assume that base URI works.
@@ -625,8 +626,11 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 		// start with root of SD card and then parse through document tree.
 		DocumentFile document = DocumentFile.fromTreeUri(this, treeUri);
-
+		Crashlytics.setInt("Build", Build.VERSION.SDK_INT);
+		Crashlytics.setBool("documentIsNull", document == null );
+		Crashlytics.setString("relativePath", relativePath );
 		String[] parts = relativePath.split("\\/");
+		Crashlytics.setBool("partsIsNull", parts == null );
 		for (int i = 0; i < parts.length; i++) {
 			DocumentFile nextDocument = document.findFile(parts[i]);
 
@@ -928,28 +932,36 @@ public abstract class DocumentActivity extends AppCompatActivity
 		editor.apply();
 	}
 
+	@TargetApi(21)
 	protected void requestWritePermission()
 	{
 		if (Util.hasLollipop())
 		{
-			ImageView image = new ImageView(this);
-			image.setImageDrawable(getDrawable(R.drawable.document_api_guide));
-			AlertDialog.Builder builder =
-					new AlertDialog.Builder(this)
-							.setTitle(R.string.dialogWriteRequestTitle)
-							.setView(image);
-			final AlertDialog dialog = builder.create();
-			image.setOnClickListener(new View.OnClickListener()
+			runOnUiThread(new Runnable()
 			{
 				@Override
-				public void onClick(View v)
+				public void run()
 				{
-					Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-					startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
-					dialog.dismiss();
+					ImageView image = new ImageView(DocumentActivity.this);
+					image.setImageDrawable(getDrawable(R.drawable.document_api_guide));
+					AlertDialog.Builder builder =
+							new AlertDialog.Builder(DocumentActivity.this)
+									.setTitle(R.string.dialogWriteRequestTitle)
+									.setView(image);
+					final AlertDialog dialog = builder.create();
+					image.setOnClickListener(new View.OnClickListener()
+					{
+						@Override
+						public void onClick(View v)
+						{
+							Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+							startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
+							dialog.dismiss();
+						}
+					});
+					dialog.show();
 				}
 			});
-			dialog.show();
 		}
 	}
 
@@ -972,12 +984,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 					// This will resume any actions pending write permission
 					onResumeWriteAction(mCallingMethod, mCallingParameters);
-					// If an operation was interrupted to request this permission restart the operation
-//					if (mPendingOperation != null)
-//					{
-//						mPendingOperation.perform();
-//						mPendingOperation = null;
-//					}
 				}
 				break;
 		}

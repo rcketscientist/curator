@@ -11,6 +11,7 @@ import android.provider.Settings;
 
 import com.anthonymandra.framework.License;
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.LicenseChecker;
 import com.google.android.vending.licensing.LicenseCheckerCallback;
@@ -111,7 +112,6 @@ public class LicenseManager extends License {
                 settings.edit().putString("license_modified", state.toString());
                 updateLicense(state);
                 return;
-
             }
             else if (packageExists(pkg2))
             {
@@ -119,7 +119,6 @@ public class LicenseManager extends License {
                 settings.edit().putString("license_modified", state.toString());
                 updateLicense(state);
                 return;
-
             }
             else if (!BuildConfig.DEBUG && scuttle(g, a))
             {
@@ -196,17 +195,26 @@ public class LicenseManager extends License {
         //Scallywags renamed your app?
 
         if (context.getPackageName().compareTo(BuildConfig.APPLICATION_ID) != 0)
+        {
+            Crashlytics.logException(new Exception("SC001: " + context.getPackageName()));
             return true; // BOOM!
+        }
 
         //Rogues relocated your app?
 
         String installer = context.getPackageManager().getInstallerPackageName(BuildConfig.APPLICATION_ID);
 
         if (installer == null)
+        {
+            Crashlytics.logException(new Exception("SC002: " + context.getPackageName()));
             return true; // BOOM!
+        }
 
         if (installer.compareTo(google) != 0 && installer.compareTo(amazon) != 0)
+        {
+            Crashlytics.logException(new Exception("SC003: " + installer));
             return true; // BOOM!
+        }
 
         return false;
     }
