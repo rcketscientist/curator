@@ -946,7 +946,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				scanRawFiles();
 				return true;
 			case R.id.galleryTutorial:
-				runTutorial();
+//				runTutorial();
 				return true;
 			case R.id.gallerySd:
 				requestWritePermission();
@@ -995,7 +995,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		mContextMode.finish(); // end the contextual action bar and multi-select mode
+		if (mContextMode != null)
+			mContextMode.finish(); // end the contextual action bar and multi-select mode
 		return false;
 	}
 

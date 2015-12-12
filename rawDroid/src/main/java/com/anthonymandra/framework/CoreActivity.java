@@ -750,7 +750,6 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		protected Boolean doInBackground(Object... params)
 		{
-			boolean totalSuccess = true;
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
@@ -771,9 +770,9 @@ public abstract class CoreActivity extends DocumentActivity
 
 				try
 				{
-					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
+					setWriteResume(WriteActions.COPY, new Object[]{remainingImages});
 
-					totalSuccess &= copy(from, to);
+					copy(from, to);
 					remainingImages.remove(toCopy);
 					onImageAdded(toCopy);
 				} catch (WritePermissionException e)
@@ -784,7 +783,7 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 				publishProgress();
 			}
-			return totalSuccess;
+			return true;
 		}
 
 		@Override
@@ -1023,7 +1022,7 @@ public abstract class CoreActivity extends DocumentActivity
 					return false;
 				}
 			}
-			return removed.size() == totalDeletes.size();
+			return true;
 		}
 
 		@Override
@@ -1128,8 +1127,6 @@ public abstract class CoreActivity extends DocumentActivity
 			final List<String> totalImages = params[0];
 			List<String> remainingImages = new ArrayList<>(totalImages);
 
-			//TODO: This must be it's own task
-			List<MediaItem> success = new ArrayList<>();
 			for (String filename : totalImages)
 			{
 				File toRestore = new File(filename);
@@ -1287,6 +1284,7 @@ public abstract class CoreActivity extends DocumentActivity
 			} catch (WritePermissionException e)
 			{
 				e.printStackTrace();
+				return false;
 			}
 
 			updateMetaDatabase(operations);

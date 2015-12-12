@@ -60,11 +60,12 @@ public class LegacyViewerActivity extends ViewerActivity
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         settings.registerOnSharedPreferenceChangeListener(this);
 
+		mModel = new MyImageViewerModel(this, null);
+
 		mImageViewer = new ImageViewer(this);
 		mImageViewer.setModel(mModel);
 		mImageViewer.setScaleListener(this);
 		mRootPane.addComponent(mImageViewer);
-		mModel = new MyImageViewerModel(this, null);
 		mModel.requestNextImageWithMeta();
 	}
 

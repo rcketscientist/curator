@@ -195,7 +195,6 @@ public class CameraImportActivity extends DocumentActivity
 			final List<Integer> imageHandles = params[0];
 			mProgressDialog.setMax(imageHandles.size());    //Can this go here?  Otherwise just do work/total * 100
 
-			boolean totalSuccess = true;
 			for (int objectHandle : imageHandles)
 			{
 				if (cancelled)
@@ -219,7 +218,7 @@ public class CameraImportActivity extends DocumentActivity
 					{
 						File tmp = new File(getExternalCacheDir(), name);
 						mMtpDevice.importFile(objectHandle, tmp.getPath());
-						totalSuccess &= moveFile(tmp, endFile);
+						moveFile(tmp, endFile);
 					} catch (WritePermissionException e)
 					{
 						e.printStackTrace();
@@ -228,12 +227,12 @@ public class CameraImportActivity extends DocumentActivity
 				}
 				else
 				{
-					totalSuccess &= mMtpDevice.importFile(objectHandle, endFile.getPath());
+					mMtpDevice.importFile(objectHandle, endFile.getPath());
 				}
 
 				publishProgress();
 			}
-			return totalSuccess;
+			return true;
 		}
 
 		@Override

@@ -653,8 +653,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         {
             showPanels();
         }
-
-//        writeXmpModifications();    //TODO: This would be best handled as an image changed listener, rather than leveraging meta update
     }
 
     private void toggleEditXmpFragment()
@@ -679,26 +677,23 @@ public abstract class ViewerActivity extends CoreActivity implements
         protected ContentValues doInBackground(Uri... params)
         {
             final Uri uri = params[0];
-            long initialTime = System.currentTimeMillis();
 
             // If the meta is processed populate it
             Cursor c = getMetaCursor(uri);
-            c.moveToFirst();
+            if (!c.moveToFirst())
+                return null;
+
             ContentValues values = new ContentValues();
 
             // Check if meta is already processed
             if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
             {
-                long preCursorConvert = System.currentTimeMillis();
                 DatabaseUtils.cursorRowToContentValues(c, values);
-                Log.d(TAG, "cursorRowToContentValues: " + (System.currentTimeMillis() - preCursorConvert));
             }
             else
             {
-                long preContentValues = System.currentTimeMillis();
                 final ContentValues cv = ImageUtils.getContentValues(ViewerActivity.this, uri);
                 values = cv;
-                Log.d(TAG, "getContentValues: " + (System.currentTimeMillis() - preContentValues));
                 new Thread(new Runnable()
                 {
                     @Override
@@ -712,15 +707,14 @@ public abstract class ViewerActivity extends CoreActivity implements
                 }).start();
             }
             c.close();
-            Log.d(TAG, "LoadMetadataTask: " + (System.currentTimeMillis() - initialTime));
-
             return values;
         }
 
         @Override
         protected void onPostExecute(ContentValues result)
         {
-            populateMeta(result);
+            if (result != null)
+                populateMeta(result);
         }
     }
 

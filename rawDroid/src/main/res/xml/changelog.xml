@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.9.6.4"
+             versioncode="39604"
+             summary="Beta: Bug patch"
+             date="7 DEC 2015"/>
+    <release version="3.9.6.2"
+             versioncode="39602"
+             summary="Beta: Bug patch"
+             date="7 DEC 2015"/>
+    <release version="3.9.6.1"
+             versioncode="39601"
+             summary="Beta: Bug patch"
+             date="5 DEC 2015"/>
     <release version="3.9.6.0"
              versioncode="39600"
              summary="Beta: Exclude/Filter by folder"

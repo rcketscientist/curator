@@ -16,7 +16,6 @@ local.properties
 /gradle/gradle
 /gradle/gradlew.bat
 /gradle/gradlew
-build
 /rawDroid/src/main/obj
 /rawDroid/build/outputs/apk/rawDroid-pro-debug.apk
 /rawDroid/build/outputs/apk/rawDroid-pro-debug-unaligned.apk
@@ -29,3 +28,8 @@ build
 /captures
 Thumbs.db
 obj
+/rawDroid/build/tmp
+/rawDroid/build/generated
+/rawDroid/build/intermediates
+/rawDroid/build/outputs/logs
+/build

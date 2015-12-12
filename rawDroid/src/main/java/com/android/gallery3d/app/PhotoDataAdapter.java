@@ -22,6 +22,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
@@ -41,6 +42,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -404,7 +406,18 @@ public class PhotoDataAdapter implements Model {
     public ScreenNail getScreenNail(int offset) {
         int index = mCurrentIndex + offset;
         if (index < 0 || index >= getCount() || !mIsActive) return null;
-        Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
+
+//        Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
+        if (!(index >= mActiveStart && index < mActiveEnd))
+        {
+            // Lets log this but attempt to allow adapter to continue
+            Crashlytics.setInt("index", index);
+            Crashlytics.setInt("mActiveStart", mActiveStart);
+            Crashlytics.setInt("mActiveEnd", mActiveEnd);
+            Crashlytics.logException(new Exception("Utils.assertTrue(index >= mActiveStart && index < mActiveEnd)"));
+            Log.e(TAG, "Utils.assertTrue(index >= mActiveStart && index < mActiveEnd) [" + mActiveStart + "," + index + "," + mActiveEnd + "]");
+            return null;
+        }
 
         MediaItem item = getImage(index);
         if (item == null) return null;
