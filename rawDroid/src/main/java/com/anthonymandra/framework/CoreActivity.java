@@ -215,10 +215,7 @@ public abstract class CoreActivity extends DocumentActivity
 				try
 				{
 					ImageUtils.cleanDatabase(CoreActivity.this);
-				} catch (RemoteException e)
-				{
-					e.printStackTrace();
-				} catch (OperationApplicationException e)
+				} catch (RemoteException | OperationApplicationException e)
 				{
 					e.printStackTrace();
 				}
@@ -414,7 +411,6 @@ public abstract class CoreActivity extends DocumentActivity
 	 * Deletes a file and determines if a recycle is necessary.
 	 *
 	 * @param toDelete file to delete.
-	 * @return true currently (possibly return success later on)
 	 */
 	protected void deleteImage(final Uri toDelete)
 	{
@@ -713,7 +709,7 @@ public abstract class CoreActivity extends DocumentActivity
 		public void handleMessage(Message msg)
 		{
 			License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-			if (state.toString().startsWith("modified"))
+			if (state == null || state.toString().startsWith("modified"))
 			{
 				for (int i = 0; i < 3; i++)
 					Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show();
@@ -765,7 +761,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
 			List<Uri> totalImages = (List<Uri>) params[0];
@@ -840,7 +836,11 @@ public abstract class CoreActivity extends DocumentActivity
 		try
 		{
 			DocumentFile dest = FileUtil.getDocumentFile(this, destination, false, true);
+			if (dest == null)
+				return false;
 			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			if (pfd == null)
+				return false;
 			return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
 		}
 		catch(Exception e)
@@ -859,7 +859,11 @@ public abstract class CoreActivity extends DocumentActivity
 		try
 		{
 			DocumentFile dest = FileUtil.getDocumentFile(this, destination, false, true);
+			if (dest == null)
+				return false;
 			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			if (pfd == null)
+				return false;
 			return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 		}
 		catch(Exception e)
@@ -889,7 +893,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
 			boolean totalSuccess = true;
@@ -1018,7 +1022,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
@@ -1094,7 +1098,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Void doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
@@ -1153,7 +1157,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof String)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof String))
 				throw new IllegalArgumentException();
 
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
@@ -1191,7 +1195,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	public boolean renameImage(File source, String baseName) throws WritePermissionException
 	{
-		Boolean imageSuccess = true;
+		Boolean imageSuccess;
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
@@ -1255,7 +1259,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
 			final List<Uri> totalImages = (List<Uri>) params[0];
@@ -1343,7 +1347,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
 			final List<Uri> totalImages = (List<Uri>) params[0];
