@@ -1340,9 +1340,9 @@ com.anthonymandra.framework.CoreActivity:
     public static final java.lang.String META_SELECTION_ARGS_KEY
     public static final java.lang.String META_SORT_ORDER_KEY
     public static final java.lang.String META_DEFAULT_SORT
-    355:355:protected java.io.File getSwapFile(java.lang.String)
-    385:388:private java.util.List getImageListFromUriList(java.util.List)
-    396:397:private com.android.gallery3d.data.MediaItem getImageFromUri(android.net.Uri)
+    368:368:protected java.io.File getSwapFile(java.lang.String)
+    398:401:private java.util.List getImageListFromUriList(java.util.List)
+    409:410:private com.android.gallery3d.data.MediaItem getImageFromUri(android.net.Uri)
 com.anthonymandra.framework.DiskLruCache:
     static final java.lang.String JOURNAL_FILE
     static final java.lang.String JOURNAL_FILE_TMP
@@ -1380,9 +1380,9 @@ com.anthonymandra.framework.DocumentActivity:
     367:404:public boolean rmdir(java.io.File)
     417:432:public boolean deleteFilesInFolder(android.content.Context,java.io.File)
     529:529:public boolean isOnExtSdCard(java.io.File)
-    797:834:private static java.io.File copyDummyFile(android.content.Context,int,java.lang.String,java.lang.String)
-    844:850:private static java.io.File copyDummyFiles(android.content.Context)
-    876:926:protected void checkWriteAccess()
+    802:839:private static java.io.File copyDummyFile(android.content.Context,int,java.lang.String,java.lang.String)
+    849:855:private static java.io.File copyDummyFiles(android.content.Context)
+    881:931:protected void checkWriteAccess()
 com.anthonymandra.framework.DocumentActivity$1
 com.anthonymandra.framework.DocumentActivity$2
 com.anthonymandra.framework.DocumentActivity$3

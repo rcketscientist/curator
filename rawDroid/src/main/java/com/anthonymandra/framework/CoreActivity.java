@@ -47,6 +47,7 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpWriter;
@@ -172,16 +173,28 @@ public abstract class CoreActivity extends DocumentActivity
 	@Override
 	protected void onResumeWriteAction(Enum callingMethod, Object[] callingParameters)
 	{
+		if (callingMethod == null)
+		{
+			Crashlytics.logException(new Exception("Null Write Method"));
+			return;
+		}
+
 		switch ((WriteActions)callingMethod)
 		{
+			case COPY:
+				new CopyTask().execute(callingParameters);
+				break;
 			case DELETE:
-				new DeleteTask().execute((List<Uri>) callingParameters[0]);
+				new DeleteTask().execute(callingParameters);
 				break;
 			case RECYCLE:
-				new RecycleTask().execute((List<Uri>) callingParameters[0]);
+				new RecycleTask().execute(callingParameters);
 				break;
 			case RENAME:
 				new RenameTask().execute(callingParameters);
+				break;
+			case RESTORE:
+				new RestoreTask().execute(callingParameters);
 				break;
 			case WRITE_XMP:
 				new WriteXmpTask().execute(callingParameters);
@@ -749,8 +762,12 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 
 		@Override
+		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+				throw new IllegalArgumentException();
+
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
@@ -869,8 +886,12 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 
 		@Override
+		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+				throw new IllegalArgumentException();
+
 			boolean totalSuccess = true;
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
@@ -981,7 +1002,7 @@ public abstract class CoreActivity extends DocumentActivity
 		return deleteFile(image);
 	}
 
-	protected class DeleteTask extends AsyncTask<List<Uri>, Integer, Boolean>
+	protected class DeleteTask extends AsyncTask<Object, Integer, Boolean>
 			implements OnCancelListener
 	{
 		@Override
@@ -994,11 +1015,15 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(final List<Uri>... params)
+		@SuppressWarnings("unchecked")
+		protected Boolean doInBackground(final Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+				throw new IllegalArgumentException();
+
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
-			final List<Uri> totalDeletes = params[0];
+			final List<Uri> totalDeletes = (List<Uri>) params[0];
 			List<Uri> remainingDeletes = new ArrayList<>(totalDeletes);
 
 			mProgressDialog.setMax(totalDeletes.size());
@@ -1006,9 +1031,9 @@ public abstract class CoreActivity extends DocumentActivity
 
 			for (Uri toDelete : totalDeletes)
 			{
+				setWriteResume(WriteActions.DELETE, new Object[]{remainingDeletes});
 				try
 				{
-					setWriteResume(WriteActions.DELETE, new Object[]{remainingDeletes});
 					if (delete(new File(toDelete.getPath())))
 					{
 						onImageRemoved(toDelete);
@@ -1056,7 +1081,7 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected class RecycleTask extends AsyncTask<List<Uri>, Integer, Void> implements OnCancelListener
+	protected class RecycleTask extends AsyncTask<Object, Integer, Void> implements OnCancelListener
 	{
 		@Override
 		protected void onPreExecute()
@@ -1066,11 +1091,15 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 
 		@Override
-		protected Void doInBackground(final List<Uri>... params)
+		@SuppressWarnings("unchecked")
+		protected Void doInBackground(final Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+				throw new IllegalArgumentException();
+
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
-			final List<Uri> totalImages = params[0];
+			final List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
 			mProgressDialog.setMax(remainingImages.size());
@@ -1118,14 +1147,18 @@ public abstract class CoreActivity extends DocumentActivity
 		new RestoreTask().execute(toRestore);
 	}
 
-	protected class RestoreTask extends AsyncTask<List<String>, Integer, Boolean>
+	protected class RestoreTask extends AsyncTask<Object, Integer, Boolean>
 	{
 		@Override
-		protected Boolean doInBackground(final List<String>... params)
+		@SuppressWarnings("unchecked")
+		protected Boolean doInBackground(final Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof String)
+				throw new IllegalArgumentException();
+
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
-			final List<String> totalImages = params[0];
+			final List<String> totalImages = (List<String>) params[0];
 			List<String> remainingImages = new ArrayList<>(totalImages);
 
 			for (String filename : totalImages)
@@ -1219,8 +1252,12 @@ public abstract class CoreActivity extends DocumentActivity
 	protected class RenameTask extends AsyncTask<Object, Integer, Boolean>
 	{
 		@Override
+		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+				throw new IllegalArgumentException();
+
 			final List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
@@ -1303,8 +1340,12 @@ public abstract class CoreActivity extends DocumentActivity
 	protected class WriteXmpTask extends AsyncTask<Object, Integer, Boolean>
 	{
 		@Override
+		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
+			if (!(params[0] instanceof  List<?>) || ((List<?>) params[0]).get(0) instanceof Uri)
+				throw new IllegalArgumentException();
+
 			final List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 

@@ -616,16 +616,20 @@ public abstract class DocumentActivity extends AppCompatActivity
 		}
 
 		String relativePath = fullPath.substring(baseFolder.length() + 1);
-
 		// start with root of SD card and then parse through document tree.
 		DocumentFile document = DocumentFile.fromTreeUri(this, treeUri);
-		Crashlytics.setInt("Build", Build.VERSION.SDK_INT);
-		Crashlytics.setString("relativePath", relativePath );
+
 		String[] parts = relativePath.split("\\/");
 		for (int i = 0; i < parts.length; i++) {
-			Crashlytics.setBool("documentIsNull", document == null );
-			Crashlytics.setString("parts[i]", parts[i] );
-
+			if (document == null)
+			{
+				Crashlytics.setInt("Build", Build.VERSION.SDK_INT);
+				Crashlytics.setString("relativePath", relativePath );
+				Crashlytics.setString("parts[i-1]: ", i > 0 ? parts[i-1] : "n/a" );
+				Crashlytics.setString("parts[i]: ", parts[i] );
+				Crashlytics.logException(new Exception("Null Document"));
+				return null;
+			}
 			DocumentFile nextDocument = document.findFile(parts[i]);
 
 			if (nextDocument == null) {
@@ -642,12 +646,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 				}
 				else {
 					nextDocument = document.createFile("image", parts[i]);
-					if (nextDocument == null)
-					{
-						Crashlytics.setString("parts[i]", parts[i] );
-						Crashlytics.log();
-						return null;
-					}
 				}
 			}
 			document = nextDocument;
@@ -992,11 +990,13 @@ public abstract class DocumentActivity extends AppCompatActivity
 	protected abstract void onResumeWriteAction(Enum callingMethod, Object[] callingParameters);
 	protected void setWriteMethod(Enum callingMethod)
 	{
+		Crashlytics.setString("WriteMethod", callingMethod.toString());
 		mCallingMethod = callingMethod;
 	}
 
 	protected void setWriteParameters(Object[] callingParameters)
 	{
+		Crashlytics.setBool("WriteParametersIsNull", callingParameters == null);
 		mCallingParameters = callingParameters;
 	}
 	protected void setWriteResume(Enum callingMethod, Object[] callingParameters)

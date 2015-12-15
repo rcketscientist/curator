@@ -18277,6 +18277,7 @@ android.support.v7.widget.Toolbar$SavedState$1: android.support.v7.widget.Toolba
 android.support.v7.widget.Toolbar$SavedState$1: android.support.v7.widget.Toolbar$SavedState[] newArray(int)
 android.support.v7.widget.Toolbar$SavedState$1: java.lang.Object[] newArray(int)
 android.support.v7.widget.Toolbar$SavedState$1: java.lang.Object createFromParcel(android.os.Parcel)
+com.adobe.xmp.XMPException
 com.android.gallery3d.app.AbstractCoreActivity: AbstractCoreActivity()
 com.android.gallery3d.app.PhotoPage: PhotoPage()
 com.android.gallery3d.ui.GLRootView
@@ -18296,6 +18297,7 @@ com.android.legacy.ui.GLRootView: void setContentPane(com.android.legacy.ui.GLVi
 com.android.legacy.ui.GLRootView: com.android.legacy.ui.GLView getContentPane()
 com.android.legacy.ui.GLRootView: android.util.DisplayMetrics getDisplayMetrics()
 com.android.legacy.ui.GLRootView: com.android.legacy.ui.GLCanvas getCanvas()
+com.android.legacy.ui.UploadedTexture$DeadBitmapException
 com.anthonymandra.content.KeywordProvider
 com.anthonymandra.content.KeywordProvider: KeywordProvider()
 com.anthonymandra.content.MetaProvider
@@ -18331,6 +18333,7 @@ com.anthonymandra.framework.CoreActivity: CoreActivity()
 com.anthonymandra.framework.CoreActivity$WriteActions: com.anthonymandra.framework.CoreActivity$WriteActions[] values()
 com.anthonymandra.framework.CoreActivity$WriteActions: com.anthonymandra.framework.CoreActivity$WriteActions valueOf(java.lang.String)
 com.anthonymandra.framework.DocumentActivity: DocumentActivity()
+com.anthonymandra.framework.DocumentActivity$WritePermissionException
 com.anthonymandra.framework.License$LicenseState: com.anthonymandra.framework.License$LicenseState[] values()
 com.anthonymandra.framework.License$LicenseState: com.anthonymandra.framework.License$LicenseState valueOf(java.lang.String)
 com.anthonymandra.framework.MetaService
@@ -22243,10 +22246,18 @@ com.crashlytics.android.ndk.TimeBasedCrashFileManager: java.io.File[] getFiles()
 com.crashlytics.android.ndk.TimeBasedCrashFileManager: void <clinit>()
 com.drew.imaging.FileType: com.drew.imaging.FileType[] values()
 com.drew.imaging.FileType: com.drew.imaging.FileType valueOf(java.lang.String)
+com.drew.imaging.ImageProcessingException
+com.drew.imaging.jpeg.JpegProcessingException
 com.drew.imaging.jpeg.JpegSegmentType: com.drew.imaging.jpeg.JpegSegmentType[] values()
 com.drew.imaging.jpeg.JpegSegmentType: com.drew.imaging.jpeg.JpegSegmentType valueOf(java.lang.String)
 com.drew.imaging.png.PngColorType: com.drew.imaging.png.PngColorType[] values()
 com.drew.imaging.png.PngColorType: com.drew.imaging.png.PngColorType valueOf(java.lang.String)
+com.drew.imaging.png.PngProcessingException
+com.drew.imaging.riff.RiffProcessingException
+com.drew.imaging.tiff.TiffProcessingException
+com.drew.lang.BufferBoundsException
+com.drew.lang.CompoundException
+com.drew.metadata.MetadataException
 com.github.amlcurran.showcaseview.R$attr: int showcaseViewStyle
 com.github.amlcurran.showcaseview.R$attr: int sv_backgroundColor
 com.github.amlcurran.showcaseview.R$attr: int sv_buttonBackgroundColor
@@ -22327,6 +22338,8 @@ com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type: com.github.amlc
 com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type: com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type valueOf(java.lang.String)
 com.github.amlcurran.showcaseview.targets.Reflector$ActionBarType: com.github.amlcurran.showcaseview.targets.Reflector$ActionBarType[] values()
 com.github.amlcurran.showcaseview.targets.Reflector$ActionBarType: com.github.amlcurran.showcaseview.targets.Reflector$ActionBarType valueOf(java.lang.String)
+com.google.android.vending.licensing.ValidationException
+com.google.android.vending.licensing.util.Base64DecoderException
 com.inscription.R$string: int buy
 com.inscription.R$string: int changelog_close
 com.inscription.R$string: int credits_close
@@ -22344,6 +22357,7 @@ io.fabric.sdk.android.ActivityLifecycleManager$Callbacks: void onActivityPaused(
 io.fabric.sdk.android.ActivityLifecycleManager$Callbacks: void onActivityStopped(android.app.Activity)
 io.fabric.sdk.android.ActivityLifecycleManager$Callbacks: void onActivitySaveInstanceState(android.app.Activity,android.os.Bundle)
 io.fabric.sdk.android.ActivityLifecycleManager$Callbacks: void onActivityDestroyed(android.app.Activity)
+io.fabric.sdk.android.InitializationException
 io.fabric.sdk.android.Kit: io.fabric.sdk.android.Fabric fabric
 io.fabric.sdk.android.Kit: io.fabric.sdk.android.InitializationTask initializationTask
 io.fabric.sdk.android.Kit: android.content.Context context
@@ -22420,6 +22434,7 @@ io.fabric.sdk.android.services.concurrency.PriorityTask: java.lang.Throwable get
 io.fabric.sdk.android.services.concurrency.PriorityTask: int compareTo(java.lang.Object)
 io.fabric.sdk.android.services.concurrency.PriorityTask: boolean isProperDelegate(java.lang.Object)
 io.fabric.sdk.android.services.concurrency.PriorityTask: void addDependency(java.lang.Object)
+io.fabric.sdk.android.services.concurrency.UnmetDependencyException
 io.fabric.sdk.android.services.events.EventsFilesManager: java.lang.String ROLL_OVER_FILE_NAME_SEPARATOR
 io.fabric.sdk.android.services.events.EventsFilesManager: int MAX_BYTE_SIZE_PER_FILE
 io.fabric.sdk.android.services.events.EventsFilesManager: int MAX_FILES_IN_BATCH
@@ -22448,6 +22463,7 @@ io.fabric.sdk.android.services.events.EventsFilesManager: void deleteOldestInRol
 io.fabric.sdk.android.services.events.EventsFilesManager: long parseCreationTimestampFromFileName(java.lang.String)
 io.fabric.sdk.android.services.network.HttpMethod: io.fabric.sdk.android.services.network.HttpMethod[] values()
 io.fabric.sdk.android.services.network.HttpMethod: io.fabric.sdk.android.services.network.HttpMethod valueOf(java.lang.String)
+io.fabric.sdk.android.services.network.HttpRequest$HttpRequestException
 io.fabric.sdk.android.services.settings.SettingsCacheBehavior: io.fabric.sdk.android.services.settings.SettingsCacheBehavior[] values()
 io.fabric.sdk.android.services.settings.SettingsCacheBehavior: io.fabric.sdk.android.services.settings.SettingsCacheBehavior valueOf(java.lang.String)
 org.openintents.filemanager.FileManagerActivity

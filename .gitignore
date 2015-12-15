@@ -33,3 +33,5 @@ obj
 /rawDroid/build/intermediates
 /rawDroid/build/outputs/logs
 /build
+/rawDroid/build/outputs/apk/rawDroid-demo-release-unaligned.apk
+/rawDroid/build/outputs/apk/rawDroid-proAmazon-release-unaligned.apk
