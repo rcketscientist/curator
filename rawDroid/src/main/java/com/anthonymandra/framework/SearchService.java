@@ -165,6 +165,8 @@ public class SearchService extends IntentService
 	     */
         for (String skip : alwaysExcludeDir)
         {
+	        if (skip == null)
+		        continue; //TODO: Issue 15.  Not sure why this could be null.
             if (canonPath.startsWith(skip))
 	            return;
         }

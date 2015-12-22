@@ -1006,8 +1006,8 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 	protected void clearWriteResume()
 	{
-		setWriteMethod(null);
-		setWriteParameters(null);
+		mCallingMethod = null;
+		mCallingParameters = null;
 	}
 
 	/**

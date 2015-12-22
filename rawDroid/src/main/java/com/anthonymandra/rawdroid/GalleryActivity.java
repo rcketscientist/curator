@@ -229,7 +229,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				.core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
 				.build();
 
-		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk(), new Crashlytics());
+		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.gallery);
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);

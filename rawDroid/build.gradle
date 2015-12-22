@@ -1,16 +1,19 @@
 buildscript {
     repositories {
+        jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
+        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'io.fabric.tools:gradle:1.21.1'
     }
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 repositories {
+    jcenter()
     maven { url 'https://maven.fabric.io/public' }
 }
 
@@ -18,7 +21,7 @@ repositories {
 def versionMajor = 3
 def versionMinor = 9
 def versionPatch = 6
-def versionBuild = 6
+def versionBuild = 8
 
 android {
     compileSdkVersion 22

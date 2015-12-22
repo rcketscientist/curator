@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.9.6.8"
+             versioncode="39608"
+             summary="Beta: Bug patch"
+             date="19 DEC 2015"/>
+    <release version="3.9.6.7"
+             versioncode="39607"
+             summary="Beta: Bug patch"
+             date="17 DEC 2015"/>
     <release version="3.9.6.6"
              versioncode="39606"
              summary="Beta: Bug patch"
