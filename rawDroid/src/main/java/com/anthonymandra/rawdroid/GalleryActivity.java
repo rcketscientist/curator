@@ -340,7 +340,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						{
 							for (String image : images)
 							{
-								MetaWakefulReceiver.startMetaService(GalleryActivity.this, Uri.fromFile(new File(image)));
+								Uri uri = Uri.fromFile(new File(image));
+								MetaWakefulReceiver.startMetaService(GalleryActivity.this, uri);
 							}
 						}
 						break;
@@ -1003,8 +1004,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		List<MediaItem> images = new ArrayList<>();
 		for (Uri u: uris)
 		{
-			File f = new File(u.getPath());
-			images.add(new LocalImage(this, f));
+//			File f = new File(u.getPath());
+			images.add(new LocalImage(this, u));
 		}
 		return images;
 	}

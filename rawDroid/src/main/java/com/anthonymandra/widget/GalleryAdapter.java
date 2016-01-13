@@ -158,15 +158,15 @@ public class GalleryAdapter extends CursorAdapter
 			view.setBackgroundColor(0);
 			label.setVisibility(View.GONE);
 		}
-		File image = new File(uri.getPath());
+
 		fileName.setText(cursor.getString(cursor.getColumnIndex(Meta.Data.NAME)));
-		mImageDecoder.loadImage(new LocalImage(mContext, image), imageView);
+		mImageDecoder.loadImage(new LocalImage(mContext, uri), imageView);
 		((Checkable) view).setChecked(mSelectedItems.contains(uri));
 	}
 
 	public MediaItem getImage(int position)
 	{
-		return new LocalImage(mContext, new File(getUri(position).getPath()));
+		return new LocalImage(mContext, getUri(position));
 	}
 
 	public Uri getUri(int position)

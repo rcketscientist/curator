@@ -533,11 +533,8 @@ public class LegacyViewerActivity extends ViewerActivity
 		{
 			mIndex = (Integer) params[0];
             MediaItem mMedia = (MediaItem) params[1];
-            byte[] imageData = mMedia.getThumb();
-			if (imageData == null)
-				return null;
 
-            return  Util.createBitmapLarge(imageData,
+            return  Util.createBitmapLarge(mMedia.getThumb(),
                     LegacyViewerActivity.displayWidth,
                     LegacyViewerActivity.displayHeight,
                     true);
@@ -562,13 +559,9 @@ public class LegacyViewerActivity extends ViewerActivity
 			mIndex = (Integer) params[0];
             MediaItem mMedia = (MediaItem) params[1];
 
-            byte[] imageData = mMedia.getThumb();
-            if (imageData == null)
-                return null;
-
 			BitmapRegionDecoder brd = null;
 			try {
-				brd = BitmapRegionDecoder.newInstance(imageData, 0, imageData.length, false);
+				brd = BitmapRegionDecoder.newInstance(mMedia.getThumb(), false);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

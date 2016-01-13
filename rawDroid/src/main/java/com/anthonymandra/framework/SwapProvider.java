@@ -80,10 +80,11 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 // Some receivers may call multiple times
                 if (!swapFile.exists())
                 {
-                	LocalImage image = new LocalImage(getContext(), input);
-	                byte[] imageData = image.getThumb();
-	                if (imageData == null)
-	                    return null;
+                    // TODO: This was a half-baked conversion to uri
+                	LocalImage image = new LocalImage(getContext(), Uri.fromFile(input));
+//	                byte[] imageData = image.getThumb();
+//	                if (imageData == null)
+//	                    return null;
 
 	                Bitmap watermark;
 	                byte[] waterData = null;

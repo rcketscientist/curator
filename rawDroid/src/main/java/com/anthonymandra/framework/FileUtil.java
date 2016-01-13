@@ -1147,7 +1147,7 @@ public class FileUtil
 			return getDataColumn(context, uri, null, null);
 		}
 		// File
-		else if ("file".equalsIgnoreCase(uri.getScheme())) {
+		else if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme())) {
 			return uri.getPath();
 		}
 
@@ -1163,7 +1163,7 @@ public class FileUtil
 	 */
 	public static InputStream getInputStream(final Context context, final Uri uri) throws FileNotFoundException
 	{
-		if ("file".equalsIgnoreCase(uri.getScheme()))
+		if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme()))
 		{
 			return new FileInputStream(uri.getPath());
 		}
@@ -1182,7 +1182,7 @@ public class FileUtil
 	 */
 	public static ParcelFileDescriptor getParcelFileDescriptor(final Context context, final Uri uri, String mode) throws FileNotFoundException
 	{
-		if ("file".equalsIgnoreCase(uri.getScheme()))
+		if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme()))
 		{
 			int m = ParcelFileDescriptor.MODE_READ_ONLY;
 			if ("rw".equals(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE;

@@ -16,13 +16,19 @@
 
 package com.android.gallery3d.data;
 
+import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.framework.RawObject;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 
@@ -40,29 +46,53 @@ public abstract class MediaObject implements RawObject {
     {
         mUri = uri;
         mContext = c;
-        mType = c.getContentResolver().getType(uri);
 
-        if ("file".equalsIgnoreCase(uri.getScheme()))
+        // TODO: Might want to hang onto the contentresolver
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()))
+        {
+            String name = null;
+            String type = null;
+            long size = 0;
+
+            ContentProviderClient cpc = c.getContentResolver().acquireContentProviderClient(uri);
+            Cursor cursor = null;
+            try
+            {
+                if (cpc != null)
+                {
+                    type = cpc.getType(uri);
+                    cursor = cpc.query(uri, null, null, null, null);
+                    if (cursor != null && cursor.moveToFirst())
+                    {
+                        int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                        int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                        name = cursor.getString(nameIndex);
+                        size = cursor.getLong(sizeIndex);
+                    }
+                }
+            }
+            catch (RemoteException e)
+            {
+                Crashlytics.logException(new Exception("Failed to acquire ContentProvider for: " +
+                    uri.toString()));
+            }
+            finally
+            {
+                if (cpc != null)
+                    cpc.release();
+                Utils.closeSilently(cursor);
+                mName = name;
+                mType = type;
+                mSize = size;
+            }
+        }
+        else    // Should be a file uri
         {
             File f = new File(uri.getPath());
             mName = f.getName();
             mSize = f.length();
-        }
-        else
-        {
-            Cursor cursor = c.getContentResolver().query(uri, null, null, null, null);
-            if (cursor != null && cursor.moveToFirst())
-            {
-                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                mName = cursor.getString(nameIndex);
-                mSize = cursor.getLong(sizeIndex);
-            }
-            else
-            {
-                mName = null;
-                mSize = 0;
-            }
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
+            mType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
         }
     }
 

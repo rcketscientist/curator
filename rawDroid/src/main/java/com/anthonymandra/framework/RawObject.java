@@ -20,7 +20,7 @@ public interface RawObject {
     InputStream getImageStream();
     byte[] getImage();
 
-    byte[] getThumb();
+    InputStream getThumb();
 	byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, LibRaw.Margins margins);
 
     long getFileSize();

@@ -7,9 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
-import android.media.ExifInterface;
 import android.net.Uri;
-import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
@@ -23,24 +21,25 @@ import com.anthonymandra.rawprocessor.TiffDecoder;
 import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public class LocalImage extends MetaMedia {
 	private static final String TAG = LocalImage.class.getSimpleName();
 	File mImage;
 	File mXmp;
 
-	public LocalImage(Context context, File image) {
-		super(context, Uri.fromFile(image));
-		mImage = image;
-	}
+//	public LocalImage(Context context, File image) {
+//		super(context, Uri.fromFile(image));
+//		mImage = image;
+//	}
 
 	public LocalImage(Context context, Uri image) {
 		super(context, image);
@@ -108,7 +107,7 @@ public class LocalImage extends MetaMedia {
 
 	@SuppressLint("SimpleDateFormat")
 	@Override
-	public byte[] getThumb() {
+	public InputStream getThumb() {
 		if (ImageUtils.isAndroidImage(mType))
 		{
 			InputStream is;
@@ -130,29 +129,7 @@ public class LocalImage extends MetaMedia {
 			width = o.outWidth;
 			height = o.outHeight;
 
-			byte[] dst = new byte[(int) mSize];
-			DataInputStream dis = null;
-			try {
-				dis = new DataInputStream(is);
-				dis.readFully(dst);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			} finally {
-				Utils.closeSilently(dis);
-			}
-			return dst;
-//			try
-//			{
-//				return FileUtil.toByteArray(is);
-//			} catch (IOException e)
-//			{
-//				return null;
-//			}
-//			finally
-//			{
-//				Utils.closeSilently(is);
-//			}
+			return is;
 		}
 
 		// Get a file descriptor to pass to native methods
@@ -174,15 +151,23 @@ public class LocalImage extends MetaMedia {
 			thumbWidth = width;
 			height = dim[1];
 			thumbHeight = height;
-			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bmp.compress(CompressFormat.JPEG, 100, baos);
-			return baos.toByteArray();
+
+			// Trying it without the jpg compression.
+			ByteBuffer bb = ByteBuffer.allocate(imageData.length * 4);
+			IntBuffer ib = bb.asIntBuffer();
+			ib.put(imageData);
+			return new ByteArrayInputStream(bb.array());
+//			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			bmp.compress(CompressFormat.JPEG, 100, baos);
+
+//			return baos.toByteArray();
 		}
 
 		// Raw images
 		String[] exif = new String[12];
 		byte[] imageData = LibRaw.getThumb(fd, exif);
+		return new ByteArrayInputStream(imageData);
 
 		// We actually want this to happen synchronously to avoid flickering due to double updates (view, db) (this doesn't stop flickering..)
 //		ImageUtils.setExifValues(getUri(), mContext, exif);
@@ -217,7 +202,7 @@ public class LocalImage extends MetaMedia {
 		
 //		putContent();
 
-		return imageData;
+//		return imageData;
 	}
 
 	public boolean hasXmp() {
@@ -294,22 +279,20 @@ public class LocalImage extends MetaMedia {
 
 		@Override
 		public Bitmap onDecodeOriginal(JobContext jc, final int type) {
-			byte[] imageData = mImage.getThumb();
-
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 			int targetSize = MetaMedia.getTargetSize(type);
 
 			// try to decode from JPEG EXIF
 			if (type == MetaMedia.TYPE_MICROTHUMBNAIL) {
-				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData,
+				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, mImage.getThumb(),
 						options, targetSize);
 				if (bitmap != null)
 					return bitmap;
 				// }
 			}
 
-			return DecodeUtils.decodeThumbnail(jc, imageData, options,
+			return DecodeUtils.decodeThumbnail(jc, mImage.getThumb(), options,
 					targetSize, type);
 		}
 	}
@@ -328,9 +311,8 @@ public class LocalImage extends MetaMedia {
 		}
 
 		public BitmapRegionDecoder run(JobContext jc) {
-			byte[] imageData = mImage.getThumb();
 			BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc,
-					imageData, 0, imageData.length, false);
+					mImage.getThumb(), false);
 			return brd;
 		}
 	}

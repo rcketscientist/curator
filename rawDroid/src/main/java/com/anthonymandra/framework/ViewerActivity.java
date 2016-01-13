@@ -1016,11 +1016,10 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void setWallpaper()
     {
-    	byte[] imageData = getCurrentItem().getThumb();
 		try
 		{
 		    WallpaperManager.getInstance(this).setBitmap(Util.createBitmapToSize(
-		            imageData, displayWidth, displayHeight));
+                    getCurrentItem().getThumb(), displayWidth, displayHeight));
 		}
 		catch (Exception e)
 		{

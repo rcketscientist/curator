@@ -99,7 +99,7 @@ public class ImageResizer extends ImageWorker
 		{
 			Log.d(TAG, "processBitmap - " + resId);
 		}
-		return decodeSampledBitmapFromResource(mResources, resId, mImageWidth, mImageHeight);
+		return decodeSampledBitmap(mResources, resId, mImageWidth, mImageHeight);
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class ImageResizer extends ImageWorker
 	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions that are equal to or greater than the requested width
 	 *         and height
 	 */
-	public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight)
+	public static Bitmap decodeSampledBitmap(Resources res, int resId, int reqWidth, int reqHeight)
 	{
 
 		// First decode with inJustDecodeBounds=true to check dimensions
@@ -150,7 +150,7 @@ public class ImageResizer extends ImageWorker
 	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions that are equal to or greater than the requested width
 	 *         and height
 	 */
-	public static Bitmap decodeSampledBitmapFromFile(String filename, int reqWidth, int reqHeight)
+	public static Bitmap decodeSampledBitmap(String filename, int reqWidth, int reqHeight)
 	{
 
 		// First decode with inJustDecodeBounds=true to check dimensions
@@ -178,7 +178,7 @@ public class ImageResizer extends ImageWorker
 	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions that are equal to or greater than the requested width
 	 *         and height
 	 */
-	public static Bitmap decodeSampledBitmapFromDescriptor(FileDescriptor fileDescriptor, int reqWidth, int reqHeight)
+	public static Bitmap decodeSampledBitmap(FileDescriptor fileDescriptor, int reqWidth, int reqHeight)
 	{
 
 		// First decode with inJustDecodeBounds=true to check dimensions
@@ -206,7 +206,7 @@ public class ImageResizer extends ImageWorker
 	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions that are equal to or greater than the requested width
 	 *         and height
 	 */
-	public static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int reqWidth, int reqHeight)
+	public static Bitmap decodeSampledBitmap(byte[] data, int reqWidth, int reqHeight)
 	{
 		// First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -220,6 +220,34 @@ public class ImageResizer extends ImageWorker
 		options.inJustDecodeBounds = false;
 
 		return BitmapFactory.decodeByteArray(data, 0, data.length, options);
+	}
+
+	/**
+	 * Decode and sample down a bitmap from a file to the requested width and height.
+	 *
+	 * @param is
+	 *            The image stream
+	 * @param reqWidth
+	 *            The requested width of the resulting bitmap
+	 * @param reqHeight
+	 *            The requested height of the resulting bitmap
+	 * @return A bitmap sampled down from the original with the same aspect ratio and dimensions that are equal to or greater than the requested width
+	 *         and height
+	 */
+	public static Bitmap decodeSampledBitmap(InputStream is, int reqWidth, int reqHeight)
+	{
+		// First decode with inJustDecodeBounds=true to check dimensions
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeStream(is, null, options);
+
+		// Calculate inSampleSize
+		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+
+		// Decode bitmap with inSampleSize set
+		options.inJustDecodeBounds = false;
+		return BitmapFactory.decodeStream(is, null, options);
+
 	}
 
 	/**
