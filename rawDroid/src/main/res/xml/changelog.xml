@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="3.9.6.10"
+             versioncode="39610"
+             summary="Beta: Bug patch"
+             date="25 DEC 2015"/>
+    <release version="3.9.6.9"
+             versioncode="39609"
+             summary="Beta: Excluded folder readability patch"
+             date="22 DEC 2015"/>
     <release version="3.9.6.8"
              versioncode="39608"
              summary="Beta: Bug patch"

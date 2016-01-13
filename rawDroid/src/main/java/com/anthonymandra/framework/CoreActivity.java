@@ -124,7 +124,7 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void onResume()
 	{
 		super.onResume();
-		LicenseManager.getLicense(getBaseContext(), getLicenseHandler());
+		LicenseManager.getLicense(this, getLicenseHandler());
 		createSwapDir();
 		createRecycleBin();
 	}

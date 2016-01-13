@@ -8,7 +8,7 @@
     <CheckBox
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textAppearance="@android:style/TextAppearance.Small"
         android:text="PATH"
         android:id="@+id/checkBoxFolderPath"
         android:layout_gravity="center"
@@ -19,7 +19,7 @@
         android:layout_marginTop="0dp"
         android:layout_toStartOf="@+id/excludeButton"
         android:layout_toLeftOf="@id/excludeButton"
-        android:maxLines="2"
+        android:singleLine="true"
         android:ellipsize="start"/>
 
     <ImageButton
