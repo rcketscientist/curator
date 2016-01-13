@@ -72,7 +72,7 @@ public abstract class ImageWorker extends CacheManager
 
 		if (mImageCache != null)
 		{
-			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getFilePath()));// String.valueOf(image));
+			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getUri()));// String.valueOf(image));
 		}
 
 		if (bitmap != null)
@@ -209,7 +209,7 @@ public abstract class ImageWorker extends CacheManager
 		protected Bitmap doInBackground(Object... params)
 		{
 			data = (RawObject) params[0];
-			final String dataString = String.valueOf(data.getFilePath());// String.valueOf(data);
+			final String dataString = String.valueOf(data.getUri());// String.valueOf(data);
 			Bitmap bitmap = null;
 
 			// Wait here if work is paused and the task is not cancelled

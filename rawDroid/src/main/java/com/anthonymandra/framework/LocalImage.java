@@ -43,7 +43,7 @@ public class LocalImage extends MetaMedia {
 	}
 
 	public LocalImage(Context context, Uri image) {
-		this(context, new File(image.getPath()));
+		super(context, image);
 	}
 
 	public LocalImage(Context context, Cursor image) {
@@ -88,16 +88,6 @@ public class LocalImage extends MetaMedia {
     }
 
 	@Override
-	public String getName() {
-		return mImage.getName();
-	}
-
-	@Override
-	public String getMimeType() {
-		return null;
-	}
-
-	@Override
 	public String getFilePath() {
 		return mImage.getPath();
 	}
@@ -119,58 +109,81 @@ public class LocalImage extends MetaMedia {
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public byte[] getThumb() {
-		if (Util.isNative(getFile())) {
+		if (ImageUtils.isAndroidImage(mType))
+		{
+			InputStream is;
+			try
+			{
+				is = mContext.getContentResolver().openInputStream(mUri);
+			} catch (FileNotFoundException e)
+			{
+				return null;
+			}
+
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
-			BitmapFactory.decodeFile(mImage.getPath(), o);
+
+			// Decode dimensions
+			BitmapFactory.decodeStream(is, null, o);
 			thumbWidth = o.outWidth;
 			thumbHeight = o.outHeight;
 			width = o.outWidth;
 			height = o.outHeight;
 
-			try {			
-				ExifInterface ei = new ExifInterface(getFilePath());
-				makeLegacy = ei.getAttribute(ExifInterface.TAG_MAKE);
-				modelLegacy = ei.getAttribute(ExifInterface.TAG_MODEL);
-				apertureLegacy = ei.getAttribute(ExifInterface.TAG_APERTURE);
-				focalLegacy = ei.getAttribute(ExifInterface.TAG_FOCAL_LENGTH);
-				isoLegacy = ei.getAttribute(ExifInterface.TAG_ISO);
-				shutterLegacy = ei.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
-				SimpleDateFormat sdf = new SimpleDateFormat(
-						"yyyy:MM:dd HH:mm:ss");
-				try {
-					dateLegacy = mExifFormatter.parse(ei
-							.getAttribute(ExifInterface.TAG_DATETIME));
-				} catch (Exception e) {
-					Log.d(TAG, "Date exif parse failed:", e);
-				}
-				orientLegacy = ei.getAttributeInt(
-						ExifInterface.TAG_ORIENTATION, 0);
-			} catch (IOException e) {
+			byte[] dst = new byte[(int) mSize];
+			DataInputStream dis = null;
+			try {
+				dis = new DataInputStream(is);
+				dis.readFully(dst);
+			} catch (Exception e) {
 				e.printStackTrace();
+				return null;
+			} finally {
+				Utils.closeSilently(dis);
 			}
-
-			return getImage();
+			return dst;
+//			try
+//			{
+//				return FileUtil.toByteArray(is);
+//			} catch (IOException e)
+//			{
+//				return null;
+//			}
+//			finally
+//			{
+//				Utils.closeSilently(is);
+//			}
 		}
-		
-		else if (Util.isTiffImage(mImage))
+
+		// Get a file descriptor to pass to native methods
+		int fd;
+		try
+		{
+			fd = mContext.getContentResolver().openFileDescriptor(mUri, "r").getFd();
+
+		} catch (FileNotFoundException e)
+		{
+			return null;
+		}
+
+		if (ImageUtils.isTiffImage(mType))
 		{
 			int[] dim = new int[2];
-//			int[] imageData = TiffDecoder.getThumb(mImage.getPath(), dim);
-			int[] imageData = TiffDecoder.getImage(mImage.getPath(), dim);
+			int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
 			width = dim[0];
 			thumbWidth = width;
 			height = dim[1];
-			thumbHeight = height;		
+			thumbHeight = height;
 			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			bmp.compress(CompressFormat.JPEG, 100, baos);
 			return baos.toByteArray();
 		}
 
+		// Raw images
 		String[] exif = new String[12];
+		byte[] imageData = LibRaw.getThumb(fd, exif);
 
-		byte[] imageData = LibRaw.getThumb(mImage, exif);
 		// We actually want this to happen synchronously to avoid flickering due to double updates (view, db) (this doesn't stop flickering..)
 //		ImageUtils.setExifValues(getUri(), mContext, exif);
 
@@ -205,11 +218,6 @@ public class LocalImage extends MetaMedia {
 //		putContent();
 
 		return imageData;
-	}
-
-	@Override
-	public long getFileSize() {
-		return mImage.length();
 	}
 
 	public boolean hasXmp() {
@@ -272,7 +280,7 @@ public class LocalImage extends MetaMedia {
 
 	@Override
 	public Job<Bitmap> requestImage(GalleryApp app, int type) {
-		return new LocalImageRequest(app, Uri.fromFile(mImage), type, this);
+		return new LocalImageRequest(app, mUri, type, this);
 	}
 
 	public static class LocalImageRequest extends ImageCacheRequest {
@@ -325,11 +333,6 @@ public class LocalImage extends MetaMedia {
 					imageData, 0, imageData.length, false);
 			return brd;
 		}
-	}
-
-	@Override
-	public Uri getUri() {
-		return Uri.fromFile(mImage);
 	}
 
 	@Override

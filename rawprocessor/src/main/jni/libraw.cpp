@@ -6,6 +6,7 @@
 #include <dirent.h>
 
 #include <libraw/libraw.h>
+#include "libraw_descriptor_stream.h"
 
 extern "C"
 {
@@ -20,6 +21,8 @@ extern "C"
         (JNIEnv* env, jclass clazz, jbyteArray bufferBytes, jobjectArray exif, int quality, jobject config, jobject compressFormat);
     JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getThumbFile
         (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat);
+	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getThumbFd
+		(JNIEnv* env, jclass clazz, int source, jobjectArray exif, int quality, jobject config, jobject compressFormat);
 	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getThumbFileWatermark
 	    (JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
@@ -182,7 +185,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_canDec
 		{
 			string p = path + "/" + ent->d_name;
 //			__android_log_print(ANDROID_LOG_INFO, "JNI", "file = %s", p.c_str());
-			result = RawProcessor.open_file(p.c_str(), 0);
+			result = RawProcessor.open_file(p.c_str());
 			if (result == 0)
 				rawFiles.push_back(p);
 			RawProcessor.recycle();
@@ -216,6 +219,20 @@ JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getThumb
 	    return NULL;
 
 	return getThumbnail(env, rawProcessor, exif, quality, config, compressFormat);
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getThumbFd(JNIEnv* env, jclass clazz, int source, jobjectArray exif, int quality, jobject config, jobject compressFormat)
+{
+	LibRaw* rawProcessor = new LibRaw();
+	LibRaw_descriptor_datastream *stream = new LibRaw_descriptor_datastream(source);
+	int result = rawProcessor->open_datastream(stream);
+
+	if (result != LIBRAW_SUCCESS)
+		return NULL;
+
+	jbyteArray image = getThumbnail(env, rawProcessor, exif, quality, config, compressFormat);
+	free(stream);
+	return image;
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getThumbFile(JNIEnv* env, jclass clazz, jstring filePath, jobjectArray exif, int quality, jobject config, jobject compressFormat)
@@ -388,7 +405,7 @@ jbyteArray getRaw(JNIEnv* env, jstring filePath, jobjectArray exif, int quality,
 
     rawProcessor->imgdata.params.use_rawspeed = 1;
     const char *str= env->GetStringUTFChars(filePath,0);
-    int result = rawProcessor->open_file(str, 0);
+    int result = rawProcessor->open_file(str);
     env->ReleaseStringUTFChars(filePath, str);
     if (result != LIBRAW_SUCCESS)
         return NULL;
@@ -464,7 +481,7 @@ JNIEXPORT jobject JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getHalfDeco
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
+	int result = rawProcessor->open_file(str);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -480,7 +497,7 @@ JNIEXPORT jobject JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getDecoder(
 	LibRaw* rawProcessor = new LibRaw();
 
 	const char *str= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(str, 0);
+	int result = rawProcessor->open_file(str);
 	env->ReleaseStringUTFChars(filePath, str);
 	if (result != LIBRAW_SUCCESS)
 		return NULL;
@@ -596,7 +613,7 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeRaw(J
 	const char *output = env->GetStringUTFChars(destination, 0);
 
 	const char *input= env->GetStringUTFChars(filePath,0);
-	int result = rawProcessor->open_file(input, 0);
+	int result = rawProcessor->open_file(input);
 	env->ReleaseStringUTFChars(filePath, input);
 	if (result != LIBRAW_SUCCESS)
 		return JNI_FALSE;
@@ -957,13 +974,24 @@ jobject createBitmapRegionDecoder(JNIEnv* env, libraw_processed_image_t *raw, in
 jboolean openFile(JNIEnv* env, jstring filePath, LibRaw* rawProcessor)
 {
     const char *str= env->GetStringUTFChars(filePath,0);
-    int result = rawProcessor->open_file(str, 0);
+    int result = rawProcessor->open_file(str);
     env->ReleaseStringUTFChars(filePath, str);
 //    if (LIBRAW_FATAL_ERROR(result))
     if (result != LIBRAW_SUCCESS)
         return JNI_FALSE;
 
     return JNI_TRUE;
+}
+
+jboolean openStream(JNIEnv* env, int source, LibRaw* rawProcessor)
+{
+	LibRaw_descriptor_datastream *stream = new LibRaw_descriptor_datastream(source);
+	int result = rawProcessor->open_datastream(stream);
+
+	if (result != LIBRAW_SUCCESS)
+		return JNI_FALSE;
+
+	return JNI_TRUE;
 }
 
 jboolean openBuffer(JNIEnv* env, jbyteArray bufferBytes, LibRaw* rawProcessor)

@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
@@ -49,6 +50,8 @@ import org.openintents.filemanager.FileManagerActivity;
 import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,23 +203,34 @@ public abstract class ViewerActivity extends CoreActivity implements
         else  // External intent
         {
             mImageIndex = 0;
+            mMediaItems.add(getIntent().getData());
+//            Uri data = getIntent().getData();
+//            InputStream is = null;
+//            try
+//            {
+//                is = FileUtil.getInputStream(this, data);
+//            } catch (FileNotFoundException e)
+//            {
+//                e.printStackTrace();
+//            }
+//            String path = FileUtil.getPath(this, data);
+//            Bitmap bmp = BitmapFactory.decodeStream(is);
+            // Ex ext storage 6.0: content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3ADCIM%2F100EOS5D%2FIMG_0081.CR2
 
-            String path;
-            Uri data = getIntent().getData();
-            if (data.getAuthority().equals(MediaStore.AUTHORITY))
-            {
-                //Attempt to acquire the file
-                path = Util.getRealPathFromURI(this, data);
-            }
-            else
-            {
-                path = data.getPath();
-            }
+//            if (data.getAuthority().equals(MediaStore.AUTHORITY))
+//            {
+//                //Attempt to acquire the file
+//                path = Util.getRealPathFromURI(this, data);
+//            }
+//            else
+//            {
+//                path = data.getPath();
+//            }
 
-            File file = new File(path);
-            Uri uri = Uri.fromFile(new File(path));
+//            File file = new File(path);
+//            Uri uri = Uri.fromFile(new File(path));
 //            LocalImage image = new LocalImage(this, file);
-            mMediaItems.add(uri);
+//            mMediaItems.add(uri);
 //            Uri entry = addDatabaseReference(image);
 //            getIntent().setData(uri);   // reset the data with a file uri
         }
@@ -275,7 +289,8 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
         mCurrentUri = item;
 
-        setShareUri(getCurrentItem().getSwapUri());
+        //TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIX SHARE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        setShareUri(getCurrentItem().getSwapUri());
         updateImageDetails();
     }
 

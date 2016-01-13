@@ -58,11 +58,9 @@ public abstract class MetaMedia extends MediaItem implements MetaObject
 
     protected SimpleDateFormat mExifFormatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
     protected SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
-    protected Context mContext;
 
     public MetaMedia(Context context, Uri path) {
-        super(path);
-        mContext = context;
+        super(context, path);
     }
 
 	private boolean isLoaded = false;

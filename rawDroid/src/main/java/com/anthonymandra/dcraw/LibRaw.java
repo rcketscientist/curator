@@ -58,6 +58,8 @@ public class LibRaw
 	 */
 	private static native byte[] getThumbFile
         (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native byte[] getThumbFd
+		(int source, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 	private static native byte[] getThumbFileWatermark
         (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
 	private static native byte[] getThumbBuffer

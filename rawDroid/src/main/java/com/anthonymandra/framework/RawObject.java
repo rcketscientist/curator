@@ -8,24 +8,22 @@ import java.io.InputStream;
 
 public interface RawObject {
 
-    public boolean isDirectory();
+    boolean isDirectory();
 
-    public String getName();
-
-    public String getFilePath();
-
-    public Uri getUri();
+    String getName();
+    Uri getUri();
+    String getMimeType();
 
     @Deprecated
-    public boolean canDecode();
+    boolean canDecode();
 
-    public InputStream getImageStream();
-    public byte[] getImage();
+    InputStream getImageStream();
+    byte[] getImage();
 
-    public byte[] getThumb();
-	public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, LibRaw.Margins margins);
+    byte[] getThumb();
+	byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, LibRaw.Margins margins);
 
-    public long getFileSize();
+    long getFileSize();
 
-    public Uri getSwapUri();
+    Uri getSwapUri();
 }

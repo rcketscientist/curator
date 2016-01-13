@@ -16,20 +16,78 @@
 
 package com.android.gallery3d.data;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
-import com.anthonymandra.framework.MetaObject;
 import com.anthonymandra.framework.RawObject;
+
+import java.io.File;
 
 public abstract class MediaObject implements RawObject {
     @SuppressWarnings("unused")
     private static final String TAG = "MediaObject";
 
-    protected final Uri mPath;
+    protected final String mName;
+    protected final long mSize;
+    protected final String mType;
+    protected final Uri mUri;
+    protected Context mContext;
 
-    public MediaObject(Uri path) {
-        mPath = path;
+    public MediaObject(Context c, Uri uri)
+    {
+        mUri = uri;
+        mContext = c;
+        mType = c.getContentResolver().getType(uri);
+
+        if ("file".equalsIgnoreCase(uri.getScheme()))
+        {
+            File f = new File(uri.getPath());
+            mName = f.getName();
+            mSize = f.length();
+        }
+        else
+        {
+            Cursor cursor = c.getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst())
+            {
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                mName = cursor.getString(nameIndex);
+                mSize = cursor.getLong(sizeIndex);
+            }
+            else
+            {
+                mName = null;
+                mSize = 0;
+            }
+        }
+    }
+
+    @Override
+    public String getName()
+    {
+        return mName;
+    }
+
+    @Override
+    public long getFileSize()
+    {
+        return mSize;
+    }
+
+    @Override
+    public Uri getUri()
+    {
+        return mUri;
+    }
+
+    @Override
+    public String getMimeType()
+    {
+        return mType;
     }
 
     public void rotate(int degrees) {
