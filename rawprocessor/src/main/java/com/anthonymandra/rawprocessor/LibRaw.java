@@ -54,6 +54,8 @@ public class LibRaw
 	 */
 	private static native byte[] getThumbFile
         (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
+	private static native byte[] getThumbFd
+			(int source, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 	private static native byte[] getThumbFileWatermark
         (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
 	private static native byte[] getThumbBuffer
@@ -115,27 +117,34 @@ public class LibRaw
 	private static int sum = 0;
 	private static int entries = 0;
 	public static byte[] getThumb(File file, String[] exif)
-	{	
+	{
 //		for (StackTraceElement ste : new Throwable().getStackTrace()) {
 //		Log.d(TAG, "DB: " + ste.toString());
 //	}
-		
+
 //		long start = System.currentTimeMillis();
 //		byte[] image = getHalfImageFromFile(file.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Half raw took " + (System.currentTimeMillis() - start) + "ms");
-		
+
 //		long start = System.currentTimeMillis();
 //		byte[] image = getImageFromFile(file.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Full raw took " + (System.currentTimeMillis() - start) + "ms");
-		
+
 		long start = System.currentTimeMillis();
 		byte[] image = getThumbFile(file.getPath(), exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Thumbnail took " + (System.currentTimeMillis() - start) + "ms");
 //		sum += System.currentTimeMillis() - start;
 //		entries++;
-		
+
 //		Log.d(TAG, "DB: Thumbnail avg = " + sum / entries + "ms");
-		
+
+		return image;
+	}
+
+	public static byte[] getThumb(int source, String[] exif)
+	{
+		//TODO: exif is not popoulated
+		byte[] image = getThumbFd(source, exif, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 		return image;
 	}
 	

@@ -388,26 +388,6 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	/**
-	 * Placeholder class TODO: Remove all references
-	 */
-	private List<MediaItem> getImageListFromUriList(List<Uri> uris)
-	{
-		List<MediaItem> images = new ArrayList<>();
-		for (Uri u : uris)
-			images.add(getImageFromUri(u));
-		return images;
-	}
-
-	/**
-	 * Placeholder class TODO: Remove all references
-	 */
-	private MediaItem getImageFromUri(Uri uri)
-	{
-		File f = new File(uri.getPath());
-		return new LocalImage(this, f);
-	}
-
-	/**
 	 * Deletes a file and determines if a recycle is necessary.
 	 *
 	 * @param toDelete file to delete.

@@ -3,9 +3,12 @@ package com.anthonymandra.framework;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -13,6 +16,7 @@ import android.os.ParcelFileDescriptor;
 import android.os.storage.StorageManager;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
+import android.provider.DocumentsProvider;
 import android.provider.MediaStore;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 
 import com.anthonymandra.rawdroid.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -45,6 +50,8 @@ public class FileUtil
 	 * The name of the primary volume (LOLLIPOP).
 	 */
 	private static final String PRIMARY_VOLUME_NAME = "primary";
+
+	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	/**
 	 * Hide default constructor.
@@ -997,5 +1004,272 @@ public class FileUtil
 		{
 			return file.getPath();
 		}
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is ExternalStorageProvider.
+	 * @author paulburke
+	 */
+	public static boolean isExternalStorageDocument(Uri uri) {
+		return "com.android.externalstorage.documents".equals(uri.getAuthority());
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is DownloadsProvider.
+	 * @author paulburke
+	 */
+	public static boolean isDownloadsDocument(Uri uri) {
+		return "com.android.providers.downloads.documents".equals(uri.getAuthority());
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is MediaProvider.
+	 * @author paulburke
+	 */
+	public static boolean isMediaDocument(Uri uri) {
+		return "com.android.providers.media.documents".equals(uri.getAuthority());
+	}
+
+	/**
+	 * @param uri The Uri to check.
+	 * @return Whether the Uri authority is Google Photos.
+	 */
+	public static boolean isGooglePhotosUri(Uri uri) {
+		return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+	}
+
+	/**
+	 * Get the value of the data column for this Uri. This is useful for
+	 * MediaStore Uris, and other file-based ContentProviders.
+	 *
+	 * @param context The context.
+	 * @param uri The Uri to query.
+	 * @param selection (Optional) Filter used in the query.
+	 * @param selectionArgs (Optional) Selection arguments used in the query.
+	 * @return The value of the _data column, which is typically a file path.
+	 * @author paulburke
+	 */
+	public static String getDataColumn(Context context, Uri uri, String selection,
+	                                   String[] selectionArgs) {
+
+		Cursor cursor = null;
+		final String column = "_data";
+		final String[] projection = {
+				column
+		};
+
+		try {
+			cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+					null);
+			if (cursor != null && cursor.moveToFirst()) {
+				final int column_index = cursor.getColumnIndexOrThrow(column);
+				return cursor.getString(column_index);
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return null;
+	}
+
+	/**
+	 * Get a file path from a Uri. This will get the the path for Storage Access
+	 * Framework Documents, as well as the _data field for the MediaStore and
+	 * other file-based ContentProviders.<br>
+	 * <br>
+	 * Callers should check whether the path is local before assuming it
+	 * represents a local file.
+	 *
+	 * @param context The context.
+	 * @param uri The Uri to query.
+	 * @author paulburke
+	 */
+	@TargetApi(Build.VERSION_CODES.KITKAT)
+	public static String getPath(final Context context, final Uri uri) {
+		final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+
+		// DocumentProvider
+		if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+			// ExternalStorageProvider
+			if (isExternalStorageDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
+
+				if ("primary".equalsIgnoreCase(type)) {
+					return Environment.getExternalStorageDirectory() + "/" + split[1];
+				}
+
+				// TODO handle non-primary volumes
+			}
+			// DownloadsProvider
+			else if (isDownloadsDocument(uri)) {
+
+				final String id = DocumentsContract.getDocumentId(uri);
+				final Uri contentUri = ContentUris.withAppendedId(
+						Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+
+				return getDataColumn(context, contentUri, null, null);
+			}
+			// MediaProvider
+			else if (isMediaDocument(uri)) {
+				final String docId = DocumentsContract.getDocumentId(uri);
+				final String[] split = docId.split(":");
+				final String type = split[0];
+
+				Uri contentUri = null;
+				if ("image".equals(type)) {
+					contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+				} else if ("video".equals(type)) {
+					contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+				} else if ("audio".equals(type)) {
+					contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+				}
+
+				final String selection = "_id=?";
+				final String[] selectionArgs = new String[] {
+						split[1]
+				};
+
+				return getDataColumn(context, contentUri, selection, selectionArgs);
+			}
+		}
+		// MediaStore (and general)
+		else if ("content".equalsIgnoreCase(uri.getScheme())) {
+
+			// Return the remote address
+			if (isGooglePhotosUri(uri))
+				return uri.getLastPathSegment();
+
+			return getDataColumn(context, uri, null, null);
+		}
+		// File
+		else if ("file".equalsIgnoreCase(uri.getScheme())) {
+			return uri.getPath();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Opens an InputStream to uri.  Checks if it's a local file to create a FileInputStream,
+	 * otherwise resorts to using the ContentResolver to request a stream.
+	 *
+	 * @param context The context.
+	 * @param uri The Uri to query.
+	 */
+	public static InputStream getInputStream(final Context context, final Uri uri) throws FileNotFoundException
+	{
+		if ("file".equalsIgnoreCase(uri.getScheme()))
+		{
+			return new FileInputStream(uri.getPath());
+		}
+		else
+		{
+			return context.getContentResolver().openInputStream(uri);
+		}
+	}
+
+	/**
+	 * Opens an InputStream to uri.  Checks if it's a local file to create a FileInputStream,
+	 * otherwise resorts to using the ContentResolver to request a stream.
+	 *
+	 * @param context The context.
+	 * @param uri The Uri to query.
+	 */
+	public static ParcelFileDescriptor getParcelFileDescriptor(final Context context, final Uri uri, String mode) throws FileNotFoundException
+	{
+		if ("file".equalsIgnoreCase(uri.getScheme()))
+		{
+			int m = ParcelFileDescriptor.MODE_READ_ONLY;
+			if ("rw".equals(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE;
+			else if ("rwt".equals(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_TRUNCATE;
+
+			//TODO: Is this any faster?  Otherwise could just rely on resolver
+			return ParcelFileDescriptor.open(new File(uri.getPath()), m);
+		}
+		else
+		{
+			return context.getContentResolver().openFileDescriptor(uri, mode);
+		}
+	}
+
+
+	// copy from InputStream
+	//-----------------------------------------------------------------------
+	/**
+	 * Copy bytes from an <code>InputStream</code> to an
+	 * <code>OutputStream</code>.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 * <p>
+	 * Large streams (over 2GB) will return a bytes copied value of
+	 * <code>-1</code> after the copy has completed since the correct
+	 * number of bytes cannot be returned as an int. For large streams
+	 * use the <code>copyLarge(InputStream, OutputStream)</code> method.
+	 *
+	 * @param input  the <code>InputStream</code> to read from
+	 * @param output  the <code>OutputStream</code> to write to
+	 * @return the number of bytes copied
+	 * @throws NullPointerException if the input or output is null
+	 * @throws IOException if an I/O error occurs
+	 * @throws ArithmeticException if the byte count is too large
+	 * @since Commons IO 1.1
+	 */
+	public static int copy(InputStream input, OutputStream output) throws IOException {
+		long count = copyLarge(input, output);
+		if (count > Integer.MAX_VALUE) {
+			return -1;
+		}
+		return (int) count;
+	}
+
+	/**
+	 * Copy bytes from a large (over 2GB) <code>InputStream</code> to an
+	 * <code>OutputStream</code>.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 *
+	 * @param input  the <code>InputStream</code> to read from
+	 * @param output  the <code>OutputStream</code> to write to
+	 * @return the number of bytes copied
+	 * @throws NullPointerException if the input or output is null
+	 * @throws IOException if an I/O error occurs
+	 * @since Commons IO 1.3
+	 */
+	public static long copyLarge(InputStream input, OutputStream output)
+			throws IOException {
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		long count = 0;
+		int n = 0;
+		while (-1 != (n = input.read(buffer))) {
+			output.write(buffer, 0, n);
+			count += n;
+		}
+		return count;
+	}
+
+	// read toByteArray
+	//-----------------------------------------------------------------------
+	/**
+	 * Get the contents of an <code>InputStream</code> as a <code>byte[]</code>.
+	 * <p>
+	 * This method buffers the input internally, so there is no need to use a
+	 * <code>BufferedInputStream</code>.
+	 *
+	 * @param input  the <code>InputStream</code> to read from
+	 * @return the requested byte array
+	 * @throws NullPointerException if the input is null
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static byte[] toByteArray(InputStream input) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		copy(input, output);
+		return output.toByteArray();
 	}
 }

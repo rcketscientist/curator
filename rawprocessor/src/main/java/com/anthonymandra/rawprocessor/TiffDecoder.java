@@ -16,20 +16,8 @@ package com.anthonymandra.rawprocessor;
 
 public class TiffDecoder {
 	
-	public static native int[] getThumb( String path, int[] dimensions );
 	public static native int[] getImage( String path, int[] dimensions );
-
-    public static native int  nativeTiffOpen( String name );
-
-	public static native int[]  nativeTiffGetBytes();
-	
-	public static native int nativeTiffGetLength();
-	
-	public static native int nativeTiffGetWidth();
-	
-	public static native int nativeTiffGetHeight();
-	
-	public static native void nativeTiffClose();
+	public static native int[] getImageFd( String path, int fd, int[] dimensions );
 	
 	static {
 	    System.loadLibrary("tiff");

@@ -22,6 +22,7 @@ import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.IOException;
 
@@ -134,7 +135,9 @@ public class LegacyViewerActivity extends ViewerActivity
 	{
 		if (mImageIndex < 0 || mImageIndex >= mModel.getCount())
 		{
-			Toast.makeText(this, "Error 2x01: Failed to load requested image.  If this continues please email details leading to this bug!", Toast.LENGTH_LONG).show();
+			Crashlytics.setInt("mModel.getCount", mModel.getCount());
+			Crashlytics.setInt("mImageIndex", mImageIndex);
+			Crashlytics.logException(new Exception("Error 2x01: Failed to load requested image."));
 			if (mModel.getCount() == 0)
 			{
 				finish();

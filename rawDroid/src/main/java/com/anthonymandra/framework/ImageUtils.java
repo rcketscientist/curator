@@ -679,4 +679,30 @@ public class ImageUtils
             xmp.updateInt(tag, value);
         }
     }
+
+    public static boolean isAndroidImage(final Context c, final Uri uri)
+    {
+        String type = c.getContentResolver().getType(uri);
+        return isAndroidImage(type);
+    }
+
+    public static boolean isAndroidImage(final String mimeType)
+    {
+        for (String mime : ImageConstants.ANDROID_IMAGE_MIME)
+        {
+            if (mime.equals(mimeType))
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean isTiffImage(final Context c, final Uri uri)
+    {
+        return isTiffImage(c.getContentResolver().getType(uri));
+    }
+
+    public static boolean isTiffImage(final String mimeType)
+    {
+        return ImageConstants.TIFF_MIME.equals(mimeType);
+    }
 }

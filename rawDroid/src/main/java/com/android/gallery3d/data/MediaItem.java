@@ -16,6 +16,7 @@
 
 package com.android.gallery3d.data;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
@@ -46,8 +47,8 @@ public abstract class MediaItem extends MediaObject {
     public abstract Job<Bitmap> requestImage(GalleryApp app, int type);
     public abstract Job<BitmapRegionDecoder> requestLargeImage();
 
-    public MediaItem(Uri path) {
-        super(path);
+    public MediaItem(Context c, Uri path) {
+        super(c, path);
     }
     public String getName() {
         return null;
@@ -75,8 +76,6 @@ public abstract class MediaItem extends MediaObject {
     public long getSize() {
         return 0;
     }
-
-    public abstract String getMimeType();
 
     public String getFilePath() {
         return "";
