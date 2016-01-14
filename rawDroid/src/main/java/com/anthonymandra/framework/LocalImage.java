@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
@@ -112,14 +114,19 @@ public class LocalImage extends MetaMedia {
 	public byte[] getThumb() {
 		if (ImageUtils.isAndroidImage(mType))
 		{
+			InputStream is = null;
 			byte[] imageBytes;
 			try
 			{
-				InputStream is = mContext.getContentResolver().openInputStream(mUri);
+				is = mContext.getContentResolver().openInputStream(mUri);
 				imageBytes = Util.getBytes(is);
 			} catch (Exception e)
 			{
 				return null;
+			}
+			finally
+			{
+				Utils.closeSilently(is);
 			}
 
 			BitmapFactory.Options o = new BitmapFactory.Options();
@@ -137,44 +144,49 @@ public class LocalImage extends MetaMedia {
 
 		// Get a file descriptor to pass to native methods
 		int fd;
+		ParcelFileDescriptor pfd = null;
 		try
 		{
-			fd = mContext.getContentResolver().openFileDescriptor(mUri, "r").getFd();
+			pfd = mContext.getContentResolver().openFileDescriptor(mUri, "r");
+			fd = pfd.getFd();
+			if (ImageUtils.isTiffImage(mType))
+			{
+				int[] dim = new int[2];
+				int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
+				width = dim[0];
+				thumbWidth = width;
+				height = dim[1];
+				thumbHeight = height;
 
-		} catch (FileNotFoundException e)
+				// This is necessary since BitmapRegionDecoder only supports jpg and png
+				Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+				return baos.toByteArray();
+			}
+
+			// Raw images
+			String[] exif = new String[12];
+			byte[] imageData = LibRaw.getThumb(fd, exif);
+			try {
+				setThumbHeight(Integer.parseInt(exif[8]));
+				setThumbWidth(Integer.parseInt(exif[9]));
+				setHeight(Integer.parseInt(exif[10]));
+				setWidth(Integer.parseInt(exif[11]));
+			} catch (Exception e) {
+				Log.d(TAG, "Dimensions exif parse failed:", e);
+			}
+			return imageData;
+		}
+		catch (FileNotFoundException e)
 		{
 			return null;
 		}
-
-		if (ImageUtils.isTiffImage(mType))
+		finally
 		{
-			int[] dim = new int[2];
-			int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
-			width = dim[0];
-			thumbWidth = width;
-			height = dim[1];
-			thumbHeight = height;
-
-			// This is necessary since BitmapRegionDecoder only supports jpg and png
-			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-			return baos.toByteArray();
+			Utils.closeSilently(pfd);
 		}
-
-		// Raw images
-		String[] exif = new String[12];
-		byte[] imageData = LibRaw.getThumb(fd, exif);
-		try {
-			setThumbHeight(Integer.parseInt(exif[8]));
-			setThumbWidth(Integer.parseInt(exif[9]));
-			setHeight(Integer.parseInt(exif[10]));
-			setWidth(Integer.parseInt(exif[11]));
-		} catch (Exception e) {
-			Log.d(TAG, "Dimensions exif parse failed:", e);
-		}
-		return imageData;
 	}
 
 	public boolean hasXmp() {

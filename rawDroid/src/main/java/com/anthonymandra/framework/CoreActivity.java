@@ -821,7 +821,9 @@ public abstract class CoreActivity extends DocumentActivity
 			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
 			if (pfd == null)
 				return false;
-			return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
+			boolean result = LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
+			pfd.close();
+			return result;
 		}
 		catch(Exception e)
 		{
@@ -844,7 +846,9 @@ public abstract class CoreActivity extends DocumentActivity
 			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
 			if (pfd == null)
 				return false;
-			return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+			boolean result =  LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+			pfd.close();
+			return result;
 		}
 		catch(Exception e)
 		{

@@ -306,4 +306,6 @@
     <string name="tap">Tap</string>
     <string name="tapExclude">to exclude a folder from all future searches</string>
 
+    <string name="selectUsb">Select USB</string>
+    <string name="allowWrite">Allow Write Permission</string>
 </resources>

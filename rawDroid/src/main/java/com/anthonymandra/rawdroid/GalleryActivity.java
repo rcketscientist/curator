@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.UriPermission;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -26,9 +27,11 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
@@ -60,6 +63,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
@@ -389,8 +393,33 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		super.onNewIntent(intent);
 		if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction()))
 		{
+			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
+			for (UriPermission permission : permissions)
+			{
+				Uri uri = permission.getUri();
+				ParcelFileDescriptor pfd = null;
+				try
+				{
+					pfd = getContentResolver().openFileDescriptor(uri, "r");
+					if (pfd != null)
+					{
+						// Then we reconnected a previous usb, don't open SAF
+						// TODO: Search the uri...
+						return;
+					}
+				}
+				catch (FileNotFoundException e)
+				{
+					e.printStackTrace();
+				}
+				finally
+				{
+					Utils.closeSilently(pfd);
+				}
+			}
+
 			Intent request = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-//			request.putExtra(DocumentsContract.EXTRA_PROMPT, "Select USB");
+			request.putExtra(DocumentsContract.EXTRA_PROMPT, getString(R.string.selectUsb));
 			startActivityForResult(request, REQUEST_ACCESS_USB);
 		}
 	}
@@ -841,7 +870,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			case REQUEST_ACCESS_USB:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleUsbAccessRequest();
+					handleUsbAccessRequest(data.getData());
 				}
 		}
 	}
@@ -910,9 +939,11 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
         ct.execute(getImageListFromUriList(mItemsForIntent), destination);
     }
 
-	private void handleUsbAccessRequest()
+	private void handleUsbAccessRequest(Uri treeUri)
 	{
-
+		getContentResolver().takePersistableUriPermission(treeUri,
+				Intent.FLAG_GRANT_READ_URI_PERMISSION |
+						Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 	}
 
     private void showWriteAccessError()

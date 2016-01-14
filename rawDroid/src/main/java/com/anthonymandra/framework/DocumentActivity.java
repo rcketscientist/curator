@@ -953,6 +953,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 						public void onClick(View v)
 						{
 							Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+							intent.putExtra(DocumentsContract.EXTRA_PROMPT, getString(R.string.allowWrite));
 							startActivityForResult(intent, REQUEST_CODE_WRITE_PERMISSION);
 							dialog.dismiss();
 						}

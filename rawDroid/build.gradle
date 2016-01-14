@@ -24,8 +24,8 @@ def versionPatch = 6
 def versionBuild = 10
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
 
     lintOptions {
         checkReleaseBuilds false
@@ -35,9 +35,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 11    // Changed for showcaseview, 10 is 0.17% of users
-        targetSdkVersion 22
-        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
+        minSdkVersion 21    // Changed for showcaseview, 10 is 0.17% of users
+        targetSdkVersion 23
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
     }
