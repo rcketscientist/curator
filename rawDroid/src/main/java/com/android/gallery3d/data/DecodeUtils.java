@@ -32,6 +32,7 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.util.ThreadPool.CancelListener;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.android.photos.data.GalleryBitmapPool;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -216,6 +217,8 @@ public class DecodeUtils {
                 options.outWidth, options.outHeight, targetSize);
         options.inJustDecodeBounds = false;
         setOptionsMutable(options);
+
+
 
         return ensureGLCompatibleBitmap(
                 BitmapFactory.decodeStream(data, null, options));
@@ -404,6 +407,18 @@ public class DecodeUtils {
 
         int w = options.outWidth;
         int h = options.outHeight;
+
+
+	    try
+	    {
+		    imageData.mark(imageData.available());
+		    imageData.reset();
+	    } catch (IOException e)
+	    {
+		    Crashlytics.logException(new Exception(
+				    "decodeThumbnail received InputStream that doesn't support mark: " + imageData.getClass().getName()));
+		    return null;
+	    }
 
         if (type == MediaItem.TYPE_MICROTHUMBNAIL) {
             // We center-crop the original image as it's micro thumbnail. In this case,

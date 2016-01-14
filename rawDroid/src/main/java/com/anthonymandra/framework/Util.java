@@ -38,9 +38,11 @@ import android.provider.MediaStore;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -337,17 +339,44 @@ public class Util
         return BitmapFactory.decodeByteArray(image, 0, image.length, o);
     }
 
+	/**
+     *
+     * @param data image stream that must support mark and reset
+     * @param viewWidth
+     * @param viewHeight
+     * @param minSize
+     * @return
+     */
     public static Bitmap createBitmapLarge(InputStream data, int viewWidth, int viewHeight, boolean minSize)
     {
         Options o = new BitmapFactory.Options();
         o.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(data, null, o);
+
+        try
+        {
+            data.mark(data.available());
+            data.reset();
+        } catch (IOException e)
+        {
+            Crashlytics.logException(new Exception(
+                    "Util.createBitmapLarge received InputStream that doesn't support mark: " + data.getClass().getName()));
+            return null;
+        }
+
         o.inSampleSize = Util.getLargeSampleSize(o, viewWidth, viewHeight);
         // setScalingPow2(image, viewWidth, viewHeight, o, minSize);
         o.inJustDecodeBounds = false;
         return BitmapFactory.decodeStream(data, null, o);
     }
 
+	/**
+     *
+     * @param data image inputstream that must support mark.reset
+     * @param width
+     * @param height
+     * @return
+     */
     public static Bitmap createBitmapToSize(InputStream data, int width, int height)
     {
         Options o = new BitmapFactory.Options();
@@ -358,14 +387,12 @@ public class Util
 
         try
         {
-            // TODO: This works, but is there a better way?
-            if (data instanceof FileInputStream)
-                ((FileInputStream) data).getChannel().position(0);
-            else
-                data.reset();
+            data.mark(data.available());
+            data.reset();
         } catch (IOException e)
         {
-            e.printStackTrace();
+            Crashlytics.logException(new Exception(
+                    "Util.createBitmapToSize received InputStream that doesn't support mark: " + data.getClass().getName()));
             return null;
         }
 
@@ -570,6 +597,19 @@ public class Util
         BitmapFactory.Options o = new Options();
         o.inScaled = false;
         return BitmapFactory.decodeResource(context.getResources(), id, o);
+    }
+
+    public static byte[] getBytes(InputStream inputStream) throws IOException
+    {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+
+        int len = 0;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
     }
 
     public static byte[] getBitmapBytes(Bitmap src)

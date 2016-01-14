@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -226,7 +227,7 @@ public class ImageResizer extends ImageWorker
 	 * Decode and sample down a bitmap from a file to the requested width and height.
 	 *
 	 * @param is
-	 *            The image stream
+	 *            The image stream which must support mark and reset.
 	 * @param reqWidth
 	 *            The requested width of the resulting bitmap
 	 * @param reqHeight
@@ -241,11 +242,22 @@ public class ImageResizer extends ImageWorker
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeStream(is, null, options);
 
+		try
+		{
+			is.reset();
+		} catch (IOException e)
+		{
+			Crashlytics.logException(new Exception(
+					"decodeSampledBitmap received InputStream that doesn't support mark: " + is.getClass().getName()));
+			return null;
+		}
+
 		// Calculate inSampleSize
 		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
+
 		return BitmapFactory.decodeStream(is, null, options);
 
 	}

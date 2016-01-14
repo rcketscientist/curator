@@ -4,10 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
+import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
@@ -18,6 +18,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
+import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.xmp.XmpDirectory;
 
 import java.io.BufferedInputStream;
@@ -27,6 +28,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -107,14 +109,15 @@ public class LocalImage extends MetaMedia {
 
 	@SuppressLint("SimpleDateFormat")
 	@Override
-	public InputStream getThumb() {
+	public byte[] getThumb() {
 		if (ImageUtils.isAndroidImage(mType))
 		{
-			InputStream is;
+			byte[] imageBytes;
 			try
 			{
-				is = mContext.getContentResolver().openInputStream(mUri);
-			} catch (FileNotFoundException e)
+				InputStream is = mContext.getContentResolver().openInputStream(mUri);
+				imageBytes = Util.getBytes(is);
+			} catch (Exception e)
 			{
 				return null;
 			}
@@ -123,13 +126,13 @@ public class LocalImage extends MetaMedia {
 			o.inJustDecodeBounds = true;
 
 			// Decode dimensions
-			BitmapFactory.decodeStream(is, null, o);
+			BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
 			thumbWidth = o.outWidth;
 			thumbHeight = o.outHeight;
 			width = o.outWidth;
 			height = o.outHeight;
 
-			return is;
+			return imageBytes;
 		}
 
 		// Get a file descriptor to pass to native methods
@@ -152,57 +155,26 @@ public class LocalImage extends MetaMedia {
 			height = dim[1];
 			thumbHeight = height;
 
-			// Trying it without the jpg compression.
-			ByteBuffer bb = ByteBuffer.allocate(imageData.length * 4);
-			IntBuffer ib = bb.asIntBuffer();
-			ib.put(imageData);
-			return new ByteArrayInputStream(bb.array());
-//			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//			bmp.compress(CompressFormat.JPEG, 100, baos);
+			// This is necessary since BitmapRegionDecoder only supports jpg and png
+			Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
-//			return baos.toByteArray();
+			return baos.toByteArray();
 		}
 
 		// Raw images
 		String[] exif = new String[12];
 		byte[] imageData = LibRaw.getThumb(fd, exif);
-		return new ByteArrayInputStream(imageData);
-
-		// We actually want this to happen synchronously to avoid flickering due to double updates (view, db) (this doesn't stop flickering..)
-//		ImageUtils.setExifValues(getUri(), mContext, exif);
-
-//		try {
-//			setThumbHeight(Integer.parseInt(exif[8]));
-//			setThumbWidth(Integer.parseInt(exif[9]));
-//			setHeight(Integer.parseInt(exif[10]));
-//			setWidth(Integer.parseInt(exif[11]));
-//		} catch (Exception e) {
-//			Log.d(TAG, "Dimensions exif parse failed:", e);
-//		}
-//
-//		makeLegacy = exif[0];
-//		modelLegacy = exif[1];
-//		apertureLegacy = exif[2];
-//		focalLegacy = exif[3];
-//		isoLegacy = exif[4];
-//		shutterLegacy = exif[5];
-//
-//		try {
-//			dateLegacy = mLibrawFormatter.parse(exif[6].trim());
-//		} catch (Exception e) {
-//			Log.d(TAG, "Date exif parse failed:", e);
-//		}
-//
-//		try {
-//			orientLegacy = Integer.parseInt(exif[7]);
-//		} catch (Exception e) {
-//			Log.d(TAG, "Orientation exif parse failed:", e);
-//		}
-		
-//		putContent();
-
-//		return imageData;
+		try {
+			setThumbHeight(Integer.parseInt(exif[8]));
+			setThumbWidth(Integer.parseInt(exif[9]));
+			setHeight(Integer.parseInt(exif[10]));
+			setWidth(Integer.parseInt(exif[11]));
+		} catch (Exception e) {
+			Log.d(TAG, "Dimensions exif parse failed:", e);
+		}
+		return imageData;
 	}
 
 	public boolean hasXmp() {
@@ -279,20 +251,22 @@ public class LocalImage extends MetaMedia {
 
 		@Override
 		public Bitmap onDecodeOriginal(JobContext jc, final int type) {
+			byte[] imageData = mImage.getThumb();
+
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 			int targetSize = MetaMedia.getTargetSize(type);
 
 			// try to decode from JPEG EXIF
 			if (type == MetaMedia.TYPE_MICROTHUMBNAIL) {
-				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, mImage.getThumb(),
+				Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData,
 						options, targetSize);
 				if (bitmap != null)
 					return bitmap;
 				// }
 			}
 
-			return DecodeUtils.decodeThumbnail(jc, mImage.getThumb(), options,
+			return DecodeUtils.decodeThumbnail(jc, imageData, options,
 					targetSize, type);
 		}
 	}
@@ -311,8 +285,9 @@ public class LocalImage extends MetaMedia {
 		}
 
 		public BitmapRegionDecoder run(JobContext jc) {
+			byte[] imageData = mImage.getThumb();
 			BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc,
-					mImage.getThumb(), false);
+					imageData, 0, imageData.length, false);
 			return brd;
 		}
 	}
