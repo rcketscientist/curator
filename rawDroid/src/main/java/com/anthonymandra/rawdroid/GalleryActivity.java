@@ -24,12 +24,14 @@ import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -181,6 +183,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	private static final int REQUEST_MOUNTED_IMPORT_DIR = 12;
 	private static final int REQUEST_EXPORT_THUMB_DIR = 15;
     private static final int REQUEST_UPDATE_PHOTO = 16;
+	private static final int REQUEST_ACCESS_USB = 17;
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
@@ -378,6 +381,18 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 //		checkWriteAccess();
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent)
+	{
+		super.onNewIntent(intent);
+		if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction()))
+		{
+			Intent request = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+//			request.putExtra(DocumentsContract.EXTRA_PROMPT, "Select USB");
+			startActivityForResult(request, REQUEST_ACCESS_USB);
+		}
 	}
 
 	protected void updateMetaLoaderXmp(XmpFilter filter)
@@ -823,6 +838,11 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                 {
                     handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0));
                 }
+			case REQUEST_ACCESS_USB:
+				if (resultCode == RESULT_OK && data != null)
+				{
+					handleUsbAccessRequest();
+				}
 		}
 	}
 
@@ -889,6 +909,11 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
         CopyThumbTask ct = new CopyThumbTask();
         ct.execute(getImageListFromUriList(mItemsForIntent), destination);
     }
+
+	private void handleUsbAccessRequest()
+	{
+
+	}
 
     private void showWriteAccessError()
     {
