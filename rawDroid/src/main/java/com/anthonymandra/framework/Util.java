@@ -226,36 +226,105 @@ public class Util
         @Override
         public boolean accept(File file)
         {
-            return Util.isRaw(file) || Util.isJpeg(file);
+            return isRaw(file) || isJpeg(file);
         }
     }
 
+    public static boolean isImage(String name)
+    {
+        return isRaw(name) || isJpeg(name);
+    }
+
+    public static boolean isImage(File f)
+    {
+        return isImage(f.getName());
+    }
+
+    public static boolean isImage(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isImage(path);
+    }
 
     public static boolean isRaw(File file)
     {
-        return containsString(ImageConstants.RAW_EXT, file);
+        return isRaw(file.getName());
+    }
+
+    public static boolean isRaw(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isRaw(path);
+    }
+
+    public static boolean isRaw(String name)
+    {
+        return endsWith(ImageConstants.RAW_EXT, name);
     }
 
     public static boolean isJpeg(File file)
     {
-        return containsString(ImageConstants.JPEG_EXT, file);
+        return isJpeg(file.getName());
+    }
+
+    public static boolean isJpeg(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isJpeg(path);
+    }
+
+    public static boolean isJpeg(String name)
+    {
+        return endsWith(ImageConstants.JPEG_EXT, name);
+    }
+
+    public static boolean isNative(String name)
+    {
+        return endsWith(ImageConstants.COMMON_EXT, name);
     }
 
     public static boolean isNative(File file)
     {
-        return containsString(ImageConstants.COMMON_EXT, file);
+        return isNative(file.getName());
+    }
+
+    public static boolean isNative(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isNative(path);
+    }
+
+    public static boolean isTiffImage(String name)
+    {
+        return endsWith(ImageConstants.TIFF_EXT, name);
     }
 
     public static boolean isTiffImage(File file)
     {
-        return containsString(ImageConstants.TIFF_EXT, file);
+        return isTiffImage(file.getName());
     }
 
-    private static boolean containsString(String[] extensions, File file)
+    public static boolean isTiffImage(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isTiffImage(path);
+    }
+
+    private static boolean endsWith(String[] extensions, String path)
     {
         for (String ext : extensions)
         {
-            if (file.getName().toLowerCase().endsWith(ext.toLowerCase()))
+            if (path.toLowerCase().endsWith(ext.toLowerCase()))
                 return true;
         }
         return false;
@@ -360,7 +429,7 @@ public class Util
         } catch (IOException e)
         {
             Crashlytics.logException(new Exception(
-                    "Util.createBitmapLarge received InputStream that doesn't support mark: " + data.getClass().getName()));
+                    "InputStream does not support mark: " + data.getClass().getName(), e));
             return null;
         }
 
@@ -392,7 +461,7 @@ public class Util
         } catch (IOException e)
         {
             Crashlytics.logException(new Exception(
-                    "Util.createBitmapToSize received InputStream that doesn't support mark: " + data.getClass().getName()));
+                    "InputStream does not support mark: " + data.getClass().getName(), e));
             return null;
         }
 

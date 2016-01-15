@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21    // Changed for showcaseview, 10 is 0.17% of users
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
     }

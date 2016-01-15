@@ -248,7 +248,7 @@ public class ImageResizer extends ImageWorker
 		} catch (IOException e)
 		{
 			Crashlytics.logException(new Exception(
-					"decodeSampledBitmap received InputStream that doesn't support mark: " + is.getClass().getName()));
+					"InputStream does not support mark: " + is.getClass().getName(), e));
 			return null;
 		}
 

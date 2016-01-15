@@ -416,7 +416,7 @@ public class DecodeUtils {
 	    } catch (IOException e)
 	    {
 		    Crashlytics.logException(new Exception(
-				    "decodeThumbnail received InputStream that doesn't support mark: " + imageData.getClass().getName()));
+				    "InputStream does not support mark: " + imageData.getClass().getName(), e));
 		    return null;
 	    }
 

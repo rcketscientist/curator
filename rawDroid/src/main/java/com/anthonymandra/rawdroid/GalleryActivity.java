@@ -27,7 +27,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
@@ -336,7 +335,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						break;
 					case SearchService.BROADCAST_FOUND:
 //						mSwipeRefresh.setRefreshing(false);
-						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGES);
+						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS);
 						mParsedImages = 0;
 						if (images.length == 0)
 						{
@@ -347,7 +346,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						{
 							for (String image : images)
 							{
-								Uri uri = Uri.fromFile(new File(image));
+								Uri uri = Uri.parse(image);
 								MetaWakefulReceiver.startMetaService(GalleryActivity.this, uri);
 							}
 						}
@@ -393,6 +392,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		super.onNewIntent(intent);
 		if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction()))
 		{
+			// Check if a previously connected usb storage device has been reconnected
 			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
 			for (UriPermission permission : permissions)
 			{
@@ -403,7 +403,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					pfd = getContentResolver().openFileDescriptor(uri, "r");
 					if (pfd != null)
 					{
-						// Then we reconnected a previous usb, don't open SAF
+						// Then we reconnected a previous usb, don't open SAF, just search
 						// TODO: Search the uri...
 						return;
 					}
@@ -837,8 +837,9 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 //		// You must make a copy of the returned preference set or changes will not be recognized
 //		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
 		SearchService.startActionSearch(
-				GalleryActivity.this,
+				this,
 				/*TEST_ROOTS,*/MOUNT_ROOTS,
+				null,
 				excludedFolders.toArray(new String[excludedFolders.size()]));
 	}
 
@@ -867,11 +868,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                 {
                     handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0));
                 }
+	            break;
 			case REQUEST_ACCESS_USB:
 				if (resultCode == RESULT_OK && data != null)
 				{
 					handleUsbAccessRequest(data.getData());
 				}
+				break;
 		}
 	}
 

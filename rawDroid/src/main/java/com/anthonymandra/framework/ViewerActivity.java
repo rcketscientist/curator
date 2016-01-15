@@ -216,6 +216,16 @@ public abstract class ViewerActivity extends CoreActivity implements
 //            String path = FileUtil.getPath(this, data);
 //            Bitmap bmp = BitmapFactory.decodeStream(is);
             // Ex ext storage 6.0: content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3ADCIM%2F100EOS5D%2FIMG_0081.CR2
+	        /**
+             * getPathSegments
+             0 = "tree"
+             1 = "0000-0000:"
+             2 = "document"
+             3 = "0000-0000:DCIM/100EOS5D/IMG_0081.CR2"
+
+             .getLastPathSegment()
+             0000-0000:DCIM/100EOS5D/IMG_0081.CR2
+             */
 
 //            if (data.getAuthority().equals(MediaStore.AUTHORITY))
 //            {

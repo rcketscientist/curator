@@ -308,4 +308,5 @@
 
     <string name="selectUsb">Select USB</string>
     <string name="allowWrite">Allow Write Permission</string>
+    <string name="addFolder">Add Folder</string>
 </resources>

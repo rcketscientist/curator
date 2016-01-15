@@ -2,6 +2,7 @@ package com.anthonymandra.framework;
 
 import android.app.IntentService;
 import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -9,15 +10,19 @@ import android.content.OperationApplicationException;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.RemoteException;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.anthonymandra.content.Meta;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class SearchService extends IntentService
@@ -29,12 +34,13 @@ public class SearchService extends IntentService
     public static final String BROADCAST_FOUND = "com.anthonymandra.framework.action.BROADCAST_FOUND";
 
     /**
-     * Broadcast extra containing the number of images that were parsed
+     * Broadcast extra containing uris for the discovered images
      */
-    public static final String EXTRA_IMAGES = "com.anthonymandra.framework.action.EXTRA_IMAGES";
+    public static final String EXTRA_IMAGE_URIS = "com.anthonymandra.framework.action.EXTRA_IMAGE_URIS";
 
     private static final String ACTION_SEARCH = "com.anthonymandra.framework.action.ACTION_SEARCH";
-    private static final String EXTRA_ROOTS = "com.anthonymandra.framework.extra.EXTRA_ROOTS";
+    private static final String EXTRA_FILEPATH_ROOTS = "com.anthonymandra.framework.extra.EXTRA_FILEPATH_ROOTS";
+	private static final String EXTRA_DOCUMENT_TREE_URI_ROOTS = "com.anthonymandra.framework.extra.EXTRA_DOCUMENT_TREE_URI_ROOTS";
     private static final String EXTRA_SKIP = "com.anthonymandra.framework.extra.EXTRA_SKIP";
 
 	/**
@@ -50,14 +56,15 @@ public class SearchService extends IntentService
 					"/mnt/sdcard"
 			};
 
-    private static final Set<String> images = new HashSet<>();
+    private static final Set<Uri> images = new HashSet<>();
 	private File mExternalStorageDir;
 
-    public static void startActionSearch(Context context, String[] roots, String[] skip)
+    public static void startActionSearch(Context context, String[] filePathRoots, String[] documentTreeUris, String[] skip)
     {
         Intent intent = new Intent(context, SearchService.class);
         intent.setAction(ACTION_SEARCH);
-        intent.putExtra(EXTRA_ROOTS, roots);
+        intent.putExtra(EXTRA_FILEPATH_ROOTS, filePathRoots);
+	    intent.putExtra(EXTRA_DOCUMENT_TREE_URI_ROOTS, documentTreeUris);
         intent.putExtra(EXTRA_SKIP, skip);
         context.startService(intent);
     }
@@ -75,37 +82,58 @@ public class SearchService extends IntentService
             final String action = intent.getAction();
             if (ACTION_SEARCH.equals(action))
             {
-                final String[] root = intent.getStringArrayExtra(EXTRA_ROOTS);
+                final String[] root = intent.getStringArrayExtra(EXTRA_FILEPATH_ROOTS);
+	            final String[] uris = intent.getStringArrayExtra(EXTRA_DOCUMENT_TREE_URI_ROOTS);
                 final String[] skip = intent.getStringArrayExtra(EXTRA_SKIP);
-                handleActionSearch(root, skip);//, ext);
+                handleActionSearch(root, uris, skip);//, ext);
             }
         }
     }
 
-    private void handleActionSearch(String[] roots, String[] alwaysExcludeDir)
+    private void handleActionSearch(@Nullable String[] filePathRoots, @Nullable String[] uriRoots, @Nullable String[] alwaysExcludeDir)
     {
-	    // Ensure 'official' storage is part of our search list
-	    mExternalStorageDir = Environment.getExternalStorageDirectory();
-	    Set<String> rootDirs = new HashSet<>(Arrays.asList(roots));
-	    rootDirs.add(mExternalStorageDir.getPath());
-
         images.clear();
 
-        for (String root : rootDirs)
-            search(new File(root), alwaysExcludeDir);
+	    // If filePathRoots is null we won't even search ExternalStorageDirectory.
+	    // This allows a strictly SAF search
+	    if (filePathRoots != null)
+	    {
+		    // Ensure 'official' storage is part of our search list
+		    mExternalStorageDir = Environment.getExternalStorageDirectory();
+		    Set<String> rootDirs = new HashSet<>(Arrays.asList(filePathRoots));
+		    rootDirs.add(mExternalStorageDir.getPath());
+
+		    for (String root : rootDirs)
+			    search(new File(root), alwaysExcludeDir);
+	    }
+
+	    if (uriRoots != null)
+	    {
+		    for (String uri : uriRoots)
+			    search(DocumentFile.fromTreeUri(this, Uri.parse(uri)), alwaysExcludeDir);
+	    }
 
 	    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+	    ArrayList<String> uriStrings = new ArrayList<>();
         if (images.size() > 0)
         {
-            for (String image : images)
+            for (Uri image : images)
             {
-                File file = new File(image);
-                ContentValues cv = new ContentValues();
-                cv.put(Meta.Data.NAME, file.getName());
-                cv.put(Meta.Data.URI, Uri.fromFile(file).toString());
-                operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
-                        .withValues(cv)
-                        .build());
+	            if (ContentResolver.SCHEME_CONTENT.equals(image.getScheme()))
+	            {
+
+	            }
+	            else    // Should be a file
+	            {
+		            File file = new File(image.getPath());
+		            ContentValues cv = new ContentValues();
+		            cv.put(Meta.Data.NAME, file.getName());
+		            cv.put(Meta.Data.URI, image.toString());
+		            operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+				            .withValues(cv)
+				            .build());
+		            uriStrings.add(image.toString());
+	            }
             }
 
             try
@@ -114,15 +142,65 @@ public class SearchService extends IntentService
                 getContentResolver().applyBatch(Meta.AUTHORITY, operations);
             } catch (RemoteException | OperationApplicationException e)
             {
-                //TODO: Notify user
-                e.printStackTrace();
+	            Crashlytics.logException(
+			            new Exception("SearchService: handleActionSearch applyBatch error", e));
             }
         }
 
 	    Intent broadcast = new Intent(BROADCAST_FOUND)
-			    .putExtra(EXTRA_IMAGES, images.toArray(new String[operations.size()]));
+			    .putExtra(EXTRA_IMAGE_URIS, uriStrings.toArray(new String[operations.size()]));
 	    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
     }
+
+	/**
+	 *
+	 * @param root Directory to recursively search
+	 * @param alwaysExcludeDir These roots are skipped absolutely even if they are the official storage
+	 */
+	public void search(DocumentFile root, String[] alwaysExcludeDir)
+	{
+		if (root == null)
+			return;
+		DocumentFile[] contents = root.listFiles();
+		if (contents == null)
+			return;
+
+		if (alwaysExcludeDir != null)
+		{
+			for (String skip : alwaysExcludeDir)
+			{
+				if (skip == null)
+					continue;
+				if (root.getUri().toString().startsWith(skip)) //TODO: This likely needs tuning...
+					return;
+			}
+		}
+
+		Util.ImageFilter imageFilter = new Util.ImageFilter();
+		DocumentFile[] imageFiles = listImages(contents);
+		if (imageFiles != null && imageFiles.length > 0)
+		{
+			for (DocumentFile image: imageFiles)
+			{
+				if (ImageUtils.isProcessed(this, image.getUri()))
+				{
+					continue;
+				}
+
+				images.add(image.getUri());
+			}
+		}
+
+		// Recursion pass
+		for (DocumentFile f : root.listFiles())
+		{
+			if (f == null)
+				continue;
+
+			if (f.isDirectory() && f.canRead())
+				search(f, alwaysExcludeDir);
+		}
+	}
 
 	/**
 	 *
@@ -159,17 +237,20 @@ public class SearchService extends IntentService
 		    Log.d(TAG, "ExternalStorage: dir= " + dir.getPath() + ", canon= " + canonPath);
 	    }
 
-	    /**
-	     * We always obey these exclusions even if they are the official storage
-	     * The user can choose to ignore the internal storage in favor of external sd for example
-	     */
-        for (String skip : alwaysExcludeDir)
-        {
-	        if (skip == null)
-		        continue; //TODO: Issue 15.  Not sure why this could be null.
-            if (canonPath.startsWith(skip))
-	            return;
-        }
+	    if (alwaysExcludeDir != null)
+	    {
+		    /**
+		     * We always obey these exclusions even if they are the official storage
+		     * The user can choose to ignore the internal storage in favor of external sd for example
+		     */
+		    for (String skip : alwaysExcludeDir)
+		    {
+			    if (skip == null)
+				    continue; //TODO: Issue 15.  Not sure why this could be null.
+			    if (canonPath.startsWith(skip))
+				    return;
+		    }
+	    }
 
 	    Log.d(TAG, "Processed: dir= " + dir.getPath() + ", canon= " + canonPath);
 
@@ -200,7 +281,7 @@ public class SearchService extends IntentService
 	            if (!isExternalStorage)
 		            path = FileUtil.getCanonicalPathSilently(raw);
 
-                images.add(path);
+                images.add(Uri.fromFile(new File(path)));
             }
         }
 
@@ -215,4 +296,16 @@ public class SearchService extends IntentService
         }
     }
 
+	/**
+	 * emulate File.listFiles(ImageFilter)
+	 */
+	public DocumentFile[] listImages(DocumentFile[] files)
+	{
+		List<DocumentFile> result = new ArrayList<>(files.length);
+		for (DocumentFile file : files) {
+			if(Util.isImage(file.getName()))
+				result.add(file);
+		}
+		return result.toArray(new DocumentFile[result.size()]);
+	}
 }

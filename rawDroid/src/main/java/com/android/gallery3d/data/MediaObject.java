@@ -74,7 +74,7 @@ public abstract class MediaObject implements RawObject {
             catch (RemoteException e)
             {
                 Crashlytics.logException(new Exception("Failed to acquire ContentProvider for: " +
-                    uri.toString()));
+                    uri.toString(), e));
             }
             finally
             {
