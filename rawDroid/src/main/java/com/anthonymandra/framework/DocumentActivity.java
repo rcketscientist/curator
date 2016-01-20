@@ -95,6 +95,89 @@ public abstract class DocumentActivity extends AppCompatActivity
 	public boolean copyFile(final Uri source, final Uri target)
 			throws WritePermissionException
 	{
+		try
+		{
+			ParcelFileDescriptor sourcePfd = FileUtil.getParcelFileDescriptor(this, source, "r");
+			ParcelFileDescriptor targetPfd = FileUtil.getParcelFileDescriptor(this, source, "rw");
+			InputStream is = new FileInputStream(sourcePfd.getFileDescriptor());
+			OutputStream os = new FileOutputStream(targetPfd.getFileDescriptor());
+		}
+		catch (FileNotFoundException e)
+		{
+			return false;
+		}
+
+		FileInputStream inStream = null;
+		OutputStream outStream = null;
+		FileChannel inChannel = null;
+		FileChannel outChannel = null;
+		try {
+			inStream = new FileInputStream(source);
+
+			// First try the normal way
+			if (isWritable(target)) {
+				// standard way
+				outStream = new FileOutputStream(target);
+				inChannel = inStream.getChannel();
+				outChannel = ((FileOutputStream) outStream).getChannel();
+				inChannel.transferTo(0, inChannel.size(), outChannel);
+			}
+			else {
+				if (Util.hasLollipop()) {
+					// Storage Access Framework
+					DocumentFile targetDocument = getLollipopDocument(target, false, true);
+					if (targetDocument == null)
+						return false;
+					outStream =
+							getContentResolver().openOutputStream(targetDocument.getUri());
+				}
+				else if (Util.hasKitkat()) {
+					// Workaround for Kitkat ext SD card
+					Uri uri = MediaStoreUtil.getUriFromFile(this, target.getAbsolutePath());
+					outStream = getContentResolver().openOutputStream(uri);
+				}
+				else {
+					return false;
+				}
+
+				if (outStream != null) {
+					// Both for SAF and for Kitkat, write to output stream.
+					byte[] buffer = new byte[4096]; // MAGIC_NUMBER
+					int bytesRead;
+					while ((bytesRead = inStream.read(buffer)) != -1) {
+						outStream.write(buffer, 0, bytesRead);
+					}
+				}
+
+			}
+		}
+		catch (Exception e) {
+			Log.e(TAG,
+					"Error when copying file to " + target.getAbsolutePath(), e);
+			return false;
+		}
+		finally {
+			Utils.closeSilently(inStream);
+			Utils.closeSilently(outStream);
+			Utils.closeSilently(inChannel);
+			Utils.closeSilently(outChannel);
+		}
+		return true;
+	}
+
+	/**
+	 * Copy a file. The target file may even be on external SD card for Kitkat.
+	 *
+	 * @param source
+	 *            The source file
+	 * @param target
+	 *            The target file
+	 * @return true if the copying was successful.
+	 */
+	public boolean copyFile(final File source, final File target)
+			throws WritePermissionException
+	{
+
 		FileInputStream inStream = null;
 		OutputStream outStream = null;
 		FileChannel inChannel = null;
@@ -511,6 +594,80 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
 	 * existing, it is created.
 	 *
+	 * @param uri
+	 *            The target uri.
+	 * @param isDirectory
+	 *            flag indicating if the file should be a directory.
+	 * @param createDirectories
+	 *            flag indicating if intermediate path directories should be created if not existing.
+	 * @return The DocumentFile
+	 */
+	private DocumentFile getLollipopDocument(final Uri uri,
+											 final boolean isDirectory,
+											 final boolean createDirectories)
+			throws WritePermissionException
+	{
+		Uri treeUri = getTreeUri();
+
+		if (treeUri == null)
+		{
+			requestWritePermission();
+			throw new WritePermissionException(
+					"Write permission not found.  This indicates a SAF write permission was requested.  " +
+					"The app should store any parameters necessary to resume write here.");
+		}
+
+		DocumentFile target;
+		if (isDirectory)
+		{
+			target = DocumentFile.fromTreeUri(this, uri);
+		}
+		else
+		{
+			target = DocumentFile.fromSingleUri(this, uri);
+		}
+
+		if (target.exists())
+		{
+			return target;
+		}
+
+		// TODO: Should check permissions instead of assuming one single root
+		DocumentFile permissionRoot = DocumentFile.fromTreeUri(this, treeUri);
+		DocumentFile parent = target.getParentFile();
+
+		// If needed create the file or directory
+		if (isDirectory)
+		{
+			parent.createDirectory(target.getName());
+		}
+		else
+		{
+			// TODO: is null mime an issue? RawDocumentFile.createFle will simply not append an ext
+			// So if the name contains the desired extension this is fine.  Another handler could
+			// be an issue.  Since Android mime support is pretty awful/silly, best off not dealing with mime.
+			parent.createFile(null, target.getName());
+		}
+
+		// If desired create the tree up to the root working backwards
+		if (createDirectories)
+		{
+			// Stop if the parent exists or we've reached the permission root
+			while (!parent.exists() && !parent.equals(permissionRoot))
+			{
+				DocumentFile opa = parent.getParentFile();
+				opa.createDirectory(parent.getName());
+				parent = opa;
+			}
+		}
+
+		return target;
+	}
+
+	/**
+	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
+	 * existing, it is created.
+	 *
 	 * @param file
 	 *            The file.
 	 * @param isDirectory
@@ -529,7 +686,9 @@ public abstract class DocumentActivity extends AppCompatActivity
 		if (treeUri == null)
 		{
 			requestWritePermission();
-			throw new WritePermissionException("Write permission not found.");
+			throw new WritePermissionException(
+					"Write permission not found.  This indicates a SAF write permission was requested.  " +
+					"The app should store any parameters necessary to resume write here.");
 		}
 
 		String fullPath = null;
@@ -572,6 +731,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 				Crashlytics.logException(new Exception("Null Document"));
 				return null;
 			}
+			// FIXME: Find file can be exceptionally slow, attempting alternative method in uri version
 			DocumentFile nextDocument = document.findFile(parts[i]);
 
 			if (nextDocument == null) {
