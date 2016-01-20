@@ -176,21 +176,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 			return document.delete();
 		}
 
-		// Try the Kitkat workaround.
-		if (Util.hasKitkat()) {
-			ContentResolver resolver = getContentResolver();
-
-			try {
-				Uri uri = MediaStoreUtil.getUriFromFile(this, file.getAbsolutePath());
-				resolver.delete(uri, null, null);
-				return !file.exists();
-			}
-			catch (Exception e) {
-				Log.e(TAG, "Error when deleting file " + file.getAbsolutePath(), e);
-				return false;
-			}
-		}
-
 		return !file.exists();
 	}
 
@@ -319,37 +304,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 			return document.exists();
 		}
 
-		// Try the Kitkat workaround.
-		if (Util.hasKitkat()) {
-			ContentResolver resolver = getContentResolver();
-			File tempFile = new File(file, "dummyImage.jpg");
-
-			File dummySong = copyDummyFiles(this);
-			int albumId = MediaStoreUtil.getAlbumIdFromAudioFile(this, dummySong);
-			Uri albumArtUri = Uri.parse("content://media/external/audio/albumart/" + albumId);
-
-			ContentValues contentValues = new ContentValues();
-			contentValues.put(MediaStore.MediaColumns.DATA, tempFile.getAbsolutePath());
-			contentValues.put(MediaStore.Audio.AlbumColumns.ALBUM_ID, albumId);
-
-			if (resolver.update(albumArtUri, contentValues, null, null) == 0) {
-				resolver.insert(Uri.parse("content://media/external/audio/albumart"), contentValues);
-			}
-			try {
-				ParcelFileDescriptor fd = resolver.openFileDescriptor(albumArtUri, "r");
-				fd.close();
-			}
-			catch (Exception e) {
-				Log.e(TAG, "Could not open file", e);
-				return false;
-			}
-			finally {
-				deleteFile(tempFile);
-			}
-
-			return true;
-		}
-
 		return false;
 	}
 
@@ -387,18 +341,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 			if (document == null)
 				return false;
 			return document.delete();
-		}
-
-		// Try the Kitkat workaround.
-		if (Util.hasKitkat()) {
-			ContentResolver resolver = getContentResolver();
-			ContentValues values = new ContentValues();
-			values.put(MediaStore.MediaColumns.DATA, file.getAbsolutePath());
-			resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-			// Delete the created entry, such that content provider will delete the file.
-			resolver.delete(MediaStore.Files.getContentUri("external"), MediaStore.MediaColumns.DATA + "=?",
-					new String[] { file.getAbsolutePath() });
 		}
 
 		return !file.exists();
@@ -782,79 +724,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	// Utility methods for Kitkat
-
-	/**
-	 * Copy a resource file into a private target directory, if the target does not yet exist. Required for the Kitkat
-	 * workaround.
-	 *
-	 * @param resource
-	 *            The resource file.
-	 * @param folderName
-	 *            The folder below app folder where the file is copied to.
-	 * @param targetName
-	 *            The name of the target file.
-	 * @return the dummy file.
-	 * @throws IOException
-	 *             thrown if there are issues while copying.
-	 */
-	private static File copyDummyFile(final Context context, final int resource, final String folderName, final String targetName)
-			throws IOException {
-		File externalFilesDir = context.getExternalFilesDir(folderName);
-		if (externalFilesDir == null) {
-			return null;
-		}
-		File targetFile = new File(externalFilesDir, targetName);
-
-		if (!targetFile.exists()) {
-			InputStream in = null;
-			OutputStream out = null;
-			try {
-				in = context.getResources().openRawResource(resource);
-				out = new FileOutputStream(targetFile);
-				byte[] buffer = new byte[4096]; // MAGIC_NUMBER
-				int bytesRead;
-				while ((bytesRead = in.read(buffer)) != -1) {
-					out.write(buffer, 0, bytesRead);
-				}
-			}
-			finally {
-				if (in != null) {
-					try {
-						in.close();
-					}
-					catch (IOException ex) {
-						// do nothing
-					}
-				}
-				if (out != null) {
-					try {
-						out.close();
-					}
-					catch (IOException ex) {
-						// do nothing
-					}
-				}
-			}
-		}
-		return targetFile;
-	}
-
-	/**
-	 * Copy the dummy image and dummy mp3 into the private folder, if not yet there. Required for the Kitkat workaround.
-	 *
-	 * @return the dummy mp3.
-	 */
-	private static File copyDummyFiles(Context context) {
-		try {
-			copyDummyFile(context, R.raw.albumart, "mkdirFiles", "albumart.jpg");
-			return copyDummyFile(context, R.raw.silence, "mkdirFiles", "silence.mp3");
-
-		}
-		catch (IOException e) {
-			Log.e(TAG, "Could not copy dummy files.", e);
-			return null;
-		}
-	}
 
 	/**
 	 * Get the stored tree URI.
