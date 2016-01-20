@@ -10,12 +10,10 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
@@ -39,19 +37,14 @@ import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.widget.HistogramView;
 
-import org.openintents.filemanager.FileManagerActivity;
-import org.openintents.intents.FileManagerIntents;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -299,8 +292,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
         mCurrentUri = item;
 
-        //TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIX SHARE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        setShareUri(getCurrentItem().getSwapUri());
+        setShareUri(getCurrentItem().getSwapUri());
         updateImageDetails();
     }
 
@@ -809,38 +801,13 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected void saveImage()
     {
-        Intent intent = new Intent(this, FileManagerActivity.class);
-        intent.setAction(FileManagerIntents.ACTION_PICK_FILE);
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        String startPath = settings.getString(GalleryActivity.PREFS_MOST_RECENT_SAVE, null);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 
-//        String name = getCurrentItem().getString(Meta.NAME_COLUMN);
         String name = getCurrentItem().getName();
+        String jpeg = Util.swapExtention(name, ".jpg");
 
-        if (startPath == null)
-        {
-            startPath = "";
-        }
-
-        File saveFile = new File(
-                Util.swapExtention(startPath + File.separator + name, ".jpg"));
-
-        // Construct URI from file name.
-        intent.setData(Uri.fromFile(saveFile));
-
-        // Set fancy title and button (optional)
-        intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.save_as));
-        intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.save));
-
-        try
-        {
-            startActivityForResult(intent, REQUEST_CODE_PICK_FILE_OR_DIRECTORY);
-        }
-        catch (ActivityNotFoundException e)
-        {
-            // No compatible file manager was found.
-            Toast.makeText(ViewerActivity.this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
-        }
+        //TODO: Store the name
+        startActivityForResult(intent, REQUEST_CODE_PICK_FILE_OR_DIRECTORY);
     }
 
     @Override

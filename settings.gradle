@@ -1,6 +1,6 @@
 include ':metadata-extractor'
 include ':rawprocessor'
-include ':oIFileManager'
+//include ':oIFileManager'
 include ':showcaseView:library'
 include ':inscription'
 include ':rawDroid'

@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.support.annotation.Nullable;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
@@ -123,38 +125,41 @@ public class ImageUtils
     /**
      * --- File Association Helpers ----------------------------------------------------------------
      */
-    public static boolean hasXmpFile(File f) {
-        return getXmpFile(f).exists();
+    public static boolean hasXmpFile(Context c, Uri uri) {
+        return getXmpFile(c, uri).exists();
     }
-    public static boolean hasJpgFile(File f) {
-        return getJpgFile(f).exists();
+    public static boolean hasJpgFile(Context c, Uri uri) {
+        return getJpgFile(c, uri).exists();
     }
 
-    public static File getXmpFile(File f)
+    public static DocumentFile getXmpFile(Context c, Uri uri)
     {
-        return getAssociatedFile(f, "xmp");
+        return getAssociatedFile(c, uri, "xmp");
     }
 
-    public static File getJpgFile(File f)
+    public static DocumentFile getJpgFile(Context c, Uri uri)
     {
-        return getAssociatedFile(f, "jpg");
+        return getAssociatedFile(c, uri, "jpg");
     }
 
-    /**
-     * Gets a similarly named file with a new ext
-     * @param file
-     * @param ext
-     * @return
-     */
-    private static File getAssociatedFile(File file, String ext) {
-        String name = file.getName();
-        int pos = name.lastIndexOf(".");
-        if (pos > 0) {
-            name = name.substring(0, pos);
+    private static DocumentFile getAssociatedFile(Context c, Uri uri, String ext)
+    {
+        /*  ghetto: mashing uris is not recommended, but since DocumentFile.findFile is slow we're
+            going to skip that process and simply mash what we know the uri would be (as of 01/2016)
+            new uri schemes could possibly break this */
+
+        DocumentFile image = DocumentFile.fromSingleUri(c, uri);
+        String name = image.getName();
+        if (ext != null)
+        {
+            name = Util.swapExtention(name, ext);
         }
-        name += "." + ext;
 
-        return new File(file.getParent(), name);
+        DocumentFile parent = image.getParentFile();
+        String parentString = parent.getUri().toString();
+        String associatedString = parentString + "/" + name;
+        Uri associatedUri = Uri.parse(associatedString);
+        return DocumentFile.fromSingleUri(c, associatedUri);
     }
 
     /**

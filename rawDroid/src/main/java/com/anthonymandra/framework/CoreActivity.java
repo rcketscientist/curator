@@ -712,12 +712,12 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @return success
 	 * @throws WritePermissionException
 	 */
-	private boolean copy(File fromImage, File toImage) throws WritePermissionException
+	private boolean copy(Uri fromImage, Uri toImage) throws WritePermissionException
 	{
-		if (ImageUtils.hasXmpFile(fromImage))
-			copyFile(ImageUtils.getXmpFile(fromImage), ImageUtils.getXmpFile(toImage));
-		if (ImageUtils.hasJpgFile(fromImage))
-			copyFile(ImageUtils.getJpgFile(fromImage), ImageUtils.getJpgFile(toImage));
+		if (ImageUtils.hasXmpFile(this, fromImage))
+			copyFile(ImageUtils.getXmpFile(this, fromImage), ImageUtils.getXmpFile(this, toImage));
+		if (ImageUtils.hasJpgFile(this, fromImage))
+			copyFile(ImageUtils.getJpgFile(this, fromImage), ImageUtils.getJpgFile(this, toImage));
 		return copyFile(fromImage, toImage);
 	}
 

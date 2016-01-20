@@ -98,10 +98,10 @@ dependencies {
     compile project(':showcaseView:library')
     compile project(':inscription')
     compile project(':metadata-extractor')
-    compile project(':oIFileManager')
+//    compile project(':oIFileManager')
     compile project(':rawprocessor')
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
     //    compile 'com.android.support:recyclerview-v7:22.2.1'
     //    compile 'com.android.support:gridlayout-v7:22.2.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {

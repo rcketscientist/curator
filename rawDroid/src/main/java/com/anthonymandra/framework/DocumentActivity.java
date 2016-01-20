@@ -92,7 +92,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 *            The target file
 	 * @return true if the copying was successful.
 	 */
-	public boolean copyFile(final File source, final File target)
+	public boolean copyFile(final Uri source, final Uri target)
 			throws WritePermissionException
 	{
 		FileInputStream inStream = null;

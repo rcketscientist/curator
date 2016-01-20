@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -19,15 +18,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.provider.DocumentFile;
 import android.widget.Toast;
 
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.DocumentActivity;
-import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.Util;
-
-import org.openintents.filemanager.FileManagerActivity;
-import org.openintents.intents.FileManagerIntents;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -264,38 +260,8 @@ public class CameraImportActivity extends DocumentActivity
 
 	private void requestImportImageLocation()
 	{
-//		Intent images = new Intent(FileManagerIntents.ACTION_PICK_DIRECTORY);
-        Intent intent = new Intent(this, FileManagerActivity.class);
-        intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentImport = settings.getString(GalleryActivity.PREFS_MOST_RECENT_IMPORT, null);
-		File importLocation = GalleryActivity.START_PATH;
-		if (recentImport != null)
-		{
-			importLocation = new File(recentImport);
-			if (!importLocation.exists())
-			{
-				importLocation = GalleryActivity.START_PATH;
-			}
-		}
-
-		// Construct URI from file name.
-        intent.setData(Uri.fromFile(importLocation));
-
-		// Set fancy title and button (optional)
-        intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
-        intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
-
-		try
-		{
-			startActivityForResult(intent, REQUEST_MTP_IMPORT_DIR);
-		}
-		catch (ActivityNotFoundException e)
-		{
-			// No compatible file manager was found.
-			Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
-		}
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		startActivityForResult(intent, REQUEST_MTP_IMPORT_DIR);
 	}
 
 	@Override
@@ -326,14 +292,9 @@ public class CameraImportActivity extends DocumentActivity
 		clearWriteResume();
 	}
 
-	private void handleImportDirResult(final String destinationPath)
+	private void handleImportDirResult(final Uri destinationUri)
 	{
-		destination = new File(destinationPath);
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(GalleryActivity.PREFS_MOST_RECENT_IMPORT, destination.getPath());
-		editor.apply();
+		DocumentFile destination = DocumentFile.fromTreeUri(this, destinationUri);
 
 		getMtpDevice();
 

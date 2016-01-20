@@ -197,7 +197,7 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
                         KeywordProvider.Data.KEYWORD_NAME + " = ?",
                         new String[]{select},
                         null);
-                if (c.moveToFirst())
+                if (c != null && c.moveToFirst())
                 {
                     long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
                     c.close();

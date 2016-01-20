@@ -1,17 +1,11 @@
 package com.anthonymandra.framework;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -24,15 +18,7 @@ import com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
 import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
-import com.drew.metadata.xmp.XmpReader;
-import com.drew.metadata.xmp.XmpWriter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -65,7 +51,7 @@ public abstract class MetaMedia extends MediaItem implements MetaObject
 
 	private boolean isLoaded = false;
 
-	public abstract boolean hasXmp();
+//	public abstract boolean hasXmp();
 
 	public String getAperture()
 	{
@@ -415,8 +401,6 @@ public abstract class MetaMedia extends MediaItem implements MetaObject
 		}
 	}
 
-	protected abstract BufferedInputStream getXmpInputStream();
-	
 	protected void getContent()
 	{
 		String[] selection = new String[]{ getUri().toString() };
@@ -441,31 +425,6 @@ public abstract class MetaMedia extends MediaItem implements MetaObject
 		isoLegacy = meta.getString(Meta.ISO_COLUMN);		
 		modelLegacy = meta.getString(Meta.MODEL_COLUMN);		
 		makeLegacy = meta.getString(Meta.MAKE_COLUMN);				
-	}
-
-	private boolean readXmp()
-	{
-		InputStream xmp = getXmpInputStream();
-		try
-		{
-			if (xmp != null)
-			{
-				XmpReader reader = new XmpReader();
-				byte[] buffer = new byte[xmp.available()];
-				xmp.read(buffer);
-				reader.extract(buffer, mMetadata);
-			}
-			return true;
-		}
-		catch (IOException e)
-		{
-			Log.e(TAG, "Failed to open XMP.", e);
-			return false;
-		}
-		finally
-		{
-            Utils.closeSilently(xmp);
-		}
 	}
 
 	public int getWidth()

@@ -58,6 +58,8 @@ public class LibRaw
 			(int source, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 	private static native byte[] getThumbFileWatermark
         (String filePath, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
+	private static native byte[] getThumbFdWatermark
+			(int source, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
 	private static native byte[] getThumbBuffer
         (byte[] buffer, String[] exif, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat);
 
@@ -108,9 +110,13 @@ public class LibRaw
 	
 	public static byte[] getThumbWithWatermark(File file, byte[] watermark, Margins margins, int waterWidth, int waterHeight)
 	{
-		long start = System.currentTimeMillis();
 		byte[] image = getThumbFileWatermark(file.getPath(), null, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, watermark, margins.getArray(), waterWidth, waterHeight);
-		Log.d(TAG, "DB: WaterThumb took " + (System.currentTimeMillis() - start) + "ms");
+		return image;
+	}
+
+	public static byte[] getThumbWithWatermark(int fd, byte[] watermark, Margins margins, int waterWidth, int waterHeight)
+	{
+		byte[] image = getThumbFdWatermark(fd, null, 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, watermark, margins.getArray(), waterWidth, waterHeight);
 		return image;
 	}
 

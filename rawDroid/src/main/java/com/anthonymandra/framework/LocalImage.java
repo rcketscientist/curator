@@ -7,8 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
-import android.os.Parcel;
 import android.os.ParcelFileDescriptor;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
@@ -20,30 +20,14 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
-import com.crashlytics.android.Crashlytics;
-import com.drew.metadata.xmp.XmpDirectory;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 public class LocalImage extends MetaMedia {
 	private static final String TAG = LocalImage.class.getSimpleName();
-	File mImage;
-	File mXmp;
-
-//	public LocalImage(Context context, File image) {
-//		super(context, Uri.fromFile(image));
-//		mImage = image;
-//	}
 
 	public LocalImage(Context context, Uri image) {
 		super(context, image);
@@ -53,81 +37,52 @@ public class LocalImage extends MetaMedia {
 		this(context, Uri.parse(image.getString(Meta.URI_COLUMN)));
 	}
 
-	// TEMPORARY to avoid full rewrite during testing
-	public File getFile() {
-		return mImage;
-	}
-
-	@Override
-	public byte[] getImage() {
-        return getImageBytes();
-	}
-
-    private byte[] getImageBytes()
-    {
-        byte[] dst = new byte[(int) mImage.length()];
-        DataInputStream dis = null;
-        try {
-            dis = new DataInputStream(new FileInputStream(mImage));
-            dis.readFully(dst);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
-            Utils.closeSilently(dis);
-        }
-        return dst;
-    }
-
     @Override
     public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
                                         int waterHeight, LibRaw.Margins margins) {
-        if (Util.isNative(getFile())) {
-            return getImageBytes();
-        }
+	    if (ImageUtils.isAndroidImage(mContext, mUri))
+	    {
+		    return getImageBytes();
+	    }
 
-        return LibRaw.getThumbWithWatermark(mImage, watermark, margins,
-				waterWidth, waterHeight);
+	    ParcelFileDescriptor pfd = null;
+	    try
+	    {
+		    pfd = mContext.getContentResolver().openFileDescriptor(mUri, "r");
+		    int fd = pfd.getFd();
+
+		    return LibRaw.getThumbWithWatermark(fd, watermark, margins,
+				    waterWidth, waterHeight);
+	    }
+	    catch (FileNotFoundException e)
+	    {
+			return null;
+	    }
     }
 
-	@Override
-	public String getFilePath() {
-		return mImage.getPath();
+	private byte[] getImageBytes()
+	{
+		InputStream is = null;
+		try
+		{
+			is = mContext.getContentResolver().openInputStream(mUri);
+			return Util.getBytes(is);
+		} catch (Exception e)
+		{
+			return null;
+		}
+		finally
+		{
+			Utils.closeSilently(is);
+		}
 	}
-
-    @Deprecated
-	@Override
-	public boolean canDecode() {
-		// Log.d(TAG, mImage.getName());
-		// Log.d(TAG, "canExecute: " + String.valueOf(mImage.canExecute()));
-		// Log.d(TAG, "canRead: " + String.valueOf(mImage.canRead()));
-		// Log.d(TAG, "canWrite: " + String.valueOf(mImage.canWrite()));
-		// Log.d(TAG, "isAbsolute: " + String.valueOf(mImage.isAbsolute()));
-		// Log.d(TAG, "isDirectory: " + String.valueOf(mImage.isDirectory()));
-		// Log.d(TAG, "isFile: " + String.valueOf(mImage.isFile()));
-		// Log.d(TAG, "isHidden: " + String.valueOf(mImage.isHidden()));
-        return mImage.isFile() && LibRaw.canDecode(mImage);
-    }
 
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public byte[] getThumb() {
 		if (ImageUtils.isAndroidImage(mType))
 		{
-			InputStream is = null;
-			byte[] imageBytes;
-			try
-			{
-				is = mContext.getContentResolver().openInputStream(mUri);
-				imageBytes = Util.getBytes(is);
-			} catch (Exception e)
-			{
-				return null;
-			}
-			finally
-			{
-				Utils.closeSilently(is);
-			}
+			byte[] imageBytes = getImageBytes();
 
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;
@@ -189,62 +144,35 @@ public class LocalImage extends MetaMedia {
 		}
 	}
 
-	public boolean hasXmp() {
-		return hasXmpFile() || mMetadata.containsDirectoryOfType(XmpDirectory.class);
+	private DocumentFile getXmpFile()
+	{
+		return getAssociatedFile("xmp");
 	}
 
-	private boolean hasXmpFile() {
-		return getXmpFile().exists();
-	}
-    private boolean hasJpgFile() {
-        return getJpgFile().exists();
+    private DocumentFile getJpgFile()
+    {
+        return getAssociatedFile("image/jpeg", "jpg");
     }
 
-	private File getXmpFile() {
-		if (mXmp == null)
-			mXmp = getAssociatedFile("xmp");
-
-		return mXmp;
+	private DocumentFile getAssociatedFile(String ext)
+	{
+		return getAssociatedFile("text/plain", ext);
 	}
 
-    private File getJpgFile() {
-        return getAssociatedFile("jpg");
+    private DocumentFile getAssociatedFile(String mimeType, String ext) {
+	    String name = Util.swapExtention(getName(), ext);
+
+	    DocumentFile image = DocumentFile.fromSingleUri(mContext, mUri);
+	    DocumentFile parent = image.getParentFile();
+
+	    // The automatic creation of the file could cause issues, but findFile is slow
+	    // and there's no way to exists() an arbitrary child...
+	    return parent.createFile(mimeType, name);
     }
-
-    private File getAssociatedFile(String ext) {
-        String name = mImage.getName();
-        int pos = name.lastIndexOf(".");
-        if (pos > 0) {
-            name = name.substring(0, pos);
-        }
-        name += "." + ext;
-
-        return new File(mImage.getParent(), name);
-    }
-
-	@Override
-	protected BufferedInputStream getXmpInputStream() {
-		if (!hasXmpFile())
-			return null;
-
-		try {
-			return new BufferedInputStream(new FileInputStream(getXmpFile()));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@Override
-	public boolean isDirectory() {
-		return mImage.isDirectory();
-	}
 
 	@Override
 	public Uri getSwapUri() {
-		return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
-				+ Util.swapExtention(mImage.getName(), ".jpg") + "#"
-				+ mImage.getPath());
+		return SwapProvider.createSwapUri(getName(), getUri());
 	}
 
 	@Override
@@ -301,16 +229,6 @@ public class LocalImage extends MetaMedia {
 			BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc,
 					imageData, 0, imageData.length, false);
 			return brd;
-		}
-	}
-
-	@Override
-	public InputStream getImageStream() {
-		try {
-			return new FileInputStream(mImage);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
 		}
 	}
 }

@@ -54,6 +54,19 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         return true;
     }
 
+	/**
+	 * Generates a uri to request a swap file
+     * @param name Name of the source image
+     * @param uri uri of the source image
+     * @return String uri to request a swap file
+     */
+    public static Uri createSwapUri(String name, Uri uri)
+    {
+        return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
+                + Util.swapExtention(name, ".jpg") + "#"
+                + uri);
+    }
+
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode)
             throws FileNotFoundException {
@@ -65,11 +78,11 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
             // If it returns 1 - then it matches the Uri defined in onCreate
             case 1:
-                File input =  new File(uri.getFragment());
+                Uri sourceUri = Uri.parse(uri.getFragment());
                 //If it's a native file, just share it directly.
-                if (Util.isNative(input))
+                if (Util.isNative(sourceUri))
                 {
-                    return ParcelFileDescriptor.open(input, modeToMode(mode));
+                    return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
                 }
 
                 File swapFile = new File(Util.getDiskCacheDir(getContext(),
@@ -80,11 +93,10 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 // Some receivers may call multiple times
                 if (!swapFile.exists())
                 {
-                    // TODO: This was a half-baked conversion to uri
-                	LocalImage image = new LocalImage(getContext(), Uri.fromFile(input));
-//	                byte[] imageData = image.getThumb();
-//	                if (imageData == null)
-//	                    return null;
+                	LocalImage image = new LocalImage(getContext(), sourceUri);
+	                byte[] imageData = image.getThumb();
+	                if (imageData == null)
+	                    return null;
 
 	                Bitmap watermark;
 	                byte[] waterData = null;
