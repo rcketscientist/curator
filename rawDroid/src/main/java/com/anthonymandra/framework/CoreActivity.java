@@ -850,7 +850,7 @@ public abstract class CoreActivity extends DocumentActivity
 		ParcelFileDescriptor pfd = null;
 		try
 		{
-			DocumentFile dest = FileUtil.getDocumentFile(this, destination, false, true);
+			DocumentFile dest = getDocumentFile(destination, false, true);
 			if (dest == null)
 				return false;
 			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
@@ -875,7 +875,7 @@ public abstract class CoreActivity extends DocumentActivity
 		ParcelFileDescriptor pfd = null;
 		try
 		{
-			DocumentFile dest = FileUtil.getDocumentFile(this, destination, false, true);
+			DocumentFile dest = getDocumentFile(destination, false, true);
 			if (dest == null)
 				return false;
 			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
@@ -1206,14 +1206,24 @@ public abstract class CoreActivity extends DocumentActivity
 			final List<String> totalImages = (List<String>) params[0];
 			List<String> remainingImages = new ArrayList<>(totalImages);
 
-			for (String filename : totalImages)
+			for (String image : totalImages)
 			{
-				File toRestore = new File(filename);
+				Uri toRestore = Uri.parse(image);
 				try
 				{
 					setWriteResume(WriteActions.RESTORE, new Object[]{remainingImages});
-					moveFile(recycleBin.getFile(filename), toRestore);
-					onImageAdded(Uri.fromFile(toRestore));
+					if (FileUtil.isFileScheme(toRestore))
+					{
+						File file = new File(toRestore.getPath());
+						moveFile(recycleBin.getFile(image), file);
+					}
+					else
+					{
+						Uri uri = Uri.fromFile(recycleBin.getFile(image));
+						moveFile(uri, toRestore);
+					}
+
+					onImageAdded(toRestore);
 				}
 				catch (WritePermissionException e)
 				{
@@ -1234,40 +1244,98 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	public boolean renameImage(File source, String baseName) throws WritePermissionException
+	public boolean renameImage(Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws WritePermissionException
 	{
-		Boolean imageSuccess;
+		Boolean imageSuccess = false;
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
-		imageSuccess = renameAssociatedFile(source, baseName);
-		if (ImageUtils.hasXmpFile(source))
+		ContentValues imageValues;
+		ContentValues jpgValues;
+		Uri originalJpegUri;
+		if (FileUtil.isFileScheme(source))
 		{
-			xmpSuccess = renameAssociatedFile(ImageUtils.getXmpFile(source), baseName);
+			DocumentFile file = DocumentFile.fromSingleUri(this, source);
+			DocumentFile renameFile = getRenamedFile(file, baseName);
+			imageSuccess = renameAssociatedFile(file, baseName);
+			imageValues = new ContentValues();
+			imageValues.put(Meta.Data.NAME, renameFile.getName());
+			imageValues.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
+			if (ImageUtils.hasXmpFile(file))
+			{
+				xmpSuccess = renameAssociatedFile(ImageUtils.getXmpFile(file), baseName);
+			}
+			if (ImageUtils.hasJpgFile(file))
+			{
+				originalJpegUri = Uri.fromFile(ImageUtils.getJpgFile(file));
+				File renamedJpeg = ImageUtils.getJpgFile(renameFile);
+
+				ContentValues cv = new ContentValues();
+				cv.put(Meta.Data.NAME, renamedJpeg.getName());
+				cv.put(Meta.Data.URI, Uri.fromFile(renamedJpeg).toString());
+
+				jpgSuccess = renameAssociatedFile(ImageUtils.getJpgFile(file), baseName);
+			}
 		}
-		if (ImageUtils.hasJpgFile(source))
+		else
 		{
-			jpgSuccess = renameAssociatedFile(ImageUtils.getJpgFile(source), baseName);
+			DocumentFile file = DocumentFile.fromSingleUri(this, source);
+
+		}
+
+		if (imageSuccess)
+		{
+			updates.add(
+					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+							.withSelection(Meta.Data.URI + "=?", new String[]{source.toString()})
+							.withValues(imageValues)
+							.build());
+		}
+
+		if (jpgSuccess)
+		{
+			updates.add(
+					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+							.withSelection(Meta.Data.URI + "=?", new String[]{originalJpegUri.toString()})
+							.withValues(jpgValues)
+							.build());
 		}
 
 		return imageSuccess && xmpSuccess && jpgSuccess;
 	}
 
-	public boolean renameAssociatedFile(File original, String baseName)
+	public boolean renameAssociatedFile(DocumentFile original, String baseName)
 			throws WritePermissionException
 	{
-		File renameFile = getRenamedFile(original, baseName);
-		return moveFile(original, renameFile);
+		DocumentFile renameFile = getRenamedFile(original, baseName);
+		if (FileUtil.isFileScheme(renameFile.getUri()))
+		{
+			File from = new File(original.getUri().getPath());
+			File to = new File(renameFile.getUri().getPath());
+			return moveFile(from, to);
+		}
+		else
+		{
+			return moveFile(original.getUri(), renameFile.getUri());
+		}
 	}
 
-	public File getRenamedFile(File original, String baseName)
+	/**
+	 * This will only work with heriarchical tree uris
+	 * @param original
+	 * @param baseName
+     * @return
+     */
+	public DocumentFile getRenamedFile(DocumentFile original, String baseName)
 	{
 		String filename = original.getName();
 		String ext = filename.substring(filename.lastIndexOf("."),
 				filename.length());
 
 		String rename = baseName + ext;
-		return new File(original.getParent(), rename);
+		String parent = original.getParentFile().getUri().toString();
+		String renameUriString = parent + "/" + rename;
+		return DocumentFile.fromSingleUri(this, Uri.parse(renameUriString));
 	}
 
 	private static int numDigits(int x)

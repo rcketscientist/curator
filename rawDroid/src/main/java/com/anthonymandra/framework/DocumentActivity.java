@@ -149,7 +149,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 			inStream = new FileInputStream(source);
 
 			// First try the normal way
-			if (isWritable(target))
+			if (FileUtil.isWritable(target))
 			{
 				// standard way
 				outStream = new FileOutputStream(target);
@@ -516,38 +516,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Check is a file is writable. Detects write issues on external SD card.
-	 *
-	 * @param file
-	 *            The file
-	 * @return true if the file is writable.
-	 */
-	public static boolean isWritable(final File file) {
-		boolean isExisting = file.exists();
-
-		try {
-			FileOutputStream output = new FileOutputStream(file, true);
-			try {
-				output.close();
-			}
-			catch (IOException e) {
-				// do nothing.
-			}
-		}
-		catch (FileNotFoundException e) {
-			return false;
-		}
-		boolean result = file.canWrite();
-
-		// Ensure that file is not created during this process.
-		if (!isExisting) {
-			file.delete();
-		}
-
-		return result;
-	}
-
-	/**
 	 * Get a list of external SD card paths. (Kitkat or higher.)
 	 *
 	 * @return A list of external SD card paths.
@@ -630,7 +598,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 			throws WritePermissionException
 	{
 		// First try the normal way
-		if (isWritable(file))
+		if (FileUtil.isWritable(file))
 		{
 			return DocumentFile.fromFile(file);
 		}
@@ -772,7 +740,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 		String baseFolder = null;
 
 		// First try to get the base folder via unofficial StorageVolume API from the URIs.
-		String treeBase = getFullPathFromTreeUri(treeUri);
+		String treeBase = FileUtil.getFullPathFromTreeUri(this, treeUri);
 		if (fullPath.startsWith(treeBase)) {
 			baseFolder = treeBase;
 	}
@@ -825,135 +793,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 		return document;
 	}
-
-	/**
-	 * Get the full path of a document from its tree URI.
-	 *
-	 * @param treeUri
-	 *            The tree RI.
-	 * @return The path (without trailing file separator).
-	 */
-	private String getFullPathFromTreeUri(final Uri treeUri) {
-		if (treeUri == null) {
-			return null;
-		}
-		String volumePath = getVolumePath(getVolumeIdFromTreeUri(treeUri));
-		if (volumePath == null) {
-			return File.separator;
-		}
-		if (volumePath.endsWith(File.separator)) {
-			volumePath = volumePath.substring(0, volumePath.length() - 1);
-		}
-
-		String documentPath = getDocumentPathFromTreeUri(treeUri);
-		if (documentPath.endsWith(File.separator)) {
-			documentPath = documentPath.substring(0, documentPath.length() - 1);
-		}
-
-		if (documentPath != null && documentPath.length() > 0) {
-			if (documentPath.startsWith(File.separator)) {
-				return volumePath + documentPath;
-			}
-			else {
-				return volumePath + File.separator + documentPath;
-			}
-		}
-		else {
-			return volumePath;
-		}
-	}
-
-	/**
-	 * Get the path of a certain volume.
-	 *
-	 * @param volumeId
-	 *            The volume id.
-	 * @return The path.
-	 */
-	private String getVolumePath(final String volumeId) {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			return null;
-		}
-
-		try {
-			StorageManager mStorageManager =
-					(StorageManager) getSystemService(Context.STORAGE_SERVICE);
-
-			Class<?> storageVolumeClazz = Class.forName("android.os.storage.StorageVolume");
-
-			Method getVolumeList = mStorageManager.getClass().getMethod("getVolumeList");
-			Method getUuid = storageVolumeClazz.getMethod("getUuid");
-			Method getPath = storageVolumeClazz.getMethod("getPath");
-			Method isPrimary = storageVolumeClazz.getMethod("isPrimary");
-			Object result = getVolumeList.invoke(mStorageManager);
-
-			final int length = Array.getLength(result);
-			for (int i = 0; i < length; i++) {
-				Object storageVolumeElement = Array.get(result, i);
-				String uuid = (String) getUuid.invoke(storageVolumeElement);
-				Boolean primary = (Boolean) isPrimary.invoke(storageVolumeElement);
-
-				// primary volume?
-				if (primary.booleanValue() && PRIMARY_VOLUME_NAME.equals(volumeId)) {
-					return (String) getPath.invoke(storageVolumeElement);
-				}
-
-				// other volumes?
-				if (uuid != null) {
-					if (uuid.equals(volumeId)) {
-						return (String) getPath.invoke(storageVolumeElement);
-					}
-				}
-			}
-
-			// not found.
-			return null;
-		}
-		catch (Exception ex) {
-			return null;
-		}
-	}
-
-	/**
-	 * Get the volume ID from the tree URI.
-	 *
-	 * @param treeUri
-	 *            The tree URI.
-	 * @return The volume ID.
-	 */
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	private static String getVolumeIdFromTreeUri(final Uri treeUri) {
-		final String docId = DocumentsContract.getTreeDocumentId(treeUri);
-		final String[] split = docId.split(":");
-
-		if (split.length > 0) {
-			return split[0];
-		}
-		else {
-			return null;
-		}
-	}
-
-	/**
-	 * Get the document path (relative to volume name) for a tree URI (LOLLIPOP).
-	 *
-	 * @param treeUri
-	 *            The tree URI.
-	 * @return the document path.
-	 */
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	private static String getDocumentPathFromTreeUri(final Uri treeUri) {
-		final String docId = DocumentsContract.getTreeDocumentId(treeUri);
-		final String[] split = docId.split(":");
-		if ((split.length >= 2) && (split[1] != null)) {
-			return split[1];
-		}
-		else {
-			return File.separator;
-		}
-	}
-
-	// Utility methods for Kitkat
 
 	/**
 	 * Get the stored tree URI.

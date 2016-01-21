@@ -18,9 +18,7 @@ package com.anthonymandra.framework;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
@@ -90,6 +88,21 @@ public class RecycleBin
 	}
 
 	/**
+	 * Deletes the given file.  This should be overridden if necessary to handle file system changes.
+	 * @param toDelete file to delete
+	 * @return success
+	 * @throws IOException the base method does not throw, but the exception is available for subclasses
+	 */
+	protected boolean deleteFile(Uri toDelete) throws IOException
+	{
+		// This will likely fail due to write permission on any device needing to use this method.
+		// Either handle write permission separately or,
+		// Overload with a call to handle requesting write permission if needed.
+		DocumentFile df = DocumentFile.fromSingleUri(mContext, toDelete);
+		return df.delete();
+	}
+
+	/**
 	 * Adds a file to the recycling bin synchronously.  Recommended to be called asynchronously,
 	 * such as with {@link #addFileAsync(Uri), which will automatically run m AsyncTask}
 	 */
@@ -106,7 +119,7 @@ public class RecycleBin
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 			{
-				final String key = fileToKey(toRecycle.getPath());
+				final String key = fileToKey(toRecycle.toString());
 				BufferedOutputStream out = null;
 				BufferedInputStream bis = null;
 				try
@@ -130,7 +143,14 @@ public class RecycleBin
                             out.write(buffer, 0, length);
                         }
 						editor.commit();
-						deleteFile(new File(toRecycle.getPath()));
+						if (FileUtil.isFileScheme(toRecycle))
+						{
+							deleteFile(new File(toRecycle.getPath()));
+						}
+						else
+						{
+							deleteFile(toRecycle);
+						}
 					}
 				}
 				catch (final IOException e)

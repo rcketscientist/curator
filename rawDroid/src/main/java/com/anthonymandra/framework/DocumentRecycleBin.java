@@ -1,5 +1,7 @@
 package com.anthonymandra.framework;
 
+import android.net.Uri;
+
 import java.io.File;
 
 public class DocumentRecycleBin extends RecycleBin
@@ -19,6 +21,15 @@ public class DocumentRecycleBin extends RecycleBin
 	 */
 	@Override
 	protected boolean deleteFile(File toDelete) throws DocumentActivity.WritePermissionException
+	{
+		return mActivity.deleteFile(toDelete);
+	}
+
+	/**
+	 * @throws DocumentActivity.WritePermissionException thrown if write permission must be requested
+	 */
+	@Override
+	protected boolean deleteFile(Uri toDelete) throws DocumentActivity.WritePermissionException
 	{
 		return mActivity.deleteFile(toDelete);
 	}
