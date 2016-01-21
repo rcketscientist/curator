@@ -27,6 +27,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.RawObject;
 import com.crashlytics.android.Crashlytics;
 
@@ -48,7 +49,7 @@ public abstract class MediaObject implements RawObject {
         mContext = c;
 
         // TODO: Might want to hang onto the contentresolver
-        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme()))
+        if (FileUtil.isContentScheme(uri))
         {
             String name = null;
             String type = null;

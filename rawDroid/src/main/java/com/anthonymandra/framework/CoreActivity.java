@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -712,12 +713,38 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @return success
 	 * @throws WritePermissionException
 	 */
+	private boolean copy(File fromImage, File toImage) throws WritePermissionException
+	{
+		if (ImageUtils.hasXmpFile(fromImage))
+			copyFile(ImageUtils.getXmpFile(fromImage), ImageUtils.getXmpFile(toImage));
+		if (ImageUtils.hasJpgFile(fromImage))
+			copyFile(ImageUtils.getJpgFile(fromImage), ImageUtils.getJpgFile(toImage));
+		return copyFile(fromImage, toImage);
+	}
+
+	/**
+	 * File operation tasks
+	 */
+
+	/**
+	 * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
+	 * @param fromImage source image
+	 * @param toImage target image
+	 * @return success
+	 * @throws WritePermissionException
+	 */
 	private boolean copy(Uri fromImage, Uri toImage) throws WritePermissionException
 	{
 		if (ImageUtils.hasXmpFile(this, fromImage))
-			copyFile(ImageUtils.getXmpFile(this, fromImage), ImageUtils.getXmpFile(this, toImage));
+		{
+			copyFile(ImageUtils.getXmpFile(this, fromImage).getUri(),
+					ImageUtils.getXmpFile(this, toImage).getUri());
+		}
 		if (ImageUtils.hasJpgFile(this, fromImage))
-			copyFile(ImageUtils.getJpgFile(this, fromImage), ImageUtils.getJpgFile(this, toImage));
+		{
+			copyFile(ImageUtils.getJpgFile(this, fromImage).getUri(),
+					ImageUtils.getJpgFile(this, toImage).getUri());
+		}
 		return copyFile(fromImage, toImage);
 	}
 
@@ -747,29 +774,37 @@ public abstract class CoreActivity extends DocumentActivity
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 
-			File destinationFolder = (File) params[1];
+			Uri destinationFolder = (Uri) params[1];
 
 			mProgressDialog.setMax(totalImages.size());
 
 			for (Uri toCopy : totalImages)
 			{
-				File from = new File(toCopy.getPath());
-				String filename = from.getName();
-				File to = new File(destinationFolder, filename);
-
-				publishProgress(filename);
-
-				// Skip a file if it's the same location
-				if (to.exists()) continue;
-
 				try
 				{
 					setWriteResume(WriteActions.COPY, new Object[]{remainingImages});
 
-					copy(from, to);
+					if (FileUtil.isFileScheme(toCopy))
+					{
+						File from = new File(toCopy.getPath());
+						File to = new File(destinationFolder.getPath(), from.getName());
+
+						// Skip a file if it's the same location
+						if (to.exists()) continue;
+						copy(from, to);
+					}
+					else
+					{
+						DocumentFile source = DocumentFile.fromSingleUri(CoreActivity.this, toCopy);
+						Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
+						copy(toCopy, destinationFile);
+					}
+
 					remainingImages.remove(toCopy);
+					onProgressUpdate();
 					onImageAdded(toCopy);
-				} catch (WritePermissionException e)
+				}
+				catch (WritePermissionException e)
 				{
 					e.printStackTrace();
 					// We'll be automatically requesting write permission so kill this process
@@ -931,6 +966,7 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
+			// TODO: This needs to be converted to SAF
 			boolean success = true;
 			for (Uri toExport : totalImages)
 			{
@@ -990,6 +1026,15 @@ public abstract class CoreActivity extends DocumentActivity
 		return deleteFile(image);
 	}
 
+	private boolean delete(Uri image) throws WritePermissionException
+	{
+		if (ImageUtils.hasXmpFile(this, image))
+			deleteFile(ImageUtils.getXmpFile(this, image).getUri());
+		if (ImageUtils.hasJpgFile(this, image))
+			deleteFile(ImageUtils.getJpgFile(this, image).getUri());
+		return deleteFile(image);
+	}
+
 	protected class DeleteTask extends AsyncTask<Object, Integer, Boolean>
 			implements OnCancelListener
 	{
@@ -1022,11 +1067,23 @@ public abstract class CoreActivity extends DocumentActivity
 				setWriteResume(WriteActions.DELETE, new Object[]{remainingDeletes});
 				try
 				{
-					if (delete(new File(toDelete.getPath())))
+					if (FileUtil.isFileScheme(toDelete))
 					{
-						onImageRemoved(toDelete);
-						remainingDeletes.remove(toDelete);
-						removed.add(toDelete);
+						if (delete(new File(toDelete.getPath())))
+						{
+							onImageRemoved(toDelete);
+							remainingDeletes.remove(toDelete);
+							removed.add(toDelete);
+						}
+					}
+					else
+					{
+						if(delete(toDelete))
+						{
+							onImageRemoved(toDelete);
+							remainingDeletes.remove(toDelete);
+							removed.add(toDelete);
+						}
 					}
 				}
 				catch (WritePermissionException e)

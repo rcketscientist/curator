@@ -84,89 +84,53 @@ public abstract class DocumentActivity extends AppCompatActivity
 	private static final String PRIMARY_VOLUME_NAME = "primary";
 
 	/**
-	 * Copy a file. The target file may even be on external SD card for Kitkat.
+	 * Copy a file within the constraints of SAF.
 	 *
 	 * @param source
-	 *            The source file
+	 *            The source uri
 	 * @param target
-	 *            The target file
+	 *            The target uri
 	 * @return true if the copying was successful.
 	 */
 	public boolean copyFile(final Uri source, final Uri target)
 			throws WritePermissionException
 	{
-		try
-		{
-			ParcelFileDescriptor sourcePfd = FileUtil.getParcelFileDescriptor(this, source, "r");
-			ParcelFileDescriptor targetPfd = FileUtil.getParcelFileDescriptor(this, source, "rw");
-			InputStream is = new FileInputStream(sourcePfd.getFileDescriptor());
-			OutputStream os = new FileOutputStream(targetPfd.getFileDescriptor());
-		}
-		catch (FileNotFoundException e)
-		{
-			return false;
-		}
-
+		ParcelFileDescriptor sourcePfd = null;
+		DocumentFile targetDoc;
 		FileInputStream inStream = null;
 		OutputStream outStream = null;
-		FileChannel inChannel = null;
-		FileChannel outChannel = null;
-		try {
-			inStream = new FileInputStream(source);
 
-			// First try the normal way
-			if (isWritable(target)) {
-				// standard way
-				outStream = new FileOutputStream(target);
-				inChannel = inStream.getChannel();
-				outChannel = ((FileOutputStream) outStream).getChannel();
-				inChannel.transferTo(0, inChannel.size(), outChannel);
-			}
-			else {
-				if (Util.hasLollipop()) {
-					// Storage Access Framework
-					DocumentFile targetDocument = getLollipopDocument(target, false, true);
-					if (targetDocument == null)
-						return false;
-					outStream =
-							getContentResolver().openOutputStream(targetDocument.getUri());
-				}
-				else if (Util.hasKitkat()) {
-					// Workaround for Kitkat ext SD card
-					Uri uri = MediaStoreUtil.getUriFromFile(this, target.getAbsolutePath());
-					outStream = getContentResolver().openOutputStream(uri);
-				}
-				else {
-					return false;
-				}
+		try
+		{
+			sourcePfd = FileUtil.getParcelFileDescriptor(this, source, "r");
+			targetDoc = getLollipopDocument(target, false, true);
+			inStream = new FileInputStream(sourcePfd.getFileDescriptor());
+			outStream = getContentResolver().openOutputStream(targetDoc.getUri());
 
-				if (outStream != null) {
-					// Both for SAF and for Kitkat, write to output stream.
-					byte[] buffer = new byte[4096]; // MAGIC_NUMBER
-					int bytesRead;
-					while ((bytesRead = inStream.read(buffer)) != -1) {
-						outStream.write(buffer, 0, bytesRead);
-					}
+			if (outStream != null)
+			{
+				byte[] buffer = new byte[4096]; // MAGIC_NUMBER
+				int bytesRead;
+				while ((bytesRead = inStream.read(buffer)) != -1) {
+					outStream.write(buffer, 0, bytesRead);
 				}
-
 			}
 		}
-		catch (Exception e) {
-			Log.e(TAG,
-					"Error when copying file to " + target.getAbsolutePath(), e);
+		catch (IOException e)
+		{
 			return false;
 		}
-		finally {
+		finally
+		{
+			Utils.closeSilently(sourcePfd);
 			Utils.closeSilently(inStream);
 			Utils.closeSilently(outStream);
-			Utils.closeSilently(inChannel);
-			Utils.closeSilently(outChannel);
 		}
 		return true;
 	}
 
 	/**
-	 * Copy a file. The target file may even be on external SD card for Kitkat.
+	 * Copy a file within the constraints of SAF.
 	 *
 	 * @param source
 	 *            The source file
@@ -177,7 +141,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 	public boolean copyFile(final File source, final File target)
 			throws WritePermissionException
 	{
-
 		FileInputStream inStream = null;
 		OutputStream outStream = null;
 		FileChannel inChannel = null;
@@ -186,7 +149,8 @@ public abstract class DocumentActivity extends AppCompatActivity
 			inStream = new FileInputStream(source);
 
 			// First try the normal way
-			if (isWritable(target)) {
+			if (isWritable(target))
+			{
 				// standard way
 				outStream = new FileOutputStream(target);
 				inChannel = inStream.getChannel();
@@ -194,7 +158,8 @@ public abstract class DocumentActivity extends AppCompatActivity
 				inChannel.transferTo(0, inChannel.size(), outChannel);
 			}
 			else {
-				if (Util.hasLollipop()) {
+				if (Util.hasLollipop())
+				{
 					// Storage Access Framework
 					DocumentFile targetDocument = getLollipopDocument(target, false, true);
 					if (targetDocument == null)
@@ -202,12 +167,8 @@ public abstract class DocumentActivity extends AppCompatActivity
 					outStream =
 							getContentResolver().openOutputStream(targetDocument.getUri());
 				}
-				else if (Util.hasKitkat()) {
-					// Workaround for Kitkat ext SD card
-					Uri uri = MediaStoreUtil.getUriFromFile(this, target.getAbsolutePath());
-					outStream = getContentResolver().openOutputStream(uri);
-				}
-				else {
+				else
+				{
 					return false;
 				}
 
@@ -237,7 +198,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Delete a file. May be even on external SD card.
+	 * Delete a file within the constraints of SAF.
 	 *
 	 * @param file
 	 *            the file to be deleted.
@@ -263,7 +224,26 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Move a file. The target file may even be on external SD card.
+	 * Delete a file within the constraints of SAF.  This delete is oriented to files that are
+	 * backed ONLY by a URI, such as USB drives on API 23 (6.0).
+	 *
+	 * {@link #deleteFile(File)} will be more efficient in most cases if a {@link File} is available.
+	 *
+	 * @param file
+	 *            the uri to be deleted.
+	 * @return True if successfully deleted.
+	 */
+	public boolean deleteFile(final Uri file)
+			throws WritePermissionException
+	{
+		DocumentFile document = getLollipopDocument(file, false, true);
+		if (document == null)
+			return false;
+		return document.delete();
+	}
+
+	/**
+	 * Move a file within the constraints of SAF.
 	 *
 	 * @param source
 	 *            The source file
@@ -286,7 +266,29 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Rename a folder. In case of extSdCard in Kitkat, the old folder stays in place, but files are moved.
+	 * Move a file within the constraints of SAF.
+	 *
+	 * This move is oriented to files that are backed ONLY by a URI, such as USB drives on API 23 (6.0).
+	 *
+	 * {@link #moveFile(File, File)} will be more efficient in most cases if a {@link File} is available.
+	 *
+	 * @param source
+	 *            The source uri
+	 * @param target
+	 *            The target uri
+	 * @return true if the copying was successful.
+	 */
+	public boolean moveFile(final Uri source, final Uri target) throws WritePermissionException
+	{
+		boolean success = copyFile(source, target);
+		if (success) {
+			success = deleteFile(source);
+		}
+		return success;
+	}
+
+	/**
+	 * Rename a folder within the constraints of SAF.
 	 *
 	 * @param source
 	 *            The source folder.
@@ -346,41 +348,28 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Get a temp file.
+	 * Create a folder within the constraints of the SAF.
 	 *
-	 * @param file
-	 *            The base file for which to create a temp file.
-	 * @return The temp file.
-	 */
-	public static File getTempFile(final Context context, final File file) {
-		File extDir = context.getExternalFilesDir(null);
-		File tempFile = new File(extDir, file.getName());
-		return tempFile;
-	}
-
-	/**
-	 * Create a folder. The folder may even be on external SD card for Kitkat.
-	 *
-	 * @param file
+	 * @param folder
 	 *            The folder to be created.
 	 * @return True if creation was successful.
 	 */
-	public boolean mkdir(final File file)
+	public boolean mkdir(final File folder)
 			throws WritePermissionException
 	{
-		if (file.exists()) {
+		if (folder.exists()) {
 			// nothing to create.
-			return file.isDirectory();
+			return folder.isDirectory();
 		}
 
 		// Try the normal way
-		if (file.mkdir()) {
+		if (folder.mkdir()) {
 			return true;
 		}
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(file, true, true);
+			DocumentFile document = getLollipopDocument(folder, true, true);
 			if (document == null)
 				return false;
 			// getLollipopDocument implicitly creates the directory.
@@ -391,42 +380,84 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Delete a folder.
+	 * Create a folder within the constraints of the SAF.
 	 *
-	 * @param file
-	 *            The folder name.
+	 * @param folder
+	 *            The folder to be created.
+	 * @return True if creation was successful.
+	 */
+	public boolean mkdir(final Uri folder)
+			throws WritePermissionException
+	{
+		DocumentFile document = getLollipopDocument(folder, true, true);
+		if (document == null)
+			return false;
+		// getLollipopDocument implicitly creates the directory.
+		return document.exists();
+	}
+
+	/**
+	 * Delete a folder within the constraints of SAF
+	 *
+	 * @param folder
+	 *            The folder
 	 *
 	 * @return true if successful.
 	 */
-	public boolean rmdir(final File file)
+	public boolean rmdir(final File folder)
 			throws WritePermissionException
 	{
-		if (!file.exists()) {
+		if (!folder.exists()) {
 			return true;
 		}
-		if (!file.isDirectory()) {
+		if (!folder.isDirectory()) {
 			return false;
 		}
-		String[] fileList = file.list();
+		String[] fileList = folder.list();
 		if (fileList != null && fileList.length > 0) {
 			// Delete only empty folder.
 			return false;
 		}
 
 		// Try the normal way
-		if (file.delete()) {
+		if (folder.delete()) {
 			return true;
 		}
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(file, true, true);
+			DocumentFile document = getLollipopDocument(folder, true, true);
 			if (document == null)
 				return false;
 			return document.delete();
 		}
 
-		return !file.exists();
+		return !folder.exists();
+	}
+
+	/**
+	 * Delete a folder within the constraints of SAF
+	 *
+	 * @param folder
+	 *            The folder
+	 *
+	 * @return true if successful.
+	 */
+	public boolean rmdir(final Uri folder)
+			throws WritePermissionException
+	{
+		DocumentFile folderDoc = getLollipopDocument(folder, true, true);
+		if (!folderDoc.exists()) {
+			return true;
+		}
+		if (!folderDoc.isDirectory()) {
+			return false;
+		}
+
+		if (folderDoc.listFiles().length > 0)
+			return false;
+
+		return folderDoc.delete();
 	}
 
 	/**
@@ -436,7 +467,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 *            the folder
 	 * @return true if successful.
 	 */
-	public boolean deleteFilesInFolder(final Context context, final File folder)
+	public boolean deleteFilesInFolder(final File folder)
 			throws WritePermissionException
 	{
 		boolean totalSuccess = true;
@@ -451,6 +482,33 @@ public abstract class DocumentActivity extends AppCompatActivity
 						Log.w(TAG, "Failed to delete file" + children[i]);
 						totalSuccess = false;
 					}
+				}
+			}
+		}
+		return totalSuccess;
+	}
+
+	/**
+	 * Delete all files in a folder.
+	 *
+	 * @param folder
+	 *            the folder
+	 * @return true if successful.
+	 */
+	public boolean deleteFilesInFolder(final Uri folder)
+			throws WritePermissionException
+	{
+		boolean totalSuccess = true;
+		DocumentFile folderDoc = getLollipopDocument(folder, true, true);
+		DocumentFile[] children = folderDoc.listFiles();
+		for (DocumentFile child : children)
+		{
+			if (!child.isDirectory())
+			{
+				if (!child.delete())
+				{
+					Log.w(TAG, "Failed to delete file" + child);
+					totalSuccess = false;
 				}
 			}
 		}
@@ -580,14 +638,27 @@ public abstract class DocumentActivity extends AppCompatActivity
 		{
 			return getLollipopDocument(file, isDirectory, createDirectories);
 		}
-		else if (Util.hasKitkat())
-		{
-			// Workaround for Kitkat ext SD card
-			//TODO: This probably doesn't work
-			Uri uri = MediaStoreUtil.getUriFromFile(this, file.getAbsolutePath());
-			DocumentFile.fromSingleUri(this, uri);
-		}
 		return null;
+	}
+
+	/**
+	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
+	 * existing, it is created.
+	 *
+	 * @param file
+	 *            The file.
+	 * @param isDirectory
+	 *            flag indicating if the file should be a directory.
+	 * @param createDirectories
+	 *            flag indicating if intermediate path directories should be created if not existing.
+	 * @return The DocumentFile
+	 */
+	public DocumentFile getDocumentFile(final Uri file,
+	                                    final boolean isDirectory,
+	                                    final boolean createDirectories)
+			throws WritePermissionException
+	{
+		return getLollipopDocument(file, isDirectory, createDirectories);
 	}
 
 	/**
@@ -632,7 +703,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 			return target;
 		}
 
-		// TODO: Should check permissions instead of assuming one single root
 		DocumentFile permissionRoot = DocumentFile.fromTreeUri(this, treeUri);
 		DocumentFile parent = target.getParentFile();
 

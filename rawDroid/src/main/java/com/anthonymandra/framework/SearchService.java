@@ -119,7 +119,7 @@ public class SearchService extends IntentService
         {
             for (Uri image : images)
             {
-	            if (ContentResolver.SCHEME_CONTENT.equals(image.getScheme()))
+	            if (FileUtil.isContentScheme(image))
 	            {
 
 	            }

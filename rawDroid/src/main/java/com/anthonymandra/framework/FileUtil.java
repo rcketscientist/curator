@@ -445,41 +445,67 @@ public class FileUtil
 		return totalSuccess;
 	}
 
-	/**
-	 * Delete a directory asynchronously.
-	 *
-	 * @param activity
-	 *            The activity calling this method.
-	 * @param file
-	 *            The folder name.
-	 * @param postActions
-	 *            Commands to be executed after success.
-	 */
-	public static void rmdirAsynchronously(final Activity activity, final File file, final Runnable postActions) {
-		new Thread() {
-			@Override
-			public void run() {
-				int retryCounter = 5; // MAGIC_NUMBER
-				while (!FileUtil.rmdir(activity.getApplicationContext(), file) && retryCounter > 0) {
-					try {
-						Thread.sleep(100); // MAGIC_NUMBER
-					}
-					catch (InterruptedException e) {
-						// do nothing
-					}
-					retryCounter--;
-				}
-				if (file.exists()) {
-					Toast.makeText(activity.getApplicationContext(), R.string.error_deleting_folder, Toast.LENGTH_SHORT).show();
-//					DialogUtil.displayError(activity, R.string.message_dialog_failed_to_delete_folder, false,
-//							file.getAbsolutePath());
-				}
-				else {
-					activity.runOnUiThread(postActions);
-				}
+//	/**
+//	 * Delete a directory asynchronously.
+//	 *
+//	 * @param activity
+//	 *            The activity calling this method.
+//	 * @param file
+//	 *            The folder name.
+//	 * @param postActions
+//	 *            Commands to be executed after success.
+//	 */
+//	public static void rmdirAsynchronously(final Activity activity, final File file, final Runnable postActions) {
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				int retryCounter = 5; // MAGIC_NUMBER
+//				while (!FileUtil.rmdir(activity.getApplicationContext(), file) && retryCounter > 0) {
+//					try {
+//						Thread.sleep(100); // MAGIC_NUMBER
+//					}
+//					catch (InterruptedException e) {
+//						// do nothing
+//					}
+//					retryCounter--;
+//				}
+//				if (file.exists()) {
+//					Toast.makeText(activity.getApplicationContext(), R.string.error_deleting_folder, Toast.LENGTH_SHORT).show();
+////					DialogUtil.displayError(activity, R.string.message_dialog_failed_to_delete_folder, false,
+////							file.getAbsolutePath());
+//				}
+//				else {
+//					activity.runOnUiThread(postActions);
+//				}
+//
+//			}
+//		}.start();
+//	}
 
-			}
-		}.start();
+	public static boolean isContentScheme(Uri uri)
+	{
+		return ContentResolver.SCHEME_CONTENT.equalsIgnoreCase(uri.getScheme());
+	}
+
+	public static boolean isFileScheme(Uri uri)
+	{
+		return ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme());
+	}
+
+	/**
+	 * Returns a uri to a child file within a folder.  This can be used to get an assumed uri
+	 * to a child within a folder.  This avoids heavy calls to DocumentFile.listFiles or
+	 * write-locked createFile
+	 *
+	 * This will only work with a uri that is an heriacrchical tree similar to SCHEME_FILE
+	 * @param heirarchicalTreeUri folder to install into
+	 * @param filename filename of child file
+	 * @return Uri to the child file
+	 */
+	public static Uri getChildUri(Uri heirarchicalTreeUri, String filename)
+	{
+		String childUriString = heirarchicalTreeUri.toString() + "/" + filename;
+		return Uri.parse(childUriString);
 	}
 
 	/**
@@ -1138,7 +1164,7 @@ public class FileUtil
 			}
 		}
 		// MediaStore (and general)
-		else if ("content".equalsIgnoreCase(uri.getScheme())) {
+		else if (isContentScheme(uri)) {
 
 			// Return the remote address
 			if (isGooglePhotosUri(uri))
@@ -1147,7 +1173,7 @@ public class FileUtil
 			return getDataColumn(context, uri, null, null);
 		}
 		// File
-		else if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme())) {
+		else if (isFileScheme(uri)) {
 			return uri.getPath();
 		}
 
@@ -1163,7 +1189,7 @@ public class FileUtil
 	 */
 	public static InputStream getInputStream(final Context context, final Uri uri) throws FileNotFoundException
 	{
-		if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme()))
+		if (isFileScheme(uri))
 		{
 			return new FileInputStream(uri.getPath());
 		}
@@ -1182,7 +1208,7 @@ public class FileUtil
 	 */
 	public static ParcelFileDescriptor getParcelFileDescriptor(final Context context, final Uri uri, String mode) throws FileNotFoundException
 	{
-		if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme()))
+		if (isFileScheme(uri))
 		{
 			int m = ParcelFileDescriptor.MODE_READ_ONLY;
 			if ("rw".equals(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE;

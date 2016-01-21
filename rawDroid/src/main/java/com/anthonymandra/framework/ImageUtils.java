@@ -131,6 +131,12 @@ public class ImageUtils
     public static boolean hasJpgFile(Context c, Uri uri) {
         return getJpgFile(c, uri).exists();
     }
+    public static boolean hasXmpFile(File f) {
+        return getXmpFile(f).exists();
+    }
+    public static boolean hasJpgFile(File f) {
+        return getJpgFile(f).exists();
+    }
 
     public static DocumentFile getXmpFile(Context c, Uri uri)
     {
@@ -140,6 +146,16 @@ public class ImageUtils
     public static DocumentFile getJpgFile(Context c, Uri uri)
     {
         return getAssociatedFile(c, uri, "jpg");
+    }
+
+    public static File getXmpFile(File f)
+    {
+        return getAssociatedFile(f, "xmp");
+    }
+
+    public static File getJpgFile(File f)
+    {
+        return getAssociatedFile(f, "jpg");
     }
 
     private static DocumentFile getAssociatedFile(Context c, Uri uri, String ext)
@@ -160,6 +176,18 @@ public class ImageUtils
         String associatedString = parentString + "/" + name;
         Uri associatedUri = Uri.parse(associatedString);
         return DocumentFile.fromSingleUri(c, associatedUri);
+    }
+
+    /**
+     * Gets a similarly named file with a new ext
+     * @param file
+     * @param ext
+     * @return
+     */
+    private static File getAssociatedFile(File file, String ext) {
+        String name = file.getName();
+        name = Util.swapExtention(name, ext);
+        return new File(file.getParent(), name);
     }
 
     /**
