@@ -801,12 +801,8 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected void saveImage()
     {
+        // TODO: Probably need a way to store the current item
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-
-        String name = getCurrentItem().getName();
-        String jpeg = Util.swapExtention(name, ".jpg");
-
-        //TODO: Store the name
         startActivityForResult(intent, REQUEST_CODE_PICK_FILE_OR_DIRECTORY);
     }
 
@@ -907,8 +903,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             case REQUEST_CODE_PICK_FILE_OR_DIRECTORY:
                 if (resultCode == RESULT_OK && data != null)
                 {
-                    File dest = new File(data.getData().getPath());
-                    handleSaveImage(dest);
+                    handleSaveImage(data.getData());
                 }
                 break;
             case REQUEST_CODE_EDIT:
@@ -920,13 +915,9 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    private void handleSaveImage(File dest)
+    private void handleSaveImage(Uri dest)
     {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(GalleryActivity.PREFS_MOST_RECENT_SAVE, dest.getParent());
-        editor.apply();
-
         boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
         String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
         int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
@@ -986,7 +977,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
 		else
         {
-            onImageAdded(Uri.fromFile(dest));
+            onImageAdded(dest);
             //Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
         }
     }

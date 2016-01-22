@@ -36,6 +36,7 @@ import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.provider.DocumentFile;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -64,7 +65,6 @@ import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.MediaItem;
-import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
@@ -87,20 +87,16 @@ import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.WhatsNewDialog;
 
-import io.fabric.sdk.android.Fabric;
-import org.openintents.filemanager.FileManagerActivity;
-import org.openintents.intents.FileManagerIntents;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import io.fabric.sdk.android.Fabric;
 
 public class GalleryActivity extends CoreActivity implements OnItemClickListener, OnItemLongClickListener, OnScrollListener,
         ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>,
@@ -120,8 +116,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	// Preference fields
 	public static final String PREFS_NAME = "RawDroidPrefs";
 	public static final boolean PREFS_AUTO_INTERFACE_DEFAULT = true;
-	public static final String PREFS_MOST_RECENT_SAVE = "mostRecentSave";
-	public static final String PREFS_MOST_RECENT_IMPORT = "mostRecentImport";
 	public static final String PREFS_VERSION_NUMBER = "prefVersionNumber";
 	public static final String PREFS_SHOW_FILTER_HINT = "prefShowFilterHint";
 	public static final String PREFS_LAST_BETA_VERSION = "prefLastBetaVersion";
@@ -358,28 +352,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		if (getIntent().getData() != null)
 		{
-			try
-			{
-				InputStream is = getContentResolver().openInputStream(getIntent().getData());
-
-				// Attempt to import keywords
-				// TODO: We should check the format first
-				boolean success = KeywordProvider.importKeywords(this, new InputStreamReader(is));
-				int message;
-				if (success)
-				{
-					message = R.string.resultImportSuccessful;
-				}
-				else
-				{
-					message = R.string.resultImportFailed;
-				}
-				Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
+			ImageUtils.importKeywords(this, getIntent().getData());
 		}
 
 //		checkWriteAccess();
@@ -853,14 +826,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			case REQUEST_MOUNTED_IMPORT_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleImportDirResult(data.getData().getPath());
+					handleImportDirResult(data.getData());
 				}
 				break;
 			case REQUEST_EXPORT_THUMB_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
-                    handleExportThumbResult(data.getData().getPath());
-//					handleExportThumbResult(data);
+                    handleExportThumbResult(data.getData());
 				}
 				break;
             case REQUEST_UPDATE_PHOTO:
@@ -883,25 +855,15 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mImageGrid.smoothScrollToPosition(index);
     }
 
-	private void handleImportDirResult(final String destinationPath)
+	private void handleImportDirResult(final Uri destination)
 	{
-		File destination = new File(destinationPath);
-        if (!destination.canWrite())
-        {
-            showWriteAccessError();
-        }
-
-		long importSize = getSelectedImageSize();
-		if (destination.getFreeSpace() < importSize)
-		{
-			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-			return;
-		}
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(PREFS_MOST_RECENT_IMPORT, destination.getPath());
-		editor.apply();
+		// TODO: Might want to figure out a way to get free space to intriduce this check again
+//		long importSize = getSelectedImageSize();
+//		if (destination.getFreeSpace() < importSize)
+//		{
+//			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+//			return;
+//		}
 
 		new CopyTask().execute(mItemsForIntent, destination);
 	}
@@ -911,32 +873,31 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		long selectionSize = 0;
 		for (Uri selected : mGalleryAdapter.getSelectedItems())
 		{
-			File toImport = new File(selected.getPath());
-			selectionSize += toImport.length();
+			DocumentFile df;
+			if (FileUtil.isFileScheme(selected))
+			{
+				df = DocumentFile.fromFile(new File(selected.getPath()));
+			}
+			else
+			{
+				df = DocumentFile.fromSingleUri(this, selected);
+			}
+
+			selectionSize += df.length();
 		}
 		return selectionSize;
 	}
 
     @SuppressWarnings("unchecked")
-    private void handleExportThumbResult(final String destinationPath)
+    private void handleExportThumbResult(final Uri destination)
     {
-        File destination = new File(destinationPath);
-        if (!destination.canWrite())
-        {
-            showWriteAccessError();
-        }
-
-        long importSize = getSelectedImageSize();
-        if (destination.getFreeSpace() < importSize)
-        {
-            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(GalleryActivity.PREFS_MOST_RECENT_SAVE, destination.getPath());
-        editor.apply();
+		// TODO: Might want to figure out a way to get free space to introduce this check again
+//        long importSize = getSelectedImageSize();
+//        if (destination.getFreeSpace() < importSize)
+//        {
+//            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+//            return;
+//        }
 
         CopyThumbTask ct = new CopyThumbTask();
         ct.execute(getImageListFromUriList(mItemsForIntent), destination);
@@ -1081,67 +1042,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	private void requestImportImageLocation()
 	{
-        Intent intent = new Intent(this, FileManagerActivity.class);
-		intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
-
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentImport = settings.getString(GalleryActivity.PREFS_MOST_RECENT_IMPORT, null);
-
-		//TODO: Better start location?
-		File importLocation = ROOT;
-		if (recentImport != null)
-		{
-			importLocation = new File(recentImport);
-			if (!importLocation.exists())
-			{
-				importLocation = ROOT;
-			}
-		}
-		if (importLocation == null)
-			importLocation = START_PATH;
-
-		// Construct URI from file name.
-		intent.setData(Uri.fromFile(importLocation));
-
-		// Set fancy title and button (optional)
-		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.chooseDestination));
-		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.import1));
-
-		try
-		{
-			startActivityForResult(intent, REQUEST_MOUNTED_IMPORT_DIR);
-		}
-		catch (ActivityNotFoundException e)
-		{
-			// No compatible file manager was found.
-			Toast.makeText(this, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
-		}
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		startActivityForResult(intent, REQUEST_MOUNTED_IMPORT_DIR);
 	}
 
     private void requestExportThumbLocation()
     {
-        Intent intent = new Intent(this, FileManagerActivity.class);
-		intent.setAction(FileManagerIntents.ACTION_PICK_DIRECTORY);
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String recentExport = settings.getString(GalleryActivity.PREFS_MOST_RECENT_SAVE, null);
-
-		//TODO: Better start location?
-		File exportLocation = ROOT;
-		if (recentExport != null)
-		{
-			exportLocation = new File(recentExport);
-			if (!exportLocation.exists())
-			{
-				exportLocation = ROOT;
-			}
-		}
-
-		// Construct URI from file name.
-		intent.setData(Uri.fromFile(exportLocation));
-
-		// Set fancy title and button (optional)
-		intent.putExtra(FileManagerIntents.EXTRA_TITLE, getString(R.string.exportThumbnails));
-		intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, getString(R.string.export));
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
     }
 

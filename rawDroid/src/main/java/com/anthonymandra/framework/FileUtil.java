@@ -69,13 +69,13 @@ public class FileUtil
 	 * write-locked createFile
 	 *
 	 * This will only work with a uri that is an heriacrchical tree similar to SCHEME_FILE
-	 * @param heirarchicalTreeUri folder to install into
+	 * @param hierarchicalTreeUri folder to install into
 	 * @param filename filename of child file
 	 * @return Uri to the child file
 	 */
-	public static Uri getChildUri(Uri heirarchicalTreeUri, String filename)
+	public static Uri getChildUri(Uri hierarchicalTreeUri, String filename)
 	{
-		String childUriString = heirarchicalTreeUri.toString() + "/" + filename;
+		String childUriString = hierarchicalTreeUri.toString() + "/" + filename;
 		return Uri.parse(childUriString);
 	}
 
@@ -413,8 +413,8 @@ public class FileUtil
 		if (isFileScheme(uri))
 		{
 			int m = ParcelFileDescriptor.MODE_READ_ONLY;
-			if ("rw".equals(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE;
-			else if ("rwt".equals(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_TRUNCATE;
+			if ("w".equalsIgnoreCase(mode) || "rw".equalsIgnoreCase(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE;
+			else if ("rwt".equalsIgnoreCase(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_TRUNCATE;
 
 			//TODO: Is this any faster?  Otherwise could just rely on resolver
 			return ParcelFileDescriptor.open(new File(uri.getPath()), m);
@@ -422,6 +422,33 @@ public class FileUtil
 		else
 		{
 			return context.getContentResolver().openFileDescriptor(uri, mode);
+		}
+	}
+
+	/**
+	 * Generates an appropriate {@link DocumentFile} based on the scheme of the supplied uri.
+	 *
+	 * Note: This assumes that the uri is either:
+	 * <li>{@link ContentResolver#SCHEME_FILE} </li>
+	 * <li>com.android...documents based singleUri</li>
+	 *
+	 * If {@link DocumentFile} is not generated with the appropriate factory then the fields will
+	 * not be generated
+	 *
+	 * I am not certain what would happen with a non-document mediastore uri, etc.
+	 * @param uri
+	 * @return
+     */
+	public static DocumentFile getDocumentFile(Context c, Uri uri)
+	{
+		if (isFileScheme(uri))
+		{
+			return DocumentFile.fromFile(new File(uri.getPath()));
+		}
+		// TODO: Confirm if other cases need to be handled
+		else
+		{
+			return DocumentFile.fromSingleUri(c, uri);
 		}
 	}
 

@@ -785,7 +785,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 					nextDocument = document.createDirectory(parts[i]);
 				}
 				else {
-					nextDocument = document.createFile("image", parts[i]);
+					nextDocument = document.createFile(null, parts[i]);
 				}
 			}
 			document = nextDocument;

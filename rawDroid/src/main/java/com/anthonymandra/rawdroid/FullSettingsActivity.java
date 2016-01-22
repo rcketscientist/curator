@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,18 +20,18 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.android.gallery3d.common.Utils;
+import com.anthonymandra.content.KeywordProvider;
+import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
-import com.anthonymandra.widget.RemovableListPreference;
 import com.anthonymandra.widget.SeekBarPreference;
 
-import org.openintents.filemanager.FileManagerActivity;
-import org.openintents.intents.FileManagerIntents;
-
 import java.io.File;
-import java.util.HashSet;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
-import java.util.Set;
 
 public class FullSettingsActivity extends PreferenceActivity
 {
@@ -165,7 +166,7 @@ public class FullSettingsActivity extends PreferenceActivity
 			case REQUEST_CODE_PICK_KEYWORD_FILE:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleKeywordResult(data.getData().getPath());
+					handleKeywordResult(data.getData());
 				}
 				break;
 		}
@@ -185,19 +186,9 @@ public class FullSettingsActivity extends PreferenceActivity
             mActivity.startActivity(store);
     }
 
-    private void handleKeywordResult(final String sourcePath)
+    private void handleKeywordResult(final Uri keywordUri)
 	{
-		if (!Util.isTabDelimited(sourcePath))
-		{
-			Toast.makeText(this, R.string.warningFileWrongFormat, Toast.LENGTH_SHORT).show();
-			return;
-		}
-
-        // FIXME:
-		if (Util.copy(new File(sourcePath), new File(getFilesDir().getAbsolutePath(), "keywords.txt")))
-			Toast.makeText(this, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show();
-		else
-			Toast.makeText(this, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
+		ImageUtils.importKeywords(this, keywordUri);
 	}
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -345,22 +336,9 @@ public class FullSettingsActivity extends PreferenceActivity
 
 		private void requestImportKeywords()
         {
-            Intent intent = new Intent(mActivity, FileManagerActivity.class);
-            intent.setAction(FileManagerIntents.ACTION_PICK_FILE);
-
-            // Set fancy title and button (optional)
-            intent.putExtra(FileManagerIntents.EXTRA_TITLE, R.string.choosefile);
-            intent.putExtra(FileManagerIntents.EXTRA_BUTTON_TEXT, R.string.import1);
-
-            try
-            {
-                mActivity.startActivityForResult(intent, REQUEST_CODE_PICK_KEYWORD_FILE);
-            }
-            catch (ActivityNotFoundException e)
-            {
-                // No compatible file manager was found.
-                Toast.makeText(mActivity, R.string.no_filemanager_installed, Toast.LENGTH_SHORT).show();
-            }
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			intent.setType("text/plain");
+			mActivity.startActivityForResult(intent, REQUEST_CODE_PICK_KEYWORD_FILE);
         }
 	}
 

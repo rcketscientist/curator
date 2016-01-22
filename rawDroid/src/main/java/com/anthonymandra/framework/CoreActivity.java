@@ -791,12 +791,14 @@ public abstract class CoreActivity extends DocumentActivity
 
 						// Skip a file if it's the same location
 						if (to.exists()) continue;
+
 						copy(from, to);
 					}
 					else
 					{
 						DocumentFile source = DocumentFile.fromSingleUri(CoreActivity.this, toCopy);
 						Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
+
 						copy(toCopy, destinationFile);
 					}
 
@@ -846,14 +848,15 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected boolean writeThumb(Uri source, File destination) {
+	protected boolean writeThumb(Uri source, Uri destination) {
 		ParcelFileDescriptor pfd = null;
 		try
 		{
-			DocumentFile dest = getDocumentFile(destination, false, true);
-			if (dest == null)
-				return false;
-			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			// Using the name from source, swap the extension to jpg and generate a child uri to
+			// send to jni
+			DocumentFile sourceDoc = FileUtil.getDocumentFile(this, source);
+			Uri destinationFile = FileUtil.getChildUri(destination, Util.swapExtention(sourceDoc.getName(), "jpg" ));
+			pfd = FileUtil.getParcelFileDescriptor(this, destinationFile, "w");
 			if (pfd == null)
 				return false;
 			boolean result = LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
@@ -870,15 +873,17 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected boolean writeThumbWatermark(Uri source, File destination, byte[] waterMap,
+	protected boolean writeThumbWatermark(Uri source, Uri destination, byte[] waterMap,
 	                                   int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
 		ParcelFileDescriptor pfd = null;
 		try
 		{
-			DocumentFile dest = getDocumentFile(destination, false, true);
-			if (dest == null)
-				return false;
-			pfd = getContentResolver().openFileDescriptor(dest.getUri(), "w");
+			// Using the name from source, swap the extension to jpg and generate a child uri to
+			// send to jni
+			DocumentFile sourceDoc = FileUtil.getDocumentFile(this, source);
+			Uri destinationFile = FileUtil.getChildUri(destination, Util.swapExtention(sourceDoc.getName(), "jpg" ));
+			DocumentFile destinationDoc = // TODO: getDocument should just handle file or uri!
+			pfd = FileUtil.getParcelFileDescriptor(this, destinationFile, "w");
 			if (pfd == null)
 				return false;
 			boolean result =  LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
@@ -918,7 +923,7 @@ public abstract class CoreActivity extends DocumentActivity
 			boolean totalSuccess = true;
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
-			File destinationFolder = (File) params[1];
+			Uri destinationFolder = (Uri) params[1];
 
 			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
 			boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
@@ -966,24 +971,38 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
-			// TODO: This needs to be converted to SAF
 			boolean success = true;
 			for (Uri toExport : totalImages)
 			{
-				File from = new File(toExport.getPath());
-				File thumbDest = new File(destinationFolder, Util.swapExtention(from.getName(), ".jpg"));
-				publishProgress(from.getName());
+				DocumentFile source = FileUtil.getDocumentFile(CoreActivity.this, toExport);
+				DocumentFile destinationTree;
+				try
+				{
+					destinationTree = getDocumentFile(destinationFolder, true, true);
+					FileUtil
+				}
+				catch (WritePermissionException e)
+				{
+					e.printStackTrace();
+				}
+
+
+				// TODO: need to go through SAF to get dest file for writing
+
+				// TODO: This would be a good place to try out mime types
+				DocumentFile destinationFile = destinationTree.createFile(null, Util.swapExtention(source.getName(), "jpg"));
+				Uri destinationUri = destinationFile.getUri();
+				publishProgress(source.getName());
 
 				if (processWatermark)
 				{
-					success = writeThumbWatermark(toExport, thumbDest, waterData, waterWidth, waterHeight, margins) && success;
-					onImageAdded(Uri.fromFile(thumbDest));
+					success = writeThumbWatermark(toExport, destinationUri, waterData, waterWidth, waterHeight, margins) && success;
 				}
 				else
 				{
-					success = writeThumb(toExport, thumbDest) && success;
-					onImageAdded(Uri.fromFile(thumbDest));
+					success = writeThumb(toExport, destinationUri) && success;
 				}
+				onImageAdded(destinationUri);
 
 				publishProgress();
 			}
@@ -1250,55 +1269,46 @@ public abstract class CoreActivity extends DocumentActivity
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
-		ContentValues imageValues;
-		ContentValues jpgValues;
-		Uri originalJpegUri;
-		if (FileUtil.isFileScheme(source))
+		DocumentFile sourceFile = FileUtil.getDocumentFile(this, source);
+		DocumentFile renameFile = getRenamedFile(sourceFile, baseName);
+		imageSuccess = renameAssociatedFile(sourceFile, baseName);
+
+		if (!imageSuccess)
+			return imageSuccess;
+
+		ContentValues imageValues = new ContentValues();
+		imageValues.put(Meta.Data.NAME, renameFile.getName());
+		imageValues.put(Meta.Data.URI, renameFile.getUri().toString());
+
+		updates.add(
+				ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+						.withSelection(Meta.Data.URI + "=?", new String[]{source.toString()})
+						.withValues(imageValues)
+						.build());
+
+		if (ImageUtils.hasXmpFile(this, source))
 		{
-			DocumentFile sourceFile = DocumentFile.fromSingleUri(this, source);
-			DocumentFile renameFile = getRenamedFile(sourceFile, baseName);
-			imageSuccess = renameAssociatedFile(sourceFile, baseName);
-			imageValues = new ContentValues();
-			imageValues.put(Meta.Data.NAME, renameFile.getName());
-			imageValues.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
-			if (ImageUtils.hasXmpFile(sourceFile.getUri()))
+			DocumentFile xmpDoc = ImageUtils.getXmpFile(this, source);
+			xmpSuccess = renameAssociatedFile(xmpDoc, baseName);
+		}
+		if (ImageUtils.hasJpgFile(this, source))
+		{
+			DocumentFile jpgDoc = ImageUtils.getJpgFile(this, source);
+			DocumentFile renamedJpeg = getRenamedFile(jpgDoc, baseName);
+			jpgSuccess = renameAssociatedFile(jpgDoc, baseName);
+
+			if (jpgSuccess)
 			{
-				xmpSuccess = renameAssociatedFile(ImageUtils.getXmpFile(sourceFile), baseName);
+				ContentValues jpgValues = new ContentValues();
+				jpgValues.put(Meta.Data.NAME, renamedJpeg.getName());
+				jpgValues.put(Meta.Data.URI, renamedJpeg.getUri().toString());
+
+				updates.add(
+						ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+								.withSelection(Meta.Data.URI + "=?", new String[]{jpgDoc.getUri().toString()})
+								.withValues(jpgValues)
+								.build());
 			}
-			if (ImageUtils.hasJpgFile(sourceFile))
-			{
-				originalJpegUri = Uri.fromFile(ImageUtils.getJpgFile(sourceFile));
-				File renamedJpeg = ImageUtils.getJpgFile(renameFile);
-
-				ContentValues cv = new ContentValues();
-				cv.put(Meta.Data.NAME, renamedJpeg.getName());
-				cv.put(Meta.Data.URI, Uri.fromFile(renamedJpeg).toString());
-
-				jpgSuccess = renameAssociatedFile(ImageUtils.getJpgFile(sourceFile), baseName);
-			}
-		}
-		else
-		{
-			DocumentFile file = DocumentFile.fromSingleUri(this, source);
-
-		}
-
-		if (imageSuccess)
-		{
-			updates.add(
-					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-							.withSelection(Meta.Data.URI + "=?", new String[]{source.toString()})
-							.withValues(imageValues)
-							.build());
-		}
-
-		if (jpgSuccess)
-		{
-			updates.add(
-					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-							.withSelection(Meta.Data.URI + "=?", new String[]{originalJpegUri.toString()})
-							.withValues(jpgValues)
-							.build());
 		}
 
 		return imageSuccess && xmpSuccess && jpgSuccess;
@@ -1321,7 +1331,7 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	/**
-	 * This will only work with heriarchical tree uris
+	 * This will only work with hierarchical tree uris
 	 * @param original
 	 * @param baseName
      * @return
@@ -1394,42 +1404,11 @@ public abstract class CoreActivity extends DocumentActivity
 
 					String rename = formatRename(format, customName, counter, total);
 
-					File imageFile = new File(image.getPath());
+					renameImage(image, rename, operations);
 
-					if (renameImage(imageFile, rename))
+					if (renameImage(image, rename, operations))
 					{
 						remainingImages.remove(image);
-						File renameFile = getRenamedFile(imageFile, rename);
-
-						ContentValues c = new ContentValues();
-						c.put(Meta.Data.NAME, renameFile.getName());
-						c.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
-
-						//TODO: This needs to happen for every file type renamed
-						operations.add(
-								ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-										.withSelection(Meta.Data.URI + "=?", new String[]{image.toString()})
-										.withValues(c)
-										.build());
-
-						//TODO: Might be worth consideration to attach jpeg to raw entry
-						// However, would that make lone jpegs harder to manage?
-						if (ImageUtils.hasJpgFile(renameFile))
-						{
-							File originalJpeg = ImageUtils.getJpgFile(imageFile);
-							File renamedJpeg = ImageUtils.getJpgFile(renameFile);
-
-							ContentValues cv = new ContentValues();
-							cv.put(Meta.Data.NAME, renamedJpeg.getName());
-							cv.put(Meta.Data.URI, Uri.fromFile(renamedJpeg).toString());
-
-							//TODO: This needs to happen for every file type renamed
-							operations.add(
-									ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-											.withSelection(Meta.Data.URI + "=?", new String[]{Uri.fromFile(originalJpeg).toString()})
-											.withValues(cv)
-											.build());
-						}
 					}
 				}
 			} catch (WritePermissionException e)
@@ -1482,12 +1461,19 @@ public abstract class CoreActivity extends DocumentActivity
 						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
 						.build());
 
-				final File xmp = ImageUtils.getXmpFile(new File(image.getPath()));
+				final DocumentFile xmp = ImageUtils.getXmpFile(CoreActivity.this, image);
 				final DocumentFile xmpDoc;
 				try
 				{
 					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
-					xmpDoc = getDocumentFile(xmp, false, true);
+					if (FileUtil.isFileScheme(image))
+					{
+						xmpDoc = getDocumentFile(new File(xmp.getUri().getPath()), false, true);
+					}
+					else
+					{
+						xmpDoc = getDocumentFile(xmp.getUri(), false, true);
+					}
 					remainingImages.remove(image);
 				}
 				catch (WritePermissionException e)

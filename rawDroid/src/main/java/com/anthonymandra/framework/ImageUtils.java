@@ -11,9 +11,12 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawdroid.R;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -32,8 +35,10 @@ import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -164,7 +169,7 @@ public class ImageUtils
             going to skip that process and simply mash what we know the uri would be (as of 01/2016)
             new uri schemes could possibly break this */
 
-        DocumentFile image = DocumentFile.fromSingleUri(c, uri);
+        DocumentFile image = FileUtil.getDocumentFile(c, uri);
         String name = image.getName();
         if (ext != null)
         {
@@ -175,7 +180,7 @@ public class ImageUtils
         String parentString = parent.getUri().toString();
         String associatedString = parentString + "/" + name;
         Uri associatedUri = Uri.parse(associatedString);
-        return DocumentFile.fromSingleUri(c, associatedUri);
+        return FileUtil.getDocumentFile(c, associatedUri);
     }
 
     /**
@@ -737,5 +742,37 @@ public class ImageUtils
     public static boolean isTiffImage(final String mimeType)
     {
         return ImageConstants.TIFF_MIME.equals(mimeType);
+    }
+
+    public static boolean importKeywords(Context c, Uri keywordUri)
+    {
+        boolean success = false;
+        InputStreamReader reader = null;
+        try
+        {
+            InputStream is = c.getContentResolver().openInputStream(keywordUri);
+            reader = new InputStreamReader(is);
+            // Attempt to import keywords
+            success = KeywordProvider.importKeywords(c, reader);
+            int message;
+            if (success)
+            {
+                message = R.string.resultImportSuccessful;
+            }
+            else
+            {
+                message = R.string.resultImportFailed;
+            }
+            Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            Utils.closeSilently(reader);
+        }
+        return success;
     }
 }

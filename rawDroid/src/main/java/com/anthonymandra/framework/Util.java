@@ -32,8 +32,10 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.provider.MediaStore;
+import android.support.v4.provider.DocumentFile;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
@@ -52,6 +54,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
@@ -165,6 +168,31 @@ public class Util
     public static String swapExtention(String filename, String ext)
     {
         return filename.replaceFirst("[.][^.]+$", "") + ext;
+    }
+
+    public static boolean isTabDelimited(Context c, Uri uri)
+    {
+        int numberOfLevels = 0;
+        BufferedReader readbuffer = null;
+        try
+        {
+            ParcelFileDescriptor pfd = c.getContentResolver().openFileDescriptor(uri, "r");
+            readbuffer = new BufferedReader(new FileReader(pfd.getFileDescriptor()));
+            String line;
+            while ((line = readbuffer.readLine()) != null)
+            {
+                String tokens[] = line.split("\t");
+                numberOfLevels = Math.max(numberOfLevels, tokens.length);
+            }
+        } catch (IOException e)
+        {
+            return false;
+        }
+        finally
+        {
+            Utils.closeSilently(readbuffer);
+        }
+        return numberOfLevels > 0;
     }
 
     public static boolean isTabDelimited(String filepath)
