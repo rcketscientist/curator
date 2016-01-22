@@ -1255,26 +1255,26 @@ public abstract class CoreActivity extends DocumentActivity
 		Uri originalJpegUri;
 		if (FileUtil.isFileScheme(source))
 		{
-			DocumentFile file = DocumentFile.fromSingleUri(this, source);
-			DocumentFile renameFile = getRenamedFile(file, baseName);
-			imageSuccess = renameAssociatedFile(file, baseName);
+			DocumentFile sourceFile = DocumentFile.fromSingleUri(this, source);
+			DocumentFile renameFile = getRenamedFile(sourceFile, baseName);
+			imageSuccess = renameAssociatedFile(sourceFile, baseName);
 			imageValues = new ContentValues();
 			imageValues.put(Meta.Data.NAME, renameFile.getName());
 			imageValues.put(Meta.Data.URI, Uri.fromFile(renameFile).toString());
-			if (ImageUtils.hasXmpFile(file))
+			if (ImageUtils.hasXmpFile(sourceFile.getUri()))
 			{
-				xmpSuccess = renameAssociatedFile(ImageUtils.getXmpFile(file), baseName);
+				xmpSuccess = renameAssociatedFile(ImageUtils.getXmpFile(sourceFile), baseName);
 			}
-			if (ImageUtils.hasJpgFile(file))
+			if (ImageUtils.hasJpgFile(sourceFile))
 			{
-				originalJpegUri = Uri.fromFile(ImageUtils.getJpgFile(file));
+				originalJpegUri = Uri.fromFile(ImageUtils.getJpgFile(sourceFile));
 				File renamedJpeg = ImageUtils.getJpgFile(renameFile);
 
 				ContentValues cv = new ContentValues();
 				cv.put(Meta.Data.NAME, renamedJpeg.getName());
 				cv.put(Meta.Data.URI, Uri.fromFile(renamedJpeg).toString());
 
-				jpgSuccess = renameAssociatedFile(ImageUtils.getJpgFile(file), baseName);
+				jpgSuccess = renameAssociatedFile(ImageUtils.getJpgFile(sourceFile), baseName);
 			}
 		}
 		else
