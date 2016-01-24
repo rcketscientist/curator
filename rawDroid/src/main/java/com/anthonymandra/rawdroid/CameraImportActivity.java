@@ -274,7 +274,7 @@ public class CameraImportActivity extends DocumentActivity
 			case REQUEST_MTP_IMPORT_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleImportDirResult(data.getData().getPath());
+					handleImportDirResult(data.getData());
 				}
 				break;
 		}

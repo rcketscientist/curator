@@ -32,6 +32,7 @@ import com.anthonymandra.framework.RawObject;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 public abstract class MediaObject implements RawObject {
     @SuppressWarnings("unused")
@@ -76,6 +77,16 @@ public abstract class MediaObject implements RawObject {
             {
                 Crashlytics.logException(new Exception("Failed to acquire ContentProvider for: " +
                     uri.toString(), e));
+            }
+            catch (IllegalArgumentException e)
+            {
+                /*
+                Ex: Failed to determine if 0000-0000:DCIM/100EOS5D/hillary2.jpg is child of 0000-0000:: java.io.FileNotFoundException: No root for 0000-0000
+                This occurred when I disconnected the usb drive and the app tried to access the file.
+                TODO: Need a way to manage transience of files.  Probably automatically removed if a file isn't seen for a week.
+                 */
+                Crashlytics.logException(new Exception("Failed to acquire ContentProvider for: " +
+                        uri.toString(), e));
             }
             finally
             {

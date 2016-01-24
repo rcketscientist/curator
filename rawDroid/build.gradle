@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0-alpha7'
         classpath 'io.fabric.tools:gradle:1.21.1'
     }
 }
@@ -35,8 +35,10 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 21    // Changed for showcaseview, 10 is 0.17% of users
-        targetSdkVersion 22
+        minSdkVersion 21
+        targetSdkVersion 23
+
+        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
     }
@@ -98,7 +100,6 @@ dependencies {
     compile project(':showcaseView:library')
     compile project(':inscription')
     compile project(':metadata-extractor')
-//    compile project(':oIFileManager')
     compile project(':rawprocessor')
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:appcompat-v7:23.1.1'

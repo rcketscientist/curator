@@ -119,21 +119,14 @@ public class SearchService extends IntentService
         {
             for (Uri image : images)
             {
-	            if (FileUtil.isContentScheme(image))
-	            {
-
-	            }
-	            else    // Should be a file
-	            {
-		            File file = new File(image.getPath());
-		            ContentValues cv = new ContentValues();
-		            cv.put(Meta.Data.NAME, file.getName());
-		            cv.put(Meta.Data.URI, image.toString());
-		            operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
-				            .withValues(cv)
-				            .build());
-		            uriStrings.add(image.toString());
-	            }
+	            DocumentFile imageFile = DocumentFile.fromSingleUri(this, image);
+	            ContentValues cv = new ContentValues();
+	            cv.put(Meta.Data.NAME, imageFile.getName());
+	            cv.put(Meta.Data.URI, image.toString());
+	            operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+			            .withValues(cv)
+			            .build());
+	            uriStrings.add(image.toString());
             }
 
             try

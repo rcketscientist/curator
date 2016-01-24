@@ -2,9 +2,6 @@ package com.anthonymandra.framework;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,10 +9,8 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-import android.os.storage.StorageManager;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,15 +24,12 @@ import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class DocumentActivity extends AppCompatActivity
@@ -50,6 +42,11 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 	protected Enum mCallingMethod;
 	protected Object[] mCallingParameters;
+
+	/**
+	 * All roots for which this app has permission
+	 */
+	private List<UriPermission> mRootPermissions = new ArrayList<>();
 
 	/**
 	 * This error is thrown when the application does not have appropriate permission to write.<br><br>
@@ -82,6 +79,19 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * The name of the primary volume (LOLLIPOP).
 	 */
 	private static final String PRIMARY_VOLUME_NAME = "primary";
+
+
+	@Override
+	protected void onResume()
+	{
+		updatePermissions();
+		super.onResume();
+	}
+
+	private void updatePermissions()
+	{
+		mRootPermissions = getContentResolver().getPersistedUriPermissions();
+	}
 
 	/**
 	 * Copy a file within the constraints of SAF.
@@ -626,6 +636,10 @@ public abstract class DocumentActivity extends AppCompatActivity
 	                                    final boolean createDirectories)
 			throws WritePermissionException
 	{
+		if (FileUtil.isFileScheme(file))
+		{
+			getDocumentFile(new File(file.getPath()), isDirectory, createDirectories);
+		}
 		return getLollipopDocument(file, isDirectory, createDirectories);
 	}
 
@@ -646,7 +660,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 											 final boolean createDirectories)
 			throws WritePermissionException
 	{
-		Uri treeUri = getTreeUri();
+		Uri treeUri = getPermissibleRoot(uri);
 
 		if (treeUri == null)
 		{
@@ -719,7 +733,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	                                         final boolean createDirectories)
 			throws WritePermissionException
 	{
-		Uri treeUri = getTreeUri();
+		Uri treeUri = getPermissibleRoot(Uri.fromFile(file));
 
 		if (treeUri == null)
 		{
@@ -795,22 +809,25 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Get the stored tree URI.
+	 * Returns the permissible root uri if one exists, null if not.
 	 *
 	 * @return The tree URI.
 	 */
-	public Uri getTreeUri() {
-		// TODO: We could use getPersistedUriPermssions, much more complicated, but ideal
-		Uri rootUri = getSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT);
-		return getSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT);
+	public Uri getPermissibleRoot(Uri uri) {
+		for (UriPermission permission : mRootPermissions)
+		{
+			if (uri != null && uri.toString().startsWith(permission.getUri().toString()))
+			{
+				return permission.getUri();
+			}
+		}
+
+		return null;
 	}
 
-	/**
-	 * Store a persistent SAF tree uri
-	 */
-	public void setTreeUri(Uri treeUri)
+	public List<UriPermission> getRootPermissions()
 	{
-		setSharedPreferenceUri(R.string.KEY_SD_CARD_ROOT, treeUri);
+		return Collections.unmodifiableList(mRootPermissions);
 	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -917,7 +934,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 							Intent.FLAG_GRANT_READ_URI_PERMISSION |
 									Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-					setTreeUri(treeUri);
+					updatePermissions();
 
 					// This will resume any actions pending write permission
 					onResumeWriteAction(mCallingMethod, mCallingParameters);

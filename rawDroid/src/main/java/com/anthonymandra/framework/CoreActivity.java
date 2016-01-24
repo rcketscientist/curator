@@ -55,6 +55,7 @@ import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
@@ -848,56 +849,15 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected boolean writeThumb(Uri source, Uri destination) {
-		ParcelFileDescriptor pfd = null;
-		try
-		{
-			// Using the name from source, swap the extension to jpg and generate a child uri to
-			// send to jni
-			DocumentFile sourceDoc = FileUtil.getDocumentFile(this, source);
-			Uri destinationFile = FileUtil.getChildUri(destination, Util.swapExtention(sourceDoc.getName(), "jpg" ));
-			pfd = FileUtil.getParcelFileDescriptor(this, destinationFile, "w");
-			if (pfd == null)
-				return false;
-			boolean result = LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
-			pfd.close();
-			return result;
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			Utils.closeSilently(pfd);
-		}
+	protected boolean writeThumb(Uri source, ParcelFileDescriptor destination)
+	{
+		return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
 	}
 
-	protected boolean writeThumbWatermark(Uri source, Uri destination, byte[] waterMap,
-	                                   int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
-		ParcelFileDescriptor pfd = null;
-		try
-		{
-			// Using the name from source, swap the extension to jpg and generate a child uri to
-			// send to jni
-			DocumentFile sourceDoc = FileUtil.getDocumentFile(this, source);
-			Uri destinationFile = FileUtil.getChildUri(destination, Util.swapExtention(sourceDoc.getName(), "jpg" ));
-			DocumentFile destinationDoc = // TODO: getDocument should just handle file or uri!
-			pfd = FileUtil.getParcelFileDescriptor(this, destinationFile, "w");
-			if (pfd == null)
-				return false;
-			boolean result =  LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
-			pfd.close();
-			return result;
-		}
-		catch(Exception e)
-		{
-			return false;
-		}
-		finally
-		{
-			Utils.closeSilently(pfd);
-		}
+	protected boolean writeThumbWatermark(Uri source, ParcelFileDescriptor destination, byte[] waterMap,
+	                                      int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
+		// TODO: This must work solely on file descriptors (source also)
+		return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
 	public class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
@@ -979,30 +939,46 @@ public abstract class CoreActivity extends DocumentActivity
 				try
 				{
 					destinationTree = getDocumentFile(destinationFolder, true, true);
-					FileUtil
 				}
 				catch (WritePermissionException e)
 				{
 					e.printStackTrace();
 				}
 
+				// Using the name from source, swap the extension to jpg and generate a child uri to
+				// send to jni
+				Uri destinationFile = FileUtil.getChildUri(destinationFolder, Util.swapExtention(source.getName(), "jpg" ));
 
-				// TODO: need to go through SAF to get dest file for writing
-
-				// TODO: This would be a good place to try out mime types
-				DocumentFile destinationFile = destinationTree.createFile(null, Util.swapExtention(source.getName(), "jpg"));
-				Uri destinationUri = destinationFile.getUri();
 				publishProgress(source.getName());
 
-				if (processWatermark)
+				ParcelFileDescriptor pfd = null;
+				try
 				{
-					success = writeThumbWatermark(toExport, destinationUri, waterData, waterWidth, waterHeight, margins) && success;
+					pfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile, "w");
+					if (pfd == null)
+					{
+						success = false;
+						continue;
+					}
+
+					if (processWatermark)
+					{
+						success = writeThumbWatermark(toExport, pfd, waterData, waterWidth, waterHeight, margins) && success;
+					}
+					else
+					{
+						success = writeThumb(toExport, pfd) && success;
+					}
+					onImageAdded(destinationFile);
 				}
-				else
+				catch(Exception e)
 				{
-					success = writeThumb(toExport, destinationUri) && success;
+					success = false;
 				}
-				onImageAdded(destinationUri);
+				finally
+				{
+					Utils.closeSilently(pfd);
+				}
 
 				publishProgress();
 			}

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.provider.DocumentFile;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -917,69 +918,9 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void handleSaveImage(Uri dest)
     {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean showWatermark = settings.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
-        String watermarkText = settings.getString(FullSettingsActivity.KEY_WatermarkText, "");
-        int watermarkAlpha = settings.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-        int watermarkSize = settings.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
-        String watermarkLocation = settings.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-        int top = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
-        int bottom = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
-        int right = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
-        int left = Integer.parseInt(settings.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
-        LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
-
         MediaItem source = getCurrentItem();
-
-        Bitmap watermark;
-        byte[] waterData = null;
-        boolean processWatermark = false;
-        int waterWidth = 0, waterHeight = 0;
-        if (Constants.VariantCode > 8 && LicenseManager.getLastResponse() != License.LicenseState.pro)
-        {
-        	processWatermark = true;
-            watermark = Util.getDemoWatermark(this, source.getWidth());
-            waterData = Util.getBitmapBytes(watermark);
-            waterWidth = watermark.getWidth();
-            waterHeight = watermark.getHeight();
-            margins = LibRaw.Margins.LowerRight;
-        }
-        else if (showWatermark)
-        {
-            processWatermark = true;
-            if (watermarkText.isEmpty())
-            {
-                Toast.makeText(this, R.string.warningBlankWatermark, Toast.LENGTH_LONG);
-                processWatermark = false;
-            }
-            else
-            {
-                watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-                waterData = Util.getBitmapBytes(watermark);
-                waterWidth = watermark.getWidth();
-                waterHeight = watermark.getHeight();
-            }
-        }
-        
-        boolean success;
-		if (processWatermark)
-		{
-			success = writeThumbWatermark(source.getUri(), dest, waterData, waterWidth, waterHeight, margins);
-		}
-        else
-        {
-        	success = writeThumb(source.getUri(), dest);
-        }	
-		
-		if (!success)
-        {
-            Toast.makeText(this, "Thumbnail generation failed.  If you are watermarking, check settings/sizes!", Toast.LENGTH_LONG).show();
-        }
-		else
-        {
-            onImageAdded(dest);
-            //Toast.makeText(this, R.string.save_success, Toast.LENGTH_SHORT).show();
-        }
+        CopyThumbTask ctt = new CopyThumbTask();
+        ctt.execute(source.getUri(), dest);
     }
 
     private void setWallpaper()

@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -24,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -120,6 +120,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	public static final String PREFS_SHOW_FILTER_HINT = "prefShowFilterHint";
 	public static final String PREFS_LAST_BETA_VERSION = "prefLastBetaVersion";
 	public static final String IMAGE_CACHE_DIR = "thumbs";
+	public static final String PREFS_PERMISSIBLE_USB = "prefPermissibleUsb";
 	public static final String[] USB_LOCATIONS = new String[]
 	{
             "/mnt/usb_storage",
@@ -365,32 +366,34 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		super.onNewIntent(intent);
 		if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(intent.getAction()))
 		{
-			// Check if a previously connected usb storage device has been reconnected
-			List<UriPermission> permissions = getContentResolver().getPersistedUriPermissions();
-			for (UriPermission permission : permissions)
+			/* There is absolutely no way to uniquely identify a usb device across connections
+			 So what we'll do instead is rely on the funky SAF host as a unique ID
+			 The flaw here is the severe edge case that in a multi-device situation we will not
+			 request permission for additional devices and jump out at the first recognized device.
+			 Well that and the fact Google will break all this in 6.1 */
+
+			Set<String> permissibleUsb = PreferenceManager.getDefaultSharedPreferences(this)
+					.getStringSet(PREFS_PERMISSIBLE_USB, new HashSet<String>());
+			for (String uriString : permissibleUsb)
 			{
-				Uri uri = permission.getUri();
-				ParcelFileDescriptor pfd = null;
+				Uri permission = Uri.parse(uriString);
 				try
 				{
-					pfd = getContentResolver().openFileDescriptor(uri, "r");
+					ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(permission, "r");
+					// If pfd exists then this is a reconnected device, avoid hassling user
 					if (pfd != null)
 					{
-						// Then we reconnected a previous usb, don't open SAF, just search
-						// TODO: Search the uri...
+						Utils.closeSilently(pfd);
 						return;
 					}
-				}
-				catch (FileNotFoundException e)
+					Utils.closeSilently(pfd);
+				} catch (Exception e)
 				{
 					e.printStackTrace();
 				}
-				finally
-				{
-					Utils.closeSilently(pfd);
-				}
 			}
 
+			// Since this appears to be a new device gather uri and request write permission
 			Intent request = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			request.putExtra(DocumentsContract.EXTRA_PROMPT, getString(R.string.selectUsb));
 			startActivityForResult(request, REQUEST_ACCESS_USB);
@@ -809,10 +812,18 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 //		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
 //		// You must make a copy of the returned preference set or changes will not be recognized
 //		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
+		List<UriPermission> rootPermissions = getRootPermissions();
+		int size = rootPermissions.size();
+		String[] permissions = new String[size];
+		for (int i = 0; i < size; i++)
+		{
+			permissions[i] = rootPermissions.get(i).getUri().toString();
+		}
+
 		SearchService.startActionSearch(
 				this,
 				/*TEST_ROOTS,*/MOUNT_ROOTS,
-				null,
+				permissions,
 				excludedFolders.toArray(new String[excludedFolders.size()]));
 	}
 
@@ -905,6 +916,18 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	private void handleUsbAccessRequest(Uri treeUri)
 	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		// You must make a copy of the returned preference set or changes will not be recognized
+		Set<String> permissibleUsbDevices = new HashSet<>(prefs.getStringSet(PREFS_PERMISSIBLE_USB, new HashSet<String>()));
+
+		// The following oddity is because permission uris are not valid without SAF
+		DocumentFile makeUriUseful = DocumentFile.fromTreeUri(this, treeUri);
+		permissibleUsbDevices.add(makeUriUseful.getUri().toString());
+
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putStringSet(PREFS_PERMISSIBLE_USB, permissibleUsbDevices);
+		editor.apply();
+
 		getContentResolver().takePersistableUriPermission(treeUri,
 				Intent.FLAG_GRANT_READ_URI_PERMISSION |
 						Intent.FLAG_GRANT_WRITE_URI_PERMISSION);

@@ -50,9 +50,6 @@ public abstract class MediaItem extends MediaObject {
     public MediaItem(Context c, Uri path) {
         super(c, path);
     }
-    public String getName() {
-        return null;
-    }
 
     public void getLatLong(double[] latLong) {
         latLong[0] = INVALID_LATLNG;
