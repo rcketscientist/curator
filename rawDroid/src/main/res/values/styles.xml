@@ -94,4 +94,9 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="RecycleDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:ellipsize">start</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
 </resources>

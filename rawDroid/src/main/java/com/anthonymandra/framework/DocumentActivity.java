@@ -128,6 +128,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 		}
 		catch (IOException e)
 		{
+			Log.e(TAG, "Failed to copy file: " + e);
 			return false;
 		}
 		finally
@@ -210,11 +211,32 @@ public abstract class DocumentActivity extends AppCompatActivity
 	/**
 	 * Delete a file within the constraints of SAF.
 	 *
-	 * @param file
-	 *            the file to be deleted.
+	 * @param file the uri to be deleted.
 	 * @return True if successfully deleted.
 	 */
-	public boolean deleteFile(final File file)
+	public boolean deleteFile(final Uri file)
+			throws WritePermissionException
+	{
+		if (FileUtil.isFileScheme(file))
+		{
+			return deleteFile(new File(file.getPath()));
+		}
+		else
+		{
+			DocumentFile document = getLollipopDocument(file, false, true);
+			if (document == null)
+				return false;
+			return document.delete();
+		}
+	}
+
+	/**
+	 * Delete a file within the constraints of SAF.
+	 *
+	 * @param file the file to be deleted.
+	 * @return True if successfully deleted.
+	 */
+	private boolean deleteFile(final File file)
 			throws WritePermissionException
 	{
 		// First try the normal deletion.
@@ -234,31 +256,35 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Delete a file within the constraints of SAF.  This delete is oriented to files that are
-	 * backed ONLY by a URI, such as USB drives on API 23 (6.0).
+	 * Move a file within the constraints of SAF.
 	 *
-	 * {@link #deleteFile(File)} will be more efficient in most cases if a {@link File} is available.
-	 *
-	 * @param file
-	 *            the uri to be deleted.
-	 * @return True if successfully deleted.
+	 * @param source The source uri
+	 * @param target The target uri
+	 * @return true if the copying was successful.
 	 */
-	public boolean deleteFile(final Uri file)
-			throws WritePermissionException
+	public boolean moveFile(final Uri source, final Uri target) throws WritePermissionException
 	{
-		DocumentFile document = getLollipopDocument(file, false, true);
-		if (document == null)
-			return false;
-		return document.delete();
+		if (FileUtil.isFileScheme(target) && FileUtil.isFileScheme(target))
+		{
+			File from = new File(source.getPath());
+			File to = new File(target.getPath());
+			return moveFile(from, to);
+		}
+		else
+		{
+			boolean success = copyFile(source, target);
+			if (success) {
+				success = deleteFile(source);
+			}
+			return success;
+		}
 	}
 
 	/**
 	 * Move a file within the constraints of SAF.
 	 *
-	 * @param source
-	 *            The source file
-	 * @param target
-	 *            The target file
+	 * @param source The source file
+	 * @param target The target file
 	 * @return true if the copying was successful.
 	 */
 	public boolean moveFile(final File source, final File target) throws WritePermissionException
@@ -268,28 +294,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 			return true;
 		}
 
-		boolean success = copyFile(source, target);
-		if (success) {
-			success = deleteFile(source);
-		}
-		return success;
-	}
-
-	/**
-	 * Move a file within the constraints of SAF.
-	 *
-	 * This move is oriented to files that are backed ONLY by a URI, such as USB drives on API 23 (6.0).
-	 *
-	 * {@link #moveFile(File, File)} will be more efficient in most cases if a {@link File} is available.
-	 *
-	 * @param source
-	 *            The source uri
-	 * @param target
-	 *            The target uri
-	 * @return true if the copying was successful.
-	 */
-	public boolean moveFile(final Uri source, final Uri target) throws WritePermissionException
-	{
 		boolean success = copyFile(source, target);
 		if (success) {
 			success = deleteFile(source);
@@ -591,15 +595,31 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
-	 * existing, it is created.
+	 * Get a DocumentFile corresponding to the given file.  If the file does not exist, it is created.
 	 *
-	 * @param file
-	 *            The file.
-	 * @param isDirectory
-	 *            flag indicating if the file should be a directory.
-	 * @param createDirectories
-	 *            flag indicating if intermediate path directories should be created if not existing.
+	 * @param file The file.
+	 * @param isDirectory flag indicating if the file should be a directory.
+	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
+	 * @return The DocumentFile
+	 */
+	public DocumentFile getDocumentFile(final Uri file,
+	                                    final boolean isDirectory,
+	                                    final boolean createDirectories)
+			throws WritePermissionException
+	{
+		if (FileUtil.isFileScheme(file))
+		{
+			getDocumentFile(new File(file.getPath()), isDirectory, createDirectories);
+		}
+		return getLollipopDocument(file, isDirectory, createDirectories);
+	}
+
+	/**
+	 * Get a DocumentFile corresponding to the given file.  If the file does not exist, it is created.
+	 *
+	 * @param file The file.
+	 * @param isDirectory flag indicating if the file should be a directory.
+	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
 	public DocumentFile getDocumentFile(final File file,
@@ -623,36 +643,9 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
 	 * existing, it is created.
 	 *
-	 * @param file
-	 *            The file.
-	 * @param isDirectory
-	 *            flag indicating if the file should be a directory.
-	 * @param createDirectories
-	 *            flag indicating if intermediate path directories should be created if not existing.
-	 * @return The DocumentFile
-	 */
-	public DocumentFile getDocumentFile(final Uri file,
-	                                    final boolean isDirectory,
-	                                    final boolean createDirectories)
-			throws WritePermissionException
-	{
-		if (FileUtil.isFileScheme(file))
-		{
-			getDocumentFile(new File(file.getPath()), isDirectory, createDirectories);
-		}
-		return getLollipopDocument(file, isDirectory, createDirectories);
-	}
-
-	/**
-	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
-	 * existing, it is created.
-	 *
-	 * @param uri
-	 *            The target uri.
-	 * @param isDirectory
-	 *            flag indicating if the file should be a directory.
-	 * @param createDirectories
-	 *            flag indicating if intermediate path directories should be created if not existing.
+	 * @param uri The target uri.
+	 * @param isDirectory flag indicating if the file should be a directory.
+	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
 	private DocumentFile getLollipopDocument(final Uri uri,

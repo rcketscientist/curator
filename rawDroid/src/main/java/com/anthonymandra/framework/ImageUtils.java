@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImageUtils
 {
@@ -130,6 +131,16 @@ public class ImageUtils
     /**
      * --- File Association Helpers ----------------------------------------------------------------
      */
+
+    public static Uri[] getAssociatedFiles(Context c, Uri image)
+    {
+        final List<Uri> files = new ArrayList<>();
+        DocumentFile xmp = getXmpFile(c, image);
+        DocumentFile jpg = getJpgFile(c, image);
+        if (xmp.exists()) files.add(xmp.getUri());
+        if (jpg.exists()) files.add(jpg.getUri());
+        return files.toArray(new Uri[files.size()]);
+    }
     public static boolean hasXmpFile(Context c, Uri uri) {
         return getXmpFile(c, uri).exists();
     }

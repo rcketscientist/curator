@@ -27,6 +27,7 @@ import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +59,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -317,7 +319,12 @@ public abstract class CoreActivity extends DocumentActivity
 			return;
 		}
 		final List<String> keys = recycleBin.getKeys();
-		final List<String> filesToRestore = new ArrayList<>(keys.size());
+		final List<String> filesToRestore = new ArrayList<>();
+		final List<String> shortNames = new ArrayList<>(keys.size());
+		for (String key : keys)
+		{
+			shortNames.add(Uri.parse(key).getLastPathSegment());
+		}
 		new AlertDialog.Builder(this).setTitle(R.string.recycleBin)
 			.setNegativeButton(R.string.emptyRecycleBin, new Dialog.OnClickListener()
 			{
@@ -342,7 +349,7 @@ public abstract class CoreActivity extends DocumentActivity
 					restoreFiles(filesToRestore);
 				}
 			})
-			.setMultiChoiceItems(keys.toArray(new String[keys.size()]), null, new DialogInterface.OnMultiChoiceClickListener()
+			.setMultiChoiceItems(shortNames.toArray(new String[shortNames.size()]), null, new DialogInterface.OnMultiChoiceClickListener()
 			{
 				@Override
 				public void onClick(DialogInterface dialog, int which, boolean isChecked)
@@ -714,27 +721,7 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @return success
 	 * @throws WritePermissionException
 	 */
-	private boolean copy(File fromImage, File toImage) throws WritePermissionException
-	{
-		if (ImageUtils.hasXmpFile(fromImage))
-			copyFile(ImageUtils.getXmpFile(fromImage), ImageUtils.getXmpFile(toImage));
-		if (ImageUtils.hasJpgFile(fromImage))
-			copyFile(ImageUtils.getJpgFile(fromImage), ImageUtils.getJpgFile(toImage));
-		return copyFile(fromImage, toImage);
-	}
-
-	/**
-	 * File operation tasks
-	 */
-
-	/**
-	 * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
-	 * @param fromImage source image
-	 * @param toImage target image
-	 * @return success
-	 * @throws WritePermissionException
-	 */
-	private boolean copy(Uri fromImage, Uri toImage) throws WritePermissionException
+	private boolean copyAssociatedFiles(Uri fromImage, Uri toImage) throws WritePermissionException
 	{
 		if (ImageUtils.hasXmpFile(this, fromImage))
 		{
@@ -785,27 +772,9 @@ public abstract class CoreActivity extends DocumentActivity
 				{
 					setWriteResume(WriteActions.COPY, new Object[]{remainingImages});
 
-					if (FileUtil.isFileScheme(toCopy))
-					{
-						File from = new File(toCopy.getPath());
-						File to = new File(destinationFolder.getPath(), from.getName());
-
-						// Skip a file if it's the same location
-						if (to.exists()) continue;
-
-						copy(from, to);
-					}
-					else
-					{
-						DocumentFile source = DocumentFile.fromSingleUri(CoreActivity.this, toCopy);
-						Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
-
-						copy(toCopy, destinationFile);
-					}
-
-					remainingImages.remove(toCopy);
-					onProgressUpdate();
-					onImageAdded(toCopy);
+					DocumentFile source = DocumentFile.fromSingleUri(CoreActivity.this, toCopy);
+					Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
+					copyAssociatedFiles(toCopy, destinationFile);
 				}
 				catch (WritePermissionException e)
 				{
@@ -813,6 +782,8 @@ public abstract class CoreActivity extends DocumentActivity
 					// We'll be automatically requesting write permission so kill this process
 					return false;
 				}
+				remainingImages.remove(toCopy);
+				onImageAdded(toCopy);
 				publishProgress();
 			}
 			return true;
@@ -1012,21 +983,11 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	private boolean delete(File image) throws WritePermissionException
+	private boolean deleteAssociatedFiles(Uri image) throws WritePermissionException
 	{
-		if (ImageUtils.hasXmpFile(image))
-			deleteFile(ImageUtils.getXmpFile(image));
-		if (ImageUtils.hasJpgFile(image))
-			deleteFile(ImageUtils.getJpgFile(image));
-		return deleteFile(image);
-	}
-
-	private boolean delete(Uri image) throws WritePermissionException
-	{
-		if (ImageUtils.hasXmpFile(this, image))
-			deleteFile(ImageUtils.getXmpFile(this, image).getUri());
-		if (ImageUtils.hasJpgFile(this, image))
-			deleteFile(ImageUtils.getJpgFile(this, image).getUri());
+		Uri[] associatedFiles = ImageUtils.getAssociatedFiles(this, image);
+		for (Uri file : associatedFiles)
+			deleteFile(file);
 		return deleteFile(image);
 	}
 
@@ -1062,23 +1023,10 @@ public abstract class CoreActivity extends DocumentActivity
 				setWriteResume(WriteActions.DELETE, new Object[]{remainingDeletes});
 				try
 				{
-					if (FileUtil.isFileScheme(toDelete))
+					if (deleteAssociatedFiles(toDelete))
 					{
-						if (delete(new File(toDelete.getPath())))
-						{
-							onImageRemoved(toDelete);
-							remainingDeletes.remove(toDelete);
-							removed.add(toDelete);
-						}
-					}
-					else
-					{
-						if(delete(toDelete))
-						{
-							onImageRemoved(toDelete);
-							remainingDeletes.remove(toDelete);
-							removed.add(toDelete);
-						}
+						onImageRemoved(toDelete);
+						removed.add(toDelete);
 					}
 				}
 				catch (WritePermissionException e)
@@ -1087,7 +1035,9 @@ public abstract class CoreActivity extends DocumentActivity
 					// We'll be automatically requesting write permission so kill this process
 					return false;
 				}
+				remainingDeletes.remove(toDelete);
 			}
+
 			return true;
 		}
 
@@ -1147,7 +1097,26 @@ public abstract class CoreActivity extends DocumentActivity
 			for (Uri toRecycle : totalImages)
 			{
 				setWriteResume(WriteActions.RECYCLE, new Object[]{remainingImages});
-				recycleBin.addFile(toRecycle);
+				try
+				{
+					//TODO: Handle related files
+					// Simply delete any related files
+//					Uri[] associates = ImageUtils.getAssociatedFiles(CoreActivity.this, toRecycle);
+//					for (Uri associate : associates)
+//						deleteFile(associate);
+
+					recycleBin.addFile(toRecycle);
+				}
+				catch (WritePermissionException e)
+				{
+					e.printStackTrace();
+					// We'll be automatically requesting write permission so kill this process
+					return null;
+				}
+				catch (IOException e)
+				{
+					Log.e(TAG, "Failed to add image to recycle bin: " + toRecycle.toString() + "/n" + e);
+				}
 				remainingImages.remove(toRecycle);
 				onImageRemoved(toRecycle);
 			}
@@ -1207,17 +1176,8 @@ public abstract class CoreActivity extends DocumentActivity
 				try
 				{
 					setWriteResume(WriteActions.RESTORE, new Object[]{remainingImages});
-					if (FileUtil.isFileScheme(toRestore))
-					{
-						File file = new File(toRestore.getPath());
-						moveFile(recycleBin.getFile(image), file);
-					}
-					else
-					{
-						Uri uri = Uri.fromFile(recycleBin.getFile(image));
-						moveFile(uri, toRestore);
-					}
-
+					Uri uri = Uri.fromFile(recycleBin.getFile(image));
+					moveFile(uri, toRestore);
 					onImageAdded(toRestore);
 				}
 				catch (WritePermissionException e)
@@ -1294,16 +1254,7 @@ public abstract class CoreActivity extends DocumentActivity
 			throws WritePermissionException
 	{
 		DocumentFile renameFile = getRenamedFile(original, baseName);
-		if (FileUtil.isFileScheme(renameFile.getUri()))
-		{
-			File from = new File(original.getUri().getPath());
-			File to = new File(renameFile.getUri().getPath());
-			return moveFile(from, to);
-		}
-		else
-		{
-			return moveFile(original.getUri(), renameFile.getUri());
-		}
+		return moveFile(original.getUri(), renameFile.getUri());
 	}
 
 	/**
@@ -1442,14 +1393,7 @@ public abstract class CoreActivity extends DocumentActivity
 				try
 				{
 					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
-					if (FileUtil.isFileScheme(image))
-					{
-						xmpDoc = getDocumentFile(new File(xmp.getUri().getPath()), false, true);
-					}
-					else
-					{
-						xmpDoc = getDocumentFile(xmp.getUri(), false, true);
-					}
+					xmpDoc = getDocumentFile(new File(xmp.getUri().getPath()), false, true);
 					remainingImages.remove(image);
 				}
 				catch (WritePermissionException e)

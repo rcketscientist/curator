@@ -207,30 +207,6 @@ public class XmpFilterFragment extends XmpBaseFragment
                     visible[i++] = !mExcludedFolders.contains(path) && !mHiddenFolders.contains(path);
                 }
 
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.FolderDialog);
-//                AlertDialog folderDialog = builder.setMultiChoiceItems(
-//                        paths.toArray(new CharSequence[paths.size()]),
-//                        visible,
-//                        new DialogInterface.OnMultiChoiceClickListener()
-//                        {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which, boolean isChecked)
-//                            {
-//                                if (isChecked)
-//                                {
-//                                    mHiddenFolders.remove(paths.get(which));
-//                                }
-//                                else
-//                                {
-//                                    mHiddenFolders.add(paths.get(which));
-//                                }
-//                                dispatchChange();
-//                            }
-//                        }).create();
-
-//                folderDialog.getWindow().setAttributes(layout);
-//                folderDialog.show();
-
                 final boolean[] excluded = new boolean[paths.size()];
                 i = 0;
                 for (String path : paths)

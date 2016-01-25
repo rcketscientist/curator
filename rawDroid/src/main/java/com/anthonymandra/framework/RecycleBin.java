@@ -39,6 +39,7 @@ import java.util.Set;
 public class RecycleBin
 {
 	private static final String TAG = RecycleBin.class.getSimpleName();
+	// TODO: Single char replacements are not sufficient
 	private static final String pathReplacement = "~";
 	private static final String spaceReplacement = "`";
 	public static final String localPrefix = "file:~";
@@ -82,17 +83,6 @@ public class RecycleBin
 	 * @return success
 	 * @throws IOException the base method does not throw, but the exception is available for subclasses
 	 */
-	protected boolean deleteFile(File toDelete) throws IOException
-	{
-		return toDelete.delete();
-	}
-
-	/**
-	 * Deletes the given file.  This should be overridden if necessary to handle file system changes.
-	 * @param toDelete file to delete
-	 * @return success
-	 * @throws IOException the base method does not throw, but the exception is available for subclasses
-	 */
 	protected boolean deleteFile(Uri toDelete) throws IOException
 	{
 		// This will likely fail due to write permission on any device needing to use this method.
@@ -106,7 +96,7 @@ public class RecycleBin
 	 * Adds a file to the recycling bin synchronously.  Recommended to be called asynchronously,
 	 * such as with {@link #addFileAsync(Uri), which will automatically run m AsyncTask}
 	 */
-	public void addFile(Uri toRecycle)
+	public void addFile(Uri toRecycle) throws IOException
 	{
 		if (toRecycle == null)
 		{
@@ -132,30 +122,19 @@ public class RecycleBin
 					final DiskLruCache.Editor editor = bin.edit(key);
 					if (editor != null)
 					{
-                        bis = new BufferedInputStream(new FileInputStream(toRecycle.getPath()));
+                        bis = new BufferedInputStream(FileUtil.getInputStream(mContext, toRecycle));
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
 
-                        byte[] buffer = new byte[1024];
-
-                        int length;
-                        //copy the file content in bytes
-                        while ((length = bis.read(buffer)) > 0){
-                            out.write(buffer, 0, length);
-                        }
+						FileUtil.copy(bis, out);
 						editor.commit();
-						if (FileUtil.isFileScheme(toRecycle))
-						{
-							deleteFile(new File(toRecycle.getPath()));
-						}
-						else
-						{
-							deleteFile(toRecycle);
-						}
+
+						deleteFile(toRecycle);
 					}
 				}
 				catch (final IOException e)
 				{
 					Log.e(TAG, "addFileToBin - " + e);
+					throw e;
 				}
 				finally
 				{
@@ -454,7 +433,14 @@ public class RecycleBin
 		@Override
 		protected Void doInBackground(Uri... params)
 		{
-			addFile(params[0]);
+			try
+			{
+				// FIXME: It may not be possible to do this with the new permission infrastructure
+				addFile(params[0]);
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -480,6 +466,7 @@ public class RecycleBin
 	 * @param recycledItem
 	 *            File to recycle and delete
 	 */
+	@Deprecated // Write permission issues would be lost
 	public void addFileAsync(Uri recycledItem)
 	{
 		new AddFileTask().execute(recycledItem);
