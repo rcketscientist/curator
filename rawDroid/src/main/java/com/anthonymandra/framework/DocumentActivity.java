@@ -663,23 +663,23 @@ public abstract class DocumentActivity extends AppCompatActivity
 					"The app should store any parameters necessary to resume write here.");
 		}
 
-		DocumentFile target;
-		if (isDirectory)
-		{
-			target = DocumentFile.fromTreeUri(this, uri);
-		}
-		else
-		{
-			target = DocumentFile.fromSingleUri(this, uri);
-		}
+		UsefulDocumentFile target = UsefulDocumentFile.fromUri(this, uri);
+//		if (isDirectory)
+//		{
+//			target = DocumentFile.fromTreeUri(this, uri);
+//		}
+//		else
+//		{
+//			target = DocumentFile.fromSingleUri(this, uri);
+//		}
 
 		if (target.exists())
 		{
-			return target;
+			return target.getDocumentFile();
 		}
 
 		DocumentFile permissionRoot = DocumentFile.fromTreeUri(this, treeUri);
-		DocumentFile parent = target.getParentFile();
+		UsefulDocumentFile parent = target.getParentFile();
 
 		// If needed create the file or directory
 		if (isDirectory)
@@ -700,13 +700,13 @@ public abstract class DocumentActivity extends AppCompatActivity
 			// Stop if the parent exists or we've reached the permission root
 			while (!parent.exists() && !parent.equals(permissionRoot))
 			{
-				DocumentFile opa = parent.getParentFile();
+				UsefulDocumentFile opa = parent.getParentFile();
 				opa.createDirectory(parent.getName());
 				parent = opa;
 			}
 		}
 
-		return target;
+		return target.getDocumentFile();
 	}
 
 	/**
