@@ -7,6 +7,7 @@ import android.support.v4.provider.DocumentFile;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class UsefulDocumentFile
@@ -32,16 +33,11 @@ public class UsefulDocumentFile
         if (FileUtil.isFileScheme(uri))
             return new UsefulDocumentFile(c, DocumentFile.fromFile(new File(uri.getPath())));
         else if (DocumentsContract.isDocumentUri(c, uri))
-        {
-            if (isTreeUri(uri))
-                return new UsefulDocumentFile(c, DocumentFile.fromTreeUri(c, uri));
-            else
-                return new UsefulDocumentFile(c, DocumentFile.fromSingleUri(c, uri));
-        }
+            return new UsefulDocumentFile(c, DocumentFile.fromSingleUri(c, uri));
+        else if (isTreeUri(uri))
+            return new UsefulDocumentFile(c, DocumentFile.fromTreeUri(c, uri));
         else
-        {
             throw new IllegalArgumentException("Invalid URI: " + uri);
-        }
     }
 
     public DocumentFile getDocumentFile()
@@ -54,15 +50,7 @@ public class UsefulDocumentFile
         DocumentFile parent = mDocument.getParentFile();
         if (parent != null) return new UsefulDocumentFile(mContext, parent);
 
-        // Uri-based DocumentFile do not support parent at all
-        // Try to garner the logical parent through the uri itself
-        Uri uri = getUri();
-        String documentId = DocumentsContract.getDocumentId(uri);
-        String parentDocumentId = getParentDocumentId(documentId);
-        Uri parentUri = DocumentsContract.buildDocumentUri(uri.getAuthority(), parentDocumentId);
-        if (parentUri != null)
-            return UsefulDocumentFile.fromUri(mContext, parentUri);
-        return null;
+        return getParentDocument();
     }
 
     protected static String getRoot(String documentId)
@@ -92,20 +80,40 @@ public class UsefulDocumentFile
         return path.split(URL_SLASH); // URL /
     }
 
-    protected static String getParentDocumentId(String documentId)
+	/**
+     *  Uri-based DocumentFile do not support parent at all
+     *  Try to garner the logical parent through the uri itself
+     * @return
+     */
+    protected UsefulDocumentFile getParentDocument()
     {
+        Uri uri = mDocument.getUri();
+        String documentId = DocumentsContract.getDocumentId(uri);
+
         String[] parts = getPathSegments(documentId);
+
         if (parts == null)
             return null;
-        String[] parentParts = new String[parts.length-1];
-        parentParts = parts;
-        return TextUtils.join(URL_SLASH, parentParts);
+
+        Uri parentUri;
+        if (parts.length == 1)
+        {
+            String parentId = DocumentsContract.getTreeDocumentId(uri);
+            parentUri = DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), parentId);
+        }
+        else
+        {
+            String[] parentParts = Arrays.copyOfRange(parts, 0, parts.length - 2);
+            String parentId = TextUtils.join(URL_SLASH, parentParts);
+            parentUri = DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), parentId);
+        }
+
+        return UsefulDocumentFile.fromUri(mContext, parentUri);
     }
 
-    // DocumentsContracts.isTreeUri
     public static boolean isTreeUri(Uri uri) {
         final List<String> paths = uri.getPathSegments();
-        return (paths.size() >= 2 && PATH_TREE.equals(paths.get(0)));
+        return (paths.size() == 2 && PATH_TREE.equals(paths.get(0)));
     }
 
     public boolean canRead()

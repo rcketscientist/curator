@@ -686,19 +686,19 @@ public abstract class DocumentActivity extends AppCompatActivity
 		{
 			parent.createDirectory(target.getName());
 		}
-		else
-		{
-			// TODO: is null mime an issue? RawDocumentFile.createFle will simply not append an ext
-			// So if the name contains the desired extension this is fine.  Another handler could
-			// be an issue.  Since Android mime support is pretty awful/silly, best off not dealing with mime.
-			parent.createFile(null, target.getName());
-		}
+//		else
+//		{
+//			// TODO: is null mime an issue? RawDocumentFile.createFle will simply not append an ext
+//			// So if the name contains the desired extension this is fine.  Another handler could
+//			// be an issue.  Since Android mime support is pretty awful/silly, best off not dealing with mime.
+//			parent.createFile(null, target.getName());
+//		}
 
 		// If desired create the tree up to the root working backwards
 		if (createDirectories)
 		{
 			// Stop if the parent exists or we've reached the permission root
-			while (!parent.exists() && !parent.equals(permissionRoot))
+			while (parent != null && !parent.exists() && !parent.equals(permissionRoot))
 			{
 				UsefulDocumentFile opa = parent.getParentFile();
 				opa.createDirectory(parent.getName());
@@ -706,6 +706,10 @@ public abstract class DocumentActivity extends AppCompatActivity
 			}
 		}
 
+		if (!target.exists())
+		{
+			target.getParentFile().createFile(null, target.getName());
+		}
 		return target.getDocumentFile();
 	}
 
