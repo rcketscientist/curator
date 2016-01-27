@@ -63,10 +63,14 @@ public class UsefulDocumentFile
 
     protected static String getPath(String documentId)
     {
+        // usb:folder/file.ext would effectively be:
+        // content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3Afolder%2Ffile.ext
+        // We want to return "folder/file.ext"
         String[] parts = documentId.split(URL_COLON); // URL :
 
         if (parts.length > 0)
         {
+            // The last part should be the path for both document and tree uris
             return parts[parts.length-1];
         }
         return null;
@@ -74,6 +78,9 @@ public class UsefulDocumentFile
 
     protected static String[] getPathSegments(String documentId)
     {
+        // usb:folder/file.ext would effectively be:
+        // content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3Afolder%2Ffile.ext
+        // We want to return ["folder", "file.ext"]
         String path = getPath(documentId);
         if (path == null)
             return null;
@@ -90,22 +97,32 @@ public class UsefulDocumentFile
         Uri uri = mDocument.getUri();
         String documentId = DocumentsContract.getDocumentId(uri);
 
+        // usb:folder/file.ext would effectively be:
+        // content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3Afolder%2Ffile.ext
+        // We expect ["folder", "file.ext"] and we want to eventually return:
+        // content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3Afolder
         String[] parts = getPathSegments(documentId);
 
         if (parts == null)
             return null;
 
         Uri parentUri;
+
+        //  One part means treeUri?
         if (parts.length == 1)
         {
             String parentId = DocumentsContract.getTreeDocumentId(uri);
             parentUri = DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), parentId);
         }
+        // document uri
+        // take the path segment up to the last segment which will drop file.ext
+        // Join them with / and we should have the parent:
+        // content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3Afolder
         else
         {
             String[] parentParts = Arrays.copyOfRange(parts, 0, parts.length - 2);
             String parentId = TextUtils.join(URL_SLASH, parentParts);
-            parentUri = DocumentsContract.buildTreeDocumentUri(uri.getAuthority(), parentId);
+            parentUri = DocumentsContract.buildDocumentUri(uri.getAuthority(), parentId);
         }
 
         return UsefulDocumentFile.fromUri(mContext, parentUri);
