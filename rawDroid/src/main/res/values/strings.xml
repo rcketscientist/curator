@@ -309,4 +309,6 @@
     <string name="selectUsb">Select USB</string>
     <string name="allowWrite">Allow Write Permission</string>
     <string name="addFolder">Add Folder</string>
+
+    <string name="permissionStorageRationale">Storage permission is needed to read and write images.</string>
 </resources>

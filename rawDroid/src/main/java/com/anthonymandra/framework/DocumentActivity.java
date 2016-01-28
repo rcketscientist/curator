@@ -1,16 +1,22 @@
 package com.anthonymandra.framework;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
+import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -34,15 +40,28 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class DocumentActivity extends AppCompatActivity
+		implements ActivityCompat.OnRequestPermissionsResultCallback
 {
 	private static final String TAG = DocumentActivity.class.getSimpleName();
 	private static final int REQUEST_PREFIX = 1000;
 	private static final int REQUEST_CODE_WRITE_PERMISSION = REQUEST_PREFIX + 1;
+	private static final int REQUEST_STORAGE_PERMISSION = REQUEST_PREFIX + 2;
 
 	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
 
+	/**
+	 * Permissions required to read and write to storage.
+	 */
+	private static String[] PERMISSIONS_STORAGE = {
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE};
+	private boolean mRequestStoragePermissionEnabled = false;
+	private int mStorageRationale = R.string.permissionStorageRationale;
+
 	protected Enum mCallingMethod;
 	protected Object[] mCallingParameters;
+
+	private int mLayoutId;
 
 	/**
 	 * All roots for which this app has permission
@@ -65,8 +84,8 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * {@link Activity#startActivityForResult(Intent, int)} it is recommended that the
 	 * calling method break upon receiving this exception with the intention that it will
 	 * be completed by {@link DocumentActivity#onResumeWriteAction(Enum, Object[])}
-	 * after receiving permission.  It is the responsibility of the {@link DocumentActivity} s
-	 * ubclass to define {@link DocumentActivity#onResumeWriteAction(Enum, Object[])}.
+	 * after receiving permission.  It is the responsibility of the {@link DocumentActivity}
+	 * subclass to define {@link DocumentActivity#onResumeWriteAction(Enum, Object[])}.
 	 */
 	public class WritePermissionException extends IOException
 	{
@@ -85,13 +104,102 @@ public abstract class DocumentActivity extends AppCompatActivity
 	@Override
 	protected void onResume()
 	{
-		updatePermissions();
 		super.onResume();
+		updatePermissions();
+
+		boolean needsRead = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+				!= PackageManager.PERMISSION_GRANTED;
+
+		boolean needsWrite = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+				!= PackageManager.PERMISSION_GRANTED;
+
+		if (mRequestStoragePermissionEnabled && needsRead || needsWrite)
+			requestStoragePermission();
 	}
 
 	private void updatePermissions()
 	{
 		mRootPermissions = getContentResolver().getPersistedUriPermissions();
+	}
+
+	/**
+	 * The permissions necessary to read and write to storage
+	 * @return
+     */
+	public static String[] getStoragePermissions()
+	{
+		return PERMISSIONS_STORAGE;
+	}
+
+	/**
+	 * Sets whether DocumentActivity will manage storage permission for your activity.
+	 * You may also set {@link #setStoragePermissionRequestEnabled(boolean)} ()} to customize the
+	 * rationale for the permission if a user initially declines
+	 * @param enabled
+     */
+	protected void setStoragePermissionRequestEnabled(boolean enabled)
+	{
+		mRequestStoragePermissionEnabled = enabled;
+	}
+
+	@Override
+	public void setContentView(@LayoutRes int layoutResID)
+	{
+		super.setContentView(layoutResID);
+		mLayoutId = layoutResID; // Hang onto the layout id for snackbars
+	}
+
+	/**
+	 * Requests the ability to read or write to external storage.
+	 *
+	 * Can be activated with {@link #setStoragePermissionRequestEnabled(boolean)}
+	 *
+	 * If a user has denied the permission you can supply a rationale that will be
+	 * displayed in a Snackbar by setting {@link #setStoragePermissionRequestEnabled(boolean)} ()}
+	 */
+	private void requestStoragePermission()
+	{
+		Log.i(TAG, "STORAGE permission has NOT been granted. Requesting permission.");
+
+		boolean justifyWrite = ActivityCompat.shouldShowRequestPermissionRationale(this,
+				Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		boolean justifyRead = ActivityCompat.shouldShowRequestPermissionRationale(this,
+				Manifest.permission.READ_EXTERNAL_STORAGE);
+
+		// Storage permission has been requested and denied, show a Snackbar with the option to
+		// grant permission
+		if (justifyRead || justifyWrite)
+		{
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			Snackbar.make(findViewById(mLayoutId),
+						mStorageRationale,
+						Snackbar.LENGTH_INDEFINITE)
+					.setAction(R.string.ok, new View.OnClickListener()
+					{
+						@Override
+						public void onClick(View view) {
+							ActivityCompat.requestPermissions(DocumentActivity.this,
+									PERMISSIONS_STORAGE, REQUEST_STORAGE_PERMISSION);
+						}
+					})
+					.show();
+		}
+		else
+		{
+			// Storage permission has not been requeste yet. Request for first time.
+			ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE_PERMISSION);
+		}
+	}
+
+	/**
+	 * Customizes the rationale for the storage permission, which appears as a snackbar if the
+	 * user initially denies the permission.
+	 * @return
+     */
+	protected void setStoragePermissionRationale(@IdRes int stringId)
+	{
+		mStorageRationale = stringId;
 	}
 
 	/**
@@ -941,64 +1049,58 @@ public abstract class DocumentActivity extends AppCompatActivity
 		}
 	}
 
+	/**
+	 * The following methods handle the wiring for resuming write actions that are interrupted by
+	 * requesting write permission.  Essentially you will overload
+	 */
+
+	/**
+	 * Override this method to handle the resuming of any write actions that were interrupted
+	 * by a SAF write request.
+	 * @param callingMethod The method to resume
+	 * @param callingParameters the paremeters to pass to callingMethod
+     */
 	protected abstract void onResumeWriteAction(Enum callingMethod, Object[] callingParameters);
+
+	/**
+	 * Use this method to set the method currently involved in a write action to allow it to be
+	 * resume in the event of a permission request
+	 * @param callingMethod
+     */
 	protected void setWriteMethod(Enum callingMethod)
 	{
 		Crashlytics.setString("WriteMethod", callingMethod.toString());
 		mCallingMethod = callingMethod;
 	}
 
+	/**
+	 * Use this method to set the parameters to pass to the method set in {@link #setWriteMethod(Enum)}
+	 * @param callingParameters
+     */
 	protected void setWriteParameters(Object[] callingParameters)
 	{
 		Crashlytics.setBool("WriteParametersIsNull", callingParameters == null);
 		mCallingParameters = callingParameters;
 	}
+
+	/**
+	 * Use this method to set the write method and appropriate parameters to resume an interrupted
+	 * write action when write permission must be requested.
+	 * @param callingMethod
+	 * @param callingParameters
+     */
 	protected void setWriteResume(Enum callingMethod, Object[] callingParameters)
 	{
 		setWriteMethod(callingMethod);
 		setWriteParameters(callingParameters);
 	}
+
+	/**
+	 * Clear any pending write actions.
+	 */
 	protected void clearWriteResume()
 	{
 		mCallingMethod = null;
 		mCallingParameters = null;
-	}
-
-	/**
-	 * Retrieve an Uri shared preference.
-	 *
-	 * @param preferenceId
-	 *            the id of the shared preference.
-	 * @return the corresponding preference value.
-	 */
-	public Uri getSharedPreferenceUri(final int preferenceId) {
-		String uriString = PreferenceManager.getDefaultSharedPreferences(this)
-				.getString(getString(preferenceId), null);
-
-		if (uriString == null) {
-			return null;
-		}
-		else {
-			return Uri.parse(uriString);
-		}
-	}
-
-	/**
-	 * Set a shared preference for an Uri.
-	 *
-	 * @param preferenceId
-	 *            the id of the shared preference.
-	 * @param uri
-	 *            the target value of the preference.
-	 */
-	public void setSharedPreferenceUri(final int preferenceId, final Uri uri) {
-		SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-		if (uri == null) {
-			editor.putString(getString(preferenceId), null);
-		}
-		else {
-			editor.putString(getString(preferenceId), uri.toString());
-		}
-		editor.commit();
 	}
 }

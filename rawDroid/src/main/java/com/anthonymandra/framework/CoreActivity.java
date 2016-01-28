@@ -1,5 +1,6 @@
 package com.anthonymandra.framework;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,6 +24,7 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
@@ -94,13 +96,6 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected ProgressDialog mProgressDialog;
 
-	protected RawFilter rawFilter = new RawFilter();
-	protected JpegFilter jpegFilter = new JpegFilter();
-	private XmpFilter xmpFilter = new XmpFilter();
-	private NativeFilter nativeFilter = new NativeFilter();
-	private FileAlphaCompare alphaCompare = new FileAlphaCompare();
-	private MetaAlphaCompare metaCompare = new MetaAlphaCompare();
-
 	protected ShareActionProvider mShareProvider;
 	protected Intent mShareIntent;
 
@@ -116,6 +111,7 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setStoragePermissionRequestEnabled(true);
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mShareIntent = new Intent(Intent.ACTION_SEND);
