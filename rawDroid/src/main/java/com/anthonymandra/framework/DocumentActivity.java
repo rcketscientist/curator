@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -107,15 +108,15 @@ public abstract class DocumentActivity extends AppCompatActivity
 	{
 		ParcelFileDescriptor sourcePfd = null;
 		DocumentFile targetDoc;
-		FileInputStream inStream = null;
+		InputStream inStream = null;
 		OutputStream outStream = null;
 
 		try
 		{
 			sourcePfd = FileUtil.getParcelFileDescriptor(this, source, "r");
 			targetDoc = getLollipopDocument(target, false, true);
-			inStream = new FileInputStream(sourcePfd.getFileDescriptor());
-			outStream = getContentResolver().openOutputStream(targetDoc.getUri());
+			inStream = getContentResolver().openInputStream(source);//new FileInputStream(sourcePfd.getFileDescriptor());
+			outStream = getContentResolver().openOutputStream(target);//targetDoc.getUri());
 
 			if (outStream != null)
 			{

@@ -129,6 +129,8 @@ public abstract class CoreActivity extends DocumentActivity
 	{
 		super.onResume();
 		LicenseManager.getLicense(this, getLicenseHandler());
+		// Request storage permission here:
+		// http://developer.android.com/samples/RuntimePermissions/src/com.example.android.system.runtimepermissions/MainActivity.html#l153
 		createSwapDir();
 		createRecycleBin();
 	}
