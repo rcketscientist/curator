@@ -135,8 +135,8 @@ public class ImageUtils
     public static Uri[] getAssociatedFiles(Context c, Uri image)
     {
         final List<Uri> files = new ArrayList<>();
-        DocumentFile xmp = getXmpFile(c, image);
-        DocumentFile jpg = getJpgFile(c, image);
+        UsefulDocumentFile xmp = getXmpFile(c, image);
+        UsefulDocumentFile jpg = getJpgFile(c, image);
         if (xmp.exists()) files.add(xmp.getUri());
         if (jpg.exists()) files.add(jpg.getUri());
         return files.toArray(new Uri[files.size()]);
@@ -154,12 +154,12 @@ public class ImageUtils
         return getJpgFile(f).exists();
     }
 
-    public static DocumentFile getXmpFile(Context c, Uri uri)
+    public static UsefulDocumentFile getXmpFile(Context c, Uri uri)
     {
         return getAssociatedFile(c, uri, "xmp");
     }
 
-    public static DocumentFile getJpgFile(Context c, Uri uri)
+    public static UsefulDocumentFile getJpgFile(Context c, Uri uri)
     {
         return getAssociatedFile(c, uri, "jpg");
     }
@@ -174,20 +174,20 @@ public class ImageUtils
         return getAssociatedFile(f, "jpg");
     }
 
-    private static DocumentFile getAssociatedFile(Context c, Uri uri, String ext)
+    private static UsefulDocumentFile getAssociatedFile(Context c, Uri uri, String ext)
     {
         /*  ghetto: mashing uris is not recommended, but since DocumentFile.findFile is slow we're
             going to skip that process and simply mash what we know the uri would be (as of 01/2016)
             new uri schemes could possibly break this */
 
-        DocumentFile image = FileUtil.getDocumentFile(c, uri);
+        UsefulDocumentFile image = FileUtil.getDocumentFile(c, uri);
         String name = image.getName();
         if (ext != null)
         {
             name = Util.swapExtention(name, ext);
         }
 
-        DocumentFile parent = image.getParentFile();
+        UsefulDocumentFile parent = image.getParentFile();
         String parentString = parent.getUri().toString();
         String associatedString = parentString + "/" + name;
         Uri associatedUri = Uri.parse(associatedString);

@@ -903,7 +903,7 @@ public abstract class CoreActivity extends DocumentActivity
 			boolean success = true;
 			for (Uri toExport : totalImages)
 			{
-				DocumentFile source = FileUtil.getDocumentFile(CoreActivity.this, toExport);
+				UsefulDocumentFile source = FileUtil.getDocumentFile(CoreActivity.this, toExport);
 				DocumentFile destinationTree;
 				try
 				{
@@ -1203,8 +1203,8 @@ public abstract class CoreActivity extends DocumentActivity
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
-		DocumentFile sourceFile = FileUtil.getDocumentFile(this, source);
-		DocumentFile renameFile = getRenamedFile(sourceFile, baseName);
+		UsefulDocumentFile sourceFile = FileUtil.getDocumentFile(this, source);
+		UsefulDocumentFile renameFile = getRenamedFile(sourceFile, baseName);
 		imageSuccess = renameAssociatedFile(sourceFile, baseName);
 
 		if (!imageSuccess)
@@ -1222,13 +1222,13 @@ public abstract class CoreActivity extends DocumentActivity
 
 		if (ImageUtils.hasXmpFile(this, source))
 		{
-			DocumentFile xmpDoc = ImageUtils.getXmpFile(this, source);
+			UsefulDocumentFile xmpDoc = ImageUtils.getXmpFile(this, source);
 			xmpSuccess = renameAssociatedFile(xmpDoc, baseName);
 		}
 		if (ImageUtils.hasJpgFile(this, source))
 		{
-			DocumentFile jpgDoc = ImageUtils.getJpgFile(this, source);
-			DocumentFile renamedJpeg = getRenamedFile(jpgDoc, baseName);
+			UsefulDocumentFile jpgDoc = ImageUtils.getJpgFile(this, source);
+			UsefulDocumentFile renamedJpeg = getRenamedFile(jpgDoc, baseName);
 			jpgSuccess = renameAssociatedFile(jpgDoc, baseName);
 
 			if (jpgSuccess)
@@ -1248,10 +1248,10 @@ public abstract class CoreActivity extends DocumentActivity
 		return imageSuccess && xmpSuccess && jpgSuccess;
 	}
 
-	public boolean renameAssociatedFile(DocumentFile original, String baseName)
+	public boolean renameAssociatedFile(UsefulDocumentFile original, String baseName)
 			throws WritePermissionException
 	{
-		DocumentFile renameFile = getRenamedFile(original, baseName);
+		UsefulDocumentFile renameFile = getRenamedFile(original, baseName);
 		return moveFile(original.getUri(), renameFile.getUri());
 	}
 
@@ -1261,7 +1261,7 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @param baseName
      * @return
      */
-	public DocumentFile getRenamedFile(DocumentFile original, String baseName)
+	public UsefulDocumentFile getRenamedFile(UsefulDocumentFile original, String baseName)
 	{
 		String filename = original.getName();
 		String ext = filename.substring(filename.lastIndexOf("."),
@@ -1270,7 +1270,7 @@ public abstract class CoreActivity extends DocumentActivity
 		String rename = baseName + ext;
 		String parent = original.getParentFile().getUri().toString();
 		String renameUriString = parent + "/" + rename;
-		return DocumentFile.fromSingleUri(this, Uri.parse(renameUriString));
+		return UsefulDocumentFile.fromUri(this, Uri.parse(renameUriString));
 	}
 
 	private static int numDigits(int x)
@@ -1386,7 +1386,7 @@ public abstract class CoreActivity extends DocumentActivity
 						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
 						.build());
 
-				final DocumentFile xmp = ImageUtils.getXmpFile(CoreActivity.this, image);
+				final UsefulDocumentFile xmp = ImageUtils.getXmpFile(CoreActivity.this, image);
 				final DocumentFile xmpDoc;
 				try
 				{

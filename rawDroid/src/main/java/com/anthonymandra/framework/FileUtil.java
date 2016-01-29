@@ -439,16 +439,16 @@ public class FileUtil
 	 * @param uri
 	 * @return
      */
-	public static DocumentFile getDocumentFile(Context c, Uri uri)
+	public static UsefulDocumentFile getDocumentFile(Context c, Uri uri)
 	{
 		if (isFileScheme(uri))
 		{
-			return DocumentFile.fromFile(new File(uri.getPath()));
+			return UsefulDocumentFile.fromFile(c, new File(uri.getPath()));
 		}
 		// TODO: Confirm if other cases need to be handled
 		else
 		{
-			return DocumentFile.fromSingleUri(c, uri);
+			return UsefulDocumentFile.fromUri(c, uri);
 		}
 	}
 

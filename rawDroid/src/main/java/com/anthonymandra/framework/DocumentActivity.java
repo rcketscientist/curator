@@ -43,9 +43,9 @@ public abstract class DocumentActivity extends AppCompatActivity
 		implements ActivityCompat.OnRequestPermissionsResultCallback
 {
 	private static final String TAG = DocumentActivity.class.getSimpleName();
-	private static final int REQUEST_PREFIX = 1000;
-	private static final int REQUEST_CODE_WRITE_PERMISSION = REQUEST_PREFIX + 1;
-	private static final int REQUEST_STORAGE_PERMISSION = REQUEST_PREFIX + 2;
+	private static final int REQUEST_PREFIX = 256;  // Permissions have 8-bit limit
+	private static final int REQUEST_CODE_WRITE_PERMISSION = REQUEST_PREFIX - 1;
+	private static final int REQUEST_STORAGE_PERMISSION = REQUEST_PREFIX - 2;
 
 	private static final String PREFERENCE_SKIP_WRITE_WARNING = "skip_write_warning";
 
@@ -172,9 +172,10 @@ public abstract class DocumentActivity extends AppCompatActivity
 		{
 			// Provide an additional rationale to the user if the permission was not granted
 			// and the user would benefit from additional context for the use of the permission.
-			Snackbar.make(findViewById(mLayoutId),
-						mStorageRationale,
-						Snackbar.LENGTH_INDEFINITE)
+			View mainView = findViewById(android.R.id.content);
+			if (mainView == null)
+				return; // Should just Toast
+			Snackbar.make(mainView, mStorageRationale, Snackbar.LENGTH_INDEFINITE)
 					.setAction(R.string.ok, new View.OnClickListener()
 					{
 						@Override

@@ -28,6 +28,11 @@ public class UsefulDocumentFile
         mContext = c;
     }
 
+    public static UsefulDocumentFile fromFile(Context c, File file)
+    {
+        return new UsefulDocumentFile(c, DocumentFile.fromFile(file));
+    }
+
     public static UsefulDocumentFile fromUri(Context c, Uri uri)
     {
         if (FileUtil.isFileScheme(uri))

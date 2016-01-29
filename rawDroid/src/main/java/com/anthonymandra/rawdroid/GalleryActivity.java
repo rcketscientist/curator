@@ -23,7 +23,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
@@ -237,7 +236,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+//        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
 
 //		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 //		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
@@ -823,7 +822,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		SearchService.startActionSearch(
 				this,
 				/*TEST_ROOTS,*/MOUNT_ROOTS,
-				permissions,
+				/*permissions*/null,
 				excludedFolders.toArray(new String[excludedFolders.size()]));
 	}
 
