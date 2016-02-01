@@ -10,11 +10,9 @@ import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.provider.DocumentFile;
@@ -26,7 +24,6 @@ import android.widget.ImageView;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.R;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +35,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Stack;
 
 public abstract class DocumentActivity extends AppCompatActivity
 		implements ActivityCompat.OnRequestPermissionsResultCallback
@@ -60,8 +58,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 	protected Enum mCallingMethod;
 	protected Object[] mCallingParameters;
-
-	private int mLayoutId;
 
 	/**
 	 * All roots for which this app has permission
@@ -113,7 +109,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 		boolean needsWrite = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 				!= PackageManager.PERMISSION_GRANTED;
 
-		if (mRequestStoragePermissionEnabled && needsRead || needsWrite)
+		if (mRequestStoragePermissionEnabled && (needsRead || needsWrite))
 			requestStoragePermission();
 	}
 
@@ -140,13 +136,6 @@ public abstract class DocumentActivity extends AppCompatActivity
 	protected void setStoragePermissionRequestEnabled(boolean enabled)
 	{
 		mRequestStoragePermissionEnabled = enabled;
-	}
-
-	@Override
-	public void setContentView(@LayoutRes int layoutResID)
-	{
-		super.setContentView(layoutResID);
-		mLayoutId = layoutResID; // Hang onto the layout id for snackbars
 	}
 
 	/**
@@ -211,39 +200,48 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * @param target
 	 *            The target uri
 	 * @return true if the copying was successful.
+	 * @throws WritePermissionException if the app does not have permission to write to target
+	 * @throws IOException if an I/O error occurs
 	 */
 	public boolean copyFile(final Uri source, final Uri target)
-			throws WritePermissionException
+			throws IOException
 	{
-		ParcelFileDescriptor sourcePfd = null;
-		DocumentFile targetDoc;
+//		ParcelFileDescriptor sourcePfd = null;
 		InputStream inStream = null;
 		OutputStream outStream = null;
 
+//		UsefulDocumentFile sourceDoc = UsefulDocumentFile.fromUri(this, source);
+		UsefulDocumentFile destinationDoc = getDocumentFile(target, false, true);
+		if (!destinationDoc.exists())
+		{
+			destinationDoc.getParentFile().createFile(null, destinationDoc.getName());
+		}
+		if (!destinationDoc.canRead())
+		{
+			throw new WritePermissionException(
+					"Write permission not found.  This indicates a SAF write permission was requested.  " +
+					"The app should store any parameters necessary to resume write here.");
+		}
+
 		try
 		{
-			sourcePfd = FileUtil.getParcelFileDescriptor(this, source, "r");
-			targetDoc = getLollipopDocument(target, false, true);
-			inStream = getContentResolver().openInputStream(source);//new FileInputStream(sourcePfd.getFileDescriptor());
-			outStream = getContentResolver().openOutputStream(target);//targetDoc.getUri());
+//			sourcePfd = FileUtil.getParcelFileDescriptor(this, source, "r");
+			inStream = FileUtil.getInputStream(this, source);//getContentResolver().openInputStream(source);//new FileInputStream(sourcePfd.getFileDescriptor());
+			outStream = getContentResolver().openOutputStream(target);
 
-			if (outStream != null)
-			{
-				byte[] buffer = new byte[4096]; // MAGIC_NUMBER
-				int bytesRead;
-				while ((bytesRead = inStream.read(buffer)) != -1) {
-					outStream.write(buffer, 0, bytesRead);
-				}
-			}
+			FileUtil.copy(inStream, outStream);
 		}
-		catch (IOException e)
+		catch(ArithmeticException e)
 		{
-			Log.e(TAG, "Failed to copy file: " + e);
-			return false;
+			Log.d(TAG, "File larger than 2GB copied.");
+		}
+		catch(Exception e)
+		{
+			throw new IOException("Failed to copy " + source.getPath() + ": " + e.toString());
 		}
 		finally
 		{
-			Utils.closeSilently(sourcePfd);
+//			Utils.closeSilently(sourcePfd);
 			Utils.closeSilently(inStream);
 			Utils.closeSilently(outStream);
 		}
@@ -282,7 +280,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 				if (Util.hasLollipop())
 				{
 					// Storage Access Framework
-					DocumentFile targetDocument = getLollipopDocument(target, false, true);
+					UsefulDocumentFile targetDocument = getLollipopDocument(target, false, true);
 					if (targetDocument == null)
 						return false;
 					outStream =
@@ -333,7 +331,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 		}
 		else
 		{
-			DocumentFile document = getLollipopDocument(file, false, true);
+			UsefulDocumentFile document = getLollipopDocument(file, false, true);
 			if (document == null)
 				return false;
 			return document.delete();
@@ -356,7 +354,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(file, false, true);
+			UsefulDocumentFile document = getLollipopDocument(file, false, true);
 			if (document == null)
 				return false;
 			return document.delete();
@@ -371,8 +369,10 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * @param source The source uri
 	 * @param target The target uri
 	 * @return true if the copying was successful.
+	 * @throws WritePermissionException if the app does not have permission to write to target
+	 * @throws IOException if an I/O error occurs
 	 */
-	public boolean moveFile(final Uri source, final Uri target) throws WritePermissionException
+	public boolean moveFile(final Uri source, final Uri target) throws IOException
 	{
 		if (FileUtil.isFileScheme(target) && FileUtil.isFileScheme(target))
 		{
@@ -434,7 +434,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 		// Try the Storage Access Framework if it is just a rename within the same parent folder.
 		if (Util.hasLollipop() && source.getParent().equals(target.getParent())) {
-			DocumentFile document = getLollipopDocument(source, true, true);
+			UsefulDocumentFile document = getLollipopDocument(source, true, true);
 			if (document == null)
 				return false;
 			if (document.renameTo(target.getName())) {
@@ -493,7 +493,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(folder, true, true);
+			UsefulDocumentFile document = getLollipopDocument(folder, true, true);
 			if (document == null)
 				return false;
 			// getLollipopDocument implicitly creates the directory.
@@ -513,7 +513,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	public boolean mkdir(final Uri folder)
 			throws WritePermissionException
 	{
-		DocumentFile document = getLollipopDocument(folder, true, true);
+		UsefulDocumentFile document = getLollipopDocument(folder, true, true);
 		if (document == null)
 			return false;
 		// getLollipopDocument implicitly creates the directory.
@@ -550,7 +550,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 
 		// Try with Storage Access Framework.
 		if (Util.hasLollipop()) {
-			DocumentFile document = getLollipopDocument(folder, true, true);
+			UsefulDocumentFile document = getLollipopDocument(folder, true, true);
 			if (document == null)
 				return false;
 			return document.delete();
@@ -570,7 +570,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	public boolean rmdir(final Uri folder)
 			throws WritePermissionException
 	{
-		DocumentFile folderDoc = getLollipopDocument(folder, true, true);
+		UsefulDocumentFile folderDoc = getLollipopDocument(folder, true, true);
 		if (!folderDoc.exists()) {
 			return true;
 		}
@@ -623,7 +623,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 			throws WritePermissionException
 	{
 		boolean totalSuccess = true;
-		DocumentFile folderDoc = getLollipopDocument(folder, true, true);
+		UsefulDocumentFile folderDoc = getLollipopDocument(folder, true, true);
 		DocumentFile[] children = folderDoc.listFiles();
 		for (DocumentFile child : children)
 		{
@@ -712,7 +712,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
-	public DocumentFile getDocumentFile(final Uri file,
+	public UsefulDocumentFile getDocumentFile(final Uri file,
 	                                    final boolean isDirectory,
 	                                    final boolean createDirectories)
 			throws WritePermissionException
@@ -732,7 +732,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
-	public DocumentFile getDocumentFile(final File file,
+	public UsefulDocumentFile getDocumentFile(final File file,
 	                                    final boolean isDirectory,
 	                                    final boolean createDirectories)
 			throws WritePermissionException
@@ -740,7 +740,7 @@ public abstract class DocumentActivity extends AppCompatActivity
 		// First try the normal way
 		if (FileUtil.isWritable(file))
 		{
-			return DocumentFile.fromFile(file);
+			return UsefulDocumentFile.fromFile(this, file);
 		}
 		else if (Util.hasLollipop())
 		{
@@ -750,77 +750,81 @@ public abstract class DocumentActivity extends AppCompatActivity
 	}
 
 	/**
-	 * Get a DocumentFile corresponding to the given file (for writing on ExtSdCard on Android 5). If the file is not
-	 * existing, it is created.
+	 * Get a {@link UsefulDocumentFile} corresponding to the given file. The file is created if it
+	 * does not exist.
 	 *
 	 * @param uri The target uri.
 	 * @param isDirectory flag indicating if the file should be a directory.
 	 * @param createDirectories flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
-	private DocumentFile getLollipopDocument(final Uri uri,
+	private UsefulDocumentFile getLollipopDocument(final Uri uri,
 											 final boolean isDirectory,
 											 final boolean createDirectories)
 			throws WritePermissionException
 	{
-		Uri treeUri = getPermissibleRoot(uri);
-
-		if (treeUri == null)
+		UsefulDocumentFile target = UsefulDocumentFile.fromUri(this, uri);
+		if (!target.exists())
 		{
-			requestWritePermission();
+			UsefulDocumentFile parent = target.getParentFile();
+			if (parent == null && !createDirectories)
+				return null;
+
+			/* This next part is necessary because DocumentFile.findFile is extremely slow in large
+			*  folders, so what we do instead is track up the tree what folders need creation
+			*  and place them in a stack (Using the convenient *working* UsefulDocumentFile.getParentFile).
+			*  We then walk the stack back down creating folders as needed.
+			*/
+
+			Stack<UsefulDocumentFile> hierarchyTree = new Stack<>();
+			// Create an hierarchical tree stack of folders that need creation
+			// Stop if the parent exists or we've reached the root
+			while (parent != null && !parent.exists())// && !parent.equals(permissionRoot))
+			{
+				hierarchyTree.push(parent);
+				parent = parent.getParentFile();
+			}
+
+			if (parent != null && !hierarchyTree.empty())
+			{
+				UsefulDocumentFile outerDirectory = parent;
+				// Now work back down to create the directories
+				while (!hierarchyTree.empty())
+				{
+					// If we cannot write to this parent we do not have sufficient permission in this tree
+					if (!outerDirectory.canWrite())
+					{
+						requestWritePermission();
+						throw new WritePermissionException(
+								"Write permission not found.  This indicates a SAF write permission was requested.  " +
+								"The app should store any parameters necessary to resume write here.");
+					}
+
+					UsefulDocumentFile innerDirectory = hierarchyTree.pop();
+					outerDirectory.createDirectory(innerDirectory.getName());
+					outerDirectory = innerDirectory;
+				}
+			}
+
+			parent = target.getParentFile();
+			if (isDirectory)
+			{
+				parent.createDirectory(target.getName());
+			}
+			else
+			{
+				parent.createFile(null, target.getName());
+			}
+		}
+
+		if (!hasPermission(uri) || !target.canWrite())
+		{
 			throw new WritePermissionException(
 					"Write permission not found.  This indicates a SAF write permission was requested.  " +
 					"The app should store any parameters necessary to resume write here.");
 		}
 
-		UsefulDocumentFile target = UsefulDocumentFile.fromUri(this, uri);
-//		if (isDirectory)
-//		{
-//			target = DocumentFile.fromTreeUri(this, uri);
-//		}
-//		else
-//		{
-//			target = DocumentFile.fromSingleUri(this, uri);
-//		}
-
-		if (target.exists())
-		{
-			return target.getDocumentFile();
-		}
-
-		DocumentFile permissionRoot = DocumentFile.fromTreeUri(this, treeUri);
-		UsefulDocumentFile parent = target.getParentFile();
-
-		// If needed create the file or directory
-		if (isDirectory)
-		{
-			parent.createDirectory(target.getName());
-		}
-//		else
-//		{
-//			// TODO: is null mime an issue? RawDocumentFile.createFle will simply not append an ext
-//			// So if the name contains the desired extension this is fine.  Another handler could
-//			// be an issue.  Since Android mime support is pretty awful/silly, best off not dealing with mime.
-//			parent.createFile(null, target.getName());
-//		}
-
-		// If desired create the tree up to the root working backwards
-		if (createDirectories)
-		{
-			// Stop if the parent exists or we've reached the permission root
-			while (parent != null && !parent.exists() && !parent.equals(permissionRoot))
-			{
-				UsefulDocumentFile opa = parent.getParentFile();
-				opa.createDirectory(parent.getName());
-				parent = opa;
-			}
-		}
-
-		if (!target.exists())
-		{
-			target.getParentFile().createFile(null, target.getName());
-		}
-		return target.getDocumentFile();
+		return target;
 	}
 
 	/**
@@ -835,84 +839,22 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 *            flag indicating if intermediate path directories should be created if not existing.
 	 * @return The DocumentFile
 	 */
-	private DocumentFile getLollipopDocument(final File file,
+	private UsefulDocumentFile getLollipopDocument(final File file,
 	                                         final boolean isDirectory,
 	                                         final boolean createDirectories)
 			throws WritePermissionException
 	{
-		Uri treeUri = getPermissibleRoot(Uri.fromFile(file));
-
-		if (treeUri == null)
-		{
-			requestWritePermission();
-			throw new WritePermissionException(
-					"Write permission not found.  This indicates a SAF write permission was requested.  " +
-					"The app should store any parameters necessary to resume write here.");
-		}
-
-		String fullPath = null;
-		try {
-			fullPath = file.getCanonicalPath();
-		}
-		catch (IOException e) {
-			return null;
-		}
-
-		String baseFolder = null;
-
-		// First try to get the base folder via unofficial StorageVolume API from the URIs.
-		String treeBase = FileUtil.getFullPathFromTreeUri(this, treeUri);
-		if (fullPath.startsWith(treeBase)) {
-			baseFolder = treeBase;
+		return getLollipopDocument(Uri.fromFile(file), isDirectory, createDirectories);
 	}
 
-		if (baseFolder == null) {
-			// Alternatively, take root folder from device and assume that base URI works.
-			baseFolder = getExtSdCardFolder(file);
-		}
-
-		if (baseFolder == null) {
-			return null;
-		}
-
-		String relativePath = fullPath.substring(baseFolder.length() + 1);
-		// start with root of SD card and then parse through document tree.
-		DocumentFile document = DocumentFile.fromTreeUri(this, treeUri);
-
-		String[] parts = relativePath.split("\\/");
-		for (int i = 0; i < parts.length; i++) {
-			if (document == null)
-			{
-				Crashlytics.setInt("Build", Build.VERSION.SDK_INT);
-				Crashlytics.setString("relativePath", relativePath );
-				Crashlytics.setString("parts[i-1]: ", i > 0 ? parts[i-1] : "n/a" );
-				Crashlytics.setString("parts[i]: ", parts[i] );
-				Crashlytics.logException(new Exception("Null Document"));
-				return null;
-			}
-			// FIXME: Find file can be exceptionally slow, attempting alternative method in uri version
-			DocumentFile nextDocument = document.findFile(parts[i]);
-
-			if (nextDocument == null) {
-				if (i < parts.length - 1) {
-					if (createDirectories) {
-						nextDocument = document.createDirectory(parts[i]);
-					}
-					else {
-						return null;
-					}
-				}
-				else if (isDirectory) {
-					nextDocument = document.createDirectory(parts[i]);
-				}
-				else {
-					nextDocument = document.createFile(null, parts[i]);
-				}
-			}
-			document = nextDocument;
-		}
-
-		return document;
+	/**
+	 * Determines if a given uri has a permission in its root
+	 * @param uri
+	 * @return true if the uri has permission
+	 */
+	public boolean hasPermission(Uri uri)
+	{
+		return getPermissibleRoot(uri) != null;
 	}
 
 	/**
@@ -920,10 +862,17 @@ public abstract class DocumentActivity extends AppCompatActivity
 	 *
 	 * @return The tree URI.
 	 */
-	public Uri getPermissibleRoot(Uri uri) {
+	public Uri getPermissibleRoot(Uri uri)
+	{
+		if (uri == null)
+			return null;
+
 		for (UriPermission permission : mRootPermissions)
 		{
-			if (uri != null && uri.toString().startsWith(permission.getUri().toString()))
+			String permissionTreeId = DocumentsContract.getTreeDocumentId(permission.getUri());
+			String uriTreeId = DocumentsContract.getTreeDocumentId(uri);
+
+			if (uriTreeId.startsWith(permissionTreeId))
 			{
 				return permission.getUri();
 			}
@@ -1070,7 +1019,7 @@ public abstract class DocumentActivity extends AppCompatActivity
      */
 	protected void setWriteMethod(Enum callingMethod)
 	{
-		Crashlytics.setString("WriteMethod", callingMethod.toString());
+//		Crashlytics.setString("WriteMethod", callingMethod.toString());
 		mCallingMethod = callingMethod;
 	}
 
@@ -1080,7 +1029,7 @@ public abstract class DocumentActivity extends AppCompatActivity
      */
 	protected void setWriteParameters(Object[] callingParameters)
 	{
-		Crashlytics.setBool("WriteParametersIsNull", callingParameters == null);
+//		Crashlytics.setBool("WriteParametersIsNull", callingParameters == null);
 		mCallingParameters = callingParameters;
 	}
 

@@ -167,7 +167,7 @@ public class Util
 
     public static String swapExtention(String filename, String ext)
     {
-        return filename.replaceFirst("[.][^.]+$", "") + ext;
+        return filename.replaceFirst("[.][^.]+$", "") + "." + ext;
     }
 
     public static boolean isTabDelimited(Context c, Uri uri)
@@ -230,6 +230,14 @@ public class Util
 //	}
 
     public static int getImageType(File file)
+    {
+        if (isRaw(file)) return Meta.RAW;
+        if (isNative(file)) return Meta.COMMON;
+        if (isTiffImage(file)) return Meta.TIFF;
+        return -1;
+    }
+
+    public static int getImageType(Uri file)
     {
         if (isRaw(file)) return Meta.RAW;
         if (isNative(file)) return Meta.COMMON;

@@ -719,7 +719,7 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @return success
 	 * @throws WritePermissionException
 	 */
-	private boolean copyAssociatedFiles(Uri fromImage, Uri toImage) throws WritePermissionException
+	private boolean copyAssociatedFiles(Uri fromImage, Uri toImage) throws IOException
 	{
 		if (ImageUtils.hasXmpFile(this, fromImage))
 		{
@@ -779,6 +779,9 @@ public abstract class CoreActivity extends DocumentActivity
 					e.printStackTrace();
 					// We'll be automatically requesting write permission so kill this process
 					return false;
+				} catch (IOException e)
+				{
+					e.printStackTrace();
 				}
 				remainingImages.remove(toCopy);
 				onImageAdded(toCopy);
@@ -823,10 +826,21 @@ public abstract class CoreActivity extends DocumentActivity
 		return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
 	}
 
+	protected boolean writeThumb(ParcelFileDescriptor source, ParcelFileDescriptor destination)
+	{
+		return LibRaw.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
+	}
+
 	protected boolean writeThumbWatermark(Uri source, ParcelFileDescriptor destination, byte[] waterMap,
 	                                      int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
 		// TODO: This must work solely on file descriptors (source also)
 		return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+	}
+
+	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
+	                                      int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
+		// TODO: This must work solely on file descriptors (source also)
+		return LibRaw.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
 	public class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
@@ -900,11 +914,12 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
+			//content://com.android.externalstorage.documents/tree/0000-0000%3A_WriteTest%2Ftest1%2Ftest2
 			boolean success = true;
 			for (Uri toExport : totalImages)
 			{
 				UsefulDocumentFile source = FileUtil.getDocumentFile(CoreActivity.this, toExport);
-				DocumentFile destinationTree;
+				UsefulDocumentFile destinationTree = null;
 				try
 				{
 					destinationTree = getDocumentFile(destinationFolder, true, true);
@@ -914,17 +929,23 @@ public abstract class CoreActivity extends DocumentActivity
 					e.printStackTrace();
 				}
 
-				// Using the name from source, swap the extension to jpg and generate a child uri to
-				// send to jni
-				Uri destinationFile = FileUtil.getChildUri(destinationFolder, Util.swapExtention(source.getName(), "jpg" ));
+				if (destinationTree == null)
+				{
+					success = false;
+					continue;
+				}
+
+				DocumentFile destinationFile = destinationTree.createFile(null, Util.swapExtention(source.getName(), "jpg" ));
 
 				publishProgress(source.getName());
 
-				ParcelFileDescriptor pfd = null;
+				ParcelFileDescriptor outputPfd = null;
+				ParcelFileDescriptor inputPfd = null;
 				try
 				{
-					pfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile, "w");
-					if (pfd == null)
+					inputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, source.getUri(), "r");
+					outputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile.getUri(), "w");
+					if (outputPfd == null)
 					{
 						success = false;
 						continue;
@@ -932,13 +953,13 @@ public abstract class CoreActivity extends DocumentActivity
 
 					if (processWatermark)
 					{
-						success = writeThumbWatermark(toExport, pfd, waterData, waterWidth, waterHeight, margins) && success;
+						success = writeThumbWatermark(inputPfd, outputPfd, waterData, waterWidth, waterHeight, margins) && success;
 					}
 					else
 					{
-						success = writeThumb(toExport, pfd) && success;
+						success = writeThumb(inputPfd, outputPfd) && success;
 					}
-					onImageAdded(destinationFile);
+					onImageAdded(destinationFile.getUri());
 				}
 				catch(Exception e)
 				{
@@ -946,7 +967,8 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 				finally
 				{
-					Utils.closeSilently(pfd);
+					Utils.closeSilently(inputPfd);
+					Utils.closeSilently(outputPfd);
 				}
 
 				publishProgress();
@@ -1182,6 +1204,9 @@ public abstract class CoreActivity extends DocumentActivity
 				{
 					e.printStackTrace();
 					return false;
+				} catch (IOException e)
+				{
+					e.printStackTrace();
 				}
 			}
 			return true;
@@ -1197,7 +1222,7 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	public boolean renameImage(Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws WritePermissionException
+	public boolean renameImage(Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws IOException
 	{
 		Boolean imageSuccess = false;
 		Boolean xmpSuccess = true;
@@ -1249,7 +1274,7 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	public boolean renameAssociatedFile(UsefulDocumentFile original, String baseName)
-			throws WritePermissionException
+			throws IOException
 	{
 		UsefulDocumentFile renameFile = getRenamedFile(original, baseName);
 		return moveFile(original.getUri(), renameFile.getUri());
@@ -1340,6 +1365,9 @@ public abstract class CoreActivity extends DocumentActivity
 			{
 				e.printStackTrace();
 				return false;
+			} catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 
 			updateMetaDatabase(operations);
@@ -1387,7 +1415,7 @@ public abstract class CoreActivity extends DocumentActivity
 						.build());
 
 				final UsefulDocumentFile xmp = ImageUtils.getXmpFile(CoreActivity.this, image);
-				final DocumentFile xmpDoc;
+				final UsefulDocumentFile xmpDoc;
 				try
 				{
 					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});

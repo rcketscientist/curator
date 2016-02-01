@@ -209,6 +209,9 @@ public class ImageResizer extends ImageWorker
 	 */
 	public static Bitmap decodeSampledBitmap(byte[] data, int reqWidth, int reqHeight)
 	{
+		if (data == null)
+			return null;
+
 		// First decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;

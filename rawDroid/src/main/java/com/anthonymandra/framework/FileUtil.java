@@ -75,6 +75,7 @@ public class FileUtil
 	 */
 	public static Uri getChildUri(Uri hierarchicalTreeUri, String filename)
 	{
+		// TODO: This technically doesn't work for content uris the url in code path separators
 		String childUriString = hierarchicalTreeUri.toString() + "/" + filename;
 		return Uri.parse(childUriString);
 	}

@@ -5,11 +5,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,7 +31,6 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +47,7 @@ public class ImageUtils
     public static Metadata readMetadata(Context c, Uri uri)
     {
         Metadata meta = readMeta(c, uri);
-        return readXmp(uri, meta);
+        return readXmp(c, uri, meta);
     }
 
     /**
@@ -89,9 +85,9 @@ public class ImageUtils
      * @param uri
      * @return
      */
-    private static Metadata readXmp(Uri uri)
+    private static Metadata readXmp(Context c, Uri uri)
     {
-        return readXmp(uri, new Metadata());
+        return readXmp(c, uri, new Metadata());
     }
 
     /**
@@ -100,17 +96,12 @@ public class ImageUtils
      * @param meta
      * @return
      */
-    private static Metadata readXmp(Uri uri, Metadata meta)
+    private static Metadata readXmp(Context c, Uri uri, Metadata meta)
     {
-        File image = new File(uri.getPath());
-        File xmp = getXmpFile(image);
-        if (!xmp.exists())
-            return meta;
-
-        FileInputStream xmpStream = null;
+        InputStream xmpStream = null;
         try
         {
-            xmpStream = new FileInputStream(xmp);
+            xmpStream = FileUtil.getInputStream(c, uri);
             XmpReader reader = new XmpReader();
             byte[] buffer = new byte[xmpStream.available()];
             xmpStream.read(buffer);
@@ -220,7 +211,7 @@ public class ImageUtils
     public static ContentValues getContentValues(Context c, Uri uri)
     {
         Metadata meta = readMetadata(c, uri);
-        return getContentValues(uri, meta, Util.getImageType(new File(uri.getPath())));
+        return getContentValues(c, uri, meta, Util.getImageType(uri));
     }
 
     //TODO: Perhaps this makes more sense in the meta provider itself?
@@ -233,7 +224,7 @@ public class ImageUtils
     public static ContentValues getContentValues(Context c, Uri uri, int type)
     {
         Metadata meta = readMetadata(c, uri);
-        return getContentValues(uri, meta, type);
+        return getContentValues(c, uri, meta, type);
     }
 
     public static Cursor getMetaCursor(Context c, Uri uri)
@@ -275,7 +266,7 @@ public class ImageUtils
             {
                 String uriString = cursor.getString(Meta.URI_COLUMN);
                 Uri uri = Uri.parse(uriString);
-                File file = new File(uri.getPath());
+                UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, uri);
                 if (!file.exists())
                 {
                     operations.add(ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
@@ -339,13 +330,14 @@ public class ImageUtils
      * @param meta
      * @return
      */
-    public static ContentValues getContentValues(Uri uri, Metadata meta, int type)
+    public static ContentValues getContentValues(Context c, Uri uri, Metadata meta, int type)
     {
         final ContentValues cv = new ContentValues();
-        File image = new File(uri.getPath());
+        UsefulDocumentFile image = UsefulDocumentFile.fromUri(c, uri);
         if (image != null)
         {
             cv.put(Meta.Data.NAME, image.getName());
+            cv.put(Meta.Data.PARENT, image.getParentFile().getUri().toString());
         }
 
         if (meta == null)
@@ -379,7 +371,6 @@ public class ImageUtils
         cv.put(Meta.Data.EXPOSURE_PROGRAM, getExposureProgram(meta));
         cv.put(Meta.Data.TYPE, type);
         cv.put(Meta.Data.PROCESSED, true);
-	    cv.put(Meta.Data.PARENT, new File(uri.getPath()).getParent());
 
         return cv;
     }

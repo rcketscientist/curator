@@ -31,8 +31,12 @@ extern "C"
         (JNIEnv* env, jclass clazz, jbyteArray bufferBytes, int quality, jobject config, jobject compressFormat, int destination);
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFile
 	    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, int destination);
+    JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFd
+        (JNIEnv* env, jclass clazz, int source, int quality, jobject config, jobject compressFormat, int destination);
 	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFileWatermark
 	    (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, int destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
+	JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFdWatermark
+	    (JNIEnv* env, jclass clazz, int source, int quality, jobject config, jobject compressFormat, int destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight);
 
 	// Return raw bitmap
 	JNIEXPORT jbyteArray JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_getImageFile
@@ -534,6 +538,21 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumb
     return writeThumb(env, rawProcessor, quality, config, compressFormat, destination);
 }
 
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFd
+    (JNIEnv* env, jclass clazz, int source, int quality, jobject config, jobject compressFormat, int destination)
+{
+	LibRaw* rawProcessor = new LibRaw();
+	LibRaw_descriptor_datastream *stream = new LibRaw_descriptor_datastream(source);
+	int result = rawProcessor->open_datastream(stream);
+
+	if (result != LIBRAW_SUCCESS)
+		return JNI_FALSE;
+
+	jboolean success = writeThumb(env, rawProcessor, quality, config, compressFormat, destination);
+	free(stream);
+	return success;
+}
+
 JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFileWatermark
     (JNIEnv* env, jclass clazz, jstring filePath, int quality, jobject config, jobject compressFormat, int destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
 {
@@ -542,6 +561,21 @@ JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumb
         return JNI_FALSE;
 
     return writeThumb(env, rawProcessor, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight, destination);
+}
+
+JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbFdWatermark
+    (JNIEnv* env, jclass clazz, int source, int quality, jobject config, jobject compressFormat, int destination, jbyteArray watermark, jintArray margins, int waterWidth, int waterHeight)
+{
+	LibRaw* rawProcessor = new LibRaw();
+	LibRaw_descriptor_datastream *stream = new LibRaw_descriptor_datastream(source);
+	int result = rawProcessor->open_datastream(stream);
+
+	if (result != LIBRAW_SUCCESS)
+		return JNI_FALSE;
+
+	jboolean success = writeThumb(env, rawProcessor, quality, config, compressFormat, watermark, margins, waterWidth, waterHeight, destination);
+	free(stream);
+	return success;
 }
 
 JNIEXPORT jboolean JNICALL Java_com_anthonymandra_rawprocessor_LibRaw_writeThumbBuffer

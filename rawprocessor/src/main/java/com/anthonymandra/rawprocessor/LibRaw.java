@@ -68,8 +68,12 @@ public class LibRaw
         (byte[] buffer, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination);
 	public static native boolean writeThumbFile
         (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination);
+	public static native boolean writeThumbFd
+		(int source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination);
 	public static native boolean writeThumbFileWatermark
         (String source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
+	public static native boolean writeThumbFdWatermark
+		(int source, int quality, Bitmap.Config config, Bitmap.CompressFormat compressFormat, int destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight);
 
 	// Get raw bitmap
     private static native byte[] getImageFile

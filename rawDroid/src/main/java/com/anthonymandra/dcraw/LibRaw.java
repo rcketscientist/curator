@@ -127,11 +127,11 @@ public class LibRaw
 //	}
 		
 //		long start = System.currentTimeMillis();
-//		byte[] image = getHalfImageFromFile(file.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+//		byte[] image = getHalfImageFromFile(file.getIdSegments(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Half raw took " + (System.currentTimeMillis() - start) + "ms");
 		
 //		long start = System.currentTimeMillis();
-//		byte[] image = getImageFromFile(file.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
+//		byte[] image = getImageFromFile(file.getIdSegments(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG);
 //		Log.d(TAG, "DB: Full raw took " + (System.currentTimeMillis() - start) + "ms");
 		
 		long start = System.currentTimeMillis();
@@ -152,7 +152,7 @@ public class LibRaw
 //	
 //	public static boolean writeThumbWatermark(File source, File destination, byte[] watermark, int[] margins, int waterWidth, int waterHeight, int quality)
 //	{
-//		return writeThumbWatermark(source.getPath(), destination, watermark, margins, waterWidth, waterHeight, quality);
+//		return writeThumbWatermark(source.getIdSegments(), destination, watermark, margins, waterWidth, waterHeight, quality);
 //	}
 	
 	public static class Margins

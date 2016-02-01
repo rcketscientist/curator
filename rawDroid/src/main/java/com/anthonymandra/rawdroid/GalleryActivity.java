@@ -910,7 +910,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 //        }
 
         CopyThumbTask ct = new CopyThumbTask();
-        ct.execute(getImageListFromUriList(mItemsForIntent), destination);
+        ct.execute(mItemsForIntent, destination);
     }
 
 	private void handleUsbAccessRequest(Uri treeUri)
@@ -1039,17 +1039,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		if (mContextMode != null)
 			mContextMode.finish(); // end the contextual action bar and multi-select mode
 		return false;
-	}
-
-	private List<MediaItem> getImageListFromUriList(List<Uri> uris)
-	{
-		List<MediaItem> images = new ArrayList<>();
-		for (Uri u: uris)
-		{
-//			File f = new File(u.getPath());
-			images.add(new LocalImage(this, u));
-		}
-		return images;
 	}
 
 	private void requestRename()
