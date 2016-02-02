@@ -63,7 +63,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     public static Uri createSwapUri(String name, Uri uri)
     {
         return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
-                + Util.swapExtention(name, ".jpg") + "#"
+                + FileUtil.swapExtention(name, ".jpg") + "#"
                 + uri);
     }
 
@@ -80,12 +80,12 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             case 1:
                 Uri sourceUri = Uri.parse(uri.getFragment());
                 //If it's a native file, just share it directly.
-                if (Util.isNative(sourceUri))
+                if (ImageUtils.isNative(sourceUri))
                 {
                     return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
                 }
 
-                File swapFile = new File(Util.getDiskCacheDir(getContext(),
+                File swapFile = new File(FileUtil.getDiskCacheDir(getContext(),
                         CoreActivity.SWAP_BIN_DIR),
                         uri.getLastPathSegment());
                         
@@ -107,8 +107,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                     if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
 	                {
 	                	processWatermark = true;
-	                    watermark = Util.getDemoWatermark(getContext(), image.getWidth());
-	                    waterData = Util.getBitmapBytes(watermark);
+	                    watermark = ImageUtils.getDemoWatermark(getContext(), image.getWidth());
+	                    waterData = ImageUtils.getBitmapBytes(watermark);
 	                    waterWidth = watermark.getWidth();
 	                    waterHeight = watermark.getHeight();
 	                    margin = LibRaw.Margins.LowerRight;
@@ -124,8 +124,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                         }
                         else
                         {
-	                        watermark = Util.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
-                            waterData = Util.getBitmapBytes(watermark);
+	                        watermark = ImageUtils.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+                            waterData = ImageUtils.getBitmapBytes(watermark);
                             waterWidth = watermark.getWidth();
                             waterHeight = watermark.getHeight();
                             margin = mMargins;
@@ -249,7 +249,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     public static Uri getSwapUri(File image)
     {
         return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
-                + Util.swapExtention(image.getName(), ".jpg") + "#"
+                + FileUtil.swapExtention(image.getName(), ".jpg") + "#"
                 + image.getPath());
     }
 

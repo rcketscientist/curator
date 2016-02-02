@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
+import android.os.StatFs;
 import android.os.storage.StorageManager;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
@@ -22,10 +23,13 @@ import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.gallery3d.common.Utils;
 import com.anthonymandra.rawdroid.R;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -527,5 +531,190 @@ public class FileUtil
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		copy(input, output);
 		return output.toByteArray();
+	}
+
+	/**
+	 * Get a usable cache directory (external if available, internal otherwise).
+	 *
+	 * @param context    The context to use
+	 * @param uniqueName A unique directory name to append to the cache dir
+	 * @return The cache dir
+	 */
+	public static File getDiskCacheDir(Context context, String uniqueName)
+	{
+		// Check if media is mounted or storage is built-in, if so, try and use external cache dir
+		// otherwise use internal cache dir
+		File cache = null;
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !isExternalStorageRemovable())
+		{
+			cache = context.getExternalCacheDir();
+		}
+		if (cache == null)
+			cache = context.getCacheDir();
+
+		return new File(cache, uniqueName);
+	}
+
+	/**
+	 * Check if external storage is built-in or removable.
+	 *
+	 * @return True if external storage is removable (like an SD card), false otherwise.
+	 */
+	@TargetApi(9)
+	public static boolean isExternalStorageRemovable()
+	{
+		if (Util.hasGingerbread())
+		{
+			return Environment.isExternalStorageRemovable();
+		}
+		return true;
+	}
+
+	/**
+	 * Check how much usable space is available at a given path.
+	 *
+	 * @param path The path to check
+	 * @return The space available in bytes
+	 */
+	@TargetApi(9)
+	public static long getUsableSpace(File path)
+	{
+		if (Util.hasGingerbread())
+		{
+			return path.getUsableSpace();
+		}
+		final StatFs stats = new StatFs(path.getPath());
+		return (long) stats.getBlockSize() * (long) stats.getAvailableBlocks();
+	}
+
+	public static String swapExtention(String filename, String ext)
+	{
+		return filename.replaceFirst("[.][^.]+$", "") + "." + ext;
+	}
+
+	public static void write(File destination, InputStream is)
+	{
+		BufferedOutputStream bos = null;
+		byte[] data = null;
+		try
+		{
+			bos = new BufferedOutputStream(new FileOutputStream(destination));
+			data = new byte[is.available()];
+			is.read(data);
+			bos.write(data);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			Utils.closeSilently(bos);
+			Utils.closeSilently(is);
+		}
+	}
+
+	public static String getRealPathFromURI(Context context, Uri contentUri)
+	{
+		Cursor cursor = null;
+		try
+		{
+			String[] proj = {MediaStore.Images.Media.DATA};
+			cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			return cursor.getString(column_index);
+		}
+		finally
+		{
+			if (cursor != null)
+			{
+				cursor.close();
+			}
+		}
+	}
+
+	public static boolean isSymlink(File file) {
+		try
+		{
+			File canon;
+			if (file.getParent() == null)
+			{
+				canon = file;
+			} else
+			{
+				File canonDir = file.getParentFile().getCanonicalFile();
+				canon = new File(canonDir, file.getName());
+			}
+			return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
+		}
+		catch (IOException e)
+		{
+			return false;
+		}
+	}
+
+	public static File[] getStorageRoots()
+	{
+		File mnt = new File("/storage");
+		if (!mnt.exists())
+			mnt = new File("/mnt");
+
+		File[] roots = mnt.listFiles(new FileFilter() {
+
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory() && pathname.exists()
+						&& pathname.canWrite() && !pathname.isHidden()
+						&& !isSymlink(pathname);
+			}
+		});
+		return roots;
+	}
+
+	public static List<File> getStoragePoints(File root)
+	{
+		List<File> matches = new ArrayList<>();
+
+		if (root == null)
+			return matches;
+
+		File[] contents = root.listFiles();
+		if (contents == null)
+			return matches;
+
+		for (File sub : contents)
+		{
+			if (sub.isDirectory())
+			{
+				if (isSymlink(sub))
+					continue;
+
+				if (sub.exists()
+						&& sub.canWrite()
+						&& !sub.isHidden())
+				{
+					matches.add(sub);
+				}
+				else
+				{
+					matches.addAll(getStoragePoints(sub));
+				}
+			}
+		}
+		return matches;
+	}
+
+	public static List<File> getStorageRoots(String[] roots)
+	{
+		List<File> valid = new ArrayList<>();
+		for (String root : roots)
+		{
+			File check = new File(root);
+			if (check.exists())
+			{
+				valid.addAll(getStoragePoints(check));
+			}
+		}
+		return valid;
 	}
 }

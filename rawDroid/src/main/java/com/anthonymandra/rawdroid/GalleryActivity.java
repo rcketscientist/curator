@@ -1331,7 +1331,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	{
         tutorialStage = 0;
 		//FIXME
-        File tutorialDirectory = Util.getDiskCacheDir(this, "tutorial");
+        File tutorialDirectory = FileUtil.getDiskCacheDir(this, "tutorial");
         if (!tutorialDirectory.exists())
         {
             tutorialDirectory.mkdir();

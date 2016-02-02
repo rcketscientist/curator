@@ -73,7 +73,7 @@ public class RecycleBin
 	{
 		mContext = context;
 		mDiskCacheSize = maxSize;
-		mDiskCacheDir = Util.getDiskCacheDir(context, uniqueName);
+		mDiskCacheDir = FileUtil.getDiskCacheDir(context, uniqueName);
 		initDiskCache();
 	}
 
@@ -315,7 +315,7 @@ public class RecycleBin
 					{
 						diskCacheDir.mkdirs();
 					}
-					if (Util.getUsableSpace(diskCacheDir) > mDiskCacheSize)
+					if (FileUtil.getUsableSpace(diskCacheDir) > mDiskCacheSize)
 					{
 						try
 						{

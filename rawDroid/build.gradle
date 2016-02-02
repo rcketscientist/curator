@@ -101,6 +101,7 @@ dependencies {
     compile project(':inscription')
     compile project(':metadata-extractor')
     compile project(':rawprocessor')
+    compile project(':DocumentActivity')
     compile 'com.android.support:design:23.1.1' //includes support-v4 and appcompat-v7
 
 //    compile 'com.android.support:support-v4:23.1.1'

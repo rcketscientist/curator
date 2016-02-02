@@ -1,4 +1,4 @@
-include ':metadata-extractor'
+include ':metadata-extractor', ':DocumentActivity'
 include ':rawprocessor'
 //include ':oIFileManager'
 include ':showcaseView:library'

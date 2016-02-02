@@ -17,6 +17,7 @@ import com.android.legacy.ui.GLView;
 import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
 import com.anthonymandra.framework.AsyncTask;
+import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
@@ -537,7 +538,7 @@ public class LegacyViewerActivity extends ViewerActivity
 			if (imageData == null)
 				return null;
 
-            return  Util.createBitmapLarge(imageData,
+            return  ImageUtils.createBitmapLarge(imageData,
                     LegacyViewerActivity.displayWidth,
                     LegacyViewerActivity.displayHeight,
                     true);

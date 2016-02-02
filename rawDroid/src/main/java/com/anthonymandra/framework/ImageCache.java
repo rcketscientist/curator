@@ -139,7 +139,7 @@ public class ImageCache
 				@Override
 				protected int sizeOf(String key, Bitmap bitmap)
 				{
-					return Util.getBitmapSize(bitmap);
+					return ImageUtils.getBitmapSize(bitmap);
 				}
 			};
 		}
@@ -171,7 +171,7 @@ public class ImageCache
 					{
 						diskCacheDir.mkdirs();
 					}
-					if (Util.getUsableSpace(diskCacheDir) > mCacheParams.diskCacheSize)
+					if (FileUtil.getUsableSpace(diskCacheDir) > mCacheParams.diskCacheSize)
 					{
 						try
 						{
@@ -423,7 +423,7 @@ public class ImageCache
 
 		public ImageCacheParams(Context context, String uniqueName)
 		{
-			diskCacheDir = Util.getDiskCacheDir(context, uniqueName);
+			diskCacheDir = FileUtil.getDiskCacheDir(context, uniqueName);
 		}
 
 		public ImageCacheParams(File diskCacheDir)

@@ -119,10 +119,11 @@ public class SearchService extends IntentService
         {
             for (Uri image : images)
             {
-	            DocumentFile imageFile = DocumentFile.fromSingleUri(this, image);
+	            UsefulDocumentFile imageFile = UsefulDocumentFile.fromUri(this, image);
 	            ContentValues cv = new ContentValues();
 	            cv.put(Meta.Data.NAME, imageFile.getName());
 	            cv.put(Meta.Data.URI, image.toString());
+				cv.put(Meta.Data.PARENT, imageFile.getParentFile().getUri().toString());
 	            operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
 			            .withValues(cv)
 			            .build());
@@ -169,7 +170,7 @@ public class SearchService extends IntentService
 			}
 		}
 
-		Util.ImageFilter imageFilter = new Util.ImageFilter();
+		ImageUtils.ImageFilter imageFilter = new ImageUtils.ImageFilter();
 		DocumentFile[] imageFiles = listImages(contents);
 		if (imageFiles != null && imageFiles.length > 0)
 		{
@@ -247,7 +248,7 @@ public class SearchService extends IntentService
 
 	    Log.d(TAG, "Processed: dir= " + dir.getPath() + ", canon= " + canonPath);
 
-	    Util.ImageFilter imageFilter = new Util.ImageFilter();
+		ImageUtils.ImageFilter imageFilter = new ImageUtils.ImageFilter();
         File[] imageFiles = dir.listFiles(imageFilter);
         if (imageFiles != null && imageFiles.length > 0)
         {
@@ -296,7 +297,7 @@ public class SearchService extends IntentService
 	{
 		List<DocumentFile> result = new ArrayList<>(files.length);
 		for (DocumentFile file : files) {
-			if(Util.isImage(file.getName()))
+			if(ImageUtils.isImage(file.getName()))
 				result.add(file);
 		}
 		return result.toArray(new DocumentFile[result.size()]);

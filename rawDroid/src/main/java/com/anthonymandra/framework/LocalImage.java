@@ -160,7 +160,7 @@ public class LocalImage extends MetaMedia {
 	}
 
     private DocumentFile getAssociatedFile(String mimeType, String ext) {
-	    String name = Util.swapExtention(getName(), ext);
+	    String name = FileUtil.swapExtention(getName(), ext);
 
 	    DocumentFile image = DocumentFile.fromSingleUri(mContext, mUri);
 	    DocumentFile parent = image.getParentFile();

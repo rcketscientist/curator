@@ -927,7 +927,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
 		try
 		{
-		    WallpaperManager.getInstance(this).setBitmap(Util.createBitmapToSize(
+		    WallpaperManager.getInstance(this).setBitmap(ImageUtils.createBitmapToSize(
                     getCurrentItem().getThumb(), displayWidth, displayHeight));
 		}
 		catch (Exception e)

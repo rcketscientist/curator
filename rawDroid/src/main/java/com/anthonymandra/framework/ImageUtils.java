@@ -1,10 +1,17 @@
 package com.anthonymandra.framework;
 
+import android.annotation.TargetApi;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
@@ -14,6 +21,7 @@ import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
+import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
@@ -31,10 +39,13 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +186,7 @@ public class ImageUtils
         String name = image.getName();
         if (ext != null)
         {
-            name = Util.swapExtention(name, ext);
+            name = FileUtil.swapExtention(name, ext);
         }
 
         UsefulDocumentFile parent = image.getParentFile();
@@ -193,7 +204,7 @@ public class ImageUtils
      */
     private static File getAssociatedFile(File file, String ext) {
         String name = file.getName();
-        name = Util.swapExtention(name, ext);
+        name = FileUtil.swapExtention(name, ext);
         return new File(file.getParent(), name);
     }
 
@@ -211,7 +222,7 @@ public class ImageUtils
     public static ContentValues getContentValues(Context c, Uri uri)
     {
         Metadata meta = readMetadata(c, uri);
-        return getContentValues(c, uri, meta, Util.getImageType(uri));
+        return getContentValues(uri, meta, getImageType(uri));
     }
 
     //TODO: Perhaps this makes more sense in the meta provider itself?
@@ -224,7 +235,7 @@ public class ImageUtils
     public static ContentValues getContentValues(Context c, Uri uri, int type)
     {
         Metadata meta = readMetadata(c, uri);
-        return getContentValues(c, uri, meta, type);
+        return getContentValues(uri, meta, type);
     }
 
     public static Cursor getMetaCursor(Context c, Uri uri)
@@ -330,16 +341,9 @@ public class ImageUtils
      * @param meta
      * @return
      */
-    public static ContentValues getContentValues(Context c, Uri uri, Metadata meta, int type)
+    public static ContentValues getContentValues(Uri uri, Metadata meta, int type)
     {
         final ContentValues cv = new ContentValues();
-        UsefulDocumentFile image = UsefulDocumentFile.fromUri(c, uri);
-        if (image != null)
-        {
-            cv.put(Meta.Data.NAME, image.getName());
-            cv.put(Meta.Data.PARENT, image.getParentFile().getUri().toString());
-        }
-
         if (meta == null)
         {
             return null;
@@ -736,16 +740,6 @@ public class ImageUtils
         return false;
     }
 
-    public static boolean isTiffImage(final Context c, final Uri uri)
-    {
-        return isTiffImage(c.getContentResolver().getType(uri));
-    }
-
-    public static boolean isTiffImage(final String mimeType)
-    {
-        return ImageConstants.TIFF_MIME.equals(mimeType);
-    }
-
     public static boolean importKeywords(Context c, Uri keywordUri)
     {
         boolean success = false;
@@ -776,5 +770,548 @@ public class ImageUtils
             Utils.closeSilently(reader);
         }
         return success;
+    }
+
+    public static int getImageType(File file)
+    {
+        if (isRaw(file)) return Meta.RAW;
+        if (isNative(file)) return Meta.COMMON;
+        if (isTiffImage(file)) return Meta.TIFF;
+        return -1;
+    }
+
+    public static int getImageType(Uri file)
+    {
+        if (isRaw(file)) return Meta.RAW;
+        if (isNative(file)) return Meta.COMMON;
+        if (isTiffImage(file)) return Meta.TIFF;
+        return -1;
+    }
+
+    public static class JpegFilter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file) { return isJpeg(file); }
+    }
+
+    public static class RawFilter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file) { return isRaw(file); }
+    }
+
+    public static class ImageFilter implements FileFilter
+    {
+        @Override
+        public boolean accept(File file)
+        {
+            return isRaw(file) || isJpeg(file);
+        }
+    }
+
+    public static boolean isImage(String name)
+    {
+        return isRaw(name) || isJpeg(name);
+    }
+
+    public static boolean isImage(File f)
+    {
+        return isImage(f.getName());
+    }
+
+    public static boolean isImage(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isImage(path);
+    }
+
+    public static boolean isRaw(File file)
+    {
+        return isRaw(file.getName());
+    }
+
+    public static boolean isRaw(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isRaw(path);
+    }
+
+    public static boolean isRaw(String name)
+    {
+        return endsWith(ImageConstants.RAW_EXT, name);
+    }
+
+    public static boolean isJpeg(File file)
+    {
+        return isJpeg(file.getName());
+    }
+
+    public static boolean isJpeg(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isJpeg(path);
+    }
+
+    public static boolean isJpeg(String name)
+    {
+        return endsWith(ImageConstants.JPEG_EXT, name);
+    }
+
+    public static boolean isNative(String name)
+    {
+        return endsWith(ImageConstants.COMMON_EXT, name);
+    }
+
+    public static boolean isNative(File file)
+    {
+        return isNative(file.getName());
+    }
+
+    public static boolean isNative(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isNative(path);
+    }
+
+    public static boolean isTiffImage(String name)
+    {
+        return endsWith(ImageConstants.TIFF_EXT, name);
+    }
+
+    public static boolean isTiffImage(File file)
+    {
+        return isTiffImage(file.getName());
+    }
+
+    public static boolean isTiffImage(Uri uri)
+    {
+        String path = uri.getPath();
+        if (path == null) // If the uri is not hierarchical
+            return false;
+        return isTiffImage(path);
+    }
+
+    private static boolean endsWith(String[] extensions, String path)
+    {
+        for (String ext : extensions)
+        {
+            if (path.toLowerCase().endsWith(ext.toLowerCase()))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Gets an exact sample size, should not be used for large images since certain ratios generate "white images"
+     *
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static int getExactSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
+    {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth)
+        {
+            if (width > height)
+            {
+                inSampleSize = Math.round((float) height / (float) reqHeight);
+            } else
+            {
+                inSampleSize = Math.round((float) width / (float) reqWidth);
+            }
+
+            // This offers some additional logic in case the image has a strange
+            // aspect ratio. For example, a panorama may have a much larger
+            // width than height. In these cases the total pixels might still
+            // end up being too large to fit comfortably in memory, so we should
+            // be more aggressive with sample down the image (=larger
+            // inSampleSize).
+            final float totalPixels = width * height;
+
+            // Anything more than 2x the requested pixels we'll sample down
+            // further.
+            final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+
+            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap)
+            {
+                inSampleSize++;
+            }
+        }
+        return inSampleSize;
+    }
+
+    /**
+     * Legacy sample size, more reliable for multiple devices (no "white image")
+     *
+     * @param options
+     * @param reqWidth
+     * @param reqHeight
+     * @return
+     */
+    public static int getLargeSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight)
+    {
+        int imageWidth = options.outWidth;
+        int imageHeight = options.outHeight;
+
+        int scaleH = 1, scaleW = 1;
+        if (imageHeight > reqHeight || imageWidth > reqWidth)
+        {
+            scaleH = (int) Math.pow(2, (int) Math.ceil(Math.log(reqHeight / (double) imageHeight) / Math.log(0.5)));
+            scaleW = (int) Math.pow(2, (int) Math.ceil(Math.log(reqWidth / (double) imageWidth) / Math.log(0.5)));
+        }
+        return Math.max(scaleW, scaleH);
+    }
+
+    public static Bitmap createBitmapLarge(byte[] image, int viewWidth, int viewHeight, boolean minSize)
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(image, 0, image.length, o);
+        o.inSampleSize = getLargeSampleSize(o, viewWidth, viewHeight);
+        // setScalingPow2(image, viewWidth, viewHeight, o, minSize);
+        o.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(image, 0, image.length, o);
+    }
+
+    /**
+     *
+     * @param data image stream that must support mark and reset
+     * @param viewWidth
+     * @param viewHeight
+     * @param minSize
+     * @return
+     */
+    public static Bitmap createBitmapLarge(InputStream data, int viewWidth, int viewHeight, boolean minSize)
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(data, null, o);
+
+        try
+        {
+            data.mark(data.available());
+            data.reset();
+        } catch (IOException e)
+        {
+            Crashlytics.logException(new Exception(
+                    "InputStream does not support mark: " + data.getClass().getName(), e));
+            return null;
+        }
+
+        o.inSampleSize = getLargeSampleSize(o, viewWidth, viewHeight);
+        // setScalingPow2(image, viewWidth, viewHeight, o, minSize);
+        o.inJustDecodeBounds = false;
+        return BitmapFactory.decodeStream(data, null, o);
+    }
+
+    /**
+     *
+     * @param data image inputstream that must support mark.reset
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap createBitmapToSize(InputStream data, int width, int height)
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(data, null, o);
+        o.inSampleSize = getExactSampleSize(o, width, height);
+        o.inJustDecodeBounds = false;
+
+        try
+        {
+            data.mark(data.available());
+            data.reset();
+        } catch (IOException e)
+        {
+            Crashlytics.logException(new Exception(
+                    "InputStream does not support mark: " + data.getClass().getName(), e));
+            return null;
+        }
+
+        return BitmapFactory.decodeStream(data, null, o);
+    }
+
+    public static Bitmap createBitmapToSize(Resources res, int resId, int width, int height)
+    {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, o);
+        o.inSampleSize = getExactSampleSize(o, width, height);
+        o.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, o);
+    }
+
+    public static Bitmap createBitmapToSize(byte[] image, int width, int height)
+    {
+        Bitmap result = null;
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(image, 0, image.length, o);
+        o.inSampleSize = getExactSampleSize(o, width, height);
+        o.inJustDecodeBounds = false;
+        result = BitmapFactory.decodeByteArray(image, 0, image.length, o);
+        return result;
+    }
+
+    /**
+     * Get the size in bytes of a bitmap.
+     *
+     * @param bitmap
+     * @return size in bytes
+     */
+    @TargetApi(12)
+    public static int getBitmapSize(Bitmap bitmap)
+    {
+        if (Util.hasHoneycombMR1())
+        {
+            return bitmap.getByteCount();
+        }
+        // Pre HC-MR1
+        return bitmap.getRowBytes() * bitmap.getHeight();
+    }
+
+    public static Bitmap addWatermark2(Context context, Bitmap src)
+    {
+        int width = src.getWidth();
+        int height = src.getHeight();
+        Bitmap result = Bitmap.createBitmap(width, height, src.getConfig());
+
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(src, 0, 0, null);
+        int id = R.drawable.watermark1024;
+        if (width < 3072)
+            id = R.drawable.watermark512;
+        else if (width < 1536)
+            id = R.drawable.watermark256;
+        else if (width < 768)
+            id = R.drawable.watermark128;
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
+        watermark.setDensity(result.getDensity());
+        canvas.drawBitmap(watermark, width / 4 * 3, height / 4 * 3, null);
+
+        return result;
+    }
+
+    public static Bitmap addWatermark(Context context, File file, Bitmap src)
+    {
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        int id = R.drawable.watermark1024;
+        if (width < 3072)
+            id = R.drawable.watermark512;
+        else if (width < 1536)
+            id = R.drawable.watermark256;
+        else if (width < 768)
+            id = R.drawable.watermark128;
+
+
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
+
+        int startX = width / 4 * 3;
+        int startY = height / 4 * 3;
+
+        int watermarkWidth = watermark.getWidth();
+        int watermarkHeight = watermark.getHeight();
+
+        int pixels = watermarkWidth * watermarkHeight;
+        int[] source = new int[width * height];
+        int[] mark = new int[pixels];
+
+        watermark.getPixels(mark, 0, watermarkWidth, 0, 0, watermarkWidth, watermarkHeight);
+        src.getPixels(source, 0, width, 0, 0, width, height);
+
+        int i = 0;
+        for (int y = startY; y < startY + watermarkHeight; ++y)
+        {
+            for (int x = startX; x < startX + watermarkWidth; ++x)
+            {
+                int index = y * width + x;
+                // Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
+                // Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
+                float opacity = Color.alpha(mark[i]) / 510f;
+                source[index] = Color.argb(
+                        Color.alpha(source[index]),
+                        Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
+                        Math.min(Color.green(source[index]) + (int) (Color.green(mark[i]) * opacity), 255),
+                        Math.min(Color.blue(source[index]) + (int) (Color.blue(mark[i]) * opacity), 255));
+                ++i;
+            }
+        }
+
+//        src.setPixels(source, 0, width, 0, 0, width, height);
+
+        return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
+    }
+
+    public static Bitmap getDemoWatermark(Context context, int srcWidth)
+    {
+        int id;
+        if (srcWidth > 5120)
+            id = R.drawable.watermark1024;
+        else if (srcWidth > 2560)
+            id = R.drawable.watermark512;
+        else if (srcWidth > 1280)
+            id = R.drawable.watermark256;
+        else
+            id = R.drawable.watermark128;
+
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        return BitmapFactory.decodeResource(context.getResources(), id, o);
+    }
+
+    public static byte[] getBitmapBytes(Bitmap src)
+    {
+        ByteBuffer dst = ByteBuffer.allocate(getBitmapSize(src));
+        dst.order(ByteOrder.nativeOrder());
+        src.copyPixelsToBuffer(dst);
+        return dst.array();
+    }
+
+    public static Bitmap addWatermark(Context context, Bitmap src)
+    {
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        int id = R.drawable.watermark1024;
+        if (width < 3072)
+            id = R.drawable.watermark512;
+        else if (width < 1536)
+            id = R.drawable.watermark256;
+        else if (width < 768)
+            id = R.drawable.watermark128;
+
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
+
+        int startX = width / 4 * 3;
+        int startY = height / 4 * 3;
+
+        int watermarkWidth = watermark.getWidth();
+        int watermarkHeight = watermark.getHeight();
+
+        int pixels = watermarkWidth * watermarkHeight;
+        int[] source = new int[width * height];
+        int[] mark = new int[pixels];
+
+        watermark.getPixels(mark, 0, watermarkWidth, 0, 0, watermarkWidth, watermarkHeight);
+        src.getPixels(source, 0, width, 0, 0, width, height);
+
+        int i = 0;
+        for (int y = startY; y < startY + watermarkHeight; ++y)
+        {
+            for (int x = startX; x < startX + watermarkWidth; ++x)
+            {
+                int index = y * width + x;
+                // Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
+                // Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
+                float opacity = Color.alpha(mark[i]) / 510f;
+                source[index] = Color.argb(
+                        Color.alpha(source[index]),
+                        Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
+                        Math.min(Color.green(source[index]) + (int) (Color.green(mark[i]) * opacity), 255),
+                        Math.min(Color.blue(source[index]) + (int) (Color.blue(mark[i]) * opacity), 255));
+                ++i;
+            }
+        }
+
+//        src.setPixels(source, 0, width, 0, 0, width, height);
+
+        return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
+    }
+
+    public static Bitmap addCustomWatermark(Bitmap src, String watermark, int alpha,
+                                            int size, String location)
+    {
+        int w = src.getWidth();
+        int h = src.getHeight();
+        Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
+
+        int x = 0, y = 0;
+
+        // We center the text in their respective quadrants
+        switch (location)
+        {
+            case "Center":
+                x = w / 2;
+                y = h / 2;
+                break;
+            case "Lower Left":
+                x = w / 4;
+                y = h / 4 * 3;
+                break;
+            case "Lower Right":
+                x = w / 4 * 3;
+                y = h / 4 * 3;
+                break;
+            case "Upper Left":
+                x = w / 4;
+                y = h / 4;
+                break;
+            case "Upper Right":
+                x = w / 4 * 3;
+                y = h / 4;
+                break;
+        }
+
+        Canvas canvas = new Canvas(result);
+        canvas.drawBitmap(src, 0, 0, null);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setShadowLayer(1, 1, 1, Color.BLACK);
+        paint.setAlpha(alpha);
+        paint.setTextSize(size);
+        paint.setAntiAlias(true);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText(watermark, x, y, paint);
+
+        return result;
+    }
+
+    public static Bitmap getWatermarkText(String text, int alpha, int size, String location)
+    {
+        if (text.isEmpty())
+            return null;
+
+        Paint paint = new Paint();
+        paint.setColor(Color.WHITE);
+        paint.setShadowLayer(1, 1, 1, Color.BLACK);
+        paint.setAlpha(alpha);
+        paint.setTextSize(size);
+        paint.setAntiAlias(true);
+        paint.setTextAlign(Paint.Align.LEFT);
+
+        int width = (int) (paint.measureText(text) + 0.5f); // round
+        float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
+        int height = (int) (baseline + paint.descent() + 0.5f);
+
+        Bitmap watermark = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(watermark);
+        canvas.drawText(text, 0, baseline, paint);
+
+        return watermark;
     }
 }

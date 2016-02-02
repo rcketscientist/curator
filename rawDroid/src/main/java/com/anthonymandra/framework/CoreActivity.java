@@ -259,7 +259,7 @@ public abstract class CoreActivity extends DocumentActivity
 	 */
 	protected void createSwapDir()
 	{
-		mSwapDir = Util.getDiskCacheDir(this, SWAP_BIN_DIR);
+		mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR);
 		if (!mSwapDir.exists())
 		{
 			mSwapDir.mkdirs();
@@ -641,7 +641,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		public boolean accept(File file)
 		{
-			return Util.isJpeg(file);
+			return ImageUtils.isJpeg(file);
 		}
 	}
 
@@ -650,7 +650,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		public boolean accept(File file)
 		{
-			return Util.isRaw(file);
+			return ImageUtils.isRaw(file);
 		}
 	}
 
@@ -659,7 +659,7 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		public boolean accept(File file)
 		{
-			return Util.isNative(file);
+			return ImageUtils.isNative(file);
 		}
 	}
 
@@ -891,8 +891,8 @@ public abstract class CoreActivity extends DocumentActivity
 				processWatermark = true;
 				// Just grab the first width and assume that will be sufficient for all images
 				final int width = getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "?", new String[] {totalImages.get(0).toString()}, null).getInt(Meta.WIDTH_COLUMN);
-				watermark = Util.getDemoWatermark(CoreActivity.this, width);
-				waterData = Util.getBitmapBytes(watermark);
+				watermark = ImageUtils.getDemoWatermark(CoreActivity.this, width);
+				waterData = ImageUtils.getBitmapBytes(watermark);
 				waterWidth = watermark.getWidth();
 				waterHeight = watermark.getHeight();
 				margins = LibRaw.Margins.LowerRight;
@@ -907,8 +907,8 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 				else
 				{
-					watermark = Util.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-					waterData = Util.getBitmapBytes(watermark);
+					watermark = ImageUtils.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+					waterData = ImageUtils.getBitmapBytes(watermark);
 					waterWidth = watermark.getWidth();
 					waterHeight = watermark.getHeight();
 				}
@@ -935,7 +935,7 @@ public abstract class CoreActivity extends DocumentActivity
 					continue;
 				}
 
-				DocumentFile destinationFile = destinationTree.createFile(null, Util.swapExtention(source.getName(), "jpg" ));
+				DocumentFile destinationFile = destinationTree.createFile(null, FileUtil.swapExtention(source.getName(), "jpg" ));
 
 				publishProgress(source.getName());
 

@@ -132,7 +132,7 @@ public class ImageResizer extends ImageWorker
 		BitmapFactory.decodeResource(res, resId, options);
 
 		// Calculate inSampleSize
-		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+		options.inSampleSize = ImageUtils.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
@@ -160,7 +160,7 @@ public class ImageResizer extends ImageWorker
 		BitmapFactory.decodeFile(filename, options);
 
 		// Calculate inSampleSize
-		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+		options.inSampleSize = ImageUtils.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
@@ -188,7 +188,7 @@ public class ImageResizer extends ImageWorker
 		BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
 
 		// Calculate inSampleSize
-		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+		options.inSampleSize = ImageUtils.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
@@ -218,7 +218,7 @@ public class ImageResizer extends ImageWorker
 		BitmapFactory.decodeByteArray(data, 0, data.length, options);
 
 		// Calculate inSampleSize
-		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+		options.inSampleSize = ImageUtils.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
@@ -256,7 +256,7 @@ public class ImageResizer extends ImageWorker
 		}
 
 		// Calculate inSampleSize
-		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+		options.inSampleSize = ImageUtils.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
@@ -285,7 +285,7 @@ public class ImageResizer extends ImageWorker
 		BitmapFactory.decodeStream(data, null, options);
 
 		// Calculate inSampleSize
-		options.inSampleSize = Util.getExactSampleSize(options, reqWidth, reqHeight);
+		options.inSampleSize = ImageUtils.getExactSampleSize(options, reqWidth, reqHeight);
 
 		// Decode bitmap with inSampleSize set
 		options.inJustDecodeBounds = false;
