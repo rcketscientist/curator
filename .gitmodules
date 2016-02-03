@@ -1,6 +1,3 @@
-[submodule "oIFileManager"]
-	path = oIFileManager
-	url = https://github.com/rcketscientist/oi-filemanager-library.git
 [submodule "showcaseView"]
 	path = showcaseView
 	url = https://github.com/rcketscientist/ShowcaseView.git
@@ -20,3 +17,6 @@
 [submodule "rawprocessor/src/main/jni/LibRaw-demosaic-pack-GPL2"]
 	path = rawprocessor/src/main/jni/LibRaw-demosaic-pack-GPL2
 	url = https://github.com/LibRaw/LibRaw-demosaic-pack-GPL2.git
+[submodule "DocumentActivity"]
+	path = DocumentActivity
+	url = https://github.com/rcketscientist/DocumentActivity.git
