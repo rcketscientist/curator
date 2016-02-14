@@ -40,8 +40,8 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
+import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;

@@ -16,6 +16,7 @@ import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
@@ -110,7 +111,7 @@ public class SearchService extends IntentService
 	    if (uriRoots != null)
 	    {
 		    for (String uri : uriRoots)
-			    search(DocumentFile.fromTreeUri(this, Uri.parse(uri)), alwaysExcludeDir);
+			    search(UsefulDocumentFile.fromUri(this, Uri.parse(uri)), alwaysExcludeDir);
 	    }
 
 	    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
@@ -151,11 +152,11 @@ public class SearchService extends IntentService
 	 * @param root Directory to recursively search
 	 * @param alwaysExcludeDir These roots are skipped absolutely even if they are the official storage
 	 */
-	public void search(DocumentFile root, String[] alwaysExcludeDir)
+	public void search(UsefulDocumentFile root, String[] alwaysExcludeDir)
 	{
 		if (root == null)
 			return;
-		DocumentFile[] contents = root.listFiles();
+		UsefulDocumentFile[] contents = root.listFiles();
 		if (contents == null)
 			return;
 
@@ -171,10 +172,10 @@ public class SearchService extends IntentService
 		}
 
 		ImageUtils.ImageFilter imageFilter = new ImageUtils.ImageFilter();
-		DocumentFile[] imageFiles = listImages(contents);
+		UsefulDocumentFile[] imageFiles = listImages(contents);
 		if (imageFiles != null && imageFiles.length > 0)
 		{
-			for (DocumentFile image: imageFiles)
+			for (UsefulDocumentFile image: imageFiles)
 			{
 				if (ImageUtils.isProcessed(this, image.getUri()))
 				{
@@ -186,7 +187,7 @@ public class SearchService extends IntentService
 		}
 
 		// Recursion pass
-		for (DocumentFile f : root.listFiles())
+		for (UsefulDocumentFile f : root.listFiles())
 		{
 			if (f == null)
 				continue;
@@ -293,13 +294,16 @@ public class SearchService extends IntentService
 	/**
 	 * emulate File.listFiles(ImageFilter)
 	 */
-	public DocumentFile[] listImages(DocumentFile[] files)
+	public UsefulDocumentFile[] listImages(UsefulDocumentFile[] files)
 	{
-		List<DocumentFile> result = new ArrayList<>(files.length);
-		for (DocumentFile file : files) {
+		List<UsefulDocumentFile> result = new ArrayList<>(files.length);
+		for (UsefulDocumentFile file : files) {
+			String name = file.getName();
+			if (name == null)
+				continue;
 			if(ImageUtils.isImage(file.getName()))
 				result.add(file);
 		}
-		return result.toArray(new DocumentFile[result.size()]);
+		return result.toArray(new UsefulDocumentFile[result.size()]);
 	}
 }

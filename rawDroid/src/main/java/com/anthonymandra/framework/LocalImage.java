@@ -20,9 +20,10 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
+import com.anthonymandra.util.FileUtil;
+import com.anthonymandra.util.ImageUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -66,7 +67,7 @@ public class LocalImage extends MetaMedia {
 		try
 		{
 			is = mContext.getContentResolver().openInputStream(mUri);
-			return Util.getBytes(is);
+			return Util.toByteArray(is);
 		} catch (Exception e)
 		{
 			return null;
@@ -104,7 +105,7 @@ public class LocalImage extends MetaMedia {
 		{
 			pfd = mContext.getContentResolver().openFileDescriptor(mUri, "r");
 			fd = pfd.getFd();
-			if (ImageUtils.isTiffImage(mType))
+			if (ImageUtils.isTiffMime(mType))
 			{
 				int[] dim = new int[2];
 				int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);

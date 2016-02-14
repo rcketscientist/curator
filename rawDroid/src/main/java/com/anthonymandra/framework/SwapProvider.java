@@ -21,6 +21,8 @@ import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.util.FileUtil;
+import com.anthonymandra.util.ImageUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;

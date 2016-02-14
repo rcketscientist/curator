@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
@@ -24,6 +25,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.DocumentUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,10 +34,16 @@ import java.util.Set;
 
 public class XmpFilterFragment extends XmpBaseFragment
 {
-    private MetaFilterChangedListener mListener;
+    private MetaFilterChangedListener mFilterListener;
     public interface MetaFilterChangedListener
     {
         void onMetaFilterChanged(XmpFilter xmpFilter);
+    }
+
+    private SearchRootRequestedListener mRequestListener;
+    public interface SearchRootRequestedListener
+    {
+        void onSearchRootRequested();
     }
 
     /**
@@ -245,6 +253,14 @@ public class XmpFilterFragment extends XmpBaseFragment
                         dispatchChange();
                     }
                 });
+                dialog.setSearchRequestedListener(new SearchRootRequestedListener()
+                {
+                    @Override
+                    public void onSearchRootRequested()
+                    {
+                        mRequestListener.onSearchRootRequested();
+                    }
+                });
 
                 dialog.show(getFragmentManager(), "diag");
             }
@@ -315,12 +331,22 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     public void registerXmpFilterChangedListener(MetaFilterChangedListener listener)
     {
-        mListener = listener;
+        mFilterListener = listener;
     }
 
     public void unregisterXmpFilterChangedListener()
     {
-        mListener = null;
+        mFilterListener = null;
+    }
+
+    public void registerSearchRootRequestedListener(SearchRootRequestedListener listener)
+    {
+        mRequestListener = listener;
+    }
+
+    public void unregisterSearchRootRequestedListener()
+    {
+        mRequestListener = null;
     }
 
     @Override
@@ -333,7 +359,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     protected void dispatchChange()
     {
-        if (mListener != null && !mPauseListener)
+        if (mFilterListener != null && !mPauseListener)
         {
             SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
@@ -349,7 +375,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
             XmpFilter filter = getXmpFilter();
 
-            mListener.onMetaFilterChanged(filter);
+            mFilterListener.onMetaFilterChanged(filter);
         }
     }
 
@@ -363,10 +389,15 @@ public class XmpFilterFragment extends XmpBaseFragment
 
         private final List<FolderVisibility> items = new ArrayList<>();
 
-        private FolderAdapter.OnVisibilityChangedListener mListener;
+        private FolderAdapter.OnVisibilityChangedListener mVisibilityListener;
         public void setOnVisibilityChangedListener(FolderAdapter.OnVisibilityChangedListener listener)
         {
-            mListener = listener;
+            mVisibilityListener = listener;
+        }
+        private SearchRootRequestedListener mSearchListener;
+        public void setSearchRequestedListener(SearchRootRequestedListener listener)
+        {
+            mSearchListener = listener;
         }
 
         static FolderDialog newInstance(String[] paths, boolean[] visible, boolean[] excluded, int x, int y)
@@ -412,9 +443,20 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
 
             FolderAdapter adapter = new FolderAdapter(v.getContext(), items);
-            adapter.setOnVisibilityChangedListener(mListener);
+            adapter.setOnVisibilityChangedListener(mVisibilityListener);
             ListView listView = (ListView) v.findViewById(R.id.listViewVisibility);
             listView.setAdapter(adapter);
+
+            final Button addRootButton = (Button) v.findViewById(R.id.buttonAddSearchRoot);
+            addRootButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (mSearchListener != null)
+                        mSearchListener.onSearchRootRequested();
+                }
+            });
 
             return v;
         }
@@ -473,7 +515,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
                 viewHolder = new ViewHolder();
                 viewHolder.path = (CheckBox) convertView.findViewById(R.id.checkBoxFolderPath);
-                viewHolder.path.setText(item.Path);
+                viewHolder.path.setText(DocumentUtil.getNicePath(Uri.parse(item.Path)));
                 viewHolder.path.setChecked(item.visible);
 
                 convertView.setTag(viewHolder);

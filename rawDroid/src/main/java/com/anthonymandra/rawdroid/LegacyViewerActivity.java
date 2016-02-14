@@ -17,12 +17,11 @@ import com.android.legacy.ui.GLView;
 import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
 import com.anthonymandra.framework.AsyncTask;
-import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
-import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.IOException;

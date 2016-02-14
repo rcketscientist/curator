@@ -1,4 +1,4 @@
-package com.anthonymandra.framework;
+package com.anthonymandra.util;
 
 import android.annotation.TargetApi;
 import android.content.ContentProviderOperation;
@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.rawdroid.R;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
@@ -182,7 +183,7 @@ public class ImageUtils
             going to skip that process and simply mash what we know the uri would be (as of 01/2016)
             new uri schemes could possibly break this */
 
-        UsefulDocumentFile image = FileUtil.getDocumentFile(c, uri);
+        UsefulDocumentFile image = UsefulDocumentFile.fromUri(c, uri);
         String name = image.getName();
         if (ext != null)
         {
@@ -193,7 +194,7 @@ public class ImageUtils
         String parentString = parent.getUri().toString();
         String associatedString = parentString + "/" + name;
         Uri associatedUri = Uri.parse(associatedString);
-        return FileUtil.getDocumentFile(c, associatedUri);
+        return UsefulDocumentFile.fromUri(c, associatedUri);
     }
 
     /**
@@ -738,6 +739,11 @@ public class ImageUtils
                 return true;
         }
         return false;
+    }
+
+    public static boolean isTiffMime(String mimeType)
+    {
+        return ImageConstants.TIFF_MIME.equals(mimeType);
     }
 
     public static boolean importKeywords(Context c, Uri keywordUri)

@@ -23,6 +23,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.FileDescriptor;

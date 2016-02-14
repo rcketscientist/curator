@@ -4,22 +4,17 @@ import android.app.Dialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.OperationApplicationException;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.RawObject;
 
 import java.util.ArrayList;

@@ -22,11 +22,11 @@ import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.util.FileUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class RecycleBin
                         bis = new BufferedInputStream(FileUtil.getInputStream(mContext, toRecycle));
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
 
-						FileUtil.copy(bis, out);
+						Util.copy(bis, out);
 						editor.commit();
 
 						deleteFile(toRecycle);

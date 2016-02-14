@@ -311,4 +311,5 @@
     <string name="addFolder">Add Folder</string>
 
     <string name="permissionStorageRationale">Storage permission is needed to read and write images.</string>
+    <string name="addRoot">Add Search Root</string>
 </resources>

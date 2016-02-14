@@ -16,17 +16,19 @@
 
 package com.anthonymandra.framework;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.util.FileUtil;
+import com.anthonymandra.util.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;

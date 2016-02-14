@@ -1,4 +1,4 @@
-package com.anthonymandra.framework;
+package com.anthonymandra.util;
 
 public class ImageConstants
 {

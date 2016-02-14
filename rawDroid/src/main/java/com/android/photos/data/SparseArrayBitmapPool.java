@@ -20,8 +20,7 @@ import android.graphics.Bitmap;
 import android.util.Pools.Pool;
 import android.util.SparseArray;
 
-import com.anthonymandra.framework.ImageUtils;
-import com.anthonymandra.framework.Util;
+import com.anthonymandra.util.ImageUtils;
 
 public class SparseArrayBitmapPool {
 

@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;

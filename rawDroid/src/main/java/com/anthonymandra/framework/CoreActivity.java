@@ -1,13 +1,11 @@
 package com.anthonymandra.framework;
 
-import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,7 +22,6 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
@@ -40,7 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
@@ -51,6 +47,8 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.util.FileUtil;
+import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.xmp.XmpDirectory;
@@ -58,7 +56,6 @@ import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -181,28 +178,29 @@ public abstract class CoreActivity extends DocumentActivity
 			return;
 		}
 
-		switch ((WriteActions)callingMethod)
+		if (callingMethod instanceof  WriteActions)
 		{
-			case COPY:
-				new CopyTask().execute(callingParameters);
-				break;
-			case DELETE:
-				new DeleteTask().execute(callingParameters);
-				break;
-			case RECYCLE:
-				new RecycleTask().execute(callingParameters);
-				break;
-			case RENAME:
-				new RenameTask().execute(callingParameters);
-				break;
-			case RESTORE:
-				new RestoreTask().execute(callingParameters);
-				break;
-			case WRITE_XMP:
-				new WriteXmpTask().execute(callingParameters);
-				break;
-			default:
-				throw new NoSuchMethodError("Write Action:" + callingMethod + " is undefined.");
+			switch ((WriteActions) callingMethod)
+			{
+				case COPY:
+					new CopyTask().execute(callingParameters);
+					break;
+				case DELETE:
+					new DeleteTask().execute(callingParameters);
+					break;
+				case RECYCLE:
+					new RecycleTask().execute(callingParameters);
+					break;
+				case RENAME:
+					new RenameTask().execute(callingParameters);
+					break;
+				case RESTORE:
+					new RestoreTask().execute(callingParameters);
+					break;
+				case WRITE_XMP:
+					new WriteXmpTask().execute(callingParameters);
+					break;
+			}
 		}
 		clearWriteResume();
 	}
@@ -918,7 +916,7 @@ public abstract class CoreActivity extends DocumentActivity
 			boolean success = true;
 			for (Uri toExport : totalImages)
 			{
-				UsefulDocumentFile source = FileUtil.getDocumentFile(CoreActivity.this, toExport);
+				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toExport);
 				UsefulDocumentFile destinationTree = null;
 				try
 				{
@@ -935,7 +933,7 @@ public abstract class CoreActivity extends DocumentActivity
 					continue;
 				}
 
-				DocumentFile destinationFile = destinationTree.createFile(null, FileUtil.swapExtention(source.getName(), "jpg" ));
+				UsefulDocumentFile destinationFile = destinationTree.createFile(null, FileUtil.swapExtention(source.getName(), "jpg" ));
 
 				publishProgress(source.getName());
 
@@ -1228,7 +1226,7 @@ public abstract class CoreActivity extends DocumentActivity
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
-		UsefulDocumentFile sourceFile = FileUtil.getDocumentFile(this, source);
+		UsefulDocumentFile sourceFile = UsefulDocumentFile.fromUri(this, source);
 		UsefulDocumentFile renameFile = getRenamedFile(sourceFile, baseName);
 		imageSuccess = renameAssociatedFile(sourceFile, baseName);
 

@@ -69,8 +69,7 @@ import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
-import com.anthonymandra.framework.ImageUtils;
-import com.anthonymandra.framework.LocalImage;
+import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
@@ -102,6 +101,11 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		GalleryAdapter.OnSelectionUpdatedListener
 {
 	private static final String TAG = GalleryActivity.class.getSimpleName();
+
+	private enum WriteResume
+	{
+		Search
+	}
 
 	private IntentFilter mResponseIntentFilter = new IntentFilter();
 
@@ -668,6 +672,15 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				updateMetaLoaderXmp(filter);
 			}
 		});
+		mXmpFilterFragment.registerSearchRootRequestedListener(new XmpFilterFragment.SearchRootRequestedListener()
+		{
+			@Override
+			public void onSearchRootRequested()
+			{
+				setWriteResume(WriteResume.Search, null);
+				requestWritePermission();
+			}
+		});
 
 		// load filter data initially (must be done here due to
 		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
@@ -821,8 +834,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		SearchService.startActionSearch(
 				this,
-				/*TEST_ROOTS,*/MOUNT_ROOTS,
-				/*permissions*/null,
+				/*TEST_ROOTS,MOUNT_ROOTS*/ null,    // Files unsupported on 4.4+
+				permissions,
 				excludedFolders.toArray(new String[excludedFolders.size()]));
 	}
 
@@ -1269,7 +1282,19 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		return true;
 	}
 
-    @TargetApi(VERSION_CODES.JELLY_BEAN)
+	@Override
+	protected void onResumeWriteAction(Enum callingMethod, Object[] callingParameters)
+	{
+		super.onResumeWriteAction(callingMethod, callingParameters);
+		switch ((WriteResume)callingMethod)
+		{
+			case Search:
+				scanRawFiles();
+				break;
+		}
+	}
+
+	@TargetApi(VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
 	{

@@ -13,7 +13,7 @@ import android.widget.CheckedTextView;
 import android.widget.GridView;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.ImageUtils;
+import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

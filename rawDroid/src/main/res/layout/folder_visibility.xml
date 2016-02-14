@@ -6,12 +6,11 @@
     >
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
+        android:id="@+id/buttonAddSearchRoot"
         android:drawableLeft="@android:drawable/ic_input_add"
-        android:text="@string/addFolder"
-        android:visibility="gone"/>
+        android:text="@string/addRoot"/>
 
     <LinearLayout
         android:orientation="horizontal"

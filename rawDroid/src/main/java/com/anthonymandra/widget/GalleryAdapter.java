@@ -16,11 +16,10 @@ import android.widget.TextView;
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.ImageDecoder;
-import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.util.ImageUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

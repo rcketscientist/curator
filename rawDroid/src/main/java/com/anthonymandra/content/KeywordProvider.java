@@ -12,9 +12,9 @@ import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
-import com.anthonymandra.framework.ImageUtils;
 import com.anthonymandra.framework.PathEnumerationProvider;
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.util.ImageUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
