@@ -1,9 +1,11 @@
 [submodule "showcaseView"]
 	path = showcaseView
 	url = https://github.com/rcketscientist/ShowcaseView.git
+	branch = master
 [submodule "inscription"]
 	path = inscription
 	url = https://github.com/rcketscientist/Inscription.git
+	branch = master
 [submodule "metadata-extractor"]
 	path = metadata-extractor
 	url = https://github.com/rcketscientist/metadata-extractor.git
@@ -20,3 +22,4 @@
 [submodule "DocumentActivity"]
 	path = DocumentActivity
 	url = https://github.com/rcketscientist/DocumentActivity.git
+	branch = master
