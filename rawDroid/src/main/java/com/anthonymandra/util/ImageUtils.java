@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.rawdroid.R;
 import com.crashlytics.android.Crashlytics;
@@ -183,6 +184,7 @@ public class ImageUtils
             going to skip that process and simply mash what we know the uri would be (as of 01/2016)
             new uri schemes could possibly break this */
 
+
         UsefulDocumentFile image = UsefulDocumentFile.fromUri(c, uri);
         String name = image.getName();
         if (ext != null)
@@ -190,11 +192,13 @@ public class ImageUtils
             name = FileUtil.swapExtention(name, ext);
         }
 
-        UsefulDocumentFile parent = image.getParentFile();
-        String parentString = parent.getUri().toString();
-        String associatedString = parentString + "/" + name;
-        Uri associatedUri = Uri.parse(associatedString);
-        return UsefulDocumentFile.fromUri(c, associatedUri);
+        Uri neighbor = DocumentUtil.getNeighborUri(uri, name);
+
+//        UsefulDocumentFile parent = image.getParentFile();
+//        String parentString = parent.getUri().toString();
+//        String associatedString = parentString + "/" + name;
+//        Uri associatedUri = Uri.parse(associatedString);
+        return UsefulDocumentFile.fromUri(c, neighbor);
     }
 
     /**

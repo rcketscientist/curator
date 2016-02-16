@@ -94,6 +94,7 @@ public class GalleryAdapter extends CursorAdapter
 		view.setTag(R.id.filenameView, view.findViewById(R.id.filenameView));
 		view.setTag(R.id.galleryRatingBar, view.findViewById(R.id.galleryRatingBar));
 		view.setTag(R.id.label, view.findViewById(R.id.label));
+		view.setTag(R.id.xmp, view.findViewById(R.id.xmp));
 		return view;
 	}
 
@@ -158,6 +159,8 @@ public class GalleryAdapter extends CursorAdapter
 			label.setVisibility(View.GONE);
 		}
 
+		//TODO: Just make this a db field
+		((ImageView)view.getTag(R.id.xmp)).setVisibility(ImageUtils.hasXmpFile(mContext, uri) ? View.VISIBLE : View.GONE);
 		fileName.setText(cursor.getString(cursor.getColumnIndex(Meta.Data.NAME)));
 		mImageDecoder.loadImage(new LocalImage(mContext, uri), imageView);
 		((Checkable) view).setChecked(mSelectedItems.contains(uri));

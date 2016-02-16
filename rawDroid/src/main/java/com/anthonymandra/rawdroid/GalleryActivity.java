@@ -57,7 +57,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -693,7 +692,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		setImageCountTitle();
 
 		if (isFirstDatabaseLoad && mGalleryAdapter.getCount() == 0)
-			offerInitDatabase();
+			offerRequestPermission();
 		isFirstDatabaseLoad = false;
 	}
 
@@ -780,19 +779,17 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		}
 	}
 
-	private void offerInitDatabase()
+	private void offerRequestPermission()
 	{
-		ImageView image = new ImageView(this);
-		image.setImageResource(R.drawable.ic_action_refresh);
-
 		AlertDialog.Builder builder =
 				new AlertDialog.Builder(this).
 						setTitle(R.string.offerSearchTitle).
-						setMessage(R.string.offerSearchMessage).
+						setMessage(R.string.offerPermissionMessage).
 						setPositiveButton(R.string.search, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-								scanRawFiles();
+								setWriteResume(WriteResume.Search, null);
+								requestWritePermission();
 							}
 						}).
 						setNegativeButton(R.string.neutral, new DialogInterface.OnClickListener()
@@ -802,8 +799,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 							{
 								//do nothing
 							}
-						}).
-								setView(image);
+						});
 		builder.create().show();
 	}
 

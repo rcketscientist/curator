@@ -191,6 +191,7 @@
     <string name="zeroSearchSummary">No images were found.  If you know there are images on the device, please contact me to investigate why search failed.  Thank you for testing the beta!</string>
     <string name="offerSearchTitle">Initial Search</string>
     <string name="offerSearchMessage">Empty database detected.  Would you like to search the device for images?  You may manually search by pressing the following menu item.</string>
+    <string name="offerPermissionMessage">Android now requires that all apps explicitly request permission to use storage.  As this is your first time, you will have to give Rawdroid permission to search where you store your images.  Please select the root of the storage as depicted in the following screen.</string>
     <string name="betaWelcomeTitle">Thank you for joining the beta!</string>
     <string name="betaWelcomeMessage">Welcome to the Rawdroid 4.0 beta.  The beta is built upon a completely redesigned framework.  At the expense of initially processing images you now have the benefit of instantaneous filter and search (coming soon), as well as an even faster browsing and viewing experience.\n\n
         <b>This is still a very early beta, so please do not use this to process your precious images on your next trip.</b>\n\n

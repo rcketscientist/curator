@@ -17,6 +17,15 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"/>
 
+    <ImageView
+        android:id="@+id/xmp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:alpha="0.8"
+        android:src="@drawable/ic_action_labels"/>
+
     <RatingBar
         android:id="@+id/galleryRatingBar"
         style="@style/GalleryRatingBar"
