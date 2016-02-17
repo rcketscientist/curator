@@ -1412,12 +1412,11 @@ public abstract class CoreActivity extends DocumentActivity
 						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
 						.build());
 
-				final UsefulDocumentFile xmp = ImageUtils.getXmpFile(CoreActivity.this, image);
-				final UsefulDocumentFile xmpDoc;
+				final UsefulDocumentFile xmpDoc = ImageUtils.getXmpFile(CoreActivity.this, image);
 				try
 				{
 					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
-					xmpDoc = getDocumentFile(new File(xmp.getUri().getPath()), false, true);
+					//TODO: need DocumentActivity.openOutputStream
 					remainingImages.remove(image);
 				}
 				catch (WritePermissionException e)
