@@ -1238,7 +1238,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 		updates.add(
 				ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-						.withSelection(Meta.Data.URI + "=?", new String[]{source.toString()})
+						.withSelection(ImageUtils.getWhere(), new String[]{source.toString()})
 						.withValues(imageValues)
 						.build());
 
@@ -1261,7 +1261,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 				updates.add(
 						ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-								.withSelection(Meta.Data.URI + "=?", new String[]{jpgDoc.getUri().toString()})
+								.withSelection(ImageUtils.getWhere(), new String[]{jpgDoc.getUri().toString()})
 								.withValues(jpgValues)
 								.build());
 			}
@@ -1407,7 +1407,8 @@ public abstract class CoreActivity extends DocumentActivity
 				cv.put(Meta.Data.RATING, values.Rating);
 				cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
 
-				databaseUpdates.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+				databaseUpdates.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+						.withSelection(Meta.Data.URI + " = ? ", new String[] {image.toString()})
 						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
 						.build());
 

@@ -6,8 +6,8 @@
     app:foreground="@drawable/photogrid_list_selector"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="2dp">
+    android:orientation="vertical">
+    <!--android:padding="2dp">-->
 
     <com.anthonymandra.widget.LoadingImageView
         android:id="@+id/webImageView"
@@ -41,7 +41,8 @@
         android:layout_width="14dip"
         android:layout_height="14dip"
         android:layout_above="@+id/filenameView"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:alpha="0.8"/>
 
     <TextView
         android:id="@+id/filenameView"

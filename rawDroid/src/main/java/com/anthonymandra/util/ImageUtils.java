@@ -251,9 +251,14 @@ public class ImageUtils
     {
         return c.getContentResolver().query(Meta.Data.CONTENT_URI,
 		        null,
-		        Meta.Data.URI + "=?",
+		        getWhere(),
 		        new String[]{uri.toString()},
 		        null);
+    }
+
+    public static String getWhere()
+    {
+        return Meta.Data.URI + "=?";
     }
 
     public static boolean isProcessed(Context c, Uri uri)
@@ -290,7 +295,7 @@ public class ImageUtils
                 if (!file.exists())
                 {
                     operations.add(ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
-                            .withSelection(Meta.Data.URI + "=?", new String[]{uriString}).build());
+                            .withSelection(getWhere(), new String[]{uriString}).build());
                 }
             }
         }
@@ -340,7 +345,7 @@ public class ImageUtils
         {
             Log.d(TAG, "Exif parse failed:", e);
         }
-        c.getContentResolver().update(Meta.Data.CONTENT_URI, cv, Meta.Data.URI + "=?",
+        c.getContentResolver().update(Meta.Data.CONTENT_URI, cv, getWhere(),
                 new String[]{uri.toString()});
     }
 

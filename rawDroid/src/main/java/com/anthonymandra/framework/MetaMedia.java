@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.util.ImageUtils;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
@@ -404,7 +405,7 @@ public abstract class MetaMedia extends MediaItem implements MetaObject
 	protected void getContent()
 	{
 		String[] selection = new String[]{ getUri().toString() };
-		Cursor meta = mContext.getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "=?", selection, null);
+		Cursor meta = mContext.getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), selection, null);
 		if (meta == null || !meta.moveToNext())
 		{
 			return;

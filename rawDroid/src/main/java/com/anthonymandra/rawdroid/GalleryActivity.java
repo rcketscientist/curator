@@ -1086,7 +1086,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	{
 		int rowsDeleted = getContentResolver().delete(
 				Meta.Data.CONTENT_URI,
-				Meta.Data.URI + " = ?",
+				ImageUtils.getWhere(),
 				new String[] {toRemove.toString()});
 		return rowsDeleted > 0;
 	}

@@ -6,7 +6,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,14 +15,7 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -176,7 +168,7 @@ public class MetaService extends ThreadedPriorityIntentService
         {
             getContentResolver().update(Meta.Data.CONTENT_URI,
                     values,
-                    Meta.Data.URI + " = ?",
+                    ImageUtils.getWhere(),
                     new String[]{uri.toString()});
 
             Intent broadcast = new Intent(BROADCAST_IMAGE_UPDATE)
@@ -247,7 +239,8 @@ public class MetaService extends ThreadedPriorityIntentService
 
     private synchronized void addUpdate(ContentValues values)
     {
-        mOperations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+        mOperations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+                .withSelection(ImageUtils.getWhere(), new String[] {values.getAsString(Meta.Data.URI)})
                 .withValues(values)
                 .build());
     }

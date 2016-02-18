@@ -304,7 +304,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 
             getContentResolver().update(
                     Meta.Data.CONTENT_URI,
-                    cv, Meta.Data.URI + " = ?",
+                    cv, ImageUtils.getWhere(),
                     new String[]{mCurrentUri.toString()});
 
             writeXmp(getCurrentItem().getUri(), mPendingXmpChanges);
@@ -603,15 +603,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         updateHistogram(getCurrentBitmap());
     }
 
-    protected Cursor getMetaCursor(Uri uri)
-    {
-        return getContentResolver().query(Meta.Data.CONTENT_URI,
-                null,
-                Meta.Data.URI + "=?",
-                new String[]{uri.toString()},
-                null);
-    }
-
     protected void updateHistogram(Bitmap bitmap)
     {
         if (bitmap == null) {
@@ -697,7 +688,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             final Uri uri = params[0];
 
             // If the meta is processed populate it
-            Cursor c = getMetaCursor(uri);
+            Cursor c = ImageUtils.getMetaCursor(ViewerActivity.this, uri);
             if (!c.moveToFirst())
                 return null;
 
@@ -719,7 +710,7 @@ public abstract class ViewerActivity extends CoreActivity implements
                     {
                         getContentResolver().update(Meta.Data.CONTENT_URI,
                                 cv,
-                                Meta.Data.URI + " = ?",
+                                ImageUtils.getWhere(),
                                 new String[]{uri.toString()});
                     }
                 }).start();

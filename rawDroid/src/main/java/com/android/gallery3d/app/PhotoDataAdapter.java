@@ -452,11 +452,7 @@ public class PhotoDataAdapter implements Model {
         if (item == null)
             return null;
 
-        Cursor c = mActivity.getAndroidContext().getContentResolver().query(Meta.Data.CONTENT_URI,
-                null,
-                Meta.Data.URI + "=?",
-                new String[]{item.getUri().toString()},
-                null);
+        Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item.getUri());
 
         return c.moveToFirst() ? c : null;
     }
