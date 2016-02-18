@@ -111,10 +111,14 @@ public class ImageUtils
      */
     private static Metadata readXmp(Context c, Uri uri, Metadata meta)
     {
+        UsefulDocumentFile xmpDoc = getXmpFile(c, uri);
+        if (!xmpDoc.exists())
+            return meta;
+
         InputStream xmpStream = null;
         try
         {
-            xmpStream = FileUtil.getInputStream(c, uri);
+            xmpStream = FileUtil.getInputStream(c, xmpDoc.getUri());
             XmpReader reader = new XmpReader();
             byte[] buffer = new byte[xmpStream.available()];
             xmpStream.read(buffer);

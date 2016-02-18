@@ -22,7 +22,6 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -768,7 +767,7 @@ public abstract class CoreActivity extends DocumentActivity
 				{
 					setWriteResume(WriteActions.COPY, new Object[]{remainingImages});
 
-					DocumentFile source = DocumentFile.fromSingleUri(CoreActivity.this, toCopy);
+					UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toCopy);
 					Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
 					copyAssociatedFiles(toCopy, destinationFile);
 				}
@@ -1412,9 +1411,11 @@ public abstract class CoreActivity extends DocumentActivity
 						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
 						.build());
 
-				final UsefulDocumentFile xmpDoc = ImageUtils.getXmpFile(CoreActivity.this, image);
+				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, image).getUri();
+				final UsefulDocumentFile xmpDoc;
 				try
 				{
+					xmpDoc = getDocumentFile(xmpUri, false, false); // For now use getDocumentFile to leverage write testing
 					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
 					//TODO: need DocumentActivity.openOutputStream
 					remainingImages.remove(image);

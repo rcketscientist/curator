@@ -16,37 +16,20 @@
 
 package com.anthonymandra.util;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.os.StatFs;
-import android.provider.MediaStore;
-import android.support.v4.provider.DocumentFile;
 
 import com.android.gallery3d.common.Utils;
-import com.anthonymandra.content.Meta;
-import com.anthonymandra.rawdroid.R;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -54,11 +37,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -515,7 +515,9 @@ public class XmpFilterFragment extends XmpBaseFragment
 
                 viewHolder = new ViewHolder();
                 viewHolder.path = (CheckBox) convertView.findViewById(R.id.checkBoxFolderPath);
-                viewHolder.path.setText(DocumentUtil.getNicePath(Uri.parse(item.Path)));
+
+                String path = item.Path != null ? DocumentUtil.getNicePath(Uri.parse(item.Path)) : null;
+                viewHolder.path.setText(path);
                 viewHolder.path.setChecked(item.visible);
 
                 convertView.setTag(viewHolder);

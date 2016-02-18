@@ -35,7 +35,6 @@ import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.provider.DocumentFile;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -68,13 +67,14 @@ import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.ImageDecoder;
-import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
+import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.GalleryAdapter;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
@@ -892,16 +892,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		long selectionSize = 0;
 		for (Uri selected : mGalleryAdapter.getSelectedItems())
 		{
-			DocumentFile df;
-			if (FileUtil.isFileScheme(selected))
-			{
-				df = DocumentFile.fromFile(new File(selected.getPath()));
-			}
-			else
-			{
-				df = DocumentFile.fromSingleUri(this, selected);
-			}
-
+			UsefulDocumentFile df = UsefulDocumentFile.fromUri(this, selected);
 			selectionSize += df.length();
 		}
 		return selectionSize;
@@ -929,7 +920,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		Set<String> permissibleUsbDevices = new HashSet<>(prefs.getStringSet(PREFS_PERMISSIBLE_USB, new HashSet<String>()));
 
 		// The following oddity is because permission uris are not valid without SAF
-		DocumentFile makeUriUseful = DocumentFile.fromTreeUri(this, treeUri);
+		UsefulDocumentFile makeUriUseful = UsefulDocumentFile.fromUri(this, treeUri);
 		permissibleUsbDevices.add(makeUriUseful.getUri().toString());
 
 		SharedPreferences.Editor editor = prefs.edit();

@@ -2,7 +2,6 @@ package com.anthonymandra.framework;
 
 import android.app.IntentService;
 import android.content.ContentProviderOperation;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.os.Environment;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.anthonymandra.content.Meta;
@@ -156,6 +154,10 @@ public class SearchService extends IntentService
 	{
 		if (root == null)
 			return;
+		String name = root.getName();
+		if (name == null || name.startsWith("."))
+			return;
+
 		UsefulDocumentFile[] contents = root.listFiles();
 		if (contents == null)
 			return;

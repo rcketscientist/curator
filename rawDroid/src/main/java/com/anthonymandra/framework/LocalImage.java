@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
@@ -20,7 +19,6 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
-import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -144,32 +142,6 @@ public class LocalImage extends MetaMedia {
 			Utils.closeSilently(pfd);
 		}
 	}
-
-	private DocumentFile getXmpFile()
-	{
-		return getAssociatedFile("xmp");
-	}
-
-    private DocumentFile getJpgFile()
-    {
-        return getAssociatedFile("image/jpeg", "jpg");
-    }
-
-	private DocumentFile getAssociatedFile(String ext)
-	{
-		return getAssociatedFile("text/plain", ext);
-	}
-
-    private DocumentFile getAssociatedFile(String mimeType, String ext) {
-	    String name = FileUtil.swapExtention(getName(), ext);
-
-	    DocumentFile image = DocumentFile.fromSingleUri(mContext, mUri);
-	    DocumentFile parent = image.getParentFile();
-
-	    // The automatic creation of the file could cause issues, but findFile is slow
-	    // and there's no way to exists() an arbitrary child...
-	    return parent.createFile(mimeType, name);
-    }
 
 	@Override
 	public Uri getSwapUri() {
