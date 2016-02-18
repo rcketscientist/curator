@@ -480,15 +480,15 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     private static class FolderAdapter extends ArrayAdapter<FolderVisibility>
     {
-        List<FolderVisibility> mVisibility;
         public interface OnVisibilityChangedListener
         {
             void onVisibilityChanged(FolderVisibility visibility);
         }
 
-        private class ViewHolder
+        static class ViewHolder
         {
             private CheckBox path;
+            private ImageButton exclude;
         }
 
         private OnVisibilityChangedListener mListener;
@@ -500,7 +500,6 @@ public class XmpFilterFragment extends XmpBaseFragment
         public FolderAdapter(Context context, List<FolderVisibility> objects)
         {
             super(context, R.layout.folder_list_item, objects);
-            mVisibility = objects;
         }
 
         @Override
@@ -515,17 +514,19 @@ public class XmpFilterFragment extends XmpBaseFragment
 
                 viewHolder = new ViewHolder();
                 viewHolder.path = (CheckBox) convertView.findViewById(R.id.checkBoxFolderPath);
-
-                String path = item.Path != null ? DocumentUtil.getNicePath(Uri.parse(item.Path)) : null;
-                viewHolder.path.setText(path);
-                viewHolder.path.setChecked(item.visible);
-
+                viewHolder.exclude = (ImageButton) convertView.findViewById(R.id.excludeButton);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
+                viewHolder.path.setOnCheckedChangeListener(null);
+                viewHolder.exclude.setOnClickListener(null);
             }
 
-            // If excluded disable visibility switch and strikethrough
+            String path = item.Path != null ? DocumentUtil.getNicePath(Uri.parse(item.Path)) : null;
+            viewHolder.path.setText(path);
+            viewHolder.path.setChecked(item.visible);
+
+            // If excluded disable visibility switch and strike-through
             if (item.excluded)
             {
                 viewHolder.path.setPaintFlags(viewHolder.path.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -537,8 +538,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                 viewHolder.path.setEnabled(true);
             }
 
-            ImageButton exclude = (ImageButton) convertView.findViewById(R.id.excludeButton);
-            exclude.setOnClickListener(new View.OnClickListener()
+            viewHolder.exclude.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)

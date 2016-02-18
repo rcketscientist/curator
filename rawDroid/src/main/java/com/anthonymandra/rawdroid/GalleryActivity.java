@@ -448,7 +448,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		if (filter.hiddenFolders != null && filter.hiddenFolders.size() > 0)
 		{
 			if (requiresJoiner)
-				selection.append(joiner);
+				selection.append(AND);  // Always exclude the folders, don't OR
 			requiresJoiner = true;
 
 			selection.append(createMultipleLike(Meta.Data.PARENT,
@@ -1273,6 +1273,9 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	protected void onResumeWriteAction(Enum callingMethod, Object[] callingParameters)
 	{
 		super.onResumeWriteAction(callingMethod, callingParameters);
+		if (callingMethod == null)
+			return;
+
 		switch ((WriteResume)callingMethod)
 		{
 			case Search:
