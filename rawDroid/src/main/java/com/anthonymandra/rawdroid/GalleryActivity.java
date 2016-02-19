@@ -719,30 +719,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		final WhatsNewDialog whatsNewDialog = new WhatsNewDialog(this);
 		whatsNewDialog.show(Constants.VariantCode == 8);
 
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		final int versionShown = prefs.getInt(PREFS_LAST_BETA_VERSION, 0);
-		if (versionShown != getAppVersionCode())
-		{
-			AlertDialog.Builder builder =
-					new AlertDialog.Builder(this).
-							setTitle(R.string.betaWelcomeTitle).
-							setMessage(Html.fromHtml(getString(R.string.betaWelcomeMessage))).
-							setPositiveButton(R.string.ok, new DialogInterface.OnClickListener()
-							{
-								@Override
-								public void onClick(DialogInterface dialog, int which)
-								{
-									//Do nothing
-								}
-							});
-			builder.create().show();
-
-			//Update last shown version
-			final SharedPreferences.Editor edit = prefs.edit();
-			edit.putInt(PREFS_LAST_BETA_VERSION, getAppVersionCode());
-			edit.apply();
-		}
-
 		mImageDecoder.setExitTasksEarly(false);
 		mGalleryAdapter.notifyDataSetChanged();
 	}
@@ -990,7 +966,14 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				selectAll();
 				return false;
 			case R.id.galleryRefresh:
-				scanRawFiles();
+				if (getRootPermissions().size() == 0)
+				{
+					offerRequestPermission();
+				}
+				else
+				{
+					scanRawFiles();
+				}
 				return true;
 			case R.id.galleryTutorial:
 //				runTutorial();

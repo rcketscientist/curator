@@ -3,7 +3,7 @@
     <release version="4.5"
              versioncode="45000"
              summary="Beta: Android 5.0+ storage support"
-             date="25 DEC 2015">
+             date="19 FEB 2016">
         <change>Feature: Support for SD cards in 5.0+</change>
         <change>Feature: Support for USB storage in 6.0+</change>
         <change>Feature: Support for Android 6 runtime permissions</change>
