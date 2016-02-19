@@ -223,11 +223,6 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         mAdapter.notifyDataSetChanged();
     }
 
-    public boolean importKeywords(Reader keywordList)
-    {
-        return KeywordProvider.importKeywords(getActivity(), keywordList);
-    }
-
     class SelectCursorAdapter extends SimpleCursorAdapter
     {
 
@@ -243,60 +238,5 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
             long id = cursor.getLong(KeywordProvider.Data.COLUMN_ID);
             ((Checkable) view).setChecked(mSelectedKeywords.get(id) != null);
         }
-    }
-
-    private void generateKeywordTemplate()
-    {
-        File keywords = new File(getActivity().getFilesDir().getAbsolutePath(), "keywords.txt");
-        if (!keywords.exists())
-        {
-            Toast.makeText(getActivity(), "Keywords file not found.  Generic created for testing.  Import in options.", Toast.LENGTH_LONG).show();
-            try
-            {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(keywords));
-                bw.write("Europe");
-                bw.newLine();
-                bw.write("\tFrance");
-                bw.newLine();
-                bw.write("\tItaly");
-                bw.newLine();
-                bw.write("\t\tRome");
-                bw.newLine();
-                bw.write("\t\tVenice");
-                bw.newLine();
-                bw.write("\tGermany");
-                bw.newLine();
-                bw.write("South America");
-                bw.newLine();
-                bw.write("\tBrazil");
-                bw.newLine();
-                bw.write("\tChile");
-                bw.newLine();
-                bw.write("United States");
-                bw.newLine();
-                bw.write("\tNew Jersey");
-                bw.newLine();
-                bw.write("\t\tTrenton");
-                bw.newLine();
-                bw.write("\tVirginia");
-                bw.newLine();
-                bw.write("\t\tRichmond");
-                bw.close();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-
-        try
-        {
-            importKeywords(new FileReader(keywords));
-        } catch (FileNotFoundException e)
-        {
-            // Do nothing
-        }
-
-        mAdapter.notifyDataSetChanged();
     }
 }

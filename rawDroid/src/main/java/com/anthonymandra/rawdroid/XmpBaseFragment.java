@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -67,7 +68,11 @@ public abstract class XmpBaseFragment extends Fragment
 
 	protected String[] getColorLabels()
 	{
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		Context c = getContext();
+		if (c == null)
+			return null;
+
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
 		List<XmpLabelGroup.Labels> checked = colorKey.getCheckedLabels();
 
 		if (checked.size() == 0)
@@ -111,9 +116,13 @@ public abstract class XmpBaseFragment extends Fragment
 
 	protected void setColorLabel(String[] labels)
 	{
+		Context c = getContext();
+		if (c == null)
+			return;
+
 		if (labels != null)
 		{
-			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
 			String red = sp.getString(FullSettingsActivity.KEY_XmpRed, "Red");
 			String blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, "Blue");
 			String green = sp.getString(FullSettingsActivity.KEY_XmpGreen, "Green");
@@ -139,7 +148,7 @@ public abstract class XmpBaseFragment extends Fragment
 					colorKey.setChecked(XmpLabelGroup.Labels.purple, true);
 				} else
 				{
-					Toast.makeText(this.getActivity(), label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show();
+					Toast.makeText(c, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show();
 				}
 			}
 		}
