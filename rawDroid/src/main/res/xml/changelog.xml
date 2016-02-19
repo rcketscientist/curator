@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.5"
+             versioncode="45000"
+             summary="Beta: Android 5.0+ storage support"
+             date="25 DEC 2015">
+        <change>Feature: Support for SD cards in 5.0+</change>
+        <change>Feature: Support for USB storage in 6.0+</change>
+        <change>Feature: Support for Android 6 runtime permissions</change>
+        <change>Fixes: Many bugs related to metadata parsing, storing, and filtering</change>
+        <change>Fixes: Search and folder exclusion for Android 5.0+</change>
+        <change>Patch: Multiple storage bugs in Android framework...Thanks Google...</change>
+    </release>
     <release version="3.9.6.10"
              versioncode="39610"
              summary="Beta: Bug patch"

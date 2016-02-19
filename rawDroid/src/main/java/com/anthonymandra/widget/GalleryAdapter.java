@@ -133,7 +133,7 @@ public class GalleryAdapter extends CursorAdapter
 					label.setBackgroundColor(blue);
 					break;
 				case "yellow":
-					view.setBackgroundColor(yellow);
+//					view.setBackgroundColor(yellow);
 					label.setVisibility(View.VISIBLE);
 					label.setBackgroundColor(yellow);
 					break;
@@ -155,7 +155,7 @@ public class GalleryAdapter extends CursorAdapter
 		}
 		else
 		{
-			view.setBackgroundColor(0);
+//			view.setBackgroundColor(0);
 			label.setVisibility(View.GONE);
 		}
 

@@ -1394,6 +1394,11 @@ public abstract class CoreActivity extends DocumentActivity
 			final XmpEditFragment.XmpEditValues values = (XmpEditFragment.XmpEditValues) params[1];
 			final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
 
+			ContentValues cv = new ContentValues();
+			cv.put(Meta.Data.LABEL, values.Label);
+			cv.put(Meta.Data.RATING, values.Rating);
+			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+
 			for (Uri image : totalImages)
 			{
 				final Metadata meta = new Metadata();
@@ -1402,14 +1407,9 @@ public abstract class CoreActivity extends DocumentActivity
 				ImageUtils.updateRating(meta, values.Rating);
 				ImageUtils.updateLabel(meta, values.Label);
 
-				ContentValues cv = new ContentValues();
-				cv.put(Meta.Data.LABEL, values.Label);
-				cv.put(Meta.Data.RATING, values.Rating);
-				cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
-
 				databaseUpdates.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-						.withSelection(Meta.Data.URI + " = ? ", new String[] {image.toString()})
-						.withValues(ImageUtils.getContentValues(CoreActivity.this, image))
+						.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
+						.withValues(cv)
 						.build());
 
 				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, image).getUri();
