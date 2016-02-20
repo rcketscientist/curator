@@ -39,7 +39,9 @@ android {
         targetSdkVersion 23
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}" + ((versionPatch != 0) ? ".${versionPatch}" : "") + ((versionBuild != 0) ? ".${versionBuild}" : "")
+        versionName "${versionMajor}.${versionMinor}" +                                 // Always include major and minor M.m
+                ((versionPatch != 0 || versionBuild != 0) ? ".${versionPatch}" : "") +  // Discard patch and build only if both are zero M.m.p
+                ((versionBuild != 0) ? ".${versionBuild}" : "")                         // Discard build only if build is zero M.m.p.bb
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
     }
 
