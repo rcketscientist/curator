@@ -24838,6 +24838,7 @@ com.anthonymandra.rawdroid.R$drawable: int keyword_border
 com.anthonymandra.rawdroid.R$drawable: int keyword_border_selector
 com.anthonymandra.rawdroid.R$drawable: int keyword_selected
 com.anthonymandra.rawdroid.R$drawable: int keyword_text_selector
+com.anthonymandra.rawdroid.R$drawable: int material_showcase_button_bg
 com.anthonymandra.rawdroid.R$drawable: int notification_template_icon_bg
 com.anthonymandra.rawdroid.R$drawable: int overscroll_edge
 com.anthonymandra.rawdroid.R$drawable: int overscroll_glow
@@ -25223,6 +25224,7 @@ com.anthonymandra.rawdroid.R$layout: int select_dialog_multichoice_material
 com.anthonymandra.rawdroid.R$layout: int select_dialog_singlechoice_material
 com.anthonymandra.rawdroid.R$layout: int showcase_button
 com.anthonymandra.rawdroid.R$layout: int support_simple_spinner_dropdown_item
+com.anthonymandra.rawdroid.R$layout: int tutorial_button
 com.anthonymandra.rawdroid.R$layout: int user_info
 com.anthonymandra.rawdroid.R$layout: int viewer_layout
 com.anthonymandra.rawdroid.R$layout: int viewer_onepane
@@ -25455,10 +25457,6 @@ com.anthonymandra.rawdroid.R$string: int tutorialExport
 com.anthonymandra.rawdroid.R$string: int tutorialExportText
 com.anthonymandra.rawdroid.R$string: int tutorialExportTitle
 com.anthonymandra.rawdroid.R$string: int tutorialFindImagesText
-com.anthonymandra.rawdroid.R$string: int tutorialFindImportText
-com.anthonymandra.rawdroid.R$string: int tutorialFindPathText
-com.anthonymandra.rawdroid.R$string: int tutorialFindTitle
-com.anthonymandra.rawdroid.R$string: int tutorialFindUSBText
 com.anthonymandra.rawdroid.R$string: int tutorialImport
 com.anthonymandra.rawdroid.R$string: int tutorialMemory
 com.anthonymandra.rawdroid.R$string: int tutorialMemoryTitle
@@ -25468,7 +25466,6 @@ com.anthonymandra.rawdroid.R$string: int tutorialMultiSelectText
 com.anthonymandra.rawdroid.R$string: int tutorialMultiSelectText2
 com.anthonymandra.rawdroid.R$string: int tutorialPath
 com.anthonymandra.rawdroid.R$string: int tutorialRecentFolder
-com.anthonymandra.rawdroid.R$string: int tutorialRecentFolderText
 com.anthonymandra.rawdroid.R$string: int tutorialRecycle
 com.anthonymandra.rawdroid.R$string: int tutorialRecycleText
 com.anthonymandra.rawdroid.R$string: int tutorialRecycleTitle
@@ -25679,6 +25676,9 @@ com.anthonymandra.rawdroid.R$style: int Base_Widget_Design_TabLayout
 com.anthonymandra.rawdroid.R$style: int ButtonColorKey
 com.anthonymandra.rawdroid.R$style: int ButtonText
 com.anthonymandra.rawdroid.R$style: int Custom_Widget_ActionButton_Overflow
+com.anthonymandra.rawdroid.R$style: int CustomShowcaseTheme2
+com.anthonymandra.rawdroid.R$style: int CustomText2
+com.anthonymandra.rawdroid.R$style: int CustomTitle2
 com.anthonymandra.rawdroid.R$style: int FolderDialog
 com.anthonymandra.rawdroid.R$style: int GalleryRatingBar
 com.anthonymandra.rawdroid.R$style: int GalleryTheme

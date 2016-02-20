@@ -26396,6 +26396,8 @@ com.anthonymandra.framework.FileUtil -> com.anthonymandra.framework.av:
     68:89:boolean isWritable(java.io.File) -> a
     163:167:java.lang.String getCanonicalPathSilently(java.io.File) -> b
     245:251:java.io.InputStream getInputStream(android.content.Context,android.net.Uri) -> a
+    395:403:java.io.File getDiskCacheDir(android.content.Context,java.lang.String) -> a
+    414:418:boolean isExternalStorageRemovable() -> a
     31:31:void <clinit>() -> <clinit>
 com.anthonymandra.framework.Histogram -> com.anthonymandra.framework.aw:
     java.lang.String TAG -> a
@@ -26764,25 +26766,24 @@ com.anthonymandra.framework.SwapProvider -> com.anthonymandra.framework.SwapProv
     int mWatermarkSize -> f
     java.lang.String mWatermarkLocation -> g
     com.anthonymandra.rawprocessor.LibRaw$Margins mMargins -> h
-    30:30:void <init>() -> <init>
-    47:56:boolean onCreate() -> onCreate
-    67:67:android.net.Uri createSwapUri(java.lang.String,android.net.Uri) -> a
-    76:165:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String) -> openFile
-    199:210:void updateWatermark() -> a
-    215:227:boolean writeThumb(android.net.Uri,java.io.File) -> a
-    235:247:boolean writeThumbWatermark(android.net.Uri,java.io.File,byte[],int,int,com.anthonymandra.rawprocessor.LibRaw$Margins) -> a
-    253:253:android.net.Uri getSwapUri(java.io.File) -> a
-    265:265:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
-    270:270:int delete(android.net.Uri,java.lang.String,java.lang.String[]) -> delete
-    275:275:android.net.Uri insert(android.net.Uri,android.content.ContentValues) -> insert
-    280:280:java.lang.String getType(android.net.Uri) -> getType
-    286:286:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
-    292:300:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    31:31:void <clinit>() -> <clinit>
+    32:32:void <init>() -> <init>
+    49:58:boolean onCreate() -> onCreate
+    69:69:android.net.Uri createSwapUri(java.lang.String,android.net.Uri) -> a
+    81:178:android.os.ParcelFileDescriptor openFile(android.net.Uri,java.lang.String) -> openFile
+    212:223:void updateWatermark() -> a
+    228:243:boolean writeThumb(android.net.Uri,java.io.File) -> a
+    251:263:boolean writeThumbWatermark(android.net.Uri,java.io.File,byte[],int,int,com.anthonymandra.rawprocessor.LibRaw$Margins) -> a
+    274:274:int update(android.net.Uri,android.content.ContentValues,java.lang.String,java.lang.String[]) -> update
+    279:279:int delete(android.net.Uri,java.lang.String,java.lang.String[]) -> delete
+    284:284:android.net.Uri insert(android.net.Uri,android.content.ContentValues) -> insert
+    289:289:java.lang.String getType(android.net.Uri) -> getType
+    295:295:android.database.Cursor query(android.net.Uri,java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> query
+    301:309:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    33:33:void <clinit>() -> <clinit>
 com.anthonymandra.framework.SwapProvider$1 -> com.anthonymandra.framework.bu:
     com.anthonymandra.framework.SwapProvider this$0 -> a
-    151:151:void <init>(com.anthonymandra.framework.SwapProvider) -> <init>
-    155:156:void run() -> run
+    164:164:void <init>(com.anthonymandra.framework.SwapProvider) -> <init>
+    168:169:void run() -> run
 com.anthonymandra.framework.ThreadedPriorityIntentService -> com.anthonymandra.framework.bv:
     java.util.concurrent.Executor mPool -> a
     java.util.concurrent.ConcurrentHashMap mTasks -> b
@@ -26837,7 +26838,7 @@ com.anthonymandra.framework.UsefulDocumentFile -> com.anthonymandra.framework.ca
     android.content.Context mContext -> c
     android.net.Uri mUri -> d
     70:74:void <init>(com.anthonymandra.framework.UsefulDocumentFile,android.content.Context,android.net.Uri) -> <init>
-    78:89:com.anthonymandra.framework.UsefulDocumentFile fromUri(android.content.Context,android.net.Uri) -> a
+    85:89:com.anthonymandra.framework.UsefulDocumentFile fromUri(android.content.Context,android.net.Uri) -> a
     106:110:com.anthonymandra.framework.UsefulDocumentFile getParentFile() -> a
     115:121:java.lang.String getDocumentId() -> b
     127:179:com.anthonymandra.framework.UsefulDocumentFile getParentDocument() -> c
@@ -26874,10 +26875,11 @@ com.anthonymandra.framework.UsefulDocumentFile -> com.anthonymandra.framework.ca
 com.anthonymandra.framework.Util -> com.anthonymandra.framework.cb:
     java.lang.String TAG -> a
     63:63:void <init>() -> <init>
-    81:81:boolean hasHoneycomb() -> a
-    96:96:boolean hasJellyBean() -> b
-    101:101:boolean hasKitkat() -> c
-    106:106:boolean hasLollipop() -> d
+    76:76:boolean hasGingerbread() -> a
+    81:81:boolean hasHoneycomb() -> b
+    96:96:boolean hasJellyBean() -> c
+    101:101:boolean hasKitkat() -> d
+    106:106:boolean hasLollipop() -> e
     110:116:void closeSilently(java.io.Closeable) -> a
     142:146:int copy(java.io.InputStream,java.io.OutputStream) -> a
     165:172:long copyLarge(java.io.InputStream,java.io.OutputStream) -> b
@@ -27258,143 +27260,168 @@ com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentWatermark -> com
     698:766:void updateWatermarkLocation() -> g
     770:781:java.lang.String translateWatermarkLocations(java.lang.String) -> a
 com.anthonymandra.rawdroid.GalleryActivity -> com.anthonymandra.rawdroid.GalleryActivity:
-    java.lang.String TAG -> l
-    android.content.IntentFilter mResponseIntentFilter -> m
+    java.lang.String TAG -> m
+    android.content.IntentFilter mResponseIntentFilter -> n
     java.lang.String[] USB_LOCATIONS -> a
-    java.lang.String[] MOUNT_ROOTS -> n
-    java.lang.String[] TEST_ROOTS -> o
-    java.lang.String[] GALLERY_PROJECTION -> p
+    java.lang.String[] MOUNT_ROOTS -> o
+    java.lang.String[] TEST_ROOTS -> p
+    java.lang.String[] GALLERY_PROJECTION -> q
     java.io.File START_PATH -> b
-    java.io.File ROOT -> q
-    boolean inTutorial -> r
-    boolean inActionMode -> s
-    android.widget.GridView mImageGrid -> t
-    int mImageThumbSize -> u
-    int mImageThumbSpacing -> v
-    com.anthonymandra.framework.ImageDecoder mImageDecoder -> w
-    com.anthonymandra.widget.GalleryAdapter mGalleryAdapter -> x
+    java.io.File ROOT -> r
+    boolean inTutorial -> s
+    boolean inActionMode -> t
+    android.widget.GridView mImageGrid -> u
+    int mImageThumbSize -> v
+    int mImageThumbSpacing -> w
+    com.anthonymandra.framework.ImageDecoder mImageDecoder -> x
+    com.anthonymandra.widget.GalleryAdapter mGalleryAdapter -> y
     java.util.List mItemsForIntent -> c
-    boolean multiSelectMode -> y
-    int mDisplayWidth -> z
-    int mDisplayHeight -> A
-    android.support.v7.view.ActionMode mContextMode -> B
-    com.github.amlcurran.showcaseview.ShowcaseView tutorial -> C
-    android.support.v7.widget.Toolbar mToolbar -> D
-    com.anthonymandra.rawdroid.XmpFilterFragment mXmpFilterFragment -> E
-    android.widget.ProgressBar mProgressBar -> F
-    android.support.v7.app.ActionBarDrawerToggle mDrawerToggle -> G
-    android.support.v4.widget.DrawerLayout mDrawerLayout -> H
-    int mParsedImages -> I
-    boolean isFirstDatabaseLoad -> J
-    int bias -> k
-    98:1376:void <init>() -> <init>
-    230:363:void onCreate(android.os.Bundle) -> onCreate
-    368:403:void onNewIntent(android.content.Intent) -> onNewIntent
-    407:476:void updateMetaLoaderXmp(com.anthonymandra.rawdroid.XmpFilter) -> a
-    480:489:java.lang.String createMultipleLike(java.lang.String,java.lang.String[],java.util.List,java.lang.String,boolean) -> a
-    494:499:java.lang.String createMultipleIN(java.lang.String,int) -> a
-    503:507:java.lang.String makePlaceholders(int) -> a
-    519:529:void updateMetaLoader(java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> a
-    537:545:android.os.Bundle getCurrentMetaLoaderBundle() -> a
-    550:555:android.os.Bundle createMetaLoaderBundle(java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> b
-    570:598:android.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
-    606:620:void onPostCreate(android.os.Bundle) -> onPostCreate
-    665:686:void loadXmpFilter() -> i
-    691:697:void onLoadFinished(android.content.Loader,android.database.Cursor) -> a
-    702:703:void onLoaderReset(android.content.Loader) -> onLoaderReset
-    708:709:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    716:724:void onResume() -> onResume
-    729:729:com.anthonymandra.framework.CoreActivity$LicenseHandler getLicenseHandler() -> k
-    735:739:void onPause() -> onPause
-    744:746:void onDestroy() -> onDestroy
-    760:780:void offerRequestPermission() -> j
-    784:785:void setImageCountTitle() -> b
-    789:812:void scanRawFiles() -> c
-    817:846:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    850:851:void handlePhotoUpdate(int) -> c
-    863:864:void handleImportDirResult(android.net.Uri) -> j
-    888:890:void handleExportThumbResult(android.net.Uri) -> k
-    894:909:void handleUsbAccessRequest(android.net.Uri) -> l
-    928:929:void storeSelectionForIntent() -> y
-    934:988:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    994:1017:void addExcludedFolder() -> z
-    1022:1024:boolean onShareTargetSelected(android.support.v7.widget.ShareActionProvider,android.content.Intent) -> onShareTargetSelected
-    1029:1035:void requestRename() -> A
-    1039:1041:void requestImportImageLocation() -> B
-    1045:1047:void requestExportThumbLocation() -> C
-    1054:1054:void onImageSetChanged() -> s
-    1059:1060:void onImageAdded(android.net.Uri) -> b
-    1065:1066:void onImageRemoved(android.net.Uri) -> c
-    1070:1074:boolean removeDatabaseReference(android.net.Uri) -> h
-    1079:1079:android.net.Uri addDatabaseReference(android.net.Uri) -> i
-    1087:1095:void onBackPressed() -> onBackPressed
-    1100:1120:void onSelectionUpdated(java.util.Set) -> a
-    1209:1211:void selectAll() -> d
-    1215:1217:void startMultiSelectMode() -> e
-    1221:1223:void endMultiSelectMode() -> f
-    1227:1230:void startContextualActionBar() -> D
-    1235:1252:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
-    1258:1268:void onResumeWriteAction(java.lang.Enum,java.lang.Object[]) -> a
-    1274:1305:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-    1311:1311:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
-    1317:1325:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
-    1599:1606:void closeTutorial() -> g
-    1700:1707:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    98:98:void onLoadFinished(android.content.Loader,java.lang.Object) -> onLoadFinished
-    98:98:int access$008() -> h
-    98:98:android.support.v7.widget.Toolbar access$100(com.anthonymandra.rawdroid.GalleryActivity) -> a
-    98:98:android.widget.ProgressBar access$200(com.anthonymandra.rawdroid.GalleryActivity) -> b
-    98:98:int access$002(int) -> b
-    98:98:void access$300(com.anthonymandra.rawdroid.GalleryActivity,java.lang.Enum,java.lang.Object[]) -> a
-    98:98:void access$400(com.anthonymandra.rawdroid.GalleryActivity) -> c
-    98:98:void access$500(com.anthonymandra.rawdroid.GalleryActivity,java.lang.Enum,java.lang.Object[]) -> b
-    98:98:void access$600(com.anthonymandra.rawdroid.GalleryActivity) -> d
-    98:98:boolean access$702(boolean) -> a
-    98:98:android.support.v7.widget.ShareActionProvider access$802(com.anthonymandra.rawdroid.GalleryActivity,android.support.v7.widget.ShareActionProvider) -> a
-    98:98:android.support.v7.widget.ShareActionProvider access$900(com.anthonymandra.rawdroid.GalleryActivity) -> e
-    98:98:android.content.Intent access$1000(com.anthonymandra.rawdroid.GalleryActivity) -> f
-    98:98:android.support.v7.widget.ShareActionProvider access$1100(com.anthonymandra.rawdroid.GalleryActivity) -> g
-    98:98:android.support.v7.view.ActionMode access$1202(com.anthonymandra.rawdroid.GalleryActivity,android.support.v7.view.ActionMode) -> a
-    102:1634:void <clinit>() -> <clinit>
+    boolean multiSelectMode -> z
+    int mDisplayWidth -> A
+    int mDisplayHeight -> B
+    android.support.v7.view.ActionMode mContextMode -> C
+    com.github.amlcurran.showcaseview.ShowcaseView tutorial -> D
+    android.support.v7.widget.Toolbar mToolbar -> E
+    com.anthonymandra.rawdroid.XmpFilterFragment mXmpFilterFragment -> F
+    android.widget.ProgressBar mProgressBar -> G
+    android.support.v7.app.ActionBarDrawerToggle mDrawerToggle -> H
+    android.support.v4.widget.DrawerLayout mDrawerLayout -> I
+    int mParsedImages -> J
+    boolean isFirstDatabaseLoad -> K
+    int tutorialStage -> k
+    int bias -> l
+    103:1418:void <init>() -> <init>
+    235:367:void onCreate(android.os.Bundle) -> onCreate
+    372:407:void onNewIntent(android.content.Intent) -> onNewIntent
+    411:480:void updateMetaLoaderXmp(com.anthonymandra.rawdroid.XmpFilter) -> a
+    484:493:java.lang.String createMultipleLike(java.lang.String,java.lang.String[],java.util.List,java.lang.String,boolean) -> a
+    498:503:java.lang.String createMultipleIN(java.lang.String,int) -> a
+    507:511:java.lang.String makePlaceholders(int) -> a
+    523:533:void updateMetaLoader(java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> a
+    541:549:android.os.Bundle getCurrentMetaLoaderBundle() -> a
+    554:559:android.os.Bundle createMetaLoaderBundle(java.lang.String[],java.lang.String,java.lang.String[],java.lang.String) -> b
+    574:602:android.content.Loader onCreateLoader(int,android.os.Bundle) -> onCreateLoader
+    610:624:void onPostCreate(android.os.Bundle) -> onPostCreate
+    669:690:void loadXmpFilter() -> y
+    695:701:void onLoadFinished(android.content.Loader,android.database.Cursor) -> a
+    706:707:void onLoaderReset(android.content.Loader) -> onLoaderReset
+    712:713:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    720:728:void onResume() -> onResume
+    733:733:com.anthonymandra.framework.CoreActivity$LicenseHandler getLicenseHandler() -> k
+    739:743:void onPause() -> onPause
+    748:750:void onDestroy() -> onDestroy
+    764:784:void offerRequestPermission() -> z
+    788:789:void setImageCountTitle() -> b
+    793:816:void scanRawFiles() -> c
+    821:850:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    854:855:void handlePhotoUpdate(int) -> d
+    867:868:void handleImportDirResult(android.net.Uri) -> j
+    892:894:void handleExportThumbResult(android.net.Uri) -> k
+    898:913:void handleUsbAccessRequest(android.net.Uri) -> l
+    932:933:void storeSelectionForIntent() -> A
+    938:992:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    998:1021:void addExcludedFolder() -> B
+    1026:1028:boolean onShareTargetSelected(android.support.v7.widget.ShareActionProvider,android.content.Intent) -> onShareTargetSelected
+    1033:1039:void requestRename() -> C
+    1043:1045:void requestImportImageLocation() -> D
+    1049:1051:void requestExportThumbLocation() -> E
+    1058:1058:void onImageSetChanged() -> s
+    1063:1064:void onImageAdded(android.net.Uri) -> b
+    1069:1070:void onImageRemoved(android.net.Uri) -> c
+    1074:1078:boolean removeDatabaseReference(android.net.Uri) -> h
+    1083:1083:android.net.Uri addDatabaseReference(android.net.Uri) -> i
+    1091:1099:void onBackPressed() -> onBackPressed
+    1104:1125:void onSelectionUpdated(java.util.Set) -> a
+    1214:1216:void selectAll() -> d
+    1220:1222:void startMultiSelectMode() -> e
+    1226:1228:void endMultiSelectMode() -> f
+    1232:1235:void startContextualActionBar() -> F
+    1240:1257:boolean onItemLongClick(android.widget.AdapterView,android.view.View,int,long) -> onItemLongClick
+    1263:1273:void onResumeWriteAction(java.lang.Enum,java.lang.Object[]) -> a
+    1279:1310:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    1316:1316:void onScroll(android.widget.AbsListView,int,int,int) -> onScroll
+    1322:1330:void onScrollStateChanged(android.widget.AbsListView,int) -> onScrollStateChanged
+    1335:1393:void runTutorial() -> g
+    1619:1645:void closeTutorial() -> h
+    1650:1660:int getNavigationBarHeight(int) -> b
+    1665:1670:android.widget.RelativeLayout$LayoutParams getRightParam(android.content.res.Resources) -> a
+    1683:1686:void setTutorialNoShowcase() -> G
+    1694:1696:void setTutorialHomeView(boolean) -> b
+    1704:1706:void setTutorialTitleView(boolean) -> c
+    1716:1729:void setTutorialActionView(int,boolean) -> a
+    1753:1760:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    103:103:void onLoadFinished(android.content.Loader,java.lang.Object) -> onLoadFinished
+    103:103:int access$008() -> i
+    103:103:android.support.v7.widget.Toolbar access$100(com.anthonymandra.rawdroid.GalleryActivity) -> a
+    103:103:android.widget.ProgressBar access$200(com.anthonymandra.rawdroid.GalleryActivity) -> b
+    103:103:int access$002(int) -> c
+    103:103:void access$300(com.anthonymandra.rawdroid.GalleryActivity) -> c
+    103:103:void access$400(com.anthonymandra.rawdroid.GalleryActivity,java.lang.Enum,java.lang.Object[]) -> a
+    103:103:void access$500(com.anthonymandra.rawdroid.GalleryActivity) -> d
+    103:103:void access$600(com.anthonymandra.rawdroid.GalleryActivity,java.lang.Enum,java.lang.Object[]) -> b
+    103:103:void access$700(com.anthonymandra.rawdroid.GalleryActivity) -> e
+    103:103:boolean access$802(boolean) -> a
+    103:103:android.support.v7.widget.ShareActionProvider access$902(com.anthonymandra.rawdroid.GalleryActivity,android.support.v7.widget.ShareActionProvider) -> a
+    103:103:android.support.v7.widget.ShareActionProvider access$1000(com.anthonymandra.rawdroid.GalleryActivity) -> f
+    103:103:android.content.Intent access$1100(com.anthonymandra.rawdroid.GalleryActivity) -> g
+    103:103:android.support.v7.widget.ShareActionProvider access$1200(com.anthonymandra.rawdroid.GalleryActivity) -> h
+    103:103:android.support.v7.view.ActionMode access$1302(com.anthonymandra.rawdroid.GalleryActivity,android.support.v7.view.ActionMode) -> a
+    103:103:com.github.amlcurran.showcaseview.ShowcaseView access$1600(com.anthonymandra.rawdroid.GalleryActivity) -> i
+    103:103:void access$1700(com.anthonymandra.rawdroid.GalleryActivity) -> j
+    103:103:void access$1800(com.anthonymandra.rawdroid.GalleryActivity,int,boolean) -> a
+    103:103:android.widget.GridView access$1900(com.anthonymandra.rawdroid.GalleryActivity) -> k
+    103:103:boolean access$800() -> j
+    103:103:com.anthonymandra.widget.GalleryAdapter access$2000(com.anthonymandra.rawdroid.GalleryActivity) -> l
+    103:103:android.support.v7.view.ActionMode access$1300(com.anthonymandra.rawdroid.GalleryActivity) -> m
+    103:103:void access$2100(com.anthonymandra.rawdroid.GalleryActivity,boolean) -> a
+    103:103:void access$2200(com.anthonymandra.rawdroid.GalleryActivity,boolean) -> b
+    103:103:void access$2300(com.anthonymandra.rawdroid.GalleryActivity) -> n
+    107:1673:void <clinit>() -> <clinit>
 com.anthonymandra.rawdroid.GalleryActivity$1 -> com.anthonymandra.rawdroid.q:
     com.anthonymandra.rawdroid.GalleryActivity this$0 -> a
-    312:312:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
-    316:352:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    317:317:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    321:356:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 com.anthonymandra.rawdroid.GalleryActivity$4 -> com.anthonymandra.rawdroid.r:
     com.anthonymandra.rawdroid.GalleryActivity this$0 -> a
-    667:667:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
-    671:672:void onMetaFilterChanged(com.anthonymandra.rawdroid.XmpFilter) -> a
+    671:671:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    675:676:void onMetaFilterChanged(com.anthonymandra.rawdroid.XmpFilter) -> a
 com.anthonymandra.rawdroid.GalleryActivity$5 -> com.anthonymandra.rawdroid.s:
     com.anthonymandra.rawdroid.GalleryActivity this$0 -> a
-    675:675:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
-    679:681:void onSearchRootRequested() -> a
+    679:679:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    683:685:void onSearchRootRequested() -> a
 com.anthonymandra.rawdroid.GalleryActivity$6 -> com.anthonymandra.rawdroid.t:
     com.anthonymandra.rawdroid.GalleryActivity this$0 -> a
-    772:772:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
-    777:777:void onClick(android.content.DialogInterface,int) -> onClick
+    776:776:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    781:781:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.rawdroid.GalleryActivity$7 -> com.anthonymandra.rawdroid.u:
     com.anthonymandra.rawdroid.GalleryActivity this$0 -> a
-    764:764:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
-    767:769:void onClick(android.content.DialogInterface,int) -> onClick
+    768:768:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    771:773:void onClick(android.content.DialogInterface,int) -> onClick
 com.anthonymandra.rawdroid.GalleryActivity$8 -> com.anthonymandra.rawdroid.v:
     int[] $SwitchMap$com$anthonymandra$rawdroid$XmpFilter$SortColumns -> a
     int[] $SwitchMap$com$anthonymandra$rawdroid$GalleryActivity$WriteResume -> b
-    468:1262:void <clinit>() -> <clinit>
+    472:1267:void <clinit>() -> <clinit>
 com.anthonymandra.rawdroid.GalleryActivity$GalleryActionMode -> com.anthonymandra.rawdroid.w:
     com.anthonymandra.rawdroid.GalleryActivity this$0 -> a
-    1163:1163:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
-    1168:1178:boolean onCreateActionMode(android.support.v7.view.ActionMode,android.view.Menu) -> onCreateActionMode
-    1184:1184:boolean onPrepareActionMode(android.support.v7.view.ActionMode,android.view.Menu) -> onPrepareActionMode
-    1190:1195:boolean onActionItemClicked(android.support.v7.view.ActionMode,android.view.MenuItem) -> onActionItemClicked
-    1201:1204:void onDestroyActionMode(android.support.v7.view.ActionMode) -> onDestroyActionMode
-    1163:1163:void <init>(com.anthonymandra.rawdroid.GalleryActivity,com.anthonymandra.rawdroid.GalleryActivity$1) -> <init>
-com.anthonymandra.rawdroid.GalleryActivity$WriteResume -> com.anthonymandra.rawdroid.x:
+    1168:1168:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    1173:1183:boolean onCreateActionMode(android.support.v7.view.ActionMode,android.view.Menu) -> onCreateActionMode
+    1189:1189:boolean onPrepareActionMode(android.support.v7.view.ActionMode,android.view.Menu) -> onPrepareActionMode
+    1195:1200:boolean onActionItemClicked(android.support.v7.view.ActionMode,android.view.MenuItem) -> onActionItemClicked
+    1206:1209:void onDestroyActionMode(android.support.v7.view.ActionMode) -> onDestroyActionMode
+    1168:1168:void <init>(com.anthonymandra.rawdroid.GalleryActivity,com.anthonymandra.rawdroid.GalleryActivity$1) -> <init>
+com.anthonymandra.rawdroid.GalleryActivity$TutorialClickListener -> com.anthonymandra.rawdroid.x:
+    android.view.View view -> a
+    com.anthonymandra.rawdroid.GalleryActivity this$0 -> b
+    1418:1418:void <init>(com.anthonymandra.rawdroid.GalleryActivity) -> <init>
+    1425:1614:void onClick(android.view.View) -> onClick
+    1418:1418:void <init>(com.anthonymandra.rawdroid.GalleryActivity,com.anthonymandra.rawdroid.GalleryActivity$1) -> <init>
+com.anthonymandra.rawdroid.GalleryActivity$WriteResume -> com.anthonymandra.rawdroid.y:
     com.anthonymandra.rawdroid.GalleryActivity$WriteResume Search -> a
     com.anthonymandra.rawdroid.GalleryActivity$WriteResume[] $VALUES -> b
-    104:104:com.anthonymandra.rawdroid.GalleryActivity$WriteResume[] values() -> values
-    104:104:com.anthonymandra.rawdroid.GalleryActivity$WriteResume valueOf(java.lang.String) -> valueOf
-    104:104:void <init>(java.lang.String,int) -> <init>
-    104:106:void <clinit>() -> <clinit>
+    109:109:com.anthonymandra.rawdroid.GalleryActivity$WriteResume[] values() -> values
+    109:109:com.anthonymandra.rawdroid.GalleryActivity$WriteResume valueOf(java.lang.String) -> valueOf
+    109:109:void <init>(java.lang.String,int) -> <init>
+    109:111:void <clinit>() -> <clinit>
 com.anthonymandra.rawdroid.ImageViewActivity -> com.anthonymandra.rawdroid.ImageViewActivity:
     java.lang.String TAG -> aq
     java.util.WeakHashMap mListeners -> ar
@@ -27414,14 +27441,14 @@ com.anthonymandra.rawdroid.ImageViewActivity -> com.anthonymandra.rawdroid.Image
     102:103:void goToNextPicture() -> B
     113:115:void setLicenseState(com.anthonymandra.framework.License$LicenseState) -> a
     17:17:void <clinit>() -> <clinit>
-com.anthonymandra.rawdroid.KeywordBaseFragment -> com.anthonymandra.rawdroid.y:
+com.anthonymandra.rawdroid.KeywordBaseFragment -> com.anthonymandra.rawdroid.z:
     com.anthonymandra.rawdroid.KeywordBaseFragment$OnKeywordsSelectedListener mListener -> a
     11:13:void <init>() -> <init>
     java.util.Collection getSelectedKeywords() -> a
     void setSelectedKeywords(java.util.Collection) -> a
     void clearSelectedKeywords() -> b
     31:32:void setOnKeywordsSelectedListener(com.anthonymandra.rawdroid.KeywordBaseFragment$OnKeywordsSelectedListener) -> a
-com.anthonymandra.rawdroid.KeywordBaseFragment$OnKeywordsSelectedListener -> com.anthonymandra.rawdroid.z:
+com.anthonymandra.rawdroid.KeywordBaseFragment$OnKeywordsSelectedListener -> com.anthonymandra.rawdroid.aa:
     void onKeywordsSelected(java.util.Collection) -> a
 com.anthonymandra.rawdroid.KeywordEditFragment -> com.anthonymandra.rawdroid.KeywordEditFragment:
     android.widget.SimpleCursorAdapter mAdapter -> b
@@ -27442,11 +27469,11 @@ com.anthonymandra.rawdroid.KeywordEditFragment -> com.anthonymandra.rawdroid.Key
     36:36:boolean access$002(com.anthonymandra.rawdroid.KeywordEditFragment,boolean) -> a
     36:36:android.widget.SimpleCursorAdapter access$100(com.anthonymandra.rawdroid.KeywordEditFragment) -> b
     36:36:java.util.Map access$200(com.anthonymandra.rawdroid.KeywordEditFragment) -> c
-com.anthonymandra.rawdroid.KeywordEditFragment$1 -> com.anthonymandra.rawdroid.aa:
+com.anthonymandra.rawdroid.KeywordEditFragment$1 -> com.anthonymandra.rawdroid.ab:
     com.anthonymandra.rawdroid.KeywordEditFragment this$0 -> a
     63:63:void <init>(com.anthonymandra.rawdroid.KeywordEditFragment) -> <init>
     67:131:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.anthonymandra.rawdroid.KeywordEditFragment$SelectCursorAdapter -> com.anthonymandra.rawdroid.ab:
+com.anthonymandra.rawdroid.KeywordEditFragment$SelectCursorAdapter -> com.anthonymandra.rawdroid.ac:
     com.anthonymandra.rawdroid.KeywordEditFragment this$0 -> a
     230:232:void <init>(com.anthonymandra.rawdroid.KeywordEditFragment,android.content.Context,int,android.database.Cursor,java.lang.String[],int[],int) -> <init>
     237:240:void bindView(android.view.View,android.content.Context,android.database.Cursor) -> bindView
@@ -27464,11 +27491,11 @@ com.anthonymandra.rawdroid.KeywordFilterFragment -> com.anthonymandra.rawdroid.K
     105:107:void clearSelectedKeywords() -> b
     25:25:android.widget.ArrayAdapter access$000(com.anthonymandra.rawdroid.KeywordFilterFragment) -> a
     25:25:java.util.Set access$100(com.anthonymandra.rawdroid.KeywordFilterFragment) -> b
-com.anthonymandra.rawdroid.KeywordFilterFragment$1 -> com.anthonymandra.rawdroid.ac:
+com.anthonymandra.rawdroid.KeywordFilterFragment$1 -> com.anthonymandra.rawdroid.ad:
     com.anthonymandra.rawdroid.KeywordFilterFragment this$0 -> a
     45:45:void <init>(com.anthonymandra.rawdroid.KeywordFilterFragment) -> <init>
     49:59:void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-com.anthonymandra.rawdroid.KeywordFilterFragment$SelectArrayAdapter -> com.anthonymandra.rawdroid.ad:
+com.anthonymandra.rawdroid.KeywordFilterFragment$SelectArrayAdapter -> com.anthonymandra.rawdroid.ae:
     com.anthonymandra.rawdroid.KeywordFilterFragment this$0 -> a
     113:115:void <init>(com.anthonymandra.rawdroid.KeywordFilterFragment,android.content.Context,int,java.util.List) -> <init>
     120:122:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
@@ -27515,18 +27542,18 @@ com.anthonymandra.rawdroid.LegacyViewerActivity -> com.anthonymandra.rawdroid.Le
     29:29:com.android.legacy.ui.GLRootView access$2000(com.anthonymandra.rawdroid.LegacyViewerActivity) -> n
     29:29:com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel access$2100(com.anthonymandra.rawdroid.LegacyViewerActivity) -> o
     31:31:void <clinit>() -> <clinit>
-com.anthonymandra.rawdroid.LegacyViewerActivity$1 -> com.anthonymandra.rawdroid.ae:
+com.anthonymandra.rawdroid.LegacyViewerActivity$1 -> com.anthonymandra.rawdroid.af:
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> j
     38:38:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity) -> <init>
     43:44:void renderBackground(com.android.legacy.ui.GLCanvas) -> b
     49:53:void onLayout(boolean,int,int,int,int) -> a
-com.anthonymandra.rawdroid.LegacyViewerActivity$CurrentImageLoader -> com.anthonymandra.rawdroid.af:
+com.anthonymandra.rawdroid.LegacyViewerActivity$CurrentImageLoader -> com.anthonymandra.rawdroid.ag:
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> d
     517:517:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity) -> <init>
     522:524:void onPostExecute(android.graphics.Bitmap) -> a
     517:517:void onPostExecute(java.lang.Object) -> a
     517:517:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity,com.anthonymandra.rawdroid.LegacyViewerActivity$1) -> <init>
-com.anthonymandra.rawdroid.LegacyViewerActivity$LargeImageLoader -> com.anthonymandra.rawdroid.ag:
+com.anthonymandra.rawdroid.LegacyViewerActivity$LargeImageLoader -> com.anthonymandra.rawdroid.ah:
     int mIndex -> d
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> e
     555:555:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity) -> <init>
@@ -27535,7 +27562,7 @@ com.anthonymandra.rawdroid.LegacyViewerActivity$LargeImageLoader -> com.anthonym
     555:555:void onPostExecute(java.lang.Object) -> a
     555:555:java.lang.Object doInBackground(java.lang.Object[]) -> a
     555:555:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity,com.anthonymandra.rawdroid.LegacyViewerActivity$1) -> <init>
-com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthonymandra.rawdroid.ah:
+com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthonymandra.rawdroid.ai:
     android.graphics.BitmapRegionDecoder mLargeBitmap -> i
     android.graphics.Bitmap[] mScreenNails -> j
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> h
@@ -27553,15 +27580,15 @@ com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel -> com.anthon
     399:411:void updateScreenNail(int,android.graphics.Bitmap) -> a
     415:430:void updateLargeImage(int,android.graphics.BitmapRegionDecoder) -> a
     434:486:void requestNextImageWithMeta() -> o
-com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$1 -> com.anthonymandra.rawdroid.ai:
+com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$1 -> com.anthonymandra.rawdroid.aj:
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel this$1 -> a
     291:291:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel) -> <init>
     295:296:void run() -> run
-com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$2 -> com.anthonymandra.rawdroid.aj:
+com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel$2 -> com.anthonymandra.rawdroid.ak:
     com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel this$1 -> a
     327:327:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity$MyImageViewerModel) -> <init>
     331:332:void run() -> run
-com.anthonymandra.rawdroid.LegacyViewerActivity$SmallImageLoader -> com.anthonymandra.rawdroid.ak:
+com.anthonymandra.rawdroid.LegacyViewerActivity$SmallImageLoader -> com.anthonymandra.rawdroid.al:
     int mIndex -> e
     com.anthonymandra.rawdroid.LegacyViewerActivity this$0 -> f
     527:527:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity) -> <init>
@@ -27570,7 +27597,7 @@ com.anthonymandra.rawdroid.LegacyViewerActivity$SmallImageLoader -> com.anthonym
     527:527:void onPostExecute(java.lang.Object) -> a
     527:527:java.lang.Object doInBackground(java.lang.Object[]) -> a
     527:527:void <init>(com.anthonymandra.rawdroid.LegacyViewerActivity,com.anthonymandra.rawdroid.LegacyViewerActivity$1) -> <init>
-com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.al:
+com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.am:
     java.lang.String TAG -> a
     com.google.android.vending.licensing.LicenseCheckerCallback mLicenseCheckerCallback -> b
     com.google.android.vending.licensing.LicenseChecker mChecker -> c
@@ -27590,17 +27617,17 @@ com.anthonymandra.rawdroid.LicenseManager -> com.anthonymandra.rawdroid.al:
     21:21:void access$200(com.anthonymandra.framework.License$LicenseState) -> a
     21:21:com.google.android.vending.licensing.LicenseChecker access$300() -> c
     22:47:void <clinit>() -> <clinit>
-com.anthonymandra.rawdroid.LicenseManager$1 -> com.anthonymandra.rawdroid.am:
+com.anthonymandra.rawdroid.LicenseManager$1 -> com.anthonymandra.rawdroid.an:
     61:61:void <init>() -> <init>
     64:65:void run() -> run
-com.anthonymandra.rawdroid.LicenseManager$RawdroidLicenseCheckerCallback -> com.anthonymandra.rawdroid.an:
+com.anthonymandra.rawdroid.LicenseManager$RawdroidLicenseCheckerCallback -> com.anthonymandra.rawdroid.ao:
     156:156:void <init>() -> <init>
     158:160:void allow(int) -> a
     163:165:void dontAllow(int) -> b
     168:170:void applicationError(int) -> c
     156:156:void <init>(com.anthonymandra.rawdroid.LicenseManager$1) -> <init>
-com.anthonymandra.rawdroid.R -> com.anthonymandra.rawdroid.ao:
-com.anthonymandra.rawdroid.R$styleable -> com.anthonymandra.rawdroid.ap:
+com.anthonymandra.rawdroid.R -> com.anthonymandra.rawdroid.ap:
+com.anthonymandra.rawdroid.R$styleable -> com.anthonymandra.rawdroid.aq:
     int[] ActionBar -> ActionBar
     int ActionBar_background -> ActionBar_background
     int ActionBar_backgroundSplit -> ActionBar_backgroundSplit
@@ -28044,7 +28071,7 @@ com.anthonymandra.rawdroid.ViewerChooser -> com.anthonymandra.rawdroid.ViewerCho
     16:40:void onCreate(android.os.Bundle) -> onCreate
     47:50:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
     13:13:void <clinit>() -> <clinit>
-com.anthonymandra.rawdroid.XmpBaseFragment -> com.anthonymandra.rawdroid.aq:
+com.anthonymandra.rawdroid.XmpBaseFragment -> com.anthonymandra.rawdroid.ar:
     java.lang.String TAG -> a
     com.anthonymandra.widget.RatingBar mRatingBar -> b
     com.anthonymandra.widget.XmpLabelGroup colorKey -> c
@@ -28069,19 +28096,19 @@ com.anthonymandra.rawdroid.XmpBaseFragment -> com.anthonymandra.rawdroid.aq:
     255:257:void dispatchChanges() -> g
     19:19:void access$000(com.anthonymandra.rawdroid.XmpBaseFragment) -> a
     21:21:void <clinit>() -> <clinit>
-com.anthonymandra.rawdroid.XmpBaseFragment$1 -> com.anthonymandra.rawdroid.ar:
+com.anthonymandra.rawdroid.XmpBaseFragment$1 -> com.anthonymandra.rawdroid.as:
     com.anthonymandra.rawdroid.XmpBaseFragment this$0 -> a
     228:228:void <init>(com.anthonymandra.rawdroid.XmpBaseFragment) -> <init>
     232:233:void onRatingSelectionChanged(java.util.List) -> a
-com.anthonymandra.rawdroid.XmpBaseFragment$2 -> com.anthonymandra.rawdroid.as:
+com.anthonymandra.rawdroid.XmpBaseFragment$2 -> com.anthonymandra.rawdroid.at:
     com.anthonymandra.rawdroid.XmpBaseFragment this$0 -> a
     236:236:void <init>(com.anthonymandra.rawdroid.XmpBaseFragment) -> <init>
     240:241:void onLabelSelectionChanged(java.util.List) -> a
-com.anthonymandra.rawdroid.XmpBaseFragment$3 -> com.anthonymandra.rawdroid.at:
+com.anthonymandra.rawdroid.XmpBaseFragment$3 -> com.anthonymandra.rawdroid.au:
     com.anthonymandra.rawdroid.XmpBaseFragment this$0 -> a
     244:244:void <init>(com.anthonymandra.rawdroid.XmpBaseFragment) -> <init>
     248:249:void onKeywordsSelected(java.util.Collection) -> a
-com.anthonymandra.rawdroid.XmpBaseFragment$4 -> com.anthonymandra.rawdroid.au:
+com.anthonymandra.rawdroid.XmpBaseFragment$4 -> com.anthonymandra.rawdroid.av:
     int[] $SwitchMap$com$anthonymandra$widget$XmpLabelGroup$Labels -> a
     84:84:void <clinit>() -> <clinit>
 com.anthonymandra.rawdroid.XmpEditFragment -> com.anthonymandra.rawdroid.XmpEditFragment:
@@ -28104,22 +28131,22 @@ com.anthonymandra.rawdroid.XmpEditFragment -> com.anthonymandra.rawdroid.XmpEdit
     150:170:void attachButtons() -> g
     9:9:void access$000(com.anthonymandra.rawdroid.XmpEditFragment) -> a
     11:11:void <clinit>() -> <clinit>
-com.anthonymandra.rawdroid.XmpEditFragment$1 -> com.anthonymandra.rawdroid.av:
+com.anthonymandra.rawdroid.XmpEditFragment$1 -> com.anthonymandra.rawdroid.aw:
     com.anthonymandra.rawdroid.XmpEditFragment this$0 -> a
     151:151:void <init>(com.anthonymandra.rawdroid.XmpEditFragment) -> <init>
     155:159:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpEditFragment$2 -> com.anthonymandra.rawdroid.aw:
+com.anthonymandra.rawdroid.XmpEditFragment$2 -> com.anthonymandra.rawdroid.ax:
     com.anthonymandra.rawdroid.XmpEditFragment this$0 -> a
     163:163:void <init>(com.anthonymandra.rawdroid.XmpEditFragment) -> <init>
     167:168:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpEditFragment$MetaChangedListener -> com.anthonymandra.rawdroid.ax:
+com.anthonymandra.rawdroid.XmpEditFragment$MetaChangedListener -> com.anthonymandra.rawdroid.ay:
     void onMetaChanged(java.lang.Integer,java.lang.String,java.lang.String[]) -> a
-com.anthonymandra.rawdroid.XmpEditFragment$XmpEditValues -> com.anthonymandra.rawdroid.ay:
+com.anthonymandra.rawdroid.XmpEditFragment$XmpEditValues -> com.anthonymandra.rawdroid.az:
     java.lang.Integer Rating -> a
     java.lang.String[] Subject -> b
     java.lang.String Label -> c
     175:179:void <init>() -> <init>
-com.anthonymandra.rawdroid.XmpFilter -> com.anthonymandra.rawdroid.az:
+com.anthonymandra.rawdroid.XmpFilter -> com.anthonymandra.rawdroid.ba:
     com.anthonymandra.rawdroid.XmpValues xmp -> a
     boolean andTrueOrFalse -> b
     boolean sortAscending -> c
@@ -28127,7 +28154,7 @@ com.anthonymandra.rawdroid.XmpFilter -> com.anthonymandra.rawdroid.az:
     com.anthonymandra.rawdroid.XmpFilter$SortColumns sortColumn -> e
     java.util.Set hiddenFolders -> f
     5:14:void <init>() -> <init>
-com.anthonymandra.rawdroid.XmpFilter$SortColumns -> com.anthonymandra.rawdroid.ba:
+com.anthonymandra.rawdroid.XmpFilter$SortColumns -> com.anthonymandra.rawdroid.bb:
     com.anthonymandra.rawdroid.XmpFilter$SortColumns Name -> a
     com.anthonymandra.rawdroid.XmpFilter$SortColumns Date -> b
     com.anthonymandra.rawdroid.XmpFilter$SortColumns[] $VALUES -> c
@@ -28175,56 +28202,56 @@ com.anthonymandra.rawdroid.XmpFilterFragment -> com.anthonymandra.rawdroid.XmpFi
     35:35:java.util.Set access$600(com.anthonymandra.rawdroid.XmpFilterFragment) -> a
     35:35:java.util.Set access$700(com.anthonymandra.rawdroid.XmpFilterFragment) -> b
     35:35:com.anthonymandra.rawdroid.XmpFilterFragment$SearchRootRequestedListener access$800(com.anthonymandra.rawdroid.XmpFilterFragment) -> c
-com.anthonymandra.rawdroid.XmpFilterFragment$1 -> com.anthonymandra.rawdroid.bb:
+com.anthonymandra.rawdroid.XmpFilterFragment$1 -> com.anthonymandra.rawdroid.bc:
     com.anthonymandra.rawdroid.XmpFilterFragment this$0 -> a
     104:104:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment) -> <init>
     108:113:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpFilterFragment$2 -> com.anthonymandra.rawdroid.bc:
+com.anthonymandra.rawdroid.XmpFilterFragment$2 -> com.anthonymandra.rawdroid.bd:
     com.anthonymandra.rawdroid.XmpFilterFragment this$0 -> a
     119:119:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment) -> <init>
     123:125:void onCheckedChanged(android.widget.RadioGroup,int) -> onCheckedChanged
-com.anthonymandra.rawdroid.XmpFilterFragment$3 -> com.anthonymandra.rawdroid.bd:
+com.anthonymandra.rawdroid.XmpFilterFragment$3 -> com.anthonymandra.rawdroid.be:
     com.anthonymandra.rawdroid.XmpFilterFragment this$0 -> a
     134:134:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment) -> <init>
     139:163:void onItemSelected(android.widget.AdapterView,android.view.View,int,long) -> onItemSelected
     169:169:void onNothingSelected(android.widget.AdapterView) -> onNothingSelected
-com.anthonymandra.rawdroid.XmpFilterFragment$4 -> com.anthonymandra.rawdroid.be:
+com.anthonymandra.rawdroid.XmpFilterFragment$4 -> com.anthonymandra.rawdroid.bf:
     com.anthonymandra.rawdroid.XmpFilterFragment this$0 -> a
     174:174:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment) -> <init>
     178:180:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.anthonymandra.rawdroid.XmpFilterFragment$5 -> com.anthonymandra.rawdroid.bf:
+com.anthonymandra.rawdroid.XmpFilterFragment$5 -> com.anthonymandra.rawdroid.bg:
     android.widget.Button val$foldersButton -> a
     com.anthonymandra.rawdroid.XmpFilterFragment this$0 -> b
     185:185:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment,android.widget.Button) -> <init>
     189:266:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpFilterFragment$5$1 -> com.anthonymandra.rawdroid.bg:
+com.anthonymandra.rawdroid.XmpFilterFragment$5$1 -> com.anthonymandra.rawdroid.bh:
     com.anthonymandra.rawdroid.XmpFilterFragment$5 this$1 -> a
     233:233:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment$5) -> <init>
     237:254:void onVisibilityChanged(com.anthonymandra.rawdroid.XmpFilterFragment$FolderVisibility) -> a
-com.anthonymandra.rawdroid.XmpFilterFragment$5$2 -> com.anthonymandra.rawdroid.bh:
+com.anthonymandra.rawdroid.XmpFilterFragment$5$2 -> com.anthonymandra.rawdroid.bi:
     com.anthonymandra.rawdroid.XmpFilterFragment$5 this$1 -> a
     257:257:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment$5) -> <init>
     261:262:void onSearchRootRequested() -> a
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter -> com.anthonymandra.rawdroid.bi:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter -> com.anthonymandra.rawdroid.bj:
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$OnVisibilityChangedListener mListener -> a
     497:498:void setOnVisibilityChangedListener(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$OnVisibilityChangedListener) -> a
     502:503:void <init>(android.content.Context,java.util.List) -> <init>
     509:564:android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     481:481:com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$OnVisibilityChangedListener access$1300(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter) -> a
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$1 -> com.anthonymandra.rawdroid.bj:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$1 -> com.anthonymandra.rawdroid.bk:
     int val$position -> a
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder val$viewHolder -> b
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter this$0 -> c
     542:542:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter,int,com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder) -> <init>
     546:552:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$2 -> com.anthonymandra.rawdroid.bk:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$2 -> com.anthonymandra.rawdroid.bl:
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderVisibility val$item -> a
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter this$0 -> b
     555:555:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter,com.anthonymandra.rawdroid.XmpFilterFragment$FolderVisibility) -> <init>
     559:561:void onCheckedChanged(android.widget.CompoundButton,boolean) -> onCheckedChanged
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$OnVisibilityChangedListener -> com.anthonymandra.rawdroid.bl:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$OnVisibilityChangedListener -> com.anthonymandra.rawdroid.bm:
     void onVisibilityChanged(com.anthonymandra.rawdroid.XmpFilterFragment$FolderVisibility) -> a
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder -> com.anthonymandra.rawdroid.bm:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder -> com.anthonymandra.rawdroid.bn:
     android.widget.CheckBox path -> a
     android.widget.ImageButton exclude -> b
     488:488:void <init>() -> <init>
@@ -28232,7 +28259,7 @@ com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder -> com.ant
     488:488:android.widget.ImageButton access$1202(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder,android.widget.ImageButton) -> a
     488:488:android.widget.CheckBox access$1100(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder) -> a
     488:488:android.widget.ImageButton access$1200(com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$ViewHolder) -> b
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog -> com.anthonymandra.rawdroid.bn:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog -> com.anthonymandra.rawdroid.bo:
     java.util.List items -> a
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderAdapter$OnVisibilityChangedListener mVisibilityListener -> b
     com.anthonymandra.rawdroid.XmpFilterFragment$SearchRootRequestedListener mSearchListener -> c
@@ -28243,21 +28270,21 @@ com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog -> com.anthonymandra.r
     420:461:android.view.View onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle) -> onCreateView
     466:470:android.app.Dialog onCreateDialog(android.os.Bundle) -> onCreateDialog
     382:382:com.anthonymandra.rawdroid.XmpFilterFragment$SearchRootRequestedListener access$1000(com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog) -> a
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog$1 -> com.anthonymandra.rawdroid.bo:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog$1 -> com.anthonymandra.rawdroid.bp:
     com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog this$0 -> a
     452:452:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment$FolderDialog) -> <init>
     456:458:void onClick(android.view.View) -> onClick
-com.anthonymandra.rawdroid.XmpFilterFragment$FolderVisibility -> com.anthonymandra.rawdroid.bp:
+com.anthonymandra.rawdroid.XmpFilterFragment$FolderVisibility -> com.anthonymandra.rawdroid.bq:
     java.lang.String Path -> a
     boolean visible -> b
     boolean excluded -> c
     474:474:void <init>() -> <init>
     474:474:void <init>(com.anthonymandra.rawdroid.XmpFilterFragment$1) -> <init>
-com.anthonymandra.rawdroid.XmpFilterFragment$MetaFilterChangedListener -> com.anthonymandra.rawdroid.bq:
+com.anthonymandra.rawdroid.XmpFilterFragment$MetaFilterChangedListener -> com.anthonymandra.rawdroid.br:
     void onMetaFilterChanged(com.anthonymandra.rawdroid.XmpFilter) -> a
-com.anthonymandra.rawdroid.XmpFilterFragment$SearchRootRequestedListener -> com.anthonymandra.rawdroid.br:
+com.anthonymandra.rawdroid.XmpFilterFragment$SearchRootRequestedListener -> com.anthonymandra.rawdroid.bs:
     void onSearchRootRequested() -> a
-com.anthonymandra.rawdroid.XmpValues -> com.anthonymandra.rawdroid.bs:
+com.anthonymandra.rawdroid.XmpValues -> com.anthonymandra.rawdroid.bt:
     java.lang.Integer[] rating -> a
     java.lang.String[] label -> b
     java.lang.String[] subject -> c
@@ -28267,7 +28294,6 @@ com.anthonymandra.rawprocessor.LibRaw -> com.anthonymandra.rawprocessor.LibRaw:
     int sum -> b
     int entries -> c
     byte[] getThumbFd(int,java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat) -> getThumbFd
-    boolean writeThumbFile(java.lang.String,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,int) -> writeThumbFile
     boolean writeThumbFd(int,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,int) -> writeThumbFd
     boolean writeThumbFileWatermark(java.lang.String,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,int,byte[],int[],int,int) -> writeThumbFileWatermark
     boolean writeThumbFdWatermark(int,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,int,byte[],int[],int,int) -> writeThumbFdWatermark
@@ -28328,7 +28354,7 @@ com.anthonymandra.util.ImageUtils -> com.anthonymandra.b.c:
     java.lang.String TAG -> b
     java.text.SimpleDateFormat mLibrawFormatter -> c
     java.lang.String strSeparator -> a
-    55:822:void <init>() -> <init>
+    55:830:void <init>() -> <init>
     62:63:com.drew.metadata.Metadata readMetadata(android.content.Context,android.net.Uri) -> a
     74:93:com.drew.metadata.Metadata readMeta(android.content.Context,android.net.Uri) -> k
     114:135:com.drew.metadata.Metadata readXmp(android.content.Context,android.net.Uri,com.drew.metadata.Metadata) -> a
@@ -28337,76 +28363,77 @@ com.anthonymandra.util.ImageUtils -> com.anthonymandra.b.c:
     156:156:boolean hasJpgFile(android.content.Context,android.net.Uri) -> d
     167:167:com.anthonymandra.framework.UsefulDocumentFile getXmpFile(android.content.Context,android.net.Uri) -> e
     172:172:com.anthonymandra.framework.UsefulDocumentFile getJpgFile(android.content.Context,android.net.Uri) -> f
-    192:205:com.anthonymandra.framework.UsefulDocumentFile getAssociatedFile(android.content.Context,android.net.Uri,java.lang.String) -> a
-    233:234:android.content.ContentValues getContentValues(android.content.Context,android.net.Uri) -> g
-    252:252:android.database.Cursor getMetaCursor(android.content.Context,android.net.Uri) -> h
-    261:261:java.lang.String getWhere() -> a
-    266:273:boolean isProcessed(android.content.Context,android.net.Uri) -> i
-    285:308:void cleanDatabase(android.content.Context) -> a
-    360:393:android.content.ContentValues getContentValues(android.net.Uri,com.drew.metadata.Metadata,int) -> a
-    398:408:java.lang.String convertArrayToString(java.lang.String[]) -> a
-    411:414:java.lang.String[] convertStringToArray(java.lang.String) -> a
-    423:426:java.lang.String getDescription(com.drew.metadata.Metadata,java.lang.Class,int) -> a
-    431:434:java.lang.String[] getStringArray(com.drew.metadata.Metadata,java.lang.Class,int) -> b
-    439:450:int getInt(com.drew.metadata.Metadata,java.lang.Class,int) -> c
-    455:466:java.lang.Double getDouble(com.drew.metadata.Metadata,java.lang.Class,int) -> d
-    471:474:java.lang.String getExifIFD0Description(com.drew.metadata.Metadata,int) -> a
-    479:479:java.lang.String getAperture(com.drew.metadata.Metadata) -> a
-    484:484:java.lang.String getExposure(com.drew.metadata.Metadata) -> b
-    489:489:java.lang.String getImageHeight(com.drew.metadata.Metadata) -> c
-    494:494:java.lang.String getImageWidth(com.drew.metadata.Metadata) -> d
-    499:499:java.lang.String getFocalLength(com.drew.metadata.Metadata) -> e
-    504:504:java.lang.String getFlash(com.drew.metadata.Metadata) -> f
-    514:522:java.lang.String getWhiteBalance(com.drew.metadata.Metadata) -> g
-    527:527:java.lang.String getExposureProgram(com.drew.metadata.Metadata) -> h
-    532:532:java.lang.String getExposureMode(com.drew.metadata.Metadata) -> i
-    542:546:java.lang.String getLensModel(com.drew.metadata.Metadata) -> j
-    551:555:java.lang.String getDriveMode(com.drew.metadata.Metadata) -> k
-    560:560:java.lang.String getIso(com.drew.metadata.Metadata) -> l
-    578:578:java.lang.String getDateTime(com.drew.metadata.Metadata) -> m
-    588:588:java.lang.String getModel(com.drew.metadata.Metadata) -> n
-    593:593:int getOrientation(com.drew.metadata.Metadata) -> o
-    598:615:int getRotation(int) -> a
-    621:621:java.lang.String getAltitude(com.drew.metadata.Metadata) -> p
-    626:626:java.lang.String getLatitude(com.drew.metadata.Metadata) -> q
-    631:631:java.lang.String getLongitude(com.drew.metadata.Metadata) -> r
-    636:636:java.lang.Double getRating(com.drew.metadata.Metadata) -> s
-    641:643:java.lang.String getLabel(com.drew.metadata.Metadata) -> t
-    648:648:java.lang.String[] getSubject(com.drew.metadata.Metadata) -> u
-    653:655:void checkXmpDirectory(com.drew.metadata.Metadata) -> v
-    659:660:void updateRating(com.drew.metadata.Metadata,java.lang.Integer) -> a
-    669:670:void updateLabel(com.drew.metadata.Metadata,java.lang.String) -> a
-    674:675:void updateSubject(com.drew.metadata.Metadata,java.lang.String[]) -> a
-    679:691:void updateXmpString(com.drew.metadata.Metadata,int,java.lang.String) -> a
-    695:707:void updateXmpStringArray(com.drew.metadata.Metadata,int,java.lang.String[]) -> a
-    711:723:void updateXmpDouble(com.drew.metadata.Metadata,int,java.lang.Double) -> a
-    749:754:boolean isAndroidImage(java.lang.String) -> b
-    759:759:boolean isTiffMime(java.lang.String) -> c
-    764:791:boolean importKeywords(android.content.Context,android.net.Uri) -> j
-    804:807:int getImageType(android.net.Uri) -> a
-    833:833:boolean isImage(java.lang.String) -> d
-    851:851:boolean isRaw(java.io.File) -> a
-    856:859:boolean isRaw(android.net.Uri) -> b
-    864:864:boolean isRaw(java.lang.String) -> e
-    869:869:boolean isJpeg(java.io.File) -> b
-    882:882:boolean isJpeg(java.lang.String) -> f
-    887:887:boolean isNative(java.lang.String) -> g
-    897:900:boolean isNative(android.net.Uri) -> c
-    905:905:boolean isTiffImage(java.lang.String) -> h
-    915:918:boolean isTiffImage(android.net.Uri) -> d
-    923:928:boolean endsWith(java.lang.String[],java.lang.String) -> a
-    942:973:int getExactSampleSize(android.graphics.BitmapFactory$Options,int,int) -> a
-    986:995:int getLargeSampleSize(android.graphics.BitmapFactory$Options,int,int) -> b
-    1000:1006:android.graphics.Bitmap createBitmapLarge(byte[],int,int,boolean) -> a
-    1081:1088:android.graphics.Bitmap createBitmapToSize(byte[],int,int) -> a
-    1100:1105:int getBitmapSize(android.graphics.Bitmap) -> a
-    1189:1200:android.graphics.Bitmap getDemoWatermark(android.content.Context,int) -> a
-    1205:1208:byte[] getBitmapBytes(android.graphics.Bitmap) -> b
-    1315:1334:android.graphics.Bitmap getWatermarkText(java.lang.String,int,int,java.lang.String) -> a
-    57:396:void <clinit>() -> <clinit>
+    192:213:com.anthonymandra.framework.UsefulDocumentFile getAssociatedFile(android.content.Context,android.net.Uri,java.lang.String) -> a
+    223:225:java.io.File getAssociatedFile(java.io.File,java.lang.String) -> a
+    241:242:android.content.ContentValues getContentValues(android.content.Context,android.net.Uri) -> g
+    260:260:android.database.Cursor getMetaCursor(android.content.Context,android.net.Uri) -> h
+    269:269:java.lang.String getWhere() -> a
+    274:281:boolean isProcessed(android.content.Context,android.net.Uri) -> i
+    293:316:void cleanDatabase(android.content.Context) -> a
+    368:401:android.content.ContentValues getContentValues(android.net.Uri,com.drew.metadata.Metadata,int) -> a
+    406:416:java.lang.String convertArrayToString(java.lang.String[]) -> a
+    419:422:java.lang.String[] convertStringToArray(java.lang.String) -> a
+    431:434:java.lang.String getDescription(com.drew.metadata.Metadata,java.lang.Class,int) -> a
+    439:442:java.lang.String[] getStringArray(com.drew.metadata.Metadata,java.lang.Class,int) -> b
+    447:458:int getInt(com.drew.metadata.Metadata,java.lang.Class,int) -> c
+    463:474:java.lang.Double getDouble(com.drew.metadata.Metadata,java.lang.Class,int) -> d
+    479:482:java.lang.String getExifIFD0Description(com.drew.metadata.Metadata,int) -> a
+    487:487:java.lang.String getAperture(com.drew.metadata.Metadata) -> a
+    492:492:java.lang.String getExposure(com.drew.metadata.Metadata) -> b
+    497:497:java.lang.String getImageHeight(com.drew.metadata.Metadata) -> c
+    502:502:java.lang.String getImageWidth(com.drew.metadata.Metadata) -> d
+    507:507:java.lang.String getFocalLength(com.drew.metadata.Metadata) -> e
+    512:512:java.lang.String getFlash(com.drew.metadata.Metadata) -> f
+    522:530:java.lang.String getWhiteBalance(com.drew.metadata.Metadata) -> g
+    535:535:java.lang.String getExposureProgram(com.drew.metadata.Metadata) -> h
+    540:540:java.lang.String getExposureMode(com.drew.metadata.Metadata) -> i
+    550:554:java.lang.String getLensModel(com.drew.metadata.Metadata) -> j
+    559:563:java.lang.String getDriveMode(com.drew.metadata.Metadata) -> k
+    568:568:java.lang.String getIso(com.drew.metadata.Metadata) -> l
+    586:586:java.lang.String getDateTime(com.drew.metadata.Metadata) -> m
+    596:596:java.lang.String getModel(com.drew.metadata.Metadata) -> n
+    601:601:int getOrientation(com.drew.metadata.Metadata) -> o
+    606:623:int getRotation(int) -> a
+    629:629:java.lang.String getAltitude(com.drew.metadata.Metadata) -> p
+    634:634:java.lang.String getLatitude(com.drew.metadata.Metadata) -> q
+    639:639:java.lang.String getLongitude(com.drew.metadata.Metadata) -> r
+    644:644:java.lang.Double getRating(com.drew.metadata.Metadata) -> s
+    649:651:java.lang.String getLabel(com.drew.metadata.Metadata) -> t
+    656:656:java.lang.String[] getSubject(com.drew.metadata.Metadata) -> u
+    661:663:void checkXmpDirectory(com.drew.metadata.Metadata) -> v
+    667:668:void updateRating(com.drew.metadata.Metadata,java.lang.Integer) -> a
+    677:678:void updateLabel(com.drew.metadata.Metadata,java.lang.String) -> a
+    682:683:void updateSubject(com.drew.metadata.Metadata,java.lang.String[]) -> a
+    687:699:void updateXmpString(com.drew.metadata.Metadata,int,java.lang.String) -> a
+    703:715:void updateXmpStringArray(com.drew.metadata.Metadata,int,java.lang.String[]) -> a
+    719:731:void updateXmpDouble(com.drew.metadata.Metadata,int,java.lang.Double) -> a
+    757:762:boolean isAndroidImage(java.lang.String) -> b
+    767:767:boolean isTiffMime(java.lang.String) -> c
+    772:799:boolean importKeywords(android.content.Context,android.net.Uri) -> j
+    812:815:int getImageType(android.net.Uri) -> a
+    841:841:boolean isImage(java.lang.String) -> d
+    859:859:boolean isRaw(java.io.File) -> a
+    864:867:boolean isRaw(android.net.Uri) -> b
+    872:872:boolean isRaw(java.lang.String) -> e
+    877:877:boolean isJpeg(java.io.File) -> b
+    890:890:boolean isJpeg(java.lang.String) -> f
+    895:895:boolean isNative(java.lang.String) -> g
+    905:908:boolean isNative(android.net.Uri) -> c
+    913:913:boolean isTiffImage(java.lang.String) -> h
+    923:926:boolean isTiffImage(android.net.Uri) -> d
+    931:936:boolean endsWith(java.lang.String[],java.lang.String) -> a
+    950:981:int getExactSampleSize(android.graphics.BitmapFactory$Options,int,int) -> a
+    994:1003:int getLargeSampleSize(android.graphics.BitmapFactory$Options,int,int) -> b
+    1008:1014:android.graphics.Bitmap createBitmapLarge(byte[],int,int,boolean) -> a
+    1089:1096:android.graphics.Bitmap createBitmapToSize(byte[],int,int) -> a
+    1108:1113:int getBitmapSize(android.graphics.Bitmap) -> a
+    1197:1208:android.graphics.Bitmap getDemoWatermark(android.content.Context,int) -> a
+    1213:1216:byte[] getBitmapBytes(android.graphics.Bitmap) -> b
+    1323:1342:android.graphics.Bitmap getWatermarkText(java.lang.String,int,int,java.lang.String) -> a
+    57:404:void <clinit>() -> <clinit>
 com.anthonymandra.util.ImageUtils$ImageFilter -> com.anthonymandra.b.d:
-    822:822:void <init>() -> <init>
-    827:827:boolean accept(java.io.File) -> accept
+    830:830:void <init>() -> <init>
+    835:835:boolean accept(java.io.File) -> accept
 com.anthonymandra.util.Util -> com.anthonymandra.b.e:
     java.lang.String TAG -> a
     47:47:void <init>() -> <init>
@@ -30760,7 +30787,7 @@ com.drew.imaging.png.PngHeader -> com.drew.imaging.png.f:
 com.drew.imaging.png.PngMetadataReader -> com.drew.imaging.png.g:
     java.util.Set _desiredChunkTypes -> a
     81:93:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
-    98:241:void processChunk(com.drew.metadata.Metadata,com.drew.imaging.png.PngChunk) -> a
+    98:242:void processChunk(com.drew.metadata.Metadata,com.drew.imaging.png.PngChunk) -> a
     45:62:void <clinit>() -> <clinit>
 com.drew.imaging.png.PngProcessingException -> com.drew.imaging.png.PngProcessingException:
     37:38:void <init>(java.lang.String) -> <init>
@@ -30835,9 +30862,9 @@ com.drew.imaging.tiff.TiffProcessingException -> com.drew.imaging.tiff.TiffProce
 com.drew.imaging.tiff.TiffReader -> com.drew.imaging.tiff.d:
     36:36:void <init>() -> <init>
     53:81:void processTiff(com.drew.lang.RandomAccessReader,com.drew.imaging.tiff.TiffHandler,int) -> a
-    114:232:void processIfd(com.drew.imaging.tiff.TiffHandler,com.drew.lang.RandomAccessReader,java.util.Set,int,int) -> a
-    241:354:void processTag(com.drew.imaging.tiff.TiffHandler,int,int,int,int,com.drew.lang.RandomAccessReader) -> a
-    366:366:int calculateTagOffset(int,int) -> a
+    112:245:void processIfd(com.drew.imaging.tiff.TiffHandler,com.drew.lang.RandomAccessReader,java.util.Set,int,int) -> a
+    254:367:void processTag(com.drew.imaging.tiff.TiffHandler,int,int,int,int,com.drew.lang.RandomAccessReader) -> a
+    379:379:int calculateTagOffset(int,int) -> a
 com.drew.imaging.webp.WebpMetadataReader -> com.drew.imaging.g.a:
     57:59:com.drew.metadata.Metadata readMetadata(java.io.InputStream) -> a
 com.drew.lang.BufferBoundsException -> com.drew.lang.BufferBoundsException:
@@ -31112,6 +31139,7 @@ com.drew.metadata.TagDescriptor -> com.drew.metadata.f:
     273:281:java.lang.String getAsciiStringFromBytes(int) -> f
     288:290:java.lang.String getFStopDescription(double) -> a
     296:298:java.lang.String getFocalLengthDescription(double) -> b
+    304:328:java.lang.String getLensSpecificationDescription(int) -> g
     44:44:void <clinit>() -> <clinit>
 com.drew.metadata.adobe.AdobeJpegDescriptor -> com.drew.metadata.a.a:
     36:37:void <init>(com.drew.metadata.adobe.AdobeJpegDirectory) -> <init>
@@ -31146,79 +31174,80 @@ com.drew.metadata.exif.ExifDescriptorBase -> com.drew.metadata.c.a:
     boolean _allowDecimalRepresentationOfRationals -> c
     java.text.DecimalFormat SimpleDecimalFormatter -> d
     50:64:void <init>(com.drew.metadata.Directory) -> <init>
-    72:208:java.lang.String getDescription(int) -> a
-    215:215:java.lang.String getInteropVersionDescription() -> a
-    221:226:java.lang.String getInteropIndexDescription() -> b
-    234:243:java.lang.String getReferenceBlackWhiteDescription() -> c
-    249:253:java.lang.String getYResolutionDescription() -> d
-    261:265:java.lang.String getXResolutionDescription() -> e
-    273:273:java.lang.String getYCbCrPositioningDescription() -> f
-    279:279:java.lang.String getOrientationDescription() -> g
-    294:294:java.lang.String getResolutionDescription() -> h
-    301:308:java.lang.String getUnicodeDescription(int) -> g
-    315:315:java.lang.String getWindowsAuthorDescription() -> i
-    321:321:java.lang.String getWindowsCommentDescription() -> j
-    327:327:java.lang.String getWindowsKeywordsDescription() -> k
-    333:333:java.lang.String getWindowsTitleDescription() -> l
-    339:339:java.lang.String getWindowsSubjectDescription() -> m
-    345:353:java.lang.String getYCbCrSubsamplingDescription() -> n
-    364:364:java.lang.String getPlanarConfigurationDescription() -> o
-    374:375:java.lang.String getSamplesPerPixelDescription() -> p
-    381:382:java.lang.String getRowsPerStripDescription() -> q
-    388:389:java.lang.String getStripByteCountsDescription() -> r
-    396:415:java.lang.String getPhotometricInterpretationDescription() -> s
-    422:423:java.lang.String getBitsPerSampleDescription() -> t
-    429:430:java.lang.String getImageWidthDescription() -> u
-    436:437:java.lang.String getImageHeightDescription() -> v
-    443:443:java.lang.String getNewSubfileTypeDescription() -> w
-    457:457:java.lang.String getSubfileTypeDescription() -> x
-    467:467:java.lang.String getThresholdingDescription() -> y
-    477:477:java.lang.String getFillOrderDescription() -> z
-    486:486:java.lang.String getSubjectDistanceRangeDescription() -> A
-    497:497:java.lang.String getSensitivityTypeRangeDescription() -> B
-    512:512:java.lang.String getSharpnessDescription() -> C
-    522:522:java.lang.String getSaturationDescription() -> D
-    532:532:java.lang.String getContrastDescription() -> E
-    542:542:java.lang.String getGainControlDescription() -> F
-    554:554:java.lang.String getSceneCaptureTypeDescription() -> G
-    565:566:java.lang.String get35mmFilmEquivFocalLengthDescription() -> H
-    576:577:java.lang.String getDigitalZoomRatioDescription() -> I
-    587:587:java.lang.String getWhiteBalanceModeDescription() -> J
-    596:596:java.lang.String getExposureModeDescription() -> K
-    606:606:java.lang.String getCustomRenderedDescription() -> L
-    615:648:java.lang.String getUserCommentDescription() -> M
-    656:659:java.lang.String getIsoEquivalentDescription() -> N
-    667:667:java.lang.String getExifVersionDescription() -> O
-    673:673:java.lang.String getFlashPixVersionDescription() -> P
-    679:679:java.lang.String getSceneTypeDescription() -> Q
-    688:688:java.lang.String getFileSourceDescription() -> R
-    699:702:java.lang.String getExposureBiasDescription() -> S
-    708:712:java.lang.String getMaxApertureValueDescription() -> T
-    718:722:java.lang.String getApertureValueDescription() -> U
-    728:728:java.lang.String getExposureProgramDescription() -> V
-    745:749:java.lang.String getFocalPlaneXResolutionDescription() -> W
-    756:760:java.lang.String getFocalPlaneYResolutionDescription() -> X
-    769:769:java.lang.String getFocalPlaneResolutionUnitDescription() -> Y
-    780:781:java.lang.String getExifImageWidthDescription() -> Z
-    787:788:java.lang.String getExifImageHeightDescription() -> aa
-    794:801:java.lang.String getColorSpaceDescription() -> ab
-    807:808:java.lang.String getFocalLengthDescription() -> ac
-    825:851:java.lang.String getFlashDescription() -> ad
-    858:885:java.lang.String getWhiteBalanceDescription() -> ae
-    894:907:java.lang.String getMeteringModeDescription() -> af
-    914:960:java.lang.String getCompressionDescription() -> ag
-    967:971:java.lang.String getSubjectDistanceDescription() -> ah
-    977:981:java.lang.String getCompressedAverageBitsPerPixelDescription() -> ai
-    989:990:java.lang.String getExposureTimeDescription() -> aj
-    1006:1018:java.lang.String getShutterSpeedDescription() -> ak
-    1045:1048:java.lang.String getFNumberDescription() -> al
-    1057:1057:java.lang.String getSensingMethodDescription() -> am
-    1073:1084:java.lang.String getComponentConfigurationDescription() -> an
-    1090:1097:java.lang.String getJpegProcDescription() -> ao
+    72:210:java.lang.String getDescription(int) -> a
+    217:217:java.lang.String getInteropVersionDescription() -> a
+    223:228:java.lang.String getInteropIndexDescription() -> b
+    236:245:java.lang.String getReferenceBlackWhiteDescription() -> c
+    251:255:java.lang.String getYResolutionDescription() -> d
+    263:267:java.lang.String getXResolutionDescription() -> e
+    275:275:java.lang.String getYCbCrPositioningDescription() -> f
+    281:281:java.lang.String getOrientationDescription() -> g
+    296:296:java.lang.String getResolutionDescription() -> h
+    303:310:java.lang.String getUnicodeDescription(int) -> h
+    317:317:java.lang.String getWindowsAuthorDescription() -> i
+    323:323:java.lang.String getWindowsCommentDescription() -> j
+    329:329:java.lang.String getWindowsKeywordsDescription() -> k
+    335:335:java.lang.String getWindowsTitleDescription() -> l
+    341:341:java.lang.String getWindowsSubjectDescription() -> m
+    347:355:java.lang.String getYCbCrSubsamplingDescription() -> n
+    366:366:java.lang.String getPlanarConfigurationDescription() -> o
+    376:377:java.lang.String getSamplesPerPixelDescription() -> p
+    383:384:java.lang.String getRowsPerStripDescription() -> q
+    390:391:java.lang.String getStripByteCountsDescription() -> r
+    398:417:java.lang.String getPhotometricInterpretationDescription() -> s
+    424:425:java.lang.String getBitsPerSampleDescription() -> t
+    431:432:java.lang.String getImageWidthDescription() -> u
+    438:439:java.lang.String getImageHeightDescription() -> v
+    445:445:java.lang.String getNewSubfileTypeDescription() -> w
+    459:459:java.lang.String getSubfileTypeDescription() -> x
+    469:469:java.lang.String getThresholdingDescription() -> y
+    479:479:java.lang.String getFillOrderDescription() -> z
+    488:488:java.lang.String getSubjectDistanceRangeDescription() -> A
+    499:499:java.lang.String getSensitivityTypeRangeDescription() -> B
+    514:514:java.lang.String getLensSpecificationDescription() -> C
+    520:520:java.lang.String getSharpnessDescription() -> D
+    530:530:java.lang.String getSaturationDescription() -> E
+    540:540:java.lang.String getContrastDescription() -> F
+    550:550:java.lang.String getGainControlDescription() -> G
+    562:562:java.lang.String getSceneCaptureTypeDescription() -> H
+    573:574:java.lang.String get35mmFilmEquivFocalLengthDescription() -> I
+    584:585:java.lang.String getDigitalZoomRatioDescription() -> J
+    595:595:java.lang.String getWhiteBalanceModeDescription() -> K
+    604:604:java.lang.String getExposureModeDescription() -> L
+    614:614:java.lang.String getCustomRenderedDescription() -> M
+    623:656:java.lang.String getUserCommentDescription() -> N
+    664:667:java.lang.String getIsoEquivalentDescription() -> O
+    675:675:java.lang.String getExifVersionDescription() -> P
+    681:681:java.lang.String getFlashPixVersionDescription() -> Q
+    687:687:java.lang.String getSceneTypeDescription() -> R
+    696:696:java.lang.String getFileSourceDescription() -> S
+    707:710:java.lang.String getExposureBiasDescription() -> T
+    716:720:java.lang.String getMaxApertureValueDescription() -> U
+    726:730:java.lang.String getApertureValueDescription() -> V
+    736:736:java.lang.String getExposureProgramDescription() -> W
+    753:757:java.lang.String getFocalPlaneXResolutionDescription() -> X
+    764:768:java.lang.String getFocalPlaneYResolutionDescription() -> Y
+    777:777:java.lang.String getFocalPlaneResolutionUnitDescription() -> Z
+    788:789:java.lang.String getExifImageWidthDescription() -> aa
+    795:796:java.lang.String getExifImageHeightDescription() -> ab
+    802:809:java.lang.String getColorSpaceDescription() -> ac
+    815:816:java.lang.String getFocalLengthDescription() -> ad
+    833:859:java.lang.String getFlashDescription() -> ae
+    866:893:java.lang.String getWhiteBalanceDescription() -> af
+    902:915:java.lang.String getMeteringModeDescription() -> ag
+    922:968:java.lang.String getCompressionDescription() -> ah
+    975:979:java.lang.String getSubjectDistanceDescription() -> ai
+    985:989:java.lang.String getCompressedAverageBitsPerPixelDescription() -> aj
+    997:998:java.lang.String getExposureTimeDescription() -> ak
+    1014:1026:java.lang.String getShutterSpeedDescription() -> al
+    1053:1056:java.lang.String getFNumberDescription() -> am
+    1065:1065:java.lang.String getSensingMethodDescription() -> an
+    1081:1092:java.lang.String getComponentConfigurationDescription() -> ao
+    1098:1105:java.lang.String getJpegProcDescription() -> ap
     53:53:void <clinit>() -> <clinit>
 com.drew.metadata.exif.ExifDirectoryBase -> com.drew.metadata.c.b:
     33:33:void <init>() -> <init>
-    582:731:void addExifTagNames(java.util.HashMap) -> a
+    586:734:void addExifTagNames(java.util.HashMap) -> a
 com.drew.metadata.exif.ExifIFD0Descriptor -> com.drew.metadata.c.c:
     35:36:void <init>(com.drew.metadata.exif.ExifIFD0Directory) -> <init>
 com.drew.metadata.exif.ExifIFD0Directory -> com.drew.metadata.c.d:
@@ -31255,8 +31284,8 @@ com.drew.metadata.exif.ExifSubIFDDirectory -> com.drew.metadata.c.i:
 com.drew.metadata.exif.ExifThumbnailDescriptor -> com.drew.metadata.c.j:
     38:39:void <init>(com.drew.metadata.exif.ExifThumbnailDirectory) -> <init>
     45:51:java.lang.String getDescription(int) -> a
-    58:59:java.lang.String getThumbnailLengthDescription() -> ap
-    65:66:java.lang.String getThumbnailOffsetDescription() -> aq
+    58:59:java.lang.String getThumbnailLengthDescription() -> aq
+    65:66:java.lang.String getThumbnailOffsetDescription() -> ar
 com.drew.metadata.exif.ExifThumbnailDirectory -> com.drew.metadata.c.k:
     java.util.HashMap _tagNameMap -> e
     byte[] _thumbnailData -> f
@@ -31273,8 +31302,8 @@ com.drew.metadata.exif.ExifTiffHandler -> com.drew.metadata.c.l:
     86:97:boolean hasFollowerIfd() -> a
     108:123:boolean customProcessTag(int,java.util.Set,int,com.drew.lang.RandomAccessReader,int,int) -> a
     128:144:void completed(com.drew.lang.RandomAccessReader,int) -> a
-    152:313:boolean processMakernote(int,java.util.Set,int,com.drew.lang.RandomAccessReader) -> a
-    319:350:void processKodakMakernote(com.drew.metadata.exif.makernotes.KodakMakernoteDirectory,int,com.drew.lang.RandomAccessReader) -> a
+    152:320:boolean processMakernote(int,java.util.Set,int,com.drew.lang.RandomAccessReader) -> a
+    326:357:void processKodakMakernote(com.drew.metadata.exif.makernotes.KodakMakernoteDirectory,int,com.drew.lang.RandomAccessReader) -> a
 com.drew.metadata.exif.GpsDescriptor -> com.drew.metadata.c.m:
     42:43:void <init>(com.drew.metadata.exif.GpsDirectory) -> <init>
     49:83:java.lang.String getDescription(int) -> a
@@ -31283,8 +31312,8 @@ com.drew.metadata.exif.GpsDescriptor -> com.drew.metadata.c.m:
     103:104:java.lang.String getGpsLongitudeDescription() -> b
     111:113:java.lang.String getGpsTimeStampDescription() -> c
     124:135:java.lang.String getGpsDestinationReferenceDescription() -> d
-    142:147:java.lang.String getGpsDirectionDescription(int) -> g
-    153:162:java.lang.String getGpsDirectionReferenceDescription(int) -> h
+    142:147:java.lang.String getGpsDirectionDescription(int) -> h
+    153:162:java.lang.String getGpsDirectionReferenceDescription(int) -> i
     169:180:java.lang.String getGpsSpeedRefDescription() -> e
     187:196:java.lang.String getGpsMeasureModeDescription() -> f
     203:212:java.lang.String getGpsStatusDescription() -> g
@@ -31509,12 +31538,12 @@ com.drew.metadata.exif.makernotes.NikonType2MakernoteDescriptor -> com.drew.meta
     289:289:java.lang.String getFlashBracketCompensationDescription() -> p
     295:295:java.lang.String getExposureTuningDescription() -> q
     301:301:java.lang.String getLensStopsDescription() -> r
-    307:314:java.lang.String getEVDescription(int) -> g
+    307:314:java.lang.String getEVDescription(int) -> h
     320:325:java.lang.String getIsoSettingDescription() -> s
-    331:333:java.lang.String getLensDescription() -> t
-    350:350:java.lang.String getHueAdjustmentDescription() -> u
-    356:357:java.lang.String getColorModeDescription() -> v
-    363:363:java.lang.String getFirmwareVersionDescription() -> w
+    331:331:java.lang.String getLensDescription() -> t
+    337:337:java.lang.String getHueAdjustmentDescription() -> u
+    343:344:java.lang.String getColorModeDescription() -> v
+    350:350:java.lang.String getFirmwareVersionDescription() -> w
 com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory -> com.drew.metadata.c.a.r:
     java.util.HashMap _tagNameMap -> e
     907:909:void <init>() -> <init>
@@ -31609,7 +31638,7 @@ com.drew.metadata.exif.makernotes.PanasonicMakernoteDescriptor -> com.drew.metad
     220:220:java.lang.String getAudioDescription() -> i
     226:226:java.lang.String getTransformDescription() -> j
     232:232:java.lang.String getTransform1Description() -> k
-    238:262:java.lang.String getTransformDescription(int) -> g
+    238:262:java.lang.String getTransformDescription(int) -> h
     269:269:java.lang.String getIntelligentExposureDescription() -> l
     276:276:java.lang.String getFlashWarningDescription() -> m
     283:283:java.lang.String getCountryDescription() -> n
@@ -31780,17 +31809,17 @@ com.drew.metadata.gif.GifHeaderDescriptor -> com.drew.metadata.d.a:
     33:34:void <init>(com.drew.metadata.gif.GifHeaderDirectory) -> <init>
 com.drew.metadata.gif.GifHeaderDirectory -> com.drew.metadata.d.b:
     java.util.HashMap _tagNameMap -> e
-    59:61:void <init>() -> <init>
-    67:67:java.lang.String getName() -> a
-    74:74:java.util.HashMap getTagNameMap() -> b
-    44:56:void <clinit>() -> <clinit>
+    64:66:void <init>() -> <init>
+    72:72:java.lang.String getName() -> a
+    79:79:java.util.HashMap getTagNameMap() -> b
+    49:61:void <clinit>() -> <clinit>
 com.drew.metadata.gif.GifReader -> com.drew.metadata.d.c:
     32:32:void <init>() -> <init>
     39:109:void extract(com.drew.lang.SequentialReader,com.drew.metadata.Metadata) -> a
 com.drew.metadata.icc.IccDescriptor -> com.drew.metadata.e.a:
     44:45:void <init>(com.drew.metadata.icc.IccDirectory) -> <init>
     50:64:java.lang.String getDescription(int) -> a
-    79:222:java.lang.String getTagDataString(int) -> g
+    79:222:java.lang.String getTagDataString(int) -> h
     229:244:java.lang.String formatDoubleAsString(double,int,boolean) -> a
     250:250:java.lang.String getRenderingIntentDescription() -> a
     260:283:java.lang.String getPlatformDescription() -> b
@@ -31811,8 +31840,8 @@ com.drew.metadata.icc.IccReader -> com.drew.metadata.e.c:
     155:158:void set4ByteString(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> a
     162:165:void setInt32(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> b
     170:173:void setInt64(com.drew.metadata.Directory,int,com.drew.lang.RandomAccessReader) -> c
-    178:198:void setDate(com.drew.metadata.icc.IccDirectory,int,com.drew.lang.RandomAccessReader) -> a
-    204:210:java.lang.String getStringFromInt32(int) -> a
+    178:199:void setDate(com.drew.metadata.icc.IccDirectory,int,com.drew.lang.RandomAccessReader) -> a
+    205:211:java.lang.String getStringFromInt32(int) -> a
 com.drew.metadata.ico.IcoDescriptor -> com.drew.metadata.f.a:
     37:38:void <init>(com.drew.metadata.ico.IcoDirectory) -> <init>
     43:53:java.lang.String getDescription(int) -> a
@@ -31916,7 +31945,7 @@ com.drew.metadata.jpeg.JpegDescriptor -> com.drew.metadata.j.e:
     94:97:java.lang.String getImageWidthDescription() -> b
     103:106:java.lang.String getImageHeightDescription() -> c
     112:115:java.lang.String getDataPrecisionDescription() -> d
-    121:126:java.lang.String getComponentDataDescription(int) -> g
+    121:126:java.lang.String getComponentDataDescription(int) -> h
 com.drew.metadata.jpeg.JpegDirectory -> com.drew.metadata.j.f:
     java.util.HashMap _tagNameMap -> e
     82:84:void <init>() -> <init>
@@ -31964,11 +31993,11 @@ com.drew.metadata.photoshop.PhotoshopDescriptor -> com.drew.metadata.l.c:
     198:207:java.lang.String getResolutionInfoDescription() -> d
     215:234:java.lang.String getVersionDescription() -> e
     242:253:java.lang.String getSlicesDescription() -> f
-    261:277:java.lang.String getThumbnailDescription(int) -> g
-    284:287:java.lang.String getBooleanString(int) -> h
-    293:300:java.lang.String get32BitNumberString(int) -> i
-    307:310:java.lang.String getSimpleString(int) -> j
-    316:319:java.lang.String getBinaryDataString(int) -> k
+    261:277:java.lang.String getThumbnailDescription(int) -> h
+    284:287:java.lang.String getBooleanString(int) -> i
+    293:300:java.lang.String get32BitNumberString(int) -> j
+    307:310:java.lang.String getSimpleString(int) -> k
+    316:319:java.lang.String getBinaryDataString(int) -> l
 com.drew.metadata.photoshop.PhotoshopDirectory -> com.drew.metadata.l.d:
     java.util.HashMap _tagNameMap -> e
     215:217:void <init>() -> <init>
@@ -32107,18 +32136,108 @@ com.drew.metadata.xmp.XmpReader -> com.drew.metadata.p.c:
 com.drew.metadata.xmp.XmpWriter -> com.drew.metadata.p.d:
     21:35:boolean write(java.io.OutputStream,com.drew.metadata.Metadata) -> a
 com.github.amlcurran.showcaseview.AnimationFactory -> com.a.a.a.a:
+    void fadeInView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener) -> a
     void fadeOutView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener) -> a
     void animateTargetToPoint(com.github.amlcurran.showcaseview.ShowcaseView,android.graphics.Point) -> a
 com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener -> com.a.a.a.b:
-com.github.amlcurran.showcaseview.OnShowcaseEventListener -> com.a.a.a.c:
+    void onAnimationEnd() -> a
+com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener -> com.a.a.a.c:
+    void onAnimationStart() -> a
+com.github.amlcurran.showcaseview.AnimatorAnimationFactory -> com.a.a.a.d:
+    android.view.animation.AccelerateDecelerateInterpolator interpolator -> a
+    38:40:void <init>() -> <init>
+    44:54:void fadeInView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener) -> a
+    58:68:void fadeOutView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener) -> a
+    72:78:void animateTargetToPoint(com.github.amlcurran.showcaseview.ShowcaseView,android.graphics.Point) -> a
+com.github.amlcurran.showcaseview.AnimatorAnimationFactory$1 -> com.a.a.a.e:
+    com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener val$listener -> a
+    com.github.amlcurran.showcaseview.AnimatorAnimationFactory this$0 -> b
+    45:45:void <init>(com.github.amlcurran.showcaseview.AnimatorAnimationFactory,com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener) -> <init>
+    49:50:void onAnimationStart(android.animation.Animator) -> onAnimationStart
+com.github.amlcurran.showcaseview.AnimatorAnimationFactory$2 -> com.a.a.a.f:
+    com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener val$listener -> a
+    com.github.amlcurran.showcaseview.AnimatorAnimationFactory this$0 -> b
+    59:59:void <init>(com.github.amlcurran.showcaseview.AnimatorAnimationFactory,com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener) -> <init>
+    63:64:void onAnimationEnd(android.animation.Animator) -> onAnimationEnd
+com.github.amlcurran.showcaseview.ApiUtils -> com.a.a.a.g:
+    21:21:void <init>() -> <init>
+    24:24:boolean isCompatWith(int) -> a
+    28:28:boolean isCompatWithHoneycomb() -> a
+com.github.amlcurran.showcaseview.MaterialShowcaseDrawer -> com.a.a.a.h:
+    float radius -> a
+    android.graphics.Paint basicPaint -> b
+    android.graphics.Paint eraserPaint -> c
+    int backgroundColor -> d
+    17:25:void <init>(android.content.res.Resources) -> <init>
+    30:30:void setShowcaseColour(int) -> a
+    34:36:void drawShowcase(android.graphics.Bitmap,float,float,float) -> a
+    40:40:int getShowcaseWidth() -> a
+    45:45:int getShowcaseHeight() -> b
+    50:50:float getBlockedRadius() -> c
+    55:56:void setBackgroundColour(int) -> b
+    60:61:void erase(android.graphics.Bitmap) -> a
+    65:66:void drawToCanvas(android.graphics.Canvas,android.graphics.Bitmap) -> a
+com.github.amlcurran.showcaseview.NewShowcaseDrawer -> com.a.a.a.i:
+    float outerRadius -> d
+    float innerRadius -> e
+    30:33:void <init>(android.content.res.Resources,android.content.res.Resources$Theme) -> <init>
+    37:38:void setShowcaseColour(int) -> a
+    42:47:void drawShowcase(android.graphics.Bitmap,float,float,float) -> a
+    51:51:int getShowcaseWidth() -> a
+    56:56:int getShowcaseHeight() -> b
+    61:61:float getBlockedRadius() -> c
+com.github.amlcurran.showcaseview.NoAnimationFactory -> com.a.a.a.j:
+    6:6:void <init>() -> <init>
+    10:11:void fadeInView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener) -> a
+    15:16:void fadeOutView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener) -> a
+    20:21:void animateTargetToPoint(com.github.amlcurran.showcaseview.ShowcaseView,android.graphics.Point) -> a
+com.github.amlcurran.showcaseview.OnShowcaseEventListener -> com.a.a.a.k:
     com.github.amlcurran.showcaseview.OnShowcaseEventListener NONE -> a
     void onShowcaseViewHide(com.github.amlcurran.showcaseview.ShowcaseView) -> a
-    44:44:void <clinit>() -> <clinit>
-com.github.amlcurran.showcaseview.OnShowcaseEventListener$1 -> com.a.a.a.d:
-    44:44:void <init>() -> <init>
-    48:48:void onShowcaseViewHide(com.github.amlcurran.showcaseview.ShowcaseView) -> a
-com.github.amlcurran.showcaseview.R -> com.a.a.a.e:
-com.github.amlcurran.showcaseview.R$style -> com.a.a.a.f:
+    void onShowcaseViewDidHide(com.github.amlcurran.showcaseview.ShowcaseView) -> b
+    void onShowcaseViewShow(com.github.amlcurran.showcaseview.ShowcaseView) -> c
+    void onShowcaseViewTouchBlocked(android.view.MotionEvent) -> a
+    52:52:void <clinit>() -> <clinit>
+com.github.amlcurran.showcaseview.OnShowcaseEventListener$1 -> com.a.a.a.l:
+    52:52:void <init>() -> <init>
+    56:56:void onShowcaseViewHide(com.github.amlcurran.showcaseview.ShowcaseView) -> a
+    61:61:void onShowcaseViewDidHide(com.github.amlcurran.showcaseview.ShowcaseView) -> b
+    66:66:void onShowcaseViewShow(com.github.amlcurran.showcaseview.ShowcaseView) -> c
+    71:71:void onShowcaseViewTouchBlocked(android.view.MotionEvent) -> a
+com.github.amlcurran.showcaseview.R -> com.a.a.a.m:
+com.github.amlcurran.showcaseview.R$attr -> com.a.a.a.n:
+    int showcaseViewStyle -> showcaseViewStyle
+    int sv_backgroundColor -> sv_backgroundColor
+    int sv_buttonBackgroundColor -> sv_buttonBackgroundColor
+    int sv_buttonForegroundColor -> sv_buttonForegroundColor
+    int sv_buttonText -> sv_buttonText
+    int sv_detailTextAppearance -> sv_detailTextAppearance
+    int sv_detailTextColor -> sv_detailTextColor
+    int sv_showcaseColor -> sv_showcaseColor
+    int sv_tintButtonColor -> sv_tintButtonColor
+    int sv_titleTextAppearance -> sv_titleTextAppearance
+    int sv_titleTextColor -> sv_titleTextColor
+com.github.amlcurran.showcaseview.R$dimen -> com.a.a.a.o:
+    int action_bar_offset -> action_bar_offset
+    int button_margin -> button_margin
+    int showcase_radius -> showcase_radius
+    int showcase_radius_inner -> showcase_radius_inner
+    int showcase_radius_material -> showcase_radius_material
+    int showcase_radius_outer -> showcase_radius_outer
+    int text_padding -> text_padding
+com.github.amlcurran.showcaseview.R$drawable -> com.a.a.a.p:
+    int btn_cling_normal -> btn_cling_normal
+    int btn_cling_pressed -> btn_cling_pressed
+    int button -> button
+    int button_normal -> button_normal
+    int cling -> cling
+    int cling_bleached -> cling_bleached
+    int cling_button_bg -> cling_button_bg
+    int hand -> hand
+com.github.amlcurran.showcaseview.R$layout -> com.a.a.a.q:
+    int handy -> handy
+    int showcase_button -> showcase_button
+com.github.amlcurran.showcaseview.R$style -> com.a.a.a.r:
     int ShowcaseButton -> ShowcaseButton
     int ShowcaseView -> ShowcaseView
     int ShowcaseView_Light -> ShowcaseView_Light
@@ -32126,7 +32245,7 @@ com.github.amlcurran.showcaseview.R$style -> com.a.a.a.f:
     int TextAppearance_ShowcaseView_Detail_Light -> TextAppearance_ShowcaseView_Detail_Light
     int TextAppearance_ShowcaseView_Title -> TextAppearance_ShowcaseView_Title
     int TextAppearance_ShowcaseView_Title_Light -> TextAppearance_ShowcaseView_Title_Light
-com.github.amlcurran.showcaseview.R$styleable -> com.a.a.a.g:
+com.github.amlcurran.showcaseview.R$styleable -> com.a.a.a.s:
     int[] CustomTheme -> CustomTheme
     int CustomTheme_showcaseViewStyle -> CustomTheme_showcaseViewStyle
     int[] ShowcaseView -> ShowcaseView
@@ -32141,18 +32260,20 @@ com.github.amlcurran.showcaseview.R$styleable -> com.a.a.a.g:
     int ShowcaseView_sv_titleTextAppearance -> ShowcaseView_sv_titleTextAppearance
     int ShowcaseView_sv_titleTextColor -> ShowcaseView_sv_titleTextColor
     64:66:void <clinit>() -> <clinit>
-com.github.amlcurran.showcaseview.ShotStateStore -> com.a.a.a.h:
+com.github.amlcurran.showcaseview.ShotStateStore -> com.a.a.a.t:
     long shotId -> a
     android.content.Context context -> b
+    27:33:void <init>(android.content.Context) -> <init>
     36:36:boolean hasShot() -> a
     42:42:boolean isSingleShot() -> b
     46:50:void storeShot() -> c
     53:54:void setSingleShot(long) -> a
-com.github.amlcurran.showcaseview.ShowcaseAreaCalculator -> com.a.a.a.i:
+com.github.amlcurran.showcaseview.ShowcaseAreaCalculator -> com.a.a.a.u:
     android.graphics.Rect mShowcaseRect -> a
+    25:27:void <init>() -> <init>
     37:52:boolean calculateShowcaseRect(float,float,com.github.amlcurran.showcaseview.ShowcaseDrawer) -> a
     57:57:android.graphics.Rect getShowcaseRect() -> a
-com.github.amlcurran.showcaseview.ShowcaseDrawer -> com.a.a.a.j:
+com.github.amlcurran.showcaseview.ShowcaseDrawer -> com.a.a.a.v:
     void setShowcaseColour(int) -> a
     void drawShowcase(android.graphics.Bitmap,float,float,float) -> a
     int getShowcaseWidth() -> a
@@ -32161,7 +32282,7 @@ com.github.amlcurran.showcaseview.ShowcaseDrawer -> com.a.a.a.j:
     void setBackgroundColour(int) -> b
     void erase(android.graphics.Bitmap) -> a
     void drawToCanvas(android.graphics.Canvas,android.graphics.Bitmap) -> a
-com.github.amlcurran.showcaseview.ShowcaseView -> com.a.a.a.k:
+com.github.amlcurran.showcaseview.ShowcaseView -> com.a.a.a.w:
     int HOLO_BLUE -> a
     android.widget.Button mEndButton -> b
     com.github.amlcurran.showcaseview.TextDrawer textDrawer -> c
@@ -32172,105 +32293,184 @@ com.github.amlcurran.showcaseview.ShowcaseView -> com.a.a.a.k:
     int showcaseX -> h
     int showcaseY -> i
     float scaleMultiplier -> j
-    boolean blockTouches -> k
-    boolean hideOnTouch -> l
-    com.github.amlcurran.showcaseview.OnShowcaseEventListener mEventListener -> m
-    boolean hasAlteredText -> n
-    boolean hasNoTarget -> o
-    boolean shouldCentreText -> p
-    android.graphics.Bitmap bitmapBuffer -> q
-    long fadeOutMillis -> r
-    int backgroundColor -> s
-    int showcaseColor -> t
-    boolean blockAllTouches -> u
-    int[] positionInWindow -> v
-    android.view.View$OnClickListener hideOnClickListener -> w
+    boolean hasCustomClickListener -> k
+    boolean blockTouches -> l
+    boolean hideOnTouch -> m
+    com.github.amlcurran.showcaseview.OnShowcaseEventListener mEventListener -> n
+    boolean hasAlteredText -> o
+    boolean hasNoTarget -> p
+    boolean shouldCentreText -> q
+    android.graphics.Bitmap bitmapBuffer -> r
+    long fadeInMillis -> s
+    long fadeOutMillis -> t
+    boolean isShowing -> u
+    int backgroundColor -> v
+    int showcaseColor -> w
+    boolean blockAllTouches -> x
+    int[] positionInWindow -> y
+    android.view.View$OnClickListener hideOnClickListener -> z
+    99:100:void <init>(android.content.Context,boolean) -> <init>
+    74:821:void <init>(android.content.Context,android.util.AttributeSet,int,boolean) -> <init>
+    138:154:void init() -> d
+    157:157:boolean hasShot() -> e
     161:162:void setShowcasePosition(android.graphics.Point) -> setShowcasePosition
     165:174:void setShowcasePosition(int,int) -> a
     177:178:void setTarget(com.github.amlcurran.showcaseview.targets.Target) -> setTarget
-    181:204:void setShowcase(com.github.amlcurran.showcaseview.targets.Target,boolean) -> a
-    207:213:void updateBitmap() -> c
-    216:216:boolean haveBoundsChanged() -> d
-    221:221:boolean hasShowcaseView() -> a
-    225:226:void setShowcaseX(int) -> setShowcaseX
-    229:230:void setShowcaseY(int) -> setShowcaseY
-    233:233:int getShowcaseX() -> getShowcaseX
-    237:237:int getShowcaseY() -> getShowcaseY
-    260:265:void setOnShowcaseEventListener(com.github.amlcurran.showcaseview.OnShowcaseEventListener) -> setOnShowcaseEventListener
-    268:271:void setButtonText(java.lang.CharSequence) -> setButtonText
-    274:281:void recalculateText() -> e
-    286:305:void dispatchDraw(android.graphics.Canvas) -> dispatchDraw
-    310:313:void hide() -> b
-    323:334:void fadeOutShowcase() -> f
-    364:378:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
-    397:398:void setContentTitle(java.lang.CharSequence) -> setContentTitle
-    402:403:void setContentText(java.lang.CharSequence) -> setContentText
-    406:407:void setScaleMultiplier(float) -> setScaleMultiplier
-    652:659:void setEndButton(android.widget.Button) -> setEndButton
-    662:667:void setShowcaseDrawer(com.github.amlcurran.showcaseview.ShowcaseDrawer) -> setShowcaseDrawer
-    670:673:void setContentTitlePaint(android.text.TextPaint) -> setContentTitlePaint
-    676:679:void setContentTextPaint(android.text.TextPaint) -> setContentTextPaint
-    685:688:void setShouldCentreText(boolean) -> setShouldCentreText
-    694:695:void setSingleShot(long) -> setSingleShot
-    705:706:void setButtonPosition(android.widget.RelativeLayout$LayoutParams) -> setButtonPosition
-    712:715:void setDetailTextAlignment(android.text.Layout$Alignment) -> setDetailTextAlignment
-    721:724:void setTitleTextAlignment(android.text.Layout$Alignment) -> setTitleTextAlignment
-    745:746:void setHideOnTouchOutside(boolean) -> setHideOnTouchOutside
-    753:754:void setBlocksTouches(boolean) -> setBlocksTouches
-    757:758:void setBlockAllTouches(boolean) -> setBlockAllTouches
-    765:767:void setStyle(int) -> setStyle
-    775:801:void updateStyle(android.content.res.TypedArray,boolean) -> a
-    804:809:void tintButton(int,boolean) -> a
+    181:207:void setShowcase(com.github.amlcurran.showcaseview.targets.Target,boolean) -> a
+    210:216:void updateBitmap() -> f
+    219:219:boolean haveBoundsChanged() -> g
+    224:224:boolean hasShowcaseView() -> a
+    228:229:void setShowcaseX(int) -> setShowcaseX
+    232:233:void setShowcaseY(int) -> setShowcaseY
+    236:236:int getShowcaseX() -> getShowcaseX
+    240:240:int getShowcaseY() -> getShowcaseY
+    249:260:void overrideButtonClick(android.view.View$OnClickListener) -> a
+    263:268:void setOnShowcaseEventListener(com.github.amlcurran.showcaseview.OnShowcaseEventListener) -> setOnShowcaseEventListener
+    271:274:void setButtonText(java.lang.CharSequence) -> setButtonText
+    277:284:void recalculateText() -> h
+    289:308:void dispatchDraw(android.graphics.Canvas) -> dispatchDraw
+    313:316:void hide() -> b
+    319:323:void clearBitmap() -> i
+    326:337:void fadeOutShowcase() -> j
+    341:347:void show() -> c
+    350:350:boolean canUpdateBitmap() -> k
+    354:363:void fadeInShowcase() -> l
+    367:386:boolean onTouch(android.view.View,android.view.MotionEvent) -> onTouch
+    390:396:void insertShowcaseView(com.github.amlcurran.showcaseview.ShowcaseView,android.view.ViewGroup,int) -> b
+    399:401:void hideImmediate() -> m
+    405:406:void setContentTitle(java.lang.CharSequence) -> setContentTitle
+    410:411:void setContentText(java.lang.CharSequence) -> setContentText
+    414:415:void setScaleMultiplier(float) -> setScaleMultiplier
+    662:669:void setEndButton(android.widget.Button) -> setEndButton
+    672:677:void setShowcaseDrawer(com.github.amlcurran.showcaseview.ShowcaseDrawer) -> setShowcaseDrawer
+    680:683:void setContentTitlePaint(android.text.TextPaint) -> setContentTitlePaint
+    686:689:void setContentTextPaint(android.text.TextPaint) -> setContentTextPaint
+    695:698:void setShouldCentreText(boolean) -> setShouldCentreText
+    704:705:void setSingleShot(long) -> setSingleShot
+    715:716:void setButtonPosition(android.widget.RelativeLayout$LayoutParams) -> setButtonPosition
+    722:725:void setDetailTextAlignment(android.text.Layout$Alignment) -> setDetailTextAlignment
+    731:734:void setTitleTextAlignment(android.text.Layout$Alignment) -> setTitleTextAlignment
+    755:756:void setHideOnTouchOutside(boolean) -> setHideOnTouchOutside
+    763:764:void setBlocksTouches(boolean) -> setBlocksTouches
+    767:768:void setBlockAllTouches(boolean) -> setBlockAllTouches
+    775:777:void setStyle(int) -> setStyle
+    785:811:void updateStyle(android.content.res.TypedArray,boolean) -> a
+    814:819:void tintButton(int,boolean) -> a
     51:51:com.github.amlcurran.showcaseview.ShotStateStore access$000(com.github.amlcurran.showcaseview.ShowcaseView) -> a
-    51:51:void access$100(com.github.amlcurran.showcaseview.ShowcaseView) -> b
-    51:51:boolean access$202(com.github.amlcurran.showcaseview.ShowcaseView,boolean) -> a
-    51:51:com.github.amlcurran.showcaseview.AnimationFactory access$300(com.github.amlcurran.showcaseview.ShowcaseView) -> c
+    51:51:boolean access$100(com.github.amlcurran.showcaseview.ShowcaseView) -> b
+    51:51:void access$200(com.github.amlcurran.showcaseview.ShowcaseView) -> c
+    51:51:boolean access$302(com.github.amlcurran.showcaseview.ShowcaseView,boolean) -> a
+    51:51:com.github.amlcurran.showcaseview.AnimationFactory access$400(com.github.amlcurran.showcaseview.ShowcaseView) -> d
+    51:51:void access$500(com.github.amlcurran.showcaseview.ShowcaseView) -> e
+    51:51:boolean access$602(com.github.amlcurran.showcaseview.ShowcaseView,boolean) -> b
+    51:51:com.github.amlcurran.showcaseview.OnShowcaseEventListener access$700(com.github.amlcurran.showcaseview.ShowcaseView) -> f
+    51:51:void access$800(com.github.amlcurran.showcaseview.ShowcaseView,android.view.ViewGroup,int) -> a
+    51:51:void access$900(com.github.amlcurran.showcaseview.ShowcaseView,com.github.amlcurran.showcaseview.ShowcaseDrawer) -> a
+    51:51:void access$1300(com.github.amlcurran.showcaseview.ShowcaseView,android.widget.Button) -> a
     54:54:void <clinit>() -> <clinit>
-com.github.amlcurran.showcaseview.ShowcaseView$1 -> com.a.a.a.l:
+com.github.amlcurran.showcaseview.ShowcaseView$1 -> com.a.a.a.x:
     com.github.amlcurran.showcaseview.targets.Target val$target -> a
     boolean val$animate -> b
     com.github.amlcurran.showcaseview.ShowcaseView this$0 -> c
     181:181:void <init>(com.github.amlcurran.showcaseview.ShowcaseView,com.github.amlcurran.showcaseview.targets.Target,boolean) -> <init>
-    185:202:void run() -> run
-com.github.amlcurran.showcaseview.ShowcaseView$2 -> com.a.a.a.m:
+    185:205:void run() -> run
+com.github.amlcurran.showcaseview.ShowcaseView$2 -> com.a.a.a.y:
     com.github.amlcurran.showcaseview.ShowcaseView this$0 -> a
-    324:324:void <init>(com.github.amlcurran.showcaseview.ShowcaseView) -> <init>
-com.github.amlcurran.showcaseview.TextDrawer -> com.a.a.a.n:
+    327:327:void <init>(com.github.amlcurran.showcaseview.ShowcaseView) -> <init>
+    330:334:void onAnimationEnd() -> a
+com.github.amlcurran.showcaseview.ShowcaseView$3 -> com.a.a.a.z:
+    com.github.amlcurran.showcaseview.ShowcaseView this$0 -> a
+    356:356:void <init>(com.github.amlcurran.showcaseview.ShowcaseView) -> <init>
+    359:360:void onAnimationStart() -> a
+com.github.amlcurran.showcaseview.ShowcaseView$4 -> com.a.a.a.aa:
+    com.github.amlcurran.showcaseview.ShowcaseView this$0 -> a
+    821:821:void <init>(com.github.amlcurran.showcaseview.ShowcaseView) -> <init>
+    824:825:void onClick(android.view.View) -> onClick
+com.github.amlcurran.showcaseview.ShowcaseView$Builder -> com.a.a.a.ab:
+    com.github.amlcurran.showcaseview.ShowcaseView showcaseView -> a
+    android.app.Activity activity -> b
+    android.view.ViewGroup parent -> c
+    int parentIndex -> d
+    438:439:void <init>(android.app.Activity) -> <init>
+    447:453:void <init>(android.app.Activity,boolean) -> <init>
+    461:462:com.github.amlcurran.showcaseview.ShowcaseView build() -> a
+    486:486:com.github.amlcurran.showcaseview.ShowcaseView$Builder withMaterialShowcase() -> b
+    493:494:com.github.amlcurran.showcaseview.ShowcaseView$Builder setShowcaseDrawer(com.github.amlcurran.showcaseview.ShowcaseDrawer) -> a
+    501:501:com.github.amlcurran.showcaseview.ShowcaseView$Builder setContentTitle(int) -> a
+    508:509:com.github.amlcurran.showcaseview.ShowcaseView$Builder setContentTitle(java.lang.CharSequence) -> a
+    516:516:com.github.amlcurran.showcaseview.ShowcaseView$Builder setContentText(int) -> b
+    523:524:com.github.amlcurran.showcaseview.ShowcaseView$Builder setContentText(java.lang.CharSequence) -> b
+    542:543:com.github.amlcurran.showcaseview.ShowcaseView$Builder setStyle(int) -> c
+    552:553:com.github.amlcurran.showcaseview.ShowcaseView$Builder setOnClickListener(android.view.View$OnClickListener) -> a
+    563:564:com.github.amlcurran.showcaseview.ShowcaseView$Builder doNotBlockTouches() -> c
+    626:627:com.github.amlcurran.showcaseview.ShowcaseView$Builder replaceEndButton(android.widget.Button) -> a
+    635:639:com.github.amlcurran.showcaseview.ShowcaseView$Builder replaceEndButton(int) -> d
+com.github.amlcurran.showcaseview.StandardShowcaseDrawer -> com.a.a.a.ac:
+    android.graphics.Paint eraserPaint -> a
+    android.graphics.drawable.Drawable showcaseDrawable -> b
+    android.graphics.Paint basicPaint -> d
+    float showcaseRadius -> e
+    int backgroundColour -> c
+    37:47:void <init>(android.content.res.Resources,android.content.res.Resources$Theme) -> <init>
+    51:52:void setShowcaseColour(int) -> a
+    56:71:void drawShowcase(android.graphics.Bitmap,float,float,float) -> a
+    75:75:int getShowcaseWidth() -> a
+    80:80:int getShowcaseHeight() -> b
+    85:85:float getBlockedRadius() -> c
+    90:91:void setBackgroundColour(int) -> b
+    95:96:void erase(android.graphics.Bitmap) -> a
+    100:101:void drawToCanvas(android.graphics.Canvas,android.graphics.Bitmap) -> a
+com.github.amlcurran.showcaseview.TextDrawer -> com.a.a.a.ad:
     android.text.TextPaint titlePaint -> a
     android.text.TextPaint textPaint -> b
     android.content.Context context -> c
     float padding -> d
     float actionBarOffset -> e
-    android.text.Layout$Alignment detailTextAlignment -> f
-    android.text.Layout$Alignment titleTextAlignment -> g
-    java.lang.CharSequence mTitle -> h
-    java.lang.CharSequence mDetails -> i
-    float[] mBestTextPosition -> j
-    android.text.DynamicLayout mDynamicTitleLayout -> k
-    android.text.DynamicLayout mDynamicDetailLayout -> l
-    android.text.style.TextAppearanceSpan mTitleSpan -> m
-    android.text.style.TextAppearanceSpan mDetailSpan -> n
+    android.text.Layout$Alignment textAlignment -> f
+    android.text.SpannableString textString -> g
+    android.text.DynamicLayout textLayout -> h
+    android.text.style.MetricAffectingSpan textSpan -> i
+    android.text.Layout$Alignment titleAlignment -> j
+    android.text.SpannableString titleString -> k
+    android.text.DynamicLayout titleLayout -> l
+    android.text.style.MetricAffectingSpan titleSpan -> m
+    float[] mBestTextPosition -> n
     boolean hasRecalculated -> o
     int forcedTextPosition -> p
-    71:103:void draw(android.graphics.Canvas) -> a
-    106:111:void setContentText(java.lang.CharSequence) -> a
-    114:119:void setContentTitle(java.lang.CharSequence) -> b
-    130:193:void calculateTextPosition(int,int,boolean,android.graphics.Rect) -> a
-    196:198:void setTitleStyling(int) -> a
-    201:203:void setDetailStyling(int) -> b
-    206:206:float[] getBestTextPosition() -> a
-    210:210:boolean shouldDrawText() -> b
-    214:215:void setContentPaint(android.text.TextPaint) -> a
-    218:219:void setTitlePaint(android.text.TextPaint) -> b
-    222:223:void setDetailTextAlignment(android.text.Layout$Alignment) -> a
-    226:227:void setTitleTextAlignment(android.text.Layout$Alignment) -> b
-com.github.amlcurran.showcaseview.targets.Target -> com.a.a.a.a.a:
+    46:72:void <init>(android.content.res.Resources,android.content.Context) -> <init>
+    75:108:void draw(android.graphics.Canvas) -> a
+    111:116:void setContentText(java.lang.CharSequence) -> a
+    119:124:void setContentTitle(java.lang.CharSequence) -> b
+    135:198:void calculateTextPosition(int,int,boolean,android.graphics.Rect) -> a
+    201:203:void setTitleStyling(int) -> a
+    206:208:void setDetailStyling(int) -> b
+    211:211:float[] getBestTextPosition() -> a
+    215:215:boolean shouldDrawText() -> b
+    219:225:void setContentPaint(android.text.TextPaint) -> a
+    228:234:void setTitlePaint(android.text.TextPaint) -> b
+    237:238:void setDetailTextAlignment(android.text.Layout$Alignment) -> a
+    241:242:void setTitleTextAlignment(android.text.Layout$Alignment) -> b
+com.github.amlcurran.showcaseview.TextDrawer$1 -> com.a.a.a.ae:
+com.github.amlcurran.showcaseview.TextDrawer$NoOpSpan -> com.a.a.a.af:
+    251:251:void <init>() -> <init>
+    255:255:void updateDrawState(android.text.TextPaint) -> updateDrawState
+    260:260:void updateMeasureState(android.text.TextPaint) -> updateMeasureState
+    251:251:void <init>(com.github.amlcurran.showcaseview.TextDrawer$1) -> <init>
+com.github.amlcurran.showcaseview.targets.PointTarget -> com.a.a.a.a.a:
+    android.graphics.Point mPoint -> b
+    32:34:void <init>(int,int) -> <init>
+    38:38:android.graphics.Point getPoint() -> a
+com.github.amlcurran.showcaseview.targets.Target -> com.a.a.a.a.b:
     com.github.amlcurran.showcaseview.targets.Target NONE -> a
     android.graphics.Point getPoint() -> a
     22:22:void <clinit>() -> <clinit>
-com.github.amlcurran.showcaseview.targets.Target$1 -> com.a.a.a.a.b:
+com.github.amlcurran.showcaseview.targets.Target$1 -> com.a.a.a.a.c:
     22:22:void <init>() -> <init>
     25:25:android.graphics.Point getPoint() -> a
+com.github.amlcurran.showcaseview.targets.ViewTarget -> com.a.a.a.a.d:
+    android.view.View mView -> b
+    30:32:void <init>(android.view.View) -> <init>
+    40:44:android.graphics.Point getPoint() -> a
 com.google.android.vending.licensing.AESObfuscator -> com.google.android.vending.licensing.a:
     byte[] IV -> a
     javax.crypto.Cipher mEncryptor -> b

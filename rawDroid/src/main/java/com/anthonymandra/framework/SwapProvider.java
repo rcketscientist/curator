@@ -1,6 +1,7 @@
 package com.anthonymandra.framework;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
@@ -26,6 +27,7 @@ import com.anthonymandra.util.ImageUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class SwapProvider extends ContentProvider implements SharedPreferences.OnSharedPreferenceChangeListener  {
     private static final String TAG = SwapProvider.class.getSimpleName();
@@ -64,9 +66,12 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
      */
     public static Uri createSwapUri(String name, Uri uri)
     {
-        return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
-                + FileUtil.swapExtention(name, ".jpg") + "#"
-                + uri);
+        return new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_CONTENT)
+                .authority(SwapProvider.AUTHORITY)
+                .path(FileUtil.swapExtention(name, "jpg"))
+                .fragment(uri.toString())
+                .build();
     }
 
     @Override
@@ -95,7 +100,15 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 // Some receivers may call multiple times
                 if (!swapFile.exists())
                 {
-                	LocalImage image = new LocalImage(getContext(), sourceUri);
+                    try
+                    {
+                        swapFile.createNewFile();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    LocalImage image = new LocalImage(getContext(), sourceUri);
 	                byte[] imageData = image.getThumb();
 	                if (imageData == null)
 	                    return null;
@@ -210,13 +223,15 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     }
 
     // It's safe to write these directly since it's app storage space
-    protected boolean writeThumb(Uri source, File destination)
+    protected boolean writeThumb(Uri uri, File destination)
     {
-        ParcelFileDescriptor pfd = null;
+        ParcelFileDescriptor source = null;
+        ParcelFileDescriptor dest = null;
         try
         {
-            pfd = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE);
-            return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd());
+            source = getContext().getContentResolver().openFileDescriptor(uri, "r");
+            dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE);
+            return LibRaw.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd());
         }
         catch(Exception e)
         {
@@ -224,7 +239,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         }
         finally
         {
-            Utils.closeSilently(pfd);
+            Utils.closeSilently(source);
+            Utils.closeSilently(dest);
         }
     }
 
@@ -246,13 +262,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         {
             Utils.closeSilently(pfd);
         }
-    }
-
-    public static Uri getSwapUri(File image)
-    {
-        return Uri.parse("content://" + SwapProvider.AUTHORITY + "/"
-                + FileUtil.swapExtention(image.getName(), ".jpg") + "#"
-                + image.getPath());
     }
 
     // //////////////////////////////////////////////////////////////

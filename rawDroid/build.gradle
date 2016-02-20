@@ -21,7 +21,7 @@ repositories {
 def versionMajor = 4
 def versionMinor = 5
 def versionPatch = 0
-def versionBuild = 0
+def versionBuild = 1
 
 android {
     compileSdkVersion 23
@@ -104,11 +104,6 @@ dependencies {
     compile project(':DocumentActivity:library')
     compile 'com.android.support:design:23.1.1' //includes support-v4 and appcompat-v7
 
-//    compile 'com.android.support:support-v4:23.1.1'
-//    compile 'com.android.support:appcompat-v7:23.1.1'
-
-    //    compile 'com.android.support:recyclerview-v7:22.2.1'
-    //    compile 'com.android.support:gridlayout-v7:22.2.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }

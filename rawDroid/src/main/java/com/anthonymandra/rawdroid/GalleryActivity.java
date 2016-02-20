@@ -1104,7 +1104,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		ArrayList<Uri> arrayUri = new ArrayList<>();
 		for (Uri selection : selectedUris)
 		{
-			arrayUri.add(SwapProvider.getSwapUri(new File(selection.getPath())));
+			UsefulDocumentFile f = UsefulDocumentFile.fromUri(this, selection);
+			arrayUri.add(SwapProvider.createSwapUri(f.getName(), selection));
 		}
 
 		int selectionCount = selectedUris.size();
@@ -1486,8 +1487,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						onItemClick(mImageGrid, mImageGrid.getChildAt(2), 2, 2);
 					}
 
-					tutorial.setAlpha(0.5f);
-
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
                     // This is ghetto, I know the spinner lies UNDER the selection view
@@ -1548,8 +1547,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(1), 1, 1);
 						onItemLongClick(mImageGrid, mImageGrid.getChildAt(3), 3, 3);
 					}
-
-	                tutorial.setAlpha(0.5f);
 
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));

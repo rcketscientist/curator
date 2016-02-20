@@ -1703,8 +1703,6 @@ com.anthonymandra.framework.FileUtil:
     321:334:public static java.io.File[] getStorageRoots()
     339:367:public static java.util.List getStoragePoints(java.io.File)
     372:381:public static java.util.List getStorageRoots(java.lang.String[])
-    395:403:public static java.io.File getDiskCacheDir(android.content.Context,java.lang.String)
-    414:418:public static boolean isExternalStorageRemovable()
 com.anthonymandra.framework.FileUtil$1
 com.anthonymandra.framework.Histogram:
     72:72:public int getMaxFreqR()
@@ -1851,7 +1849,7 @@ com.anthonymandra.framework.SimpleCursorLoader
 com.anthonymandra.framework.SimpleCursorLoader$CursorDataSource
 com.anthonymandra.framework.SwapProvider:
     public static final java.lang.String AUTHORITY
-    174:194:private static int modeToMode(java.lang.String)
+    187:207:private static int modeToMode(java.lang.String)
 com.anthonymandra.framework.ThreadedPriorityIntentService:
     private static final int DEFAULT_PRIORITY
     public static final java.lang.String EXTRA_PRIORITY
@@ -1878,7 +1876,6 @@ com.anthonymandra.framework.UsefulDocumentFile:
 com.anthonymandra.framework.Util:
     private static final int DEFAULT_BUFFER_SIZE
     71:71:public static boolean hasFroyo()
-    76:76:public static boolean hasGingerbread()
     86:86:public static boolean hasHoneycombMR1()
     91:91:public static boolean hasIceCreamSandwich()
     231:233:public static java.lang.Object[] concat(java.lang.Object[],java.lang.Object[])
@@ -1983,32 +1980,16 @@ com.anthonymandra.rawdroid.GalleryActivity:
     private static final int REQUEST_ACCESS_USB
     public static final java.lang.String GALLERY_INDEX_EXTRA
     private android.os.Parcelable gridState
-    int tutorialStage
-    624:661:private void doFirstRun()
-    751:754:private int getAppVersionCode()
-    868:874:private long getSelectedImageSize()
-    913:924:private void showWriteAccessError()
-    1151:1160:public static boolean isCamera(android.hardware.usb.UsbDevice)
-    1330:1374:public void runTutorial()
-    1611:1621:public int getNavigationBarHeight(int)
-    1626:1631:public android.widget.RelativeLayout$LayoutParams getRightParam(android.content.res.Resources)
-    1644:1647:private void setTutorialNoShowcase()
-    1651:1653:private void setTutorialHomeView(boolean)
-    1663:1676:private void setTutorialActionView(int,boolean)
-    1681:1695:private void setTutorialShareView(boolean)
-    98:98:static synthetic com.github.amlcurran.showcaseview.ShowcaseView access$1500(com.anthonymandra.rawdroid.GalleryActivity)
-    98:98:static synthetic void access$1600(com.anthonymandra.rawdroid.GalleryActivity)
-    98:98:static synthetic void access$1700(com.anthonymandra.rawdroid.GalleryActivity,int,boolean)
-    98:98:static synthetic android.widget.GridView access$1800(com.anthonymandra.rawdroid.GalleryActivity)
-    98:98:static synthetic boolean access$700()
-    98:98:static synthetic com.anthonymandra.widget.GalleryAdapter access$1900(com.anthonymandra.rawdroid.GalleryActivity)
-    98:98:static synthetic android.support.v7.view.ActionMode access$1200(com.anthonymandra.rawdroid.GalleryActivity)
-    98:98:static synthetic void access$2000(com.anthonymandra.rawdroid.GalleryActivity,boolean)
-    98:98:static synthetic void access$2100(com.anthonymandra.rawdroid.GalleryActivity)
+    628:665:private void doFirstRun()
+    755:758:private int getAppVersionCode()
+    872:878:private long getSelectedImageSize()
+    917:928:private void showWriteAccessError()
+    1156:1165:public static boolean isCamera(android.hardware.usb.UsbDevice)
+    1734:1748:private void setTutorialShareView(boolean)
 com.anthonymandra.rawdroid.GalleryActivity$2
 com.anthonymandra.rawdroid.GalleryActivity$3
 com.anthonymandra.rawdroid.GalleryActivity$DirAlphaComparator
-com.anthonymandra.rawdroid.GalleryActivity$TutorialClickListener
+com.anthonymandra.rawdroid.GalleryActivity$ToolbarActionItemTarget
 com.anthonymandra.rawdroid.ImageModel
 com.anthonymandra.rawdroid.ImageViewActivity:
     107:108:public void goToFirstPicture()
@@ -2090,6 +2071,7 @@ com.anthonymandra.rawprocessor.LibRaw:
     private static native byte[] getThumbFdWatermark(int,java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,byte[],int[],int,int)
     private static native byte[] getThumbBuffer(byte[],java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
     public static native boolean writeThumbBuffer(byte[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,int)
+    public static native boolean writeThumbFile(java.lang.String,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,int)
     private static native byte[] getImageFile(java.lang.String,java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
     private static native byte[] getImageFileWatermark(java.lang.String,java.lang.String[],int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat,byte[],int[],int,int)
     private static native byte[] getHalfImageFile(java.lang.String,int,android.graphics.Bitmap$Config,android.graphics.Bitmap$CompressFormat)
@@ -2143,29 +2125,28 @@ com.anthonymandra.util.ImageUtils:
     162:162:public static boolean hasJpgFile(java.io.File)
     177:177:public static java.io.File getXmpFile(java.io.File)
     182:182:public static java.io.File getJpgFile(java.io.File)
-    215:217:private static java.io.File getAssociatedFile(java.io.File,java.lang.String)
-    246:247:public static android.content.ContentValues getContentValues(android.content.Context,android.net.Uri,int)
-    313:350:public static void setExifValues(android.net.Uri,android.content.Context,java.lang.String[])
-    509:509:private static java.lang.String getShutterSpeed(com.drew.metadata.Metadata)
-    537:537:private static java.lang.String getLensMake(com.drew.metadata.Metadata)
-    565:573:private static java.lang.String getFNumber(com.drew.metadata.Metadata)
-    583:583:private static java.lang.String getMake(com.drew.metadata.Metadata)
-    664:665:public static void updateRating(com.drew.metadata.Metadata,java.lang.Double)
-    727:739:private static void updateXmpInteger(com.drew.metadata.Metadata,int,java.lang.Integer)
-    743:744:public static boolean isAndroidImage(android.content.Context,android.net.Uri)
-    796:799:public static int getImageType(java.io.File)
-    838:838:public static boolean isImage(java.io.File)
-    843:846:public static boolean isImage(android.net.Uri)
-    874:877:public static boolean isJpeg(android.net.Uri)
-    892:892:public static boolean isNative(java.io.File)
-    910:910:public static boolean isTiffImage(java.io.File)
-    1019:1037:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
-    1049:1066:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
-    1071:1076:public static android.graphics.Bitmap createBitmapToSize(android.content.res.Resources,int,int,int)
-    1110:1129:public static android.graphics.Bitmap addWatermark2(android.content.Context,android.graphics.Bitmap)
-    1134:1183:public static android.graphics.Bitmap addWatermark(android.content.Context,java.io.File,android.graphics.Bitmap)
-    1213:1261:public static android.graphics.Bitmap addWatermark(android.content.Context,android.graphics.Bitmap)
-    1267:1310:public static android.graphics.Bitmap addCustomWatermark(android.graphics.Bitmap,java.lang.String,int,int,java.lang.String)
+    254:255:public static android.content.ContentValues getContentValues(android.content.Context,android.net.Uri,int)
+    321:358:public static void setExifValues(android.net.Uri,android.content.Context,java.lang.String[])
+    517:517:private static java.lang.String getShutterSpeed(com.drew.metadata.Metadata)
+    545:545:private static java.lang.String getLensMake(com.drew.metadata.Metadata)
+    573:581:private static java.lang.String getFNumber(com.drew.metadata.Metadata)
+    591:591:private static java.lang.String getMake(com.drew.metadata.Metadata)
+    672:673:public static void updateRating(com.drew.metadata.Metadata,java.lang.Double)
+    735:747:private static void updateXmpInteger(com.drew.metadata.Metadata,int,java.lang.Integer)
+    751:752:public static boolean isAndroidImage(android.content.Context,android.net.Uri)
+    804:807:public static int getImageType(java.io.File)
+    846:846:public static boolean isImage(java.io.File)
+    851:854:public static boolean isImage(android.net.Uri)
+    882:885:public static boolean isJpeg(android.net.Uri)
+    900:900:public static boolean isNative(java.io.File)
+    918:918:public static boolean isTiffImage(java.io.File)
+    1027:1045:public static android.graphics.Bitmap createBitmapLarge(java.io.InputStream,int,int,boolean)
+    1057:1074:public static android.graphics.Bitmap createBitmapToSize(java.io.InputStream,int,int)
+    1079:1084:public static android.graphics.Bitmap createBitmapToSize(android.content.res.Resources,int,int,int)
+    1118:1137:public static android.graphics.Bitmap addWatermark2(android.content.Context,android.graphics.Bitmap)
+    1142:1191:public static android.graphics.Bitmap addWatermark(android.content.Context,java.io.File,android.graphics.Bitmap)
+    1221:1269:public static android.graphics.Bitmap addWatermark(android.content.Context,android.graphics.Bitmap)
+    1275:1318:public static android.graphics.Bitmap addCustomWatermark(android.graphics.Bitmap,java.lang.String,int,int,java.lang.String)
 com.anthonymandra.util.ImageUtils$JpegFilter
 com.anthonymandra.util.ImageUtils$RawFilter
 com.anthonymandra.util.Util:
@@ -3268,6 +3249,7 @@ com.drew.metadata.gif.GifHeaderDirectory:
     public static final int TAG_BITS_PER_PIXEL
     public static final int TAG_HAS_GLOBAL_COLOR_TABLE
     public static final int TAG_TRANSPARENT_COLOR_INDEX
+    public static final int TAG_BACKGROUND_COLOR_INDEX
     public static final int TAG_PIXEL_ASPECT_RATIO
 com.drew.metadata.gif.GifReader:
     private static final java.lang.String GIF_87A_VERSION_IDENTIFIER
@@ -3479,8 +3461,10 @@ com.drew.metadata.jfif.JfifDirectory:
     public static final int TAG_THUMB_HEIGHT
     78:78:public int getVersion()
     83:83:public int getResUnits()
-    88:88:public int getImageWidth()
-    93:93:public int getImageHeight()
+    92:92:public int getImageWidth()
+    97:97:public int getResY()
+    106:106:public int getImageHeight()
+    111:111:public int getResX()
 com.drew.metadata.jfif.JfifReader:
     public static final java.lang.String PREAMBLE
 com.drew.metadata.jfxx.JfxxDirectory:
@@ -3708,32 +3692,24 @@ com.drew.tools.ProcessAllImagesInFolderUtility$TextFileOutputHandler
 com.drew.tools.ProcessAllImagesInFolderUtility$UnknownTagHandler
 com.drew.tools.ProcessAllImagesInFolderUtility$UnknownTagHandler$1
 com.drew.tools.ProcessUrlUtility
-com.github.amlcurran.showcaseview.AnimationFactory:
-    public abstract void fadeInView(android.view.View,long,com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener)
-com.github.amlcurran.showcaseview.AnimationFactory$AnimationEndListener:
-    public abstract void onAnimationEnd()
-com.github.amlcurran.showcaseview.AnimationFactory$AnimationStartListener
-com.github.amlcurran.showcaseview.AnimatorAnimationFactory
-com.github.amlcurran.showcaseview.AnimatorAnimationFactory$1
-com.github.amlcurran.showcaseview.AnimatorAnimationFactory$2
-com.github.amlcurran.showcaseview.ApiUtils
+com.github.amlcurran.showcaseview.AnimatorAnimationFactory:
+    private static final java.lang.String ALPHA
+    private static final float INVISIBLE
+    private static final float VISIBLE
 com.github.amlcurran.showcaseview.BuildConfig
-com.github.amlcurran.showcaseview.MaterialShowcaseDrawer
-com.github.amlcurran.showcaseview.NewShowcaseDrawer
-com.github.amlcurran.showcaseview.NoAnimationFactory
-com.github.amlcurran.showcaseview.OnShowcaseEventListener:
-    public abstract void onShowcaseViewDidHide(com.github.amlcurran.showcaseview.ShowcaseView)
-    public abstract void onShowcaseViewShow(com.github.amlcurran.showcaseview.ShowcaseView)
-com.github.amlcurran.showcaseview.OnShowcaseEventListener$1:
-    53:53:public void onShowcaseViewDidHide(com.github.amlcurran.showcaseview.ShowcaseView)
-    58:58:public void onShowcaseViewShow(com.github.amlcurran.showcaseview.ShowcaseView)
+com.github.amlcurran.showcaseview.NewShowcaseDrawer:
+    private static final int ALPHA_60_PERCENT
 com.github.amlcurran.showcaseview.R:
     9:63:public R()
-com.github.amlcurran.showcaseview.R$attr
-com.github.amlcurran.showcaseview.R$dimen
-com.github.amlcurran.showcaseview.R$drawable
+com.github.amlcurran.showcaseview.R$attr:
+    10:10:public R$attr()
+com.github.amlcurran.showcaseview.R$dimen:
+    23:23:public R$dimen()
+com.github.amlcurran.showcaseview.R$drawable:
+    32:32:public R$drawable()
 com.github.amlcurran.showcaseview.R$id
-com.github.amlcurran.showcaseview.R$layout
+com.github.amlcurran.showcaseview.R$layout:
+    47:47:public R$layout()
 com.github.amlcurran.showcaseview.R$string
 com.github.amlcurran.showcaseview.R$style:
     54:54:public R$style()
@@ -3742,58 +3718,41 @@ com.github.amlcurran.showcaseview.R$styleable:
 com.github.amlcurran.showcaseview.ShotStateStore:
     private static final java.lang.String PREFS_SHOWCASE_INTERNAL
     private static final int INVALID_SHOT_ID
-    27:33:public ShotStateStore(android.content.Context)
-com.github.amlcurran.showcaseview.ShowcaseAreaCalculator:
-    25:27:ShowcaseAreaCalculator()
 com.github.amlcurran.showcaseview.ShowcaseView:
     public static final int UNDEFINED
     public static final int LEFT_OF_SHOWCASE
     public static final int RIGHT_OF_SHOWCASE
     public static final int ABOVE_SHOWCASE
     public static final int BELOW_SHOWCASE
-    private boolean hasCustomClickListener
-    private long fadeInMillis
-    private boolean isShowing
-    99:100:protected ShowcaseView(android.content.Context,boolean)
-    74:811:protected ShowcaseView(android.content.Context,android.util.AttributeSet,int,boolean)
-    138:154:private void init()
-    157:157:private boolean hasShot()
-    246:257:public void overrideButtonClick(android.view.View$OnClickListener)
-    316:320:private void clearBitmap()
-    338:344:public void show()
-    347:347:private boolean canUpdateBitmap()
-    351:360:private void fadeInShowcase()
-    382:388:private static void insertShowcaseView(com.github.amlcurran.showcaseview.ShowcaseView,android.view.ViewGroup,int)
-    391:393:private void hideImmediate()
-    410:411:public void hideButton()
-    414:415:public void showButton()
-    730:732:private void setFadeDurations(long,long)
-    735:738:public void forceTextPosition(int)
-    771:771:public boolean isShowing()
-    51:51:static synthetic void access$400(com.github.amlcurran.showcaseview.ShowcaseView)
-    51:51:static synthetic boolean access$502(com.github.amlcurran.showcaseview.ShowcaseView,boolean)
-    51:51:static synthetic com.github.amlcurran.showcaseview.OnShowcaseEventListener access$600(com.github.amlcurran.showcaseview.ShowcaseView)
-    51:51:static synthetic void access$700(com.github.amlcurran.showcaseview.ShowcaseView,android.view.ViewGroup,int)
-    51:51:static synthetic void access$800(com.github.amlcurran.showcaseview.ShowcaseView,com.github.amlcurran.showcaseview.ShowcaseDrawer)
-    51:51:static synthetic void access$900(com.github.amlcurran.showcaseview.ShowcaseView,long)
-    51:51:static synthetic void access$1000(com.github.amlcurran.showcaseview.ShowcaseView,android.text.TextPaint)
+    418:419:public void hideButton()
+    422:423:public void showButton()
+    740:742:private void setFadeDurations(long,long)
+    745:748:public void forceTextPosition(int)
+    781:781:public boolean isShowing()
+    51:51:static synthetic void access$1000(com.github.amlcurran.showcaseview.ShowcaseView,long)
     51:51:static synthetic void access$1100(com.github.amlcurran.showcaseview.ShowcaseView,android.text.TextPaint)
-    51:51:static synthetic void access$1200(com.github.amlcurran.showcaseview.ShowcaseView,android.widget.Button)
-    51:51:static synthetic void access$1300(com.github.amlcurran.showcaseview.ShowcaseView,boolean)
-com.github.amlcurran.showcaseview.ShowcaseView$2:
-    327:331:public void onAnimationEnd()
-com.github.amlcurran.showcaseview.ShowcaseView$3
-com.github.amlcurran.showcaseview.ShowcaseView$4
-com.github.amlcurran.showcaseview.ShowcaseView$Builder
+    51:51:static synthetic void access$1200(com.github.amlcurran.showcaseview.ShowcaseView,android.text.TextPaint)
+    51:51:static synthetic void access$1400(com.github.amlcurran.showcaseview.ShowcaseView,boolean)
+com.github.amlcurran.showcaseview.ShowcaseView$Builder:
+    470:470:public com.github.amlcurran.showcaseview.ShowcaseView$Builder withHoloShowcase()
+    478:478:public com.github.amlcurran.showcaseview.ShowcaseView$Builder withNewStyleShowcase()
+    534:535:public com.github.amlcurran.showcaseview.ShowcaseView$Builder setTarget(com.github.amlcurran.showcaseview.targets.Target)
+    574:576:public com.github.amlcurran.showcaseview.ShowcaseView$Builder hideOnTouchOutside()
+    586:587:public com.github.amlcurran.showcaseview.ShowcaseView$Builder singleShot(long)
+    591:592:public com.github.amlcurran.showcaseview.ShowcaseView$Builder setShowcaseEventListener(com.github.amlcurran.showcaseview.OnShowcaseEventListener)
+    596:598:public com.github.amlcurran.showcaseview.ShowcaseView$Builder setParent(android.view.ViewGroup,int)
+    607:608:public com.github.amlcurran.showcaseview.ShowcaseView$Builder setContentTextPaint(android.text.TextPaint)
+    617:618:public com.github.amlcurran.showcaseview.ShowcaseView$Builder setContentTitlePaint(android.text.TextPaint)
+    646:647:public com.github.amlcurran.showcaseview.ShowcaseView$Builder blockAllTouches()
+    655:657:public com.github.amlcurran.showcaseview.ShowcaseView$Builder useDecorViewAsParent()
 com.github.amlcurran.showcaseview.ShowcaseView$TextPosition
 com.github.amlcurran.showcaseview.ShowcaseViewApi
-com.github.amlcurran.showcaseview.StandardShowcaseDrawer
+com.github.amlcurran.showcaseview.SimpleShowcaseEventListener
 com.github.amlcurran.showcaseview.TextDrawer:
     private static final int INDEX_TEXT_START_X
     private static final int INDEX_TEXT_START_Y
     private static final int INDEX_TEXT_WIDTH
-    45:68:public TextDrawer(android.content.res.Resources,android.content.Context)
-    230:234:public void forceTextPosition(int)
+    245:249:public void forceTextPosition(int)
 com.github.amlcurran.showcaseview.targets.ActionBarReflector
 com.github.amlcurran.showcaseview.targets.ActionBarViewWrapper
 com.github.amlcurran.showcaseview.targets.ActionItemTarget
@@ -3801,13 +3760,15 @@ com.github.amlcurran.showcaseview.targets.ActionViewTarget
 com.github.amlcurran.showcaseview.targets.ActionViewTarget$1
 com.github.amlcurran.showcaseview.targets.ActionViewTarget$Type
 com.github.amlcurran.showcaseview.targets.AppCompatReflector
-com.github.amlcurran.showcaseview.targets.PointTarget
+com.github.amlcurran.showcaseview.targets.PointTarget:
+    28:30:public PointTarget(android.graphics.Point)
 com.github.amlcurran.showcaseview.targets.Reflector
 com.github.amlcurran.showcaseview.targets.Reflector$ActionBarType
 com.github.amlcurran.showcaseview.targets.ReflectorFactory
 com.github.amlcurran.showcaseview.targets.ReflectorFactory$1
 com.github.amlcurran.showcaseview.targets.SherlockReflector
-com.github.amlcurran.showcaseview.targets.ViewTarget
+com.github.amlcurran.showcaseview.targets.ViewTarget:
+    34:36:public ViewTarget(int,android.app.Activity)
 com.google.android.vending.licensing.AESObfuscator:
     private static final java.lang.String UTF8
     private static final java.lang.String KEYGEN_ALGORITHM

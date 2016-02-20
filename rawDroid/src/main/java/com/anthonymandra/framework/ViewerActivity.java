@@ -862,13 +862,13 @@ public abstract class ViewerActivity extends CoreActivity implements
 
         Intent action = new Intent(Intent.ACTION_EDIT);
         action.setDataAndType(media.getUri(), "");
+        action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         // Convert if no editor for raw exists
         if (!intentExists(action))
         {
             action.setDataAndType(media.getSwapUri(), "image/jpeg");
-            action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 
         // Otherwise convert
