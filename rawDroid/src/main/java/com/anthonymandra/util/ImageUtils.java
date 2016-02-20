@@ -196,8 +196,16 @@ public class ImageUtils
             name = FileUtil.swapExtention(name, ext);
         }
 
-        Uri neighbor = DocumentUtil.getNeighborUri(uri, name);
-
+        Uri neighbor;
+        if (FileUtil.isFileScheme(uri))
+        {
+            File n = getAssociatedFile(new File(uri.getPath()), ext);
+            neighbor = Uri.fromFile(n);
+        }
+        else
+        {
+            neighbor = DocumentUtil.getNeighborUri(uri, name);
+        }
 //        UsefulDocumentFile parent = image.getParentFile();
 //        String parentString = parent.getUri().toString();
 //        String associatedString = parentString + "/" + name;

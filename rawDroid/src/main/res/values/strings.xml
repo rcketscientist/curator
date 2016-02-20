@@ -216,16 +216,11 @@
 
     <string name="tutorialConnectTitle">How to Connect Images</string>
     <string name="tutorialConnectText1">There are three main ways to access your images in Rawdroid.</string>
-    <string name="tutorialConnectText2">Insert an SD card directly into your device.  Not all devices have an sd slot, and obviously not all cameras store on SD.</string>
-    <string name="tutorialConnectText3">Alternatively you can connect the camera directly.  Just like on your PC this method is slow.  Due to limitations in Android we cannot write to cameras, so this will import images to your device.\nYour device must have enough storage.  More details on the website.</string>
-    <string name="tutorialConnectText4">Finally you can connect your media card with a card reader and OTG cable.  This is the best way to use Rawdroid.  It is far faster than importing.  A single format card reader is best.\n\ta. Some devices will require root.  Unfortunately my nexus did.  There are more details on this case on the website.</string>
+    <string name="tutorialConnectText2">1. Insert an SD card directly into your device.</string>
+    <string name="tutorialConnectText3">2. You can connect your media card with a card reader and OTG cable.  This is the best way to use Rawdroid, fast and convenient.  A single-format card reader is best.</string>
+    <string name="tutorialConnectText4">3. You may connect the camera directly.  Due to many limitations in Android this is slow and requires a full import of images to your device.\nYour device must have enough storage.  This is not recommended</string>
     <string name="tutorialConnectText5">(Future addition) Eventually I will be adding network support.</string>
 
-    <string name="tutorialFindTitle">How Do I Find My Images</string>
-    <string name="tutorialFindUSBText">You can connect an external reader via a USB OTG cable. \'Find USB\' will attempt to find the mounted media.</string>
-    <string name="tutorialFindImportText">If you import from the camera it should take you to the destination when complete.</string>
-    <string name="tutorialFindPathText">Finally if needed you can also navigate manually much like a file explorer.  Try clicking \'tutorial\'.  That messy path is where the tutorial is temporarily stored.  You can use this to help navigate to your images.  When in doubt start at \'\\mnt\'</string>
-    <string name="tutorialRecentFolderText">If you always use the same location Rawdroid should attempt to automatically open it on startup.</string>
     <string name="tutorialFindImagesText">You can quickly use \'Search\' to find any folders with images on your device.</string>
 
     <string name="tutorialSelectTitle">How to Select Images</string>
