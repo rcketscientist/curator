@@ -209,6 +209,8 @@ public class FileUtil
 
 	public static String swapExtention(String filename, String ext)
 	{
+		if (filename == null)
+			return null;
 		return filename.replaceFirst("[.][^.]+$", "") + "." + ext;
 	}
 

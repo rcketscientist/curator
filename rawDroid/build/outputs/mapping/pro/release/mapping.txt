@@ -23942,9 +23942,9 @@ com.android.gallery3d.data.MediaObject -> com.android.gallery3d.d.j:
     java.lang.String mType -> c
     android.net.Uri mUri -> d
     android.content.Context mContext -> e
-    48:109:void <init>(android.content.Context,android.net.Uri) -> <init>
-    114:114:java.lang.String getName() -> g
-    126:126:android.net.Uri getUri() -> h
+    50:58:void <init>(android.content.Context,android.net.Uri) -> <init>
+    63:63:java.lang.String getName() -> g
+    75:75:android.net.Uri getUri() -> h
 com.android.gallery3d.glrenderer.BasicTexture -> com.android.gallery3d.e.a:
     int mId -> a
     int mState -> b
@@ -26391,8 +26391,7 @@ com.anthonymandra.framework.DocumentUtil -> com.anthonymandra.framework.au:
 com.anthonymandra.framework.FileUtil -> com.anthonymandra.framework.av:
     java.lang.String TAG -> a
     29:29:void <init>() -> <init>
-    35:35:boolean isContentScheme(android.net.Uri) -> a
-    40:40:boolean isFileScheme(android.net.Uri) -> b
+    40:40:boolean isFileScheme(android.net.Uri) -> a
     68:89:boolean isWritable(java.io.File) -> a
     163:167:java.lang.String getCanonicalPathSilently(java.io.File) -> b
     245:251:java.io.InputStream getInputStream(android.content.Context,android.net.Uri) -> a
@@ -26850,27 +26849,34 @@ com.anthonymandra.framework.UsefulDocumentFile -> com.anthonymandra.framework.ca
     267:273:com.anthonymandra.framework.UsefulDocumentFile createDirectoryFile(java.lang.String) -> b
     277:281:com.anthonymandra.framework.UsefulDocumentFile createDirectoryUri(java.lang.String) -> c
     292:294:java.lang.String getName() -> e
-    297:298:java.lang.String getNameFile() -> l
-    301:308:java.lang.String getNameUri() -> m
-    353:355:boolean isDirectory() -> f
-    358:359:boolean isDirectoryFile() -> n
-    362:362:boolean isDirectoryUri() -> o
-    432:434:boolean canRead() -> g
-    437:438:boolean canReadFile() -> p
-    441:441:boolean canReadUri() -> q
-    455:457:boolean canWrite() -> h
-    460:461:boolean canWriteFile() -> r
-    464:464:boolean canWriteUri() -> s
-    478:480:boolean delete() -> i
-    483:485:boolean deleteFile() -> t
+    297:298:java.lang.String getNameFile() -> n
+    301:308:java.lang.String getNameUri() -> o
+    317:319:java.lang.String getType() -> f
+    322:326:java.lang.String getTypeFile() -> p
+    330:330:java.lang.String getTypeUri() -> q
+    333:342:java.lang.String getTypeForName(java.lang.String) -> d
+    353:355:boolean isDirectory() -> g
+    358:359:boolean isDirectoryFile() -> r
+    362:362:boolean isDirectoryUri() -> s
+    414:416:long length() -> h
+    419:420:long lengthFile() -> t
+    423:423:long lengthUri() -> u
+    432:434:boolean canRead() -> i
+    437:438:boolean canReadFile() -> v
+    441:441:boolean canReadUri() -> w
+    455:457:boolean canWrite() -> j
+    460:461:boolean canWriteFile() -> x
+    464:464:boolean canWriteUri() -> y
+    478:480:boolean delete() -> k
+    483:485:boolean deleteFile() -> z
     488:501:boolean deleteContents(java.io.File) -> a
-    504:504:boolean deleteUri() -> u
-    513:515:boolean exists() -> j
-    518:519:boolean existsFile() -> v
-    522:522:boolean existsUri() -> w
-    534:536:com.anthonymandra.framework.UsefulDocumentFile[] listFiles() -> k
-    539:547:com.anthonymandra.framework.UsefulDocumentFile[] listFilesFile() -> x
-    550:558:com.anthonymandra.framework.UsefulDocumentFile[] listFilesUri() -> y
+    504:504:boolean deleteUri() -> A
+    513:515:boolean exists() -> l
+    518:519:boolean existsFile() -> B
+    522:522:boolean existsUri() -> C
+    534:536:com.anthonymandra.framework.UsefulDocumentFile[] listFiles() -> m
+    539:547:com.anthonymandra.framework.UsefulDocumentFile[] listFilesFile() -> D
+    550:558:com.anthonymandra.framework.UsefulDocumentFile[] listFilesUri() -> E
     64:64:void <clinit>() -> <clinit>
 com.anthonymandra.framework.Util -> com.anthonymandra.framework.cb:
     java.lang.String TAG -> a
@@ -28315,12 +28321,14 @@ com.anthonymandra.rawprocessor.TiffDecoder -> com.anthonymandra.rawprocessor.Tif
     23:25:void <clinit>() -> <clinit>
 com.anthonymandra.support.v4.provider.DocumentsContractApi19 -> com.anthonymandra.a.a.a.a:
     40:40:java.lang.String getName(android.content.Context,android.net.Uri) -> a
-    44:44:java.lang.String getRawType(android.content.Context,android.net.Uri) -> g
-    57:57:boolean isDirectory(android.content.Context,android.net.Uri) -> b
-    79:89:boolean canRead(android.content.Context,android.net.Uri) -> c
-    94:122:boolean canWrite(android.content.Context,android.net.Uri) -> d
-    126:126:boolean delete(android.content.Context,android.net.Uri) -> e
-    130:141:boolean exists(android.content.Context,android.net.Uri) -> f
+    44:44:java.lang.String getRawType(android.content.Context,android.net.Uri) -> i
+    48:52:java.lang.String getType(android.content.Context,android.net.Uri) -> b
+    57:57:boolean isDirectory(android.content.Context,android.net.Uri) -> c
+    74:74:long length(android.content.Context,android.net.Uri) -> d
+    79:89:boolean canRead(android.content.Context,android.net.Uri) -> e
+    94:122:boolean canWrite(android.content.Context,android.net.Uri) -> f
+    126:126:boolean delete(android.content.Context,android.net.Uri) -> g
+    130:141:boolean exists(android.content.Context,android.net.Uri) -> h
     147:161:java.lang.String queryForString(android.content.Context,android.net.Uri,java.lang.String,java.lang.String) -> a
     167:167:int queryForInt(android.content.Context,android.net.Uri,java.lang.String,int) -> a
     172:186:long queryForLong(android.content.Context,android.net.Uri,java.lang.String,long) -> a
@@ -28341,7 +28349,7 @@ com.anthonymandra.util.FileUtil -> com.anthonymandra.b.a:
     167:175:java.io.File getDiskCacheDir(android.content.Context,java.lang.String) -> a
     186:190:boolean isExternalStorageRemovable() -> a
     202:207:long getUsableSpace(java.io.File) -> a
-    212:212:java.lang.String swapExtention(java.lang.String,java.lang.String) -> a
+    212:214:java.lang.String swapExtention(java.lang.String,java.lang.String) -> a
     31:31:void <clinit>() -> <clinit>
 com.anthonymandra.util.ImageConstants -> com.anthonymandra.b.b:
     java.lang.String[] RAW_EXT -> a

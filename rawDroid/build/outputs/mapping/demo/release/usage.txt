@@ -872,10 +872,10 @@ com.android.gallery3d.data.MediaItem:
     78:78:public java.lang.String getFilePath()
 com.android.gallery3d.data.MediaObject:
     private static final java.lang.String TAG
-    120:120:public long getFileSize()
-    132:132:public java.lang.String getMimeType()
-    136:136:public void rotate(int)
-    140:142:public android.net.Uri getContentUri()
+    69:69:public long getFileSize()
+    81:81:public java.lang.String getMimeType()
+    85:85:public void rotate(int)
+    89:91:public android.net.Uri getContentUri()
 com.android.gallery3d.glrenderer.BasicTexture:
     private static final java.lang.String TAG
     protected static final int UNSPECIFIED
@@ -1688,6 +1688,7 @@ com.anthonymandra.framework.DocumentUtil:
 com.anthonymandra.framework.FileHandler
 com.anthonymandra.framework.FileHandlerFactory
 com.anthonymandra.framework.FileUtil:
+    35:35:public static boolean isContentScheme(android.net.Uri)
     56:57:public static android.net.Uri getChildUri(android.net.Uri,java.lang.String)
     101:120:private static java.lang.String[] getExtSdCardPaths(android.content.Context)
     133:144:public static java.lang.String getExtSdCardFolder(android.content.Context,java.io.File)
@@ -1857,19 +1858,12 @@ com.anthonymandra.framework.ThreadedPriorityIntentService:
     186:187:public void setIntentRedelivery(boolean)
 com.anthonymandra.framework.UsefulDocumentFile:
     188:193:public com.anthonymandra.framework.UsefulDocumentFile findFile(java.lang.String)
-    317:319:public java.lang.String getType()
-    322:326:private java.lang.String getTypeFile()
-    330:330:private java.lang.String getTypeUri()
-    333:342:private static java.lang.String getTypeForName(java.lang.String)
     372:374:public boolean isFile()
     377:378:private boolean isFileFile()
     381:381:private boolean isFileUri()
     393:395:public long lastModified()
     398:399:private long lastModifiedFile()
     402:402:private long lastModifiedUri()
-    414:416:public long length()
-    419:420:private long lengthFile()
-    423:423:private long lengthUri()
     580:582:public boolean renameTo(java.lang.String)
     585:591:private boolean renameToFile(java.lang.String)
     595:603:private boolean renameToUri(java.lang.String)
@@ -2084,10 +2078,8 @@ com.anthonymandra.support.v4.provider.DocumentsContractApi19:
     private static final java.lang.String TAG
     32:32:public DocumentsContractApi19()
     36:36:public static boolean isDocumentUri(android.content.Context,android.net.Uri)
-    48:52:public static java.lang.String getType(android.content.Context,android.net.Uri)
     61:65:public static boolean isFile(android.content.Context,android.net.Uri)
     70:70:public static long lastModified(android.content.Context,android.net.Uri)
-    74:74:public static long length(android.content.Context,android.net.Uri)
 com.anthonymandra.support.v4.provider.DocumentsContractApi21:
     private static final java.lang.String TAG
     31:31:public DocumentsContractApi21()
@@ -2097,12 +2089,12 @@ com.anthonymandra.util.FileUtil:
     64:68:public static java.lang.String getCanonicalPathSilently(java.io.File)
     77:77:public static boolean isGooglePhotosUri(android.net.Uri)
     93:110:public static java.lang.String getDataColumn(android.content.Context,android.net.Uri,java.lang.String,java.lang.String[])
-    217:234:public static void write(java.io.File,java.io.InputStream)
-    238:251:public static java.lang.String getRealPathFromURI(android.content.Context,android.net.Uri)
-    260:272:public static boolean isSymlink(java.io.File)
-    278:291:public static java.io.File[] getStorageRoots()
-    296:324:public static java.util.List getStoragePoints(java.io.File)
-    329:338:public static java.util.List getStorageRoots(java.lang.String[])
+    219:236:public static void write(java.io.File,java.io.InputStream)
+    240:253:public static java.lang.String getRealPathFromURI(android.content.Context,android.net.Uri)
+    262:274:public static boolean isSymlink(java.io.File)
+    280:293:public static java.io.File[] getStorageRoots()
+    298:326:public static java.util.List getStoragePoints(java.io.File)
+    331:340:public static java.util.List getStorageRoots(java.lang.String[])
 com.anthonymandra.util.FileUtil$1
 com.anthonymandra.util.ImageConstants:
     public static final java.lang.String JPEG_MIME

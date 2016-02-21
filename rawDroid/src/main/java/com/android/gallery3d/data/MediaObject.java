@@ -20,6 +20,7 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.UnsupportedSchemeException;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.OpenableColumns;
@@ -29,6 +30,7 @@ import android.webkit.MimeTypeMap;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.RawObject;
+import com.anthonymandra.framework.UsefulDocumentFile;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
@@ -38,10 +40,10 @@ public abstract class MediaObject implements RawObject {
     @SuppressWarnings("unused")
     private static final String TAG = "MediaObject";
 
-    protected final String mName;
-    protected final long mSize;
-    protected final String mType;
-    protected final Uri mUri;
+    protected String mName;
+    protected long mSize;
+    protected String mType;
+    protected Uri mUri;
     protected Context mContext;
 
     public MediaObject(Context c, Uri uri)
@@ -49,63 +51,10 @@ public abstract class MediaObject implements RawObject {
         mUri = uri;
         mContext = c;
 
-        // TODO: Might want to hang onto the contentresolver
-        if (FileUtil.isContentScheme(uri))
-        {
-            String name = null;
-            String type = null;
-            long size = 0;
-
-            ContentProviderClient cpc = c.getContentResolver().acquireContentProviderClient(uri);
-            Cursor cursor = null;
-            try
-            {
-                if (cpc != null)
-                {
-                    type = cpc.getType(uri);
-                    cursor = cpc.query(uri, null, null, null, null);
-                    if (cursor != null && cursor.moveToFirst())
-                    {
-                        int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                        int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                        name = cursor.getString(nameIndex);
-                        size = cursor.getLong(sizeIndex);
-                    }
-                }
-            }
-            catch (RemoteException e)
-            {
-                Crashlytics.logException(new Exception("Failed to acquire ContentProvider for: " +
-                    uri.toString(), e));
-            }
-            catch (IllegalArgumentException e)
-            {
-                /*
-                Ex: Failed to determine if 0000-0000:DCIM/100EOS5D/hillary2.jpg is child of 0000-0000:: java.io.FileNotFoundException: No root for 0000-0000
-                This occurred when I disconnected the usb drive and the app tried to access the file.
-                TODO: Need a way to manage transience of files.  Probably automatically removed if a file isn't seen for a week.
-                 */
-                Crashlytics.logException(new Exception("Failed to acquire ContentProvider for: " +
-                        uri.toString(), e));
-            }
-            finally
-            {
-                if (cpc != null)
-                    cpc.release();
-                Utils.closeSilently(cursor);
-                mName = name;
-                mType = type;
-                mSize = size;
-            }
-        }
-        else    // Should be a file uri
-        {
-            File f = new File(uri.getPath());
-            mName = f.getName();
-            mSize = f.length();
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString());
-            mType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase());
-        }
+        UsefulDocumentFile doc = UsefulDocumentFile.fromUri(c, uri);
+        mType = doc.getType();
+        mName = doc.getName();
+        mSize = doc.length();
     }
 
     @Override
