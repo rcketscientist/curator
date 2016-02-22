@@ -26531,20 +26531,20 @@ com.anthonymandra.framework.LocalImage -> com.anthonymandra.framework.bi:
     32:33:void <init>(android.content.Context,android.net.Uri) -> <init>
     36:37:void <init>(android.content.Context,android.database.Cursor) -> <init>
     64:75:byte[] getImageBytes() -> n
-    82:142:byte[] getThumb() -> i
-    148:148:android.net.Uri getSwapUri() -> j
-    153:153:com.android.gallery3d.util.ThreadPool$Job requestImage(com.android.gallery3d.app.GalleryApp,int) -> a
-    189:189:com.android.gallery3d.util.ThreadPool$Job requestLargeImage() -> a
+    82:144:byte[] getThumb() -> i
+    150:150:android.net.Uri getSwapUri() -> j
+    155:155:com.android.gallery3d.util.ThreadPool$Job requestImage(com.android.gallery3d.app.GalleryApp,int) -> a
+    191:191:com.android.gallery3d.util.ThreadPool$Job requestLargeImage() -> a
     29:29:void <clinit>() -> <clinit>
 com.anthonymandra.framework.LocalImage$LocalImageRequest -> com.anthonymandra.framework.bj:
     com.anthonymandra.framework.LocalImage mImage -> b
-    161:163:void <init>(com.android.gallery3d.app.GalleryApp,android.net.Uri,int,com.anthonymandra.framework.LocalImage) -> <init>
-    167:182:android.graphics.Bitmap onDecodeOriginal(com.android.gallery3d.util.ThreadPool$JobContext,int) -> a
+    163:165:void <init>(com.android.gallery3d.app.GalleryApp,android.net.Uri,int,com.anthonymandra.framework.LocalImage) -> <init>
+    169:184:android.graphics.Bitmap onDecodeOriginal(com.android.gallery3d.util.ThreadPool$JobContext,int) -> a
 com.anthonymandra.framework.LocalImage$LocalLargeImageRequest -> com.anthonymandra.framework.bk:
     com.anthonymandra.framework.LocalImage mImage -> a
-    196:198:void <init>(com.anthonymandra.framework.LocalImage) -> <init>
-    201:204:android.graphics.BitmapRegionDecoder run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
-    192:192:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> b
+    198:200:void <init>(com.anthonymandra.framework.LocalImage) -> <init>
+    203:206:android.graphics.BitmapRegionDecoder run(com.android.gallery3d.util.ThreadPool$JobContext) -> a
+    194:194:java.lang.Object run(com.android.gallery3d.util.ThreadPool$JobContext) -> b
 com.anthonymandra.framework.MetaMedia -> com.anthonymandra.framework.bl:
     java.lang.String TAG -> u
     boolean metaLoaded -> f
@@ -26953,7 +26953,7 @@ com.anthonymandra.framework.ViewerActivity -> com.anthonymandra.framework.cc:
     java.util.List mMediaItems -> an
     boolean mRequiresHistogramUpdate -> ao
     com.anthonymandra.framework.ViewerActivity$HistogramTask mHistogramTask -> ap
-    51:1006:void <init>() -> <init>
+    51:1010:void <init>() -> <init>
     com.android.gallery3d.data.MediaItem getCurrentItem() -> y
     android.graphics.Bitmap getCurrentBitmap() -> z
     void goToPrevPicture() -> A
@@ -26981,26 +26981,26 @@ com.anthonymandra.framework.ViewerActivity -> com.anthonymandra.framework.cc:
     522:550:void showPanels() -> d
     554:582:void hidePanels() -> e
     586:592:void togglePanels() -> K
-    596:598:void updateMetaData() -> L
-    602:604:void updateImageDetails() -> M
-    608:617:void updateHistogram(android.graphics.Bitmap) -> a
-    621:665:void populateMeta(android.content.ContentValues) -> a
-    669:681:void toggleEditXmpFragment() -> f
-    793:795:void saveImage() -> N
-    799:801:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
-    806:814:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
-    819:821:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
-    828:855:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    861:877:void editImage() -> g
-    881:881:boolean intentExists(android.content.Intent) -> a
-    887:904:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    908:911:void handleSaveImage(android.net.Uri) -> h
-    917:925:void setWallpaper() -> P
-    929:930:void tagImage() -> Q
-    948:978:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
-    985:988:void setImageFocus() -> O
-    993:1004:void onScaleChanged(float) -> a
-    1026:1029:void setLicenseState(com.anthonymandra.framework.License$LicenseState) -> a
+    596:602:void updateMetaData() -> L
+    606:608:void updateImageDetails() -> M
+    612:621:void updateHistogram(android.graphics.Bitmap) -> a
+    625:669:void populateMeta(android.content.ContentValues) -> a
+    673:685:void toggleEditXmpFragment() -> f
+    797:799:void saveImage() -> N
+    803:805:void onConfigurationChanged(android.content.res.Configuration) -> onConfigurationChanged
+    810:818:boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
+    823:825:boolean onPrepareOptionsMenu(android.view.Menu) -> onPrepareOptionsMenu
+    832:859:boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
+    865:881:void editImage() -> g
+    885:885:boolean intentExists(android.content.Intent) -> a
+    891:908:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    912:915:void handleSaveImage(android.net.Uri) -> h
+    921:929:void setWallpaper() -> P
+    933:934:void tagImage() -> Q
+    952:982:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    989:992:void setImageFocus() -> O
+    997:1008:void onScaleChanged(float) -> a
+    1030:1033:void setLicenseState(com.anthonymandra.framework.License$LicenseState) -> a
     51:51:void access$000(com.anthonymandra.framework.ViewerActivity) -> a
     56:64:void <clinit>() -> <clinit>
 com.anthonymandra.framework.ViewerActivity$1 -> com.anthonymandra.framework.cd:
@@ -27024,33 +27024,33 @@ com.anthonymandra.framework.ViewerActivity$4 -> com.anthonymandra.framework.cg:
 com.anthonymandra.framework.ViewerActivity$5 -> com.anthonymandra.framework.ch:
     java.lang.String val$zoom -> a
     com.anthonymandra.framework.ViewerActivity this$0 -> b
-    997:997:void <init>(com.anthonymandra.framework.ViewerActivity,java.lang.String) -> <init>
-    1001:1002:void run() -> run
+    1001:1001:void <init>(com.anthonymandra.framework.ViewerActivity,java.lang.String) -> <init>
+    1005:1006:void run() -> run
 com.anthonymandra.framework.ViewerActivity$AutoHideMetaTask -> com.anthonymandra.framework.ci:
     com.anthonymandra.framework.ViewerActivity this$0 -> a
-    730:730:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
-    735:736:void run() -> run
+    734:734:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
+    739:740:void run() -> run
 com.anthonymandra.framework.ViewerActivity$HistogramTask -> com.anthonymandra.framework.cj:
     com.anthonymandra.framework.ViewerActivity this$0 -> d
-    739:739:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
-    743:745:void onPreExecute() -> a
-    751:779:com.anthonymandra.framework.Histogram doInBackground(android.graphics.Bitmap[]) -> a
-    785:787:void onPostExecute(com.anthonymandra.framework.Histogram) -> a
-    739:739:void onPostExecute(java.lang.Object) -> a
-    739:739:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    743:743:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
+    747:749:void onPreExecute() -> a
+    755:783:com.anthonymandra.framework.Histogram doInBackground(android.graphics.Bitmap[]) -> a
+    789:791:void onPostExecute(com.anthonymandra.framework.Histogram) -> a
+    743:743:void onPostExecute(java.lang.Object) -> a
+    743:743:java.lang.Object doInBackground(java.lang.Object[]) -> a
 com.anthonymandra.framework.ViewerActivity$LoadMetadataTask -> com.anthonymandra.framework.ck:
     com.anthonymandra.framework.ViewerActivity this$0 -> d
-    683:683:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
-    688:719:android.content.ContentValues doInBackground(android.net.Uri[]) -> a
-    725:727:void onPostExecute(android.content.ContentValues) -> a
-    683:683:void onPostExecute(java.lang.Object) -> a
-    683:683:java.lang.Object doInBackground(java.lang.Object[]) -> a
+    687:687:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
+    692:723:android.content.ContentValues doInBackground(android.net.Uri[]) -> a
+    729:731:void onPostExecute(android.content.ContentValues) -> a
+    687:687:void onPostExecute(java.lang.Object) -> a
+    687:687:java.lang.Object doInBackground(java.lang.Object[]) -> a
 com.anthonymandra.framework.ViewerActivity$LoadMetadataTask$1 -> com.anthonymandra.framework.cl:
     android.content.ContentValues val$cv -> a
     android.net.Uri val$uri -> b
     com.anthonymandra.framework.ViewerActivity$LoadMetadataTask this$1 -> c
-    707:707:void <init>(com.anthonymandra.framework.ViewerActivity$LoadMetadataTask,android.content.ContentValues,android.net.Uri) -> <init>
-    711:715:void run() -> run
+    711:711:void <init>(com.anthonymandra.framework.ViewerActivity$LoadMetadataTask,android.content.ContentValues,android.net.Uri) -> <init>
+    715:719:void run() -> run
 com.anthonymandra.framework.ViewerActivity$NextImageClickListener -> com.anthonymandra.framework.cm:
     com.anthonymandra.framework.ViewerActivity this$0 -> a
     511:511:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
@@ -27061,8 +27061,8 @@ com.anthonymandra.framework.ViewerActivity$PreviousImageClickListener -> com.ant
     507:508:void onClick(android.view.View) -> onClick
 com.anthonymandra.framework.ViewerActivity$ViewerLicenseHandler -> com.anthonymandra.framework.co:
     java.lang.ref.WeakReference mViewer -> a
-    1012:1014:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
-    1018:1021:void handleMessage(android.os.Message) -> handleMessage
+    1016:1018:void <init>(com.anthonymandra.framework.ViewerActivity) -> <init>
+    1022:1025:void handleMessage(android.os.Message) -> handleMessage
 com.anthonymandra.framework.ViewlessCursorAdapter -> com.anthonymandra.framework.cp:
     android.database.DataSetObservable mDataSetObservable -> h
     boolean mDataValid -> a
@@ -28362,86 +28362,86 @@ com.anthonymandra.util.ImageUtils -> com.anthonymandra.b.c:
     java.lang.String TAG -> b
     java.text.SimpleDateFormat mLibrawFormatter -> c
     java.lang.String strSeparator -> a
-    55:830:void <init>() -> <init>
+    55:827:void <init>() -> <init>
     62:63:com.drew.metadata.Metadata readMetadata(android.content.Context,android.net.Uri) -> a
-    74:93:com.drew.metadata.Metadata readMeta(android.content.Context,android.net.Uri) -> k
-    114:135:com.drew.metadata.Metadata readXmp(android.content.Context,android.net.Uri,com.drew.metadata.Metadata) -> a
-    145:150:android.net.Uri[] getAssociatedFiles(android.content.Context,android.net.Uri) -> b
-    153:153:boolean hasXmpFile(android.content.Context,android.net.Uri) -> c
-    156:156:boolean hasJpgFile(android.content.Context,android.net.Uri) -> d
-    167:167:com.anthonymandra.framework.UsefulDocumentFile getXmpFile(android.content.Context,android.net.Uri) -> e
-    172:172:com.anthonymandra.framework.UsefulDocumentFile getJpgFile(android.content.Context,android.net.Uri) -> f
-    192:213:com.anthonymandra.framework.UsefulDocumentFile getAssociatedFile(android.content.Context,android.net.Uri,java.lang.String) -> a
-    223:225:java.io.File getAssociatedFile(java.io.File,java.lang.String) -> a
-    241:242:android.content.ContentValues getContentValues(android.content.Context,android.net.Uri) -> g
-    260:260:android.database.Cursor getMetaCursor(android.content.Context,android.net.Uri) -> h
-    269:269:java.lang.String getWhere() -> a
-    274:281:boolean isProcessed(android.content.Context,android.net.Uri) -> i
-    293:316:void cleanDatabase(android.content.Context) -> a
-    368:401:android.content.ContentValues getContentValues(android.net.Uri,com.drew.metadata.Metadata,int) -> a
-    406:416:java.lang.String convertArrayToString(java.lang.String[]) -> a
-    419:422:java.lang.String[] convertStringToArray(java.lang.String) -> a
-    431:434:java.lang.String getDescription(com.drew.metadata.Metadata,java.lang.Class,int) -> a
-    439:442:java.lang.String[] getStringArray(com.drew.metadata.Metadata,java.lang.Class,int) -> b
-    447:458:int getInt(com.drew.metadata.Metadata,java.lang.Class,int) -> c
-    463:474:java.lang.Double getDouble(com.drew.metadata.Metadata,java.lang.Class,int) -> d
-    479:482:java.lang.String getExifIFD0Description(com.drew.metadata.Metadata,int) -> a
-    487:487:java.lang.String getAperture(com.drew.metadata.Metadata) -> a
-    492:492:java.lang.String getExposure(com.drew.metadata.Metadata) -> b
-    497:497:java.lang.String getImageHeight(com.drew.metadata.Metadata) -> c
-    502:502:java.lang.String getImageWidth(com.drew.metadata.Metadata) -> d
-    507:507:java.lang.String getFocalLength(com.drew.metadata.Metadata) -> e
-    512:512:java.lang.String getFlash(com.drew.metadata.Metadata) -> f
-    522:530:java.lang.String getWhiteBalance(com.drew.metadata.Metadata) -> g
-    535:535:java.lang.String getExposureProgram(com.drew.metadata.Metadata) -> h
-    540:540:java.lang.String getExposureMode(com.drew.metadata.Metadata) -> i
-    550:554:java.lang.String getLensModel(com.drew.metadata.Metadata) -> j
-    559:563:java.lang.String getDriveMode(com.drew.metadata.Metadata) -> k
-    568:568:java.lang.String getIso(com.drew.metadata.Metadata) -> l
-    586:586:java.lang.String getDateTime(com.drew.metadata.Metadata) -> m
-    596:596:java.lang.String getModel(com.drew.metadata.Metadata) -> n
-    601:601:int getOrientation(com.drew.metadata.Metadata) -> o
-    606:623:int getRotation(int) -> a
-    629:629:java.lang.String getAltitude(com.drew.metadata.Metadata) -> p
-    634:634:java.lang.String getLatitude(com.drew.metadata.Metadata) -> q
-    639:639:java.lang.String getLongitude(com.drew.metadata.Metadata) -> r
-    644:644:java.lang.Double getRating(com.drew.metadata.Metadata) -> s
-    649:651:java.lang.String getLabel(com.drew.metadata.Metadata) -> t
-    656:656:java.lang.String[] getSubject(com.drew.metadata.Metadata) -> u
-    661:663:void checkXmpDirectory(com.drew.metadata.Metadata) -> v
-    667:668:void updateRating(com.drew.metadata.Metadata,java.lang.Integer) -> a
-    677:678:void updateLabel(com.drew.metadata.Metadata,java.lang.String) -> a
-    682:683:void updateSubject(com.drew.metadata.Metadata,java.lang.String[]) -> a
-    687:699:void updateXmpString(com.drew.metadata.Metadata,int,java.lang.String) -> a
-    703:715:void updateXmpStringArray(com.drew.metadata.Metadata,int,java.lang.String[]) -> a
-    719:731:void updateXmpDouble(com.drew.metadata.Metadata,int,java.lang.Double) -> a
-    757:762:boolean isAndroidImage(java.lang.String) -> b
-    767:767:boolean isTiffMime(java.lang.String) -> c
-    772:799:boolean importKeywords(android.content.Context,android.net.Uri) -> j
-    812:815:int getImageType(android.net.Uri) -> a
-    841:841:boolean isImage(java.lang.String) -> d
-    859:859:boolean isRaw(java.io.File) -> a
-    864:867:boolean isRaw(android.net.Uri) -> b
-    872:872:boolean isRaw(java.lang.String) -> e
-    877:877:boolean isJpeg(java.io.File) -> b
-    890:890:boolean isJpeg(java.lang.String) -> f
-    895:895:boolean isNative(java.lang.String) -> g
-    905:908:boolean isNative(android.net.Uri) -> c
-    913:913:boolean isTiffImage(java.lang.String) -> h
-    923:926:boolean isTiffImage(android.net.Uri) -> d
-    931:936:boolean endsWith(java.lang.String[],java.lang.String) -> a
-    950:981:int getExactSampleSize(android.graphics.BitmapFactory$Options,int,int) -> a
-    994:1003:int getLargeSampleSize(android.graphics.BitmapFactory$Options,int,int) -> b
-    1008:1014:android.graphics.Bitmap createBitmapLarge(byte[],int,int,boolean) -> a
-    1089:1096:android.graphics.Bitmap createBitmapToSize(byte[],int,int) -> a
-    1108:1113:int getBitmapSize(android.graphics.Bitmap) -> a
-    1197:1208:android.graphics.Bitmap getDemoWatermark(android.content.Context,int) -> a
-    1213:1216:byte[] getBitmapBytes(android.graphics.Bitmap) -> b
-    1323:1342:android.graphics.Bitmap getWatermarkText(java.lang.String,int,int,java.lang.String) -> a
-    57:404:void <clinit>() -> <clinit>
+    74:90:com.drew.metadata.Metadata readMeta(android.content.Context,android.net.Uri) -> k
+    111:132:com.drew.metadata.Metadata readXmp(android.content.Context,android.net.Uri,com.drew.metadata.Metadata) -> a
+    142:147:android.net.Uri[] getAssociatedFiles(android.content.Context,android.net.Uri) -> b
+    150:150:boolean hasXmpFile(android.content.Context,android.net.Uri) -> c
+    153:153:boolean hasJpgFile(android.content.Context,android.net.Uri) -> d
+    164:164:com.anthonymandra.framework.UsefulDocumentFile getXmpFile(android.content.Context,android.net.Uri) -> e
+    169:169:com.anthonymandra.framework.UsefulDocumentFile getJpgFile(android.content.Context,android.net.Uri) -> f
+    189:210:com.anthonymandra.framework.UsefulDocumentFile getAssociatedFile(android.content.Context,android.net.Uri,java.lang.String) -> a
+    220:222:java.io.File getAssociatedFile(java.io.File,java.lang.String) -> a
+    238:239:android.content.ContentValues getContentValues(android.content.Context,android.net.Uri) -> g
+    257:257:android.database.Cursor getMetaCursor(android.content.Context,android.net.Uri) -> h
+    266:266:java.lang.String getWhere() -> a
+    271:278:boolean isProcessed(android.content.Context,android.net.Uri) -> i
+    290:313:void cleanDatabase(android.content.Context) -> a
+    365:398:android.content.ContentValues getContentValues(android.net.Uri,com.drew.metadata.Metadata,int) -> a
+    403:413:java.lang.String convertArrayToString(java.lang.String[]) -> a
+    416:419:java.lang.String[] convertStringToArray(java.lang.String) -> a
+    428:431:java.lang.String getDescription(com.drew.metadata.Metadata,java.lang.Class,int) -> a
+    436:439:java.lang.String[] getStringArray(com.drew.metadata.Metadata,java.lang.Class,int) -> b
+    444:455:int getInt(com.drew.metadata.Metadata,java.lang.Class,int) -> c
+    460:471:java.lang.Double getDouble(com.drew.metadata.Metadata,java.lang.Class,int) -> d
+    476:479:java.lang.String getExifIFD0Description(com.drew.metadata.Metadata,int) -> a
+    484:484:java.lang.String getAperture(com.drew.metadata.Metadata) -> a
+    489:489:java.lang.String getExposure(com.drew.metadata.Metadata) -> b
+    494:494:java.lang.String getImageHeight(com.drew.metadata.Metadata) -> c
+    499:499:java.lang.String getImageWidth(com.drew.metadata.Metadata) -> d
+    504:504:java.lang.String getFocalLength(com.drew.metadata.Metadata) -> e
+    509:509:java.lang.String getFlash(com.drew.metadata.Metadata) -> f
+    519:527:java.lang.String getWhiteBalance(com.drew.metadata.Metadata) -> g
+    532:532:java.lang.String getExposureProgram(com.drew.metadata.Metadata) -> h
+    537:537:java.lang.String getExposureMode(com.drew.metadata.Metadata) -> i
+    547:551:java.lang.String getLensModel(com.drew.metadata.Metadata) -> j
+    556:560:java.lang.String getDriveMode(com.drew.metadata.Metadata) -> k
+    565:565:java.lang.String getIso(com.drew.metadata.Metadata) -> l
+    583:583:java.lang.String getDateTime(com.drew.metadata.Metadata) -> m
+    593:593:java.lang.String getModel(com.drew.metadata.Metadata) -> n
+    598:598:int getOrientation(com.drew.metadata.Metadata) -> o
+    603:620:int getRotation(int) -> a
+    626:626:java.lang.String getAltitude(com.drew.metadata.Metadata) -> p
+    631:631:java.lang.String getLatitude(com.drew.metadata.Metadata) -> q
+    636:636:java.lang.String getLongitude(com.drew.metadata.Metadata) -> r
+    641:641:java.lang.Double getRating(com.drew.metadata.Metadata) -> s
+    646:648:java.lang.String getLabel(com.drew.metadata.Metadata) -> t
+    653:653:java.lang.String[] getSubject(com.drew.metadata.Metadata) -> u
+    658:660:void checkXmpDirectory(com.drew.metadata.Metadata) -> v
+    664:665:void updateRating(com.drew.metadata.Metadata,java.lang.Integer) -> a
+    674:675:void updateLabel(com.drew.metadata.Metadata,java.lang.String) -> a
+    679:680:void updateSubject(com.drew.metadata.Metadata,java.lang.String[]) -> a
+    684:696:void updateXmpString(com.drew.metadata.Metadata,int,java.lang.String) -> a
+    700:712:void updateXmpStringArray(com.drew.metadata.Metadata,int,java.lang.String[]) -> a
+    716:728:void updateXmpDouble(com.drew.metadata.Metadata,int,java.lang.Double) -> a
+    754:759:boolean isAndroidImage(java.lang.String) -> b
+    764:764:boolean isTiffMime(java.lang.String) -> c
+    769:796:boolean importKeywords(android.content.Context,android.net.Uri) -> j
+    809:812:int getImageType(android.net.Uri) -> a
+    838:838:boolean isImage(java.lang.String) -> d
+    856:856:boolean isRaw(java.io.File) -> a
+    861:864:boolean isRaw(android.net.Uri) -> b
+    869:869:boolean isRaw(java.lang.String) -> e
+    874:874:boolean isJpeg(java.io.File) -> b
+    887:887:boolean isJpeg(java.lang.String) -> f
+    892:892:boolean isNative(java.lang.String) -> g
+    902:905:boolean isNative(android.net.Uri) -> c
+    910:910:boolean isTiffImage(java.lang.String) -> h
+    920:923:boolean isTiffImage(android.net.Uri) -> d
+    928:933:boolean endsWith(java.lang.String[],java.lang.String) -> a
+    947:978:int getExactSampleSize(android.graphics.BitmapFactory$Options,int,int) -> a
+    991:1000:int getLargeSampleSize(android.graphics.BitmapFactory$Options,int,int) -> b
+    1005:1011:android.graphics.Bitmap createBitmapLarge(byte[],int,int,boolean) -> a
+    1086:1093:android.graphics.Bitmap createBitmapToSize(byte[],int,int) -> a
+    1105:1110:int getBitmapSize(android.graphics.Bitmap) -> a
+    1194:1205:android.graphics.Bitmap getDemoWatermark(android.content.Context,int) -> a
+    1210:1213:byte[] getBitmapBytes(android.graphics.Bitmap) -> b
+    1320:1339:android.graphics.Bitmap getWatermarkText(java.lang.String,int,int,java.lang.String) -> a
+    57:401:void <clinit>() -> <clinit>
 com.anthonymandra.util.ImageUtils$ImageFilter -> com.anthonymandra.b.d:
-    830:830:void <init>() -> <init>
-    835:835:boolean accept(java.io.File) -> accept
+    827:827:void <init>() -> <init>
+    832:832:boolean accept(java.io.File) -> accept
 com.anthonymandra.util.Util -> com.anthonymandra.b.e:
     java.lang.String TAG -> a
     47:47:void <init>() -> <init>

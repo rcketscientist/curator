@@ -593,8 +593,12 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected void updateMetaData()
     {
+        MediaItem image = getCurrentItem();
+        if (image == null)
+            return;
+
         LoadMetadataTask task = new LoadMetadataTask();
-        task.execute(getCurrentItem().getUri());
+        task.execute(image.getUri());
     }
 
     protected void updateImageDetails()

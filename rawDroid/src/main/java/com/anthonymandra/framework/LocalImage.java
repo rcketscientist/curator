@@ -82,6 +82,8 @@ public class LocalImage extends MetaMedia {
 		if (ImageUtils.isAndroidImage(mType))
 		{
 			byte[] imageBytes = getImageBytes();
+			if (imageBytes == null)
+				return null;
 
 			BitmapFactory.Options o = new BitmapFactory.Options();
 			o.inJustDecodeBounds = true;

@@ -78,13 +78,10 @@ public class ImageUtils
             image = c.getContentResolver().openInputStream(uri);
             meta = ImageMetadataReader.readMetadata(image);  //TODO: possibly replace with exiv, too much overhead
         }
-        catch (ImageProcessingException e)
+        catch (Exception e)
         {
-            Log.w(TAG, "Failed to process file for meta data.", e);
-        }
-        catch (IOException e)
-        {
-            Log.w(TAG, "Failed to open file for meta data.", e);
+            Crashlytics.setString("readMetaUri", uri.toString());
+            Crashlytics.logException(e);
         }
         finally
         {
