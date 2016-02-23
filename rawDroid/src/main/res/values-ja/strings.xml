@@ -12,7 +12,7 @@
 <string name="selectAll">全て選択</string>
 <string name="help">ヘルプ</string>
 <string name="delete">削除</string>
-<string name="view_tag">タグ</string>
+<string name="viewMeta">タグ</string>
 <string name="rename">リネーム</string>
 <string name="format_prompt">フォーマット</string>
 <string name="save">保存</string>
@@ -128,7 +128,7 @@
 <string name="recycleBin">ゴミ箱</string>
 <string name="restoreFile">ファイル復元</string>
 <string name="emptyRecycleBin">ゴミ箱を空にする</string>
-<string name="exportThumbnails">サムネイル出力</string>
+<string name="saveJpg">サムネイル出力</string>
 <string name="shareWith">共有</string>
 <string name="ratingRequest">Rawdroidをお楽しみいただいているなら評価にご協力をお願いします。
 \n

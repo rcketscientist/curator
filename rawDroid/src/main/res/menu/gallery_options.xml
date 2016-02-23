@@ -14,6 +14,12 @@
         android:visible="false"
         android:title="Request Write Permission"/>
     <item
+        android:id="@+id/toggleXmp"
+        android:orderInCategory="11"
+        android:icon="@drawable/ic_action_labels"
+        app:showAsAction="always"
+        android:title="@string/viewMeta"/>
+    <item
         android:id="@+id/gallery_recycle"
         android:icon="@drawable/recycle"
         android:orderInCategory="12"

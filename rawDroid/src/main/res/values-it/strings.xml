@@ -12,7 +12,7 @@
 <string name="selectAll">Seleziona tutti</string>
 <string name="help">Aiuto</string>
 <string name="delete">Cancella</string>
-<string name="view_tag">Vista tag etichetta</string>
+<string name="viewMeta">Vista tag etichetta</string>
 <string name="rename">Rinominare</string>
 <string name="format_prompt">Formato</string>
 <string name="save">Salva </string>
@@ -111,7 +111,7 @@
 <string name="recycleBin">Cestino</string>
 <string name="restoreFile">Ripristina File</string>
 <string name="emptyRecycleBin">Svuota Cestino</string>
-<string name="exportThumbnails">Miniature di esportazione</string>
+<string name="saveJpg">Miniature di esportazione</string>
 <string name="shareWith">Condividi con </string>
 <string name="ratingRequest">Se vi piace  RawDroid si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
 <string name="importingImages">Importazione di immagini ...</string>

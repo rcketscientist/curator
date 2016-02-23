@@ -14,7 +14,7 @@
     <string name="selectAll">Select All</string>
     <string name="help">Help</string>
     <string name="delete">Delete</string>
-    <string name="view_tag">Tag</string>
+    <string name="viewMeta">Show Meta Sidebar</string>
     <string name="lastUsedFolder">Last Used Folder</string>
     <string name="rename">Rename</string>
     <string name="format_prompt">Format</string>
@@ -33,6 +33,7 @@
     <string name="Name">Name</string>
     <string name="settings">Settings</string>
     <string name="moveImages">Move Images</string>
+    <string name="copyImages">Copy Images</string>
     <string name="chooseDestination">Choose Destination</string>
     <string name="choosefile">Choose File</string>
     <string name="import1">Import</string>
@@ -156,8 +157,8 @@
     <string name="recycleBin">Recycle Bin</string>
     <string name="restoreFile">Restore File</string>
     <string name="emptyRecycleBin">Empty Recycle Bin</string>
-    <string name="exportThumbnails">Export Thumbnails</string>
-    <string name="shareWith">Share with…</string>
+    <string name="saveJpg">Save Jpeg</string>
+    <string name="share">Share</string>
     <string name="ratingRequest">If you enjoy using RawDroid please take a moment to rate it.\n\nIf you\'ve rated based on a bug that is now fixed please update your rating.\n\nThanks for your support!</string>
     <string name="importingImages">Importing Images...</string>
     <string name="exportingThumb">Exporting Thumbnails...</string>

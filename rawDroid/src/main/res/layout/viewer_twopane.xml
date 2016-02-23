@@ -2,16 +2,33 @@
 <RelativeLayout
     android:id="@+id/mainLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <include
-        layout="@layout/image_viewer"
+    <com.android.gallery3d.ui.GLRootView
+        android:id="@+id/gl_root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_alignParentTop="true"/>
+
+    <include
+        android:id="@+id/navPanel"
+        layout="@layout/nav_panel"
+        android:layout_alignParentStart="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
+    <include
+        android:id="@+id/metaPanel"
+        layout="@layout/meta_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewerToolbar"
         android:layout_toStartOf="@+id/editFragment"/>
 
     <fragment
@@ -29,8 +46,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="false"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/translucent_black_rect"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>

@@ -12,7 +12,7 @@
 <string name="selectAll">tout sélectionner</string>
 <string name="help">Aide</string>
 <string name="delete">Effacer</string>
-<string name="view_tag">Mots-clés</string>
+<string name="viewMeta">Mots-clés</string>
 <string name="rename">Renommer</string>
 <string name="format_prompt">Format</string>
 <string name="save">Enregistrer</string>
@@ -103,7 +103,7 @@
 <string name="recycleBin">Poubelle</string>
 <string name="restoreFile">Restaure le fichier</string>
 <string name="emptyRecycleBin">Vide la poubelle</string>
-<string name="exportThumbnails">Exporte les miniatures</string>
+<string name="saveJpg">Exporte les miniatures</string>
 <string name="shareWith">Partager avec ...</string>
 <string name="importingImages">Importation d\\\'images...</string>
 <string name="exportingThumb">Exportation des miniatures...</string>

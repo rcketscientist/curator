@@ -46,11 +46,11 @@
         app:showAsAction="never"
         android:title="@string/wallpaper"/>
     <item
-        android:id="@+id/view_tag"
+        android:id="@+id/toggleXmp"
         android:orderInCategory="12"
         android:icon="@drawable/ic_action_labels"
         app:showAsAction="always"
-        android:title="@string/view_tag"/>
+        android:title="@string/viewMeta"/>
     <item android:title="@string/help"
         android:orderInCategory="40">
         <menu>

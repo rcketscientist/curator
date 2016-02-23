@@ -123,39 +123,32 @@ public class GalleryAdapter extends CursorAdapter
 			switch (labelString.toLowerCase())
 			{
 				case "purple":
-//					view.setBackgroundColor(purple);
 					label.setVisibility(View.VISIBLE);
 					label.setBackgroundColor(purple);
 					break;
 				case "blue":
-//					view.setBackgroundColor(blue);
 					label.setVisibility(View.VISIBLE);
 					label.setBackgroundColor(blue);
 					break;
 				case "yellow":
-//					view.setBackgroundColor(yellow);
 					label.setVisibility(View.VISIBLE);
 					label.setBackgroundColor(yellow);
 					break;
 				case "green":
-//					view.setBackgroundColor(green);
 					label.setVisibility(View.VISIBLE);
 					label.setBackgroundColor(green);
 					break;
 				case "red":
-//					view.setBackgroundColor(red);
 					label.setVisibility(View.VISIBLE);
 					label.setBackgroundColor(red);
 					break;
 				default:
-//					view.setBackgroundColor(0);
 					label.setVisibility(View.GONE);
 					break;
 			}
 		}
 		else
 		{
-//			view.setBackgroundColor(0);
 			label.setVisibility(View.GONE);
 		}
 

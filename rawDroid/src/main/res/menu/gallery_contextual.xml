@@ -9,28 +9,32 @@
         app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
-        android:id="@+id/context_delete"
+        android:id="@+id/contextDelete"
         android:icon="@android:drawable/ic_menu_delete"
         android:orderInCategory="1"
         app:showAsAction="always"
         android:title="@string/delete"/>
     <item
-        android:id="@+id/contextExportThumbs"
-        android:icon="@android:drawable/ic_menu_gallery"
-        android:orderInCategory="5"
-        app:showAsAction="ifRoom"
-        android:title="@string/exportThumbnails"/>
+        android:id="@+id/toggleXmp"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_action_labels"
+        app:showAsAction="always"
+        android:title="@string/viewMeta"/>
     <item
-        android:id="@+id/contextMoveImages"
-        android:icon="@drawable/import_images"
+        android:id="@+id/contextSaveJpg"
+        android:orderInCategory="5"
+        app:showAsAction="never"
+        android:title="@string/saveJpg"/>
+    <item
+        android:id="@+id/contextCopy"
         android:orderInCategory="3"
-        app:showAsAction="ifRoom"
-        android:title="@string/moveImages"/>
+        app:showAsAction="never"
+        android:title="@string/copyImages"/>
     <item
         android:id="@+id/contextRename"
         android:icon="@drawable/ic_rename"
         android:orderInCategory="2"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:title="@string/rename"/>
     <item
         android:id="@+id/contextShare"

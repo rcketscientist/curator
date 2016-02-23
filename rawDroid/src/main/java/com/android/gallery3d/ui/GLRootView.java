@@ -110,7 +110,6 @@ public class GLRootView extends GLSurfaceView
 
     private long mLastDrawFinishTime;
     private boolean mInDownState = false;
-    private boolean mFirstDraw = true;
 
     public GLRootView(Context context) {
         this(context, null);
@@ -357,21 +356,6 @@ public class GLRootView extends GLSurfaceView
             onDrawFrameLocked(gl);
         } finally {
             mRenderLock.unlock();
-        }
-
-        // We put a black cover View in front of the SurfaceView and hide it
-        // after the first draw. This prevents the SurfaceView being transparent
-        // before the first draw.
-        if (mFirstDraw) {
-            mFirstDraw = false;
-            post(new Runnable() {
-                    @Override
-                    public void run() {
-                        View root = getRootView();
-                        View cover = root.findViewById(R.id.gl_root_cover);
-                        cover.setVisibility(GONE);
-                    }
-                });
         }
 
         if (DEBUG_PROFILE_SLOW_ONLY) {

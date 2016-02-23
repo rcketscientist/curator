@@ -5,13 +5,13 @@ import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.UriPermission;
@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.IdRes;
@@ -45,7 +46,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -185,8 +185,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 			};
 
 	// Request codes
-	private static final int REQUEST_MOUNTED_IMPORT_DIR = 12;
-	private static final int REQUEST_EXPORT_THUMB_DIR = 15;
+	private static final int REQUEST_COPY_DIR = 12;
+	private static final int REQUEST_SAVE_JPG_DIR = 15;
     private static final int REQUEST_UPDATE_PHOTO = 16;
 	private static final int REQUEST_ACCESS_USB = 17;
 
@@ -207,6 +207,9 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	private int mImageThumbSpacing;
 	private ImageDecoder mImageDecoder;
 	private GalleryAdapter mGalleryAdapter;
+	/**
+	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
+	 */
 	protected List<Uri> mItemsForIntent = new ArrayList<>();
 
 	// Selection support
@@ -227,8 +230,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 //	private SwipeRefreshLayout mSwipeRefresh;
 	private static int mParsedImages;
 
-	private boolean isFirstDatabaseLoad = true;
-
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -239,7 +240,9 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.gallery);
+
+		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
+
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
 		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
@@ -364,6 +367,12 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 //		checkWriteAccess();
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
+	}
+
+	@Override
+	public int getContentView()
+	{
+		return R.layout.gallery;
 	}
 
 	@Override
@@ -695,9 +704,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mGalleryAdapter.swapCursor(cursor);
 		setImageCountTitle();
 
-		if (isFirstDatabaseLoad && mGalleryAdapter.getCount() == 0)
+		if (mGalleryAdapter.getCount() == 0)
 			offerRequestPermission();
-		isFirstDatabaseLoad = false;
 	}
 
 	@Override
@@ -822,13 +830,13 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		switch (requestCode)
 		{
-			case REQUEST_MOUNTED_IMPORT_DIR:
+			case REQUEST_COPY_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleImportDirResult(data.getData());
+					handleCopyDestinationResult(data.getData());
 				}
 				break;
-			case REQUEST_EXPORT_THUMB_DIR:
+			case REQUEST_SAVE_JPG_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
                     handleExportThumbResult(data.getData());
@@ -854,7 +862,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		mImageGrid.smoothScrollToPosition(index);
     }
 
-	private void handleImportDirResult(final Uri destination)
+	private void handleCopyDestinationResult(final Uri destination)
 	{
 		// TODO: Might want to figure out a way to get free space to intriduce this check again
 //		long importSize = getSelectedImageSize();
@@ -941,7 +949,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		switch (item.getItemId())
 		{
 			case R.id.contextRename:
-				storeSelectionForIntent();
 				requestRename();
 				return true;
 			case R.id.galleryClearCache:
@@ -949,17 +956,14 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
-			case R.id.context_delete:
-				storeSelectionForIntent();
-				deleteImages(mItemsForIntent);
+			case R.id.contextDelete:
+				deleteImages(getSelectedImages());
 				return true;
-			case R.id.contextExportThumbs:
-				storeSelectionForIntent();
-				requestExportThumbLocation();
+			case R.id.contextSaveJpg:
+				requestSaveJpgDestination();
 				return true;
-			case R.id.contextMoveImages:
-				storeSelectionForIntent();
-				requestImportImageLocation();
+			case R.id.contextCopy:
+				requestCopyDestination();
 				return true;
 			case R.id.gallery_recycle:
             case R.id.context_recycle:
@@ -1033,21 +1037,21 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		if (mGalleryAdapter.getSelectedItemCount() == 0)
 			mGalleryAdapter.selectAll();
 
-		storeSelectionForIntent();
-
-		showRenameDialog(mItemsForIntent);
+		showRenameDialog(getSelectedImages());
 	}
 
-	private void requestImportImageLocation()
+	private void requestCopyDestination()
 	{
+		storeSelectionForIntent();
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, REQUEST_MOUNTED_IMPORT_DIR);
+		startActivityForResult(intent, REQUEST_COPY_DIR);
 	}
 
-    private void requestExportThumbLocation()
+    private void requestSaveJpgDestination()
     {
+	    storeSelectionForIntent();
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, REQUEST_EXPORT_THUMB_DIR);
+		startActivityForResult(intent, REQUEST_SAVE_JPG_DIR);
     }
 
 	@Override
@@ -1061,6 +1065,12 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	protected void onImageAdded(Uri item)
 	{
 		addDatabaseReference(item);
+	}
+
+	@Override
+	protected List<Uri> getSelectedImages()
+	{
+		return mGalleryAdapter.getSelectedItems();
 	}
 
 	@Override
@@ -1099,29 +1109,38 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	}
 
 	@Override
-	public void onSelectionUpdated(Set<Uri> selectedUris)
+	public void onSelectionUpdated(final Set<Uri> selectedUris)
 	{
-		ArrayList<Uri> arrayUri = new ArrayList<>();
-		for (Uri selection : selectedUris)
-		{
-			UsefulDocumentFile f = UsefulDocumentFile.fromUri(this, selection);
-			arrayUri.add(SwapProvider.createSwapUri(f.getName(), selection));
-		}
-
-		int selectionCount = selectedUris.size();
 		if (mContextMode != null)
 		{
 			mContextMode.setTitle("Select Items");
-			mContextMode.setSubtitle(selectionCount + " selected");
+			mContextMode.setSubtitle(selectedUris.size() + " selected");
 		}
-		if (selectionCount == 1)
+
+		// DocumentFile has some overhead in creation so run a thread here.
+		// For ex., select all with 100s of images can take a few seconds.
+		new Thread(new Runnable()
 		{
-			setShareUri(arrayUri.get(0));
-		}
-		else if (selectionCount > 1)
-		{
-			setShareUri(arrayUri);
-		}
+			@Override
+			public void run()
+			{
+				ArrayList<Uri> arrayUri = new ArrayList<>();
+				for (Uri selection : selectedUris)
+				{
+					UsefulDocumentFile f = UsefulDocumentFile.fromUri(GalleryActivity.this, selection);
+					arrayUri.add(SwapProvider.createSwapUri(f.getName(), selection));
+				}
+
+				if (selectedUris.size() == 1)
+				{
+					setShareUri(arrayUri.get(0));
+				}
+				else if (selectedUris.size() > 1)
+				{
+					setShareUri(arrayUri);
+				}
+			}
+		}).start();
 	}
 
 	class DirAlphaComparator implements Comparator<File>
@@ -1193,7 +1212,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item)
 		{
 			boolean handled = onOptionsItemSelected(item);
-			if (handled)
+			if (handled && (item.getItemId() != R.id.toggleXmp)) //We don't exit context for xmp bar
 			{
 				mode.finish();
 			}
@@ -1570,7 +1589,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialMoveTitle));
                     tutorial.setContentText(getString(R.string.tutorialMoveText));
-                    setTutorialActionView(R.id.contextMoveImages, true);
+                    setTutorialActionView(R.id.contextCopy, true);
                     break;
                 case 16: // Export
 					if (!inActionMode)
@@ -1579,7 +1598,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
                     tutorial.setContentText(getString(R.string.tutorialExportText));
-                    setTutorialActionView(R.id.contextExportThumbs, true);
+                    setTutorialActionView(R.id.contextSaveJpg, true);
                     break;
                 case 17: // Share (can't figure out how to address the share button
 //					if (!inActionMode)

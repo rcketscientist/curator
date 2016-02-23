@@ -12,7 +12,7 @@
 <string name="selectAll">Wybierz wszystko</string>
 <string name="help">Pomoc</string>
 <string name="delete">Kasuj</string>
-<string name="view_tag">Tag</string>
+<string name="viewMeta">Tag</string>
 <string name="rename">Zmień nazwę</string>
 <string name="format_prompt">Format</string>
 <string name="save">Zapisz</string>
@@ -111,7 +111,7 @@
 <string name="recycleBin">Kosz</string>
 <string name="restoreFile">Odzyskaj plik</string>
 <string name="emptyRecycleBin">Opróżnij kosz</string>
-<string name="exportThumbnails">Eksportuj miniaturki</string>
+<string name="saveJpg">Eksportuj miniaturki</string>
 <string name="shareWith">Udostępnij...</string>
 <string name="ratingRequest">Jeżeli spodobał Ci się RawDroid, proszę poświęć chwilę na jego ocenę.
 \nJeżeli na Twoją ocenę miał wpływ błąd, który został naprawiony, to proszę abyś zaktualizował swoją ocenę.

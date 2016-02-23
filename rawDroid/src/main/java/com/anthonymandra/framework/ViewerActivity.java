@@ -66,7 +66,6 @@ public abstract class ViewerActivity extends CoreActivity implements
     protected HistogramView histView;
     protected View metaFragment;
     protected View navFragment;
-    protected View viewerLayout;
     protected View metaPanel;
     protected ImageButton buttonPrev;
     protected ImageButton buttonNext;
@@ -109,8 +108,6 @@ public abstract class ViewerActivity extends CoreActivity implements
     protected TableRow rowExposureMode;
     protected TableRow rowExposureProgram;
 
-    protected XmpEditFragment mXmpFragment;
-
     protected Timer autoHide;
 
     protected boolean isInterfaceHidden;
@@ -120,7 +117,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected int mImageIndex;
 
-    protected XmpEditFragment.XmpEditValues mPendingXmpChanges;
     protected Uri mCurrentUri;
 
     public abstract MediaItem getCurrentItem();
@@ -146,9 +142,16 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @Override
+    protected List<Uri> getSelectedImages()
+    {
+        List<Uri> currentImage = new ArrayList<>();
+        currentImage.add(mCurrentUri);
+        return currentImage;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getContentView());
         Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -236,14 +239,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-
-    /**
-     * Subclasses must define the layout id here.  It will be loaded in {@link #onCreate}.
-     * The layout should conform to viewer template (xmp, meta, historgram, etc).
-     * @return The resource id of the layout to load
-     */
-    public abstract int getContentView();
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus)
     {
@@ -291,25 +286,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
         setShareUri(getCurrentItem().getSwapUri());
         updateImageDetails();
-    }
-
-    protected void writeXmpModifications()
-    {
-        if (mCurrentUri != null && mPendingXmpChanges != null)
-        {
-            ContentValues cv = new ContentValues();
-            cv.put(Meta.Data.LABEL, mPendingXmpChanges.Label);
-            cv.put(Meta.Data.RATING, mPendingXmpChanges.Rating);
-            cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(mPendingXmpChanges.Subject));
-
-            getContentResolver().update(
-                    Meta.Data.CONTENT_URI,
-                    cv, ImageUtils.getWhere(),
-                    new String[]{mCurrentUri.toString()});
-
-            writeXmp(getCurrentItem().getUri(), mPendingXmpChanges);
-            mPendingXmpChanges = null;
-        }
     }
 
     @TargetApi(19)
@@ -364,12 +340,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     @Override
     public void onBackPressed() {
-        if (!mXmpFragment.isHidden())
-        {
-            toggleEditXmpFragment();
-            return;
-        }
-
     	setImageFocus();
     	super.onBackPressed();
     }
@@ -405,8 +375,6 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
         metaFragment = findViewById(R.id.metaPanel);
         navFragment = findViewById(R.id.navPanel);
-        
-        viewerLayout = findViewById(R.id.viewerLayout);
 
         histView = (HistogramView) findViewById(R.id.histogramView1);
         metaPanel = findViewById(R.id.tableLayoutMeta);
@@ -459,7 +427,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         rowDriveMode = (TableRow) findViewById(R.id.rowDriveMode);
         rowExposureMode = (TableRow) findViewById(R.id.rowExposureMode);
         rowExposureProgram = (TableRow) findViewById(R.id.rowExposureProgram);
-        mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
         toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
     }
 
@@ -477,17 +444,6 @@ public abstract class ViewerActivity extends CoreActivity implements
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
                 onZoomLockChanged(isChecked);
-            }
-        });
-        mXmpFragment.setListener(new XmpEditFragment.MetaChangedListener()
-        {
-            @Override
-            public void onMetaChanged(Integer rating, String label, String[] subject)
-            {
-                mPendingXmpChanges = new XmpEditFragment.XmpEditValues();
-                mPendingXmpChanges.Label = label;
-                mPendingXmpChanges.Subject = subject;
-                mPendingXmpChanges.Rating = rating;
             }
         });
     }
@@ -521,7 +477,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
         isInterfaceHidden = false;
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        viewerLayout.post(new Runnable()
+        runOnUiThread(new Runnable()
         {
             public void run()
             {
@@ -553,7 +509,8 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
         isInterfaceHidden = true;
         final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        viewerLayout.post(new Runnable()
+
+        runOnUiThread(new Runnable()
         {
             public void run()
             {
@@ -666,22 +623,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         {
             showPanels();
         }
-    }
-
-    private void toggleEditXmpFragment()
-    {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        if (mXmpFragment.isHidden())
-        {
-            ft.show(mXmpFragment);
-            ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left);
-        }
-        else
-        {
-            ft.hide(mXmpFragment);
-            ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-        }
-        ft.commit();
     }
 
     public class LoadMetadataTask extends AsyncTask<Uri, Void, ContentValues>
@@ -840,21 +781,12 @@ public abstract class ViewerActivity extends CoreActivity implements
             case R.id.view_wallpaper:
                 setWallpaper();
                 return true;
-            case R.id.view_tag:
-                tagImage();
-                return true;
             case R.id.view_delete:
                 deleteImage(getCurrentItem().getUri());
                 return true;
             case R.id.view_recycle:
                 showRecycleBin();
                 return true;
-//            case R.id.viewSettings:
-//                startSettings();
-//                return true;
-//            case R.id.viewHelp:
-//                Toast.makeText(this, R.string.prefTitleComingSoon, Toast.LENGTH_SHORT).show();
-//                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -928,50 +860,13 @@ public abstract class ViewerActivity extends CoreActivity implements
 		}
     }
 
-    private void tagImage()
-    {
-        toggleEditXmpFragment();
-    }
-
-    //TODO: Should not be needed anymore
-//    protected void updateViewerItems()
-//    {
-//
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        boolean showNative = prefs.getBoolean(FullSettingsActivity.KEY_ShowNativeFiles, true);
-//
-//        mVisibleItems.clear();
-//        mVisibleItems.addAll(mRawImages);
-//        if (showNative)
-//            mVisibleItems.addAll(mNativeImages);
-//    }
-
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         setMetaVisibility();
         MediaItem media = getCurrentItem();
 
-        //FIXME: Show native files?
-/*        if (key.equals(FullSettingsActivity.KEY_ShowNativeFiles))
-        {
-            updateViewerItems();
-
-            // If current images are native and viewing is turned off finish activity
-            if (media == null || !sharedPreferences.getBoolean(key, true) && Util.isNative(new File(media.getFilePath())))
-            {
-                if (mVisibleItems.size() > 0)
-                {
-                    goToFirstPicture();
-                }
-                else
-                {
-                    Toast.makeText(this, "All images were native, returning to gallery.", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            }
-        }
-        else*/ if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
+        if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
         {
             Intent viewer = getViewerIntent();
             viewer.setData(media.getUri());
@@ -983,9 +878,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected void setImageFocus()
     {
-//        MediaItem current = getCurrentItem();
-//        if (current == null)
-//            return;
         Intent data = new Intent();
         data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, mImageIndex);
         setResult(RESULT_OK, data);

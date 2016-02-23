@@ -12,7 +12,7 @@
 <string name="selectAll">Seleccionar todo</string>
 <string name="help">Ayuda</string>
 <string name="delete">Borrar</string>
-<string name="view_tag">Etiqueta</string>
+<string name="viewMeta">Etiqueta</string>
 <string name="rename">Cambiar nombre</string>
 <string name="format_prompt">Formatear</string>
 <string name="save">Guardar</string>
@@ -100,7 +100,7 @@
 <string name="recycleBin">Papelera</string>
 <string name="restoreFile">Restaurar Archivo</string>
 <string name="emptyRecycleBin">Vaciar Papelera</string>
-<string name="exportThumbnails">Exportar Miniaturas</string>
+<string name="saveJpg">Exportar Miniaturas</string>
 <string name="shareWith">Compartir con ...</string>
 <string name="ratingRequest">Si le ha gustado RawDroid, por favor dedique un momento a valorarlo.
 \nSi ya lo ha valorado basándose en un fallo que ha sido solucionado, actualice su valoración.

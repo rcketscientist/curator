@@ -22,6 +22,7 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -95,6 +96,9 @@ public abstract class CoreActivity extends DocumentActivity
 	protected ShareActionProvider mShareProvider;
 	protected Intent mShareIntent;
 
+	protected XmpEditFragment mXmpFragment;
+	protected XmpEditFragment.XmpEditValues mPendingXmpChanges;
+
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
 	public static final String EXTRA_META_BUNDLE = "meta_bundle";
@@ -107,6 +111,7 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setContentView(getContentView());
 		setStoragePermissionRequestEnabled(true);
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -114,6 +119,24 @@ public abstract class CoreActivity extends DocumentActivity
 		mShareIntent.setType("image/jpeg");
 		mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+		mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
+		mXmpFragment.setListener(new XmpEditFragment.MetaChangedListener()
+		{
+			@Override
+			public void onMetaChanged(Integer rating, String label, String[] subject)
+			{
+				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+				values.Label = label;
+				values.Subject = subject;
+				values.Rating = rating;
+				writeXmpModifications(values);
+//				mPendingXmpChanges = new XmpEditFragment.XmpEditValues();
+//				mPendingXmpChanges.Label = label;
+//				mPendingXmpChanges.Subject = subject;
+//				mPendingXmpChanges.Rating = rating;
+			}
+		});
 	}
 
 	@Override
@@ -129,12 +152,30 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected abstract LicenseHandler getLicenseHandler();
 
+	/**
+	 * Subclasses must define the layout id here.  It will be loaded in {@link #onCreate}.
+	 * The layout should conform to viewer template (xmp, meta, historgram, etc).
+	 * @return The resource id of the layout to load
+	 */
+	public abstract int getContentView();
+
 	@Override
 	protected void onPause()
 	{
 		super.onPause();
 		if (recycleBin != null)
 			recycleBin.flushCache();
+	}
+
+	@Override
+	public void onBackPressed()
+	{
+		if (!mXmpFragment.isHidden())
+		{
+			toggleEditXmpFragment();
+			return;
+		}
+		super.onBackPressed();
 	}
 
 	@Override
@@ -162,6 +203,9 @@ public abstract class CoreActivity extends DocumentActivity
 				return true;
 			case R.id.settings:
 				requestSettings();
+				return true;
+			case R.id.toggleXmp:
+				toggleEditXmpFragment();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -204,6 +248,22 @@ public abstract class CoreActivity extends DocumentActivity
 		clearWriteResume();
 	}
 
+	protected void toggleEditXmpFragment()
+	{
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		if (mXmpFragment.isHidden())
+		{
+			ft.show(mXmpFragment);
+			ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left);
+		}
+		else
+		{
+			ft.hide(mXmpFragment);
+			ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		}
+		ft.commit();
+	}
+
 	protected void runCleanDatabase()
 	{
 		new Thread(new Runnable()
@@ -220,6 +280,71 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 		}).start();
+	}
+
+	protected void writeXmpModifications(XmpEditFragment.XmpEditValues values)
+	{
+		List<Uri> selection = getSelectedImages();
+		if (selection != null)
+		{
+			ContentValues cv = new ContentValues();
+			cv.put(Meta.Data.LABEL, values.Label);
+			cv.put(Meta.Data.RATING, values.Rating);
+			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+
+			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+			for (Uri image : selection)
+			{
+				operations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+						.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
+						.withValues(cv)
+						.build());
+			}
+
+			try
+			{
+				getContentResolver().applyBatch(Meta.AUTHORITY ,operations);
+			}
+			catch (RemoteException | OperationApplicationException e)
+			{
+				Crashlytics.logException(e);
+			}
+
+			writeXmp(selection, values);
+		}
+	}
+
+	protected void writeXmpModifications()
+	{
+		List<Uri> selection = getSelectedImages();
+		if (selection != null && mPendingXmpChanges != null)
+		{
+			ContentValues cv = new ContentValues();
+			cv.put(Meta.Data.LABEL, mPendingXmpChanges.Label);
+			cv.put(Meta.Data.RATING, mPendingXmpChanges.Rating);
+			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(mPendingXmpChanges.Subject));
+
+			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+			for (Uri image : selection)
+			{
+				operations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+					.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
+					.withValues(cv)
+					.build());
+			}
+
+			try
+			{
+				getContentResolver().applyBatch(Meta.AUTHORITY ,operations);
+			}
+			catch (RemoteException | OperationApplicationException e)
+			{
+				Crashlytics.logException(e);
+			}
+
+			writeXmp(selection, mPendingXmpChanges);
+			mPendingXmpChanges = null;
+		}
 	}
 
 	protected void writeXmp(Uri toWrite, XmpEditFragment.XmpEditValues values)
@@ -606,6 +731,11 @@ public abstract class CoreActivity extends DocumentActivity
 	 * Fires after all actions of a batch (or single) change to the image set are complete.
 	 */
 	protected abstract void onImageSetChanged();
+
+	/**
+	 * Returns any selected images
+	 */
+	protected abstract List<Uri> getSelectedImages();
 
 	protected void setShareUri(Uri share)
 	{

@@ -12,7 +12,7 @@
 <string name="selectAll">Επιλογή όλων</string>
 <string name="help">Βοήθεια</string>
 <string name="delete">Διαγραφή</string>
-<string name="view_tag">Ετικέτα</string>
+<string name="viewMeta">Ετικέτα</string>
 <string name="rename">Μετονομασία</string>
 <string name="format_prompt">Διαμόρφωση</string>
 <string name="save">Αποθήκευση</string>

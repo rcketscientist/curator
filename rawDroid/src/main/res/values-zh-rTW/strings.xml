@@ -12,7 +12,7 @@
 <string name="selectAll">全選</string>
 <string name="help">幫助</string>
 <string name="delete">刪除</string>
-<string name="view_tag">標籤</string>
+<string name="viewMeta">標籤</string>
 <string name="rename">重新命名</string>
 <string name="format_prompt">格式</string>
 <string name="save">儲存</string>

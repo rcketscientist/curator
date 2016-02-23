@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/galleryLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,13 +16,14 @@
             android:id="@+id/galleryToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize">
             <ProgressBar
                 android:id="@+id/toolbarSpinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="start"
                 android:indeterminate="true"
                 android:visibility="gone" />
         </android.support.v7.widget.Toolbar>
@@ -32,23 +33,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">-->
 
-            <GridView
-                android:id="@+id/gridview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:columnWidth="@dimen/image_thumbnail_size"
-                android:drawSelectorOnTop="true"
-                android:fastScrollEnabled="true"
-                android:horizontalSpacing="@dimen/image_thumbnail_spacing"
-                android:listSelector="@drawable/photogrid_list_selector"
-                android:numColumns="auto_fit"
-                android:scrollingCache="false"
-                android:stretchMode="columnWidth"
-                android:verticalSpacing="@dimen/image_thumbnail_spacing"/>
+        <GridView
+            android:id="@+id/gridview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:columnWidth="@dimen/image_thumbnail_size"
+            android:drawSelectorOnTop="true"
+            android:fastScrollEnabled="true"
+            android:horizontalSpacing="@dimen/image_thumbnail_spacing"
+            android:listSelector="@drawable/photogrid_list_selector"
+            android:numColumns="auto_fit"
+            android:scrollingCache="false"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="@dimen/image_thumbnail_spacing"
+            android:layout_below="@+id/galleryToolbar"
+            android:layout_toStartOf="@+id/editFragment"/>
+        <fragment
+            android:id="@+id/editFragment"
+            android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+            android:layout_width="@dimen/xmp_filter_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/galleryToolbar"
+            android:layout_gravity="end"
+            tools:layout="@layout/xmp_edit_landscape"/>
 <!--
         </android.support.v4.widget.SwipeRefreshLayout>
 -->
-    </LinearLayout>
+    </RelativeLayout>
 
     <fragment
         android:id="@+id/filterFragment"
