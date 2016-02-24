@@ -181,11 +181,6 @@ public class ImageUtils
 
     private static UsefulDocumentFile getAssociatedFile(Context c, Uri uri, String ext)
     {
-        /*  ghetto: mashing uris is not recommended, but since DocumentFile.findFile is slow we're
-            going to skip that process and simply mash what we know the uri would be (as of 01/2016)
-            new uri schemes could possibly break this */
-
-
         UsefulDocumentFile image = UsefulDocumentFile.fromUri(c, uri);
         String name = image.getName();
         if (ext != null)
@@ -203,10 +198,7 @@ public class ImageUtils
         {
             neighbor = DocumentUtil.getNeighborUri(uri, name);
         }
-//        UsefulDocumentFile parent = image.getParentFile();
-//        String parentString = parent.getUri().toString();
-//        String associatedString = parentString + "/" + name;
-//        Uri associatedUri = Uri.parse(associatedString);
+
         return UsefulDocumentFile.fromUri(c, neighbor);
     }
 

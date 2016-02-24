@@ -602,7 +602,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         metaFlash.setText(cursor.getAsString(Meta.Data.FLASH));
         metaLat.setText(cursor.getAsString(Meta.Data.LATITUDE));
         metaLon.setText(cursor.getAsString(Meta.Data.LONGITUDE));
-        metaName.setText(cursor.getAsString(Meta.Data.NAME));
+        metaName.setText(cursor.getAsString(Meta.Data.NAME));   //TODO: Name is missing in cursor???
         metaWb.setText(cursor.getAsString(Meta.Data.WHITE_BALANCE));
         metaLens.setText(cursor.getAsString(Meta.Data.LENS_MODEL));
         metaDriveMode.setText(cursor.getAsString(Meta.Data.DRIVE_MODE));
@@ -639,6 +639,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 
             ContentValues values = new ContentValues();
 
+            //TODO: This logic is wrong...we'll lose any non-meta data in db if we need to process!
             // Check if meta is already processed
             if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
             {

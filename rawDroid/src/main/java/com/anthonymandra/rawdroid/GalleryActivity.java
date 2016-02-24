@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.UriPermission;
@@ -33,7 +32,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.Parcelable;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.IdRes;
@@ -44,6 +42,8 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
@@ -56,10 +56,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -79,7 +75,8 @@ import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.util.ImageUtils;
-import com.anthonymandra.widget.GalleryAdapter;
+import com.anthonymandra.widget.GalleryRecyclerAdapter;
+import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
@@ -100,9 +97,15 @@ import java.util.Set;
 
 import io.fabric.sdk.android.Fabric;
 
-public class GalleryActivity extends CoreActivity implements OnItemClickListener, OnItemLongClickListener, OnScrollListener,
-        ShareActionProvider.OnShareTargetSelectedListener, OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<Cursor>,
-		GalleryAdapter.OnSelectionUpdatedListener
+public class GalleryActivity extends CoreActivity
+		implements
+		GalleryRecyclerAdapter.OnItemClickListener,
+		GalleryRecyclerAdapter.OnItemLongClickListener,
+		OnScrollListener,
+        ShareActionProvider.OnShareTargetSelectedListener,
+		OnSharedPreferenceChangeListener,
+		LoaderManager.LoaderCallbacks<Cursor>,
+		GalleryRecyclerAdapter.OnSelectionUpdatedListener
 {
 	private static final String TAG = GalleryActivity.class.getSimpleName();
 
@@ -200,13 +203,12 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	private static boolean inActionMode = false;
 
 	// Widget handles
-	private GridView mImageGrid;
+	private RecyclerView mImageGrid;
+	private GridLayoutManager mGridLayout;
 
 	// Image processing
-	private int mImageThumbSize;
-	private int mImageThumbSpacing;
 	private ImageDecoder mImageDecoder;
-	private GalleryAdapter mGalleryAdapter;
+	private GalleryRecyclerAdapter mGalleryAdapter;
 	/**
 	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
 	 */
@@ -229,6 +231,12 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	private DrawerLayout mDrawerLayout;
 //	private SwipeRefreshLayout mSwipeRefresh;
 	private static int mParsedImages;
+
+	@Override
+	public int getContentView()
+	{
+		return R.layout.gallery;
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -269,8 +277,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 		// Set the drawer toggle as the DrawerListener
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//		getSupportActionBar().setHomeButtonEnabled(true);
 
 //		doFirstRun();
 
@@ -289,21 +297,33 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 		cacheParams.setMemCacheSizePercent(this, 0.15f);
 
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
-		mImageThumbSpacing = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_spacing);
-
-		mImageDecoder = new ImageDecoder(this, mImageThumbSize);
+		mImageDecoder = new ImageDecoder(this, getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size));
 		mImageDecoder.setFolderImage(R.drawable.android_folder);
 		mImageDecoder.setUnknownImage(R.drawable.ic_unknown_file);
 		mImageDecoder.addImageCache(getFragmentManager(), cacheParams);
 
-		mGalleryAdapter = new GalleryAdapter(this, null, mImageDecoder);
+//		mGalleryAdapter = new GalleryAdapter(this, null, mImageDecoder);
+		mGalleryAdapter = new GalleryRecyclerAdapter(this, null, mImageDecoder);
 		mGalleryAdapter.setOnSelectionListener(this);
+		mGalleryAdapter.setOnItemClickListener(this);
+		mGalleryAdapter.setOnItemLongClickListener(this);
 
-		mImageGrid = ((GridView) findViewById(R.id.gridview));
-		mImageGrid.setOnScrollListener(this);
-		mImageGrid.setOnItemClickListener(this);
-		mImageGrid.setOnItemLongClickListener(this);
+//		mImageGrid = ((GridView) findViewById(R.id.gridview));
+//		mImageGrid.setOnScrollListener(this);
+//		mImageGrid.setOnItemClickListener(this);
+//		mImageGrid.setOnItemLongClickListener(this);
+
+		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
+		final int displayWidth = getResources().getDisplayMetrics().widthPixels;
+		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
+		final int numColumns = (int) Math.floor(displayWidth / (thumbSize + thumbSpacing));
+
+		mGridLayout = new GridLayoutManager(this, numColumns);
+		mGridLayout.setSmoothScrollbarEnabled(true);
+//		mImageGrid.setOnScrollListener(this);
+//		mImageGrid.setOnItemClickListener(this);
+//		mImageGrid.setOnItemLongClickListener(this);
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
@@ -311,6 +331,10 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
         PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
 
+		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
+		mImageGrid.setLayoutManager(mGridLayout);
+		mImageGrid.addItemDecoration(spacing);
+		mImageGrid.setHasFixedSize(true);
 		mImageGrid.setAdapter(mGalleryAdapter);
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
@@ -367,12 +391,6 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 //		checkWriteAccess();
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
-	}
-
-	@Override
-	public int getContentView()
-	{
-		return R.layout.gallery;
 	}
 
 	@Override
@@ -769,6 +787,9 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	private void offerRequestPermission()
 	{
+		if (!mActivityVisible)
+			return; // User might switch apps waiting for search to complete
+
 		AlertDialog.Builder builder =
 				new AlertDialog.Builder(this).
 						setTitle(R.string.offerSearchTitle).
@@ -1254,7 +1275,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 	}
 
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+	public boolean onItemLongClick(RecyclerView.Adapter<?> parent, View view, int position, long id)
 	{
 		MediaItem media = mGalleryAdapter.getImage(position);
 
@@ -1293,7 +1314,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 
 	@TargetApi(VERSION_CODES.JELLY_BEAN)
 	@Override
-	public void onItemClick(AdapterView<?> parent, View v, int position, long id)
+	public void onItemClick(RecyclerView.Adapter<?> parent, View v, int position, long id)
 	{
 		Uri uri = mGalleryAdapter.getUri(position);
 		if (multiSelectMode)
@@ -1487,7 +1508,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 				case 7: // Add select
 					// If the user is lazy select for them
 					if (!inActionMode)
-						onItemLongClick(mImageGrid, mImageGrid.getChildAt(0), 0, 0);
+						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
 
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
@@ -1502,8 +1523,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					if (mGalleryAdapter.getSelectedItemCount() < 2)
 					{
 						mContextMode.finish();
-						onItemLongClick(mImageGrid, mImageGrid.getChildAt(0), 0, 0);
-						onItemClick(mImageGrid, mImageGrid.getChildAt(2), 2, 2);
+						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
+						onItemClick(mGalleryAdapter, mImageGrid.getChildAt(2), 2, 2);
 					}
 
                     tutorial.setScaleMultiplier(1.5f);
@@ -1547,7 +1568,7 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
                 case 12: // Select between end
 					// If the user is lazy select for them
 					if (mGalleryAdapter.getSelectedItemCount() < 1)
-						onItemLongClick(mImageGrid, mImageGrid.getChildAt(1), 1, 1);
+						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(1), 1, 1);
 
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
@@ -1563,8 +1584,8 @@ public class GalleryActivity extends CoreActivity implements OnItemClickListener
 					// If the user is lazy select for them
 					if (mGalleryAdapter.getSelectedItemCount() < 2)
 					{
-						onItemLongClick(mImageGrid, mImageGrid.getChildAt(1), 1, 1);
-						onItemLongClick(mImageGrid, mImageGrid.getChildAt(3), 3, 3);
+						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(1), 1, 1);
+						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(3), 3, 3);
 					}
 
                     tutorial.setScaleMultiplier(1.5f);

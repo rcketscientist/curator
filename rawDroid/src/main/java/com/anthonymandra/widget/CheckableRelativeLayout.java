@@ -43,9 +43,10 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
 
     public CheckableRelativeLayout(Context context) { this(context, null); }
     public CheckableRelativeLayout(Context context, AttributeSet attrs) { this(context, attrs, 0); }
-    public CheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr)
+    public CheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {this(context, attrs, defStyleAttr, 0);}
+    public CheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes)
     {
-        super(context, attrs, defStyleAttr);
+        super(context, attrs, defStyleAttr, defStyleRes);
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CheckableRelativeLayout);
 
         final Drawable d = a.getDrawable(R.styleable.CheckableRelativeLayout_foreground);

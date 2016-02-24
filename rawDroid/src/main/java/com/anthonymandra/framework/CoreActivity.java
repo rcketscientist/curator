@@ -99,6 +99,8 @@ public abstract class CoreActivity extends DocumentActivity
 	protected XmpEditFragment mXmpFragment;
 	protected XmpEditFragment.XmpEditValues mPendingXmpChanges;
 
+	protected boolean mActivityVisible;
+
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
 	public static final String EXTRA_META_BUNDLE = "meta_bundle";
@@ -143,6 +145,7 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void onResume()
 	{
 		super.onResume();
+		mActivityVisible = true;
 		LicenseManager.getLicense(this, getLicenseHandler());
 		// Request storage permission here:
 		// http://developer.android.com/samples/RuntimePermissions/src/com.example.android.system.runtimepermissions/MainActivity.html#l153
@@ -163,6 +166,7 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void onPause()
 	{
 		super.onPause();
+		mActivityVisible = false;
 		if (recycleBin != null)
 			recycleBin.flushCache();
 	}

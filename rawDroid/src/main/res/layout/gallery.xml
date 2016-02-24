@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">-->
 
-        <GridView
+<!--        <GridView
             android:id="@+id/gridview"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -47,7 +47,17 @@
             android:stretchMode="columnWidth"
             android:verticalSpacing="@dimen/image_thumbnail_spacing"
             android:layout_below="@+id/galleryToolbar"
+            android:layout_toStartOf="@+id/editFragment"/>-->
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gridview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:padding="@dimen/image_thumbnail_margin"
+            android:layout_below="@+id/galleryToolbar"
             android:layout_toStartOf="@+id/editFragment"/>
+
         <fragment
             android:id="@+id/editFragment"
             android:name="com.anthonymandra.rawdroid.XmpEditFragment"
