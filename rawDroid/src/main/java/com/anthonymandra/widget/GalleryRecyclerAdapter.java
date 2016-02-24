@@ -158,7 +158,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		private float rating;
 		private String label;
 		private Uri uri;
-		private boolean hasXmp;
+		private boolean hasSubject;
 
 		public static GalleryItem fromCursor(Context c, Cursor cursor)
 		{
@@ -167,8 +167,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			item.rating = cursor.getFloat(Meta.RATING_COLUMN);
 			item.uri = Uri.parse(cursor.getString(Meta.URI_COLUMN));
 			item.label = cursor.getString(Meta.LABEL_COLUMN);
-			item.name = cursor.getString(cursor.getColumnIndex(Meta.Data.NAME));
-//			item.hasXmp = ImageUtils.hasXmpFile(c, item.uri); //TODO: I like the idea of the xmp file icon, but any resolver in UI is bad news
+			item.name = cursor.getString(Meta.NAME_COLUMN);
+			item.hasSubject = cursor.getString(Meta.SUBJECT_COLUMN) != null;
 			return item;
 		}
 	}
@@ -260,7 +260,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			vh.mLabel.setVisibility(View.GONE);
 		}
 		vh.mFileName.setText(galleryItem.name);
-		vh.mXmpView.setVisibility(galleryItem.hasXmp ? View.VISIBLE : View.GONE);
+		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		mImageDecoder.loadImage(new LocalImage(mContext, galleryItem.uri), vh.mImageView);
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
 	}

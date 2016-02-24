@@ -1,10 +1,13 @@
 package com.anthonymandra.rawdroid;
 
+import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,19 +19,15 @@ import android.widget.AdapterView;
 import android.widget.Checkable;
 import android.widget.GridView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.KeywordProvider;
+import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.KeywordDataSource;
 import com.anthonymandra.framework.PathEnumerationProvider;
+import com.crashlytics.android.Crashlytics;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -183,38 +182,61 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         if (selected == null)
         {
             clearSelectedKeywords();
+            return;
         }
-        else
-        {
-            long time = System.currentTimeMillis(); //Keep the time the same for these entries
-            mSelectedKeywords.clear();
 
-            for (String select : selected)
-            {
-                Cursor c = getActivity().getContentResolver().query(
-                        KeywordProvider.Data.CONTENT_URI,
-                        null,
-                        KeywordProvider.Data.KEYWORD_NAME + " = ?",
-                        new String[]{select},
-                        null);
-                if (c != null && c.moveToFirst())
-                {
-                    long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
-                    c.close();
-                    ContentValues cv = new ContentValues();
-                    cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
-                    int rowsAffected = getActivity().getContentResolver().update(
-                            ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
-                            cv,
-                            null, null);    //TODO: Might want to make this async
-                    mSelectedKeywords.put(id, select);
-                } else
-                {
-                    //TODO: Offer to add the keywords
-                }
-            }
+        // If a meta lookup is threaded it could try to set keywords AFTER a user navigated away
+        if (getActivity() == null)
+            return;
+
+        long time = System.currentTimeMillis(); //Keep the time the same for these entries
+        mSelectedKeywords.clear();
+
+        final ArrayList<ContentProviderOperation> updateRecent = new ArrayList<>();
+
+        Cursor c = getActivity().getContentResolver().query(
+                KeywordProvider.Data.CONTENT_URI,
+                null,
+                KeywordProvider.Data.KEYWORD_NAME + " = ?",
+                selected.toArray(new String[selected.size()]),
+                null);
+
+        while (c != null && c.moveToFirst())
+        {
+            long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
+            ContentValues cv = new ContentValues();
+            cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
+
+            updateRecent.add(ContentProviderOperation.newUpdate(ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id))
+                    .withValues(cv)
+                    .build());
+
+            mSelectedKeywords.put(id, c.getString(KeywordDataSource.COLUMN_NAME));
         }
-        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, this);
+
+        if (c != null)
+            c.close();
+
+        if (updateRecent.size() > 0)
+        {
+            new Thread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    try
+                    {
+                        getActivity().getContentResolver().applyBatch(KeywordProvider.Data.AUTHORITY, updateRecent);
+                    }
+                    catch (RemoteException | OperationApplicationException e)
+                    {
+                        Crashlytics.logException(
+                                new Exception("KeywordEditFragment: setSelected applyBatch error", e));
+                    }
+                }
+            }).start();
+        }
+        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, this);    //TODO: Is this right?  Should manage itself...
     }
 
     public void clearSelectedKeywords()

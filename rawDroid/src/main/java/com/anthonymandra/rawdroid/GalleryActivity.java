@@ -586,51 +586,6 @@ public class GalleryActivity extends CoreActivity
 		return metaLoader;
 	}
 
-	/*
-	* Callback that's invoked when the system has initialized the Loader and
-	* is ready to start the query. This usually happens when initLoader() is
-	* called. The loaderID argument contains the ID value passed to the
-	* initLoader() call.
-	*/
-	@Override
-	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
-	{
-		/*
-		 * Takes action based on the ID of the Loader that's being created
-		 */
-		switch (loaderID) {
-			case META_LOADER_ID:
-
-				String[] projection = null;//GALLERY_PROJECTION;
-				String selection = null;
-				String[] selectionArgs = null;
-				String sort = META_DEFAULT_SORT;
-
-				// Populate the database with filter (selection) from the previous app
-				if (bundle != null)
-				{
-					projection = bundle.getStringArray(META_PROJECTION_KEY);
-					selection = bundle.getString(META_SELECTION_KEY);
-					selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
-					sort = bundle.getString(META_SORT_ORDER_KEY);
-				}
-
-				// Returns a new CursorLoader
-				return new CursorLoader(
-						this,   				// Parent activity context
-						Meta.Data.CONTENT_URI,  // Table to query
-						projection,				// Projection to return
-						selection,       		// No selection clause
-						selectionArgs, 			// No selection arguments
-						sort         			// Default sort order
-				);
-			default:
-				// An invalid id was passed in
-				return null;
-		}
-	}
-
-
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState)
 	{
@@ -714,6 +669,50 @@ public class GalleryActivity extends CoreActivity
 
 		// load filter data initially (must be done here due to
 		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
+	}
+
+	/*
+	* Callback that's invoked when the system has initialized the Loader and
+	* is ready to start the query. This usually happens when initLoader() is
+	* called. The loaderID argument contains the ID value passed to the
+	* initLoader() call.
+	*/
+	@Override
+	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
+	{
+		/*
+		 * Takes action based on the ID of the Loader that's being created
+		 */
+		switch (loaderID) {
+			case META_LOADER_ID:
+
+				String[] projection = null;//GALLERY_PROJECTION;
+				String selection = null;
+				String[] selectionArgs = null;
+				String sort = META_DEFAULT_SORT;
+
+				// Populate the database with filter (selection) from the previous app
+				if (bundle != null)
+				{
+					projection = bundle.getStringArray(META_PROJECTION_KEY);
+					selection = bundle.getString(META_SELECTION_KEY);
+					selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
+					sort = bundle.getString(META_SORT_ORDER_KEY);
+				}
+
+				// Returns a new CursorLoader
+				return new CursorLoader(
+						this,   				// Parent activity context
+						Meta.Data.CONTENT_URI,  // Table to query
+						projection,				// Projection to return
+						selection,       		// No selection clause
+						selectionArgs, 			// No selection arguments
+						sort         			// Default sort order
+				);
+			default:
+				// An invalid id was passed in
+				return null;
+		}
 	}
 
 	@Override
