@@ -118,11 +118,14 @@ public class SearchService extends IntentService
         {
             for (Uri image : images)
             {
-	            UsefulDocumentFile imageFile = UsefulDocumentFile.fromUri(this, image);
+	            UsefulDocumentFile.FileData fd = UsefulDocumentFile.fromUri(this, image).getData();
+
 	            ContentValues cv = new ContentValues();
-	            cv.put(Meta.Data.NAME, imageFile.getName());
+	            cv.put(Meta.Data.NAME, fd.name);
 	            cv.put(Meta.Data.URI, image.toString());
-				cv.put(Meta.Data.PARENT, imageFile.getParentFile().getUri().toString());
+				cv.put(Meta.Data.PARENT, fd.parent.toString());
+	            cv.put(Meta.Data.TIMESTAMP, fd.lastModified);
+
 	            operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
 			            .withValues(cv)
 			            .build());

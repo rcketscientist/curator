@@ -18,6 +18,7 @@ import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -43,7 +44,9 @@ import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.HistogramView;
 
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -591,7 +594,11 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
 
         // Assuming cursor is pointing properly...
-        metaDate.setText(cursor.getAsString(Meta.Data.TIMESTAMP));
+        Date d = new Date(cursor.getAsLong(Meta.Data.TIMESTAMP));
+        java.text.DateFormat df = DateFormat.getDateFormat(this);
+        java.text.DateFormat tf = DateFormat.getTimeFormat(this);
+
+        metaDate.setText(df.format(d) + " " + tf.format(d));
         metaModel.setText(cursor.getAsString(Meta.Data.MODEL));
         metaIso.setText(cursor.getAsString(Meta.Data.ISO));
         metaExposure.setText(cursor.getAsString(Meta.Data.EXPOSURE));
@@ -639,7 +646,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
             ContentValues values = new ContentValues();
 
-            //TODO: This logic is wrong...we'll lose any non-meta data in db if we need to process!
             // Check if meta is already processed
             if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
             {
@@ -647,19 +653,21 @@ public abstract class ViewerActivity extends CoreActivity implements
             }
             else
             {
-                final ContentValues cv = ImageUtils.getContentValues(ViewerActivity.this, uri);
-                values = cv;
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        getContentResolver().update(Meta.Data.CONTENT_URI,
-                                cv,
-                                ImageUtils.getWhere(),
-                                new String[]{uri.toString()});
-                    }
-                }).start();
+                values = ImageUtils.getContentValues(ViewerActivity.this, uri);
+
+                getContentResolver().update(Meta.Data.CONTENT_URI,
+                    values,
+                    ImageUtils.getWhere(),
+                    new String[]{uri.toString()});
+
+                // Populate the non-meta fields (originally populated in search),
+                // otherwise the panel will be missing this data
+                values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));
+                values.put(Meta.Data.URI, c.getString(Meta.URI_COLUMN));
+                values.put(Meta.Data.PARENT, c.getString(Meta.PARENT_COLUMN));
+                if (values.get(Meta.Data.TIMESTAMP) == null)
+                    values.put(Meta.Data.TIMESTAMP, c.getString(Meta.TIMESTAMP_COLUMN));
+
             }
             c.close();
             return values;

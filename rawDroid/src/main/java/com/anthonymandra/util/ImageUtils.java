@@ -48,14 +48,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ImageUtils
 {
     private static String TAG = ImageUtils.class.getSimpleName();
     private static SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
+    private static SimpleDateFormat mMetaExtractorFormat = new SimpleDateFormat("yyyy:MM:dd H:m:s");
 
     public static Metadata readMetadata(Context c, Uri uri)
     {
@@ -372,10 +375,23 @@ public class ImageUtils
         cv.put(Meta.Data.MODEL, getModel(meta));
 
         cv.put(Meta.Data.ORIENTATION, getOrientation(meta));
-        cv.put(Meta.Data.TIMESTAMP, getDateTime(meta));
+        String rawDate = getDateTime(meta);
+        if (rawDate != null)  // Don't overwrite null since we can rely on file time
+        {
+            Date date = null;
+            try
+            {
+                date = mMetaExtractorFormat.parse(rawDate);
+                cv.put(Meta.Data.TIMESTAMP, date.getTime());
+            }
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+            }
+        }
         cv.put(Meta.Data.WHITE_BALANCE, getWhiteBalance(meta));
         cv.put(Meta.Data.WIDTH, getImageWidth(meta));
-        cv.put(Meta.Data.URI, uri.toString());
+
         cv.put(Meta.Data.RATING, getRating(meta));
         cv.put(Meta.Data.SUBJECT, convertArrayToString(getSubject(meta)));
         cv.put(Meta.Data.LABEL, getLabel(meta));
