@@ -179,7 +179,7 @@ public class MetaService extends ThreadedPriorityIntentService
         }
         else
         {
-            addUpdate(values);
+            addUpdate(uri, values);
             Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
                     .putExtra(EXTRA_URI, uri.toString())
                     .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
@@ -237,10 +237,10 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    private synchronized void addUpdate(ContentValues values)
+    private synchronized void addUpdate(Uri uri, ContentValues values)
     {
         mOperations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-                .withSelection(ImageUtils.getWhere(), new String[] {values.getAsString(Meta.Data.URI)})
+                .withSelection(ImageUtils.getWhere(), new String[] {uri.toString()})
                 .withValues(values)
                 .build());
     }

@@ -647,7 +647,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             ContentValues values = new ContentValues();
 
             // Check if meta is already processed
-            if (c.getInt(Meta.PROCESSED_COLUMN) != 0)
+            if (c.getInt(Meta.PROCESSED_COLUMN) == 1)
             {
                 DatabaseUtils.cursorRowToContentValues(c, values);
             }

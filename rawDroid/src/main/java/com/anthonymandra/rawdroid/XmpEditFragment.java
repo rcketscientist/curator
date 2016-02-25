@@ -158,7 +158,7 @@ public class XmpEditFragment extends XmpBaseFragment
 				}
 			}
 		});
-
+//TODO: Doesn't seem to be attaching!
 		getActivity().findViewById(R.id.clearButton).setOnClickListener(new OnClickListener()
 		{
 			@Override

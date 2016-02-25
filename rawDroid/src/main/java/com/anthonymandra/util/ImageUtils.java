@@ -588,7 +588,7 @@ public class ImageUtils
 
     private static String getDateTime(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_DATETIME);
+        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
     }
 
     private static String getMake(Metadata meta)

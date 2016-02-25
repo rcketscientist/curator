@@ -74,6 +74,7 @@ import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
@@ -449,7 +450,7 @@ public class GalleryActivity extends CoreActivity
 			{
 				requiresJoiner = true;
 
-				selection.append(createMultipleIN(Meta.Data.LABEL, filter.xmp.label.length));
+				selection.append(DbUtil.createMultipleIN(Meta.Data.LABEL, filter.xmp.label.length));
 				for (String label : filter.xmp.label)
 				{
 					selectionArgs.add(label);
@@ -461,7 +462,7 @@ public class GalleryActivity extends CoreActivity
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(createMultipleLike(Meta.Data.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
+				selection.append(DbUtil.createMultipleLike(Meta.Data.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
 			}
 			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
 			{
@@ -469,7 +470,7 @@ public class GalleryActivity extends CoreActivity
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(createMultipleIN(Meta.Data.RATING, filter.xmp.rating.length));
+				selection.append(DbUtil.createMultipleIN(Meta.Data.RATING, filter.xmp.rating.length));
 				for (int rating : filter.xmp.rating)
 				{
 					selectionArgs.add(Double.toString((double)rating));
@@ -482,7 +483,7 @@ public class GalleryActivity extends CoreActivity
 				selection.append(AND);  // Always exclude the folders, don't OR
 			requiresJoiner = true;
 
-			selection.append(createMultipleLike(Meta.Data.PARENT,
+			selection.append(DbUtil.createMultipleLike(Meta.Data.PARENT,
 					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
 					selectionArgs,
 					AND,    // Requires AND so multiple hides don't negate each other
@@ -504,38 +505,6 @@ public class GalleryActivity extends CoreActivity
 		}
 
 		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
-	}
-
-	String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner, boolean NOT)
-	{
-		StringBuilder selection = new StringBuilder();
-		for (int i = 0; i < likes.length; i++)
-		{
-			if (i > 0) selection.append(joiner);
-			selection.append(column)
-					.append(NOT ? " NOT LIKE ?" : " LIKE ?");
-			selectionArgs.add("%" + likes[i] + "%");
-		}
-
-		return selection.toString();
-	}
-
-	String createMultipleIN(String column, int arguments)
-	{
-		StringBuilder selection = new StringBuilder();
-		selection.append(column)
-				.append(" IN (")
-				.append(makePlaceholders(arguments))
-				.append(")");
-		return selection.toString();
-	}
-
-	String makePlaceholders(int len) {
-		StringBuilder sb = new StringBuilder(len * 2 - 1);
-		sb.append("?");
-		for (int i = 1; i < len; i++)
-			sb.append(",?");
-		return sb.toString();
 	}
 
 	/**

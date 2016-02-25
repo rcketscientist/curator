@@ -25,6 +25,7 @@ import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.KeywordDataSource;
 import com.anthonymandra.framework.PathEnumerationProvider;
+import com.anthonymandra.util.DbUtil;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -32,7 +33,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderCallbacks<Cursor>
+public class
+
+KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
     private static final int KEYWORD_LOADER_ID = 1;
     private SimpleCursorAdapter mAdapter;
@@ -197,11 +200,11 @@ public class KeywordEditFragment extends KeywordBaseFragment implements LoaderMa
         Cursor c = getActivity().getContentResolver().query(
                 KeywordProvider.Data.CONTENT_URI,
                 null,
-                KeywordProvider.Data.KEYWORD_NAME + " = ?",
+                DbUtil.createMultipleIN(KeywordProvider.Data.KEYWORD_NAME, selected.size()),
                 selected.toArray(new String[selected.size()]),
                 null);
 
-        while (c != null && c.moveToFirst())
+        while (c != null && c.moveToNext())
         {
             long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
             ContentValues cv = new ContentValues();
