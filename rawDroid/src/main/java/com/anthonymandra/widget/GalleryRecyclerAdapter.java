@@ -171,6 +171,30 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			item.hasSubject = cursor.getString(Meta.SUBJECT_COLUMN) != null;
 			return item;
 		}
+
+		public static GalleryItem fromViewHolder(ViewHolder vh)
+		{
+			GalleryItem item = new GalleryItem();
+			item.rotation = (int)vh.mImageView.getRotation();
+			item.rating = vh.mRatingBar.getRating();
+			item.uri = (Uri) vh.mBaseView.getTag();
+			item.label = (String) vh.mLabel.getTag();
+			item.name = (String) vh.mFileName.getText();
+			item.hasSubject = vh.mXmpView.getVisibility() == View.VISIBLE;
+			return item;
+		}
+
+		@Override
+		public boolean equals(Object o)
+		{
+			GalleryItem compare = (GalleryItem) o;
+			return rotation == compare.rotation
+					&& rating == compare.rating
+					&& uri.equals(compare.uri)
+					&& label.equals(compare.label)
+					&& name.equals(compare.name)
+					&& hasSubject == compare.hasSubject;
+		}
 	}
 
 	public GalleryRecyclerAdapter(Context context, Cursor c, ImageDecoder imageDecoder)
@@ -198,6 +222,15 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	@Override
 	public void onBindViewHolder(ViewHolder vh, final int position, Cursor cursor)
 	{
+		GalleryItem galleryItem = GalleryItem.fromCursor(mContext, cursor);
+		GalleryItem former = GalleryItem.fromViewHolder(vh);
+
+		// If nothing has changed avoid refreshing.
+		// The reason for this is that loaderManagers replace cursors meaning every change
+		// will refresh the entire data source causing flickering
+		if (former.equals(galleryItem))
+			return;
+
 		if (mOnItemClickListener != null)
 		{
 			vh.mBaseView.setOnClickListener(new View.OnClickListener()
@@ -222,12 +255,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			});
 		}
 
-		GalleryItem galleryItem = GalleryItem.fromCursor(mContext, cursor);
+
 		vh.mImageView.setRotation(galleryItem.rotation);
 		vh.mRatingBar.setRating(galleryItem.rating);
 
 		if (galleryItem.label != null)
 		{
+			vh.mLabel.setTag(galleryItem.label);
 			switch (galleryItem.label.toLowerCase())
 			{
 				case "purple":
@@ -263,6 +297,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		mImageDecoder.loadImage(new LocalImage(mContext, galleryItem.uri), vh.mImageView);
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
+		vh.mBaseView.setTag(galleryItem.uri);
 	}
 
 	public MediaItem getImage(int position)
