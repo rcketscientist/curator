@@ -188,12 +188,14 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		public boolean equals(Object o)
 		{
 			GalleryItem compare = (GalleryItem) o;
-			return rotation == compare.rotation
-					&& rating == compare.rating
-					&& uri.equals(compare.uri)
-					&& label.equals(compare.label)
-					&& name.equals(compare.name)
-					&& hasSubject == compare.hasSubject;
+			boolean sameRotation = rotation == compare.rotation;
+			boolean sameRating = rating == compare.rating;
+			boolean sameSubject = hasSubject == compare.hasSubject;
+			boolean sameUri = uri == null ? compare.uri == null : uri.equals(compare.uri);
+			boolean sameName = name == null ? compare.name == null : name.equals(compare.name);
+			boolean sameLabel = label == null ? compare.label == null : label.equals(compare.label);
+
+			return sameLabel && sameName && sameRating && sameRotation && sameSubject && sameUri;
 		}
 	}
 
