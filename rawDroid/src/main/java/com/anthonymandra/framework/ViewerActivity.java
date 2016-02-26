@@ -167,7 +167,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             String[] uris = getIntent().getStringArrayExtra(EXTRA_URIS);
             for (String uri : uris)
             {
-                mMediaItems.add(Uri.parse(uri));
+                mMediaItems.add(new LocalImage(this, Uri.parse(uri)));
             }
         }
         else if (getIntent().hasExtra(EXTRA_META_BUNDLE))
@@ -191,7 +191,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             {
                 while(c.moveToNext())
                 {
-                    mMediaItems.add(Uri.parse(c.getString(Meta.URI_COLUMN)));
+                    mMediaItems.add(new LocalImage(this, c));
                 }
             }
             c.close();
@@ -199,7 +199,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         else  // External intent
         {
             mImageIndex = 0;
-            mMediaItems.add(getIntent().getData());
+            mMediaItems.add(new LocalImage(this, getIntent().getData());
         }
     }
 

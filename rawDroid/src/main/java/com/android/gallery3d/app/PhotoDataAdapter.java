@@ -41,6 +41,7 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.LocalImage;
+import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
@@ -113,7 +114,7 @@ public class PhotoDataAdapter implements Model {
     // smaller than DATA_CACHE_SIZE because we only update the window and reload
     // the MediaItems when there are significant changes to the window position
     // (>= MIN_LOAD_COUNT).
-    private final MediaItem mData[] = new MediaItem[DATA_CACHE_SIZE];
+    private final MetaMedia mData[] = new MetaMedia[DATA_CACHE_SIZE];
     private int mContentStart = 0;
     private int mContentEnd = 0;
 
@@ -661,9 +662,9 @@ public class PhotoDataAdapter implements Model {
 	}
 
     private class ScreenNailJob implements Job<ScreenNail> {
-		private MediaItem mItem;
+		private MetaMedia mItem;
 
-		public ScreenNailJob(MediaItem item) {
+		public ScreenNailJob(MetaMedia item) {
 			mItem = item;
 		}
 
@@ -680,15 +681,15 @@ public class PhotoDataAdapter implements Model {
     }
 
     private class FullImageJob implements Job<BitmapRegionDecoder> {
-		private MediaItem mItem;
+		private MetaMedia mItem;
 
-		public FullImageJob(MediaItem item)	{
+		public FullImageJob(MetaMedia item)	{
 			mItem = item;
 		}
 
 		@Override
         public BitmapRegionDecoder run(JobContext jc) {
-            return mItem.requestLargeImage().run(jc);
+            return ImageUtils.requestLargeImage(mActivity.getAndroidContext(), mItem).run(jc);
         }
     }
 
@@ -707,7 +708,7 @@ public class PhotoDataAdapter implements Model {
 
         ImageEntry entry = mImageCache.get(getPath(index));
         if (entry == null) return null;
-		MediaItem item = mData[index % DATA_CACHE_SIZE];
+		MetaMedia item = mData[index % DATA_CACHE_SIZE];
 		Utils.assertTrue(item != null);
 
         if (which == BIT_SCREEN_NAIL && entry.screenNailTask != null
@@ -865,7 +866,7 @@ public class PhotoDataAdapter implements Model {
 		public int contentEnd;
 
 		public int size;
-		public ArrayList<MediaItem> items;
+		public ArrayList<MetaMedia> items;
 	}
 
     private class GetUpdateInfo implements Callable<UpdateInfo> {
@@ -936,9 +937,9 @@ public class PhotoDataAdapter implements Model {
 		}
 	}
 
-	public ArrayList<MediaItem> getMediaItem(int start, int count)
+	public ArrayList<MetaMedia> getMediaItem(int start, int count)
 	{
-		ArrayList<MediaItem> result = new ArrayList<>();
+		ArrayList<MetaMedia> result = new ArrayList<>();
 
 		for (int i = start; i <= start + count; i++)
 		{

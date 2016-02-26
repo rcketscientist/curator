@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,19 +19,25 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
+import com.android.gallery3d.data.DecodeUtils;
+import com.android.gallery3d.data.ImageCacheRequest;
+import com.android.gallery3d.data.MediaItem;
+import com.android.gallery3d.util.ThreadPool;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
+import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -946,59 +953,152 @@ public class ImageUtils
         return false;
     }
 
-    @SuppressLint("SimpleDateFormat")
-    @Override
-    public static byte[] getThumb(Context c, Uri uri) {
-        String type = getImageType(uri);
-        int width, height, thumbWidth, thumbHeight;
-        if (ImageUtils.isAndroidImage(mType))
-        {
-            byte[] imageBytes = getImageBytes(c, uri);
-            if (imageBytes == null)
-                return null;
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
 
+    private static byte[] getAndroidImage(Context c, Uri uri, ContentValues values)
+    {
+        byte[] imageBytes = getImageBytes(c, uri);
+        if (imageBytes != null)
+        {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
 
             // Decode dimensions
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
-            thumbWidth = o.outWidth;
-            thumbHeight = o.outHeight;
-            width = o.outWidth;
-            height = o.outHeight;
-
-            return imageBytes;
+            values.put(Meta.Data.WIDTH, o.outWidth);
+            values.put(Meta.Data.HEIGHT, o.outHeight);
         }
+        return imageBytes;
+    }
 
-        // Get a file descriptor to pass to native methods
-        int fd;
-        ParcelFileDescriptor pfd = null;
+    private static byte[] getTiffImage(int fileDescriptor, ContentValues values)
+    {
+        int[] dim = new int[2];
+        int[] imageData = TiffDecoder.getImageFd("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
+        int width = dim[0];
+        int height = dim[1];
+        values.put(Meta.Data.WIDTH, width);
+        values.put(Meta.Data.HEIGHT, height);
+
+        // This is necessary since BitmapRegionDecoder only supports jpg and png
+        // TODO: This could be done in native, we already have jpeg capability
+        Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+        return baos.toByteArray();
+    }
+
+    private static byte[] getRawThumb(int fileDescriptor, ContentValues values)
+    {
+        String[] exif = new String[12];
+        byte[] imageBytes = LibRaw.getThumb(fileDescriptor, exif);
 
         try
         {
-            pfd = c.getContentResolver().openFileDescriptor(uri, "r");
-            fd = pfd.getFd();
-            if (ImageUtils.isTiffMime(mType))
+            values.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[LibRaw.EXIF_TIMESTAMP]).getTime());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        values.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_APERTURE]);
+        values.put(Meta.Data.MAKE, exif[LibRaw.EXIF_MAKE]);
+        values.put(Meta.Data.MODEL, exif[LibRaw.EXIF_MODEL]);
+        values.put(Meta.Data.FOCAL_LENGTH, exif[LibRaw.EXIF_FOCAL]);
+        values.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_HEIGHT]);
+        values.put(Meta.Data.ISO, exif[LibRaw.EXIF_ISO]);
+        values.put(Meta.Data.ORIENTATION, exif[LibRaw.EXIF_ORIENTATION]);
+        values.put(Meta.Data.EXPOSURE, exif[LibRaw.EXIF_SHUTTER]);
+        values.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_HEIGHT]);
+        values.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_WIDTH]);
+        //TODO: Placing thumb dimensions since we aren't decoding raw atm.
+        values.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_THUMB_HEIGHT]);
+        values.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_THUMB_WIDTH]);
+        // Are the thumb dimensions useful in database?
+
+        return imageBytes;
+    }
+
+    /**
+     * Get thumb and update image with image dimensions/orientation
+     * @param c
+     * @param image
+     * @return
+     */
+    public static byte[] getThumb(Context c, MetaMedia image)
+    {
+        ContentValues values = new ContentValues();
+        byte[] imageBytes = getThumb(c, image.getUri(), values);
+        if (values.containsKey(Meta.Data.HEIGHT))
+        {
+            image.setHeight(values.getAsInteger(Meta.Data.HEIGHT));
+            image.setWidth(values.getAsInteger(Meta.Data.WIDTH));
+        }
+        if (values.containsKey(Meta.Data.ORIENTATION))
+        {
+            image.setOrientation(values.getAsInteger(Meta.Data.ORIENTATION));
+        }
+        return imageBytes;
+    }
+
+    public static byte[] getThumb(Context c, Uri uri)
+    {
+        ContentValues values = new ContentValues();
+        return getThumb(c, uri, values);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public static byte[] getThumb(Context c, Uri uri, ContentValues values) {
+        //TODO: Split this into component methods
+        String type = getMimeType(uri.toString());
+
+        byte[] imageBytes = null;
+
+        // If it's a supported images, just get the bytes
+        if (ImageUtils.isAndroidImage(type))
+        {
+            imageBytes = getAndroidImage(c, uri, values);
+        }
+        // Otherwise we'll need a file descriptor to pass to native
+        else
+        {
+            // Get a file descriptor to pass to native methods
+            int fd;
+            ParcelFileDescriptor pfd = null;
+
+            try
             {
-                int[] dim = new int[2];
-                int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
-                width = dim[0];
-                thumbWidth = width;
-                height = dim[1];
-                thumbHeight = height;
-
-                // This is necessary since BitmapRegionDecoder only supports jpg and png
-                Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-
-                return baos.toByteArray();
+                pfd = c.getContentResolver().openFileDescriptor(uri, "r");
+                fd = pfd.getFd();
+                if (ImageUtils.isTiffMime(type))
+                {
+                    imageBytes = getTiffImage(fd, values);
+                }
+                else
+                {
+                    imageBytes = getRawThumb(fd, values);
+                }
             }
+            catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                Utils.closeSilently(pfd);
+            }
+        }
 
-            // Raw images
-            String[] exif = new String[12];
-            byte[] imageData = LibRaw.getThumb(fd, exif);
-
+        if (values.size() > 0)
+        {
             ContentProviderClient cpc = null;
             Cursor cursor = null;
             try
@@ -1006,38 +1106,14 @@ public class ImageUtils
                 cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
                 if (cpc != null)
                 {
-                    cursor = cpc.query(Meta.Data.CONTENT_URI, new String[] { Meta.Data.PROCESSED },
-                            ImageUtils.getWhere(), new String[] {uri.toString()}, null, null);
+                    cursor = cpc.query(Meta.Data.CONTENT_URI, new String[]{Meta.Data.PROCESSED},
+                            ImageUtils.getWhere(), new String[]{uri.toString()}, null, null);
                     if (cursor != null)
                     {
                         cursor.moveToFirst();
                         if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
                         {
-                            ContentValues cv = new ContentValues();
-                            try
-                            {
-                                cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[LibRaw.EXIF_TIMESTAMP]).getTime());
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
-                            }
-                            cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_APERTURE]);
-                            cv.put(Meta.Data.MAKE, exif[LibRaw.EXIF_MAKE]);
-                            cv.put(Meta.Data.MODEL, exif[LibRaw.EXIF_MODEL]);
-                            cv.put(Meta.Data.FOCAL_LENGTH, exif[LibRaw.EXIF_FOCAL]);
-                            cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_HEIGHT]);
-                            cv.put(Meta.Data.ISO, exif[LibRaw.EXIF_ISO]);
-                            cv.put(Meta.Data.ORIENTATION, exif[LibRaw.EXIF_ORIENTATION]);
-                            cv.put(Meta.Data.EXPOSURE, exif[LibRaw.EXIF_SHUTTER]);
-                            cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_HEIGHT]);
-                            cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_WIDTH]);
-                            //TODO: Placing thumb dimensions since we aren't decoding raw atm.
-                            cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_THUMB_HEIGHT]);
-                            cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_THUMB_WIDTH]);
-                            // Are the thumb dimensions useful in database?
-
-                            cpc.update(Meta.Data.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {uri.toString()});
+                            cpc.update(Meta.Data.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
                         }
                     }
                 }
@@ -1052,18 +1128,8 @@ public class ImageUtils
                     cpc.release();
                 Utils.closeSilently(cursor);
             }
-
-            return imageData;
         }
-        catch (FileNotFoundException e)
-        {
-            return null;
-        }
-
-        finally
-        {
-            Utils.closeSilently(pfd);
-        }
+        return imageBytes;
     }
 
     private static byte[] getImageBytes(Context c, Uri uri)
@@ -1080,6 +1146,63 @@ public class ImageUtils
         finally
         {
             Utils.closeSilently(is);
+        }
+    }
+
+    public static ThreadPool.Job<Bitmap> requestImage(GalleryApp app, int type, MetaMedia image) {
+        return new ImageRequest(app, image, type);
+    }
+
+    public static class ImageRequest extends ImageCacheRequest
+    {
+        MetaMedia mImage;
+        ImageRequest(GalleryApp application, MetaMedia image, int type) {
+            super(application, image.getUri(), type, MetaMedia.getTargetSize(type));
+            mImage = image;
+        }
+
+        @Override
+        public Bitmap onDecodeOriginal(ThreadPool.JobContext jc, final int type) {
+            byte[] imageData = getThumb(mApplication.getAndroidContext(), mImage);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            int targetSize = MetaMedia.getTargetSize(type);
+
+            // try to decode from JPEG EXIF
+            if (type == MetaMedia.TYPE_MICROTHUMBNAIL) {
+                Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData,
+                        options, targetSize);
+                if (bitmap != null)
+                    return bitmap;
+                // }
+            }
+
+            return DecodeUtils.decodeThumbnail(jc, imageData, options,
+                    targetSize, type);
+        }
+    }
+
+    public static ThreadPool.Job<BitmapRegionDecoder> requestLargeImage(Context c, MetaMedia image) {
+        return new LargeImageRequest(c, image);
+    }
+
+    public static class LargeImageRequest implements
+            ThreadPool.Job<BitmapRegionDecoder>
+    {
+        Context mContext;
+        MetaMedia mImage;
+
+        public LargeImageRequest(Context c, MetaMedia image) {
+            mImage = image;
+            mContext = c;
+        }
+
+        public BitmapRegionDecoder run(ThreadPool.JobContext jc) {
+            byte[] imageData = getThumb(mContext, mImage);
+            BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc,
+                    imageData, 0, imageData.length, false);
+            return brd;
         }
     }
 

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.anthonymandra.util.ImageUtils;
 
 public class ImageDecoder extends ImageResizer
 {
@@ -44,7 +45,7 @@ public class ImageDecoder extends ImageResizer
 			Log.d(TAG, "processBitmap - " + media.getUri());
 		}
 
-	    return decodeSampledBitmap(media.getThumb(), mImageWidth, mImageHeight);
+	    return decodeSampledBitmap(ImageUtils.getThumb(mContext, media.getUri()), mImageWidth, mImageHeight);
 	}
 
 	@Override

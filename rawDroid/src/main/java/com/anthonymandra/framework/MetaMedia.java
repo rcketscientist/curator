@@ -60,7 +60,6 @@ public abstract class MetaMedia extends MediaItem
 
 	public int getRotation()
 	{
-		int orientation = getOrientation();
 		switch (orientation)
 		{
 			case 1:
@@ -82,9 +81,19 @@ public abstract class MetaMedia extends MediaItem
 		}
 	}
 
+	public void setOrientation(int o)
+	{
+		orientation = o;
+	}
+
 	public int getWidth()
 	{
 		return width;
+	}
+
+	public void setWidth(int width)
+	{
+		this.width = width;
 	}
 
 	public int getHeight()
@@ -92,6 +101,10 @@ public abstract class MetaMedia extends MediaItem
 		return height;
 	}
 
+	public void setHeight(int height)
+	{
+		this.height = height;
+	}
 //	public int getThumbWidth()
 //	{
 //		return thumbWidth;

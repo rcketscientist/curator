@@ -44,10 +44,12 @@ public abstract class ImageWorker extends CacheManager
 	// private boolean mFadeInBitmap = true;
 
 	protected Resources mResources;
+	protected Context mContext;
 
 	protected ImageWorker(Context context)
 	{
 		mResources = context.getResources();
+		mContext = context;
 	}
 
 	/**
