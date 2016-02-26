@@ -38,7 +38,7 @@ public class LocalImage extends MetaMedia {
 	}
 
 	public LocalImage(Context context, Cursor image) {
-		this(context, Uri.parse(image.getString(Meta.URI_COLUMN)));
+		super(context, image);
 	}
 
     @Override
@@ -95,8 +95,8 @@ public class LocalImage extends MetaMedia {
 
 			// Decode dimensions
 			BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
-			thumbWidth = o.outWidth;
-			thumbHeight = o.outHeight;
+//			thumbWidth = o.outWidth;
+//			thumbHeight = o.outHeight;
 			width = o.outWidth;
 			height = o.outHeight;
 
@@ -116,9 +116,9 @@ public class LocalImage extends MetaMedia {
 				int[] dim = new int[2];
 				int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
 				width = dim[0];
-				thumbWidth = width;
+//				thumbWidth = width;
 				height = dim[1];
-				thumbHeight = height;
+//				thumbHeight = height;
 
 				// This is necessary since BitmapRegionDecoder only supports jpg and png
 				Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);

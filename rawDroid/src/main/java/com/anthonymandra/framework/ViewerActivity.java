@@ -128,7 +128,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
-    protected List<Uri> mMediaItems = new ArrayList<>();
+    protected List<LocalImage> mMediaItems = new ArrayList<>();
 
     /**
      * Since initial image configuration can occur BEFORE image generation

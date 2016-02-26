@@ -15,7 +15,5 @@ public interface RawObject {
     byte[] getThumb();
 	byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, LibRaw.Margins margins);
 
-    long getFileSize();
-
     Uri getSwapUri();
 }

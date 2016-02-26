@@ -17,6 +17,7 @@
 package com.android.gallery3d.data;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
@@ -49,6 +50,10 @@ public abstract class MediaItem extends MediaObject {
 
     public MediaItem(Context c, Uri path) {
         super(c, path);
+    }
+
+    public MediaItem(Context c, Cursor cursor) {
+        super(c, cursor);
     }
 
     public void getLatLong(double[] latLong) {

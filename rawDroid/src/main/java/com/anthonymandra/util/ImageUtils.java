@@ -1,6 +1,8 @@
 package com.anthonymandra.util;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -23,6 +26,8 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.rawprocessor.TiffDecoder;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -40,6 +45,7 @@ import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -938,6 +944,143 @@ public class ImageUtils
                 return true;
         }
         return false;
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    @Override
+    public static byte[] getThumb(Context c, Uri uri) {
+        String type = getImageType(uri);
+        int width, height, thumbWidth, thumbHeight;
+        if (ImageUtils.isAndroidImage(mType))
+        {
+            byte[] imageBytes = getImageBytes(c, uri);
+            if (imageBytes == null)
+                return null;
+
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+
+            // Decode dimensions
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
+            thumbWidth = o.outWidth;
+            thumbHeight = o.outHeight;
+            width = o.outWidth;
+            height = o.outHeight;
+
+            return imageBytes;
+        }
+
+        // Get a file descriptor to pass to native methods
+        int fd;
+        ParcelFileDescriptor pfd = null;
+
+        try
+        {
+            pfd = c.getContentResolver().openFileDescriptor(uri, "r");
+            fd = pfd.getFd();
+            if (ImageUtils.isTiffMime(mType))
+            {
+                int[] dim = new int[2];
+                int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
+                width = dim[0];
+                thumbWidth = width;
+                height = dim[1];
+                thumbHeight = height;
+
+                // This is necessary since BitmapRegionDecoder only supports jpg and png
+                Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                return baos.toByteArray();
+            }
+
+            // Raw images
+            String[] exif = new String[12];
+            byte[] imageData = LibRaw.getThumb(fd, exif);
+
+            ContentProviderClient cpc = null;
+            Cursor cursor = null;
+            try
+            {
+                cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
+                if (cpc != null)
+                {
+                    cursor = cpc.query(Meta.Data.CONTENT_URI, new String[] { Meta.Data.PROCESSED },
+                            ImageUtils.getWhere(), new String[] {uri.toString()}, null, null);
+                    if (cursor != null)
+                    {
+                        cursor.moveToFirst();
+                        if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
+                        {
+                            ContentValues cv = new ContentValues();
+                            try
+                            {
+                                cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[LibRaw.EXIF_TIMESTAMP]).getTime());
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                            cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_APERTURE]);
+                            cv.put(Meta.Data.MAKE, exif[LibRaw.EXIF_MAKE]);
+                            cv.put(Meta.Data.MODEL, exif[LibRaw.EXIF_MODEL]);
+                            cv.put(Meta.Data.FOCAL_LENGTH, exif[LibRaw.EXIF_FOCAL]);
+                            cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_HEIGHT]);
+                            cv.put(Meta.Data.ISO, exif[LibRaw.EXIF_ISO]);
+                            cv.put(Meta.Data.ORIENTATION, exif[LibRaw.EXIF_ORIENTATION]);
+                            cv.put(Meta.Data.EXPOSURE, exif[LibRaw.EXIF_SHUTTER]);
+                            cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_HEIGHT]);
+                            cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_WIDTH]);
+                            //TODO: Placing thumb dimensions since we aren't decoding raw atm.
+                            cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_THUMB_HEIGHT]);
+                            cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_THUMB_WIDTH]);
+                            // Are the thumb dimensions useful in database?
+
+                            cpc.update(Meta.Data.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {uri.toString()});
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (cpc != null)
+                    cpc.release();
+                Utils.closeSilently(cursor);
+            }
+
+            return imageData;
+        }
+        catch (FileNotFoundException e)
+        {
+            return null;
+        }
+
+        finally
+        {
+            Utils.closeSilently(pfd);
+        }
+    }
+
+    private static byte[] getImageBytes(Context c, Uri uri)
+    {
+        InputStream is = null;
+        try
+        {
+            is = c.getContentResolver().openInputStream(uri);
+            return Util.toByteArray(is);
+        } catch (Exception e)
+        {
+            return null;
+        }
+        finally
+        {
+            Utils.closeSilently(is);
+        }
     }
 
     /**

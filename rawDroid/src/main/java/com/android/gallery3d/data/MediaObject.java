@@ -28,6 +28,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.RawObject;
 import com.anthonymandra.framework.UsefulDocumentFile;
@@ -41,7 +42,6 @@ public abstract class MediaObject implements RawObject {
     private static final String TAG = "MediaObject";
 
     protected String mName;
-    protected long mSize;
     protected String mType;
     protected Uri mUri;
     protected Context mContext;
@@ -50,23 +50,20 @@ public abstract class MediaObject implements RawObject {
     {
         mUri = uri;
         mContext = c;
+    }
 
-//        UsefulDocumentFile doc = UsefulDocumentFile.fromUri(c, uri);
-//        mType = doc.getType();
-//        mName = doc.getName();
-//        mSize = doc.length();
+    public MediaObject(Context c, Cursor cursor)
+    {
+        this(c, Uri.parse(cursor.getString(cursor.getColumnIndex(Meta.Data.URI))));
+
+        mName = cursor.getString(cursor.getColumnIndex(Meta.Data.NAME));
+        mType = cursor.getString(cursor.getColumnIndex(Meta.Data.TYPE));
     }
 
     @Override
     public String getName()
     {
-        return "test";
-    }
-
-    @Override
-    public long getFileSize()
-    {
-        return mSize;
+        return mName;
     }
 
     @Override
