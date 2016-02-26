@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
@@ -233,6 +234,54 @@ public class ImageUtils
     /**
      * --- Content Helpers -------------------------------------------------------------------------
      */
+
+    /**
+     * Updates the metadata database.  This should be run in the background.
+     * @param databaseUpdates database updates
+     */
+    public static void updateMetaDatabase(Context c, ArrayList<ContentProviderOperation> databaseUpdates)
+    {
+        try
+        {
+            // TODO: If I implement bulkInsert it's faster
+            ContentProviderResult[] results = c.getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
+        } catch (RemoteException | OperationApplicationException e)
+        {
+            //TODO: Notify user
+            e.printStackTrace();
+        }
+    }
+
+    public static ContentProviderOperation newInsert(Context c, Uri image)
+    {
+        UsefulDocumentFile.FileData fd = UsefulDocumentFile.fromUri(c, image).getData();
+
+        ContentValues cv = new ContentValues();
+        cv.put(Meta.Data.NAME, fd.name);
+        cv.put(Meta.Data.URI, image.toString());
+        cv.put(Meta.Data.PARENT, fd.parent.toString());
+        cv.put(Meta.Data.TIMESTAMP, fd.lastModified);
+        cv.put(Meta.Data.TYPE, ImageUtils.getImageType(image));
+
+       return ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+                .withValues(cv)
+                .build();
+    }
+
+    public static ContentProviderOperation newDelete(Uri image)
+    {
+        return ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
+                .withSelection(ImageUtils.getWhere(), new String[] { image.toString() })
+                .build();
+    }
+
+    public static ContentProviderOperation newUpdate(Uri image, ContentValues cv)
+    {
+        return ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+                .withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
+                .withValues(cv)
+                .build();
+    }
 
     //TODO: Perhaps this makes more sense in the meta provider itself?
     /**

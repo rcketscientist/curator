@@ -302,4 +302,6 @@
 
     <string name="permissionStorageRationale">Storage permission is needed to read and write images.</string>
     <string name="addRoot">Add Search Root</string>
+    <string name="restoreFail">Restore was not completely successful.</string>
+    <string name="deleteFail">Delete was not completely successful.</string>
 </resources>

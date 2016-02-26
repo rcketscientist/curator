@@ -88,7 +88,7 @@ public class RecycleBin
 		// This will likely fail due to write permission on any device needing to use this method.
 		// Either handle write permission separately or,
 		// Overload with a call to handle requesting write permission if needed.
-		DocumentFile df = DocumentFile.fromSingleUri(mContext, toDelete);
+		UsefulDocumentFile df = UsefulDocumentFile.fromUri(mContext, toDelete);
 		return df.delete();
 	}
 

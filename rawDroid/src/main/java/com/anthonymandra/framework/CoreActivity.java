@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentValues;
@@ -22,6 +23,7 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
@@ -294,60 +296,42 @@ public abstract class CoreActivity extends DocumentActivity
 			cv.put(Meta.Data.RATING, values.Rating);
 			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
 
-			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-			for (Uri image : selection)
-			{
-				operations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-						.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
-						.withValues(cv)
-						.build());
-			}
-
-			try
-			{
-				getContentResolver().applyBatch(Meta.AUTHORITY ,operations);
-			}
-			catch (RemoteException | OperationApplicationException e)
-			{
-				Crashlytics.logException(e);
-			}
-
 			writeXmp(selection, values);
 		}
 	}
 
-	protected void writeXmpModifications()
-	{
-		List<Uri> selection = getSelectedImages();
-		if (selection != null && mPendingXmpChanges != null)
-		{
-			ContentValues cv = new ContentValues();
-			cv.put(Meta.Data.LABEL, mPendingXmpChanges.Label);
-			cv.put(Meta.Data.RATING, mPendingXmpChanges.Rating);
-			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(mPendingXmpChanges.Subject));
-
-			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-			for (Uri image : selection)
-			{
-				operations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-					.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
-					.withValues(cv)
-					.build());
-			}
-
-			try
-			{
-				getContentResolver().applyBatch(Meta.AUTHORITY ,operations);
-			}
-			catch (RemoteException | OperationApplicationException e)
-			{
-				Crashlytics.logException(e);
-			}
-
-			writeXmp(selection, mPendingXmpChanges);
-			mPendingXmpChanges = null;
-		}
-	}
+//	protected void writeXmpModifications()
+//	{
+//		List<Uri> selection = getSelectedImages();
+//		if (selection != null && mPendingXmpChanges != null)
+//		{
+//			ContentValues cv = new ContentValues();
+//			cv.put(Meta.Data.LABEL, mPendingXmpChanges.Label);
+//			cv.put(Meta.Data.RATING, mPendingXmpChanges.Rating);
+//			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(mPendingXmpChanges.Subject));
+//
+//			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
+//			for (Uri image : selection)
+//			{
+//				operations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+//					.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
+//					.withValues(cv)
+//					.build());
+//			}
+//
+//			try
+//			{
+//				getContentResolver().applyBatch(Meta.AUTHORITY ,operations);
+//			}
+//			catch (RemoteException | OperationApplicationException e)
+//			{
+//				Crashlytics.logException(e);
+//			}
+//
+//			writeXmp(selection, mPendingXmpChanges);
+//			mPendingXmpChanges = null;
+//		}
+//	}
 
 	protected void writeXmp(Uri toWrite, XmpEditFragment.XmpEditValues values)
 	{
@@ -359,23 +343,6 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void writeXmp(List<Uri> images, XmpEditFragment.XmpEditValues values)
 	{
 		new WriteXmpTask().execute(images, values);
-	}
-
-	/**
-	 * Updates the metadata database.  This should be run in the background.
-	 * @param databaseUpdates database updates
-	 */
-	protected void updateMetaDatabase(ArrayList<ContentProviderOperation> databaseUpdates)
-	{
-		try
-		{
-			// TODO: If I implement bulkInsert it's faster
-			ContentProviderResult[] results = getContentResolver().applyBatch(Meta.AUTHORITY, databaseUpdates);
-		} catch (RemoteException | OperationApplicationException e)
-		{
-			//TODO: Notify user
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -836,6 +803,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 			mProgressDialog.setMax(totalImages.size());
 
+			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
 			for (Uri toCopy : totalImages)
 			{
 				try
@@ -845,6 +813,7 @@ public abstract class CoreActivity extends DocumentActivity
 					UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toCopy);
 					Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
 					copyAssociatedFiles(toCopy, destinationFile);
+					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile));
 				}
 				catch (WritePermissionException e)
 				{
@@ -859,6 +828,7 @@ public abstract class CoreActivity extends DocumentActivity
 				onImageAdded(toCopy);
 				publishProgress();
 			}
+			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
 			return true;
 		}
 
@@ -986,8 +956,8 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
-			//content://com.android.externalstorage.documents/tree/0000-0000%3A_WriteTest%2Ftest1%2Ftest2
 			boolean success = true;
+			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
 			for (Uri toExport : totalImages)
 			{
 				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toExport);
@@ -1032,6 +1002,7 @@ public abstract class CoreActivity extends DocumentActivity
 						success = writeThumb(inputPfd, outputPfd) && success;
 					}
 					onImageAdded(destinationFile.getUri());
+					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile.getUri()));
 				}
 				catch(Exception e)
 				{
@@ -1045,6 +1016,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 				publishProgress();
 			}
+			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
 			return success; //not used.
 		}
 
@@ -1110,6 +1082,8 @@ public abstract class CoreActivity extends DocumentActivity
 			mProgressDialog.setMax(totalDeletes.size());
 			final List<Uri> removed = new ArrayList<>();
 
+			ArrayList<ContentProviderOperation> dbDeletes = new ArrayList<>();
+			boolean totalSuccess = true;
 			for (Uri toDelete : totalDeletes)
 			{
 				setWriteResume(WriteActions.DELETE, new Object[]{remainingDeletes});
@@ -1119,18 +1093,20 @@ public abstract class CoreActivity extends DocumentActivity
 					{
 						onImageRemoved(toDelete);
 						removed.add(toDelete);
+						dbDeletes.add(ImageUtils.newDelete(toDelete));
 					}
 				}
 				catch (WritePermissionException e)
 				{
 					e.printStackTrace();
 					// We'll be automatically requesting write permission so kill this process
-					return false;
+					totalSuccess = false;
 				}
 				remainingDeletes.remove(toDelete);
 			}
 
-			return true;
+			ImageUtils.updateMetaDatabase(CoreActivity.this, dbDeletes);
+			return totalSuccess;
 		}
 
 		@Override
@@ -1138,6 +1114,8 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			if (result)
 				clearWriteResume();
+			else
+				Snackbar.make(findViewById(android.R.id.content), R.string.deleteFail, Snackbar.LENGTH_LONG).show();
 
 			mProgressDialog.dismiss();
 			onImageSetChanged();
@@ -1186,6 +1164,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 			mProgressDialog.setMax(remainingImages.size());
 
+			ArrayList<ContentProviderOperation> dbDeletes = new ArrayList<>();
 			for (Uri toRecycle : totalImages)
 			{
 				setWriteResume(WriteActions.RECYCLE, new Object[]{remainingImages});
@@ -1198,6 +1177,7 @@ public abstract class CoreActivity extends DocumentActivity
 //						deleteFile(associate);
 
 					recycleBin.addFile(toRecycle);
+					dbDeletes.add(ImageUtils.newDelete(toRecycle));
 				}
 				catch (WritePermissionException e)
 				{
@@ -1213,6 +1193,7 @@ public abstract class CoreActivity extends DocumentActivity
 				onImageRemoved(toRecycle);
 			}
 
+			ImageUtils.updateMetaDatabase(CoreActivity.this, dbDeletes);
 			return null;
 		}
 
@@ -1262,6 +1243,8 @@ public abstract class CoreActivity extends DocumentActivity
 			final List<String> totalImages = (List<String>) params[0];
 			List<String> remainingImages = new ArrayList<>(totalImages);
 
+			boolean totalSuccess = true;
+			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
 			for (String image : totalImages)
 			{
 				Uri toRestore = Uri.parse(image);
@@ -1271,17 +1254,20 @@ public abstract class CoreActivity extends DocumentActivity
 					Uri uri = Uri.fromFile(recycleBin.getFile(image));
 					moveFile(uri, toRestore);
 					onImageAdded(toRestore);
+					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, toRestore));
 				}
 				catch (WritePermissionException e)
 				{
 					e.printStackTrace();
-					return false;
+					totalSuccess = false;
 				} catch (IOException e)
 				{
 					e.printStackTrace();
 				}
 			}
-			return true;
+
+			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+			return totalSuccess;
 		}
 
 		@Override
@@ -1289,7 +1275,8 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			if (result)
 				clearWriteResume();
-
+			else
+				Snackbar.make(findViewById(android.R.id.content), R.string.restoreFail, Snackbar.LENGTH_LONG).show();
 			onImageSetChanged();
 		}
 	}
@@ -1442,7 +1429,7 @@ public abstract class CoreActivity extends DocumentActivity
 				e.printStackTrace();
 			}
 
-			updateMetaDatabase(operations);
+			ImageUtils.updateMetaDatabase(CoreActivity.this, operations);
 			return true;
 		}
 
@@ -1482,10 +1469,7 @@ public abstract class CoreActivity extends DocumentActivity
 				ImageUtils.updateRating(meta, values.Rating);
 				ImageUtils.updateLabel(meta, values.Label);
 
-				databaseUpdates.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-						.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
-						.withValues(cv)
-						.build());
+				databaseUpdates.add(ImageUtils.newUpdate(image, cv));
 
 				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, image).getUri();
 				final UsefulDocumentFile xmpDoc;
@@ -1499,7 +1483,7 @@ public abstract class CoreActivity extends DocumentActivity
 				catch (WritePermissionException e)
 				{
 					// Write pending updates, method will resume with remainingImages
-					updateMetaDatabase(databaseUpdates);
+					ImageUtils.updateMetaDatabase(CoreActivity.this, databaseUpdates);
 					return false;
 				}
 
@@ -1519,7 +1503,7 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
-			updateMetaDatabase(databaseUpdates);
+			ImageUtils.updateMetaDatabase(CoreActivity.this, databaseUpdates);
 			return true;
 		}
 

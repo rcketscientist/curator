@@ -236,16 +236,16 @@ public abstract class ViewerActivity extends CoreActivity implements
     protected void onStop()
     {
         super.onStop();
-        writeXmpModifications();    // If the lifecycle changes commit pending changes
+//        writeXmpModifications();    // If the lifecycle changes commit pending changes
     }
 
     @Override
     public void onPhotoChanged(int index, Uri item)
     {
-        if (mCurrentUri != null && mPendingXmpChanges != null)
-        {
-            writeXmpModifications();
-        }
+//        if (mCurrentUri != null && mPendingXmpChanges != null)
+//        {
+//            writeXmpModifications();
+//        }
         mCurrentUri = item;
 
         setShareUri(getCurrentItem().getSwapUri());
