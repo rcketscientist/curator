@@ -51,16 +51,16 @@ public abstract class MediaObject implements RawObject {
         mUri = uri;
         mContext = c;
 
-        UsefulDocumentFile doc = UsefulDocumentFile.fromUri(c, uri);
-        mType = doc.getType();
-        mName = doc.getName();
-        mSize = doc.length();
+//        UsefulDocumentFile doc = UsefulDocumentFile.fromUri(c, uri);
+//        mType = doc.getType();
+//        mName = doc.getName();
+//        mSize = doc.length();
     }
 
     @Override
     public String getName()
     {
-        return mName;
+        return "test";
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.anthonymandra.framework;
 
 import android.annotation.SuppressLint;
+import android.content.ContentProviderClient;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -8,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
@@ -24,9 +27,11 @@ import com.anthonymandra.util.ImageUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 
 public class LocalImage extends MetaMedia {
 	private static final String TAG = LocalImage.class.getSimpleName();
+	private static SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
 
 	public LocalImage(Context context, Uri image) {
 		super(context, image);
@@ -101,6 +106,7 @@ public class LocalImage extends MetaMedia {
 		// Get a file descriptor to pass to native methods
 		int fd;
 		ParcelFileDescriptor pfd = null;
+
 		try
 		{
 			pfd = mContext.getContentResolver().openFileDescriptor(mUri, "r");
@@ -125,20 +131,68 @@ public class LocalImage extends MetaMedia {
 			// Raw images
 			String[] exif = new String[12];
 			byte[] imageData = LibRaw.getThumb(fd, exif);
-			try {
-				setThumbHeight(Integer.parseInt(exif[8]));
-				setThumbWidth(Integer.parseInt(exif[9]));
-				setHeight(Integer.parseInt(exif[10]));
-				setWidth(Integer.parseInt(exif[11]));
-			} catch (Exception e) {
-				Log.d(TAG, "Dimensions exif parse failed:", e);
+
+			ContentProviderClient cpc = null;
+			Cursor c = null;
+			try
+			{
+				cpc = mContext.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
+				if (cpc != null)
+				{
+					c = cpc.query(Meta.Data.CONTENT_URI, new String[] { Meta.Data.PROCESSED },
+							ImageUtils.getWhere(), new String[] {mUri.toString()}, null, null);
+					if (c != null)
+					{
+						c.moveToFirst();
+						if (c.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
+						{
+							ContentValues cv = new ContentValues();
+							try
+							{
+								cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[LibRaw.EXIF_TIMESTAMP]).getTime());
+							}
+							catch (Exception e)
+							{
+								e.printStackTrace();
+							}
+							cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_APERTURE]);
+							cv.put(Meta.Data.MAKE, exif[LibRaw.EXIF_MAKE]);
+							cv.put(Meta.Data.MODEL, exif[LibRaw.EXIF_MODEL]);
+							cv.put(Meta.Data.FOCAL_LENGTH, exif[LibRaw.EXIF_FOCAL]);
+							cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_HEIGHT]);
+							cv.put(Meta.Data.ISO, exif[LibRaw.EXIF_ISO]);
+							cv.put(Meta.Data.ORIENTATION, exif[LibRaw.EXIF_ORIENTATION]);
+							cv.put(Meta.Data.EXPOSURE, exif[LibRaw.EXIF_SHUTTER]);
+							cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_HEIGHT]);
+							cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_WIDTH]);
+							//TODO: Placing thumb dimensions since we aren't decoding raw atm.
+							cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_THUMB_HEIGHT]);
+							cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_THUMB_WIDTH]);
+							// Are the thumb dimensions useful in database?
+
+							cpc.update(Meta.Data.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {mUri.toString()});
+						}
+					}
+				}
 			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				if (cpc != null)
+					cpc.release();
+				Utils.closeSilently(c);
+			}
+
 			return imageData;
 		}
 		catch (FileNotFoundException e)
 		{
 			return null;
 		}
+
 		finally
 		{
 			Utils.closeSilently(pfd);

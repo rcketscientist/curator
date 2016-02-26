@@ -36,25 +36,21 @@
         <menu>
             <item
                 android:id="@+id/contact"
-                android:icon="@android:drawable/ic_menu_send"
                 android:orderInCategory="31"
                 app:showAsAction="never"
                 android:title="@string/contact"/>
             <item
                 android:id="@+id/galleryClearCache"
-                android:icon="@android:drawable/ic_menu_report_image"
                 android:orderInCategory="32"
                 app:showAsAction="never"
                 android:title="@string/clearCache"/>
             <item
                 android:id="@+id/galleryTutorial"
-                android:icon="@android:drawable/ic_menu_help"
                 android:orderInCategory="33"
                 app:showAsAction="never"
                 android:title="@string/tutorial"/>
             <item
                 android:id="@+id/about"
-                android:icon="@android:drawable/ic_menu_info_details"
                 android:orderInCategory="34"
                 app:showAsAction="never"
                 android:title="@string/about"/>
@@ -62,7 +58,6 @@
     </item>
     <item
         android:id="@+id/settings"
-        android:icon="@android:drawable/ic_menu_preferences"
         android:orderInCategory="21"
         app:showAsAction="never"
         android:title="@string/settings"/>

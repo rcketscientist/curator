@@ -200,45 +200,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         {
             mImageIndex = 0;
             mMediaItems.add(getIntent().getData());
-//            Uri data = getIntent().getData();
-//            InputStream is = null;
-//            try
-//            {
-//                is = FileUtil.getInputStream(this, data);
-//            } catch (FileNotFoundException e)
-//            {
-//                e.printStackTrace();
-//            }
-//            String path = FileUtil.getPath(this, data);
-//            Bitmap bmp = BitmapFactory.decodeStream(is);
-            // Ex ext storage 6.0: content://com.android.externalstorage.documents/tree/0000-0000%3A/document/0000-0000%3ADCIM%2F100EOS5D%2FIMG_0081.CR2
-	        /**
-             * getPathSegments
-             0 = "tree"
-             1 = "0000-0000:"
-             2 = "document"
-             3 = "0000-0000:DCIM/100EOS5D/IMG_0081.CR2"
-
-             .getLastPathSegment()
-             0000-0000:DCIM/100EOS5D/IMG_0081.CR2
-             */
-
-//            if (data.getAuthority().equals(MediaStore.AUTHORITY))
-//            {
-//                //Attempt to acquire the file
-//                path = Util.getRealPathFromURI(this, data);
-//            }
-//            else
-//            {
-//                path = data.getPath();
-//            }
-
-//            File file = new File(path);
-//            Uri uri = Uri.fromFile(new File(path));
-//            LocalImage image = new LocalImage(this, file);
-//            mMediaItems.add(uri);
-//            Uri entry = addDatabaseReference(image);
-//            getIntent().setData(uri);   // reset the data with a file uri
         }
     }
 

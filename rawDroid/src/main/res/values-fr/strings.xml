@@ -97,7 +97,7 @@
 <item> Toujours </item>
 <item> jamais</item>
 </string-array>
-<string name="clearCache">Nettoyer le cache des miniatures</string>
+<string name="clearCache">Nettoyer le cache</string>
 <string name="cacheCleared">Le cache de la Gallerie d\'image est supprimé</string>
 <string name="accessRecycle">Acces à la poubelle</string>
 <string name="recycleBin">Poubelle</string>

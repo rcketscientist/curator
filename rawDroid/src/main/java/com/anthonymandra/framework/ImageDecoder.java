@@ -41,7 +41,7 @@ public class ImageDecoder extends ImageResizer
 	{
 		if (BuildConfig.DEBUG)
 		{
-			Log.d(TAG, "processBitmap - " + media.getName());
+			Log.d(TAG, "processBitmap - " + media.getUri());
 		}
 
 	    return decodeSampledBitmap(media.getThumb(), mImageWidth, mImageHeight);

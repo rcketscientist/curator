@@ -400,7 +400,6 @@ public class ImageUtils
         cv.put(Meta.Data.DRIVE_MODE, getDriveMode(meta));
         cv.put(Meta.Data.EXPOSURE_MODE, getExposureMode(meta));
         cv.put(Meta.Data.EXPOSURE_PROGRAM, getExposureProgram(meta));
-        cv.put(Meta.Data.TYPE, type);
         cv.put(Meta.Data.PROCESSED, true);
 
         return cv;
@@ -843,7 +842,7 @@ public class ImageUtils
 
     public static boolean isImage(String name)
     {
-        return isRaw(name) || isJpeg(name);
+        return isRaw(name) || isJpeg(name) || isTiffImage(name);
     }
 
     public static boolean isImage(File f)

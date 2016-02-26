@@ -147,8 +147,6 @@ public abstract class CoreActivity extends DocumentActivity
 		super.onResume();
 		mActivityVisible = true;
 		LicenseManager.getLicense(this, getLicenseHandler());
-		// Request storage permission here:
-		// http://developer.android.com/samples/RuntimePermissions/src/com.example.android.system.runtimepermissions/MainActivity.html#l153
 		createSwapDir();
 		createRecycleBin();
 	}
@@ -755,63 +753,6 @@ public abstract class CoreActivity extends DocumentActivity
 		mShareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, shares);
 		if (mShareProvider != null)
 			mShareProvider.setShareIntent(mShareIntent);
-	}
-
-	class XmpFilter implements FileFilter
-	{
-		@Override
-		public boolean accept(File file)
-		{
-			String filename = file.getName();
-			return filename.toLowerCase(Locale.US).endsWith(".xmp");
-		}
-	}
-
-	class JpegFilter implements FileFilter
-	{
-		@Override
-		public boolean accept(File file)
-		{
-			return ImageUtils.isJpeg(file);
-		}
-	}
-
-	class RawFilter implements FileFilter
-	{
-		@Override
-		public boolean accept(File file)
-		{
-			return ImageUtils.isRaw(file);
-		}
-	}
-
-	class NativeFilter implements FileFilter
-	{
-		@Override
-		public boolean accept(File file)
-		{
-			return ImageUtils.isNative(file);
-		}
-	}
-
-	class FileAlphaCompare implements Comparator<File>
-	{
-		// Comparator interface requires defining compare method.
-		@Override
-		public int compare(File filea, File fileb)
-		{
-			return filea.getName().compareToIgnoreCase(fileb.getName());
-		}
-	}
-
-	class MetaAlphaCompare implements Comparator<RawObject>
-	{
-		// Comparator interface requires defining compare method.
-		@Override
-		public int compare(RawObject filea, RawObject fileb)
-		{
-			return filea.getName().compareToIgnoreCase(fileb.getName());
-		}
 	}
 
 	public static class LicenseHandler extends Handler

@@ -42,6 +42,20 @@ public class LibRaw
 	private static native boolean canDecodeFromFile(String filePath);
 	public static native String[] canDecodeDirectory(String directory);
 
+	public static final int EXIF_MAKE = 0;
+	public static final int EXIF_MODEL = 1;
+	public static final int EXIF_APERTURE = 2;
+	public static final int EXIF_FOCAL = 3;
+	public static final int EXIF_ISO = 4;
+	public static final int EXIF_SHUTTER = 5;
+	public static final int EXIF_TIMESTAMP = 6;
+	public static final int EXIF_ORIENTATION = 7;
+	public static final int EXIF_THUMB_HEIGHT = 8;
+	public static final int EXIF_THUMB_WIDTH = 9;
+	public static final int EXIF_HEIGHT = 10;
+	public static final int EXIF_WIDTH = 11;
+
+
 	/**
 	 * Gets the thumbnail from a raw image.  Thumbnail will be returned as a jpeg.  In the case of a 
 	 * thumbnail that is in rgb format it will be converted using {@code config}, {@code quality}, and {@code format}.

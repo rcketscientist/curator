@@ -187,20 +187,19 @@ public class MetaService extends ThreadedPriorityIntentService
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
 
-        WakefulBroadcastReceiver.completeWakefulIntent(intent);
-//        try
-//        {
-//            processUpdates(49);
-//        }
-//        catch (RemoteException | OperationApplicationException e)
-//        {
-//            //TODO: Notify user
-//            e.printStackTrace();
-//        }
-//        finally
-//        {
-//            WakefulBroadcastReceiver.completeWakefulIntent(intent);
-//        }
+        try
+        {
+            processUpdates(20);
+        }
+        catch (RemoteException | OperationApplicationException e)
+        {
+            //TODO: Notify user
+            e.printStackTrace();
+        }
+        finally
+        {
+            WakefulBroadcastReceiver.completeWakefulIntent(intent);
+        }
     }
 
     @Override

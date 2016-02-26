@@ -125,6 +125,7 @@ public class SearchService extends IntentService
 	            cv.put(Meta.Data.URI, image.toString());
 				cv.put(Meta.Data.PARENT, fd.parent.toString());
 	            cv.put(Meta.Data.TIMESTAMP, fd.lastModified);
+	            cv.put(Meta.Data.TYPE, ImageUtils.getImageType(image));
 
 	            operations.add(ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
 			            .withValues(cv)

@@ -495,13 +495,13 @@ public class GalleryActivity extends CoreActivity
 
 		if (filter.segregateByType)
 		{
-			sort.append(Meta.Data.TYPE).append(" ASC, ");
+			sort.append(Meta.Data.TYPE).append(" COLLATE NOCASE").append(" ASC, ");
 		}
 		switch (filter.sortColumn)
 		{
 			case Date: sort.append(Meta.Data.TIMESTAMP).append(order); break;
-			case Name: sort.append(Meta.Data.NAME).append(order); break;
-			default: sort.append(Meta.Data.NAME).append(" ASC");
+			case Name: sort.append(Meta.Data.NAME).append(" COLLATE NOCASE").append(order); break;
+			default: sort.append(Meta.Data.NAME).append(" COLLATE NOCASE").append(" ASC");
 		}
 
 		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
@@ -1280,7 +1280,6 @@ public class GalleryActivity extends CoreActivity
 		}
 	}
 
-	@TargetApi(VERSION_CODES.JELLY_BEAN)
 	@Override
 	public void onItemClick(RecyclerView.Adapter<?> parent, View v, int position, long id)
 	{
@@ -1297,24 +1296,24 @@ public class GalleryActivity extends CoreActivity
             return;
         }
 
-		Intent viewer = new Intent(this, ViewerChooser.class);//getViewerIntent();
+		Intent viewer = new Intent(this, ViewerChooser.class);
 		viewer.setData(uri);
 
 		Bundle options = new Bundle();
-        if (Util.hasJellyBean())
-        {
-            // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
-            // show plus the thumbnail image in GridView is cropped. so using
-            // makeScaleUpAnimation() instead.
-            options.putAll(
-					ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
-        }
+
+		v.setDrawingCacheEnabled(true);
+		v.setPressed(false);
+		v.refreshDrawableState();
+        options.putAll(
+	        ActivityOptions.makeThumbnailScaleUpAnimation(v, v.getDrawingCache(), 0, 0).toBundle());
+		//TODO: If we want this to look smooth we should load the gallery thumb in viewer so there's a smooth transition
 
 		Bundle metaLoader = getCurrentMetaLoaderBundle();
 		viewer.putExtra(EXTRA_META_BUNDLE, metaLoader);
 		viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position);
 
 		startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options);
+		v.setDrawingCacheEnabled(false);
 	}
 
 	@Override

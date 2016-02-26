@@ -122,7 +122,7 @@
 <item>右上</item>
 </string-array>
 
-<string name="clearCache">サムネイルのキャッシュを削除</string>
+<string name="clearCache">のキャッシュを削除</string>
 <string name="cacheCleared">ギャラリーのイメージキャッシュを削除しました。</string>
 <string name="accessRecycle">ゴミ箱に移動</string>
 <string name="recycleBin">ゴミ箱</string>

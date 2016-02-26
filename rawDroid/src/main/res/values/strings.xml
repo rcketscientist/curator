@@ -151,7 +151,7 @@
         <item>Upper Right</item>
     </string-array>
 
-    <string name="clearCache">Clear Thumbnail Cache</string>
+    <string name="clearCache">Clear Cache</string>
     <string name="cacheCleared">Gallery image cache cleared.</string>
     <string name="accessRecycle">Access Recycle Bin</string>
     <string name="recycleBin">Recycle Bin</string>
