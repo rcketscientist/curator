@@ -710,10 +710,13 @@ public class PhotoDataAdapter implements Model {
         public ScreenNail run(JobContext jc) {
 			Bitmap bitmap = ImageUtils.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL, mItem).run(jc);
             if (jc.isCancelled()) return null;
-            if (bitmap != null) {
-                bitmap = BitmapUtils.rotateBitmap(bitmap,
-                        ImageUtils.getRotation(imageData.get(mItem).orientation), true);
-            }
+
+//            if (bitmap != null) {
+// TODO: Technically the rotations cancel out and the viewer still orients properly, so wtf...just dropping this altogether
+//                bitmap = BitmapUtils.rotateBitmap(bitmap,
+//                        mItem.getRotation() - mItem.getFullImageRotation(), true);
+//                bitmap = BitmapUtils.rotateBitmap(bitmap, 0/*getImageRotation(mItem)*/, true);
+//            }
             return bitmap == null ? null : new TiledScreenNail(bitmap);
         }
     }
