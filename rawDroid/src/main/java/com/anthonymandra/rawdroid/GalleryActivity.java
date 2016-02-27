@@ -1116,8 +1116,7 @@ public class GalleryActivity extends CoreActivity
 				ArrayList<Uri> arrayUri = new ArrayList<>();
 				for (Uri selection : selectedUris)
 				{
-					UsefulDocumentFile f = UsefulDocumentFile.fromUri(GalleryActivity.this, selection);
-					arrayUri.add(SwapProvider.createSwapUri(f.getName(), selection));
+					arrayUri.add(SwapProvider.createSwapUri(selection));
 				}
 
 				if (selectedUris.size() == 1)

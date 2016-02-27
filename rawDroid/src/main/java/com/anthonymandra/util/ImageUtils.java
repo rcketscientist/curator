@@ -1198,15 +1198,15 @@ public class ImageUtils
         }
     }
 
-    public static ThreadPool.Job<Bitmap> requestImage(GalleryApp app, int type, MetaMedia image) {
+    public static ThreadPool.Job<Bitmap> requestImage(GalleryApp app, int type, Uri image) {
         return new ImageRequest(app, image, type);
     }
 
     public static class ImageRequest extends ImageCacheRequest
     {
-        MetaMedia mImage;
-        ImageRequest(GalleryApp application, MetaMedia image, int type) {
-            super(application, image.getUri(), type, MetaMedia.getTargetSize(type));
+        Uri mImage;
+        ImageRequest(GalleryApp application, Uri image, int type) {
+            super(application, image, type, MetaMedia.getTargetSize(type));
             mImage = image;
         }
 
@@ -1232,7 +1232,7 @@ public class ImageUtils
         }
     }
 
-    public static ThreadPool.Job<BitmapRegionDecoder> requestLargeImage(Context c, MetaMedia image) {
+    public static ThreadPool.Job<BitmapRegionDecoder> requestLargeImage(Context c, Uri image) {
         return new LargeImageRequest(c, image);
     }
 
@@ -1240,9 +1240,9 @@ public class ImageUtils
             ThreadPool.Job<BitmapRegionDecoder>
     {
         Context mContext;
-        MetaMedia mImage;
+        Uri mImage;
 
-        public LargeImageRequest(Context c, MetaMedia image) {
+        public LargeImageRequest(Context c, Uri image) {
             mImage = image;
             mContext = c;
         }

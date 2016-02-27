@@ -40,8 +40,6 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.LocalImage;
-import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
@@ -114,7 +112,7 @@ public class PhotoDataAdapter implements Model {
     // smaller than DATA_CACHE_SIZE because we only update the window and reload
     // the MediaItems when there are significant changes to the window position
     // (>= MIN_LOAD_COUNT).
-    private final MetaMedia mData[] = new MetaMedia[DATA_CACHE_SIZE];
+    private final Uri mData[] = new Uri[DATA_CACHE_SIZE];
     private int mContentStart = 0;
     private int mContentEnd = 0;
 
@@ -141,6 +139,18 @@ public class PhotoDataAdapter implements Model {
 
     private final PhotoView mPhotoView;
     private final List<Uri> mSource;
+
+	/**
+     * Stores image data so multiple resolver calls are unneeded
+     */
+    private final HashMap<Uri, ImageData> imageData = new HashMap<>();
+
+    private class ImageData
+    {
+        public int width;
+        public int height;
+        public int orientation;
+    }
     private ReloadTask mReloadTask;
 
     private Uri mItemPath;
@@ -197,7 +207,7 @@ public class PhotoDataAdapter implements Model {
         updateSlidingWindow();
     }
 
-    private MediaItem getItemInternal(int index) {
+    private Uri getItemInternal(int index) {
         if (index < 0 || index >= getCount()) return null;
         if (index >= mContentStart && index < mContentEnd) {
             return mData[index % DATA_CACHE_SIZE];
@@ -206,9 +216,7 @@ public class PhotoDataAdapter implements Model {
     }
 
     private Uri getPath(int index) {
-        MediaItem item = getItemInternal(index);
-        if (item == null) return null;
-        return item.getUri();
+        return getItemInternal(index);
     }
 
     private void fireDataChange() {
@@ -343,7 +351,7 @@ public class PhotoDataAdapter implements Model {
         TiledTexture.freeResources();
     }
 
-    private MediaItem getImage(int index) {
+    private Uri getImage(int index) {
         if (index < 0 || index >= getCount() || !mIsActive) return null;
         Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
@@ -358,8 +366,7 @@ public class PhotoDataAdapter implements Model {
         mCurrentIndex = index;
         updateSlidingWindow();
 
-        MediaItem item = mData[index % DATA_CACHE_SIZE];
-        mItemPath = item == null ? null : item.getUri();
+        mItemPath = mData[index % DATA_CACHE_SIZE];
 
         updateImageCache();
         updateImageRequests();
@@ -376,10 +383,10 @@ public class PhotoDataAdapter implements Model {
         int index = mCurrentIndex + offset;
         if (index < mActiveStart || index >= mActiveEnd) return;
 
-        MediaItem item = getImage(index);
+        Uri item = getImage(index);
         if (item == null) return;
 
-        ImageEntry e = mImageCache.get(item.getUri());
+        ImageEntry e = mImageCache.get(item);
         if (e == null) return;
 
         ScreenNail s = e.screenNail;
@@ -420,10 +427,10 @@ public class PhotoDataAdapter implements Model {
             return null;
         }
 
-        MediaItem item = getImage(index);
+        Uri item = getImage(index);
         if (item == null) return null;
 
-        ImageEntry entry = mImageCache.get(item.getUri());
+        ImageEntry entry = mImageCache.get(item);
         if (entry == null) return null;
 
         // Create a default ScreenNail if the real one is not available yet,
@@ -438,22 +445,45 @@ public class PhotoDataAdapter implements Model {
 
     @Override
     public void getImageSize(int offset, PhotoView.Size size) {
-        Cursor c = getCursor(offset);
+        Uri uri = getImage(mCurrentIndex + offset);
+        if (uri == null)
+            return;
+
+        getImageSize(uri, size);
+    }
+
+    public void getImageSize(Uri uri, PhotoView.Size size)
+    {
+        if (!imageData.containsKey(uri))
+        {
+            populateImageData(uri);
+        }
+
+        size.height = imageData.get(uri).height;
+        size.width = imageData.get(uri).width;
+    }
+
+    private void populateImageData(Uri uri)
+    {
+        Cursor c = getCursor(uri);
         if (c == null)
             return;
 
-        size.height = c.getInt(Meta.HEIGHT_COLUMN);
-        size.width = c.getInt(Meta.WIDTH_COLUMN);
+        ImageData data = new ImageData();
+        data.height = c.getInt(c.getColumnIndex(Meta.Data.HEIGHT));
+        data.width = c.getInt(c.getColumnIndex(Meta.Data.WIDTH));
+        data.orientation = c.getInt(c.getColumnIndex(Meta.Data.ORIENTATION));
+
+        imageData.put(uri, data);
         c.close();
     }
 
-    private Cursor getCursor(int offset)
+    private Cursor getCursor(Uri item)
     {
-        MediaItem item = getImage(mCurrentIndex + offset);
         if (item == null)
             return null;
 
-        Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item.getUri());
+        Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item);
 
         return c.moveToFirst() ? c : null;
     }
@@ -461,13 +491,21 @@ public class PhotoDataAdapter implements Model {
     @Override
     public int getImageRotation(int offset)
     {
-        Cursor c = getCursor(offset);
-        if (c == null || !c.moveToFirst())
+        Uri uri = getImage(mCurrentIndex + offset);
+        if (uri == null)
             return 0;
 
-        int rotation = ImageUtils.getRotation(c.getInt(Meta.ORIENTATION_COLUMN));
-        c.close();
-        return rotation;
+        return getImageRotation(uri);
+    }
+
+    public int getImageRotation(Uri uri)
+    {
+        if (!imageData.containsKey(uri))
+        {
+            populateImageData(uri);
+        }
+
+        return ImageUtils.getRotation(imageData.get(uri).orientation);
     }
 
     @Override
@@ -540,7 +578,7 @@ public class PhotoDataAdapter implements Model {
     }
 
     @Override
-	public MediaItem getMediaItem(int offset) {
+	public Uri getMediaItem(int offset) {
 		int index = mCurrentIndex + offset;
 		if (index >= mContentStart && index < mContentEnd) {
 			return mData[index % DATA_CACHE_SIZE];
@@ -558,14 +596,14 @@ public class PhotoDataAdapter implements Model {
 		fireDataChange();
 
 		// We need to reload content if the path doesn't match.
-		MediaItem item = getMediaItem(0);
-		if (item != null && !item.getUri().equals(path)) {
+		Uri item = getMediaItem(0);
+		if (item != null && !item.equals(path)) {
             if (mReloadTask != null) mReloadTask.notifyDirty();
 		}
 	}
 
     @Override
-    public MediaItem getCurrentItem()
+    public Uri getCurrentItem()
     {
         return getMediaItem(0);
     }
@@ -629,8 +667,8 @@ public class PhotoDataAdapter implements Model {
         if (!mIsActive) return;
 
 		int currentIndex = mCurrentIndex;
-		MediaItem item = mData[currentIndex % DATA_CACHE_SIZE];
-		if (item == null || !item.getUri().equals(mItemPath)) {
+		Uri item = mData[currentIndex % DATA_CACHE_SIZE];
+		if (item == null || !item.equals(mItemPath)) {
 			// current item mismatch - don't request image
 			return;
 		}
@@ -662,28 +700,28 @@ public class PhotoDataAdapter implements Model {
 	}
 
     private class ScreenNailJob implements Job<ScreenNail> {
-		private MetaMedia mItem;
+		private Uri mItem;
 
-		public ScreenNailJob(MetaMedia item) {
+		public ScreenNailJob(Uri item) {
 			mItem = item;
 		}
 
 		@Override
         public ScreenNail run(JobContext jc) {
-			Bitmap bitmap = mItem.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL).run(jc);
+			Bitmap bitmap = ImageUtils.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL, mItem).run(jc);
             if (jc.isCancelled()) return null;
             if (bitmap != null) {
                 bitmap = BitmapUtils.rotateBitmap(bitmap,
-                    mItem.getRotation() - mItem.getFullImageRotation(), true);
+                        ImageUtils.getRotation(imageData.get(mItem).orientation), true);
             }
             return bitmap == null ? null : new TiledScreenNail(bitmap);
         }
     }
 
     private class FullImageJob implements Job<BitmapRegionDecoder> {
-		private MetaMedia mItem;
+		private Uri mItem;
 
-		public FullImageJob(MetaMedia item)	{
+		public FullImageJob(Uri item)	{
 			mItem = item;
 		}
 
@@ -696,9 +734,11 @@ public class PhotoDataAdapter implements Model {
     // Create a default ScreenNail when a ScreenNail is needed, but we don't yet
     // have one available (because the image data is still being saved, or the
     // Bitmap is still being loaded.
-    private ScreenNail newPlaceholderScreenNail(MediaItem item) {
-        int width = item.getWidth();
-        int height = item.getHeight();
+    private ScreenNail newPlaceholderScreenNail(Uri item) {
+        PhotoView.Size s = new PhotoView.Size();
+        getImageSize(item, s);
+        int width = s.width;
+        int height = s.height;
         return new TiledScreenNail(width, height);
     }
 
@@ -708,7 +748,7 @@ public class PhotoDataAdapter implements Model {
 
         ImageEntry entry = mImageCache.get(getPath(index));
         if (entry == null) return null;
-		MetaMedia item = mData[index % DATA_CACHE_SIZE];
+		Uri item = mData[index % DATA_CACHE_SIZE];
 		Utils.assertTrue(item != null);
 
         if (which == BIT_SCREEN_NAIL && entry.screenNailTask != null
@@ -743,9 +783,9 @@ public class PhotoDataAdapter implements Model {
 	private void updateImageCache()	{
         HashSet<Uri> toBeRemoved = new HashSet<>(mImageCache.keySet());
         for (int i = mActiveStart; i < mActiveEnd; ++i) {
-			MediaItem item = mData[i % DATA_CACHE_SIZE];
-            if (item == null) continue;
-			Uri path = item.getUri();
+            Uri path = mData[i % DATA_CACHE_SIZE];
+            if (path == null) continue;
+
 			ImageEntry entry = mImageCache.get(path);
 			toBeRemoved.remove(path);
             if (entry != null) {
@@ -764,8 +804,9 @@ public class PhotoDataAdapter implements Model {
                         TiledScreenNail s = (TiledScreenNail) entry.screenNail;
 //						s.updatePlaceholderSize(
 //                                item.getThumbWidth(), item.getThumbHeight());
-						s.updatePlaceholderSize(
-                                item.getWidth(), item.getHeight());
+                        PhotoView.Size size = new PhotoView.Size();
+                        getImageSize(path, size);
+						s.updatePlaceholderSize(size.width, size.height);
 					}
 				}
             } else {
@@ -789,8 +830,8 @@ public class PhotoDataAdapter implements Model {
 		private final Uri mPath;
 		private Future<BitmapRegionDecoder> mFuture;
 
-		public FullImageListener(MediaItem item) {
-			mPath = item.getUri();
+		public FullImageListener(Uri item) {
+			mPath = item;
 		}
 
         @Override
@@ -811,8 +852,8 @@ public class PhotoDataAdapter implements Model {
 		private final Uri mPath;
 		private Future<ScreenNail> mFuture;
 
-		public ScreenNailListener(MediaItem item) {
-			mPath = item.getUri();
+		public ScreenNailListener(Uri item) {
+			mPath = item;
 		}
 
         @Override
@@ -866,7 +907,7 @@ public class PhotoDataAdapter implements Model {
 		public int contentEnd;
 
 		public int size;
-		public ArrayList<MetaMedia> items;
+		public ArrayList<Uri> items;
 	}
 
     private class GetUpdateInfo implements Callable<UpdateInfo> {
@@ -875,8 +916,8 @@ public class PhotoDataAdapter implements Model {
             for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
                 if (mData[i % DATA_CACHE_SIZE] == null) return true;
             }
-			MediaItem current = mData[mCurrentIndex % DATA_CACHE_SIZE];
-			return current == null || !current.getUri().equals(mItemPath);
+			Uri current = mData[mCurrentIndex % DATA_CACHE_SIZE];
+			return current == null || !current.equals(mItemPath);
 		}
 
 		@Override
@@ -920,9 +961,7 @@ public class PhotoDataAdapter implements Model {
                 }
             }
 
-			// update mItemPath
-			MediaItem current = mData[mCurrentIndex % DATA_CACHE_SIZE];
-			mItemPath = current == null ? null : current.getUri();
+            mItemPath = mData[mCurrentIndex % DATA_CACHE_SIZE];
 
 			updateImageCache();
 			updateTileProvider();
@@ -937,15 +976,15 @@ public class PhotoDataAdapter implements Model {
 		}
 	}
 
-	public ArrayList<MetaMedia> getMediaItem(int start, int count)
+	public ArrayList<Uri> getMediaItem(int start, int count)
 	{
-		ArrayList<MetaMedia> result = new ArrayList<>();
+		ArrayList<Uri> result = new ArrayList<>();
 
 		for (int i = start; i <= start + count; i++)
 		{
 			if (i >= 0 && i < getCount())
 			{
-				result.add(new LocalImage(mActivity.getAndroidContext(), mSource.get(i)));
+				result.add(mSource.get(i));
 			}
 		}
 

@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -39,12 +38,10 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.HistogramView;
 
 import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -122,13 +119,13 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected Uri mCurrentUri;
 
-    public abstract MediaItem getCurrentItem();
+    public abstract Uri getCurrentItem();
     public abstract Bitmap getCurrentBitmap();
     public abstract void goToPrevPicture();
     public abstract void goToNextPicture();
     public abstract void goToFirstPicture();
 
-    protected List<LocalImage> mMediaItems = new ArrayList<>();
+    protected List<Uri> mMediaItems = new ArrayList<>();
 
     /**
      * Since initial image configuration can occur BEFORE image generation
@@ -167,7 +164,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             String[] uris = getIntent().getStringArrayExtra(EXTRA_URIS);
             for (String uri : uris)
             {
-                mMediaItems.add(new LocalImage(this, Uri.parse(uri)));
+                mMediaItems.add(Uri.parse(uri));
             }
         }
         else if (getIntent().hasExtra(EXTRA_META_BUNDLE))
@@ -191,7 +188,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             {
                 while(c.moveToNext())
                 {
-                    mMediaItems.add(new LocalImage(this, c));
+                    mMediaItems.add(Uri.parse(c.getString(Meta.URI_COLUMN)));
                 }
             }
             c.close();
@@ -199,7 +196,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         else  // External intent
         {
             mImageIndex = 0;
-            mMediaItems.add(new LocalImage(this, getIntent().getData());
+            mMediaItems.add(getIntent().getData());
         }
     }
 
@@ -248,7 +245,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 //        }
         mCurrentUri = item;
 
-        setShareUri(getCurrentItem().getSwapUri());
+        setShareUri(SwapProvider.createSwapUri(item));
         updateImageDetails();
     }
 
@@ -514,12 +511,12 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected void updateMetaData()
     {
-        MediaItem image = getCurrentItem();
+        Uri image = getCurrentItem();
         if (image == null)
             return;
 
         LoadMetadataTask task = new LoadMetadataTask();
-        task.execute(image.getUri());
+        task.execute(image);
     }
 
     protected void updateImageDetails()
@@ -752,7 +749,7 @@ public abstract class ViewerActivity extends CoreActivity implements
                 setWallpaper();
                 return true;
             case R.id.view_delete:
-                deleteImage(getCurrentItem().getUri());
+                deleteImage(getCurrentItem());
                 return true;
             case R.id.view_recycle:
                 showRecycleBin();
@@ -764,17 +761,17 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void editImage()
     {
-        MediaItem media = getCurrentItem();
+        Uri media = getCurrentItem();
 
         Intent action = new Intent(Intent.ACTION_EDIT);
-        action.setDataAndType(media.getUri(), "");
+        action.setDataAndType(media, "");
         action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         // Convert if no editor for raw exists
         if (!intentExists(action))
         {
-            action.setDataAndType(media.getSwapUri(), "image/jpeg");
+            action.setDataAndType(SwapProvider.createSwapUri(media), "image/jpeg");
         }
 
         // Otherwise convert
@@ -811,9 +808,9 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void handleSaveImage(Uri dest)
     {
-        MediaItem source = getCurrentItem();
+        Uri source = getCurrentItem();
         CopyThumbTask ctt = new CopyThumbTask();
-        ctt.execute(source.getUri(), dest);
+        ctt.execute(source, dest);
     }
 
     private void setWallpaper()
@@ -821,7 +818,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 		try
 		{
 		    WallpaperManager.getInstance(this).setBitmap(ImageUtils.createBitmapToSize(
-                    getCurrentItem().getThumb(), displayWidth, displayHeight));
+                    ImageUtils.getThumb(this, getCurrentItem()), displayWidth, displayHeight));
 		}
 		catch (Exception e)
 		{
@@ -834,12 +831,12 @@ public abstract class ViewerActivity extends CoreActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         setMetaVisibility();
-        MediaItem media = getCurrentItem();
+        Uri media = getCurrentItem();
 
         if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
         {
             Intent viewer = getViewerIntent();
-            viewer.setData(media.getUri());
+            viewer.setData(media);
             //TODO: finish() before startActivity???
             finish();
             startActivity(viewer);

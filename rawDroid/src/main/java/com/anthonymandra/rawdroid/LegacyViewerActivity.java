@@ -16,8 +16,10 @@ import com.android.legacy.ui.GLRootView;
 import com.android.legacy.ui.GLView;
 import com.android.legacy.ui.ImageViewer;
 import com.android.legacy.ui.ImageViewer.ImageData;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.LocalImage;
+import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
 import com.anthonymandra.rawprocessor.LibRaw;
@@ -104,12 +106,6 @@ public class LegacyViewerActivity extends ViewerActivity
 	}
 
 	@Override
-	public void onPhotoChanged(int index, Uri item)
-	{
-		super.onPhotoChanged(index, item);
-	}
-
-	@Override
 	public void onPause()
 	{
 		super.onPause();
@@ -131,7 +127,7 @@ public class LegacyViewerActivity extends ViewerActivity
 	}
 
     @Override
-	public MediaItem getCurrentItem()
+	public Uri getCurrentItem()
 	{
 		if (mImageIndex < 0 || mImageIndex >= mModel.getCount())
 		{
@@ -147,7 +143,8 @@ public class LegacyViewerActivity extends ViewerActivity
 				mImageIndex = 0;
 			}
 		}
-		return new LocalImage(this, mModel.getCursor());
+		Cursor c = mModel.getCursor();
+		return Uri.parse(c.getString(c.getColumnIndex(Meta.Data.URI)));
 	}
 
     @Override
@@ -431,13 +428,13 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void requestNextImageWithMeta()
 		{
-            setShareUri(getCurrentItem().getSwapUri());
+            setShareUri(SwapProvider.createSwapUri(getCurrentItem()));
 			loadExif();
 
 			// First request the current screen nail
 			if (mScreenNails[INDEX_CURRENT] == null)
 			{
-                MediaItem current = getCurrentItem();
+                Uri current = getCurrentItem();
 				if (current != null)
 				{
 					CurrentImageLoader cml = new CurrentImageLoader();
@@ -476,7 +473,7 @@ public class LegacyViewerActivity extends ViewerActivity
 			// Next, the full size image
 			if (mLargeBitmap == null)
 			{
-                MediaItem current = getCurrentItem();
+                Uri current = getCurrentItem();
 				if (current != null)
 				{
 					LargeImageLoader lml = new LargeImageLoader();

@@ -55,7 +55,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     protected PhotoDataAdapter mModel;
 
     private Handler mHandler;
-    private MediaItem mCurrentPhoto = null;
+    private Uri mCurrentPhoto = null;
     private boolean mIsActive;
     private OrientationManager mOrientationManager;
 
@@ -103,7 +103,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
                         break;
                     }
                     case MSG_REFRESH_IMAGE: {
-                        final MediaItem photo = mCurrentPhoto;
+                        final Uri photo = mCurrentPhoto;
                         mCurrentPhoto = null;
                         updateCurrentPhoto(photo);
                         break;
@@ -130,7 +130,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
 
         if (!mSkipUpdateCurrentPhoto) {
             if (item != null) {
-                MediaItem photo = mModel.getMediaItem(0);
+                Uri photo = mModel.getMediaItem(0);
                 if (photo != null) updateCurrentPhoto(photo);
             }
         }
@@ -139,7 +139,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     @Override
     public void onLoadingFinished(boolean loadingFailed) {
         if (!mModel.isEmpty()) {
-            MediaItem photo = mModel.getMediaItem(0);
+            Uri photo = mModel.getMediaItem(0);
             if (photo != null) updateCurrentPhoto(photo);
         } else if (mIsActive) {
             finish();
@@ -169,7 +169,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
         }
     }
 
-    private void updateCurrentPhoto(MediaItem photo) {
+    private void updateCurrentPhoto(Uri photo) {
         if (mCurrentPhoto == photo) return;
         mCurrentPhoto = photo;
         if (mPhotoView.getFilmMode()) {

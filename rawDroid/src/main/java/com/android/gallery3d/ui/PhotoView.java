@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.view.MotionEvent;
@@ -60,7 +61,7 @@ public class PhotoView extends GLView {
         void getImageSize(int offset, Size size);
 
         // Returns the media item for the specified picture.
-        MediaItem getMediaItem(int offset);
+        Uri getMediaItem(int offset);
 
         // Returns the rotation for the specified picture.
         int getImageRotation(int offset);
@@ -99,14 +100,14 @@ public class PhotoView extends GLView {
         // MediaItem, depending on the value of focus hint direction.
         int FOCUS_HINT_NEXT = 0;
         int FOCUS_HINT_PREVIOUS = 1;
-        MediaItem getCurrentItem();
+        Uri getCurrentItem();
     }
 
     public interface Listener {
         void onSingleTapUp(int x, int y);
         void onCurrentImageUpdated();
         void onFilmModeChanged(boolean enabled);
-        void onCommitDeleteImage(MediaItem toDelete);
+        void onCommitDeleteImage(Uri toDelete);
         void onSingleTapConfirmed();// int x, int y); Don't need the point at the moment don't bother converting
     }
 
@@ -271,7 +272,7 @@ public class PhotoView extends GLView {
     }
 
     private void delete() {
-        MediaItem item = mModel.getMediaItem(mTouchBoxIndex);
+        Uri item = mModel.getMediaItem(mTouchBoxIndex);
         if (item == null) return;
         mListener.onCommitDeleteImage(item);
     }

@@ -246,7 +246,7 @@ class PositionController {
 		// minimal scale under the new view size.
         if (wasMinimal) {
 			Box b = mBoxes.get(0);
-			b.mCurrentScale = b.mScaleMin;
+			b.setCurrentScale(b.mScaleMin);
 		}
 
 		// If we have the opening animation, do it. Otherwise go directly to the
@@ -307,10 +307,10 @@ class PositionController {
         // we change the scale directly. Otherwise adjust the scales by a ratio,
         // and snapback will animate the scale into the min/max bounds if necessary.
         if ((wasViewSize && !isViewSize) || !mFilmMode) {
-			b.mCurrentScale = getMinimalScale(b);
+	        b.setCurrentScale(getMinimalScale(b));
 			b.mAnimationStartTime = NO_ANIMATION;
         } else {
-			b.mCurrentScale *= ratio;
+			b.setCurrentScale(b.mCurrentScale * ratio);
 			b.mFromScale *= ratio;
 			b.mToScale *= ratio;
 		}
@@ -334,8 +334,8 @@ class PositionController {
 
 		mPlatform.mCurrentX = r.centerX() - mViewW / 2;
 		b.mCurrentY = r.centerY() - mViewH / 2;
-        b.mCurrentScale = Math.max(r.width() / (float) b.mImageW,
-                r.height() / (float) b.mImageH);
+	    b.setCurrentScale(Math.max(r.width() / (float) b.mImageW,
+                r.height() / (float) b.mImageH));
         startAnimation(mPlatform.mDefaultX, 0, b.mScaleMin,
                 ANIM_KIND_OPENING);
 
@@ -430,7 +430,7 @@ class PositionController {
             Box b = mBoxes.get(i);
             if (b.mAnimationStartTime == NO_ANIMATION) continue;
             b.mCurrentY = b.mToY;
-            b.mCurrentScale = b.mToScale;
+	        b.setCurrentScale(b.mToScale);
             b.mAnimationStartTime = NO_ANIMATION;
         }
         for (int i = -BOX_MAX; i < BOX_MAX; i++) {
@@ -533,7 +533,7 @@ class PositionController {
 	public void updateCurrentImage(int platformX, int platformY, int boxY, float scale)
 	{
 		Box b = mBoxes.get(0);
-		b.mCurrentScale = scale;
+		b.setCurrentScale(scale);
 		b.mCurrentY = boxY;
 		mPlatform.mCurrentX = platformX;
 		mPlatform.mToX = platformX;
@@ -947,7 +947,7 @@ class PositionController {
         b.mScaleMin = getMinimalScale(b);
         b.mScaleMax = getMaximalScale(b);
         b.mCurrentY = 0;
-        b.mCurrentScale = b.mScaleMin;
+        b.setCurrentScale(b.mScaleMin);
         b.mAnimationStartTime = NO_ANIMATION;
         b.mAnimationKind = ANIM_KIND_NONE;
     }
@@ -965,7 +965,7 @@ class PositionController {
         b.mScaleMin = getMinimalScale(b);
         b.mScaleMax = getMaximalScale(b);
         b.mCurrentY = 0;
-        b.mCurrentScale = b.mScaleMin;
+	    b.setCurrentScale(b.mScaleMin);
         b.mAnimationStartTime = NO_ANIMATION;
         b.mAnimationKind = ANIM_KIND_NONE;
     }
@@ -1614,6 +1614,12 @@ class PositionController {
         // defined by Platform and Gaps.
         public int mCurrentY, mFromY, mToY;
         public float mCurrentScale, mFromScale, mToScale;
+	    private void setCurrentScale(float scale)
+	    {
+		    mCurrentScale = scale;
+		    if (this == mBoxes.get(0))
+		        mListener.onScaleChanged(mCurrentScale);
+	    }
 
         // The absolute X coordinate of the center of the box. This is only used
         // during moveBox().
@@ -1719,14 +1725,14 @@ class PositionController {
         private boolean interpolateLinear(float progress) {
             if (progress >= 1) {
                 mCurrentY = mToY;
-                mCurrentScale = mToScale;
+                setCurrentScale(mToScale);
                 return true;
             } else {
                 mCurrentY = (int) (mFromY + progress * (mToY - mFromY));
-                mCurrentScale = mFromScale + progress * (mToScale - mFromScale);
+                setCurrentScale(mFromScale + progress * (mToScale - mFromScale));
                 if (mAnimationKind == ANIM_KIND_CAPTURE) {
                     float f = CaptureAnimation.calculateScale(progress);
-                    mCurrentScale *= f;
+                    setCurrentScale(mCurrentScale * f);
                     return false;
                 } else {
                     return (mCurrentY == mToY && mCurrentScale == mToScale);

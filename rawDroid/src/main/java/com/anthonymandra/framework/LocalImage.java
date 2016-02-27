@@ -201,7 +201,7 @@ public class LocalImage extends MetaMedia {
 
 	@Override
 	public Uri getSwapUri() {
-		return SwapProvider.createSwapUri(getName(), getUri());
+		return SwapProvider.createSwapUri(getUri());
 	}
 
 	@Override

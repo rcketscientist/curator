@@ -2,6 +2,7 @@ package com.anthonymandra.rawdroid;
 
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -56,9 +57,9 @@ public class ImageViewActivity extends PhotoPage
 	}
 
     @Override
-    public void onCommitDeleteImage(MediaItem toDelete)
+    public void onCommitDeleteImage(Uri toDelete)
     {
-        deleteImage(toDelete.getUri());
+        deleteImage(toDelete);
     }
 
     private WeakHashMap<ContentListener, Object> mListeners =
@@ -83,7 +84,7 @@ public class ImageViewActivity extends PhotoPage
     }
 
     @Override
-    public MediaItem getCurrentItem() {
+    public Uri getCurrentItem() {
         return mModel.getCurrentItem();
     }
 

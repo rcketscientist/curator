@@ -60,12 +60,12 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
 	/**
 	 * Generates a uri to request a swap file
-     * @param name Name of the source image
      * @param uri uri of the source image
      * @return String uri to request a swap file
      */
-    public static Uri createSwapUri(String name, Uri uri)
+    public static Uri createSwapUri(Uri uri)
     {
+        String name = uri.getLastPathSegment();
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(SwapProvider.AUTHORITY)
