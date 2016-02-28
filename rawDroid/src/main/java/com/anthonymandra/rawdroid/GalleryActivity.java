@@ -27,7 +27,6 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
@@ -44,6 +43,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
@@ -55,7 +55,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -102,7 +101,6 @@ public class GalleryActivity extends CoreActivity
 		implements
 		GalleryRecyclerAdapter.OnItemClickListener,
 		GalleryRecyclerAdapter.OnItemLongClickListener,
-		OnScrollListener,
         ShareActionProvider.OnShareTargetSelectedListener,
 		OnSharedPreferenceChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
@@ -283,6 +281,12 @@ public class GalleryActivity extends CoreActivity
 
 //		doFirstRun();
 
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
+
 		AppRater.app_launched(this);
 
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -317,17 +321,12 @@ public class GalleryActivity extends CoreActivity
 
 		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
 
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
-
 		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
 		mImageGrid.setLayoutManager(mGridLayout);
 		mImageGrid.addItemDecoration(spacing);
 		mImageGrid.setHasFixedSize(true);
 		mImageGrid.setAdapter(mGalleryAdapter);
+//		mImageGrid.addOnScrollListener(this);
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
@@ -1306,26 +1305,44 @@ public class GalleryActivity extends CoreActivity
 		v.setDrawingCacheEnabled(false);
 	}
 
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
-	{
-        //Do nothing
-	}
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState)
-	{
-		//TODO: See if this is still of any value, currently not attached
-		// Pause fetcher to ensure smoother scrolling when flinging
-		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING)
-		{
-			mImageDecoder.setPauseWork(true);
-		}
-		else
-		{
-			mImageDecoder.setPauseWork(false);
-		}
-	}
+//	private static class GalleryOnScrollListener extends OnScrollListener
+//	{
+//		@Override
+//		public void onScrollStateChanged(RecyclerView recyclerView, int newState)
+//		{
+//			//TODO: See if this is still of any value, currently not attached
+//			// Pause fetcher to ensure smoother scrolling when flinging
+//			if (newState == OnScrollListener.SCROLL_STATE_FLING)
+//			{
+//				mImageDecoder.setPauseWork(true);
+//			}
+//			else
+//			{
+//				mImageDecoder.setPauseWork(false);
+//			}
+//		}
+//	}
+//
+//	@Override
+//	public void onScrolled(RecyclerView recyclerView, int dx, int dy){}
+//	{
+//        //Do nothing
+//	}
+//
+//	@Override
+//	public void onScrollStateChanged(RecyclerView view, int scrollState)
+//	{
+//		//TODO: See if this is still of any value, currently not attached
+//		// Pause fetcher to ensure smoother scrolling when flinging
+//		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING)
+//		{
+//			mImageDecoder.setPauseWork(true);
+//		}
+//		else
+//		{
+//			mImageDecoder.setPauseWork(false);
+//		}
+//	}
 
     int tutorialStage;
 	public void runTutorial()
