@@ -297,34 +297,25 @@ public class GalleryActivity extends CoreActivity
 		// Set memory cache to 25% of mem class
 		cacheParams.setMemCacheSizePercent(this, 0.15f);
 
+		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
+		final int numColumns = (int) Math.floor(mDisplayWidth / (thumbSize + thumbSpacing));
+		final int imageSize = mDisplayWidth / numColumns;
+
+		mGridLayout = new GridLayoutManager(this, numColumns);
+		mGridLayout.setSmoothScrollbarEnabled(true);
+
 		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		mImageDecoder = new ImageDecoder(this, getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size));
-		mImageDecoder.setFolderImage(R.drawable.android_folder);
-		mImageDecoder.setUnknownImage(R.drawable.ic_unknown_file);
+		// TODO: This should not have a hardcoded size
+		mImageDecoder = new ImageDecoder(this, imageSize);
 		mImageDecoder.addImageCache(getFragmentManager(), cacheParams);
 
-//		mGalleryAdapter = new GalleryAdapter(this, null, mImageDecoder);
 		mGalleryAdapter = new GalleryRecyclerAdapter(this, null, mImageDecoder);
 		mGalleryAdapter.setOnSelectionListener(this);
 		mGalleryAdapter.setOnItemClickListener(this);
 		mGalleryAdapter.setOnItemLongClickListener(this);
 
-//		mImageGrid = ((GridView) findViewById(R.id.gridview));
-//		mImageGrid.setOnScrollListener(this);
-//		mImageGrid.setOnItemClickListener(this);
-//		mImageGrid.setOnItemLongClickListener(this);
-
 		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
-		final int displayWidth = getResources().getDisplayMetrics().widthPixels;
-		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
-		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
-		final int numColumns = (int) Math.floor(displayWidth / (thumbSize + thumbSpacing));
-
-		mGridLayout = new GridLayoutManager(this, numColumns);
-		mGridLayout.setSmoothScrollbarEnabled(true);
-//		mImageGrid.setOnScrollListener(this);
-//		mImageGrid.setOnItemClickListener(this);
-//		mImageGrid.setOnItemLongClickListener(this);
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
         PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
@@ -1324,6 +1315,7 @@ public class GalleryActivity extends CoreActivity
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState)
 	{
+		//TODO: See if this is still of any value, currently not attached
 		// Pause fetcher to ensure smoother scrolling when flinging
 		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING)
 		{

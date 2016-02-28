@@ -19,9 +19,10 @@ package com.anthonymandra.framework;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.util.Log;
 
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.widget.LoadingImageView;
@@ -38,9 +39,6 @@ public abstract class ImageWorker extends CacheManager
 	private static final String TAG = ImageWorker.class.getSimpleName();
 	// private static final int FADE_IN_TIME = 200;
 
-	//TODO: Should i not store these?
-	protected Bitmap mFolderBitmap;
-	protected Bitmap mUnknownBitmap;
 	// private boolean mFadeInBitmap = true;
 
 	protected Resources mResources;
@@ -62,7 +60,7 @@ public abstract class ImageWorker extends CacheManager
 	 * @param imageView
 	 *            The ImageView to bind the downloaded image to.
 	 */
-	public void loadImage(RawObject image, LoadingImageView imageView)
+	public void loadImage(Uri image, LoadingImageView imageView)
 	{
 		imageView.setLoadingSpinner();
 		if (image == null)
@@ -74,7 +72,7 @@ public abstract class ImageWorker extends CacheManager
 
 		if (mImageCache != null)
 		{
-			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image.getUri()));// String.valueOf(image));
+			bitmap = mImageCache.getBitmapFromMemCache(String.valueOf(image));
 		}
 
 		if (bitmap != null)
@@ -96,16 +94,6 @@ public abstract class ImageWorker extends CacheManager
 			task.executeOnExecutor(LibRaw.EXECUTOR, image);
 //			task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, image);
 		}
-	}
-
-	public void setFolderImage(int resId)
-	{
-		mFolderBitmap = BitmapFactory.decodeResource(mResources, resId);
-	}
-
-	public void setUnknownImage(int resId)
-	{
-		mUnknownBitmap = BitmapFactory.decodeResource(mResources, resId);
 	}
 
 	// /**
@@ -134,7 +122,7 @@ public abstract class ImageWorker extends CacheManager
 	 * Returns true if the current work has been canceled or if there was no work in progress on this image view. Returns false if the work in
 	 * progress deals with the same data. The work is not stopped in that case.
 	 */
-	public static boolean cancelPotentialWork(RawObject data, LoadingImageView imageView)
+	public static boolean cancelPotentialWork(Uri data, LoadingImageView imageView)
 	{
 		final BitmapWorkerTask bitmapWorkerTask = getBitmapWorkerTask(imageView);
 
@@ -145,13 +133,13 @@ public abstract class ImageWorker extends CacheManager
 //		Log.d(TAG, "DB:" + "null =  " + (bitmapWorkerTask == null));
 		if (bitmapWorkerTask != null)
 		{
-			final RawObject bitmapData = bitmapWorkerTask.data;
+			final Uri bitmapData = bitmapWorkerTask.data;
 //			if (bitmapData != null)
 //				Log.d(TAG, "DB:" + "current =  " + bitmapData.getUri());
 //			else
 //				Log.d(TAG, "DB:" + "bitmapData =  null");
 //			Log.d(TAG, "DB:" + "request =  " + data.getUri());
-			if (bitmapData == null || !bitmapData.getUri().equals(data.getUri()))
+			if (bitmapData == null || !bitmapData.equals(data))
 			{
 //				Log.d(TAG, "DB:" + "cancel");
 				bitmapWorkerTask.cancel(true);
@@ -186,7 +174,7 @@ public abstract class ImageWorker extends CacheManager
 	 * background thread and be long running. For example, you could resize a large bitmap here, or pull down an image from the network.
 	 * 
 	 * @param data
-	 *            The data to identify which image to process, as provided by {@link ImageWorker#loadImage(RawObject, com.anthonymandra.widget.LoadingImageView)}
+	 *            The data to identify which image to process, as provided by {@link ImageWorker#loadImage(Uri, com.anthonymandra.widget.LoadingImageView)}
 	 * @return The processed bitmap
 	 */
 	protected abstract Bitmap processBitmap(Object data);
@@ -196,7 +184,7 @@ public abstract class ImageWorker extends CacheManager
 	 */
 	public class BitmapWorkerTask extends AsyncTask<Object, Void, Bitmap>
 	{
-		private RawObject data;
+		private Uri data;
 		private final WeakReference<LoadingImageView> imageViewReference;
 
 		public BitmapWorkerTask(LoadingImageView imageView)
@@ -210,8 +198,8 @@ public abstract class ImageWorker extends CacheManager
 		@Override
 		protected Bitmap doInBackground(Object... params)
 		{
-			data = (RawObject) params[0];
-			final String dataString = String.valueOf(data.getUri());// String.valueOf(data);
+			data = (Uri) params[0];
+			final String dataString = String.valueOf(data);
 			Bitmap bitmap = null;
 
 			// Wait here if work is paused and the task is not cancelled
@@ -229,6 +217,7 @@ public abstract class ImageWorker extends CacheManager
 				}
 			}
 
+			Log.d(TAG, data.toString());
 			// If the image cache is available and this task has not been cancelled by another
 			// thread and the ImageView that was originally bound to this task is still bound back
 			// to this task and our "exit early" flag is not set then try and fetch the bitmap from
@@ -236,6 +225,7 @@ public abstract class ImageWorker extends CacheManager
 			if (mImageCache != null && !isCancelled() && getAttachedImageView() != null && !mExitTasksEarly)
 			{
 				bitmap = mImageCache.getBitmapFromDiskCache(dataString);
+				Log.d(TAG, "cached: " + (bitmap != null));
 			}
 
 			// If the bitmap was not found in the cache and this task has not been cancelled by
@@ -245,9 +235,7 @@ public abstract class ImageWorker extends CacheManager
 			if (bitmap == null && !isCancelled() && getAttachedImageView() != null && !mExitTasksEarly)
 			{
 				bitmap = processBitmap(data);
-				// We don't want to cache the default images
-				if (bitmap == mFolderBitmap || bitmap == mUnknownBitmap)
-					return bitmap;
+				Log.d(TAG, "processed: " + (bitmap != null));
 			}
 
 			// If the bitmap was processed and the image cache is available, then add the processed
@@ -257,8 +245,10 @@ public abstract class ImageWorker extends CacheManager
 			if (bitmap != null && mImageCache != null)
 			{
 				mImageCache.addBitmapToCache(dataString, bitmap);
+				Log.d(TAG, "added, bitmap != null" + (bitmap != null));
 			}
 
+			Log.d(TAG, "bitmap != null: " + (bitmap != null));
 			return bitmap;
 		}
 
@@ -272,11 +262,6 @@ public abstract class ImageWorker extends CacheManager
 			if (isCancelled() || mExitTasksEarly)
 			{
 				bitmap = null;
-			}
-
-			if (bitmap == null)
-			{
-				bitmap = mUnknownBitmap;
 			}
 
 			final LoadingImageView imageView = getAttachedImageView();

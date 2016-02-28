@@ -297,7 +297,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 		vh.mFileName.setText(galleryItem.name);
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
-		mImageDecoder.loadImage(new LocalImage(mContext, galleryItem.uri), vh.mImageView);
+		mImageDecoder.loadImage(galleryItem.uri, vh.mImageView);
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
 		vh.mBaseView.setTag(galleryItem.uri);
 	}

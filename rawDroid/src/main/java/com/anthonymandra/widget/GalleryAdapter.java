@@ -155,7 +155,7 @@ public class GalleryAdapter extends CursorAdapter
 		//TODO: Just make this a db field
 		((ImageView)view.getTag(R.id.xmp)).setVisibility(ImageUtils.hasXmpFile(mContext, uri) ? View.VISIBLE : View.GONE);
 		fileName.setText(cursor.getString(cursor.getColumnIndex(Meta.Data.NAME)));
-		mImageDecoder.loadImage(new LocalImage(mContext, uri), imageView);
+		mImageDecoder.loadImage(uri, imageView);
 		((Checkable) view).setChecked(mSelectedItems.contains(uri));
 	}
 

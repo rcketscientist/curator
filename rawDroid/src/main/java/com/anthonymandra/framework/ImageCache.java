@@ -133,6 +133,21 @@ public class ImageCache
 		// Set up memory cache
 		if (mCacheParams.memoryCacheEnabled)
 		{
+			//TODO: https://github.com/googlesamples/android-DisplayingBitmaps/blob/master/Application/src/main/java/com/example/android/displayingbitmaps/util/ImageCache.java
+			// If we're running on Honeycomb or newer, create a set of reusable bitmaps that can be
+			// populated into the inBitmap field of BitmapFactory.Options. Note that the set is
+			// of SoftReferences which will actually not be very effective due to the garbage
+			// collector being aggressive clearing Soft/WeakReferences. A better approach
+			// would be to use a strongly references bitmaps, however this would require some
+			// balancing of memory usage between this set and the bitmap LruCache. It would also
+			// require knowledge of the expected size of the bitmaps. From Honeycomb to JellyBean
+			// the size would need to be precise, from KitKat onward the size would just need to
+			// be the upper bound (due to changes in how inBitmap can re-use bitmaps).
+//			if (Utils.hasHoneycomb()) {
+//				mReusableBitmaps =
+//						Collections.synchronizedSet(new HashSet<SoftReference<Bitmap>>());
+//			}
+
 			mMemoryCache = new LruCache<String, Bitmap>(mCacheParams.memCacheSize)
 			{
 				/**
@@ -141,7 +156,8 @@ public class ImageCache
 				@Override
 				protected int sizeOf(String key, Bitmap bitmap)
 				{
-					return ImageUtils.getBitmapSize(bitmap);
+					final int bitmapSize = ImageUtils.getBitmapSize(bitmap);
+					return bitmapSize == 0 ? 1 : bitmapSize;
 				}
 			};
 		}

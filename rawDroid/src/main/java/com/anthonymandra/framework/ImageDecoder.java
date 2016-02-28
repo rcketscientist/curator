@@ -2,6 +2,7 @@ package com.anthonymandra.framework;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 
 import com.anthonymandra.rawdroid.BuildConfig;
@@ -38,19 +39,19 @@ public class ImageDecoder extends ImageResizer
 	 * The main processing method. This happens in a background task. In this case we are just sampling down the bitmap and returning it from a
 	 * resource.
 	 */
-	private Bitmap processBitmap(RawObject media)
+	private Bitmap processBitmap(Uri media)
 	{
 		if (BuildConfig.DEBUG)
 		{
-			Log.d(TAG, "processBitmap - " + media.getUri());
+			Log.d(TAG, "processBitmap - " + media);
 		}
 
-	    return decodeSampledBitmap(ImageUtils.getThumb(mContext, media.getUri()), mImageWidth, mImageHeight);
+	    return decodeSampledBitmap(ImageUtils.getThumb(mContext, media), mImageWidth, mImageHeight);
 	}
 
 	@Override
 	protected Bitmap processBitmap(Object data)
 	{
-		return processBitmap((RawObject) data);
+		return processBitmap((Uri) data);
 	}
 }

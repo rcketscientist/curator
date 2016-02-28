@@ -1424,10 +1424,16 @@ public class ImageUtils
     @TargetApi(12)
     public static int getBitmapSize(Bitmap bitmap)
     {
-        if (Util.hasHoneycombMR1())
-        {
+        // From KitKat onward use getAllocationByteCount() as allocated bytes can potentially be
+        // larger than bitmap byte count.
+        if (Util.hasKitkat()) {
+            return bitmap.getAllocationByteCount();
+        }
+
+        if (Util.hasHoneycombMR1()) {
             return bitmap.getByteCount();
         }
+
         // Pre HC-MR1
         return bitmap.getRowBytes() * bitmap.getHeight();
     }
