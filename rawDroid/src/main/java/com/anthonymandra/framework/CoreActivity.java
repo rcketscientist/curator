@@ -131,17 +131,6 @@ public abstract class CoreActivity extends DocumentActivity
 				writeXmpModifications(values);
 			}
 		});
-
-//		try
-//		{
-//			Picasso p = new Picasso.Builder(this)
-//					.addRequestHandler(new RawRequestHandler(this))
-//					.build();
-//			p.setIndicatorsEnabled(true);
-//			Picasso.setSingletonInstance(p);
-//		} catch (IllegalStateException ignored) {
-//			// Picasso instance was already set
-//		}
 	}
 
 	@Override

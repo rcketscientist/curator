@@ -255,6 +255,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			});
 		}
 
+		// Glide actually rotates automatically from exif even for raw (at least cr2).
 //		vh.mImageView.setRotation(galleryItem.rotation);
 		vh.mRatingBar.setRating(galleryItem.rating);
 
@@ -302,11 +303,6 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				.using(new RawModelLoader(mContext))
 				.load(galleryItem.uri)
 				.into(vh.mImageView);
-//		Picasso.with(mContext)
-//				.load(galleryItem.uri)
-//				.resize(mImageSize, mImageSize)
-//				.centerCrop()
-//				.into(vh.mImageView);
 	}
 
 	public MediaItem getImage(int position)
