@@ -54,7 +54,7 @@ public abstract class ImageWorker extends CacheManager
 	 * Load an image specified by the data parameter into an ImageView (override {@link ImageWorker#processBitmap(Object)} to define the processing
 	 * logic). A memory and disk cache will be used if an {@link ImageCache} has been set using {@link ImageWorker#setImageCache(ImageCache)}. If the
 	 * image is found in the memory cache, it is set immediately, otherwise an {@link AsyncTask} will be created to asynchronously load the bitmap.
-	 * 
+	 *
 	 * @param image
 	 *            The raw image to decode
 	 * @param imageView
@@ -106,7 +106,7 @@ public abstract class ImageWorker extends CacheManager
 
 	/**
 	 * Cancels any pending work attached to the provided ImageView.
-	 * 
+	 *
 	 * @param imageView
 	 */
 	public static void cancelWork(LoadingImageView imageView)
@@ -129,7 +129,7 @@ public abstract class ImageWorker extends CacheManager
 //		for (StackTraceElement ste : new Throwable().getStackTrace()) {
 //			Log.d(TAG, "DB: " + ste.toString());
 //		}
-		
+
 //		Log.d(TAG, "DB:" + "null =  " + (bitmapWorkerTask == null));
 		if (bitmapWorkerTask != null)
 		{
@@ -172,7 +172,7 @@ public abstract class ImageWorker extends CacheManager
 	/**
 	 * Subclasses should override this to define any processing or work that must happen to produce the final bitmap. This will be executed in a
 	 * background thread and be long running. For example, you could resize a large bitmap here, or pull down an image from the network.
-	 * 
+	 *
 	 * @param data
 	 *            The data to identify which image to process, as provided by {@link ImageWorker#loadImage(Uri, com.anthonymandra.widget.LoadingImageView)}
 	 * @return The processed bitmap
@@ -297,7 +297,7 @@ public abstract class ImageWorker extends CacheManager
 			return null;
 		}
 	}
-	
+
     /**
      * A custom Drawable that will be attached to the imageView while the work is in progress.
      * Contains a reference to the actual worker task, so that it can be stopped if a new binding is
@@ -320,7 +320,7 @@ public abstract class ImageWorker extends CacheManager
 
 	/**
 	 * Called when the processing is complete and the final bitmap should be set on the ImageView.
-	 * 
+	 *
 	 * @param imageView
 	 * @param bitmap
 	 */

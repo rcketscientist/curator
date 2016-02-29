@@ -4,9 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,15 +56,12 @@ import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 public abstract class CoreActivity extends DocumentActivity
 {
@@ -99,7 +94,6 @@ public abstract class CoreActivity extends DocumentActivity
 	protected Intent mShareIntent;
 
 	protected XmpEditFragment mXmpFragment;
-	protected XmpEditFragment.XmpEditValues mPendingXmpChanges;
 
 	protected boolean mActivityVisible;
 
@@ -135,12 +129,19 @@ public abstract class CoreActivity extends DocumentActivity
 				values.Subject = subject;
 				values.Rating = rating;
 				writeXmpModifications(values);
-//				mPendingXmpChanges = new XmpEditFragment.XmpEditValues();
-//				mPendingXmpChanges.Label = label;
-//				mPendingXmpChanges.Subject = subject;
-//				mPendingXmpChanges.Rating = rating;
 			}
 		});
+
+//		try
+//		{
+//			Picasso p = new Picasso.Builder(this)
+//					.addRequestHandler(new RawRequestHandler(this))
+//					.build();
+//			p.setIndicatorsEnabled(true);
+//			Picasso.setSingletonInstance(p);
+//		} catch (IllegalStateException ignored) {
+//			// Picasso instance was already set
+//		}
 	}
 
 	@Override

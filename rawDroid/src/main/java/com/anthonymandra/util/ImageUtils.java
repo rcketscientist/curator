@@ -1006,7 +1006,7 @@ public class ImageUtils
         String type = null;
         String extension = MimeTypeMap.getFileExtensionFromUrl(url);
         if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
         }
         return type;
     }
@@ -1038,6 +1038,7 @@ public class ImageUtils
 
         // This is necessary since BitmapRegionDecoder only supports jpg and png
         // TODO: This could be done in native, we already have jpeg capability
+        // Alternatively maybe glide can handle int[]?
         Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -1076,40 +1077,13 @@ public class ImageUtils
         return imageBytes;
     }
 
-    /**
-     * Get thumb and update image with image dimensions/orientation
-     * @param c
-     * @param image
-     * @return
-     */
-    public static byte[] getThumb(Context c, MetaMedia image)
-    {
-        ContentValues values = new ContentValues();
-        byte[] imageBytes = getThumb(c, image.getUri(), values);
-        if (values.containsKey(Meta.Data.HEIGHT))
-        {
-            image.setHeight(values.getAsInteger(Meta.Data.HEIGHT));
-            image.setWidth(values.getAsInteger(Meta.Data.WIDTH));
-        }
-        if (values.containsKey(Meta.Data.ORIENTATION))
-        {
-            image.setOrientation(values.getAsInteger(Meta.Data.ORIENTATION));
-        }
-        return imageBytes;
-    }
-
-    public static byte[] getThumb(Context c, Uri uri)
-    {
-        ContentValues values = new ContentValues();
-        return getThumb(c, uri, values);
-    }
-
     @SuppressLint("SimpleDateFormat")
-    public static byte[] getThumb(Context c, Uri uri, ContentValues values) {
+    public static byte[] getThumb(final Context c, final Uri uri) {
         //TODO: Split this into component methods
         String type = getMimeType(uri.toString());
 
         byte[] imageBytes = null;
+        final ContentValues values = new ContentValues();
 
         // If it's a supported images, just get the bytes
         if (ImageUtils.isAndroidImage(type))
@@ -1146,37 +1120,47 @@ public class ImageUtils
             }
         }
 
+        // If there are content values fire off a thread to update the provider so we get the image
+        // asap while still having basic info for viewer if not fully processed yet
         if (values.size() > 0)
         {
-            ContentProviderClient cpc = null;
-            Cursor cursor = null;
-            try
+            new Thread(new Runnable()
             {
-                cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
-                if (cpc != null)
+                @Override
+                public void run()
                 {
-                    cursor = cpc.query(Meta.Data.CONTENT_URI, new String[]{Meta.Data.PROCESSED},
-                            ImageUtils.getWhere(), new String[]{uri.toString()}, null, null);
-                    if (cursor != null)
+                    ContentProviderClient cpc = null;
+                    Cursor cursor = null;
+                    try
                     {
-                        cursor.moveToFirst();
-                        if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
+                        cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
+                        if (cpc != null)
                         {
-                            cpc.update(Meta.Data.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+                            cursor = cpc.query(Meta.Data.CONTENT_URI, new String[]{Meta.Data.PROCESSED},
+                                    ImageUtils.getWhere(), new String[]{uri.toString()}, null, null);
+                            if (cursor != null)
+                            {
+                                cursor.moveToFirst();
+                                if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
+                                {
+                                    cpc.update(Meta.Data.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+                                }
+                            }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    finally
+                    {
+                        if (cpc != null)
+                            cpc.release();
+                        Utils.closeSilently(cursor);
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                if (cpc != null)
-                    cpc.release();
-                Utils.closeSilently(cursor);
-            }
+            }).start();
+
         }
         return imageBytes;
     }

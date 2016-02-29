@@ -24,7 +24,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.android.gallery3d.common.BitmapUtils;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.ContentListener;
 import com.android.gallery3d.data.MediaItem;
@@ -41,6 +40,9 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -164,6 +166,30 @@ public class PhotoDataAdapter implements Model {
 
     private final GalleryApp mActivity;
 
+//    private final Target initialImage = new Target()
+//    {
+//        @Override
+//        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from)
+//        {
+//            ImageEntry startupImage = new ImageEntry();
+//            startupImage.screenNail = new TiledScreenNail(bitmap);
+//            startupImage.screenNailProcessed = true;
+//            updateTileProvider(startupImage);
+//        }
+//
+//        @Override
+//        public void onBitmapFailed(Drawable errorDrawable)
+//        {
+//            return;
+//        }
+//
+//        @Override
+//        public void onPrepareLoad(Drawable placeHolderDrawable)
+//        {
+//            return;
+//        }
+//    };
+
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
         List<Uri> mediaSet, int position) {
 		mActivity = activity;
@@ -205,6 +231,8 @@ public class PhotoDataAdapter implements Model {
         };
 
         updateSlidingWindow();
+
+
     }
 
     private Uri getItemInternal(int index) {
@@ -326,6 +354,32 @@ public class PhotoDataAdapter implements Model {
 
         mReloadTask = new ReloadTask();
         mReloadTask.start();
+
+        SimpleTarget target = new SimpleTarget<Bitmap>(1000, 1000)
+        {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
+            {
+                ImageEntry startupImage = new ImageEntry();
+                startupImage.screenNail = new TiledScreenNail(resource);
+                startupImage.screenNailProcessed = true;
+                updateTileProvider(startupImage);
+            }
+        };
+        Glide.with(mActivity.getAndroidContext())
+                .load(mSource.get(mCurrentIndex))
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>(1000, 1000)
+                {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
+                    {
+                        ImageEntry startupImage = new ImageEntry();
+                        startupImage.screenNail = new TiledScreenNail(resource);
+                        startupImage.screenNailProcessed = true;
+                        updateTileProvider(startupImage);
+                    }
+                });
 
         fireDataChange();
     }

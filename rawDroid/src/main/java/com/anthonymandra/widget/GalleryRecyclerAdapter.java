@@ -13,10 +13,10 @@ import android.widget.TextView;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.util.ImageUtils;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,8 +37,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	private Set<Long> mSelectedIds = new HashSet<>();
 	private TreeSet<Integer> mSelectedPositions = new TreeSet<>();
 
-	private ImageDecoder mImageDecoder;
-
+	private final int mImageSize;
 	private OnSelectionUpdatedListener mSelectionListener;
 	private OnItemClickListener mOnItemClickListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
@@ -130,7 +129,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 
 	public static class ViewHolder extends RecyclerView.ViewHolder
 	{
-		public LoadingImageView mImageView;
+		public ImageView mImageView;
 		public TextView mFileName;
 		public View mLabel;
 		public android.widget.RatingBar mRatingBar;
@@ -141,7 +140,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		{
 			super(view);
 
-			mImageView = (LoadingImageView) view.findViewById(R.id.webImageView);
+			mImageView = (ImageView) view.findViewById(R.id.webImageView);
 			mImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 			mFileName = (TextView) view.findViewById(R.id.filenameView);
 			mLabel = view.findViewById(R.id.label);
@@ -199,12 +198,11 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 	}
 
-	public GalleryRecyclerAdapter(Context context, Cursor c, ImageDecoder imageDecoder)
+	public GalleryRecyclerAdapter(Context context, Cursor c, int imageSize)
 	{
 		super(c);
 		mContext = context;
-
-		mImageDecoder = imageDecoder;
+		mImageSize = imageSize;
 
 		purple = mContext.getResources().getColor(R.color.startPurple);
 		blue = mContext.getResources().getColor(R.color.startBlue);
@@ -257,8 +255,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			});
 		}
 
-
-		vh.mImageView.setRotation(galleryItem.rotation);
+//		vh.mImageView.setRotation(galleryItem.rotation);
 		vh.mRatingBar.setRating(galleryItem.rating);
 
 		if (galleryItem.label != null)
@@ -297,9 +294,19 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 		vh.mFileName.setText(galleryItem.name);
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
-		mImageDecoder.loadImage(galleryItem.uri, vh.mImageView);
+
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
 		vh.mBaseView.setTag(galleryItem.uri);
+
+		Glide.with(mContext)
+				.using(new RawModelLoader(mContext))
+				.load(galleryItem.uri)
+				.into(vh.mImageView);
+//		Picasso.with(mContext)
+//				.load(galleryItem.uri)
+//				.resize(mImageSize, mImageSize)
+//				.centerCrop()
+//				.into(vh.mImageView);
 	}
 
 	public MediaItem getImage(int position)

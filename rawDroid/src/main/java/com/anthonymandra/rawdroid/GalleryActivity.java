@@ -43,7 +43,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
@@ -54,7 +53,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -65,7 +63,6 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.ImageCache.ImageCacheParams;
-import com.anthonymandra.framework.ImageDecoder;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
@@ -77,6 +74,7 @@ import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
+import com.bumptech.glide.Glide;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
@@ -204,9 +202,6 @@ public class GalleryActivity extends CoreActivity
 	// Widget handles
 	private RecyclerView mImageGrid;
 	private GridLayoutManager mGridLayout;
-
-	// Image processing
-	private ImageDecoder mImageDecoder;
 	private GalleryRecyclerAdapter mGalleryAdapter;
 	/**
 	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
@@ -309,12 +304,7 @@ public class GalleryActivity extends CoreActivity
 		mGridLayout = new GridLayoutManager(this, numColumns);
 		mGridLayout.setSmoothScrollbarEnabled(true);
 
-		// The ImageFetcher takes care of loading images into our ImageView children asynchronously
-		// TODO: This should not have a hardcoded size
-		mImageDecoder = new ImageDecoder(this, imageSize);
-		mImageDecoder.addImageCache(getFragmentManager(), cacheParams);
-
-		mGalleryAdapter = new GalleryRecyclerAdapter(this, null, mImageDecoder);
+		mGalleryAdapter = new GalleryRecyclerAdapter(this, null, imageSize);
 		mGalleryAdapter.setOnSelectionListener(this);
 		mGalleryAdapter.setOnItemClickListener(this);
 		mGalleryAdapter.setOnItemLongClickListener(this);
@@ -707,7 +697,6 @@ public class GalleryActivity extends CoreActivity
 		final WhatsNewDialog whatsNewDialog = new WhatsNewDialog(this);
 		whatsNewDialog.show(Constants.VariantCode == 8);
 
-		mImageDecoder.setExitTasksEarly(false);
 		mGalleryAdapter.notifyDataSetChanged();
 	}
 
@@ -721,16 +710,12 @@ public class GalleryActivity extends CoreActivity
 	public void onPause()
 	{
 		super.onPause();
-		mImageDecoder.setPauseWork(false);
-		mImageDecoder.setExitTasksEarly(true);
-		mImageDecoder.flushCache();
 	}
 
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-		mImageDecoder.closeCache();
 	}
 
 	//Get the current app version
@@ -931,7 +916,16 @@ public class GalleryActivity extends CoreActivity
 				requestRename();
 				return true;
 			case R.id.galleryClearCache:
-				mImageDecoder.clearCache();
+//				PicassoTools.clearCache(Picasso.with(this));
+				new Thread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						Glide.get(GalleryActivity.this).clearDiskCache();
+					}
+				}).start();
+				Glide.get(GalleryActivity.this).clearMemory();
 				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
