@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/buttonAddSearchRoot"
-        android:drawableLeft="@android:drawable/ic_input_add"
+        android:drawableLeft="@drawable/ic_folder_add"
         android:text="@string/addRoot"/>
 
     <LinearLayout
@@ -30,8 +30,10 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_eye"
-            android:id="@+id/imageView"/>
+            android:src="@drawable/ic_visibility"
+            android:id="@+id/imageView"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,8 +61,10 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete"
-            android:id="@+id/imageView2"/>
+            android:src="@drawable/ic_folder_remove"
+            android:id="@+id/imageView2"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
         <TextView
             android:layout_width="wrap_content"

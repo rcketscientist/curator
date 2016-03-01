@@ -318,6 +318,11 @@ public class ImageUtils
 		        null);
     }
 
+    public static boolean isInDatabase(Context c, Uri uri)
+    {
+        return getMetaCursor(c, uri).moveToFirst();
+    }
+
     public static String getWhere()
     {
         return Meta.Data.URI + "=?";

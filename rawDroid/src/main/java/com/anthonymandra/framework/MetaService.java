@@ -6,6 +6,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
@@ -43,7 +45,7 @@ public class MetaService extends ThreadedPriorityIntentService
     /**
      * Broadcast ID when priority image has updated database
      */
-    public static final String BROADCAST_IMAGE_UPDATE = "com.anthonymandra.framework.action.BROADCAST_IMAGE_UPDATE";
+    public static final String BROADCAST_REQUESTED_META = "com.anthonymandra.framework.action.BROADCAST_REQUESTED_META";
 
     /**
      * Broadcast ID after processing, before database is updated
@@ -74,6 +76,11 @@ public class MetaService extends ThreadedPriorityIntentService
      * Intent extra containing number of completed jobs in current parse
      */
     public static final String EXTRA_TOTAL_JOBS = "com.anthonymandra.framework.extra.EXTRA_TOTAL_JOBS";
+
+    /**
+     * Intent extra containing the processed meta data.
+     */
+    public static final String EXTRA_METADATA = "com.anthonymandra.framework.extra.EXTRA_METADATA";
 
     private final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
 
@@ -155,8 +162,17 @@ public class MetaService extends ThreadedPriorityIntentService
         Uri uri = intent.getData();
 
         // Check if meta is already processed
-        if (ImageUtils.isProcessed(this, uri))
+        Cursor c = ImageUtils.getMetaCursor(this, uri);
+        if (c.moveToFirst() && c.getInt(Meta.PROCESSED_COLUMN) != 0)
         {
+            ContentValues values = new ContentValues();
+            DatabaseUtils.cursorRowToContentValues(c, values);
+
+            Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                    .putExtra(EXTRA_URI, uri.toString())
+                    .putExtra(EXTRA_METADATA, values);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+
             WakefulBroadcastReceiver.completeWakefulIntent(intent);
             return;
         }
@@ -171,10 +187,10 @@ public class MetaService extends ThreadedPriorityIntentService
                     ImageUtils.getWhere(),
                     new String[]{uri.toString()});
 
-            Intent broadcast = new Intent(BROADCAST_IMAGE_UPDATE)
+            values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));  // add name to broadcast
+            Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
                     .putExtra(EXTRA_URI, uri.toString())
-                    .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
-                    .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
+                    .putExtra(EXTRA_METADATA, values);
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
         else

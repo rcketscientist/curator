@@ -15,22 +15,7 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_checked="true">
-        <bitmap android:src="@drawable/btn_rating_star_on_mtrl_alpha"/>
-<!--
-                android:tint="?attr/colorControlActivated" />
--->
-    </item>
-    <item android:state_pressed="true">
-        <bitmap android:src="@drawable/btn_rating_star_off_mtrl_alpha"/>
-<!--
-                android:tint="?attr/colorControlActivated" />
--->
-    </item>
-    <item>
-        <bitmap android:src="@drawable/btn_rating_star_off_mtrl_alpha"/>
-<!--
-                android:tint="?attr/colorControlNormal" />
--->
-    </item>
+    <item android:state_checked="true" android:drawable="@drawable/ic_star" />
+    <item android:state_pressed="true" android:drawable="@drawable/ic_star_border" />
+    <item android:drawable="@drawable/ic_star_border" />
 </selector>

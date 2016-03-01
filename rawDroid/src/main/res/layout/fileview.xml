@@ -24,7 +24,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:alpha="0.8"
-        android:src="@drawable/ic_action_labels"/>
+        android:src="@drawable/ic_tag"/>
 
     <RatingBar
         android:id="@+id/galleryRatingBar"

@@ -246,7 +246,7 @@ public class GalleryActivity extends CoreActivity
 		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
 
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
-		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
+		mToolbar.setNavigationIcon(R.drawable.ic_filter);
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
 //        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
@@ -540,7 +540,7 @@ public class GalleryActivity extends CoreActivity
 	{
 		super.onPostCreate(savedInstanceState);
 		mDrawerToggle.syncState();
-		mToolbar.setNavigationIcon(R.drawable.ic_action_filter);
+		mToolbar.setNavigationIcon(R.drawable.ic_filter);
 
 		loadXmpFilter();	//must be done here due to fragment/activity lifecycle
 
@@ -1221,6 +1221,7 @@ public class GalleryActivity extends CoreActivity
 	private void startContextualActionBar()
 	{
 		mContextMode = startSupportActionMode(new GalleryActionMode());
+//		mXmpFragment.clear();
 		mContextMode.setTitle("Select Items");
 		startMultiSelectMode();
 	}

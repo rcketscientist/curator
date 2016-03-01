@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/gallerySelectAll"
-        android:icon="@drawable/ic_action_select_all"
+        android:icon="@drawable/ic_select_all"
         app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
@@ -16,18 +16,18 @@
     <item
         android:id="@+id/toggleXmp"
         android:orderInCategory="11"
-        android:icon="@drawable/ic_action_labels"
+        android:icon="@drawable/ic_tag"
         app:showAsAction="always"
         android:title="@string/viewMeta"/>
     <item
         android:id="@+id/gallery_recycle"
-        android:icon="@drawable/recycle"
+        android:icon="@drawable/ic_recycle"
         android:orderInCategory="12"
         app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
     <item
         android:id="@+id/galleryRefresh"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_refresh"
         android:orderInCategory="10"
         app:showAsAction="ifRoom"
         android:title="@string/search"/>

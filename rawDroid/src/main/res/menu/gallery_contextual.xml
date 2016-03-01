@@ -4,20 +4,20 @@
 
     <item
         android:id="@+id/contextSelectAll"
-        android:icon="@drawable/ic_action_select_all"
+        android:icon="@drawable/ic_select_all"
         android:orderInCategory="0"
         app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
         android:id="@+id/contextDelete"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_delete"
         android:orderInCategory="1"
         app:showAsAction="always"
         android:title="@string/delete"/>
     <item
         android:id="@+id/toggleXmp"
         android:orderInCategory="2"
-        android:icon="@drawable/ic_action_labels"
+        android:icon="@drawable/ic_tag"
         app:showAsAction="always"
         android:title="@string/viewMeta"/>
     <item
@@ -32,7 +32,6 @@
         android:title="@string/copyImages"/>
     <item
         android:id="@+id/contextRename"
-        android:icon="@drawable/ic_rename"
         android:orderInCategory="2"
         app:showAsAction="never"
         android:title="@string/rename"/>
@@ -40,10 +39,10 @@
         android:id="@+id/contextShare"
         app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
         app:showAsAction="always"
-        android:title="@string/shareWith"/>
+        android:title="@string/share"/>
     <item
         android:id="@+id/context_recycle"
-        android:icon="@drawable/recycle"
+        android:icon="@drawable/ic_recycle"
         android:orderInCategory="12"
         app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>

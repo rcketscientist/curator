@@ -2,8 +2,11 @@ package com.anthonymandra.framework;
 
 import android.annotation.TargetApi;
 import android.app.WallpaperManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -13,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ActionProvider;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
@@ -32,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.app.DataListener;
-import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -135,6 +138,8 @@ public abstract class ViewerActivity extends CoreActivity implements
     protected boolean mRequiresHistogramUpdate;
     protected HistogramTask mHistogramTask;
 
+    private IntentFilter mResponseIntentFilter = new IntentFilter();
+
     @Override
     protected LicenseHandler getLicenseHandler()
     {
@@ -198,6 +203,26 @@ public abstract class ViewerActivity extends CoreActivity implements
             mImageIndex = 0;
             mMediaItems.add(getIntent().getData());
         }
+
+        mResponseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                switch(intent.getAction())
+                {
+                    case MetaService.BROADCAST_REQUESTED_META:
+                        Uri uri = Uri.parse(intent.getStringExtra(MetaService.EXTRA_URI));
+                        if (uri.equals(getCurrentItem()))
+                        {
+                            ContentValues values = intent.getParcelableExtra(MetaService.EXTRA_METADATA);
+                            populateMeta(values);
+                        }
+                        break;
+                }
+            }
+        }, mResponseIntentFilter);
     }
 
     @Override
@@ -515,14 +540,21 @@ public abstract class ViewerActivity extends CoreActivity implements
         if (image == null)
             return;
 
-        LoadMetadataTask task = new LoadMetadataTask();
-        task.execute(image);
+        clearMeta();    // clear panel during load to avoid confusion
+
+        // Start a meta check/process on a high priority.
+        MetaWakefulReceiver.startPriorityMetaService(ViewerActivity.this, image);
     }
 
     protected void updateImageDetails()
     {
         updateMetaData();
         updateHistogram(getCurrentBitmap());
+        if (PreferenceManager.getDefaultSharedPreferences(ViewerActivity.this).getBoolean(FullSettingsActivity.KEY_ShowImageInterface,
+                GalleryActivity.PREFS_AUTO_INTERFACE_DEFAULT))
+        {
+            showPanels();
+        }
     }
 
     protected void updateHistogram(Bitmap bitmap)
@@ -567,7 +599,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         metaFlash.setText(cursor.getAsString(Meta.Data.FLASH));
         metaLat.setText(cursor.getAsString(Meta.Data.LATITUDE));
         metaLon.setText(cursor.getAsString(Meta.Data.LONGITUDE));
-        metaName.setText(cursor.getAsString(Meta.Data.NAME));   //TODO: Name is missing in cursor???
+        metaName.setText(cursor.getAsString(Meta.Data.NAME));
         metaWb.setText(cursor.getAsString(Meta.Data.WHITE_BALANCE));
         metaLens.setText(cursor.getAsString(Meta.Data.LENS_MODEL));
         metaDriveMode.setText(cursor.getAsString(Meta.Data.DRIVE_MODE));
@@ -582,61 +614,27 @@ public abstract class ViewerActivity extends CoreActivity implements
 
         autoHide = new Timer();
         autoHide.schedule(new AutoHideMetaTask(), 3000);
-
-        if (PreferenceManager.getDefaultSharedPreferences(ViewerActivity.this).getBoolean(FullSettingsActivity.KEY_ShowImageInterface,
-                GalleryActivity.PREFS_AUTO_INTERFACE_DEFAULT))
-        {
-            showPanels();
-        }
     }
 
-    public class LoadMetadataTask extends AsyncTask<Uri, Void, ContentValues>
+    protected void clearMeta()
     {
-        @Override
-        protected ContentValues doInBackground(Uri... params)
-        {
-            final Uri uri = params[0];
-
-            // If the meta is processed populate it
-            Cursor c = ImageUtils.getMetaCursor(ViewerActivity.this, uri);
-            if (!c.moveToFirst())
-                return null;
-
-            ContentValues values = new ContentValues();
-
-            // Check if meta is already processed
-            if (c.getInt(Meta.PROCESSED_COLUMN) == 1)
-            {
-                DatabaseUtils.cursorRowToContentValues(c, values);
-            }
-            else
-            {
-                values = ImageUtils.getContentValues(ViewerActivity.this, uri);
-
-                getContentResolver().update(Meta.Data.CONTENT_URI,
-                    values,
-                    ImageUtils.getWhere(),
-                    new String[]{uri.toString()});
-
-                // Populate the non-meta fields (originally populated in search),
-                // otherwise the panel will be missing this data
-                values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));
-                values.put(Meta.Data.URI, c.getString(Meta.URI_COLUMN));
-                values.put(Meta.Data.PARENT, c.getString(Meta.PARENT_COLUMN));
-                if (values.get(Meta.Data.TIMESTAMP) == null)
-                    values.put(Meta.Data.TIMESTAMP, c.getString(Meta.TIMESTAMP_COLUMN));
-
-            }
-            c.close();
-            return values;
-        }
-
-        @Override
-        protected void onPostExecute(ContentValues result)
-        {
-            if (result != null)
-                populateMeta(result);
-        }
+        metaDate.setText("");
+        metaModel.setText("");
+        metaIso.setText("");
+        metaExposure.setText("");
+        metaAperture.setText("");
+        metaFocal.setText("");
+        metaDimensions.setText("");
+        metaAlt.setText("");
+        metaFlash.setText("");
+        metaLat.setText("");
+        metaLon.setText("");
+        metaName.setText("");
+        metaWb.setText("");
+        metaLens.setText("");
+        metaDriveMode.setText("");
+        metaExposureMode.setText("");
+        metaExposureProgram.setText("");
     }
 
     class AutoHideMetaTask extends TimerTask

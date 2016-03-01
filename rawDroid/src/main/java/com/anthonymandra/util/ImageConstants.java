@@ -3,10 +3,11 @@ package com.anthonymandra.util;
 public class ImageConstants
 {
     public static final String[] RAW_EXT = new String[]
-    {   ".3fr", ".ari", ".arw", ".bay", ".crw", ".cr2", ".cap", ".dcs", ".dcr", ".dng",
-        ".drf", ".eip", ".erf", ".fff", ".iiq", ".k25", ".kdc", ".mdc", ".mef", ".mos",
-        ".mrw", ".nef", ".nrw", ".obm", ".orf", ".pef", ".ptx", ".pxn", ".r3d", ".raf",
-        ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf", ".srw", ".x3f"
+    {   ".cr2", ".nef", ".arw", ".srw", ".x3f", ".orf", ".pef", ".ptx", // Most common
+        ".crw", ".nrw", ".3fr", ".ari", ".bay", ".cap", ".dcs", ".dcr",
+        ".dng", ".drf", ".eip", ".erf", ".fff", ".iiq", ".k25", ".kdc",
+        ".mdc", ".mef", ".mos", ".mrw", ".obm", ".pxn", ".r3d", ".raf",
+        ".raw", ".rwl", ".rw2", ".rwz", ".sr2", ".srf",
     };
 
     public static final String[] JPEG_EXT = new String[] { ".jpg", "jpeg" };

@@ -34,7 +34,6 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 
 	private final Context mContext;
 	private Set<Uri> mSelectedItems = new HashSet<>();
-	private Set<Long> mSelectedIds = new HashSet<>();
 	private TreeSet<Integer> mSelectedPositions = new TreeSet<>();
 
 	private final int mImageSize;
@@ -225,6 +224,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		GalleryItem galleryItem = GalleryItem.fromCursor(mContext, cursor);
 		GalleryItem former = GalleryItem.fromViewHolder(vh);
 
+		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
+
 		// If nothing has changed avoid refreshing.
 		// The reason for this is that loaderManagers replace cursors meaning every change
 		// will refresh the entire data source causing flickering
@@ -295,13 +296,12 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 		vh.mFileName.setText(galleryItem.name);
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
-
-		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
 		vh.mBaseView.setTag(galleryItem.uri);
 
 		Glide.with(mContext)
 				.using(new RawModelLoader(mContext))
 				.load(galleryItem.uri)
+				.centerCrop()
 				.into(vh.mImageView);
 	}
 
@@ -388,14 +388,12 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	{
 		mSelectedItems.add(uri);
 		mSelectedPositions.add(position);
-		mSelectedIds.add(getItemId(position));
 	}
 
 	private void removeSelection(View view, Uri uri, int position)
 	{
 		mSelectedItems.remove(uri);
 		mSelectedPositions.remove(position);
-		mSelectedIds.remove(getItemId(position));
 		((Checkable)view).setChecked(false);
 	}
 

@@ -19,24 +19,23 @@
     <item
         android:id="@+id/view_recycle"
         android:orderInCategory="27"
-        android:icon="@drawable/recycle"
+        android:icon="@drawable/ic_recycle"
         app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
     <item
         android:id="@+id/view_edit"
         android:orderInCategory="13"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_brush"
         app:showAsAction="ifRoom"
         android:title="@string/edit"/>
     <item
         android:id="@+id/view_delete"
         android:orderInCategory="11"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_delete"
         app:showAsAction="always"
         android:title="@string/delete"/>
     <item
         android:id="@+id/view_save"
-        android:icon="@android:drawable/ic_menu_save"
         android:orderInCategory="21"
         app:showAsAction="ifRoom"
         android:title="@string/save_as"/>
@@ -48,7 +47,7 @@
     <item
         android:id="@+id/toggleXmp"
         android:orderInCategory="12"
-        android:icon="@drawable/ic_action_labels"
+        android:icon="@drawable/ic_tag"
         app:showAsAction="always"
         android:title="@string/viewMeta"/>
     <item android:title="@string/help"

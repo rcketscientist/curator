@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:text="@string/folders"
         android:id="@+id/buttonFolders"
-        android:drawableLeft="@drawable/ic_action_collection"
+        android:drawableLeft="@drawable/ic_folder_border"
         android:layout_below="@+id/labelAndRating"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
