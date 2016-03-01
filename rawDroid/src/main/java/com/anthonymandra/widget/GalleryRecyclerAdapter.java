@@ -173,7 +173,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		public static GalleryItem fromViewHolder(ViewHolder vh)
 		{
 			GalleryItem item = new GalleryItem();
-			item.rotation = (int)vh.mImageView.getRotation();
+			item.rotation = (int)vh.mImageView.getRotation();	//TODO: Not needed with glide?
 			item.rating = vh.mRatingBar.getRating();
 			item.uri = (Uri) vh.mBaseView.getTag();
 			item.label = (String) vh.mLabel.getTag();

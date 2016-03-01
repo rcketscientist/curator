@@ -246,7 +246,7 @@ public class GalleryActivity extends CoreActivity
 		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
 
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
-		mToolbar.setNavigationIcon(R.drawable.ic_filter);
+//		mToolbar.setNavigationIcon(R.drawable.ic_filter);
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
 //        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
@@ -316,7 +316,6 @@ public class GalleryActivity extends CoreActivity
 		mImageGrid.addItemDecoration(spacing);
 		mImageGrid.setHasFixedSize(true);
 		mImageGrid.setAdapter(mGalleryAdapter);
-//		mImageGrid.addOnScrollListener(this);
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
@@ -540,7 +539,7 @@ public class GalleryActivity extends CoreActivity
 	{
 		super.onPostCreate(savedInstanceState);
 		mDrawerToggle.syncState();
-		mToolbar.setNavigationIcon(R.drawable.ic_filter);
+//		mToolbar.setNavigationIcon(R.drawable.ic_filter);
 
 		loadXmpFilter();	//must be done here due to fragment/activity lifecycle
 
@@ -767,11 +766,6 @@ public class GalleryActivity extends CoreActivity
 
 		final Set<String> excludedFolders = mXmpFilterFragment.getExcludedFolders();
 
-//		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-//		SharedPreferences.Editor editor = prefs.edit();
-//		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
-//		// You must make a copy of the returned preference set or changes will not be recognized
-//		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
 		List<UriPermission> rootPermissions = getRootPermissions();
 		int size = rootPermissions.size();
 		String[] permissions = new String[size];
@@ -916,7 +910,6 @@ public class GalleryActivity extends CoreActivity
 				requestRename();
 				return true;
 			case R.id.galleryClearCache:
-//				PicassoTools.clearCache(Picasso.with(this));
 				new Thread(new Runnable()
 				{
 					@Override

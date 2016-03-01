@@ -40,6 +40,7 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.widget.RawModelLoader;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -191,7 +192,8 @@ public class PhotoDataAdapter implements Model {
 //    };
 
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
-        List<Uri> mediaSet, int position) {
+        List<Uri> mediaSet, int position)
+    {
 		mActivity = activity;
         mSource = Utils.checkNotNull(mediaSet);
         mPhotoView = Utils.checkNotNull(view);
@@ -355,31 +357,32 @@ public class PhotoDataAdapter implements Model {
         mReloadTask = new ReloadTask();
         mReloadTask.start();
 
-        SimpleTarget target = new SimpleTarget<Bitmap>(1000, 1000)
-        {
-            @Override
-            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
-            {
-                ImageEntry startupImage = new ImageEntry();
-                startupImage.screenNail = new TiledScreenNail(resource);
-                startupImage.screenNailProcessed = true;
-                updateTileProvider(startupImage);
-            }
-        };
-        Glide.with(mActivity.getAndroidContext())
-                .load(mSource.get(mCurrentIndex))
-                .asBitmap()
-                .into(new SimpleTarget<Bitmap>(1000, 1000)
-                {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
-                    {
-                        ImageEntry startupImage = new ImageEntry();
-                        startupImage.screenNail = new TiledScreenNail(resource);
-                        startupImage.screenNailProcessed = true;
-                        updateTileProvider(startupImage);
-                    }
-                });
+//        SimpleTarget target = new SimpleTarget<Bitmap>(1000, 1000)
+//        {
+//            @Override
+//            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
+//            {
+//                ImageEntry startupImage = new ImageEntry();
+//                startupImage.screenNail = new TiledScreenNail(resource);
+//                startupImage.screenNailProcessed = true;
+//                updateTileProvider(startupImage);
+//            }
+//        };
+//        Glide.with(mActivity.getAndroidContext())
+//                .using(new RawModelLoader(mActivity.getAndroidContext()))
+//                .load(mSource.get(mCurrentIndex))
+//                .asBitmap()
+//                .into(new SimpleTarget<Bitmap>(1000, 1000)
+//                {
+//                    @Override
+//                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation)
+//                    {
+//                        ImageEntry startupImage = new ImageEntry();
+//                        startupImage.screenNail = new TiledScreenNail(resource);
+//                        startupImage.screenNailProcessed = true;
+//                        updateTileProvider(startupImage);
+//                    }
+//                });
 
         fireDataChange();
     }

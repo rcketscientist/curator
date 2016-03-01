@@ -12,13 +12,22 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/filterSidebar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/galleryToolbar"
+            android:layout_alignBottom="@+id/galleryToolbar"
+            android:padding="16dp"
+            android:src="@drawable/ic_filter"
+            android:background="@color/tintDarkGreen"/>
         <android.support.v7.widget.Toolbar
             android:id="@+id/galleryToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize">
+            android:layout_toEndOf="@id/filterSidebar"
+            android:layout_toStartOf="@+id/xmpSidebar">
             <ProgressBar
                 android:id="@+id/toolbarSpinner"
                 android:layout_width="wrap_content"
@@ -27,27 +36,21 @@
                 android:indeterminate="true"
                 android:visibility="gone" />
         </android.support.v7.widget.Toolbar>
+        <ImageView
+            android:id="@+id/xmpSidebar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/galleryToolbar"
+            android:layout_alignBottom="@id/galleryToolbar"
+            android:layout_alignParentEnd="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_tag"
+            android:background="@color/tintDarkGreen"/>
 
 <!--        <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">-->
-
-<!--        <GridView
-            android:id="@+id/gridview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:columnWidth="@dimen/image_thumbnail_size"
-            android:drawSelectorOnTop="true"
-            android:fastScrollEnabled="true"
-            android:horizontalSpacing="@dimen/image_thumbnail_spacing"
-            android:listSelector="@drawable/photogrid_list_selector"
-            android:numColumns="auto_fit"
-            android:scrollingCache="false"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="@dimen/image_thumbnail_spacing"
-            android:layout_below="@+id/galleryToolbar"
-            android:layout_toStartOf="@+id/editFragment"/>-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gridview"
@@ -55,7 +58,7 @@
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             android:padding="@dimen/image_thumbnail_margin"
-            android:layout_below="@+id/galleryToolbar"
+            android:layout_below="@+id/filterSidebar"
             android:layout_toStartOf="@+id/editFragment"/>
 
         <fragment
@@ -64,7 +67,7 @@
             android:layout_width="@dimen/xmp_filter_width"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_below="@+id/galleryToolbar"
+            android:layout_below="@+id/xmpSidebar"
             android:layout_gravity="end"
             tools:layout="@layout/xmp_edit_landscape"/>
 <!--
