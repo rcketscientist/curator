@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -75,7 +76,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     }
 
     @Override
-    public ParcelFileDescriptor openFile(Uri uri, String mode)
+    public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode)
             throws FileNotFoundException {
 
         Log.v(TAG, "Called with uri: '" + uri + "'." + uri.getLastPathSegment());
@@ -134,7 +135,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 	                	processWatermark = true;
                         if (mWatermarkText.isEmpty())
                         {
-                            Toast.makeText(getContext(), R.string.warningBlankWatermark, Toast.LENGTH_LONG);
+                            Toast.makeText(getContext(), R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
                             processWatermark = false;
                         }
                         else
