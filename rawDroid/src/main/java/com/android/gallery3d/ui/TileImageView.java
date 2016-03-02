@@ -124,11 +124,11 @@ public class TileImageView extends GLView {
     private final ThreadPool mThreadPool;
     private boolean mBackgroundTileUploaded;
 
-    public static interface TileSource {
-        public int getLevelCount();
-        public ScreenNail getScreenNail();
-        public int getImageWidth();
-        public int getImageHeight();
+    public interface TileSource {
+        int getLevelCount();
+        ScreenNail getScreenNail();
+        int getImageWidth();
+        int getImageHeight();
 
         // The tile returned by this method can be specified this way: Assuming
         // the image size is (width, height), first take the intersection of (0,
@@ -141,7 +141,7 @@ public class TileImageView extends GLView {
         // still refers to the coordinate on the original image.
         //
         // The method would be called in another thread.
-        public Bitmap getTile(int level, int x, int y, int tileSize);
+        Bitmap getTile(int level, int x, int y, int tileSize);
     }
 
     public static boolean isHighResolution(Context context) {

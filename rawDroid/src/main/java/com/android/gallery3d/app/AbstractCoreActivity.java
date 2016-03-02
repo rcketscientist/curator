@@ -147,11 +147,10 @@ public abstract class AbstractCoreActivity extends ViewerActivity implements Gal
     // Imported ActivityState Methods
     // //////////////////////////////////////////////////////////////////////////
 
-    private GLView mContentPane;
     protected float[] mBackgroundColor;
 
     protected void setContentPane(GLView content) {
-        mContentPane = content;
+        GLView mContentPane = content;
         mContentPane.setBackgroundColor(getBackgroundColor());
         getGLRoot().setContentPane(mContentPane);
     }

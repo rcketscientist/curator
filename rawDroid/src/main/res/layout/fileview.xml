@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.anthonymandra.widget.SquareCheckableRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fileView2"
-    app:foreground="@drawable/photogrid_list_selector"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/Black_Medium">
+    android:background="@drawable/photogrid_list_selector">
 
     <ImageView
         android:id="@+id/webImageView"

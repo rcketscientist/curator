@@ -519,12 +519,6 @@ public class GLRootView extends GLSurfaceView
     public void onPause() {
         unfreeze();
         super.onPause();
-        if (DEBUG_PROFILE) {
-            Log.d(TAG, "Stop profiling");
-            Profile.disableAll();
-            Profile.dumpToFile("/sdcard/gallery.prof");
-            Profile.reset();
-        }
     }
 
     @Override

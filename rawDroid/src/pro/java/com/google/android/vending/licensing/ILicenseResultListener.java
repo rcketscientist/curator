@@ -12,7 +12,7 @@ import android.os.Parcel;
 public interface ILicenseResultListener extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
-public static abstract class Stub extends android.os.Binder implements com.google.android.vending.licensing.ILicenseResultListener
+abstract class Stub extends android.os.Binder implements com.google.android.vending.licensing.ILicenseResultListener
 {
 private static final String DESCRIPTOR = "com.android.vending.licensing.ILicenseResultListener";
 /** Construct the stub at attach it to the interface. */
@@ -29,7 +29,7 @@ public static com.google.android.vending.licensing.ILicenseResultListener asInte
 if ((obj==null)) {
 return null;
 }
-android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
+android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
 if (((iin!=null)&&(iin instanceof com.google.android.vending.licensing.ILicenseResultListener))) {
 return ((com.google.android.vending.licensing.ILicenseResultListener)iin);
 }
@@ -95,5 +95,5 @@ _data.recycle();
 }
 static final int TRANSACTION_verifyLicense = (IBinder.FIRST_CALL_TRANSACTION + 0);
 }
-public void verifyLicense(int responseCode, String signedData, String signature) throws android.os.RemoteException;
+void verifyLicense(int responseCode, String signedData, String signature) throws android.os.RemoteException;
 }

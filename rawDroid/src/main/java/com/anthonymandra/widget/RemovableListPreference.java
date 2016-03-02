@@ -121,7 +121,7 @@ public class RemovableListPreference extends DialogPreference implements OnClick
 		    editor.putStringSet(mPreferenceKey, rows);
             editor.apply();
 	    }
-        ((AlertDialog) getDialog()).dismiss();
+        getDialog().dismiss();
     }
 
 	private Drawable getDivider() {

@@ -39,13 +39,13 @@ import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
 //
 public interface Texture
 {
-	public int getWidth() throws DeadBitmapException;
+	int getWidth() throws DeadBitmapException;
 
-	public int getHeight() throws DeadBitmapException;
+	int getHeight() throws DeadBitmapException;
 
-	public void draw(GLCanvas canvas, int x, int y) throws DeadBitmapException;
+	void draw(GLCanvas canvas, int x, int y) throws DeadBitmapException;
 
-	public void draw(GLCanvas canvas, int x, int y, int w, int h) throws DeadBitmapException;
+	void draw(GLCanvas canvas, int x, int y, int w, int h) throws DeadBitmapException;
 
-	public boolean isOpaque();
+	boolean isOpaque();
 }

@@ -42,7 +42,7 @@ public class ThreadPool {
 
     // A Job is like a Callable, but it has an addition JobContext parameter.
     public interface Job<T> {
-        public T run(JobContext jc);
+        T run(JobContext jc);
     }
 
     public interface JobContext {
@@ -68,7 +68,7 @@ public class ThreadPool {
     }
 
     public interface CancelListener {
-        public void onCancel();
+        void onCancel();
     }
 
     private static class ResourceCounter {

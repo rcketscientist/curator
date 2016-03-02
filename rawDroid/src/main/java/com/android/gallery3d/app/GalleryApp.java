@@ -31,5 +31,5 @@ public interface GalleryApp extends GalleryContext
     void addContentListener(ContentListener listener);
     void removeContentListener(ContentListener listener);
 
-    public Context getAndroidContext();
+    Context getAndroidContext();
 }

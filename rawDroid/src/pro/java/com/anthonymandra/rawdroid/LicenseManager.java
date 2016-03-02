@@ -175,14 +175,8 @@ public class LicenseManager extends License {
         try {
             ApplicationInfo info = context.getPackageManager().getApplicationInfo(packageName, 0);
 
-            if (info == null) {
-                // No need really to test for null, if the package does not
-                // exist it will really rise an exception. but in case Google
-                // changes the API in the future lets be safe and test it
-                return false;
-            }
+            return info != null;
 
-            return true;
         } catch (Exception ex) {
             // If we get here only means the Package does not exist
         }

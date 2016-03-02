@@ -68,9 +68,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@SuppressLint("AndroidLintSimpleDateFormat") // These are for specific library formats
 public class ImageUtils
 {
     private static String TAG = ImageUtils.class.getSimpleName();
+
     private static SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
     private static SimpleDateFormat mMetaExtractorFormat = new SimpleDateFormat("yyyy:MM:dd H:m:s");
 

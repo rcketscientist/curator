@@ -59,7 +59,6 @@ public class RecycleBin
 	private boolean mDiskCacheStarting = true;
 	private int mDiskCacheSize = DEFAULT_DISK_CACHE_SIZE;
 	private File mDiskCacheDir;
-	private List<ImageUpdateListener> listeners = new ArrayList<>();
 
 	/**
 	 * Create new recycling bin with the default parameters.
@@ -490,10 +489,5 @@ public class RecycleBin
 	public void closeCache()
 	{
 		new CacheAsyncTask().execute(MESSAGE_CLOSE);
-	}
-
-	public void setOnImageUpdateListener(ImageUpdateListener listener)
-	{
-		this.listeners.add(listener);
 	}
 }

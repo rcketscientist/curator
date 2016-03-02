@@ -62,7 +62,6 @@ import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
-import com.anthonymandra.framework.ImageCache.ImageCacheParams;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
@@ -280,11 +279,6 @@ public class GalleryActivity extends CoreActivity
 
 		mDisplayWidth = metrics.widthPixels;
 		mDisplayHeight = metrics.heightPixels;
-
-		ImageCacheParams cacheParams = new ImageCacheParams(this, IMAGE_CACHE_DIR);
-
-		// Set memory cache to 25% of mem class
-		cacheParams.setMemCacheSizePercent(this, 0.15f);
 
 		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
@@ -954,7 +948,8 @@ public class GalleryActivity extends CoreActivity
 	private void addExcludedFolder()
 	{
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
+		// TODO: Need to save changes to excluded folders
+
 		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
 		// You must make a copy of the returned preference set or changes will not be recognized
 		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));

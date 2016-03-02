@@ -22,24 +22,24 @@ import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
 public interface GLRoot
 {
 
-	public static interface OnGLIdleListener
+	interface OnGLIdleListener
 	{
-		public boolean onGLIdle(GLRoot root, GLCanvas canvas) throws DeadBitmapException;
+		boolean onGLIdle(GLRoot root, GLCanvas canvas) throws DeadBitmapException;
 	}
 
-	public void addOnGLIdleListener(OnGLIdleListener listener);
+	void addOnGLIdleListener(OnGLIdleListener listener);
 
-	public void registerLaunchedAnimation(CanvasAnimation animation);
+	void registerLaunchedAnimation(CanvasAnimation animation);
 
-	public void requestRender();
+	void requestRender();
 
-	public void requestLayoutContentPane();
+	void requestLayoutContentPane();
 
-	public boolean hasStencil();
+	boolean hasStencil();
 
-	public void lockRenderThread();
+	void lockRenderThread();
 
-	public void unlockRenderThread();
+	void unlockRenderThread();
 
-	public void setContentPane(GLView content);
+	void setContentPane(GLView content);
 }

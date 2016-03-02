@@ -1496,20 +1496,20 @@ public class ImageViewer extends GLView
 		return mDownUpDetector.isDown();
 	}
 
-	public static interface Model
+	public interface Model
 	{
-		public static final int INDEX_CURRENT = 1;
-		public static final int INDEX_PREVIOUS = 0;
-		public static final int INDEX_NEXT = 2;
+		int INDEX_CURRENT = 1;
+		int INDEX_PREVIOUS = 0;
+		int INDEX_NEXT = 2;
 
-		public void next();
+		void next();
 
-		public void previous();
+		void previous();
 
 		// Return null if the specified image is unavailable.
-		public ImageData getImageData(int which);
+		ImageData getImageData(int which);
 
-		public BitmapRegionDecoder getLargeBitmap();
+		BitmapRegionDecoder getLargeBitmap();
 	}
 
 	public static class ImageData

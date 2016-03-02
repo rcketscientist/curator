@@ -7,7 +7,7 @@ public abstract class License {
     private static final String TAG = License.class.getSimpleName();
     public static final String KEY_LICENSE_RESPONSE = "licenseResponse";
 
-    public static enum LicenseState
+    public enum LicenseState
     {
         demo,
         pro,

@@ -17,6 +17,6 @@
 package com.android.gallery3d.ui;
 
 public interface OrientationSource {
-    public int getDisplayRotation();
-    public int getCompensation();
+    int getDisplayRotation();
+    int getCompensation();
 }
