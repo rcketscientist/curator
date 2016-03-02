@@ -5,7 +5,6 @@
           android:drawable="@drawable/ic_lock_open" />
     <item android:state_checked="true"
           android:drawable="@drawable/ic_lock_outline" />
-    <item android:state_pressed="true"
-          android:drawable="@drawable/ic_lock_open" />
+    <item android:drawable="@drawable/ic_lock_open" />
 
 </selector>

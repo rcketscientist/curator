@@ -2,20 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--
-         <item
-        android:id="@+id/view_ratings"
-        android:actionLayout="@layout/rating_bar"
-        android:icon="@drawable/important"
-        android:showAsAction="always"
-        android:title="@string/rating"/>
-    <item
-        android:id="@+id/viewColorKey"
-        android:actionLayout="@layout/color_key"
-        android:icon="@drawable/important"
-        android:showAsAction="always"
-        android:title="@string/rating"/>
-    -->
     <item
         android:id="@+id/view_recycle"
         android:orderInCategory="27"
@@ -37,19 +23,13 @@
     <item
         android:id="@+id/view_save"
         android:orderInCategory="21"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:title="@string/save_as"/>
     <item
         android:id="@+id/view_wallpaper"
         android:orderInCategory="27"
         app:showAsAction="never"
         android:title="@string/wallpaper"/>
-    <item
-        android:id="@+id/toggleXmp"
-        android:orderInCategory="12"
-        android:icon="@drawable/ic_tag"
-        app:showAsAction="always"
-        android:title="@string/viewMeta"/>
     <item android:title="@string/help"
         android:orderInCategory="40">
         <menu>

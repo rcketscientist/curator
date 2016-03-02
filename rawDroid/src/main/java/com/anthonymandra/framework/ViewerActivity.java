@@ -413,7 +413,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         rowDriveMode = (TableRow) findViewById(R.id.rowDriveMode);
         rowExposureMode = (TableRow) findViewById(R.id.rowExposureMode);
         rowExposureProgram = (TableRow) findViewById(R.id.rowExposureProgram);
-        toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
     }
 
     protected void onZoomLockChanged(boolean locked) {
@@ -430,6 +429,14 @@ public abstract class ViewerActivity extends CoreActivity implements
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
                 onZoomLockChanged(isChecked);
+            }
+        });
+        findViewById(R.id.xmpSidebarButton).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                toggleEditXmpFragment();
             }
         });
     }

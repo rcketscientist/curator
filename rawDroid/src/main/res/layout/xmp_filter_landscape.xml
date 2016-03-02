@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/xmp_filter_width"
     android:layout_height="match_parent"
-    android:background="#111"
+    android:background="@drawable/translucent_black_rect"
     android:padding="3dp"
     android:clickable="true"
     >

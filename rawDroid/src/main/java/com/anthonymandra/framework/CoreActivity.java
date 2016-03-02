@@ -21,6 +21,7 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.ShareActionProvider;
@@ -117,20 +118,6 @@ public abstract class CoreActivity extends DocumentActivity
 		mShareIntent.setType("image/jpeg");
 		mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-		mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
-		mXmpFragment.setListener(new XmpEditFragment.MetaChangedListener()
-		{
-			@Override
-			public void onMetaChanged(Integer rating, String label, String[] subject)
-			{
-				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-				values.Label = label;
-				values.Subject = subject;
-				values.Rating = rating;
-				writeXmpModifications(values);
-			}
-		});
 	}
 
 	@Override
@@ -198,9 +185,9 @@ public abstract class CoreActivity extends DocumentActivity
 			case R.id.settings:
 				requestSettings();
 				return true;
-			case R.id.toggleXmp:
-				toggleEditXmpFragment();
-				return true;
+//			case R.id.toggleXmp:
+//				toggleEditXmpFragment();
+//				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -240,6 +227,26 @@ public abstract class CoreActivity extends DocumentActivity
 			}
 		}
 		clearWriteResume();
+	}
+
+	@Override
+	protected void onPostCreate(@Nullable Bundle savedInstanceState)
+	{
+		super.onPostCreate(savedInstanceState);
+		mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
+		mXmpFragment.setListener(new XmpEditFragment.MetaChangedListener()
+		{
+			@Override
+			public void onMetaChanged(Integer rating, String label, String[] subject)
+			{
+				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+				values.Label = label;
+				values.Subject = subject;
+				values.Rating = rating;
+				writeXmpModifications(values);
+			}
+		});
+		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
 	}
 
 	protected void toggleEditXmpFragment()

@@ -39,7 +39,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,6 +46,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -221,7 +221,6 @@ public class GalleryActivity extends CoreActivity
     private Toolbar mToolbar;
 	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
-	private ActionBarDrawerToggle mDrawerToggle;
 	private DrawerLayout mDrawerLayout;
 //	private SwipeRefreshLayout mSwipeRefresh;
 	private static int mParsedImages;
@@ -243,36 +242,27 @@ public class GalleryActivity extends CoreActivity
 		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
-
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
-//		mToolbar.setNavigationIcon(R.drawable.ic_filter);
 		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
         setSupportActionBar(mToolbar);
-//        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
-
-//		mSwipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
-//		mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-//		{
-//			@Override
-//			public void onRefresh()
-//			{
-//				scanRawFiles();
-//			}
-//		});
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mDrawerToggle = new ActionBarDrawerToggle(
-				this,
-				mDrawerLayout,
-				mToolbar,
-				R.string.drawer_open,  /* "open drawer" description */
-				R.string.drawer_close  /* "close drawer" description */);
-
-		// Set the drawer toggle as the DrawerListener
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
-//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//		getSupportActionBar().setHomeButtonEnabled(true);
+		findViewById(R.id.filterSidebarButton).setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				mDrawerLayout.openDrawer(Gravity.LEFT);
+			}
+		});
+		findViewById(R.id.xmpSidebarButton).setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				toggleEditXmpFragment();
+			}
+		});
 
 //		doFirstRun();
 
@@ -538,8 +528,6 @@ public class GalleryActivity extends CoreActivity
 	protected void onPostCreate(Bundle savedInstanceState)
 	{
 		super.onPostCreate(savedInstanceState);
-		mDrawerToggle.syncState();
-//		mToolbar.setNavigationIcon(R.drawable.ic_filter);
 
 		loadXmpFilter();	//must be done here due to fragment/activity lifecycle
 
@@ -1214,7 +1202,7 @@ public class GalleryActivity extends CoreActivity
 	private void startContextualActionBar()
 	{
 		mContextMode = startSupportActionMode(new GalleryActionMode());
-//		mXmpFragment.clear();
+		mXmpFragment.reset();
 		mContextMode.setTitle("Select Items");
 		startMultiSelectMode();
 	}

@@ -195,6 +195,11 @@ public abstract class XmpBaseFragment extends Fragment
 		mPauseListener = false;
 	}
 
+	public void reset()
+	{
+		initXmp(null, null, null);
+	}
+
 	protected void setRating(Integer[] ratings)
 	{
 		if (ratings != null)
