@@ -12,28 +12,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.UriPermission;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
-import android.hardware.usb.UsbConstants;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -46,7 +37,6 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,7 +57,6 @@ import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.UsefulDocumentFile;
-import com.anthonymandra.framework.Util;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
@@ -79,7 +68,6 @@ import com.crashlytics.android.core.CrashlyticsCore;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
-import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.WhatsNewDialog;
 
@@ -87,22 +75,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import io.fabric.sdk.android.Fabric;
 
-public class GalleryActivity extends CoreActivity
-		implements
+public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
 		GalleryRecyclerAdapter.OnItemLongClickListener,
         ShareActionProvider.OnShareTargetSelectedListener,
-		OnSharedPreferenceChangeListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		GalleryRecyclerAdapter.OnSelectionUpdatedListener
 {
+	@SuppressWarnings("unused")
 	private static final String TAG = GalleryActivity.class.getSimpleName();
 
 	private enum WriteResume
@@ -110,7 +97,7 @@ public class GalleryActivity extends CoreActivity
 		Search
 	}
 
-	private IntentFilter mResponseIntentFilter = new IntentFilter();
+	private final IntentFilter mResponseIntentFilter = new IntentFilter();
 
 	public static final String KEY_STARTUP_DIR = "keyStartupDir";
 
@@ -122,66 +109,20 @@ public class GalleryActivity extends CoreActivity
 	// Preference fields
 	public static final String PREFS_NAME = "RawDroidPrefs";
 	public static final boolean PREFS_AUTO_INTERFACE_DEFAULT = true;
-	public static final String PREFS_VERSION_NUMBER = "prefVersionNumber";
 	public static final String PREFS_SHOW_FILTER_HINT = "prefShowFilterHint";
-	public static final String PREFS_LAST_BETA_VERSION = "prefLastBetaVersion";
-	public static final String IMAGE_CACHE_DIR = "thumbs";
 	public static final String PREFS_PERMISSIBLE_USB = "prefPermissibleUsb";
-	public static final String[] USB_LOCATIONS = new String[]
-	{
-            "/mnt/usb_storage",
-            "/Removable",
-            "/mnt/UsbDriveA",
-            "/mnt/UsbDriveB",
-            "/mnt/UsbDriveC",
-            "/mnt/UsbDriveD",
-            "/mnt/UsbDriveE",
-            "/mnt/UsbDriveF",
-			"/mnt/sda1",
-            "/mnt/sdcard2",
-            "/udisk",
-            "/mnt/extSdCard",
-            Environment.getExternalStorageDirectory().getPath() + "/usbStorage/sda1",
-			Environment.getExternalStorageDirectory().getPath() + "/usbStorage",
-            "/mnt/usb",
-            "/storage/usb",
-            "/dev/bus/usb/001/002",
-            "/storage/USBstorage",
-            "/storage/USBstorage2",
-            "/storage/USBstorage3",
-            "/storage/USBstorage4",
-            "/storage/USBstorage5",
-            "/storage/USBstorage6",
-            "/storage/usbdisk",
-            "/storage/usbdisk1",
-            "/storage/usbdisk2"
-    };
 
-	private static final String[] MOUNT_ROOTS =
-	{
-			"/mnt",
-			"/Removable",
-			"/udisk",
-			"/usbStorage",
-			"/storage",
-			"/dev/bus/usb",
-	};
-
-	private static final String[] TEST_ROOTS =
-			{
-					"/storage/emulated",
-			};
-
-	private static final String[] GALLERY_PROJECTION =
-			{
-					Meta.Data._ID,
-					Meta.Data.URI,
-					Meta.Data.ORIENTATION,
-					Meta.Data.RATING,
-					Meta.Data.SUBJECT,
-					Meta.Data.TIMESTAMP,
-					Meta.Data.LABEL
-			};
+	// TODO: Supposedly faster to use a projection
+//	private static final String[] GALLERY_PROJECTION =
+//	{
+//		Meta.Data._ID,
+//		Meta.Data.URI,
+//		Meta.Data.ORIENTATION,
+//		Meta.Data.RATING,
+//		Meta.Data.SUBJECT,
+//		Meta.Data.TIMESTAMP,
+//		Meta.Data.LABEL
+//	};
 
 	// Request codes
 	private static final int REQUEST_COPY_DIR = 12;
@@ -191,16 +132,11 @@ public class GalleryActivity extends CoreActivity
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
-	public static final File START_PATH = new File("/mnt");
-	private static final File ROOT = new File("/");
-	private Parcelable gridState;
-
     private static boolean inTutorial = false;
 	private static boolean inActionMode = false;
 
 	// Widget handles
 	private RecyclerView mImageGrid;
-	private GridLayoutManager mGridLayout;
 	private GalleryRecyclerAdapter mGalleryAdapter;
 	/**
 	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
@@ -211,18 +147,14 @@ public class GalleryActivity extends CoreActivity
 	private boolean multiSelectMode;
 
 	private int mDisplayWidth;
-	private int mDisplayHeight;
 
 	private ActionMode mContextMode;
 
-	// private int tutorialStage;
 	private ShowcaseView tutorial;
     private Toolbar mToolbar;
 	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
 	private DrawerLayout mDrawerLayout;
-//	private SwipeRefreshLayout mSwipeRefresh;
-	private static int mParsedImages;
 
 	@Override
 	public int getContentView()
@@ -251,7 +183,7 @@ public class GalleryActivity extends CoreActivity
 			@Override
 			public void onClick(View v)
 			{
-				mDrawerLayout.openDrawer(Gravity.LEFT);
+				mDrawerLayout.openDrawer(GravityCompat.START);
 			}
 		});
 		findViewById(R.id.xmpSidebarButton).setOnClickListener(new OnClickListener()
@@ -278,14 +210,13 @@ public class GalleryActivity extends CoreActivity
 		inTutorial = false;
 
 		mDisplayWidth = metrics.widthPixels;
-		mDisplayHeight = metrics.heightPixels;
 
 		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
 		final int numColumns = (int) Math.floor(mDisplayWidth / (thumbSize + thumbSpacing));
 		final int imageSize = mDisplayWidth / numColumns;
 
-		mGridLayout = new GridLayoutManager(this, numColumns);
+		GridLayoutManager mGridLayout = new GridLayoutManager(this, numColumns);
 		mGridLayout.setSmoothScrollbarEnabled(true);
 
 		mGalleryAdapter = new GalleryRecyclerAdapter(this, null, imageSize);
@@ -312,7 +243,6 @@ public class GalleryActivity extends CoreActivity
 				switch(intent.getAction())
 				{
 					case MetaService.BROADCAST_IMAGE_PARSED:
-						mParsedImages++;
 						mToolbar.setSubtitle(new StringBuilder()
 								.append("Processed ")
 								.append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
@@ -329,7 +259,6 @@ public class GalleryActivity extends CoreActivity
 					case SearchService.BROADCAST_FOUND:
 //						mSwipeRefresh.setRefreshing(false);
 						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS);
-						mParsedImages = 0;
 						if (images.length == 0)
 						{
 							offerRequestPermission();
@@ -357,6 +286,7 @@ public class GalleryActivity extends CoreActivity
 		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
 	}
 
+	@TargetApi(Build.VERSION_CODES.M)
 	@Override
 	protected void onNewIntent(Intent intent)
 	{
@@ -383,7 +313,6 @@ public class GalleryActivity extends CoreActivity
 						Utils.closeSilently(pfd);
 						return;
 					}
-					Utils.closeSilently(pfd);
 				} catch (Exception e)
 				{
 					e.printStackTrace();
@@ -414,10 +343,7 @@ public class GalleryActivity extends CoreActivity
 				requiresJoiner = true;
 
 				selection.append(DbUtil.createMultipleIN(Meta.Data.LABEL, filter.xmp.label.length));
-				for (String label : filter.xmp.label)
-				{
-					selectionArgs.add(label);
-				}
+				Collections.addAll(selectionArgs, filter.xmp.label);
 			}
 			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
 			{
@@ -444,7 +370,6 @@ public class GalleryActivity extends CoreActivity
 		{
 			if (requiresJoiner)
 				selection.append(AND);  // Always exclude the folders, don't OR
-			requiresJoiner = true;
 
 			selection.append(DbUtil.createMultipleLike(Meta.Data.PARENT,
 					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
@@ -472,10 +397,6 @@ public class GalleryActivity extends CoreActivity
 
 	/**
 	 * Updates any filled parameters.  Retains existing parameters if null.
-	 * @param projection
-	 * @param selection
-	 * @param selectionArgs
-	 * @param sortOrder
 	 */
 	public void updateMetaLoader(@Nullable String[] projection,@Nullable  String selection, @Nullable  String[] selectionArgs,@Nullable  String sortOrder)
 	{
@@ -493,19 +414,17 @@ public class GalleryActivity extends CoreActivity
 
 	/**
 	 * Gets a bundle of the existing MetaLoader parameters
-	 * @return
 	 */
 	public Bundle getCurrentMetaLoaderBundle()
 	{
 		Loader<Cursor> c = getLoaderManager().getLoader(META_LOADER_ID);
 		CursorLoader cl = (CursorLoader) c;
-		Bundle metaLoader = createMetaLoaderBundle(
+		return createMetaLoaderBundle(
 				cl.getProjection(),
 				cl.getSelection(),
 				cl.getSelectionArgs(),
 				cl.getSortOrder()
 		);
-		return metaLoader;
 	}
 
 	public static Bundle createMetaLoaderBundle(String[] projection, String selection, String[] selectionArgs, String sortOrder)
@@ -671,7 +590,6 @@ public class GalleryActivity extends CoreActivity
 	@Override
 	public void onResume()
 	{
-		//TODO: Check if galleryadapter selection ids should be stored here (savestate)
 		super.onResume();
 
 		// Launch what's new dialog (will only be shown once)
@@ -697,16 +615,6 @@ public class GalleryActivity extends CoreActivity
 	public void onDestroy()
 	{
 		super.onDestroy();
-	}
-
-	//Get the current app version
-	private int getAppVersionCode() {
-		try {
-			final PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			return packageInfo.versionCode;
-		} catch (PackageManager.NameNotFoundException ignored) {
-			return 0;
-		}
 	}
 
 	private void offerRequestPermission()
@@ -738,7 +646,8 @@ public class GalleryActivity extends CoreActivity
 
 	protected void setImageCountTitle()
 	{
-		getSupportActionBar().setTitle(mGalleryAdapter.getCount() + " Images");
+		if (getSupportActionBar() != null)
+			getSupportActionBar().setTitle(mGalleryAdapter.getCount() + " Images");
 	}
 
 	protected void scanRawFiles()
@@ -804,7 +713,7 @@ public class GalleryActivity extends CoreActivity
 
 	private void handleCopyDestinationResult(final Uri destination)
 	{
-		// TODO: Might want to figure out a way to get free space to intriduce this check again
+		// TODO: Might want to figure out a way to get free space to introduce this check again
 //		long importSize = getSelectedImageSize();
 //		if (destination.getFreeSpace() < importSize)
 //		{
@@ -815,18 +724,17 @@ public class GalleryActivity extends CoreActivity
 		new CopyTask().execute(mItemsForIntent, destination);
 	}
 
-	private long getSelectedImageSize()
-	{
-		long selectionSize = 0;
-		for (Uri selected : mGalleryAdapter.getSelectedItems())
-		{
-			UsefulDocumentFile df = UsefulDocumentFile.fromUri(this, selected);
-			selectionSize += df.length();
-		}
-		return selectionSize;
-	}
+//	private long getSelectedImageSize()
+//	{
+//		long selectionSize = 0;
+//		for (Uri selected : mGalleryAdapter.getSelectedItems())
+//		{
+//			UsefulDocumentFile df = UsefulDocumentFile.fromUri(this, selected);
+//			selectionSize += df.length();
+//		}
+//		return selectionSize;
+//	}
 
-    @SuppressWarnings("unchecked")
     private void handleExportThumbResult(final Uri destination)
     {
 		// TODO: Might want to figure out a way to get free space to introduce this check again
@@ -859,21 +767,6 @@ public class GalleryActivity extends CoreActivity
 				Intent.FLAG_GRANT_READ_URI_PERMISSION |
 						Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 	}
-
-    private void showWriteAccessError()
-    {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
-        alert.setTitle(R.string.warningAccessError);
-        if (Util.hasKitkat())
-        {
-            alert.setMessage(R.string.warningWriteDisabledKitKat);
-        }
-        else
-        {
-            alert.setMessage(R.string.warningWriteDisabled);
-        }
-        alert.show();
-    }
 
 	private void storeSelectionForIntent()
 	{
@@ -937,40 +830,9 @@ public class GalleryActivity extends CoreActivity
 			case R.id.gallerySd:
 				requestWritePermission();
 				return true;
-			case R.id.contextBlockFolder:
-				addExcludedFolder();
-				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-
-	private void addExcludedFolder()
-	{
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		// TODO: Need to save changes to excluded folders
-
-		final String key = getString(R.string.KEY_EXCLUDED_FOLDERS);
-		// You must make a copy of the returned preference set or changes will not be recognized
-		Set<String> excludedFolders = new HashSet<>(prefs.getStringSet(key, new HashSet<String>()));
-
-		for (Uri uri : mGalleryAdapter.getSelectedItems())
-		{
-			File file = new File(uri.getPath());
-
-			/**
-			 * We need canonical here, otherwise we could exclude one copy of an image only to allow the other(s)
-			 * ie: /storage/extSdCard and /mnt/extSdCard point to the same physical memory
-			 */
-			File canon = new File(FileUtil.getCanonicalPathSilently(file));
-			excludedFolders.add(canon.getParent());
-		}
-
-		mXmpFilterFragment.addExcludedFolders(excludedFolders);
-//		getContentResolver().delete(Meta.Data.CONTENT_URI,
-//				createMultipleIN(Meta.Data.PARENT, excludedFolders.size()),
-//				excludedFolders.toArray(new String[excludedFolders.size()]));
-//		scanRawFiles();
 	}
 
 	@Override
@@ -1089,47 +951,6 @@ public class GalleryActivity extends CoreActivity
 				}
 			}
 		}).start();
-	}
-
-	class DirAlphaComparator implements Comparator<File>
-	{
-
-		// Comparator interface requires defining compare method.
-		@Override
-		public int compare(File filea, File fileb)
-		{
-			// ... Sort directories before files,
-			// otherwise alphabetical ignoring case.
-			if (filea.isDirectory() && !fileb.isDirectory())
-			{
-				return -1;
-
-			}
-			else if (!filea.isDirectory() && fileb.isDirectory())
-			{
-				return 1;
-
-			}
-			else
-			{
-				return filea.getName().compareToIgnoreCase(fileb.getName());
-			}
-		}
-	}
-
-	@TargetApi(12)
-	static public boolean isCamera(UsbDevice device)
-	{
-		int count = device.getInterfaceCount();
-		for (int i = 0; i < count; i++)
-		{
-			UsbInterface intf = device.getInterface(i);
-			if (intf.getInterfaceClass() == UsbConstants.USB_CLASS_STILL_IMAGE && intf.getInterfaceSubclass() == 1 && intf.getInterfaceProtocol() == 1)
-			{
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private final class GalleryActionMode implements ActionMode.Callback
@@ -1276,45 +1097,6 @@ public class GalleryActivity extends CoreActivity
 		v.setDrawingCacheEnabled(false);
 	}
 
-//	private static class GalleryOnScrollListener extends OnScrollListener
-//	{
-//		@Override
-//		public void onScrollStateChanged(RecyclerView recyclerView, int newState)
-//		{
-//			//TODO: See if this is still of any value, currently not attached
-//			// Pause fetcher to ensure smoother scrolling when flinging
-//			if (newState == OnScrollListener.SCROLL_STATE_FLING)
-//			{
-//				mImageDecoder.setPauseWork(true);
-//			}
-//			else
-//			{
-//				mImageDecoder.setPauseWork(false);
-//			}
-//		}
-//	}
-//
-//	@Override
-//	public void onScrolled(RecyclerView recyclerView, int dx, int dy){}
-//	{
-//        //Do nothing
-//	}
-//
-//	@Override
-//	public void onScrollStateChanged(RecyclerView view, int scrollState)
-//	{
-//		//TODO: See if this is still of any value, currently not attached
-//		// Pause fetcher to ensure smoother scrolling when flinging
-//		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING)
-//		{
-//			mImageDecoder.setPauseWork(true);
-//		}
-//		else
-//		{
-//			mImageDecoder.setPauseWork(false);
-//		}
-//	}
-
     int tutorialStage;
 	public void runTutorial()
 	{
@@ -1322,7 +1104,8 @@ public class GalleryActivity extends CoreActivity
         File tutorialDirectory = FileUtil.getDiskCacheDir(this, "tutorial");
         if (!tutorialDirectory.exists())
         {
-            tutorialDirectory.mkdir();
+            if(!tutorialDirectory.mkdir())
+	            return;
         }
 
         //generate some example images
@@ -1378,28 +1161,27 @@ public class GalleryActivity extends CoreActivity
         setTutorialNoShowcase();
 	}
 
-	/**
-	 * Represents an Action item to showcase (e.g., one of the buttons on an ActionBar).
-	 * To showcase specific action views such as the home button, use {@link ToolbarActionItemTarget}
-	 *
-	 * @see ToolbarActionItemTarget
-	 */
-	private class ToolbarActionItemTarget implements Target
-	{
-		private final Toolbar toolbar;
-		private final int menuItemId;
-
-		public ToolbarActionItemTarget(Toolbar toolbar, @IdRes int itemId) {
-			this.toolbar = toolbar;
-			this.menuItemId = itemId;
-		}
-
-		@Override
-		public Point getPoint() {
-			return new ViewTarget(toolbar.findViewById(menuItemId)).getPoint();
-		}
-
-	}
+//	/**
+//	 * Represents an Action item to showcase (e.g., one of the buttons on an ActionBar).
+//	 * To showcase specific action views such as the home button, use {@link ToolbarActionItemTarget}
+//	 *
+//	 * @see ToolbarActionItemTarget
+//	 */
+//	private class ToolbarActionItemTarget implements Target
+//	{
+//		private final Toolbar toolbar;
+//		private final int menuItemId;
+//
+//		public ToolbarActionItemTarget(Toolbar toolbar, @IdRes int itemId) {
+//			this.toolbar = toolbar;
+//			this.menuItemId = itemId;
+//		}
+//
+//		@Override
+//		public Point getPoint() {
+//			return new ViewTarget(toolbar.findViewById(menuItemId)).getPoint();
+//		}
+//	}
 
 	private class TutorialClickListener implements OnClickListener
 	{
@@ -1600,6 +1382,7 @@ public class GalleryActivity extends CoreActivity
 		}
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
     public void closeTutorial()
     {
         inTutorial = false;
@@ -1673,7 +1456,6 @@ public class GalleryActivity extends CoreActivity
 
 	/**
 	 * ballpark home (filter) location
-	 * @param animate
 	 */
     private void setTutorialHomeView(boolean animate)
     {
@@ -1683,7 +1465,6 @@ public class GalleryActivity extends CoreActivity
 
 	/**
 	 * ballpark title location
-	 * @param animate
 	 */
 	private void setTutorialTitleView(boolean animate)
 	{
@@ -1713,35 +1494,4 @@ public class GalleryActivity extends CoreActivity
 
 		tutorial.setShowcase(target, animate);
     }
-
-	private void setTutorialShareView(boolean animate)
-	{
-		ViewTarget target;
-		View itemView = mShareProvider.onCreateActionView();
-		if (itemView == null)
-		{
-			//List of all mToolbar items, assuming last is overflow
-			List<View> views = mToolbar.getTouchables();
-			target = new ViewTarget(views.get(views.size()-1)); //overflow
-			openOptionsMenu();   // Change size of showcase?
-		}
-		else
-		{
-			target = new ViewTarget(itemView);
-		}
-
-		tutorial.setShowcase(target, animate);
-	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-	{
-		if (key.equals(FullSettingsActivity.KEY_ShowXmpFiles)
-                || key.equals(FullSettingsActivity.KEY_ShowNativeFiles)
-                || key.equals(FullSettingsActivity.KEY_ShowUnknownFiles))
-		{
-			//FIXME: Setting currently useless
-//			updateLocalFiles();
-		}
-	}
 }

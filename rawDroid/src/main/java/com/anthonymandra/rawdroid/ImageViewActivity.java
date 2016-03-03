@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 
 import com.android.gallery3d.app.PhotoPage;
 import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.framework.License;
 
 import java.util.WeakHashMap;
@@ -101,11 +100,6 @@ public class ImageViewActivity extends PhotoPage
     @Override
     public void goToNextPicture() {
         mPhotoView.goToNextPicture();
-    }
-
-    @Override
-    public void goToFirstPicture() {
-        mModel.moveTo(0);
     }
 
     @Override

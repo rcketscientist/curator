@@ -489,12 +489,6 @@ public class LegacyViewerActivity extends ViewerActivity
 		mModel.next();
 	}
 
-    @Override
-    public void goToFirstPicture() {
-        mImageIndex = 0;
-        mModel.requestNextImageWithMeta();
-    }
-
     public void deleteToNext()
 	{
 		mModel.deleteToNext();

@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import android.widget.Spinner;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
+import com.drew.lang.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +36,8 @@ import java.util.Set;
 
 public class XmpFilterFragment extends XmpBaseFragment
 {
+    private static final String TAG = XmpBaseFragment.class.getSimpleName();
+
     private MetaFilterChangedListener mFilterListener;
     public interface MetaFilterChangedListener
     {
@@ -85,8 +89,8 @@ public class XmpFilterFragment extends XmpBaseFragment
         mSortAscending = pref.getBoolean(mPrefAscending, true);
         mSortColumn = XmpFilter.SortColumns.valueOf(pref.getString(mPrefColumn, XmpFilter.SortColumns.Name.toString()));
         mSegregateByType = pref.getBoolean(mPrefSegregate, true);
-        mHiddenFolders = pref.getStringSet(mPrefHiddenFolders, new HashSet<String>());
-        mExcludedFolders = pref.getStringSet(mPrefExcludedFolders, new HashSet<String>());
+        mHiddenFolders = new HashSet<>(pref.getStringSet(mPrefHiddenFolders, new HashSet<String>()));
+        mExcludedFolders = new HashSet<>(pref.getStringSet(mPrefExcludedFolders, new HashSet<String>()));
 
         attachButtons();
     }
@@ -135,7 +139,6 @@ public class XmpFilterFragment extends XmpBaseFragment
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                //TODO: This is really vulnerable to array index changes!
                 switch (position)
                 {
                     case 0:
@@ -187,20 +190,23 @@ public class XmpFilterFragment extends XmpBaseFragment
             public void onClick(View v)
             {
                 final List<String> paths = new ArrayList<>();
-                final List<String> sortedPaths = new ArrayList<>();
 
                 Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
                         new String[]{"DISTINCT " + Meta.Data.PARENT}, null, null,
                         Meta.Data.PARENT + " ASC");
-                while (c.moveToNext())
-                {
-                    String path = c.getString(c.getColumnIndex(Meta.Data.PARENT));
 
-                    // We place the excluded folders at the end
-                    if (!mExcludedFolders.contains(path))
-                        paths.add(path);
+                if (c != null)
+                {
+                    while (c.moveToNext())
+                    {
+                        String path = c.getString(c.getColumnIndex(Meta.Data.PARENT));
+
+                        // We place the excluded folders at the end
+                        if (!mExcludedFolders.contains(path))
+                            paths.add(path);
+                    }
+                    c.close();
                 }
-                c.close();
 
                 // Place exclusions at the end
                 for (String exclusion : mExcludedFolders)
@@ -262,7 +268,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                     }
                 });
 
-                dialog.show(getFragmentManager(), "diag");
+                dialog.show(getFragmentManager(), TAG);
             }
         });
     }
@@ -280,26 +286,31 @@ public class XmpFilterFragment extends XmpBaseFragment
         }
     }
 
+    @SuppressWarnings("unused")
     public boolean getAndOr()
     {
         return mAndTrueOrFalse;
     }
 
+    @SuppressWarnings("unused")
     public boolean getSegregate()
     {
         return mSegregateByType;
     }
 
-    public XmpFilter.SortColumns getSortCoumn()
+    @SuppressWarnings("unused")
+    public XmpFilter.SortColumns getSortColumn()
     {
         return mSortColumn;
     }
 
+    @SuppressWarnings("unused")
     public boolean getAscending()
     {
         return mSortAscending;
     }
 
+    @SuppressWarnings("unused")
     public XmpValues getXmpValues()
     {
         return mXmpValues;
@@ -334,6 +345,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         mFilterListener = listener;
     }
 
+    @SuppressWarnings("unused")
     public void unregisterXmpFilterChangedListener()
     {
         mFilterListener = null;
@@ -344,6 +356,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         mRequestListener = listener;
     }
 
+    @SuppressWarnings("unused")
     public void unregisterSearchRootRequestedListener()
     {
         mRequestListener = null;
@@ -400,7 +413,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             mSearchListener = listener;
         }
 
-        static FolderDialog newInstance(String[] paths, boolean[] visible, boolean[] excluded, int x, int y)
+        static FolderDialog newInstance(@NotNull String[] paths, @NotNull boolean[] visible, @NotNull boolean[] excluded, int x, int y)
         {
             FolderDialog f = new FolderDialog();
             Bundle args = new Bundle();
@@ -432,12 +445,14 @@ public class XmpFilterFragment extends XmpBaseFragment
             params.y = y;
             window.setAttributes(params);
 
-//            List<FolderVisibility> items = new ArrayList<>();
+            //noinspection ConstantConditions
             for (int i = 0; i < paths.length; i++)
             {
                 FolderVisibility fv = new FolderVisibility();
                 fv.Path = paths[i];
+                //noinspection NullableProblems,ConstantConditions
                 fv.visible = visible[i];
+                //noinspection NullableProblems,ConstantConditions
                 fv.excluded = excluded[i];
                 items.add(fv);
             }
@@ -461,6 +476,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             return v;
         }
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             Dialog dialog = super.onCreateDialog(savedInstanceState);

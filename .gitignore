@@ -7,15 +7,16 @@
 /libs/armeabi-v7a
 /out
 /obj
-/.idea
-/.gradle
-local.properties
+
+#Android studio
+/.idea/workspace.xml
+/.idea/libraries
 /local.properties
-*.iml
-/gradle/.gradle
-/gradle/gradle
-/gradle/gradlew.bat
-/gradle/gradlew
+/captures
+
+#Gradle
+/.gradle
+
 /rawDroid/src/main/obj
 /rawDroid/build/outputs/apk/rawDroid-pro-debug.apk
 /rawDroid/build/outputs/apk/rawDroid-pro-debug-unaligned.apk
@@ -25,7 +26,7 @@ local.properties
 /rawDroid/build/outputs/apk/manifest-merger-pro-release-report.txt
 /rawDroid/build/outputs/apk/manifest-merger-proAmazon-release-report.txt
 /rawDroid/build/outputs/apk/manifest-merger-demo-release-report.txt
-/captures
+
 Thumbs.db
 obj
 /rawDroid/build/tmp

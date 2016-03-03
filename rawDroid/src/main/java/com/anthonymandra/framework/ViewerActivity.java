@@ -1,5 +1,6 @@
 package com.anthonymandra.framework;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.WallpaperManager;
 import android.content.BroadcastReceiver;
@@ -10,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -58,75 +58,70 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private static final String TAG = ViewerActivity.class.getSimpleName();
 
-    protected static final int REQUEST_CODE_PICK_FILE_OR_DIRECTORY = 1;
-    protected static final int REQUEST_CODE_KEYWORDS = 2;
-    protected static final int REQUEST_CODE_EDIT = 3;
+    private static final int REQUEST_CODE_PICK_FILE_OR_DIRECTORY = 1;
+    private static final int REQUEST_CODE_EDIT = 3;
 
     public static String EXTRA_START_INDEX = "viewer_index";
-    public static String EXTRA_START_URI = "viewer_start_uri";
-    public static String EXTRA_URIS = "viewer_uris";
+    private static String EXTRA_URIS = "viewer_uris";
 
-    protected HistogramView histView;
-    protected View metaFragment;
-    protected View navFragment;
-    protected View metaPanel;
-    protected ImageButton buttonPrev;
-    protected ImageButton buttonNext;
-    protected View navigationPanel;
-    protected TextView zoomLevel;
-    protected CheckBox zoomButton;
-    protected TextView metaDate;
-    protected TextView metaModel;
-    protected TextView metaIso;
-    protected TextView metaExposure;
-    protected TextView metaAperture;
-    protected TextView metaFocal;
-    protected TextView metaDimensions;
-    protected TextView metaAlt;
-    protected TextView metaFlash;
-    protected TextView metaLat;
-    protected TextView metaLon;
-    protected TextView metaName;
-    protected TextView metaWb;
-    protected TextView metaLens;
-    protected TextView metaDriveMode;
-    protected TextView metaExposureMode;
-    protected TextView metaExposureProgram;
+    private HistogramView histView;
+    private View metaPanel;
+    private ImageButton buttonPrev;
+    private ImageButton buttonNext;
+    private View navigationPanel;
+    private TextView zoomLevel;
+    private CheckBox zoomButton;
+    private TextView metaDate;
+    private TextView metaModel;
+    private TextView metaIso;
+    private TextView metaExposure;
+    private TextView metaAperture;
+    private TextView metaFocal;
+    private TextView metaDimensions;
+    private TextView metaAlt;
+    private TextView metaFlash;
+    private TextView metaLat;
+    private TextView metaLon;
+    private TextView metaName;
+    private TextView metaWb;
+    private TextView metaLens;
+    private TextView metaDriveMode;
+    private TextView metaExposureMode;
+    private TextView metaExposureProgram;
 
-    protected TableRow rowDate;
-    protected TableRow rowModel;
-    protected TableRow rowIso;
-    protected TableRow rowExposure;
-    protected TableRow rowAperture;
-    protected TableRow rowFocal;
-    protected TableRow rowDimensions;
-    protected TableRow rowAlt;
-    protected TableRow rowFlash;
-    protected TableRow rowLat;
-    protected TableRow rowLon;
-    protected TableRow rowName;
-    protected TableRow rowWhiteBalance;
-    protected TableRow rowLens;
-    protected TableRow rowDriveMode;
-    protected TableRow rowExposureMode;
-    protected TableRow rowExposureProgram;
+    private TableRow rowDate;
+    private TableRow rowModel;
+    private TableRow rowIso;
+    private TableRow rowExposure;
+    private TableRow rowAperture;
+    private TableRow rowFocal;
+    private TableRow rowDimensions;
+    private TableRow rowAlt;
+    private TableRow rowFlash;
+    private TableRow rowLat;
+    private TableRow rowLon;
+    private TableRow rowName;
+    private TableRow rowWhiteBalance;
+    private TableRow rowLens;
+    private TableRow rowDriveMode;
+    private TableRow rowExposureMode;
+    private TableRow rowExposureProgram;
 
-    protected Timer autoHide;
+    private Timer autoHide;
 
-    protected boolean isInterfaceHidden;
+    private boolean isInterfaceHidden;
 
     public static int displayWidth;
     public static int displayHeight;
 
     protected int mImageIndex;
 
-    protected Uri mCurrentUri;
+    private Uri mCurrentUri;
 
     public abstract Uri getCurrentItem();
     public abstract Bitmap getCurrentBitmap();
     public abstract void goToPrevPicture();
     public abstract void goToNextPicture();
-    public abstract void goToFirstPicture();
 
     protected List<Uri> mMediaItems = new ArrayList<>();
 
@@ -136,7 +131,7 @@ public abstract class ViewerActivity extends CoreActivity implements
      * flag, histogram could be regenerated for each layer (thumb, big, full raw, etc)
      */
     protected boolean mRequiresHistogramUpdate;
-    protected HistogramTask mHistogramTask;
+    private HistogramTask mHistogramTask;
 
     private IntentFilter mResponseIntentFilter = new IntentFilter();
 
@@ -159,7 +154,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         super.onCreate(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
         if (getIntent().hasExtra(EXTRA_URIS))
@@ -183,6 +177,8 @@ public abstract class ViewerActivity extends CoreActivity implements
                 dbQuery.getString(META_SELECTION_KEY),
                 dbQuery.getStringArray(META_SELECTION_ARGS_KEY),
                 dbQuery.getString(META_SORT_ORDER_KEY));
+            if (c == null)
+                return;
             if (c.getCount() < 1)
             {
                 c.close();
@@ -275,7 +271,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @TargetApi(19)
-    protected void setImmersive()
+    private void setImmersive()
     {
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -286,7 +282,7 @@ public abstract class ViewerActivity extends CoreActivity implements
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
-    protected void initialize()
+    private void initialize()
     {
         lookupViews();
         setMetaVisibility();
@@ -307,7 +303,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         mMediaItems.remove(item);
     }
 
-    protected void setWatermark(boolean demo)
+    private void setWatermark(boolean demo)
     {
         View watermark = findViewById(R.id.watermark);
         if (!demo)
@@ -316,7 +312,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             watermark.setVisibility(View.VISIBLE);
     }
 
-    protected void setDisplayMetrics()
+    private void setDisplayMetrics()
     {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -330,7 +326,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     	super.onBackPressed();
     }
 
-    protected void setMetaVisibility()
+    private void setMetaVisibility()
     {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -359,9 +355,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     protected void lookupViews()
     {
-        metaFragment = findViewById(R.id.metaPanel);
-        navFragment = findViewById(R.id.navPanel);
-
         histView = (HistogramView) findViewById(R.id.histogramView1);
         metaPanel = findViewById(R.id.tableLayoutMeta);
         navigationPanel = findViewById(R.id.leftNavigation);
@@ -419,7 +412,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         // no base implementation
     }
 
-    protected void attachButtons()
+    private void attachButtons()
     {
         buttonPrev.setOnClickListener(new PreviousImageClickListener());
         buttonNext.setOnClickListener(new NextImageClickListener());
@@ -447,7 +440,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             autoHide.cancel();
     }
 
-    class PreviousImageClickListener implements View.OnClickListener
+    private class PreviousImageClickListener implements View.OnClickListener
     {
 
         @Override
@@ -457,7 +450,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    class NextImageClickListener implements View.OnClickListener
+    private class NextImageClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(View v)
@@ -492,7 +485,8 @@ public abstract class ViewerActivity extends CoreActivity implements
                 if (!settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always")
                         .equals("Never"))
                 {
-                    getSupportActionBar().show();
+                    if (getSupportActionBar() != null)
+                        getSupportActionBar().show();
                 }
             }
         });
@@ -525,7 +519,8 @@ public abstract class ViewerActivity extends CoreActivity implements
                 if (!settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always")
                         .equals("Always"))
                 {
-                    getSupportActionBar().hide();
+                    if (getSupportActionBar() != null)
+                        getSupportActionBar().hide();
                 }
             }
         });
@@ -553,7 +548,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         MetaWakefulReceiver.startPriorityMetaService(ViewerActivity.this, image);
     }
 
-    protected void updateImageDetails()
+    private void updateImageDetails()
     {
         updateMetaData();
         updateHistogram(getCurrentBitmap());
@@ -577,7 +572,8 @@ public abstract class ViewerActivity extends CoreActivity implements
         mHistogramTask.execute(bitmap);
     }
 
-    protected void populateMeta(ContentValues cursor)
+    @SuppressLint("SetTextI18n")
+    private void populateMeta(ContentValues cursor)
     {
         if (autoHide != null)
             autoHide.cancel();
@@ -623,7 +619,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         autoHide.schedule(new AutoHideMetaTask(), 3000);
     }
 
-    protected void clearMeta()
+    private void clearMeta()
     {
         metaDate.setText("");
         metaModel.setText("");
@@ -644,7 +640,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         metaExposureProgram.setText("");
     }
 
-    class AutoHideMetaTask extends TimerTask
+    private class AutoHideMetaTask extends TimerTask
     {
         @Override
         public void run()
@@ -653,7 +649,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    public class HistogramTask extends AsyncTask<Bitmap, Void, Histogram>
+    protected class HistogramTask extends AsyncTask<Bitmap, Void, Histogram>
     {
         @Override
         protected void onPreExecute() {
@@ -704,7 +700,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    protected void saveImage()
+    private void saveImage()
     {
         // TODO: Probably need a way to store the current item
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -848,7 +844,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    protected void setImageFocus()
+    private void setImageFocus()
     {
         Intent data = new Intent();
         data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, mImageIndex);
@@ -871,7 +867,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         });
     }
 
-    protected static class ViewerLicenseHandler extends LicenseHandler
+    static class ViewerLicenseHandler extends LicenseHandler
     {
         private final WeakReference<ViewerActivity> mViewer;
 

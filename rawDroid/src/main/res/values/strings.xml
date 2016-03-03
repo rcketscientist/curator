@@ -170,7 +170,6 @@
     <string name="addKeyword">Add Keyword</string>
     <string name="about">About</string>
     <string name="search">Search</string>
-    <string name="excludeFolder">Exclude Folder</string>
 	<string name="excludedFolders">Excluded Folders</string>
 	<string name="excludedSummary">Folders that are not scanned for images</string>
     <string name="excludedMessage">Tap to remove folders from the exclusion list</string>

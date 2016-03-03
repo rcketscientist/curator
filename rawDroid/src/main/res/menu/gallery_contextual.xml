@@ -46,9 +46,4 @@
         android:orderInCategory="12"
         app:showAsAction="ifRoom"
         android:title="@string/accessRecycle"/>
-    <item
-        android:id="@+id/contextBlockFolder"
-        android:orderInCategory="20"
-        app:showAsAction="never"
-        android:title="@string/excludeFolder"/>
 </menu>
