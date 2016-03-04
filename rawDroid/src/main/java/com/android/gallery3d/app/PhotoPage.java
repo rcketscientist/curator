@@ -28,6 +28,7 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 
 public abstract class PhotoPage extends AbstractCoreActivity implements
         PhotoView.Listener, GalleryApp{
+    @SuppressWarnings("unused")
     private static final String TAG = "PhotoPage";
 
 //    private static final int MSG_HIDE_BARS = 1;
@@ -45,7 +46,6 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
 //    private static final int MSG_UPDATE_SHARE_URI = 15;
 //    private static final int MSG_UPDATE_PANORAMA_UI = 16;
 
-    private static final int HIDE_BARS_TIMEOUT = 3500;
     private static final int UNFREEZE_GLROOT_TIMEOUT = 250;
 
     protected PhotoView mPhotoView;
@@ -54,9 +54,6 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     private Handler mHandler;
     private Uri mCurrentPhoto = null;
     private boolean mIsActive;
-    private OrientationManager mOrientationManager;
-
-    private boolean mSkipUpdateCurrentPhoto = false;
 
     private static final long DEFERRED_UPDATE_MS = 250;
     private boolean mDeferredUpdateWaiting = false;
@@ -78,7 +75,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
         mPhotoView.setListener(this);
         mPhotoView.setScaleListener(this);
         mRootPane.addComponent(mPhotoView);
-        mOrientationManager = getOrientationManager();
+        OrientationManager mOrientationManager = getOrientationManager();
         getGLRoot().setOrientationSource(mOrientationManager);
 
         mHandler = new SynchronizedHandler(getGLRoot()) {
@@ -125,11 +122,9 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
         super.onPhotoChanged(index, item);
         mImageIndex = index;
 
-        if (!mSkipUpdateCurrentPhoto) {
-            if (item != null) {
-                Uri photo = mModel.getMediaItem(0);
-                if (photo != null) updateCurrentPhoto(photo);
-            }
+        if (item != null) {
+            Uri photo = mModel.getMediaItem(0);
+            if (photo != null) updateCurrentPhoto(photo);
         }
     }
 

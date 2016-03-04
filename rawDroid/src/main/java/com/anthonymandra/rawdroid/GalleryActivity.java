@@ -48,7 +48,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
@@ -214,12 +213,11 @@ public class GalleryActivity extends CoreActivity implements
 		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
 		final int numColumns = (int) Math.floor(mDisplayWidth / (thumbSize + thumbSpacing));
-		final int imageSize = mDisplayWidth / numColumns;
 
 		GridLayoutManager mGridLayout = new GridLayoutManager(this, numColumns);
 		mGridLayout.setSmoothScrollbarEnabled(true);
 
-		mGalleryAdapter = new GalleryRecyclerAdapter(this, null, imageSize);
+		mGalleryAdapter = new GalleryRecyclerAdapter(this, null);
 		mGalleryAdapter.setOnSelectionListener(this);
 		mGalleryAdapter.setOnItemClickListener(this);
 		mGalleryAdapter.setOnItemLongClickListener(this);
@@ -570,7 +568,7 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.swapCursor(cursor);
 		setImageCountTitle();
 
-		if (mGalleryAdapter.getCount() == 0)
+		if (mGalleryAdapter.getItemCount() == 0)
 			offerRequestPermission();
 	}
 
@@ -647,7 +645,7 @@ public class GalleryActivity extends CoreActivity implements
 	protected void setImageCountTitle()
 	{
 		if (getSupportActionBar() != null)
-			getSupportActionBar().setTitle(mGalleryAdapter.getCount() + " Images");
+			getSupportActionBar().setTitle(mGalleryAdapter.getItemCount() + " Images");
 	}
 
 	protected void scanRawFiles()
@@ -1026,11 +1024,6 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	public boolean onItemLongClick(RecyclerView.Adapter<?> parent, View view, int position, long id)
 	{
-		MediaItem media = mGalleryAdapter.getImage(position);
-
-		if (media == null)
-			return false;
-
 		// If we're in multi-select select all items between
 		if (multiSelectMode)
 		{

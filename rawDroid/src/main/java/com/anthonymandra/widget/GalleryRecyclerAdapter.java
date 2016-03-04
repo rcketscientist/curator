@@ -11,9 +11,7 @@ import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Glide;
@@ -33,10 +31,9 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	private final int red;
 
 	private final Context mContext;
-	private Set<Uri> mSelectedItems = new HashSet<>();
-	private TreeSet<Integer> mSelectedPositions = new TreeSet<>();
+	private final Set<Uri> mSelectedItems = new HashSet<>();
+	private final TreeSet<Integer> mSelectedPositions = new TreeSet<>();
 
-	private final int mImageSize;
 	private OnSelectionUpdatedListener mSelectionListener;
 	private OnItemClickListener mOnItemClickListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
@@ -77,6 +74,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	 * @return The callback to be invoked with an item in this AdapterView has
 	 *         been clicked, or null id no callback has been set.
 	 */
+	@SuppressWarnings("unused")
 	public final OnItemClickListener getOnItemClickListener() {
 		return mOnItemClickListener;
 	}
@@ -117,6 +115,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	 * @return The callback to be invoked with an item in this AdapterView has
 	 *         been clicked and held, or null id no callback as been set.
 	 */
+	@SuppressWarnings("unused")
 	public final OnItemLongClickListener getOnItemLongClickListener() {
 		return mOnItemLongClickListener;
 	}
@@ -128,12 +127,12 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 
 	public static class ViewHolder extends RecyclerView.ViewHolder
 	{
-		public ImageView mImageView;
-		public TextView mFileName;
-		public View mLabel;
-		public android.widget.RatingBar mRatingBar;
-		public CheckableRelativeLayout mBaseView;
-		public ImageView mXmpView;
+		public final ImageView mImageView;
+		public final TextView mFileName;
+		public final View mLabel;
+		public final android.widget.RatingBar mRatingBar;
+		public final CheckableRelativeLayout mBaseView;
+		public final ImageView mXmpView;
 
 		public ViewHolder(View view)
 		{
@@ -158,22 +157,22 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		private Uri uri;
 		private boolean hasSubject;
 
-		public static GalleryItem fromCursor(Context c, Cursor cursor)
+		public static GalleryItem fromCursor(Cursor cursor)
 		{
 			GalleryItem item = new GalleryItem();
-			item.rotation = ImageUtils.getRotation(cursor.getInt(Meta.ORIENTATION_COLUMN));
-			item.rating = cursor.getFloat(Meta.RATING_COLUMN);
-			item.uri = Uri.parse(cursor.getString(Meta.URI_COLUMN));
-			item.label = cursor.getString(Meta.LABEL_COLUMN);
-			item.name = cursor.getString(Meta.NAME_COLUMN);
-			item.hasSubject = cursor.getString(Meta.SUBJECT_COLUMN) != null;
+			item.rotation = ImageUtils.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.Data.ORIENTATION)));
+			item.rating = cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING));
+			item.uri = Uri.parse(cursor.getString(cursor.getColumnIndex(Meta.Data.URI)));
+			item.label = cursor.getString(cursor.getColumnIndex(Meta.Data.LABEL));
+			item.name = cursor.getString(cursor.getColumnIndex(Meta.Data.NAME));
+			item.hasSubject = cursor.getString(cursor.getColumnIndex(Meta.Data.SUBJECT)) != null;
 			return item;
 		}
 
 		public static GalleryItem fromViewHolder(ViewHolder vh)
 		{
 			GalleryItem item = new GalleryItem();
-			item.rotation = (int)vh.mImageView.getRotation();	//TODO: Not needed with glide?
+			item.rotation = (int)vh.mImageView.getRotation();
 			item.rating = vh.mRatingBar.getRating();
 			item.uri = (Uri) vh.mBaseView.getTag();
 			item.label = (String) vh.mLabel.getTag();
@@ -185,6 +184,10 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		@Override
 		public boolean equals(Object o)
 		{
+			if (!(o instanceof GalleryItem)) {
+				return false;
+			}
+
 			GalleryItem compare = (GalleryItem) o;
 			boolean sameRotation = rotation == compare.rotation;
 			boolean sameRating = rating == compare.rating;
@@ -197,11 +200,11 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 	}
 
-	public GalleryRecyclerAdapter(Context context, Cursor c, int imageSize)
+	@SuppressWarnings("deprecation")
+	public GalleryRecyclerAdapter(Context context, Cursor c)
 	{
 		super(c);
 		mContext = context;
-		mImageSize = imageSize;
 
 		purple = mContext.getResources().getColor(R.color.startPurple);
 		blue = mContext.getResources().getColor(R.color.startBlue);
@@ -214,14 +217,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
 	{
 		View itemView = LayoutInflater.from(mContext).inflate(R.layout.fileview, parent, false);
-		ViewHolder vh = new ViewHolder(itemView);
-		return vh;
+		return new ViewHolder(itemView);
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder vh, final int position, Cursor cursor)
+	public void onBindViewHolder(final ViewHolder vh, final int position, Cursor cursor)
 	{
-		GalleryItem galleryItem = GalleryItem.fromCursor(mContext, cursor);
+		GalleryItem galleryItem = GalleryItem.fromCursor(cursor);
 		GalleryItem former = GalleryItem.fromViewHolder(vh);
 
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
@@ -239,7 +241,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				@Override
 				public void onClick(View v)
 				{
-					mOnItemClickListener.onItemClick(GalleryRecyclerAdapter.this, v, position, getItemId(position));
+					int currentPos = vh.getAdapterPosition();
+					mOnItemClickListener.onItemClick(GalleryRecyclerAdapter.this, v, currentPos, getItemId(currentPos));
 				}
 			});
 		}
@@ -251,7 +254,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				@Override
 				public boolean onLongClick(View v)
 				{
-					return mOnItemLongClickListener.onItemLongClick(GalleryRecyclerAdapter.this, v, position, getItemId(position));
+					int currentPos = vh.getAdapterPosition();
+					return mOnItemLongClickListener.onItemLongClick(GalleryRecyclerAdapter.this, v, currentPos, getItemId(currentPos));
 				}
 			});
 		}
@@ -305,27 +309,15 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				.into(vh.mImageView);
 	}
 
-	public MediaItem getImage(int position)
-	{
-		return new LocalImage(mContext, getUri(position));
-	}
-
 	public Uri getUri(int position)
 	{
 		Cursor c = (Cursor)getItem(position);
 		return Uri.parse(c.getString((c.getColumnIndex(Meta.Data.URI))));
 	}
 
-
-	public int getCount()
-	{
-		//TODO: This wrapper just makes it easier to swap old gallery adapter, remove if recycler works
-		return getItemCount();
-	}
-
 	public List<Uri> getSelectedItems()
 	{
-		return new ArrayList<Uri>(mSelectedItems);
+		return new ArrayList<>(mSelectedItems);
 	}
 
 	public int getSelectedItemCount()
@@ -333,7 +325,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		return mSelectedItems.size();
 	}
 
-	public void addBetween(int start, int end)
+	private void addBetween(int start, int end)
 	{
 		for (int i = start; i <= end; i++)
 		{
@@ -419,7 +411,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		updateSelection();
 	}
 
-	public void updateSelection()
+	private void updateSelection()
 	{
 		if (mSelectionListener != null)
 			mSelectionListener.onSelectionUpdated(mSelectedItems);

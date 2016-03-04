@@ -34,16 +34,17 @@ import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.rawdroid.R;
 
 public abstract class AbstractCoreActivity extends ViewerActivity implements GalleryApp {
+    @SuppressWarnings("unused")
     private static final String TAG = "AbstractCoreActivity";
+
     private GLRootView mGLRootView;
     private ImageCacheService mImageCacheService;
-    private Object mLock = new Object();
+    private final Object mLock = new Object();
     private ThreadPool mThreadPool;
     private OrientationManager mOrientationManager;
-    private TransitionStore mTransitionStore = new TransitionStore();
 
     private AlertDialog mAlertDialog = null;
-    private BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mMountReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getExternalCacheDir() != null) onStorageReady();
@@ -57,8 +58,9 @@ public abstract class AbstractCoreActivity extends ViewerActivity implements Gal
         mOrientationManager = new OrientationManager(this);
 
         getWindow().setBackgroundDrawable(null);
+        //noinspection deprecation
         mBackgroundColor = GalleryUtils.intColorToFloatARGBArray(
-                getResources().getColor(getBackgroundColorId()));   //AJM: From ActivityState
+                getResources().getColor(R.color.default_background));   //AJM: From ActivityState
     }
 
     @Override
@@ -107,16 +109,6 @@ public abstract class AbstractCoreActivity extends ViewerActivity implements Gal
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         mGLRootView.onResume();
@@ -139,10 +131,6 @@ public abstract class AbstractCoreActivity extends ViewerActivity implements Gal
         mGLRootView.unlockRenderThread();
     }
 
-    public TransitionStore getTransitionStore() {
-        return mTransitionStore;
-    }
-
     // //////////////////////////////////////////////////////////////////////////
     // Imported ActivityState Methods
     // //////////////////////////////////////////////////////////////////////////
@@ -150,13 +138,8 @@ public abstract class AbstractCoreActivity extends ViewerActivity implements Gal
     protected float[] mBackgroundColor;
 
     protected void setContentPane(GLView content) {
-        GLView mContentPane = content;
-        mContentPane.setBackgroundColor(getBackgroundColor());
-        getGLRoot().setContentPane(mContentPane);
-    }
-
-    protected int getBackgroundColorId() {
-        return R.color.default_background;
+        content.setBackgroundColor(getBackgroundColor());
+        getGLRoot().setContentPane(content);
     }
 
     protected float[] getBackgroundColor() {

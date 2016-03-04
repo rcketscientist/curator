@@ -14,7 +14,8 @@ import java.util.WeakHashMap;
 
 public class ImageViewActivity extends PhotoPage
 {
-	private static final String TAG = ImageViewActivity.class.getSimpleName();
+	@SuppressWarnings("unused")
+    private static final String TAG = ImageViewActivity.class.getSimpleName();
 
     @Override
 	public void onCreate(Bundle savedInstanceState)
@@ -61,8 +62,7 @@ public class ImageViewActivity extends PhotoPage
         deleteImage(toDelete);
     }
 
-    private WeakHashMap<ContentListener, Object> mListeners =
-            new WeakHashMap<>();
+    private final WeakHashMap<ContentListener, Object> mListeners = new WeakHashMap<>();
 
     // NOTE: The MediaSet only keeps a weak reference to the listener. The
     // listener is automatically removed when there is no other reference to
@@ -76,7 +76,7 @@ public class ImageViewActivity extends PhotoPage
     }
 
     // This should be called by subclasses when the content is changed.
-    public void notifyContentChanged() {
+    protected void notifyContentChanged() {
         for (ContentListener listener : mListeners.keySet()) {
             listener.onContentDirty();
         }
