@@ -62,6 +62,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class CoreActivity extends DocumentActivity
@@ -69,6 +70,7 @@ public abstract class CoreActivity extends DocumentActivity
 	private enum WriteActions
 	{
 		COPY,
+		COPY_THUMB,
 		DELETE,
 		RECYCLE,
 		RESTORE,
@@ -81,10 +83,6 @@ public abstract class CoreActivity extends DocumentActivity
 
 	public static final String SWAP_BIN_DIR = "swap";
 	public static final String RECYCLE_BIN_DIR = "recycle";
-	public static final int FILE_NOT_FOUND = -1;
-
-	private static final int REQUEST_CODE_SHARE = 00;
-	private static final int REQUEST_PREFIX = 2000;
 
 	protected DocumentRecycleBin recycleBin;
 	protected File mSwapDir;
@@ -134,7 +132,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	/**
 	 * Subclasses must define the layout id here.  It will be loaded in {@link #onCreate}.
-	 * The layout should conform to viewer template (xmp, meta, historgram, etc).
+	 * The layout should conform to viewer template (xmp, meta, histogram, etc).
 	 * @return The resource id of the layout to load
 	 */
 	public abstract int getContentView();
@@ -297,46 +295,6 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-//	protected void writeXmpModifications()
-//	{
-//		List<Uri> selection = getSelectedImages();
-//		if (selection != null && mPendingXmpChanges != null)
-//		{
-//			ContentValues cv = new ContentValues();
-//			cv.put(Meta.Data.LABEL, mPendingXmpChanges.Label);
-//			cv.put(Meta.Data.RATING, mPendingXmpChanges.Rating);
-//			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(mPendingXmpChanges.Subject));
-//
-//			ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-//			for (Uri image : selection)
-//			{
-//				operations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-//					.withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
-//					.withValues(cv)
-//					.build());
-//			}
-//
-//			try
-//			{
-//				getContentResolver().applyBatch(Meta.AUTHORITY ,operations);
-//			}
-//			catch (RemoteException | OperationApplicationException e)
-//			{
-//				Crashlytics.logException(e);
-//			}
-//
-//			writeXmp(selection, mPendingXmpChanges);
-//			mPendingXmpChanges = null;
-//		}
-//	}
-
-	protected void writeXmp(Uri toWrite, XmpEditFragment.XmpEditValues values)
-	{
-		List<Uri> placeholder = new ArrayList<>();
-		placeholder.add(toWrite);
-		writeXmp(placeholder, values);
-	}
-
 	protected void writeXmp(List<Uri> images, XmpEditFragment.XmpEditValues values)
 	{
 		new WriteXmpTask().execute(images, values);
@@ -345,6 +303,7 @@ public abstract class CoreActivity extends DocumentActivity
 	/**
 	 * Create swap directory or clear the contents
 	 */
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	protected void createSwapDir()
 	{
 		mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR);
@@ -361,6 +320,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 		new Thread(new Runnable()
 		{
+			@SuppressWarnings("ResultOfMethodCallIgnored")
 			@Override
 			public void run()
 			{
@@ -447,17 +407,6 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			})
 			.show();
-	}
-
-	/**
-	 * Gets the swap directory and clears existing files in the process
-	 *
-	 * @param filename name of the file to add to swap
-	 * @return file link to new swap file
-	 */
-	protected File getSwapFile(String filename)
-	{
-		return new File(mSwapDir, filename);
 	}
 
 	protected Intent getViewerIntent()
@@ -590,20 +539,17 @@ public abstract class CoreActivity extends DocumentActivity
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
 		}
 
-		StringBuilder body = new StringBuilder();
-		body.append("Variant:   ").append(BuildConfig.FLAVOR).append("\n");
-		body.append("Version:   ").append(BuildConfig.VERSION_NAME).append("\n");
-		body.append("Make:      ").append(Build.MANUFACTURER).append("\n");
-		body.append("Model:     ").append(Build.MODEL).append("\n");
-		if (Util.hasLollipop())
-			body.append("ABI:       ").append(Build.SUPPORTED_ABIS).append("\n");
-		else
-			body.append("ABI:       ").append(Build.CPU_ABI).append("\n");
-		body.append("Android:   ").append(Build.DISPLAY).append("\n");
-		body.append("SDK:       ").append(Build.VERSION.SDK_INT).append("\n\n");
-		body.append("---Please don't remove this data---").append("\n\n");
+		String body =
+				"Variant:   " + BuildConfig.FLAVOR + "\n" +
+				"Version:   " + BuildConfig.VERSION_NAME + "\n" +
+				"Make:      " + Build.MANUFACTURER + "\n" +
+				"Model:     " + Build.MODEL + "\n" +
+				"ABI:       " + Arrays.toString(Build.SUPPORTED_ABIS) + "\n" +
+				"Android:   " + Build.DISPLAY + "\n" +
+				"SDK:       " + Build.VERSION.SDK_INT + "\n\n" +
+				"---Please don't remove this data---" + "\n\n";
 
-		emailIntent.putExtra(Intent.EXTRA_TEXT, body.toString());
+		emailIntent.putExtra(Intent.EXTRA_TEXT, body);
 		startActivity(Intent.createChooser(emailIntent, "Send email..."));
 	}
 
@@ -755,6 +701,7 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @return success
 	 * @throws WritePermissionException
 	 */
+	@SuppressWarnings("UnusedReturnValue")
 	private boolean copyAssociatedFiles(Uri fromImage, Uri toImage) throws IOException
 	{
 		if (ImageUtils.hasXmpFile(this, fromImage))
@@ -769,9 +716,6 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 		return copyFile(fromImage, toImage);
 	}
-
-
-	//TODO: Double check if we want custom AsyncTask here
 
 	public class CopyTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
@@ -860,25 +804,13 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected boolean writeThumb(Uri source, ParcelFileDescriptor destination)
-	{
-		return LibRaw.writeThumbFile(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
-	}
-
 	protected boolean writeThumb(ParcelFileDescriptor source, ParcelFileDescriptor destination)
 	{
 		return LibRaw.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
 	}
 
-	protected boolean writeThumbWatermark(Uri source, ParcelFileDescriptor destination, byte[] waterMap,
-	                                      int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
-		// TODO: This must work solely on file descriptors (source also)
-		return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
-	}
-
 	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
 	                                      int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
-		// TODO: This must work solely on file descriptors (source also)
 		return LibRaw.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
@@ -902,7 +834,6 @@ public abstract class CoreActivity extends DocumentActivity
 			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
 				throw new IllegalArgumentException();
 
-			boolean totalSuccess = true;
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 			Uri destinationFolder = (Uri) params[1];
@@ -955,9 +886,10 @@ public abstract class CoreActivity extends DocumentActivity
 
 			boolean success = true;
 			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
-			for (Uri toExport : totalImages)
+			for (Uri toThumb : totalImages)
 			{
-				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toExport);
+				setWriteResume(WriteActions.COPY_THUMB, new Object[] { remainingImages } );
+				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toThumb);
 				UsefulDocumentFile destinationTree = null;
 				try
 				{
@@ -1000,6 +932,7 @@ public abstract class CoreActivity extends DocumentActivity
 					}
 					onImageAdded(destinationFile.getUri());
 					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile.getUri()));
+					remainingImages.remove(toThumb);
 				}
 				catch(Exception e)
 				{
@@ -1077,7 +1010,6 @@ public abstract class CoreActivity extends DocumentActivity
 			List<Uri> remainingDeletes = new ArrayList<>(totalDeletes);
 
 			mProgressDialog.setMax(totalDeletes.size());
-			final List<Uri> removed = new ArrayList<>();
 
 			ArrayList<ContentProviderOperation> dbDeletes = new ArrayList<>();
 			boolean totalSuccess = true;
@@ -1089,7 +1021,6 @@ public abstract class CoreActivity extends DocumentActivity
 					if (deleteAssociatedFiles(toDelete))
 					{
 						onImageRemoved(toDelete);
-						removed.add(toDelete);
 						dbDeletes.add(ImageUtils.newDelete(toDelete));
 					}
 				}
@@ -1168,11 +1099,6 @@ public abstract class CoreActivity extends DocumentActivity
 				try
 				{
 					//TODO: Handle related files
-					// Simply delete any related files
-//					Uri[] associates = ImageUtils.getAssociatedFiles(CoreActivity.this, toRecycle);
-//					for (Uri associate : associates)
-//						deleteFile(associate);
-
 					recycleBin.addFile(toRecycle);
 					dbDeletes.add(ImageUtils.newDelete(toRecycle));
 				}
@@ -1280,16 +1206,14 @@ public abstract class CoreActivity extends DocumentActivity
 
 	public boolean renameImage(Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws IOException
 	{
-		Boolean imageSuccess = false;
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
 		UsefulDocumentFile sourceFile = UsefulDocumentFile.fromUri(this, source);
 		UsefulDocumentFile renameFile = getRenamedFile(sourceFile, baseName);
-		imageSuccess = renameAssociatedFile(sourceFile, baseName);
 
-		if (!imageSuccess)
-			return imageSuccess;
+		if (!renameAssociatedFile(sourceFile, baseName))
+			return false;
 
 		ContentValues imageValues = new ContentValues();
 		imageValues.put(Meta.Data.NAME, renameFile.getName());
@@ -1326,7 +1250,7 @@ public abstract class CoreActivity extends DocumentActivity
 			}
 		}
 
-		return imageSuccess && xmpSuccess && jpgSuccess;
+		return xmpSuccess && jpgSuccess;
 	}
 
 	public boolean renameAssociatedFile(UsefulDocumentFile original, String baseName)
@@ -1338,9 +1262,6 @@ public abstract class CoreActivity extends DocumentActivity
 
 	/**
 	 * This will only work with hierarchical tree uris
-	 * @param original
-	 * @param baseName
-     * @return
      */
 	public UsefulDocumentFile getRenamedFile(UsefulDocumentFile original, String baseName)
 	{

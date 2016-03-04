@@ -27,6 +27,4 @@
             <solid android:color="@color/grid_state_focused" />
         </shape>
     </item>
-    <item android:drawable="@android:color/transparent" />
-
 </selector>

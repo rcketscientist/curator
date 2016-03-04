@@ -27,6 +27,7 @@
     <color name="endOrange">#bb6008</color>
 
     <color name="tintDarkGreen">#182b12</color>
+    <color name="translucentDarkGreen">#b9182b12</color>
 
 
 </resources>

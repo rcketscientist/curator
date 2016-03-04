@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.anthonymandra.widget.SquareCheckableRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fileView2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/photogrid_list_selector">
+    app:foreground="@drawable/photogrid_list_selector">
 
     <ImageView
         android:id="@+id/webImageView"
@@ -19,7 +20,7 @@
         android:id="@+id/xmp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:alpha="0.8"
         android:src="@drawable/ic_tag"/>
@@ -38,15 +39,15 @@
         android:layout_width="14dip"
         android:layout_height="14dip"
         android:layout_above="@+id/filenameView"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:id="@+id/filenameView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/webImageView"
-        android:layout_alignLeft="@id/webImageView"
-        android:layout_alignRight="@+id/webImageView"
+        android:layout_alignStart="@id/webImageView"
+        android:layout_alignEnd="@+id/webImageView"
         android:background="@color/Transparent_Black"
         android:gravity="center_horizontal"
         android:maxLines="1"

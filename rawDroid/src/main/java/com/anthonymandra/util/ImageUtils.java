@@ -111,8 +111,6 @@ public class ImageUtils
 
     /**
      * Reads associated xmp file if it exists
-     * @param uri
-     * @return
      */
     private static Metadata readXmp(Context c, Uri uri)
     {
@@ -122,8 +120,6 @@ public class ImageUtils
     /**
      * Reads associated xmp file if it exists and adds the data to meta
      * @param uri image file
-     * @param meta
-     * @return
      */
     private static Metadata readXmp(Context c, Uri uri, Metadata meta)
     {
