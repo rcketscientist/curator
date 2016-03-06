@@ -260,13 +260,12 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			});
 		}
 
-		// Glide actually rotates automatically from exif even for raw (at least cr2).
-//		vh.mImageView.setRotation(galleryItem.rotation);
+		vh.mImageView.setRotation(galleryItem.rotation);
 		vh.mRatingBar.setRating(galleryItem.rating);
 
+		vh.mLabel.setTag(galleryItem.label);    // store tag for compare
 		if (galleryItem.label != null)
 		{
-			vh.mLabel.setTag(galleryItem.label);
 			switch (galleryItem.label.toLowerCase())
 			{
 				case "purple":
@@ -300,7 +299,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 		vh.mFileName.setText(galleryItem.name);
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
-		vh.mBaseView.setTag(galleryItem.uri);
+		vh.mBaseView.setTag(galleryItem.uri);   // store tag for compare
 
 		Glide.with(mContext)
 				.using(new RawModelLoader(mContext))

@@ -39,7 +39,7 @@
         android:layout_width="14dip"
         android:layout_height="14dip"
         android:layout_above="@+id/filenameView"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentEnd="true"/>
 
     <TextView
         android:id="@+id/filenameView"

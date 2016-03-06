@@ -12,6 +12,8 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
@@ -48,6 +50,7 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
@@ -63,7 +66,10 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public abstract class CoreActivity extends DocumentActivity
 {
@@ -183,9 +189,9 @@ public abstract class CoreActivity extends DocumentActivity
 			case R.id.settings:
 				requestSettings();
 				return true;
-//			case R.id.toggleXmp:
-//				toggleEditXmpFragment();
-//				return true;
+			case R.id.toggleXmp:
+				toggleEditXmpFragment();
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -244,6 +250,40 @@ public abstract class CoreActivity extends DocumentActivity
 				writeXmpModifications(values);
 			}
 		});
+		mXmpFragment.setLabelListener(new XmpEditFragment.LabelChangedListener()
+		{
+			@Override
+			public void onLabelChanged(String label)
+			{
+				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+				values.Label = label;
+
+				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Label)).start();
+			}
+		});
+		mXmpFragment.setRatingListener(new XmpEditFragment.RatingChangedListener()
+		{
+			@Override
+			public void onRatingChanged(Integer rating)
+			{
+				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+				values.Rating = rating;
+
+				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Rating)).start();
+			}
+		});
+		mXmpFragment.setSubjectListener(new XmpEditFragment.SubjectChangedListener()
+		{
+
+			@Override
+			public void onSubjectChanged(String[] subject)
+			{
+				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+				values.Subject = subject;
+
+				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Subject)).start();
+			}
+		});
 		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
 	}
 
@@ -291,13 +331,19 @@ public abstract class CoreActivity extends DocumentActivity
 			cv.put(Meta.Data.RATING, values.Rating);
 			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
 
-			writeXmp(selection, values);
+			Map<Uri, ContentValues> xmpPairing = new HashMap<>();
+			for (Uri uri : selection)
+			{
+				xmpPairing.put(uri, cv);
+			}
+
+			writeXmp(xmpPairing);
 		}
 	}
 
-	protected void writeXmp(List<Uri> images, XmpEditFragment.XmpEditValues values)
+	protected void writeXmp(Map<Uri, ContentValues> xmpPairing)
 	{
-		new WriteXmpTask().execute(images, values);
+		new WriteXmpTask().execute(xmpPairing);
 	}
 
 	/**
@@ -1365,60 +1411,49 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
-				throw new IllegalArgumentException();
-
-			final List<Uri> totalImages = (List<Uri>) params[0];
-			List<Uri> remainingImages = new ArrayList<>(totalImages);
-
-			final XmpEditFragment.XmpEditValues values = (XmpEditFragment.XmpEditValues) params[1];
+			final Map<Uri, ContentValues> xmpPairing = (Map<Uri, ContentValues>) params[0];
 			final ArrayList<ContentProviderOperation> databaseUpdates = new ArrayList<>();
 
-			ContentValues cv = new ContentValues();
-			cv.put(Meta.Data.LABEL, values.Label);
-			cv.put(Meta.Data.RATING, values.Rating);
-			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
-
-			for (Uri image : totalImages)
+			Iterator uris = xmpPairing.entrySet().iterator();
+			while(uris.hasNext())
 			{
+				setWriteResume(WriteActions.WRITE_XMP, new Object[]{xmpPairing});
+
+				Map.Entry<Uri, ContentValues> pair = (Map.Entry) uris.next();
+				ContentValues values = pair.getValue();
+				databaseUpdates.add(ImageUtils.newUpdate(pair.getKey(), values));
+
 				final Metadata meta = new Metadata();
 				meta.addDirectory(new XmpDirectory());
-				ImageUtils.updateSubject(meta, values.Subject);
-				ImageUtils.updateRating(meta, values.Rating);
-				ImageUtils.updateLabel(meta, values.Label);
+				ImageUtils.updateSubject(meta, ImageUtils.convertStringToArray(values.getAsString(Meta.Data.SUBJECT)));
+				ImageUtils.updateRating(meta, values.getAsInteger(Meta.Data.RATING));
+				ImageUtils.updateLabel(meta, values.getAsString(Meta.Data.LABEL));
 
-				databaseUpdates.add(ImageUtils.newUpdate(image, cv));
-
-				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, image).getUri();
+				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, pair.getKey()).getUri();
 				final UsefulDocumentFile xmpDoc;
 				try
 				{
 					xmpDoc = getDocumentFile(xmpUri, false, false); // For now use getDocumentFile to leverage write testing
-					setWriteResume(WriteActions.WRITE_XMP, new Object[]{remainingImages});
 					//TODO: need DocumentActivity.openOutputStream
-					remainingImages.remove(image);
 				}
 				catch (WritePermissionException e)
 				{
-					// Write pending updates, method will resume with remainingImages
+					// Write pending updates, method will resume with remaining images
 					ImageUtils.updateMetaDatabase(CoreActivity.this, databaseUpdates);
 					return false;
 				}
 
-				OutputStream os = null;
-				try
+				try(OutputStream os = getContentResolver().openOutputStream(xmpDoc.getUri()))
 				{
-					os = getContentResolver().openOutputStream(xmpDoc.getUri());
 					if (meta.containsDirectoryOfType(XmpDirectory.class))
 						XmpWriter.write(os, meta);
-				} catch (FileNotFoundException e)
+				}
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
-				finally
-				{
-					Utils.closeSilently(os);
-				}
+
+				uris.remove();  //concurrency-safe remove
 			}
 
 			ImageUtils.updateMetaDatabase(CoreActivity.this, databaseUpdates);
@@ -1430,6 +1465,75 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			if (result)
 				clearWriteResume();
+		}
+	}
+
+	enum XmpUpdateField
+	{
+		Rating,
+		Label,
+		Subject
+	}
+
+	protected class PrepareXmpRunnable implements Runnable
+	{
+		private final List<Uri> selectedImages;
+		private final XmpEditFragment.XmpEditValues update;
+		private final XmpUpdateField updateType;
+		private final String[] projection = new String[] { Meta.Data.URI, Meta.Data.RATING, Meta.Data.LABEL, Meta.Data.SUBJECT };
+
+		public PrepareXmpRunnable(XmpEditFragment.XmpEditValues update, XmpUpdateField updateType)
+		{
+			this.selectedImages = getSelectedImages();
+			this.update = update;
+			this.updateType = updateType;
+		}
+
+		@Override
+		public void run()
+		{
+			String[] selectionArgs = new String[selectedImages.size()];
+			for (int i = 0; i < selectedImages.size(); i++)
+			{
+				selectionArgs[i] = selectedImages.get(i).toString();
+			}
+
+			// Grab existing metadata
+			Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI,
+					projection,
+					DbUtil.createMultipleIN(Meta.Data.URI, selectedImages.size()),
+					selectionArgs,
+					null);
+
+			if (c == null)
+				return;
+
+			// Create mappings with existing values
+			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
+			while (c.moveToNext())
+			{
+				ContentValues cv = new ContentValues(projection.length);
+				DatabaseUtils.cursorRowToContentValues(c, cv);
+				xmpPairs.put(Uri.parse(cv.getAsString(Meta.Data.URI)), cv);
+			}
+
+			// Update singular fields in the existing values
+			for (Map.Entry<Uri, ContentValues> xmpPair : xmpPairs.entrySet())
+			{
+				switch(updateType)
+				{
+					case Label:
+						xmpPair.getValue().put(Meta.Data.LABEL, update.Label);
+						break;
+					case Rating:
+						xmpPair.getValue().put(Meta.Data.RATING, update.Rating);
+						break;
+					case Subject:
+						xmpPair.getValue().put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(update.Subject));
+						break;
+				}
+			}
+			writeXmp(xmpPairs);
 		}
 	}
 }

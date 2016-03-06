@@ -27,9 +27,11 @@ import android.widget.Spinner;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
+import com.anthonymandra.widget.XmpLabelGroup;
 import com.drew.lang.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,31 +52,28 @@ public class XmpFilterFragment extends XmpBaseFragment
         void onSearchRootRequested();
     }
 
-    /**
-     * Used to control updating of the listener to avoid updates during creation, or
-     * multiple updates during bulk changes.
-     */
-    private boolean mPauseListener;
     private boolean mAndTrueOrFalse;
     private boolean mSortAscending;
     private boolean mSegregateByType;
     private XmpFilter.SortColumns mSortColumn;
-    private XmpValues mXmpValues;
     private Set<String> mHiddenFolders;
     private Set<String> mExcludedFolders;
 
-    private final String mPrefName = "galleryFilter";
-    private final String mPrefRelational = "relational";
-    private final String mPrefAscending = "ascending";
-    private final String mPrefColumn = "column";
-    private final String mPrefSegregate = "segregate";
-    private final String mPrefHiddenFolders = "hiddenFolders";
-    private final String mPrefExcludedFolders = "excludedFolders";
+    private final static String mPrefName = "galleryFilter";
+    private final static String mPrefRelational = "relational";
+    private final static String mPrefAscending = "ascending";
+    private final static String mPrefColumn = "column";
+    private final static String mPrefSegregate = "segregate";
+    private final static String mPrefHiddenFolders = "hiddenFolders";
+    private final static String mPrefExcludedFolders = "excludedFolders";
+    // For not we're not saving xmp filters
+    private final static String mPrefLabel = "label";
+    private final static String mPrefSubject = "subject";
+    private final static String mPrefRating = "rating";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        mPauseListener = true;
         return inflater.inflate(R.layout.xmp_filter_landscape, container, false);
     }
 
@@ -99,7 +98,6 @@ public class XmpFilterFragment extends XmpBaseFragment
     public void onStart()
     {
         super.onStart();
-        mPauseListener = false;
     }
 
     private void attachButtons()
@@ -109,11 +107,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             @Override
             public void onClick(View v)
             {
-                mPauseListener = true;
                 clear();
-                mPauseListener = false;
-                mXmpValues = getXmp();
-                dispatchChange();
             }
         });
 
@@ -125,7 +119,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             public void onCheckedChanged(RadioGroup group, int checkedId)
             {
                 setAndOr(checkedId);
-                dispatchChange();
+                onFilterUpdated();
             }
         });
 
@@ -162,7 +156,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                         mSortColumn = XmpFilter.SortColumns.Name;
                         break;
                 }
-                dispatchChange();
+                onFilterUpdated();
             }
 
             @Override
@@ -179,7 +173,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
                 mSegregateByType = isChecked;
-                dispatchChange();
+                onFilterUpdated();
             }
         });
 
@@ -256,7 +250,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                         {
                             mExcludedFolders.remove(visibility.Path);
                         }
-                        dispatchChange();
+                        onFilterUpdated();
                     }
                 });
                 dialog.setSearchRequestedListener(new SearchRootRequestedListener()
@@ -284,6 +278,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                 mAndTrueOrFalse = false;
                 break;
         }
+        onFilterUpdated();
     }
 
     @SuppressWarnings("unused")
@@ -313,19 +308,16 @@ public class XmpFilterFragment extends XmpBaseFragment
     @SuppressWarnings("unused")
     public XmpValues getXmpValues()
     {
-        return mXmpValues;
+        XmpValues xmp = new XmpValues();
+        xmp.label = getColorLabels();
+        xmp.subject = getSubject();
+        xmp.rating = getRatings();
+        return xmp;
     }
 
     public Set<String> getExcludedFolders()
     {
         return mExcludedFolders;
-    }
-
-    public void addExcludedFolders(Set<String> exclusions)
-    {
-        mExcludedFolders.addAll(exclusions);
-        mHiddenFolders.addAll(exclusions);
-        dispatchChange();
     }
 
     public XmpFilter getXmpFilter()
@@ -336,7 +328,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         filter.segregateByType = mSegregateByType;
         filter.sortAscending = mSortAscending;
         filter.sortColumn = mSortColumn;
-        filter.xmp = mXmpValues;
+        filter.xmp = getXmpValues();
         return filter;
     }
 
@@ -365,14 +357,12 @@ public class XmpFilterFragment extends XmpBaseFragment
     @Override
     protected void onXmpChanged(XmpValues xmp)
     {
-        super.onXmpChanged(xmp);
-        mXmpValues = xmp;
-        dispatchChange();
+        onFilterUpdated();
     }
 
-    protected void dispatchChange()
+    protected void onFilterUpdated()
     {
-        if (mFilterListener != null && !mPauseListener)
+        if (mFilterListener != null)
         {
             SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
@@ -390,6 +380,24 @@ public class XmpFilterFragment extends XmpBaseFragment
 
             mFilterListener.onMetaFilterChanged(filter);
         }
+    }
+
+    @Override
+    public void onKeywordsSelected(Collection<String> selectedKeywords)
+    {
+        onFilterUpdated();
+    }
+
+    @Override
+    public void onLabelSelectionChanged(List<XmpLabelGroup.Labels> checked)
+    {
+        onFilterUpdated();
+    }
+
+    @Override
+    public void onRatingSelectionChanged(List<Integer> checked)
+    {
+        onFilterUpdated();
     }
 
     public static class FolderDialog extends DialogFragment
@@ -494,7 +502,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         boolean excluded;
     }
 
-    private static class FolderAdapter extends ArrayAdapter<FolderVisibility>
+    private static class FolderAdapter extends ArrayAdapter<FolderVisibility>   //TODO: Recycler
     {
         public interface OnVisibilityChangedListener
         {

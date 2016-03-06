@@ -51,12 +51,16 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="GalleryTheme" parent="@style/Theme.AppCompat.NoActionBar">
+    <style name="GalleryTheme" parent="@style/Theme.AppCompat">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
         <item name="android:windowBackground">@android:color/black</item>
         <item name="actionModeShareDrawable">@drawable/ic_share</item>
         <!--<item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>-->
-        <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
+        <!--<item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>-->
+        <!--<item name="actionModeStyle">@style/GalleryActionMode</item>-->
     </style>
 
     <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
@@ -100,6 +104,17 @@
     <style name="RecycleDialog" parent="@android:style/Theme.Dialog">
         <item name="android:ellipsize">start</item>
         <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="GalleryActionMode" parent="@style/Widget.AppCompat.ActionMode">
+	    <!--Wanted to leave a right margin, but layout styling has no effect-->
+        <!--<item name="android:paddingEnd">56dp</item>             WORKS-->
+        <!--<item name="background">@drawable/button_blue</item>    WORKS-->
+        <!--<item name="height">56dp</item>                         WORKS-->
+        <item name="android:layout_marginRight">56dp</item>
+        <!--<item name="android:layout_width">wrap_content</item>   FAILS-->
+	    <!--<item name="android:width">400dp</item>                 FAILS-->
+	    <!--<item name="android:layout_margin">200dp</item>         FAILS-->
     </style>
 
 </resources>

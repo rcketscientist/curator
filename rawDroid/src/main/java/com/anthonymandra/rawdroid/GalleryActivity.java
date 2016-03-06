@@ -232,7 +232,9 @@ public class GalleryActivity extends CoreActivity implements
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
-		mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_STARTED);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_COMPLETE);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES);
 		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
 		{
 			@Override
@@ -254,8 +256,13 @@ public class GalleryActivity extends CoreActivity implements
 						mProgressBar.setVisibility(View.GONE);
 						mToolbar.setSubtitle("");
 						break;
-					case SearchService.BROADCAST_FOUND:
-//						mSwipeRefresh.setRefreshing(false);
+					case SearchService.BROADCAST_SEARCH_STARTED:
+						mToolbar.setSubtitle("Searching...");
+						break;
+					case SearchService.BROADCAST_FOUND_IMAGES:
+						mToolbar.setTitle(intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0) + " Images");
+						break;
+					case SearchService.BROADCAST_SEARCH_COMPLETE:
 						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS);
 						if (images.length == 0)
 						{
@@ -1016,7 +1023,6 @@ public class GalleryActivity extends CoreActivity implements
 	private void startContextualActionBar()
 	{
 		mContextMode = startSupportActionMode(new GalleryActionMode());
-		mXmpFragment.reset();
 		mContextMode.setTitle("Select Items");
 		startMultiSelectMode();
 	}
@@ -1061,6 +1067,7 @@ public class GalleryActivity extends CoreActivity implements
 		if (multiSelectMode)
 		{
 			mGalleryAdapter.toggleSelection(v, position);
+			mXmpFragment.reset();   // reset the panel to ensure it's clear it's not tied to existing values
 			return;
 		}
 

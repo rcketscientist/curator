@@ -16,14 +16,51 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class XmpBaseFragment extends Fragment
+public abstract class XmpBaseFragment extends Fragment implements
+		RatingBar.OnRatingSelectionChangedListener,
+		XmpLabelGroup.OnLabelSelectionChangedListener,
+		KeywordBaseFragment.OnKeywordsSelectedListener
 {
 	private static final String TAG = XmpBaseFragment.class.getSimpleName();
+
+	public interface RatingChangedListener
+	{
+		void onRatingChanged(Integer[] rating);
+	}
+
+	public interface LabelChangedListener
+	{
+		void onLabelChanged(String[] label);
+	}
+
+	public interface SubjectChangedListener
+	{
+		void onSubjectChanged(String[] subject);
+	}
 
 	private RatingBar mRatingBar;
 	private XmpLabelGroup colorKey;
 	private KeywordBaseFragment mKeywordFragment;
 	private boolean mPauseListener = false;
+
+	private RatingChangedListener mRatingListener;
+	private LabelChangedListener mLabelListener;
+	private SubjectChangedListener mSubjectListener;
+
+	public void setRatingListener(RatingChangedListener listener)
+	{
+		mRatingListener = listener;
+	}
+
+	public void setLabelListener(LabelChangedListener listener)
+	{
+		mLabelListener = listener;
+	}
+
+	public void setSubjectListener(SubjectChangedListener listener)
+	{
+		mSubjectListener = listener;
+	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
@@ -43,11 +80,14 @@ public abstract class XmpBaseFragment extends Fragment
 
 	protected void clear()
 	{
+		mPauseListener = true;
 		mKeywordFragment.clearSelectedKeywords();
 		if (colorKey != null)
 			colorKey.clearCheck();
 		if (mRatingBar != null)
 			mRatingBar.clearCheck();
+		mPauseListener = false;
+		onXmpChanged(getXmp());
 	}
 
 	protected String[] getSubject()
@@ -112,7 +152,7 @@ public abstract class XmpBaseFragment extends Fragment
 		return xmp;
 	}
 
-	protected void onXmpChanged(XmpValues xmp) { }
+	protected abstract void onXmpChanged(XmpValues xmp);
 
 	protected void setColorLabel(String[] labels)
 	{
@@ -166,7 +206,7 @@ public abstract class XmpBaseFragment extends Fragment
 		setSubject(subject);
 		setRating(rating);
 		mPauseListener = false;
-		dispatchChanges();
+		onXmpChanged(getXmp());
 	}
 
 	/**
@@ -234,7 +274,8 @@ public abstract class XmpBaseFragment extends Fragment
 			@Override
 			public void onRatingSelectionChanged(List<Integer> checked)
 			{
-				dispatchChanges();
+				if (!mPauseListener)
+					XmpBaseFragment.this.onRatingSelectionChanged(checked);
 			}
 		});
 		colorKey.setOnLabelSelectionChangedListener(new XmpLabelGroup.OnLabelSelectionChangedListener()
@@ -242,7 +283,8 @@ public abstract class XmpBaseFragment extends Fragment
 			@Override
 			public void onLabelSelectionChanged(List<XmpLabelGroup.Labels> checked)
 			{
-				dispatchChanges();
+				if (!mPauseListener)
+					XmpBaseFragment.this.onLabelSelectionChanged(checked);
 			}
 		});
 		mKeywordFragment.setOnKeywordsSelectedListener(new KeywordEditFragment.OnKeywordsSelectedListener()
@@ -250,14 +292,9 @@ public abstract class XmpBaseFragment extends Fragment
 			@Override
 			public void onKeywordsSelected(Collection<String> selectedKeywords)
 			{
-				dispatchChanges();
+				if (!mPauseListener)
+					XmpBaseFragment.this.onKeywordsSelected(selectedKeywords);
 			}
 		});
-	}
-
-	private void dispatchChanges()
-	{
-		if (!mPauseListener)
-			onXmpChanged(getXmp());
 	}
 }

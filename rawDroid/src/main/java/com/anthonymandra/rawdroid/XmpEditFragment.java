@@ -6,12 +6,51 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
+import com.anthonymandra.widget.XmpLabelGroup;
+
+import java.util.Collection;
+import java.util.List;
+
 public class XmpEditFragment extends XmpBaseFragment
 {
 	private static final String TAG = XmpEditFragment.class.getSimpleName();
 	public static final String FRAGMENT_TAG = "XmpEditFragment";
 
-	private MetaChangedListener mListener;
+	public interface RatingChangedListener
+	{
+		void onRatingChanged(Integer rating);
+	}
+
+	public interface LabelChangedListener
+	{
+		void onLabelChanged(String label);
+	}
+
+	public interface SubjectChangedListener
+	{
+		void onSubjectChanged(String[] subject);
+	}
+
+	private RatingChangedListener mRatingListener;
+	private LabelChangedListener mLabelListener;
+	private SubjectChangedListener mSubjectListener;
+
+	public void setRatingListener(RatingChangedListener listener)
+	{
+		mRatingListener = listener;
+	}
+
+	public void setLabelListener(LabelChangedListener listener)
+	{
+		mLabelListener = listener;
+	}
+
+	public void setSubjectListener(SubjectChangedListener listener)
+	{
+		mSubjectListener = listener;
+	}
+
+	private MetaChangedListener mXmpChangedListener;
 	public interface MetaChangedListener
 	{
 		void onMetaChanged(Integer rating, String label, String[] subject);
@@ -19,19 +58,17 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	public void setListener(MetaChangedListener listener)
 	{
-		mListener = listener;
+		mXmpChangedListener = listener;
 	}
 
 	@Override
 	protected void onXmpChanged(XmpValues xmp)
 	{
-		super.onXmpChanged(xmp);
-
 		recentXmp = new XmpEditValues();
 		recentXmp.Subject = xmp.subject;
 		recentXmp.Rating = formatRating(xmp.rating);
 		recentXmp.Label = formatLabel(xmp.label);
-		mListener.onMetaChanged(
+		mXmpChangedListener.onMetaChanged(
 				recentXmp.Rating,
 				recentXmp.Label,
 				recentXmp.Subject);
@@ -52,15 +89,8 @@ public class XmpEditFragment extends XmpBaseFragment
 		attachButtons();
 	}
 
-	private void clearXmp()
-	{
-		setXmp((Integer) null, null, null);
-		clear();
-	}
-
 	/**
 	 * Convenience method for single select XmpLabelGroup
-	 * @return
 	 */
 	private String getLabel()
 	{
@@ -70,7 +100,6 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	/**
 	 * Convenience method for single select XmpLabelGroup
-	 * @return
 	 */
 	private Integer getRating()
 	{
@@ -127,9 +156,6 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	/**
 	 * Silently set xmp without firing listeners
-	 * @param rating
-	 * @param subject
-	 * @param label
 	 */
 	public void initXmp(Integer rating, String[] subject, String label)
 	{
@@ -138,35 +164,37 @@ public class XmpEditFragment extends XmpBaseFragment
 				subject);
 	}
 
-	public void setXmp(Integer rating, String[] subject, String label)
-	{
-		super.setXmp(formatRating(rating),
-				formatLabel(label),
-				subject);
-	}
-
 	private void attachButtons()
 	{
-		getActivity().findViewById(R.id.buttonReuseXmp).setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				if (recentXmp != null)
-				{
-					setXmp(recentXmp.Rating, recentXmp.Subject, recentXmp.Label);
-				}
-			}
-		});
-//TODO: Doesn't seem to be attaching!
 		getActivity().findViewById(R.id.clearButton).setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
 			{
-				clearXmp();
+				clear();
 			}
 		});
+	}
+
+	@Override
+	public void onKeywordsSelected(Collection<String> selectedKeywords)
+	{
+		if (mSubjectListener != null)
+			mSubjectListener.onSubjectChanged(getSubject());
+	}
+
+	@Override
+	public void onLabelSelectionChanged(List<XmpLabelGroup.Labels> checked)
+	{
+		if (mLabelListener != null)
+			mLabelListener.onLabelChanged(getLabel());
+	}
+
+	@Override
+	public void onRatingSelectionChanged(List<Integer> checked)
+	{
+		if (mRatingListener != null)
+			mRatingListener.onRatingChanged(getRating());
 	}
 
 	/**

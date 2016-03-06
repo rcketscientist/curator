@@ -154,6 +154,8 @@ public abstract class ViewerActivity extends CoreActivity implements
         super.onCreate(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
         if (getIntent().hasExtra(EXTRA_URIS))

@@ -27,7 +27,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@id/filterSidebarButton"
-            android:layout_toStartOf="@+id/xmpSidebarButton">
+            android:layout_toStartOf="@+id/xmpSidebarButton"
+            android:minHeight="?android:attr/actionBarSize"
+            android:background="?android:attr/colorPrimary">
             <ProgressBar
                 android:id="@+id/toolbarSpinner"
                 android:layout_width="wrap_content"
