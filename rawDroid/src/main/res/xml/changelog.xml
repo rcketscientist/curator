@@ -5,8 +5,6 @@
              summary="Beta: Gallery Meta"
              date="6 MAR 2016"/>
     <change>Feature: Edit metadata directly in gallery on multiple images at once.</change>
-    <change>Feature: Support for USB storage in 6.0+</change>
-    <change>Feature: Support for Android 6 runtime permissions</change>
     <change>Enhancement: New gallery (~50% faster)</change>
     <change>Enhancement: Optimized search (~100% faster deep searches)</change>
     <change>Enhancement: Better feedback during search</change>
@@ -15,7 +13,6 @@
     <change>Enhancement: Removed legacy (5.0 and below) code</change>
     <change>Fixes: Flicker on gallery updates</change>
     <change>Fixes: Many minor bugs from beta testers, thanks!</change>
-    <change>Patch: Multiple storage bugs in Android framework...Thanks Google...</change>
     <release version="4.5.0.3"
              versioncode="45001"
              summary="Beta: Bug patch"
