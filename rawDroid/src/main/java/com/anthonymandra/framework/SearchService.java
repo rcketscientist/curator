@@ -111,7 +111,9 @@ public class SearchService extends IntentService
 		    for (String uri : uriRoots)
 		    {
 			    SearchTask task = new SearchTask(this, UsefulDocumentFile.fromUri(this, Uri.parse(uri)), alwaysExcludeDir);
-			    foundImages.addAll(pool.invoke(task));
+				Set<Uri> searchResults = pool.invoke(task);
+				if (searchResults != null)
+			    	foundImages.addAll(searchResults);
 		    }
 	    }
 
