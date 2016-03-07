@@ -933,29 +933,20 @@ public class GalleryActivity extends CoreActivity implements
 			mContextMode.setSubtitle(selectedUris.size() + " selected");
 		}
 
-		// DocumentFile has some overhead in creation so run a thread here.
-		// For ex., select all with 100s of images can take a few seconds.
-		new Thread(new Runnable()
+		ArrayList<Uri> arrayUri = new ArrayList<>();
+		for (Uri selection : selectedUris)
 		{
-			@Override
-			public void run()
-			{
-				ArrayList<Uri> arrayUri = new ArrayList<>();
-				for (Uri selection : selectedUris)
-				{
-					arrayUri.add(SwapProvider.createSwapUri(selection));
-				}
+			arrayUri.add(SwapProvider.createSwapUri(selection));
+		}
 
-				if (selectedUris.size() == 1)
-				{
-					setShareUri(arrayUri.get(0));
-				}
-				else if (selectedUris.size() > 1)
-				{
-					setShareUri(arrayUri);
-				}
-			}
-		}).start();
+		if (selectedUris.size() == 1)
+		{
+			setShareUri(arrayUri.get(0));
+		}
+		else if (selectedUris.size() > 1)
+		{
+			setShareUri(arrayUri);
+		}
 	}
 
 	private final class GalleryActionMode implements ActionMode.Callback

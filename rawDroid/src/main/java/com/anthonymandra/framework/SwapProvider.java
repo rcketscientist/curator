@@ -66,7 +66,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
      */
     public static Uri createSwapUri(Uri uri)
     {
-        String name = uri.getLastPathSegment();
+        String name = uri.getLastPathSegment(); //this is risky
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(SwapProvider.AUTHORITY)

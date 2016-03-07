@@ -161,46 +161,48 @@ public class MetaService extends ThreadedPriorityIntentService
     {
         Uri uri = intent.getData();
 
-        // Check if meta is already processed
-        Cursor c = ImageUtils.getMetaCursor(this, uri);
-        if (c.moveToFirst() && c.getInt(Meta.PROCESSED_COLUMN) != 0)
+        try(Cursor c = ImageUtils.getMetaCursor(this, uri))
         {
-            ContentValues values = new ContentValues();
-            DatabaseUtils.cursorRowToContentValues(c, values);
+            // Check if meta is already processed
+            if (c.moveToFirst() && c.getInt(Meta.PROCESSED_COLUMN) != 0)
+            {
+                ContentValues values = new ContentValues();
+                DatabaseUtils.cursorRowToContentValues(c, values);
 
-            Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
-                    .putExtra(EXTRA_URI, uri.toString())
-                    .putExtra(EXTRA_METADATA, values);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+                Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                        .putExtra(EXTRA_URI, uri.toString())
+                        .putExtra(EXTRA_METADATA, values);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
 
-            WakefulBroadcastReceiver.completeWakefulIntent(intent);
-            return;
-        }
+                WakefulBroadcastReceiver.completeWakefulIntent(intent);
+                return;
+            }
 
-        ContentValues values = ImageUtils.getContentValues(this, uri);
+            ContentValues values = ImageUtils.getContentValues(this, uri);
 
-        // If this is a high priority request then add to db immediately
-        if (isHigherThanDefault(intent))
-        {
-            getContentResolver().update(Meta.Data.CONTENT_URI,
-                    values,
-                    ImageUtils.getWhere(),
-                    new String[]{uri.toString()});
+            // If this is a high priority request then add to db immediately
+            if (isHigherThanDefault(intent))
+            {
+                getContentResolver().update(Meta.Data.CONTENT_URI,
+                        values,
+                        ImageUtils.getWhere(),
+                        new String[]{uri.toString()});
 
-            values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));  // add name to broadcast
-            Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
-                    .putExtra(EXTRA_URI, uri.toString())
-                    .putExtra(EXTRA_METADATA, values);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-        }
-        else
-        {
-            addUpdate(uri, values);
-            Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
-                    .putExtra(EXTRA_URI, uri.toString())
-                    .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
-                    .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+                values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));  // add name to broadcast
+                Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                        .putExtra(EXTRA_URI, uri.toString())
+                        .putExtra(EXTRA_METADATA, values);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+            }
+            else
+            {
+                addUpdate(uri, values);
+                Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
+                        .putExtra(EXTRA_URI, uri.toString())
+                        .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
+                        .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+            }
         }
 
         try
