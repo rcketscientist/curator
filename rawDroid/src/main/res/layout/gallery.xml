@@ -38,6 +38,12 @@
                 android:indeterminate="true"
                 android:visibility="gone" />
         </android.support.v7.widget.Toolbar>
+        <ViewStub
+            android:id="@+id/cab_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/actionBarSize"
+            android:layout_toStartOf="@+id/xmpSidebarButton" />
         <ImageView
             android:id="@+id/xmpSidebarButton"
             android:layout_width="wrap_content"

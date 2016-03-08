@@ -59,14 +59,15 @@
         <item name="android:windowBackground">@android:color/black</item>
         <item name="actionModeShareDrawable">@drawable/ic_share</item>
         <!--<item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>-->
-        <!--<item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>-->
+        <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
         <!--<item name="actionModeStyle">@style/GalleryActionMode</item>-->
     </style>
 
     <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
     <style name="Custom.Widget.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">0dp</item>
+        <item name="android:src">@drawable/ic_overflow</item>
+<!--        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>-->
     </style>
 
     <style name="CustomShowcaseTheme2" parent="ShowcaseView">

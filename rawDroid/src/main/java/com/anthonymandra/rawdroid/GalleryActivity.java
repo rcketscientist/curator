@@ -47,6 +47,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.afollestad.materialcab.MaterialCab;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
@@ -151,6 +152,7 @@ public class GalleryActivity extends CoreActivity implements
 
 	private ShowcaseView tutorial;
     private Toolbar mToolbar;
+	private MaterialCab mMaterialCab;
 	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
 	private DrawerLayout mDrawerLayout;
@@ -843,8 +845,10 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		if (mContextMode != null)
-			mContextMode.finish(); // end the contextual action bar and multi-select mode
+		if (mMaterialCab != null)
+			mMaterialCab.finish();
+//		if (mContextMode != null)
+//			mContextMode.finish(); // end the contextual action bar and multi-select mode
 		return false;
 	}
 
@@ -927,10 +931,9 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	public void onSelectionUpdated(final Set<Uri> selectedUris)
 	{
-		if (mContextMode != null)
+		if (mMaterialCab != null)
 		{
-			mContextMode.setTitle("Select Items");
-			mContextMode.setSubtitle(selectedUris.size() + " selected");
+			mMaterialCab.setTitle(selectedUris.size() + " " + getString(R.string.selected));
 		}
 
 		ArrayList<Uri> arrayUri = new ArrayList<>();
@@ -949,13 +952,57 @@ public class GalleryActivity extends CoreActivity implements
 		}
 	}
 
-	private final class GalleryActionMode implements ActionMode.Callback
+//	private final class GalleryActionMode implements ActionMode.Callback
+//	{
+//		@Override
+//		public boolean onCreateActionMode(ActionMode mode, Menu menu)
+//		{
+//			inActionMode = true;
+//			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
+//			MenuItem actionItem = menu.findItem(R.id.contextShare);
+//			if (actionItem != null)
+//			{
+//				mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
+//				mShareProvider.setOnShareTargetSelectedListener(GalleryActivity.this);
+//				mShareProvider.setShareIntent(mShareIntent);
+//			}
+//
+//			return true;
+//		}
+//
+//		@Override
+//		public boolean onPrepareActionMode(ActionMode mode, Menu menu)
+//		{
+//			return false;
+//		}
+//
+//		@Override
+//		public boolean onActionItemClicked(ActionMode mode, MenuItem item)
+//		{
+//			boolean handled = onOptionsItemSelected(item);
+//			if (handled && (item.getItemId() != R.id.toggleXmp)) //We don't exit context for xmp bar
+//			{
+//				mode.finish();
+//			}
+//			return handled;
+//		}
+//
+//		@Override
+//		public void onDestroyActionMode(ActionMode mode)
+//		{
+//			inActionMode = false;
+//			endMultiSelectMode();
+//            mContextMode = null;
+//		}
+//	}
+
+	private final class GalleryActionMode implements MaterialCab.Callback
 	{
 		@Override
-		public boolean onCreateActionMode(ActionMode mode, Menu menu)
+		public boolean onCabCreated(MaterialCab cab, Menu menu)
 		{
 			inActionMode = true;
-			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
+//			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
 			MenuItem actionItem = menu.findItem(R.id.contextShare);
 			if (actionItem != null)
 			{
@@ -968,28 +1015,23 @@ public class GalleryActivity extends CoreActivity implements
 		}
 
 		@Override
-		public boolean onPrepareActionMode(ActionMode mode, Menu menu)
-		{
-			return false;
-		}
-
-		@Override
-		public boolean onActionItemClicked(ActionMode mode, MenuItem item)
+		public boolean onCabItemClicked(MenuItem item)
 		{
 			boolean handled = onOptionsItemSelected(item);
-			if (handled && (item.getItemId() != R.id.toggleXmp)) //We don't exit context for xmp bar
+			if (handled)// && (item.getItemId() != R.id.toggleXmp)) //We don't exit context for xmp bar
 			{
-				mode.finish();
+				mMaterialCab.finish();
 			}
 			return handled;
 		}
 
 		@Override
-		public void onDestroyActionMode(ActionMode mode)
+		public boolean onCabFinished(MaterialCab cab)
 		{
 			inActionMode = false;
 			endMultiSelectMode();
-            mContextMode = null;
+			mMaterialCab = null;
+			return true;
 		}
 	}
 
@@ -1013,8 +1055,10 @@ public class GalleryActivity extends CoreActivity implements
 
 	private void startContextualActionBar()
 	{
-		mContextMode = startSupportActionMode(new GalleryActionMode());
-		mContextMode.setTitle("Select Items");
+		mMaterialCab = new MaterialCab(this, R.id.cab_stub)
+				.setTitle(getString(R.string.selectItems))
+				.setMenu(R.menu.gallery_contextual)
+				.start(new GalleryActionMode());
 		startMultiSelectMode();
 	}
 
@@ -1241,7 +1285,8 @@ public class GalleryActivity extends CoreActivity implements
 					// If the user is lazy select for them
 					if (mGalleryAdapter.getSelectedItemCount() < 2)
 					{
-						mContextMode.finish();
+						if (mMaterialCab != null)
+							mMaterialCab.finish();
 						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
 						onItemClick(mGalleryAdapter, mImageGrid.getChildAt(2), 2, 2);
 					}
@@ -1255,7 +1300,7 @@ public class GalleryActivity extends CoreActivity implements
 					break;
 				case 9: // Select All
 					if (inActionMode)
-						mContextMode.finish();
+						mMaterialCab.finish();
 
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectAll));
@@ -1273,8 +1318,8 @@ public class GalleryActivity extends CoreActivity implements
                     setTutorialHomeView(true);
 					break;
                 case 11: // Select between beginning
-                    if (mContextMode != null)
-                        mContextMode.finish();
+                    if (mMaterialCab != null)
+						mMaterialCab.finish();
 
                     tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
@@ -1351,8 +1396,8 @@ public class GalleryActivity extends CoreActivity implements
 //                    break;
 					tutorialStage++;
                 case 18: // Recycle
-                    if (mContextMode != null)
-                        mContextMode.finish();
+                    if (mMaterialCab != null)
+						mMaterialCab.finish();
 
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
@@ -1377,8 +1422,9 @@ public class GalleryActivity extends CoreActivity implements
     public void closeTutorial()
     {
         inTutorial = false;
-        if (mContextMode != null)
-            mContextMode.finish();
+		if (mMaterialCab != null)
+			mMaterialCab.finish();
+
         closeOptionsMenu();
         tutorial.hide();
 

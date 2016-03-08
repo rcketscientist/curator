@@ -189,9 +189,9 @@ public abstract class CoreActivity extends DocumentActivity
 			case R.id.settings:
 				requestSettings();
 				return true;
-			case R.id.toggleXmp:
-				toggleEditXmpFragment();
-				return true;
+//			case R.id.toggleXmp:
+//				toggleEditXmpFragment();
+//				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}

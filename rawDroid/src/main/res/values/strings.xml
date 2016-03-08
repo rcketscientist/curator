@@ -303,4 +303,6 @@
     <string name="addRoot">Add Search Root</string>
     <string name="restoreFail">Restore was not completely successful.</string>
     <string name="deleteFail">Delete was not completely successful.</string>
+    <string name="selectItems">Select Items</string>
+    <string name="selected">" selected"</string>
 </resources>

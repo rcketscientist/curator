@@ -14,12 +14,12 @@
         android:orderInCategory="1"
         app:showAsAction="always"
         android:title="@string/delete"/>
-    <item
-        android:id="@+id/toggleXmp"
-        android:orderInCategory="2"
-        android:icon="@drawable/ic_tag"
-        app:showAsAction="always"
-        android:title="@string/viewMeta"/>
+    <!--<item-->
+        <!--android:id="@+id/toggleXmp"-->
+        <!--android:orderInCategory="2"-->
+        <!--android:icon="@drawable/ic_tag"-->
+        <!--app:showAsAction="always"-->
+        <!--android:title="@string/viewMeta"/>-->
     <item
         android:id="@+id/contextSaveJpg"
         android:orderInCategory="5"
