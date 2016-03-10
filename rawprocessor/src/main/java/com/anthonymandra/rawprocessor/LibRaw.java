@@ -222,4 +222,40 @@ public class LibRaw
 			return new int[] { top, left, bottom, right };
 		}
 	}
+
+	public static class Watermark
+	{
+		private byte[] watermark;
+		private int[] margins;
+		private int waterWidth;
+		private int waterHeight;
+
+		public int[] getMargins()
+		{
+			return margins;
+		}
+
+		public int getWaterHeight()
+		{
+			return waterHeight;
+		}
+
+		public byte[] getWatermark()
+		{
+			return watermark;
+		}
+
+		public int getWaterWidth()
+		{
+			return waterWidth;
+		}
+
+		public Watermark(int width, int height, int[] margins, byte[] watermark)
+		{
+			waterWidth = width;
+			waterHeight = height;
+			this.margins = margins;
+			this.watermark = watermark;
+		}
+	}
 }

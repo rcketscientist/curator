@@ -860,17 +860,77 @@ public abstract class CoreActivity extends DocumentActivity
 		return LibRaw.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
+	public LibRaw.Watermark getWatermark(boolean demo)
+	{
+		Bitmap watermark;
+		byte[] waterData = null;
+		int waterWidth = 0, waterHeight = 0;
+
+		if (demo)
+		{
+			// Just grab the first width and assume that will be sufficient for all images
+			final int width = getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "?", new String[] {totalImages.get(0).toString()}, null).getInt(Meta.WIDTH_COLUMN);
+			watermark = ImageUtils.getDemoWatermark(CoreActivity.this, width);
+			waterData = ImageUtils.getBitmapBytes(watermark);
+			waterWidth = watermark.getWidth();
+			waterHeight = watermark.getHeight();
+
+			return new LibRaw.Watermark(
+					LibRaw.Margins.LowerRight
+					waterWidth,
+					waterHeight,
+					waterData);
+		}
+		else if (showWatermark)
+		{
+			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
+			boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
+			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
+			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
+			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
+			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
+			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
+			LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
+
+			if (watermarkText.isEmpty())
+			{
+				Toast.makeText(CoreActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+			}
+			else
+			{
+				watermark = ImageUtils.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+				waterData = ImageUtils.getBitmapBytes(watermark);
+				waterWidth = watermark.getWidth();
+				waterHeight = watermark.getHeight();
+			}
+		}
+		return null;
+	}
+
 	public class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
+		final ProgressDialog mProgressDialog;
+
+		public CopyThumbTask(ProgressDialog progress)
+		{
+			mProgressDialog = progress;
+		}
+
 		@Override
 		protected void onPreExecute()
 		{
-			mProgressDialog = new ProgressDialog(CoreActivity.this);
-			mProgressDialog.setTitle(R.string.exportingThumb);
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			mProgressDialog.setCanceledOnTouchOutside(true);
-			mProgressDialog.setOnCancelListener(this);
-			mProgressDialog.show();
+			if (mProgressDialog != null)
+			{
+				mProgressDialog.setTitle(R.string.exportingThumb);
+				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				mProgressDialog.setCanceledOnTouchOutside(true);
+				mProgressDialog.setOnCancelListener(this);
+				mProgressDialog.show();
+			}
 		}
 
 		@Override
