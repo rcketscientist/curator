@@ -1154,9 +1154,10 @@ public abstract class CoreActivity extends DocumentActivity
 					// We'll be automatically requesting write permission so kill this process
 					return null;
 				}
-				catch (IOException e)
+				catch (Exception e)
 				{
-					Log.e(TAG, "Failed to add image to recycle bin: " + toRecycle.toString() + "/n" + e);
+					Crashlytics.setString("uri", toRecycle.toString());
+					Crashlytics.log(e.toString());
 				}
 				remainingImages.remove(toRecycle);
 				onImageRemoved(toRecycle);

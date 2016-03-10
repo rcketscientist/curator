@@ -23,6 +23,7 @@ import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.util.FileUtil;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -129,11 +130,6 @@ public class RecycleBin
 
 						deleteFile(toRecycle);
 					}
-				}
-				catch (final IOException e)
-				{
-					Log.e(TAG, "addFileToBin - " + e);
-					throw e;
 				}
 				finally
 				{

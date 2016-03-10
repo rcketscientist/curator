@@ -811,9 +811,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void handleSaveImage(Uri dest)
     {
-        Uri source = getCurrentItem();
-        CopyThumbTask ctt = new CopyThumbTask();
-        ctt.execute(source, dest);
+        new CopyThumbTask().execute(getSelectedImages(), dest);
     }
 
     private void setWallpaper()
