@@ -752,7 +752,7 @@ public class GalleryActivity extends CoreActivity implements
 //            return;
 //        }
 
-        new CopyThumbTask().execute(mItemsForIntent, destination);
+	    saveThumbnails(mItemsForIntent, destination);
     }
 
 	private void handleUsbAccessRequest(Uri treeUri)

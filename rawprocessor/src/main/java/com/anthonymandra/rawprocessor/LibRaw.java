@@ -226,11 +226,11 @@ public class LibRaw
 	public static class Watermark
 	{
 		private byte[] watermark;
-		private int[] margins;
+		private Margins margins;
 		private int waterWidth;
 		private int waterHeight;
 
-		public int[] getMargins()
+		public Margins getMargins()
 		{
 			return margins;
 		}
@@ -250,7 +250,7 @@ public class LibRaw
 			return waterWidth;
 		}
 
-		public Watermark(int width, int height, int[] margins, byte[] watermark)
+		public Watermark(int width, int height, Margins margins, byte[] watermark)
 		{
 			waterWidth = width;
 			waterHeight = height;

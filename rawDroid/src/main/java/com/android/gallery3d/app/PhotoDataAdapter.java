@@ -515,24 +515,28 @@ public class PhotoDataAdapter implements Model {
         {
             populateImageData(uri);
         }
+        ImageData currentImage = imageData.get(uri);
+        if (currentImage == null)
+            return;
 
-        size.height = imageData.get(uri).height;
-        size.width = imageData.get(uri).width;
+        size.height = currentImage.height;
+        size.width = currentImage.width;
     }
 
     private void populateImageData(Uri uri)
     {
-        Cursor c = getCursor(uri);
-        if (c == null)
-            return;
+        try (Cursor c = getCursor(uri))
+        {
+            if (c == null)
+                return;
 
-        ImageData data = new ImageData();
-        data.height = c.getInt(c.getColumnIndex(Meta.Data.HEIGHT));
-        data.width = c.getInt(c.getColumnIndex(Meta.Data.WIDTH));
-        data.orientation = c.getInt(c.getColumnIndex(Meta.Data.ORIENTATION));
+            ImageData data = new ImageData();
+            data.height = c.getInt(c.getColumnIndex(Meta.Data.HEIGHT));
+            data.width = c.getInt(c.getColumnIndex(Meta.Data.WIDTH));
+            data.orientation = c.getInt(c.getColumnIndex(Meta.Data.ORIENTATION));
 
-        imageData.put(uri, data);
-        c.close();
+            imageData.put(uri, data);
+        }
     }
 
     private Cursor getCursor(Uri item)

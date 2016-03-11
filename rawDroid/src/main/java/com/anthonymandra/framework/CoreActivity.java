@@ -860,31 +860,30 @@ public abstract class CoreActivity extends DocumentActivity
 		return LibRaw.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
-	public LibRaw.Watermark getWatermark(boolean demo)
+	@Nullable
+	public LibRaw.Watermark getWatermark(final boolean demo, final int width)
 	{
 		Bitmap watermark;
-		byte[] waterData = null;
-		int waterWidth = 0, waterHeight = 0;
+		byte[] waterData;
+		int waterWidth, waterHeight;
 
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
+		boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
 		if (demo)
 		{
-			// Just grab the first width and assume that will be sufficient for all images
-			final int width = getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "?", new String[] {totalImages.get(0).toString()}, null).getInt(Meta.WIDTH_COLUMN);
 			watermark = ImageUtils.getDemoWatermark(CoreActivity.this, width);
 			waterData = ImageUtils.getBitmapBytes(watermark);
 			waterWidth = watermark.getWidth();
 			waterHeight = watermark.getHeight();
 
 			return new LibRaw.Watermark(
-					LibRaw.Margins.LowerRight
 					waterWidth,
 					waterHeight,
+					LibRaw.Margins.LowerRight,
 					waterData);
 		}
 		else if (showWatermark)
 		{
-			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
-			boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
 			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
 			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
 			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
@@ -899,16 +898,39 @@ public abstract class CoreActivity extends DocumentActivity
 			if (watermarkText.isEmpty())
 			{
 				Toast.makeText(CoreActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+				return null;
 			}
 			else
 			{
 				watermark = ImageUtils.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-				waterData = ImageUtils.getBitmapBytes(watermark);
+				if (watermark == null)
+					return null;
 				waterWidth = watermark.getWidth();
+				waterData = ImageUtils.getBitmapBytes(watermark);
 				waterHeight = watermark.getHeight();
+				return new LibRaw.Watermark(
+						waterWidth,
+						waterHeight,
+						margins,
+						waterData);
 			}
 		}
 		return null;
+	}
+
+	protected void saveThumbnails(List<Uri> images, Uri destination)
+	{
+		// Just grab the first width and assume that will be sufficient for all images
+		LibRaw.Watermark wm = null;
+		try (Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
+		{
+			if (c != null && c.moveToFirst())
+			{
+				final int width = c.getInt(Meta.WIDTH_COLUMN);
+				wm = getWatermark(Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro, width);
+			}
+		}
+		new CopyThumbTask(mProgressDialog).execute(images, destination, wm);
 	}
 
 	public class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
@@ -943,52 +965,7 @@ public abstract class CoreActivity extends DocumentActivity
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 			Uri destinationFolder = (Uri) params[1];
-
-			SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
-			boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
-			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
-			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
-			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-
-			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
-			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
-			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
-			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
-			LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
-
-			Bitmap watermark;
-			byte[] waterData = null;
-			boolean processWatermark = false;
-			int waterWidth = 0, waterHeight = 0;
-
-			if (Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro)
-			{
-				processWatermark = true;
-				// Just grab the first width and assume that will be sufficient for all images
-				final int width = getContentResolver().query(Meta.Data.CONTENT_URI, null, Meta.Data.URI + "?", new String[] {totalImages.get(0).toString()}, null).getInt(Meta.WIDTH_COLUMN);
-				watermark = ImageUtils.getDemoWatermark(CoreActivity.this, width);
-				waterData = ImageUtils.getBitmapBytes(watermark);
-				waterWidth = watermark.getWidth();
-				waterHeight = watermark.getHeight();
-				margins = LibRaw.Margins.LowerRight;
-			}
-			else if (showWatermark)
-			{
-				processWatermark = true;
-				if (watermarkText.isEmpty())
-				{
-					Toast.makeText(CoreActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
-					processWatermark = false;
-				}
-				else
-				{
-					watermark = ImageUtils.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-					waterData = ImageUtils.getBitmapBytes(watermark);
-					waterWidth = watermark.getWidth();
-					waterHeight = watermark.getHeight();
-				}
-			}
+			LibRaw.Watermark wm = (LibRaw.Watermark) params[2];
 
 			boolean success = true;
 			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
@@ -1012,7 +989,13 @@ public abstract class CoreActivity extends DocumentActivity
 					continue;
 				}
 
-				UsefulDocumentFile destinationFile = destinationTree.createFile(null, FileUtil.swapExtention(source.getName(), "jpg" ));
+				String jpgFileName = FileUtil.swapExtention(source.getName(), "jpg" );
+				Uri desiredJpg = DocumentUtil.getChildUri(destinationFolder, jpgFileName);
+				UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(CoreActivity.this, desiredJpg);
+				if (destinationFile.exists())
+					continue;   //don't overwrite
+
+				destinationFile = destinationTree.createFile(null, jpgFileName);
 
 				publishProgress(source.getName());
 
@@ -1028,9 +1011,9 @@ public abstract class CoreActivity extends DocumentActivity
 						continue;
 					}
 
-					if (processWatermark)
+					if (wm != null)
 					{
-						success = writeThumbWatermark(inputPfd, outputPfd, waterData, waterWidth, waterHeight, margins) && success;
+						success = writeThumbWatermark(inputPfd, outputPfd, wm.getWatermark(), wm.getWaterWidth(), wm.getWaterHeight(), wm.getMargins()) && success;
 					}
 					else
 					{

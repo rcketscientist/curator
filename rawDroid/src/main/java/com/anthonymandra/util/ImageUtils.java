@@ -2,9 +2,11 @@ package com.anthonymandra.util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
@@ -214,6 +216,9 @@ public class ImageUtils
             neighbor = DocumentUtil.getNeighborUri(uri, name);
         }
 
+        if (neighbor == null)
+            return null;
+
         return UsefulDocumentFile.fromUri(c, neighbor);
     }
 
@@ -349,12 +354,17 @@ public class ImageUtils
     {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        final Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null);
-        try
+        try(Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null))
         {
             while (cursor.moveToNext())
             {
                 String uriString = cursor.getString(Meta.URI_COLUMN);
+                if (uriString == null)  // we've got some bogus data, just remove
+                {
+                    operations.add(ContentProviderOperation.newDelete(
+                            Uri.withAppendedPath(Meta.Data.CONTENT_URI, cursor.getString(Meta.ID_COLUMN))).build());
+                    continue;
+                }
                 Uri uri = Uri.parse(uriString);
                 UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, uri);
                 if (!file.exists())
@@ -364,10 +374,7 @@ public class ImageUtils
                 }
             }
         }
-        finally
-        {
-            cursor.close();
-        }
+
         // TODO: If I implement bulkInsert it's faster
         c.getContentResolver().applyBatch(Meta.AUTHORITY, operations);
     }

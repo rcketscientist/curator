@@ -162,7 +162,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			GalleryItem item = new GalleryItem();
 			item.rotation = ImageUtils.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.Data.ORIENTATION)));
 			item.rating = cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING));
-			item.uri = Uri.parse(cursor.getString(cursor.getColumnIndex(Meta.Data.URI)));
+			final String u = cursor.getString(cursor.getColumnIndex(Meta.Data.URI));
+			item.uri = u != null ? Uri.parse(u) : null;
 			item.label = cursor.getString(cursor.getColumnIndex(Meta.Data.LABEL));
 			item.name = cursor.getString(cursor.getColumnIndex(Meta.Data.NAME));
 			item.hasSubject = cursor.getString(cursor.getColumnIndex(Meta.Data.SUBJECT)) != null;
