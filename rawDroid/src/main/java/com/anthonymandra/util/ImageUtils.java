@@ -21,6 +21,8 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
@@ -293,7 +295,7 @@ public class ImageUtils
      * @param uri
      * @return
      */
-    public static ContentValues getContentValues(Context c, Uri uri)
+    public static ContentValues getContentValues(@NonNull Context c, @NonNull Uri uri)
     {
         Metadata meta = readMetadata(c, uri);
         return getContentValues(uri, meta, getImageType(uri));
@@ -427,7 +429,8 @@ public class ImageUtils
      * @param meta
      * @return
      */
-    public static ContentValues getContentValues(Uri uri, Metadata meta, int type)
+    @Nullable
+    public static ContentValues getContentValues(@NonNull Uri uri, Metadata meta, int type)
     {
         final ContentValues cv = new ContentValues();
         if (meta == null)

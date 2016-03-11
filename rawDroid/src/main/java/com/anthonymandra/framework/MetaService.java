@@ -179,6 +179,8 @@ public class MetaService extends ThreadedPriorityIntentService
             }
 
             ContentValues values = ImageUtils.getContentValues(this, uri);
+            if (values == null)
+                return;
 
             // If this is a high priority request then add to db immediately
             if (isHigherThanDefault(intent))

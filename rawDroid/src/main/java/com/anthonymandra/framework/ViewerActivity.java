@@ -575,8 +575,11 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @SuppressLint("SetTextI18n")
-    private void populateMeta(ContentValues cursor)
+    private void populateMeta(ContentValues values)
     {
+        if (values == null)
+            return;
+        
         if (autoHide != null)
             autoHide.cancel();
 
@@ -588,34 +591,33 @@ public abstract class ViewerActivity extends CoreActivity implements
             return;
         }
 
-        // Assuming cursor is pointing properly...
-        Date d = new Date(cursor.getAsLong(Meta.Data.TIMESTAMP));
+        Date d = new Date(values.getAsLong(Meta.Data.TIMESTAMP));
         java.text.DateFormat df = DateFormat.getDateFormat(this);
         java.text.DateFormat tf = DateFormat.getTimeFormat(this);
 
         metaDate.setText(df.format(d) + " " + tf.format(d));
-        metaModel.setText(cursor.getAsString(Meta.Data.MODEL));
-        metaIso.setText(cursor.getAsString(Meta.Data.ISO));
-        metaExposure.setText(cursor.getAsString(Meta.Data.EXPOSURE));
-        metaAperture.setText(cursor.getAsString(Meta.Data.APERTURE));
-        metaFocal.setText(cursor.getAsString(Meta.Data.FOCAL_LENGTH));
-        metaDimensions.setText(cursor.getAsString(Meta.Data.WIDTH) + " x " + cursor.getAsString(Meta.Data.HEIGHT));
-        metaAlt.setText(cursor.getAsString(Meta.Data.ALTITUDE));
-        metaFlash.setText(cursor.getAsString(Meta.Data.FLASH));
-        metaLat.setText(cursor.getAsString(Meta.Data.LATITUDE));
-        metaLon.setText(cursor.getAsString(Meta.Data.LONGITUDE));
-        metaName.setText(cursor.getAsString(Meta.Data.NAME));
-        metaWb.setText(cursor.getAsString(Meta.Data.WHITE_BALANCE));
-        metaLens.setText(cursor.getAsString(Meta.Data.LENS_MODEL));
-        metaDriveMode.setText(cursor.getAsString(Meta.Data.DRIVE_MODE));
-        metaExposureMode.setText(cursor.getAsString(Meta.Data.EXPOSURE_MODE));
-        metaExposureProgram.setText(cursor.getAsString(Meta.Data.EXPOSURE_PROGRAM));
+        metaModel.setText(values.getAsString(Meta.Data.MODEL));
+        metaIso.setText(values.getAsString(Meta.Data.ISO));
+        metaExposure.setText(values.getAsString(Meta.Data.EXPOSURE));
+        metaAperture.setText(values.getAsString(Meta.Data.APERTURE));
+        metaFocal.setText(values.getAsString(Meta.Data.FOCAL_LENGTH));
+        metaDimensions.setText(values.getAsString(Meta.Data.WIDTH) + " x " + values.getAsString(Meta.Data.HEIGHT));
+        metaAlt.setText(values.getAsString(Meta.Data.ALTITUDE));
+        metaFlash.setText(values.getAsString(Meta.Data.FLASH));
+        metaLat.setText(values.getAsString(Meta.Data.LATITUDE));
+        metaLon.setText(values.getAsString(Meta.Data.LONGITUDE));
+        metaName.setText(values.getAsString(Meta.Data.NAME));
+        metaWb.setText(values.getAsString(Meta.Data.WHITE_BALANCE));
+        metaLens.setText(values.getAsString(Meta.Data.LENS_MODEL));
+        metaDriveMode.setText(values.getAsString(Meta.Data.DRIVE_MODE));
+        metaExposureMode.setText(values.getAsString(Meta.Data.EXPOSURE_MODE));
+        metaExposureProgram.setText(values.getAsString(Meta.Data.EXPOSURE_PROGRAM));
 
-        String rating = cursor.getAsString(Meta.Data.RATING);  //Use string since double returns 0 for null
+        String rating = values.getAsString(Meta.Data.RATING);  //Use string since double returns 0 for null
         mXmpFragment.initXmp(
                 rating == null ? null : (int) Double.parseDouble(rating),
-                ImageUtils.convertStringToArray(cursor.getAsString(Meta.Data.SUBJECT)),
-                cursor.getAsString(Meta.Data.LABEL));
+                ImageUtils.convertStringToArray(values.getAsString(Meta.Data.SUBJECT)),
+                values.getAsString(Meta.Data.LABEL));
 
         autoHide = new Timer();
         autoHide.schedule(new AutoHideMetaTask(), 3000);
