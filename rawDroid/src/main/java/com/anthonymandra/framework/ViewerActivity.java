@@ -191,7 +191,10 @@ public abstract class ViewerActivity extends CoreActivity implements
             {
                 while(c.moveToNext())
                 {
-                    mMediaItems.add(Uri.parse(c.getString(Meta.URI_COLUMN)));
+                    String uri = c.getString(Meta.URI_COLUMN);
+                    if (uri == null)
+                        continue;
+                    mMediaItems.add(Uri.parse(uri));
                 }
             }
             c.close();
@@ -579,7 +582,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
         if (values == null)
             return;
-        
+
         if (autoHide != null)
             autoHide.cancel();
 
