@@ -673,6 +673,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             int[] pixels = new int[input.getWidth() * input.getHeight()];
             try
             {
+                //TODO: Forkjoin row by row? http://stackoverflow.com/questions/17740059/how-to-generate-image-histogram-in-android
                 input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
                 for (int pixel : pixels)
 //              for (int pixel = 0; pixel < pixels.length; pixel += stride)
