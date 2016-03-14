@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,8 +66,14 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
      * @param uri uri of the source image
      * @return String uri to request a swap file
      */
+    @Nullable
     public static Uri createSwapUri(Uri uri)
     {
+        if (uri == null)
+        {
+            Crashlytics.logException(new Exception("null uri requested swap)"));
+            return null;
+        }
         String name = uri.getLastPathSegment(); //this is risky
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)

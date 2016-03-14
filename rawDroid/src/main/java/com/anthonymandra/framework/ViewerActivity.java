@@ -265,10 +265,6 @@ public abstract class ViewerActivity extends CoreActivity implements
     @Override
     public void onPhotoChanged(int index, Uri item)
     {
-//        if (mCurrentUri != null && mPendingXmpChanges != null)
-//        {
-//            writeXmpModifications();
-//        }
         mCurrentUri = item;
 
         setShareUri(SwapProvider.createSwapUri(item));
@@ -578,7 +574,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @SuppressLint("SetTextI18n")
-    private void populateMeta(ContentValues values)
+    private void populateMeta(final ContentValues values)
     {
         if (values == null)
             return;
