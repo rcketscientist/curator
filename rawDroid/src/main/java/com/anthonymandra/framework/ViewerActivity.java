@@ -590,11 +590,14 @@ public abstract class ViewerActivity extends CoreActivity implements
             return;
         }
 
-        Date d = new Date(values.getAsLong(Meta.Data.TIMESTAMP));
-        java.text.DateFormat df = DateFormat.getDateFormat(this);
-        java.text.DateFormat tf = DateFormat.getTimeFormat(this);
-
-        metaDate.setText(df.format(d) + " " + tf.format(d));
+        Long timestamp = values.getAsLong(Meta.Data.TIMESTAMP);
+        if (timestamp != null)
+        {
+            Date d = new Date(timestamp);
+            java.text.DateFormat df = DateFormat.getDateFormat(this);
+            java.text.DateFormat tf = DateFormat.getTimeFormat(this);
+            metaDate.setText(df.format(d) + " " + tf.format(d));
+        }
         metaModel.setText(values.getAsString(Meta.Data.MODEL));
         metaIso.setText(values.getAsString(Meta.Data.ISO));
         metaExposure.setText(values.getAsString(Meta.Data.EXPOSURE));

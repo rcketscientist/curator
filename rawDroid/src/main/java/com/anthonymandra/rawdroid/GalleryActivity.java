@@ -751,6 +751,7 @@ public class GalleryActivity extends CoreActivity implements
 //            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
 //            return;
 //        }
+		
 
 	    saveThumbnails(mItemsForIntent, destination);
     }
