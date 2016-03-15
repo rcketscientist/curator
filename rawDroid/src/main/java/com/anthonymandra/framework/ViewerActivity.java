@@ -670,30 +670,33 @@ public abstract class ViewerActivity extends CoreActivity implements
             if (input == null || input.isRecycled())
                 return null;
 
-            int[] pixels = new int[input.getWidth() * input.getHeight()];
-            try
-            {
-                //TODO: Forkjoin row by row? http://stackoverflow.com/questions/17740059/how-to-generate-image-histogram-in-android
-                input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
-                for (int pixel : pixels)
-//              for (int pixel = 0; pixel < pixels.length; pixel += stride)
-                {
-                    if (isCancelled())
-                        return null;
-                    result.processPixel(pixel);
-                }
-            }
-            catch(IllegalStateException e)
-            {
-                Toast.makeText(ViewerActivity.this,
-                        "Memory Error: Histogram failed due to recycled image.  Try swapping slower or using Legacy Viewer.",
-                        Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                return null;
-            }
-//            int stride = pixels.length / 4095;
-
+            result.processBitmap(input);
             return result;
+
+//            int[] pixels = new int[input.getWidth() * input.getHeight()];
+//            try
+//            {
+//                //TODO: Forkjoin row by row? http://stackoverflow.com/questions/17740059/how-to-generate-image-histogram-in-android
+//                input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
+//                for (int pixel : pixels)
+////              for (int pixel = 0; pixel < pixels.length; pixel += stride)
+//                {
+//                    if (isCancelled())
+//                        return null;
+//                    result.processPixel(pixel);
+//                }
+//            }
+//            catch(IllegalStateException e)
+//            {
+//                Toast.makeText(ViewerActivity.this,
+//                        "Memory Error: Histogram failed due to recycled image.  Try swapping slower or using Legacy Viewer.",
+//                        Toast.LENGTH_SHORT).show();
+//                e.printStackTrace();
+//                return null;
+//            }
+////            int stride = pixels.length / 4095;
+//
+//            return result;
         }
 
         @Override
