@@ -565,6 +565,8 @@ public class PhotoDataAdapter implements Model {
         {
             populateImageData(uri);
         }
+        if (!imageData.containsKey(uri))
+            return 0;
 
         return ImageUtils.getRotation(imageData.get(uri).orientation);
     }
@@ -574,11 +576,6 @@ public class PhotoDataAdapter implements Model {
         mNeedFullImage = enabled;
         mMainHandler.sendEmptyMessage(MSG_UPDATE_IMAGE_REQUESTS);
     }
-
-	@Override
-	public boolean isVideo(int offset) {
-		return false;
-	}
 
 	@Override
     public boolean isDeletable(int offset) {
