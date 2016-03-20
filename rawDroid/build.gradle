@@ -85,7 +85,7 @@ dependencies {
     compile project(':showcaseView:library')
     compile project(':inscription')
     compile project(':metadata-extractor')
-    compile project(':rawprocessor')
+    compile project(':library')
     compile project(':DocumentActivity:library')
     compile 'com.android.support:design:23.2.0' //includes support-v4 and appcompat-v7
     compile 'com.github.bumptech.glide:glide:3.7.0'

@@ -10,16 +10,10 @@
 	path = metadata-extractor
 	url = https://github.com/rcketscientist/metadata-extractor.git
 	branch = Android
-[submodule "rawprocessor/src/main/jni/LibRaw"]
-	path = rawprocessor/src/main/jni/LibRaw
-	url = https://github.com/rcketscientist/LibRaw.git
-[submodule "rawprocessor/src/main/jni/LibRaw-demosaic-pack-GPL3"]
-	path = rawprocessor/src/main/jni/LibRaw-demosaic-pack-GPL3
-	url = https://github.com/LibRaw/LibRaw-demosaic-pack-GPL3.git
-[submodule "rawprocessor/src/main/jni/LibRaw-demosaic-pack-GPL2"]
-	path = rawprocessor/src/main/jni/LibRaw-demosaic-pack-GPL2
-	url = https://github.com/LibRaw/LibRaw-demosaic-pack-GPL2.git
 [submodule "DocumentActivity"]
 	path = DocumentActivity
 	url = https://github.com/rcketscientist/DocumentActivity.git
 	branch = master
+[submodule "rawprocessor"]
+	path = rawprocessor
+	url = https://rcketscientist@bitbucket.org/rcketscientist/rawprocessor.git
