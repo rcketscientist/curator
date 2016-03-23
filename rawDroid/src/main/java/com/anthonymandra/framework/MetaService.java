@@ -185,12 +185,18 @@ public class MetaService extends ThreadedPriorityIntentService
             // If this is a high priority request then add to db immediately
             if (isHigherThanDefault(intent))
             {
-                getContentResolver().update(Meta.Data.CONTENT_URI,
-                        values,
-                        ImageUtils.getWhere(),
-                        new String[]{uri.toString()});
+                // To allow service to operate on external images without database
+                if (c.getCount() != 0)
+                {
+                    getContentResolver().update(Meta.Data.CONTENT_URI,
+                            values,
+                            ImageUtils.getWhere(),
+                            new String[]{uri.toString()});
 
-                values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));  // add name to broadcast
+                    values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));  // add name to broadcast
+                }
+
+                // TODO: external images won't have a name
                 Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
                         .putExtra(EXTRA_URI, uri.toString())
                         .putExtra(EXTRA_METADATA, values);

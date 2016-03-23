@@ -2,8 +2,8 @@ include ':metadata-extractor'
 include ':DocumentActivity:library'
 
 // rawprocessor
-//include ':jpeg'
-//include ':raw'
+include ':jpeg'
+include ':raw'
 include ':rawprocessor'
 
 // exiv2
@@ -15,8 +15,8 @@ include ':inscription'
 include ':rawDroid'
 
 // Rawprocessor redirection
-//project(':jpeg').projectDir = new File('rawprocessor/jpeg')
-//project(':raw').projectDir = new File('rawprocessor/raw')
+project(':jpeg').projectDir = new File('rawprocessor/jpeg')
+project(':raw').projectDir = new File('rawprocessor/raw')
 //project(':expat').projectDir = new File('rawprocessor/expat')
 //project(':exiv2').projectDir = new File('rawprocessor/exiv2')
 project(':rawprocessor').projectDir = new File('rawprocessor/library')
