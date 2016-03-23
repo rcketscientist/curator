@@ -3,8 +3,8 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 4
 def versionMinor = 7
-def versionPatch = 0
-def versionBuild = 10
+def versionPatch = 1
+def versionBuild = 0
 
 android {
     compileSdkVersion 23
@@ -85,7 +85,7 @@ dependencies {
     compile project(':showcaseView:library')
     compile project(':inscription')
     compile project(':metadata-extractor')
-    compile project(':library')
+    compile project(':rawprocessor')
     compile project(':DocumentActivity:library')
     compile 'com.android.support:design:23.2.0' //includes support-v4 and appcompat-v7
     compile 'com.github.bumptech.glide:glide:3.7.0'

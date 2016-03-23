@@ -13,7 +13,6 @@ public interface RawObject {
     String getMimeType();
 
     byte[] getThumb();
-	byte[] getThumbWithWatermark(byte[] watermark, int waterWidth, int waterHeight, LibRaw.Margins margins);
 
     Uri getSwapUri();
 }

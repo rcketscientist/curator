@@ -41,29 +41,6 @@ public class LocalImage extends MetaMedia {
 		super(context, image);
 	}
 
-    @Override
-    public byte[] getThumbWithWatermark(byte[] watermark, int waterWidth,
-                                        int waterHeight, LibRaw.Margins margins) {
-	    if (ImageUtils.isAndroidImage(mContext, mUri))
-	    {
-		    return getImageBytes();
-	    }
-
-	    ParcelFileDescriptor pfd = null;
-	    try
-	    {
-		    pfd = mContext.getContentResolver().openFileDescriptor(mUri, "r");
-		    int fd = pfd.getFd();
-
-		    return LibRaw.getThumbWithWatermark(fd, watermark, margins,
-				    waterWidth, waterHeight);
-	    }
-	    catch (FileNotFoundException e)
-	    {
-			return null;
-	    }
-    }
-
 	private byte[] getImageBytes()
 	{
 		InputStream is = null;

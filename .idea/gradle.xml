@@ -14,9 +14,7 @@
             <option value="$PROJECT_DIR$/inscription" />
             <option value="$PROJECT_DIR$/metadata-extractor" />
             <option value="$PROJECT_DIR$/rawDroid" />
-            <option value="$PROJECT_DIR$/rawprocessor/jpeg" />
             <option value="$PROJECT_DIR$/rawprocessor/library" />
-            <option value="$PROJECT_DIR$/rawprocessor/raw" />
             <option value="$PROJECT_DIR$/showcaseView" />
             <option value="$PROJECT_DIR$/showcaseView/library" />
           </set>
@@ -29,9 +27,7 @@
             <option value="$PROJECT_DIR$/inscription" />
             <option value="$PROJECT_DIR$/metadata-extractor" />
             <option value="$PROJECT_DIR$/rawDroid" />
-            <option value="$PROJECT_DIR$/rawprocessor/jpeg" />
             <option value="$PROJECT_DIR$/rawprocessor/library" />
-            <option value="$PROJECT_DIR$/rawprocessor/raw" />
             <option value="$PROJECT_DIR$/showcaseView" />
             <option value="$PROJECT_DIR$/showcaseView/library" />
           </set>

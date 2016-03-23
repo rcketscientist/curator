@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.7.1"
+             versioncode="47100"
+             summary="Beta: Bug patch"
+             date="23 MAR 2016"/>
+    <change>Enhancement: Faster histogram</change>
+    <change>Fixes: Minor bug roundup</change>
     <release version="4.7"
              versioncode="47000"
              summary="Beta: Gallery Meta"

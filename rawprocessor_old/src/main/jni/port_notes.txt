@@ -1,0 +1,23 @@
+
+//This fails in 10d.  __arch__swab16 doesn't exist
+1.	internal/dcraw_common.cpp, src/libraw.cxx
+-Insert:
+#include <swab.h>
+
+2.	internal/defines.h, src/libraw_datastream.cpp
+Wrap existing include with extern "C":
+extern "C"
+{
+#include <jpeglib.h>
+}
+
+
+
+
+//This was not necessary in the latest libraw
+3.	internal/demosaic_packs.cpp
+Wrap existing include with extern "C":
+extern "C"
+{
+#include <dcraw_foveon.c>
+}

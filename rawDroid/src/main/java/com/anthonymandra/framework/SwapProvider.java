@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -78,7 +79,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(SwapProvider.AUTHORITY)
-                .path(FileUtil.swapExtention(name, "jpg"))
                 .fragment(uri.toString())
                 .build();
     }
@@ -89,103 +89,102 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
         Log.v(TAG, "Called with uri: '" + uri + "'." + uri.getLastPathSegment());
 
-        // Check incoming Uri against the matcher
-        switch (uriMatcher.match(uri)) {
-
-            // If it returns 1 - then it matches the Uri defined in onCreate
-            case 1:
-                Uri sourceUri = Uri.parse(uri.getFragment());
-                //If it's a native file, just share it directly.
-                if (ImageUtils.isNative(sourceUri))
-                {
-                    return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
-                }
-
-                File swapFile = new File(FileUtil.getDiskCacheDir(getContext(),
-                        CoreActivity.SWAP_BIN_DIR),
-                        uri.getLastPathSegment());
-                        
-                // Don't keep recreating the swap file
-                // Some receivers may call multiple times
-                if (!swapFile.exists())
-                {
-                    try
-                    {
-                        swapFile.createNewFile();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    LocalImage image = new LocalImage(getContext(), sourceUri);
-	                byte[] imageData = image.getThumb();
-	                if (imageData == null)
-	                    return null;
-
-	                Bitmap watermark;
-	                byte[] waterData = null;
-	                boolean processWatermark = false;
-	                int waterWidth = 0, waterHeight = 0;
-	                LibRaw.Margins margin = null;
-
-                    if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
-	                {
-	                	processWatermark = true;
-	                    watermark = ImageUtils.getDemoWatermark(getContext(), image.getWidth());
-	                    waterData = ImageUtils.getBitmapBytes(watermark);
-	                    waterWidth = watermark.getWidth();
-	                    waterHeight = watermark.getHeight();
-	                    margin = LibRaw.Margins.LowerRight;
-
-	                }
-	                else if (mShowWatermark)
-	                {
-	                	processWatermark = true;
-                        if (mWatermarkText.isEmpty())
-                        {
-                            Toast.makeText(getContext(), R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
-                            processWatermark = false;
-                        }
-                        else
-                        {
-	                        watermark = ImageUtils.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
-                            waterData = ImageUtils.getBitmapBytes(watermark);
-                            waterWidth = watermark.getWidth();
-                            waterHeight = watermark.getHeight();
-                            margin = mMargins;
-                        }
-	                }
-	                
-	                boolean success;
-					if (processWatermark)
-					{
-						success = writeThumbWatermark(image.getUri(), swapFile, waterData, waterWidth, waterHeight, margin);
-					}
-					else
-					{
-						success = writeThumb(image.getUri(), swapFile);
-					}
-					
-					if (!success)
-                    {
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                Toast.makeText(getContext(), "Thumbnail generation failed.", Toast.LENGTH_LONG).show();
-                            }
-                        } );
-                    }
-                }
-
-                return ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
-
-            default:
-                Log.v(TAG, "Unsupported uri: '" + uri + "'.");
-                throw new FileNotFoundException("Unsupported uri: " + uri.toString());
+        Uri sourceUri = Uri.parse(uri.getFragment());
+        // If it's a native file, just share it directly.
+        if (ImageUtils.isNative(sourceUri))
+        {
+            return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
         }
+
+        UsefulDocumentFile image = UsefulDocumentFile.fromUri(getContext(), sourceUri);
+        String name = image.getName();
+        String jpg = FileUtil.swapExtention(name, "jpg");
+
+        File swapFile = new File(FileUtil.getDiskCacheDir(getContext(),
+                CoreActivity.SWAP_BIN_DIR),
+                jpg);
+
+        // Don't keep recreating the swap file
+        // Some receivers may call multiple times
+        if (!swapFile.exists())
+        {
+            try
+            {
+                swapFile.createNewFile();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+
+            byte[] imageData = ImageUtils.getThumb(getContext(), image.getUri());
+            if (imageData == null)
+                return null;
+
+            Bitmap watermark;
+            byte[] waterData = null;
+            boolean processWatermark = false;
+            int waterWidth = 0, waterHeight = 0;
+            LibRaw.Margins margin = null;
+
+            if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
+            {
+                processWatermark = true;
+                try (Cursor c = ImageUtils.getMetaCursor(getContext(), image.getUri()))
+                {
+                    if (c != null && c.moveToFirst())
+                    {
+                        watermark = ImageUtils.getDemoWatermark(getContext(), c.getInt(Meta.WIDTH_COLUMN));
+                        waterData = ImageUtils.getBitmapBytes(watermark);
+                        waterWidth = watermark.getWidth();
+                        waterHeight = watermark.getHeight();
+                        margin = LibRaw.Margins.LowerRight;
+                    }
+                }
+            }
+            else if (mShowWatermark)
+            {
+                processWatermark = true;
+                if (mWatermarkText.isEmpty())
+                {
+                    Toast.makeText(getContext(), R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+                    processWatermark = false;
+                }
+                else
+                {
+                    watermark = ImageUtils.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+                    waterData = ImageUtils.getBitmapBytes(watermark);
+                    waterWidth = watermark.getWidth();
+                    waterHeight = watermark.getHeight();
+                    margin = mMargins;
+                }
+            }
+
+            boolean success;
+            if (processWatermark)
+            {
+                success = writeThumbWatermark(image.getUri(), swapFile, waterData, waterWidth, waterHeight, margin);
+            }
+            else
+            {
+                success = writeThumb(image.getUri(), swapFile);
+            }
+
+            if (!success)
+            {
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast.makeText(getContext(), "Thumbnail generation failed.", Toast.LENGTH_LONG).show();
+                    }
+                } );
+            }
+        }
+
+        return ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
     }
 
     /**
@@ -234,22 +233,14 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     // It's safe to write these directly since it's app storage space
     protected boolean writeThumb(Uri uri, File destination)
     {
-        ParcelFileDescriptor source = null;
-        ParcelFileDescriptor dest = null;
-        try
-        {
-            source = getContext().getContentResolver().openFileDescriptor(uri, "r");
-            dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE);
+        try (
+            ParcelFileDescriptor source = getContext().getContentResolver().openFileDescriptor(uri, "r");
+            ParcelFileDescriptor dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE)) {
             return LibRaw.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd());
         }
         catch(Exception e)
         {
             return false;
-        }
-        finally
-        {
-            Utils.closeSilently(source);
-            Utils.closeSilently(dest);
         }
     }
 
@@ -257,19 +248,14 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     protected boolean writeThumbWatermark(Uri source, File destination, byte[] waterMap,
                                           int waterWidth, int waterHeight, LibRaw.Margins waterMargins)
     {
-        ParcelFileDescriptor pfd = null;
-        try
-        {
-            pfd = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE);
-            return LibRaw.writeThumbFileWatermark(source.getPath(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, pfd.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+        try (
+            ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(source, "r");
+            ParcelFileDescriptor dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE)) {
+            return LibRaw.writeThumbFdWatermark(src.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
         }
         catch(Exception e)
         {
             return false;
-        }
-        finally
-        {
-            Utils.closeSilently(pfd);
         }
     }
 
