@@ -128,7 +128,7 @@ public class ImageUtils
     private static Metadata readXmp(Context c, Uri uri, Metadata meta)
     {
         UsefulDocumentFile xmpDoc = getXmpFile(c, uri);
-        if (!xmpDoc.exists())
+        if (xmpDoc == null || !xmpDoc.exists())
             return meta;
 
         InputStream xmpStream = null;
