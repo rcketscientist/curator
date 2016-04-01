@@ -259,13 +259,21 @@ public class ImageUtils
 
     public static ContentProviderOperation newInsert(Context c, Uri image)
     {
-        UsefulDocumentFile.FileData fd = UsefulDocumentFile.fromUri(c, image).getData();
+        UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, image);
+        UsefulDocumentFile.FileData fd = file.getData();
 
         ContentValues cv = new ContentValues();
-        cv.put(Meta.Data.NAME, fd.name);
+        if (fd != null)
+        {
+            cv.put(Meta.Data.NAME, fd.name);
+            cv.put(Meta.Data.PARENT, fd.parent.toString());
+            cv.put(Meta.Data.TIMESTAMP, fd.lastModified);
+        }
+        else
+        {
+            cv.put(Meta.Data.PARENT, file.getParentFile().getUri().toString());
+        }
         cv.put(Meta.Data.URI, image.toString());
-        cv.put(Meta.Data.PARENT, fd.parent.toString());
-        cv.put(Meta.Data.TIMESTAMP, fd.lastModified);
         cv.put(Meta.Data.TYPE, ImageUtils.getImageType(image));
 
        return ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
