@@ -186,7 +186,7 @@ public class MetaService extends ThreadedPriorityIntentService
             if (isHigherThanDefault(intent))
             {
                 // To allow service to operate on external images without database
-                if (c.getCount() != 0)
+                if (c.getCount() > 0)
                 {
                     getContentResolver().update(Meta.Data.CONTENT_URI,
                             values,
