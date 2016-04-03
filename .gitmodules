@@ -17,3 +17,4 @@
 [submodule "rawprocessor"]
 	path = rawprocessor
 	url = https://rcketscientist@bitbucket.org/rcketscientist/rawprocessor.git
+	branch = master
