@@ -22,7 +22,7 @@ import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
-import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.rawprocessor.Executor;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 
@@ -438,7 +438,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				if (current != null)
 				{
 					CurrentImageLoader cml = new CurrentImageLoader();
-					cml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex, current);
+					cml.executeOnExecutor(Executor.EXECUTOR, mImageIndex, current);
 				}
 			}
 			else
@@ -454,7 +454,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				if (next != null)
 				{
 					SmallImageLoader sml = new SmallImageLoader();
-					sml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex + 1, next);
+					sml.executeOnExecutor(Executor.EXECUTOR, mImageIndex + 1, next);
 				}
 			}
 
@@ -466,7 +466,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				if (previous != null)
 				{
 					SmallImageLoader sml = new SmallImageLoader();
-					sml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex - 1, previous);
+					sml.executeOnExecutor(Executor.EXECUTOR, mImageIndex - 1, previous);
 				}
 			}
 
@@ -477,7 +477,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				if (current != null)
 				{
 					LargeImageLoader lml = new LargeImageLoader();
-					lml.executeOnExecutor(LibRaw.EXECUTOR, mImageIndex, current);
+					lml.executeOnExecutor(Executor.EXECUTOR, mImageIndex, current);
 				}
 			}
 		}

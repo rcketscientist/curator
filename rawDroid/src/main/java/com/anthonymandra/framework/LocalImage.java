@@ -10,8 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
-import android.util.Log;
 
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
@@ -20,6 +18,7 @@ import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawprocessor.Exif;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
 import com.anthonymandra.util.ImageUtils;
@@ -126,25 +125,25 @@ public class LocalImage extends MetaMedia {
 							ContentValues cv = new ContentValues();
 							try
 							{
-								cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[LibRaw.EXIF_TIMESTAMP]).getTime());
+								cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
 							}
 							catch (Exception e)
 							{
 								e.printStackTrace();
 							}
-							cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_APERTURE]);
-							cv.put(Meta.Data.MAKE, exif[LibRaw.EXIF_MAKE]);
-							cv.put(Meta.Data.MODEL, exif[LibRaw.EXIF_MODEL]);
-							cv.put(Meta.Data.FOCAL_LENGTH, exif[LibRaw.EXIF_FOCAL]);
-							cv.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_HEIGHT]);
-							cv.put(Meta.Data.ISO, exif[LibRaw.EXIF_ISO]);
-							cv.put(Meta.Data.ORIENTATION, exif[LibRaw.EXIF_ORIENTATION]);
-							cv.put(Meta.Data.EXPOSURE, exif[LibRaw.EXIF_SHUTTER]);
-							cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_HEIGHT]);
-							cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_WIDTH]);
+							cv.put(Meta.Data.APERTURE, exif[Exif.APERTURE]);
+							cv.put(Meta.Data.MAKE, exif[Exif.MAKE]);
+							cv.put(Meta.Data.MODEL, exif[Exif.MODEL]);
+							cv.put(Meta.Data.FOCAL_LENGTH, exif[Exif.FOCAL]);
+							cv.put(Meta.Data.APERTURE, exif[Exif.HEIGHT]);
+							cv.put(Meta.Data.ISO, exif[Exif.ISO]);
+							cv.put(Meta.Data.ORIENTATION, exif[Exif.ORIENTATION]);
+							cv.put(Meta.Data.EXPOSURE, exif[Exif.SHUTTER]);
+							cv.put(Meta.Data.HEIGHT, exif[Exif.HEIGHT]);
+							cv.put(Meta.Data.WIDTH, exif[Exif.WIDTH]);
 							//TODO: Placing thumb dimensions since we aren't decoding raw atm.
-							cv.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_THUMB_HEIGHT]);
-							cv.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_THUMB_WIDTH]);
+							cv.put(Meta.Data.HEIGHT, exif[Exif.THUMB_HEIGHT]);
+							cv.put(Meta.Data.WIDTH, exif[Exif.THUMB_WIDTH]);
 							// Are the thumb dimensions useful in database?
 
 							cpc.update(Meta.Data.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {mUri.toString()});

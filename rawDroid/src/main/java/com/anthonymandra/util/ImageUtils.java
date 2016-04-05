@@ -2,11 +2,9 @@ package com.anthonymandra.util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
@@ -31,7 +29,6 @@ import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.data.ImageCacheRequest;
-import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.util.ThreadPool;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
@@ -39,6 +36,7 @@ import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawprocessor.Exif;
 import com.anthonymandra.rawprocessor.LibRaw;
 import com.anthonymandra.rawprocessor.TiffDecoder;
 import com.crashlytics.android.Crashlytics;
@@ -1074,25 +1072,25 @@ public class ImageUtils
 
         try
         {
-            values.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[LibRaw.EXIF_TIMESTAMP]).getTime());
+            values.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        values.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_APERTURE]);
-        values.put(Meta.Data.MAKE, exif[LibRaw.EXIF_MAKE]);
-        values.put(Meta.Data.MODEL, exif[LibRaw.EXIF_MODEL]);
-        values.put(Meta.Data.FOCAL_LENGTH, exif[LibRaw.EXIF_FOCAL]);
-        values.put(Meta.Data.APERTURE, exif[LibRaw.EXIF_HEIGHT]);
-        values.put(Meta.Data.ISO, exif[LibRaw.EXIF_ISO]);
-        values.put(Meta.Data.ORIENTATION, exif[LibRaw.EXIF_ORIENTATION]);
-        values.put(Meta.Data.EXPOSURE, exif[LibRaw.EXIF_SHUTTER]);
-        values.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_HEIGHT]);
-        values.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_WIDTH]);
+        values.put(Meta.Data.APERTURE, exif[Exif.APERTURE]);
+        values.put(Meta.Data.MAKE, exif[Exif.MAKE]);
+        values.put(Meta.Data.MODEL, exif[Exif.MODEL]);
+        values.put(Meta.Data.FOCAL_LENGTH, exif[Exif.FOCAL]);
+        values.put(Meta.Data.APERTURE, exif[Exif.HEIGHT]);
+        values.put(Meta.Data.ISO, exif[Exif.ISO]);
+        values.put(Meta.Data.ORIENTATION, exif[Exif.ORIENTATION]);
+        values.put(Meta.Data.EXPOSURE, exif[Exif.SHUTTER]);
+        values.put(Meta.Data.HEIGHT, exif[Exif.HEIGHT]);
+        values.put(Meta.Data.WIDTH, exif[Exif.WIDTH]);
         //TODO: Placing thumb dimensions since we aren't decoding raw atm.
-        values.put(Meta.Data.HEIGHT, exif[LibRaw.EXIF_THUMB_HEIGHT]);
-        values.put(Meta.Data.WIDTH, exif[LibRaw.EXIF_THUMB_WIDTH]);
+        values.put(Meta.Data.HEIGHT, exif[Exif.THUMB_HEIGHT]);
+        values.put(Meta.Data.WIDTH, exif[Exif.THUMB_WIDTH]);
         // Are the thumb dimensions useful in database?
 
         return imageBytes;

@@ -17,7 +17,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
@@ -25,6 +24,7 @@ import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.rawprocessor.Margins;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
@@ -46,7 +46,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     private static int mWatermarkAlpha;
     private static int mWatermarkSize;
     private static String mWatermarkLocation;
-    private static LibRaw.Margins mMargins;
+    private static Margins mMargins;
 
     @Override
     public boolean onCreate() {
@@ -125,7 +125,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             byte[] waterData = null;
             boolean processWatermark = false;
             int waterWidth = 0, waterHeight = 0;
-            LibRaw.Margins margin = null;
+            Margins margin = null;
 
             if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
@@ -138,7 +138,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                         waterData = ImageUtils.getBitmapBytes(watermark);
                         waterWidth = watermark.getWidth();
                         waterHeight = watermark.getHeight();
-                        margin = LibRaw.Margins.LowerRight;
+                        margin = Margins.LowerRight;
                     }
                 }
             }
@@ -227,7 +227,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
         int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
         int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
-        LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
+        Margins margins = new Margins(top, left, bottom, right);
     }
 
     // It's safe to write these directly since it's app storage space
@@ -246,7 +246,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
     // It's safe to write these directly since it's app storage space
     protected boolean writeThumbWatermark(Uri source, File destination, byte[] waterMap,
-                                          int waterWidth, int waterHeight, LibRaw.Margins waterMargins)
+                                          int waterWidth, int waterHeight, Margins waterMargins)
     {
         try (
             ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(source, "r");

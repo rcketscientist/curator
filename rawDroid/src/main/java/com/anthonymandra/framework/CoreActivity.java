@@ -29,7 +29,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +49,8 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.rawprocessor.LibRaw;
+import com.anthonymandra.rawprocessor.Margins;
+import com.anthonymandra.rawprocessor.Watermark;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
@@ -60,7 +61,6 @@ import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
@@ -856,12 +856,12 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
-	                                      int waterWidth, int waterHeight, LibRaw.Margins waterMargins) {
+	                                      int waterWidth, int waterHeight, Margins waterMargins) {
 		return LibRaw.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
 	@Nullable
-	public LibRaw.Watermark getWatermark(final boolean demo, final int width)
+	public Watermark getWatermark(final boolean demo, final int width)
 	{
 		Bitmap watermark;
 		byte[] waterData;
@@ -876,10 +876,10 @@ public abstract class CoreActivity extends DocumentActivity
 			waterWidth = watermark.getWidth();
 			waterHeight = watermark.getHeight();
 
-			return new LibRaw.Watermark(
+			return new Watermark(
 					waterWidth,
 					waterHeight,
-					LibRaw.Margins.LowerRight,
+					Margins.LowerRight,
 					waterData);
 		}
 		else if (showWatermark)
@@ -893,7 +893,7 @@ public abstract class CoreActivity extends DocumentActivity
 			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
 			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
 			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
-			LibRaw.Margins margins = new LibRaw.Margins(top, left, bottom, right);
+			Margins margins = new Margins(top, left, bottom, right);
 
 			if (watermarkText.isEmpty())
 			{
@@ -908,7 +908,7 @@ public abstract class CoreActivity extends DocumentActivity
 				waterWidth = watermark.getWidth();
 				waterData = ImageUtils.getBitmapBytes(watermark);
 				waterHeight = watermark.getHeight();
-				return new LibRaw.Watermark(
+				return new Watermark(
 						waterWidth,
 						waterHeight,
 						margins,
@@ -921,7 +921,7 @@ public abstract class CoreActivity extends DocumentActivity
 	protected void saveThumbnails(List<Uri> images, Uri destination)
 	{
 		// Just grab the first width and assume that will be sufficient for all images
-		LibRaw.Watermark wm = null;
+		Watermark wm = null;
 		try (Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
 		{
 			if (c != null && c.moveToFirst())
@@ -965,7 +965,7 @@ public abstract class CoreActivity extends DocumentActivity
 			List<Uri> totalImages = (List<Uri>) params[0];
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 			Uri destinationFolder = (Uri) params[1];
-			LibRaw.Watermark wm = (LibRaw.Watermark) params[2];
+			Watermark wm = (Watermark) params[2];
 
 			boolean success = true;
 			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
