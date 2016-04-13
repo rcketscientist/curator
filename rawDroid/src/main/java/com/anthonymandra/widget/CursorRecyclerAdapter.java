@@ -24,6 +24,7 @@ package com.anthonymandra.widget;
  */
 
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
@@ -74,6 +75,7 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 	/**
 	 * @see android.widget.ListAdapter#getItem(int)
 	 */
+	@Nullable
 	public Object getItem(int position) {
 		if (mDataValid && mCursor != null) {
 			mCursor.moveToPosition(position);

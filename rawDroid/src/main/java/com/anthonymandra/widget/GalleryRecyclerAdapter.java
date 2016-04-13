@@ -3,6 +3,7 @@ package com.anthonymandra.widget;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -309,9 +310,12 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				.into(vh.mImageView);
 	}
 
+	@Nullable
 	public Uri getUri(int position)
 	{
 		Cursor c = (Cursor)getItem(position);
+		if (c == null)
+			return null;
 		return Uri.parse(c.getString((c.getColumnIndex(Meta.Data.URI))));
 	}
 
