@@ -239,6 +239,9 @@ public class KeywordProvider extends PathEnumerationProvider
                             new String[]{Long.toString(parents.get(depth - 1))},
                             null);
 
+                    if (c == null)
+                        return false;
+                    
                     c.moveToFirst();
                     List<String> synonyms = new ArrayList<>();
                     String[] activeSynonyms = ImageUtils.convertStringToArray(
