@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/rawprocessor/jpeg" />
             <option value="$PROJECT_DIR$/rawprocessor/library" />
             <option value="$PROJECT_DIR$/rawprocessor/raw" />
+            <option value="$PROJECT_DIR$/rawprocessor/tiff" />
             <option value="$PROJECT_DIR$/showcaseView" />
             <option value="$PROJECT_DIR$/showcaseView/library" />
           </set>
@@ -32,6 +33,7 @@
             <option value="$PROJECT_DIR$/rawprocessor/jpeg" />
             <option value="$PROJECT_DIR$/rawprocessor/library" />
             <option value="$PROJECT_DIR$/rawprocessor/raw" />
+            <option value="$PROJECT_DIR$/rawprocessor/tiff" />
             <option value="$PROJECT_DIR$/showcaseView" />
             <option value="$PROJECT_DIR$/showcaseView/library" />
           </set>

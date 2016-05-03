@@ -4,6 +4,7 @@ include ':DocumentActivity:library'
 // rawprocessor
 include ':jpeg'
 include ':raw'
+include ':tiff'
 include ':rawprocessor'
 
 // exiv2
@@ -17,6 +18,7 @@ include ':rawDroid'
 // Rawprocessor redirection
 project(':jpeg').projectDir = new File('rawprocessor/jpeg')
 project(':raw').projectDir = new File('rawprocessor/raw')
+project(':tiff').projectDir = new File('rawprocessor/tiff')
 //project(':expat').projectDir = new File('rawprocessor/expat')
 //project(':exiv2').projectDir = new File('rawprocessor/exiv2')
 project(':rawprocessor').projectDir = new File('rawprocessor/library')

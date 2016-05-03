@@ -13,6 +13,7 @@
       <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/showcaseView.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/library/showcaseView-library.iml" filepath="$PROJECT_DIR$/showcaseView/library/showcaseView-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/tiff/tiff.iml" filepath="$PROJECT_DIR$/rawprocessor/tiff/tiff.iml" />
     </modules>
   </component>
 </project>
