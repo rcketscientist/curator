@@ -35,3 +35,4 @@ obj
 /rawDroid/build/intermediates
 /rawDroid/build/outputs/logs
 /build
+*.iml
