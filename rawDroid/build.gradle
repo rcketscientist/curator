@@ -99,6 +99,7 @@ dependencies {
     compile('com.afollestad:material-cab:0.1.9@aar') {
         transitive = true
     }
+    testCompile 'junit:junit:4.12'
 }
 crashlytics {
     enableNdk true

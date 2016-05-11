@@ -22,7 +22,7 @@ import com.anthonymandra.framework.LocalImage;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
-import com.anthonymandra.rawprocessor.Executor;
+import com.anthonymandra.imageprocessor.Executor;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
 

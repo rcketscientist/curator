@@ -23,8 +23,8 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawprocessor.LibRaw;
-import com.anthonymandra.rawprocessor.Margins;
+import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Margins;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
@@ -236,7 +236,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         try (
             ParcelFileDescriptor source = getContext().getContentResolver().openFileDescriptor(uri, "r");
             ParcelFileDescriptor dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE)) {
-            return LibRaw.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd());
+            return ImageProcessor.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd());
         }
         catch(Exception e)
         {
@@ -251,7 +251,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         try (
             ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(source, "r");
             ParcelFileDescriptor dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE)) {
-            return LibRaw.writeThumbFdWatermark(src.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+            return ImageProcessor.writeThumbFdWatermark(src.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
         }
         catch(Exception e)
         {

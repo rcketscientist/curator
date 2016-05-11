@@ -18,9 +18,8 @@ import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.rawprocessor.Exif;
-import com.anthonymandra.rawprocessor.LibRaw;
-import com.anthonymandra.rawprocessor.TiffDecoder;
+import com.anthonymandra.imageprocessor.Exif;
+import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.util.ImageUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -90,7 +89,7 @@ public class LocalImage extends MetaMedia {
 			if (ImageUtils.isTiffMime(mType))
 			{
 				int[] dim = new int[2];
-				int[] imageData = TiffDecoder.getImageFd(mName, fd, dim);
+				int[] imageData = ImageProcessor.getImageFd(mName, fd, dim);
 				width = dim[0];
 //				thumbWidth = width;
 				height = dim[1];
@@ -106,7 +105,7 @@ public class LocalImage extends MetaMedia {
 
 			// Raw images
 			String[] exif = new String[12];
-			byte[] imageData = LibRaw.getThumb(fd, exif);
+			byte[] imageData = ImageProcessor.getThumb(fd, exif);
 
 			ContentProviderClient cpc = null;
 			Cursor c = null;

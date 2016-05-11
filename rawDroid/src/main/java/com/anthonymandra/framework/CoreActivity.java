@@ -48,9 +48,9 @@ import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
-import com.anthonymandra.rawprocessor.LibRaw;
-import com.anthonymandra.rawprocessor.Margins;
-import com.anthonymandra.rawprocessor.Watermark;
+import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Margins;
+import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
@@ -852,12 +852,12 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected boolean writeThumb(ParcelFileDescriptor source, ParcelFileDescriptor destination)
 	{
-		return LibRaw.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
+		return ImageProcessor.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
 	}
 
 	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
 	                                      int waterWidth, int waterHeight, Margins waterMargins) {
-		return LibRaw.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+		return ImageProcessor.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
 	@Nullable

@@ -36,9 +36,8 @@ import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.rawprocessor.Exif;
-import com.anthonymandra.rawprocessor.LibRaw;
-import com.anthonymandra.rawprocessor.TiffDecoder;
+import com.anthonymandra.imageprocessor.Exif;
+import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
@@ -1049,7 +1048,7 @@ public class ImageUtils
     private static byte[] getTiffImage(int fileDescriptor, ContentValues values)
     {
         int[] dim = new int[2];
-        int[] imageData = TiffDecoder.getImageFd("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
+        int[] imageData = ImageProcessor.getImageFd("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
         int width = dim[0];
         int height = dim[1];
         values.put(Meta.Data.WIDTH, width);
@@ -1068,7 +1067,7 @@ public class ImageUtils
     private static byte[] getRawThumb(int fileDescriptor, ContentValues values)
     {
         String[] exif = new String[12];
-        byte[] imageBytes = LibRaw.getThumb(fileDescriptor, exif);
+        byte[] imageBytes = ImageProcessor.getThumb(fileDescriptor, exif);
 
         try
         {
