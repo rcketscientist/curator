@@ -852,12 +852,12 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected boolean writeThumb(ParcelFileDescriptor source, ParcelFileDescriptor destination)
 	{
-		return ImageProcessor.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
+		return ImageProcessor.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), null, null, 0, 0);
 	}
 
 	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
 	                                      int waterWidth, int waterHeight, Margins waterMargins) {
-		return ImageProcessor.writeThumbFdWatermark(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+		return ImageProcessor.writeThumbFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
 	@Nullable
