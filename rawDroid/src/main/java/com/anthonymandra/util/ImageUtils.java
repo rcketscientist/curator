@@ -1048,7 +1048,7 @@ public class ImageUtils
     private static byte[] getTiffImage(int fileDescriptor, ContentValues values)
     {
         int[] dim = new int[2];
-        int[] imageData = ImageProcessor.getTiffFd("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
+        int[] imageData = ImageProcessor.getTiff("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
         int width = dim[0];
         int height = dim[1];
         values.put(Meta.Data.WIDTH, width);

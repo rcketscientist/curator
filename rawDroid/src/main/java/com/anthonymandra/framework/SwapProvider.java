@@ -236,7 +236,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         try (
             ParcelFileDescriptor source = getContext().getContentResolver().openFileDescriptor(uri, "r");
             ParcelFileDescriptor dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE)) {
-            return ImageProcessor.writeThumbAsJpgFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd(), null, null, 0, 0);
+            return ImageProcessor.writeThumb(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd());
         }
         catch(Exception e)
         {
@@ -251,7 +251,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         try (
             ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(source, "r");
             ParcelFileDescriptor dest = ParcelFileDescriptor.open(destination, ParcelFileDescriptor.MODE_READ_WRITE)) {
-            return ImageProcessor.writeThumbAsJpgFd(src.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+            return ImageProcessor.writeThumb(src.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, dest.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
         }
         catch(Exception e)
         {

@@ -85,7 +85,7 @@
     <string name="warningWriteDisabled">You have selected a folder that has write access disabled.</string>
     <string name="warningWriteDisabledKitKat">You have selected a folder that has write access disabled.  Google disabled sdcard write access in Android 4.4.</string>
     <string name="warningAccessError">Access Error</string>
-	<string name="warningNoImages">No new images found.  Your can clear cache (Help:Clear Thumbnail Cache) to force reset.</string>
+    <string name="warningNoImages">No new images found.  Your can clear cache (Help:Clear Thumbnail Cache) to force reset.</string>
 
     <!-- Preferences -->
     <string name="prefTitleImageInterface">Automatically display interface</string>
@@ -136,7 +136,7 @@
     <string name="prefSummaryUseImmersive">(Android 4.4+) Hide nav and status bars until swiped in.</string>
 
     <string name="buypro">Click here to upgrade to Rawdroid Pro to unlock features and improve speed!</string>
-    
+
     <string-array name="showOptions">
         <item>Automatic</item>
         <item>Always</item>
@@ -170,8 +170,8 @@
     <string name="addKeyword">Add Keyword</string>
     <string name="about">About</string>
     <string name="search">Search</string>
-	<string name="excludedFolders">Excluded Folders</string>
-	<string name="excludedSummary">Folders that are not scanned for images</string>
+    <string name="excludedFolders">Excluded Folders</string>
+    <string name="excludedSummary">Folders that are not scanned for images</string>
     <string name="excludedMessage">Tap to remove folders from the exclusion list</string>
 
     <!-- Dialogs -->
@@ -203,12 +203,12 @@
 
     <!-- Locations -->
     <string name="margins">Margins</string>
-	<string name="lowerLeft">Lower Left</string>
-	<string name="lowerRight">Lower Right</string>
-	<string name="upperLeft">Upper Left</string>
-	<string name="upperRight">Upper Right</string>
+    <string name="lowerLeft">Lower Left</string>
+    <string name="lowerRight">Lower Right</string>
+    <string name="upperLeft">Upper Left</string>
+    <string name="upperRight">Upper Right</string>
     <string name="next">Next</string>
-    
+
     <!-- Tutorials -->
     <string name="tutorialWelcomeTitle">Welcome to the Rawdroid Tutorial</string>
     <string name="tutorialWelcomeText">The tutorial is interactive and can be advanced by clicking the next button.</string>
@@ -307,4 +307,7 @@
     <string name="selected">" selected"</string>
     <string name="setAsDefault">Set as default</string>
     <string name="noSettings">No Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

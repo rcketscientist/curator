@@ -24,7 +24,8 @@ android {
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}" +                                 // Always include major and minor M.m
                 ((versionPatch != 0 || versionBuild != 0) ? ".${versionPatch}" : "") +  // Discard patch and build only if both are zero M.m.p
-                ((versionBuild != 0) ? ".${versionBuild}" : "")                         // Discard build only if build is zero M.m.p.bb
+                ((versionBuild != 0) ? ".${versionBuild}" : "")
+        // Discard build only if build is zero M.m.p.bb
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
     }
 
@@ -46,6 +47,7 @@ android {
         debug {
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
+            jniDebuggable true
         }
     }
 
@@ -87,8 +89,7 @@ dependencies {
     compile project(':metadata-extractor')
     compile project(':api')
     compile project(':DocumentActivity:library')
-    compile 'com.android.support:design:23.4.0' //includes support-v4 and appcompat-v7
-    compile 'com.github.bumptech.glide:glide:3.7.0'
+    //includes support-v4 and appcompat-v7
 
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
@@ -100,6 +101,9 @@ dependencies {
         transitive = true
     }
     testCompile 'junit:junit:4.12'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.android.support:support-v4:23.4.0'
 }
 crashlytics {
     enableNdk true

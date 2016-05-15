@@ -852,12 +852,12 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected boolean writeThumb(ParcelFileDescriptor source, ParcelFileDescriptor destination)
 	{
-		return ImageProcessor.writeThumbAsJpgFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), null, null, 0, 0);
+		return ImageProcessor.writeThumb(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
 	}
 
 	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
 	                                      int waterWidth, int waterHeight, Margins waterMargins) {
-		return ImageProcessor.writeThumbAsJpgFd(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
+		return ImageProcessor.writeThumb(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
 	}
 
 	@Nullable
@@ -916,6 +916,158 @@ public abstract class CoreActivity extends DocumentActivity
 			}
 		}
 		return null;
+	}
+
+	//TODO: CopyThumb and SaveTif should be able to be combined with a switch for which native to call
+	protected void saveTiff(List<Uri> images, Uri destination)
+	{
+		// Just grab the first width and assume that will be sufficient for all images
+		Watermark wm = null;
+		try (Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
+		{
+			if (c != null && c.moveToFirst())
+			{
+				final int width = c.getInt(Meta.WIDTH_COLUMN);
+				wm = getWatermark(Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro, width);
+			}
+		}
+		new SaveTiffTask(mProgressDialog).execute(images, destination, wm);
+	}
+
+	public class SaveTiffTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
+	{
+		final ProgressDialog mProgressDialog;
+
+		public SaveTiffTask(ProgressDialog progress)
+		{
+			mProgressDialog = progress;
+		}
+
+		@Override
+		protected void onPreExecute()
+		{
+			if (mProgressDialog != null)
+			{
+				mProgressDialog.setTitle(R.string.exportingThumb);
+				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				mProgressDialog.setCanceledOnTouchOutside(true);
+				mProgressDialog.setOnCancelListener(this);
+				mProgressDialog.show();
+			}
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		protected Boolean doInBackground(Object... params)
+		{
+			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
+				throw new IllegalArgumentException();
+
+			List<Uri> totalImages = (List<Uri>) params[0];
+			List<Uri> remainingImages = new ArrayList<>(totalImages);
+			Uri destinationFolder = (Uri) params[1];
+			Watermark wm = (Watermark) params[2];
+
+			boolean success = true;
+			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
+			for (Uri toThumb : totalImages)
+			{
+				setWriteResume(WriteActions.COPY_THUMB, new Object[] { remainingImages } );
+				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toThumb);
+				UsefulDocumentFile destinationTree = null;
+				try
+				{
+					destinationTree = getDocumentFile(destinationFolder, true, true);
+				}
+				catch (WritePermissionException e)
+				{
+					e.printStackTrace();
+				}
+
+				if (destinationTree == null)
+				{
+					success = false;
+					continue;
+				}
+
+				String tiffFileName = FileUtil.swapExtention(source.getName(), "tiff" );
+				Uri desiredTiff = DocumentUtil.getChildUri(destinationFolder, tiffFileName);
+				UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(CoreActivity.this, desiredTiff);
+				if (destinationFile.exists())
+					continue;   //don't overwrite
+
+				destinationFile = destinationTree.createFile(null, tiffFileName);
+
+				publishProgress(source.getName());
+
+				ParcelFileDescriptor outputPfd = null;
+				ParcelFileDescriptor inputPfd = null;
+				try
+				{
+					inputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, source.getUri(), "r");
+					outputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile.getUri(), "w");
+					if (outputPfd == null)
+					{
+						success = false;
+						continue;
+					}
+
+					if (wm != null)
+					{
+						success = ImageProcessor.writeTiff(tiffFileName, inputPfd.getFd(),
+								outputPfd.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
+								wm.getWaterWidth(), wm.getWaterHeight()) && success;
+					}
+					else
+					{
+						success = ImageProcessor.writeTiff(tiffFileName, inputPfd.getFd(),
+								outputPfd.getFd());
+					}
+					onImageAdded(destinationFile.getUri());
+					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile.getUri()));
+					remainingImages.remove(toThumb);
+				}
+				catch(Exception e)
+				{
+					success = false;
+				}
+				finally
+				{
+					Utils.closeSilently(inputPfd);
+					Utils.closeSilently(outputPfd);
+				}
+
+				publishProgress();
+			}
+			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+			return success; //not used.
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result)
+		{
+			onImageSetChanged();
+			mProgressDialog.dismiss();
+		}
+
+		@Override
+		protected void onProgressUpdate(String... values)
+		{
+			if (values.length > 0)
+			{
+				mProgressDialog.setMessage(values[0]);
+			}
+			else
+			{
+				mProgressDialog.incrementProgressBy(1);
+			}
+		}
+
+		@Override
+		public void onCancel(DialogInterface dialog)
+		{
+			this.cancel(true);
+		}
 	}
 
 	protected void saveThumbnails(List<Uri> images, Uri destination)

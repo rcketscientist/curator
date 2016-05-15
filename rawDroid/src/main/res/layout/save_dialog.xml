@@ -2,40 +2,98 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_height="wrap_content"
                 tools:context=".GalleryActivity"
-    >
-
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabFormats"
+                android:textAlignment="center">
+    <TabHost
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabMode="fixed">
-        <android.support.design.widget.TabItem
-            android:text="JPG"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-        <android.support.design.widget.TabItem
-            android:text="TIF"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"/>
-    </android.support.design.widget.TabLayout>
+        android:id="@+id/tabHost"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="20dp">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tabFormats"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </TabWidget>
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/JPG"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#535353"
+                    android:padding="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Quality"
+                        android:id="@+id/labelQuality"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="100"
+                        android:id="@+id/valueQuality"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignTop="@+id/seekBarQuality"
+                        android:layout_alignBottom="@+id/seekBarQuality"
+                        android:textAlignment="center"
+                        android:gravity="center"/>
+
+                    <SeekBar
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/seekBarQuality"
+                        android:max="100"
+                        android:progress="100"
+                        android:layout_below="@+id/labelQuality"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@+id/valueQuality"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        style="@android:style/Widget.Material.SeekBar"
+                        android:layout_marginEnd="5dp"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/TIFF"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save"
         android:id="@+id/buttonSave"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:textAlignment="center"
+        android:layout_below="@+id/tabHost"
         style="?attr/borderlessButtonStyle"/>
 
     <Button
@@ -43,18 +101,18 @@
         android:layout_height="wrap_content"
         android:text="@android:string/cancel"
         android:id="@+id/buttonCancel"
-        android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/buttonSave"
-        style="?attr/borderlessButtonStyle"/>
+        style="?attr/borderlessButtonStyle"
+        android:layout_below="@+id/tabHost"
+        android:layout_toStartOf="@+id/buttonSave"/>
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/setAsDefault"
         android:id="@+id/checkBoxSetDefault"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/buttonCancel"
-        android:layout_alignTop="@+id/buttonCancel"/>
+        android:layout_alignBottom="@+id/buttonCancel"
+        android:layout_alignTop="@+id/buttonCancel"
+        android:layout_below="@+id/tabHost"/>
 
 </RelativeLayout>

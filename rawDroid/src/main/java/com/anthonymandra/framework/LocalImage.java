@@ -89,7 +89,7 @@ public class LocalImage extends MetaMedia {
 			if (ImageUtils.isTiffMime(mType))
 			{
 				int[] dim = new int[2];
-				int[] imageData = ImageProcessor.getTiffFd(mName, fd, dim);
+				int[] imageData = ImageProcessor.getTiff(mName, fd, dim);
 				width = dim[0];
 //				thumbWidth = width;
 				height = dim[1];

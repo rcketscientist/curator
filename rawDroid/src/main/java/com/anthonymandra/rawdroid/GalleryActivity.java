@@ -27,11 +27,9 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
@@ -51,7 +49,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TabHost;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -137,7 +134,7 @@ public class GalleryActivity extends CoreActivity implements
 	private static final int REQUEST_SAVE_JPG_DIR = 15;
     private static final int REQUEST_UPDATE_PHOTO = 16;
 	private static final int REQUEST_ACCESS_USB = 17;
-	private static final int REQUEST_SAVE_AS_DIR = 18;
+	private static final int REQUEST_SAVE_TIF_DIR = 18;
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
@@ -707,10 +704,10 @@ public class GalleryActivity extends CoreActivity implements
                     handleExportThumbResult(data.getData());
 				}
 				break;
-			case REQUEST_SAVE_AS_DIR:
+			case REQUEST_SAVE_TIF_DIR:
 				if (resultCode == RESULT_OK && data != null)
 				{
-					handleExportThumbResult(data.getData());
+					handleSaveTifResult(data.getData());
 				}
 				break;
             case REQUEST_UPDATE_PHOTO:
@@ -770,6 +767,20 @@ public class GalleryActivity extends CoreActivity implements
 
 	    saveThumbnails(mItemsForIntent, destination);
     }
+
+	private void handleSaveTifResult(final Uri destination)
+	{
+		// TODO: Might want to figure out a way to get free space to introduce this check again
+//        long importSize = getSelectedImageSize();
+//        if (destination.getFreeSpace() < importSize)
+//        {
+//            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+//            return;
+//        }
+
+
+		saveTiff(mItemsForIntent, destination);
+	}
 
 	private void handleUsbAccessRequest(Uri treeUri)
 	{
@@ -887,63 +898,70 @@ public class GalleryActivity extends CoreActivity implements
 
 	private void requestSaveAsDestination()
 	{
+		storeSelectionForIntent();	// dialog resets CAB, so store first
+
 		final Dialog dialog = new Dialog(this);
-		dialog.setContentView(R.layout.save_dialog3);
+		dialog.setContentView(R.layout.save_dialog);
 		dialog.setTitle(R.string.saveAs);
 
-//		Button save = (Button) dialog.findViewById(R.id.buttonSave);
-//		save.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				//TODO: SAVE
-//			}
-//		});
-//		Button cancel = (Button) dialog.findViewById(R.id.buttonCancel);
-//		cancel.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				dialog.dismiss();
-//			}
-//		});
+		final TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
+		tabs.setup();
 
-//		final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-////		setupViewPager(viewPager);
-//
-//		final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabFormats);
-//		tabLayout.setupWithViewPager(viewPager);
+		TabHost.TabSpec jpg = tabs.newTabSpec("JPG");
+		TabHost.TabSpec tif = tabs.newTabSpec("TIF");
 
+		jpg.setContent(R.id.JPG);
+		jpg.setIndicator("JPG");
+		tabs.addTab(jpg);
 
+		tif.setContent(R.id.TIFF);
+		tif.setIndicator("TIFF");
+		tabs.addTab(tif);
 
-//		final TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
-//		tabs.setup();
-//
-//		TabHost.TabSpec jpg = tabs.newTabSpec("JPG");
-//		TabHost.TabSpec tif = tabs.newTabSpec("TIF");
-//
-//		jpg.setContent(R.id.JPG);
-//		jpg.setIndicator("JPG");
-//		tabs.addTab(jpg);
-//
-//		tif.setContent(R.id.TIF);
-//		tif.setIndicator("TIF");
-//		tabs.addTab(tif);
+		final TextView qualityText = (TextView) dialog.findViewById(R.id.valueQuality);
+		final SeekBar qualityBar = (SeekBar) dialog.findViewById(R.id.seekBarQuality);
+		qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				qualityText.setText(String.valueOf(progress));
+			}
 
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
 
-		// set the custom dialog components - text, image and button
-//		final TextView qualityText = (TextView) dialog.findViewById(R.id.valueQuality);
-//		final SeekBar qualityBar = (SeekBar) dialog.findViewById(R.id.seekBarQuality);
-//		qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//			@Override
-//			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//				qualityText.setText(String.valueOf(progress));
-//			}
-//
-//			@Override
-//			public void onStartTrackingTouch(SeekBar seekBar) {}
-//
-//			@Override
-//			public void onStopTrackingTouch(SeekBar seekBar) {}
-//		});
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+		});
+
+		Button save = (Button) dialog.findViewById(R.id.buttonSave);
+		save.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent getDest = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+				int type;
+				switch(tabs.getCurrentTab())
+				{
+					case 0: //JPG
+						type = REQUEST_SAVE_JPG_DIR;
+						break;
+					case 1: //TIF
+						type = REQUEST_SAVE_TIF_DIR;
+						break;
+					default:
+						type = REQUEST_SAVE_JPG_DIR;
+						break;
+				}
+				dialog.dismiss();
+				startActivityForResult(getDest, type);
+			}
+		});
+		Button cancel = (Button) dialog.findViewById(R.id.buttonCancel);
+		cancel.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
 
 		dialog.show();
 	}
