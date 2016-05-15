@@ -5,7 +5,7 @@
 <string name="positive">Annehmen</string>
 <string name="negative">Ablehnen</string>
 <string name="neutral">Abbrechen</string>
-<string name="save_as">Speichern unter ...</string>
+<string name="saveAs">Speichern unter ...</string>
 <string name="export">Exportieren</string>
 <string name="wallpaper">Als Hintergrund wählen</string>
 <string name="edit">Bearbeiten mit ...</string>

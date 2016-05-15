@@ -4,7 +4,7 @@
 <string name="app_name">RawDroid</string>
 <string name="neutral">Отмена</string>
 <string name="DecodeAll">Декодировать все</string>
-<string name="save_as">сохранить как...</string>
+<string name="saveAs">сохранить как...</string>
 <string name="wallpaper">Установить как фон</string>
 <string name="edit">Редактировать в...</string>
 <string name="help">помощь</string>

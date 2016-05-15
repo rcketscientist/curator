@@ -5,7 +5,7 @@
 <string name="positive">接受</string>
 <string name="negative">拒絕</string>
 <string name="neutral">取消</string>
-<string name="save_as">另存新檔</string>
+<string name="saveAs">另存新檔</string>
 <string name="export">匯出</string>
 <string name="wallpaper">設定為桌布</string>
 <string name="edit">用...修改</string>

@@ -5,7 +5,7 @@
 <string name="positive">Επιβεβαίωση</string>
 <string name="negative">Απόρριψη</string>
 <string name="neutral">Ακύρωση</string>
-<string name="save_as">Αποθήκευση ως...</string>
+<string name="saveAs">Αποθήκευση ως...</string>
 <string name="export">Εξαγωγή</string>
 <string name="wallpaper">Ορισμός ως ταπετσαρία</string>
 <string name="edit">Επεξεργασία με...</string>

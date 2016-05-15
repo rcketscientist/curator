@@ -3,6 +3,7 @@ package com.anthonymandra.rawdroid;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,9 +27,11 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
@@ -43,8 +46,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TabHost;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
@@ -129,6 +137,7 @@ public class GalleryActivity extends CoreActivity implements
 	private static final int REQUEST_SAVE_JPG_DIR = 15;
     private static final int REQUEST_UPDATE_PHOTO = 16;
 	private static final int REQUEST_ACCESS_USB = 17;
+	private static final int REQUEST_SAVE_AS_DIR = 18;
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
@@ -698,6 +707,12 @@ public class GalleryActivity extends CoreActivity implements
                     handleExportThumbResult(data.getData());
 				}
 				break;
+			case REQUEST_SAVE_AS_DIR:
+				if (resultCode == RESULT_OK && data != null)
+				{
+					handleExportThumbResult(data.getData());
+				}
+				break;
             case REQUEST_UPDATE_PHOTO:
                 if (resultCode == RESULT_OK && data != null)
                 {
@@ -807,6 +822,9 @@ public class GalleryActivity extends CoreActivity implements
 			case R.id.contextDelete:
 				deleteImages(getSelectedImages());
 				return true;
+			case R.id.contextSaveAs:
+				requestSaveAsDestination();
+				return true;
 			case R.id.contextSaveJpg:
 				requestSaveJpgDestination();
 				return true;
@@ -866,6 +884,71 @@ public class GalleryActivity extends CoreActivity implements
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		startActivityForResult(intent, REQUEST_COPY_DIR);
 	}
+
+	private void requestSaveAsDestination()
+	{
+		final Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.save_dialog3);
+		dialog.setTitle(R.string.saveAs);
+
+//		Button save = (Button) dialog.findViewById(R.id.buttonSave);
+//		save.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				//TODO: SAVE
+//			}
+//		});
+//		Button cancel = (Button) dialog.findViewById(R.id.buttonCancel);
+//		cancel.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				dialog.dismiss();
+//			}
+//		});
+
+//		final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+////		setupViewPager(viewPager);
+//
+//		final TabLayout tabLayout = (TabLayout) findViewById(R.id.tabFormats);
+//		tabLayout.setupWithViewPager(viewPager);
+
+
+
+//		final TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
+//		tabs.setup();
+//
+//		TabHost.TabSpec jpg = tabs.newTabSpec("JPG");
+//		TabHost.TabSpec tif = tabs.newTabSpec("TIF");
+//
+//		jpg.setContent(R.id.JPG);
+//		jpg.setIndicator("JPG");
+//		tabs.addTab(jpg);
+//
+//		tif.setContent(R.id.TIF);
+//		tif.setIndicator("TIF");
+//		tabs.addTab(tif);
+
+
+		// set the custom dialog components - text, image and button
+//		final TextView qualityText = (TextView) dialog.findViewById(R.id.valueQuality);
+//		final SeekBar qualityBar = (SeekBar) dialog.findViewById(R.id.seekBarQuality);
+//		qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//			@Override
+//			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//				qualityText.setText(String.valueOf(progress));
+//			}
+//
+//			@Override
+//			public void onStartTrackingTouch(SeekBar seekBar) {}
+//
+//			@Override
+//			public void onStopTrackingTouch(SeekBar seekBar) {}
+//		});
+
+		dialog.show();
+	}
+
+
 
     private void requestSaveJpgDestination()
     {

@@ -24,7 +24,7 @@
         android:id="@+id/view_save"
         android:orderInCategory="21"
         app:showAsAction="never"
-        android:title="@string/save_as"/>
+        android:title="@string/saveAs"/>
     <item
         android:id="@+id/view_wallpaper"
         android:orderInCategory="27"

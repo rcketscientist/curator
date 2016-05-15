@@ -5,7 +5,7 @@
 <string name="positive">了解</string>
 <string name="negative">断る</string>
 <string name="neutral">キャンセル</string>
-<string name="save_as">JPEGで保存</string>
+<string name="saveAs">JPEGで保存</string>
 <string name="export">出力</string>
 <string name="wallpaper">壁紙に設定</string>
 <string name="edit">編集</string>
