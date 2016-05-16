@@ -993,10 +993,9 @@ public abstract class CoreActivity extends DocumentActivity
 				String tiffFileName = FileUtil.swapExtention(source.getName(), "tiff" );
 				Uri desiredTiff = DocumentUtil.getChildUri(destinationFolder, tiffFileName);
 				UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(CoreActivity.this, desiredTiff);
-				if (destinationFile.exists())
-					continue;   //don't overwrite
 
-				destinationFile = destinationTree.createFile(null, tiffFileName);
+				if (!destinationFile.exists())
+					destinationFile = destinationTree.createFile(null, tiffFileName);
 
 				publishProgress(source.getName());
 
