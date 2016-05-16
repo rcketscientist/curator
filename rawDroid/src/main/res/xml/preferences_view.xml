@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <PreferenceCategory android:title="@string/gallery" >
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="prefKeyShowXmpFiles"
-            android:summary="@string/prefSummaryShowXmpFiles"
-            android:title="@string/prefTitleShowXmpFiles" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="prefKeyShowNativeFiles"
-            android:summary="@string/prefSummaryShowNativeFiles"
-            android:title="@string/prefTitleShowNativeFiles" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="prefKeyShowUnknownFiles"
-            android:summary="@string/prefSummaryShowUnknownFiles"
-            android:title="@string/prefTitleShowUnknownFiles" />
-    </PreferenceCategory>
+    <!--<PreferenceCategory android:title="@string/gallery" >-->
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="prefKeyShowXmpFiles"-->
+            <!--android:summary="@string/prefSummaryShowXmpFiles"-->
+            <!--android:title="@string/prefTitleShowXmpFiles" />-->
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:key="prefKeyShowNativeFiles"-->
+            <!--android:summary="@string/prefSummaryShowNativeFiles"-->
+            <!--android:title="@string/prefTitleShowNativeFiles" />-->
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="prefKeyShowUnknownFiles"-->
+            <!--android:summary="@string/prefSummaryShowUnknownFiles"-->
+            <!--android:title="@string/prefTitleShowUnknownFiles" />-->
+    <!--</PreferenceCategory>-->
     <PreferenceCategory android:title="@string/viewer" >
         <!--<CheckBoxPreference-->
             <!--android:key="prefKeyUseLegacyViewer"-->
