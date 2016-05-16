@@ -24,14 +24,14 @@ public class ViewerChooser extends Activity {
             editor.apply();
         }
 
-        if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
-        {
-            viewer.setClass(this, LegacyViewerActivity.class);
-        }
-        else
-        {
+//        if(settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
+//        {
+//            viewer.setClass(this, LegacyViewerActivity.class);
+//        }
+//        else
+//        {
             viewer.setClass(this, ImageViewActivity.class);
-        }
+//        }
 
 //        viewer.setData(getIntent().getData());
         viewer.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);   //Ensure result is passed to caller
