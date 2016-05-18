@@ -48,6 +48,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +64,9 @@ import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.image.ImageConfiguration;
+import com.anthonymandra.image.JpegConfiguration;
+import com.anthonymandra.image.TiffConfiguration;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
@@ -131,10 +135,8 @@ public class GalleryActivity extends CoreActivity implements
 
 	// Request codes
 	private static final int REQUEST_COPY_DIR = 12;
-	private static final int REQUEST_SAVE_JPG_DIR = 15;
     private static final int REQUEST_UPDATE_PHOTO = 16;
 	private static final int REQUEST_ACCESS_USB = 17;
-	private static final int REQUEST_SAVE_TIF_DIR = 18;
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
@@ -698,18 +700,6 @@ public class GalleryActivity extends CoreActivity implements
 					handleCopyDestinationResult(data.getData());
 				}
 				break;
-			case REQUEST_SAVE_JPG_DIR:
-				if (resultCode == RESULT_OK && data != null)
-				{
-                    handleExportThumbResult(data.getData());
-				}
-				break;
-			case REQUEST_SAVE_TIF_DIR:
-				if (resultCode == RESULT_OK && data != null)
-				{
-					handleSaveTifResult(data.getData());
-				}
-				break;
             case REQUEST_UPDATE_PHOTO:
                 if (resultCode == RESULT_OK && data != null)
                 {
@@ -753,34 +743,6 @@ public class GalleryActivity extends CoreActivity implements
 //		}
 //		return selectionSize;
 //	}
-
-    private void handleExportThumbResult(final Uri destination)
-    {
-		// TODO: Might want to figure out a way to get free space to introduce this check again
-//        long importSize = getSelectedImageSize();
-//        if (destination.getFreeSpace() < importSize)
-//        {
-//            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-//            return;
-//        }
-		
-
-	    saveThumbnails(mItemsForIntent, destination);
-    }
-
-	private void handleSaveTifResult(final Uri destination)
-	{
-		// TODO: Might want to figure out a way to get free space to introduce this check again
-//        long importSize = getSelectedImageSize();
-//        if (destination.getFreeSpace() < importSize)
-//        {
-//            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-//            return;
-//        }
-
-
-		saveTiff(mItemsForIntent, destination);
-	}
 
 	private void handleUsbAccessRequest(Uri treeUri)
 	{
@@ -832,12 +794,6 @@ public class GalleryActivity extends CoreActivity implements
 				return true;
 			case R.id.contextDelete:
 				deleteImages(getSelectedImages());
-				return true;
-			case R.id.contextSaveAs:
-				requestSaveAsDestination();
-				return true;
-			case R.id.contextSaveJpg:
-				requestSaveJpgDestination();
 				return true;
 			case R.id.contextCopy:
 				requestCopyDestination();
@@ -896,85 +852,6 @@ public class GalleryActivity extends CoreActivity implements
 		startActivityForResult(intent, REQUEST_COPY_DIR);
 	}
 
-	private void requestSaveAsDestination()
-	{
-		storeSelectionForIntent();	// dialog resets CAB, so store first
-
-		final Dialog dialog = new Dialog(this);
-		dialog.setContentView(R.layout.save_dialog);
-		dialog.setTitle(R.string.saveAs);
-
-		final TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
-		tabs.setup();
-
-		TabHost.TabSpec jpg = tabs.newTabSpec("JPG");
-		TabHost.TabSpec tif = tabs.newTabSpec("TIF");
-
-		jpg.setContent(R.id.JPG);
-		jpg.setIndicator("JPG");
-		tabs.addTab(jpg);
-
-		tif.setContent(R.id.TIFF);
-		tif.setIndicator("TIFF");
-		tabs.addTab(tif);
-
-		final TextView qualityText = (TextView) dialog.findViewById(R.id.valueQuality);
-		final SeekBar qualityBar = (SeekBar) dialog.findViewById(R.id.seekBarQuality);
-		qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-				qualityText.setText(String.valueOf(progress));
-			}
-
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {}
-
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {}
-		});
-
-		Button save = (Button) dialog.findViewById(R.id.buttonSave);
-		save.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent getDest = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-				int type;
-				switch(tabs.getCurrentTab())
-				{
-					case 0: //JPG
-						type = REQUEST_SAVE_JPG_DIR;
-						break;
-					case 1: //TIF
-						type = REQUEST_SAVE_TIF_DIR;
-						break;
-					default:
-						type = REQUEST_SAVE_JPG_DIR;
-						break;
-				}
-				dialog.dismiss();
-				startActivityForResult(getDest, type);
-			}
-		});
-		Button cancel = (Button) dialog.findViewById(R.id.buttonCancel);
-		cancel.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
-
-		dialog.show();
-	}
-
-
-
-    private void requestSaveJpgDestination()
-    {
-	    storeSelectionForIntent();
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-		startActivityForResult(intent, REQUEST_SAVE_JPG_DIR);
-    }
-
 	@Override
 	protected void onImageSetChanged()
 	{
@@ -985,7 +862,8 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	protected void onImageAdded(Uri item)
 	{
-		addDatabaseReference(item);
+		//not needed with cursorloader
+//		addDatabaseReference(item);
 	}
 
 	@Override
@@ -997,7 +875,8 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	protected void onImageRemoved(Uri item)
 	{
-		removeDatabaseReference(item);
+		//not needed with cursorloader
+//		removeDatabaseReference(item);
 	}
 
 	protected boolean removeDatabaseReference(Uri toRemove)
@@ -1484,7 +1363,7 @@ public class GalleryActivity extends CoreActivity implements
                     tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
                     tutorial.setContentText(getString(R.string.tutorialExportText));
-                    setTutorialActionView(R.id.contextSaveJpg, true);
+                    setTutorialActionView(R.id.contextSaveAs, true);
                     break;
                 case 17: // Share (can't figure out how to address the share button
 //					if (!inActionMode)

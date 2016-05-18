@@ -58,7 +58,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private static final String TAG = ViewerActivity.class.getSimpleName();
 
-    private static final int REQUEST_CODE_PICK_FILE_OR_DIRECTORY = 1;
     private static final int REQUEST_CODE_EDIT = 3;
 
     public static String EXTRA_START_INDEX = "viewer_index";
@@ -710,13 +709,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    private void saveImage()
-    {
-        // TODO: Probably need a way to store the current item
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        startActivityForResult(intent, REQUEST_CODE_PICK_FILE_OR_DIRECTORY);
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -750,9 +742,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         // Handle item selection
         switch (item.getItemId())
         {
-            case R.id.view_save:
-                saveImage();
-                return true;
             case R.id.view_edit:
                 editImage();
                 return true;
@@ -802,12 +791,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
         switch (requestCode)
         {
-            case REQUEST_CODE_PICK_FILE_OR_DIRECTORY:
-                if (resultCode == RESULT_OK && data != null)
-                {
-                    handleSaveImage(data.getData());
-                }
-                break;
             case REQUEST_CODE_EDIT:
                 // This doesn't seem to return a result.
 //                if (resultCode == RESULT_OK)
@@ -815,11 +798,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 //                    Log.d(TAG, data.getDataString());
 //                }
         }
-    }
-
-    private void handleSaveImage(Uri dest)
-    {
-        saveThumbnails(getSelectedImages(), dest);
     }
 
     private void setWallpaper()

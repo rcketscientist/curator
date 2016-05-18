@@ -21,8 +21,8 @@
         app:showAsAction="always"
         android:title="@string/delete"/>
     <item
-        android:id="@+id/view_save"
-        android:orderInCategory="21"
+        android:id="@+id/contextSaveAs"
+        android:orderInCategory="5"
         app:showAsAction="never"
         android:title="@string/saveAs"/>
     <item

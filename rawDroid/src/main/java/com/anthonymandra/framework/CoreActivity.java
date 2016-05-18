@@ -33,13 +33,20 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.image.ImageConfiguration;
+import com.anthonymandra.image.JpegConfiguration;
+import com.anthonymandra.image.TiffConfiguration;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -78,6 +85,7 @@ public abstract class CoreActivity extends DocumentActivity
 		COPY,
 		COPY_THUMB,
 		DELETE,
+		SAVE_IMAGE,
 		RECYCLE,
 		RESTORE,
 		RENAME,
@@ -101,6 +109,13 @@ public abstract class CoreActivity extends DocumentActivity
 	protected XmpEditFragment mXmpFragment;
 
 	protected boolean mActivityVisible;
+
+	/**
+	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
+	 */
+	protected List<Uri> mItemsForIntent = new ArrayList<>();
+
+	private static final int REQUEST_SAVE_AS_DIR = 15;
 
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
@@ -186,6 +201,10 @@ public abstract class CoreActivity extends DocumentActivity
 				final ChangeLogDialog changeLogDialog = new ChangeLogDialog(this);
 				changeLogDialog.show(Constants.VariantCode == 8);
 				return true;
+			case R.id.contextSaveAs:
+				storeSelectionForIntent();
+				requestSaveAsDestination();
+				return true;
 			case R.id.settings:
 				requestSettings();
 				return true;
@@ -195,6 +214,105 @@ public abstract class CoreActivity extends DocumentActivity
 			default:
 				return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void storeSelectionForIntent()
+	{
+		mItemsForIntent = getSelectedImages();
+	}
+
+	@Override
+	public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+
+		switch (requestCode)
+		{
+			case REQUEST_SAVE_AS_DIR:
+				if (resultCode == RESULT_OK && data != null)
+				{
+					handleSaveDestinationResult(data.getData());
+				}
+				break;
+		}
+	}
+
+	private void handleSaveDestinationResult(final Uri destination)
+	{
+//		storeSelectionForIntent();	// dialog resets CAB, so store first
+
+		// TODO: Might want to figure out a way to get free space to introduce this check again
+//        long importSize = getSelectedImageSize();
+//        if (destination.getFreeSpace() < importSize)
+//        {
+//            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+//            return;
+//        }
+
+		final Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.save_dialog);
+		dialog.setTitle(R.string.saveAs);
+
+		final TabHost tabs = (TabHost) dialog.findViewById(R.id.tabHost);
+		tabs.setup();
+
+		TabHost.TabSpec jpg = tabs.newTabSpec("JPG");
+		TabHost.TabSpec tif = tabs.newTabSpec("TIF");
+
+		jpg.setContent(R.id.JPG);
+		jpg.setIndicator("JPG");
+		tabs.addTab(jpg);
+
+		tif.setContent(R.id.TIFF);
+		tif.setIndicator("TIFF");
+		tabs.addTab(tif);
+
+		final TextView qualityText = (TextView) dialog.findViewById(R.id.valueQuality);
+		final SeekBar qualityBar = (SeekBar) dialog.findViewById(R.id.seekBarQuality);
+		final Switch compressSwitch = (Switch) dialog.findViewById(R.id.switchCompress);
+		qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				qualityText.setText(String.valueOf(progress));
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+		});
+
+		Button save = (Button) dialog.findViewById(R.id.buttonSave);
+		save.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ImageConfiguration config = null;
+				int type;
+				switch(tabs.getCurrentTab())
+				{
+					case 0: //JPG
+						config = new JpegConfiguration();
+						((JpegConfiguration)config).setQuality(qualityBar.getProgress());
+						break;
+					case 1: //TIF
+						config = new TiffConfiguration();
+						((TiffConfiguration)config).setCompress(compressSwitch.isChecked());
+						break;
+				}
+				dialog.dismiss();
+				saveImage(mItemsForIntent, destination, config);
+			}
+		});
+		Button cancel = (Button) dialog.findViewById(R.id.buttonCancel);
+		cancel.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+
+		dialog.show();
 	}
 
 	@Override
@@ -605,6 +723,12 @@ public abstract class CoreActivity extends DocumentActivity
 		startActivity(settings);
 	}
 
+	private void requestSaveAsDestination()
+	{
+		Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+		startActivityForResult(intent, REQUEST_SAVE_AS_DIR);
+	}
+
 	protected void showRenameDialog(final List<Uri> itemsToRename)
 	{
 		final View dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null);
@@ -919,7 +1043,7 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	//TODO: CopyThumb and SaveTif should be able to be combined with a switch for which native to call
-	protected void saveTiff(List<Uri> images, Uri destination)
+	protected void saveImage(List<Uri> images, Uri destination, ImageConfiguration config)
 	{
 		// Just grab the first width and assume that will be sufficient for all images
 		Watermark wm = null;
@@ -931,29 +1055,24 @@ public abstract class CoreActivity extends DocumentActivity
 				wm = getWatermark(Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro, width);
 			}
 		}
-		new SaveTiffTask(mProgressDialog).execute(images, destination, wm);
+		new SaveImageTask().execute(images, destination, wm, config);
 	}
 
-	public class SaveTiffTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
+	public class SaveImageTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
-		final ProgressDialog mProgressDialog;
+		final ProgressDialog mProgressDialog = new ProgressDialog(CoreActivity.this);
 
-		public SaveTiffTask(ProgressDialog progress)
-		{
-			mProgressDialog = progress;
-		}
+		public SaveImageTask()
+		{	}
 
 		@Override
 		protected void onPreExecute()
 		{
-			if (mProgressDialog != null)
-			{
-				mProgressDialog.setTitle(R.string.exportingThumb);
-				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				mProgressDialog.setCanceledOnTouchOutside(true);
-				mProgressDialog.setOnCancelListener(this);
-				mProgressDialog.show();
-			}
+			mProgressDialog.setTitle(getString(R.string.extractingImage));
+			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			mProgressDialog.setCanceledOnTouchOutside(true);
+			mProgressDialog.setOnCancelListener(this);
+			mProgressDialog.show();
 		}
 
 		@Override
@@ -967,12 +1086,13 @@ public abstract class CoreActivity extends DocumentActivity
 			List<Uri> remainingImages = new ArrayList<>(totalImages);
 			Uri destinationFolder = (Uri) params[1];
 			Watermark wm = (Watermark) params[2];
+			ImageConfiguration config = (ImageConfiguration) params[3];
 
 			boolean success = true;
 			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
 			for (Uri toThumb : totalImages)
 			{
-				setWriteResume(WriteActions.COPY_THUMB, new Object[] { remainingImages } );
+				setWriteResume(WriteActions.SAVE_IMAGE, new Object[] { remainingImages, destinationFolder, wm, config } );
 				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toThumb);
 				UsefulDocumentFile destinationTree = null;
 				try
@@ -990,38 +1110,53 @@ public abstract class CoreActivity extends DocumentActivity
 					continue;
 				}
 
-				String tiffFileName = FileUtil.swapExtention(source.getName(), "tiff" );
-				Uri desiredTiff = DocumentUtil.getChildUri(destinationFolder, tiffFileName);
-				UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(CoreActivity.this, desiredTiff);
+				String desiredName = FileUtil.swapExtention(source.getName(), config.getExtension() );
+				publishProgress(desiredName);
+				Uri desiredUri = DocumentUtil.getChildUri(destinationFolder, desiredName);
+				UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(CoreActivity.this, desiredUri);
 
 				if (!destinationFile.exists())
-					destinationFile = destinationTree.createFile(null, tiffFileName);
+					destinationFile = destinationTree.createFile(null, desiredName);
 
-				publishProgress(source.getName());
-
-				ParcelFileDescriptor outputPfd = null;
-				ParcelFileDescriptor inputPfd = null;
-				try
+				try(	ParcelFileDescriptor inputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, source.getUri(), "r");
+						ParcelFileDescriptor outputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile.getUri(), "w"))
 				{
-					inputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, source.getUri(), "r");
-					outputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile.getUri(), "w");
 					if (outputPfd == null)
 					{
 						success = false;
 						continue;
 					}
 
-					if (wm != null)
+					switch(config.getType())
 					{
-						success = ImageProcessor.writeTiff(tiffFileName, inputPfd.getFd(),
-								outputPfd.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
-								wm.getWaterWidth(), wm.getWaterHeight()) && success;
+						case jpeg:
+							// TODO: we're not setting the quality
+							if (wm != null)
+							{
+								success = writeThumbWatermark(inputPfd, outputPfd, wm.getWatermark(), wm.getWaterWidth(), wm.getWaterHeight(), wm.getMargins()) && success;
+							}
+							else
+							{
+								success = writeThumb(inputPfd, outputPfd) && success;
+							}
+							break;
+						case tiff:
+							// TODO: we're not setting the compression
+							if (wm != null)
+							{
+								success = ImageProcessor.writeTiff(desiredName, inputPfd.getFd(),
+										outputPfd.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
+										wm.getWaterWidth(), wm.getWaterHeight()) && success;
+							}
+							else
+							{
+								success = ImageProcessor.writeTiff(desiredName, inputPfd.getFd(),
+										outputPfd.getFd());
+							}
+							break;
+						default: throw new UnsupportedOperationException("unimplemented save type.");
 					}
-					else
-					{
-						success = ImageProcessor.writeTiff(tiffFileName, inputPfd.getFd(),
-								outputPfd.getFd());
-					}
+
 					onImageAdded(destinationFile.getUri());
 					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile.getUri()));
 					remainingImages.remove(toThumb);
@@ -1029,159 +1164,6 @@ public abstract class CoreActivity extends DocumentActivity
 				catch(Exception e)
 				{
 					success = false;
-				}
-				finally
-				{
-					Utils.closeSilently(inputPfd);
-					Utils.closeSilently(outputPfd);
-				}
-
-				publishProgress();
-			}
-			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
-			return success; //not used.
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-			onImageSetChanged();
-			mProgressDialog.dismiss();
-		}
-
-		@Override
-		protected void onProgressUpdate(String... values)
-		{
-			if (values.length > 0)
-			{
-				mProgressDialog.setMessage(values[0]);
-			}
-			else
-			{
-				mProgressDialog.incrementProgressBy(1);
-			}
-		}
-
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			this.cancel(true);
-		}
-	}
-
-	protected void saveThumbnails(List<Uri> images, Uri destination)
-	{
-		// Just grab the first width and assume that will be sufficient for all images
-		Watermark wm = null;
-		try (Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
-		{
-			if (c != null && c.moveToFirst())
-			{
-				final int width = c.getInt(Meta.WIDTH_COLUMN);
-				wm = getWatermark(Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro, width);
-			}
-		}
-		new CopyThumbTask(mProgressDialog).execute(images, destination, wm);
-	}
-
-	public class CopyThumbTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
-	{
-		final ProgressDialog mProgressDialog;
-
-		public CopyThumbTask(ProgressDialog progress)
-		{
-			mProgressDialog = progress;
-		}
-
-		@Override
-		protected void onPreExecute()
-		{
-			if (mProgressDialog != null)
-			{
-				mProgressDialog.setTitle(R.string.exportingThumb);
-				mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				mProgressDialog.setCanceledOnTouchOutside(true);
-				mProgressDialog.setOnCancelListener(this);
-				mProgressDialog.show();
-			}
-		}
-
-		@Override
-		@SuppressWarnings("unchecked")
-		protected Boolean doInBackground(Object... params)
-		{
-			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof Uri))
-				throw new IllegalArgumentException();
-
-			List<Uri> totalImages = (List<Uri>) params[0];
-			List<Uri> remainingImages = new ArrayList<>(totalImages);
-			Uri destinationFolder = (Uri) params[1];
-			Watermark wm = (Watermark) params[2];
-
-			boolean success = true;
-			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
-			for (Uri toThumb : totalImages)
-			{
-				setWriteResume(WriteActions.COPY_THUMB, new Object[] { remainingImages } );
-				UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toThumb);
-				UsefulDocumentFile destinationTree = null;
-				try
-				{
-					destinationTree = getDocumentFile(destinationFolder, true, true);
-				}
-				catch (WritePermissionException e)
-				{
-					e.printStackTrace();
-				}
-
-				if (destinationTree == null)
-				{
-					success = false;
-					continue;
-				}
-
-				String jpgFileName = FileUtil.swapExtention(source.getName(), "jpg" );
-				Uri desiredJpg = DocumentUtil.getChildUri(destinationFolder, jpgFileName);
-				UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(CoreActivity.this, desiredJpg);
-				if (destinationFile.exists())
-					continue;   //don't overwrite
-
-				destinationFile = destinationTree.createFile(null, jpgFileName);
-
-				publishProgress(source.getName());
-
-				ParcelFileDescriptor outputPfd = null;
-				ParcelFileDescriptor inputPfd = null;
-				try
-				{
-					inputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, source.getUri(), "r");
-					outputPfd = FileUtil.getParcelFileDescriptor(CoreActivity.this, destinationFile.getUri(), "w");
-					if (outputPfd == null)
-					{
-						success = false;
-						continue;
-					}
-
-					if (wm != null)
-					{
-						success = writeThumbWatermark(inputPfd, outputPfd, wm.getWatermark(), wm.getWaterWidth(), wm.getWaterHeight(), wm.getMargins()) && success;
-					}
-					else
-					{
-						success = writeThumb(inputPfd, outputPfd) && success;
-					}
-					onImageAdded(destinationFile.getUri());
-					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile.getUri()));
-					remainingImages.remove(toThumb);
-				}
-				catch(Exception e)
-				{
-					success = false;
-				}
-				finally
-				{
-					Utils.closeSilently(inputPfd);
-					Utils.closeSilently(outputPfd);
 				}
 
 				publishProgress();
