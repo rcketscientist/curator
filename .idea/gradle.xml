@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/metadata-extractor" />
             <option value="$PROJECT_DIR$/rawDroid" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/cms" />
+            <option value="$PROJECT_DIR$/rawprocessor/jni/dng_sdk" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/libjpeg" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/processor" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/raw" />
@@ -33,6 +34,7 @@
             <option value="$PROJECT_DIR$/metadata-extractor" />
             <option value="$PROJECT_DIR$/rawDroid" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/cms" />
+            <option value="$PROJECT_DIR$/rawprocessor/jni/dng_sdk" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/libjpeg" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/processor" />
             <option value="$PROJECT_DIR$/rawprocessor/jni/raw" />

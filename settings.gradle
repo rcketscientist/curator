@@ -8,6 +8,7 @@ include ':raw'
 include ':tiff'
 include ':processor'
 include ':api'
+include ':dng'
 
 // exiv2
 //include ':expat'
@@ -22,6 +23,7 @@ project(':jpeg').projectDir =       new File('rawprocessor/jni/libjpeg')
 project(':cms').projectDir =        new File('rawprocessor/jni/cms')
 project(':raw').projectDir =        new File('rawprocessor/jni/raw')
 project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
+project(':dng').projectDir =        new File('rawprocessor/jni/dng_sdk')
 project(':processor').projectDir =  new File('rawprocessor/jni/processor')
 project(':api').projectDir =        new File('rawprocessor/library')
 //project(':expat').projectDir = new File('rawprocessor/jni/expat')
