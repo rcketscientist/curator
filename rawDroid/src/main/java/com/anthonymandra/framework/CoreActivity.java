@@ -1669,6 +1669,9 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		public void run()
 		{
+			if (selectedImages.size() == 0)
+				return;
+
 			String[] selectionArgs = new String[selectedImages.size()];
 			for (int i = 0; i < selectedImages.size(); i++)
 			{
