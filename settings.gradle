@@ -19,7 +19,7 @@ include ':inscription'
 include ':rawDroid'
 
 // Rawprocessor redirection
-project(':jpeg').projectDir =       new File('rawprocessor/jni/libjpeg')
+project(':jpeg').projectDir =       new File('rawprocessor/jni/jpeg')
 project(':cms').projectDir =        new File('rawprocessor/jni/cms')
 project(':raw').projectDir =        new File('rawprocessor/jni/raw')
 project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
