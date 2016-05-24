@@ -1059,7 +1059,7 @@ public class ImageUtils
         // Alternatively maybe glide can handle int[]?
         Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
         return baos.toByteArray();
     }

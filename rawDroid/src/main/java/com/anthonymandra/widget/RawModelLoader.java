@@ -1,8 +1,14 @@
 package com.anthonymandra.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 
+import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
@@ -11,6 +17,7 @@ import com.bumptech.glide.load.model.stream.StreamModelLoader;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 public class RawModelLoader implements StreamModelLoader<Uri>
 {
@@ -45,8 +52,13 @@ public class RawModelLoader implements StreamModelLoader<Uri>
 		@Override
 		public InputStream loadData(Priority priority) throws Exception
 		{
-			byte[] image = ImageUtils.getThumb(context, uri);
-			return new ExifOrientationStream(new ByteArrayInputStream(image), 0);   //Wrap to turn off orientation
+			ParcelFileDescriptor pfd = context.getContentResolver().openFileDescriptor(uri, "r");
+			int fd = pfd.getFd();
+			BitmapRegionDecoder decoder = ImageProcessor.getRawDecoder(fd);
+			Bitmap bmp = decoder.decodeRegion(new Rect(0, 0, 100, 100), new BitmapFactory.Options());
+			ByteBuffer buffer = ByteBuffer.allocate(bmp.getRowBytes() * bmp.getHeight());
+//			byte[] image = ImageUtils.getThumb(context, uri);
+			return new ExifOrientationStream(new ByteArrayInputStream(buffer.array()), 0);   //Wrap to turn off orientation
 		}
 
 		@Override
