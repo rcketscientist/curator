@@ -57,8 +57,9 @@ public class RawModelLoader implements StreamModelLoader<Uri>
 			BitmapRegionDecoder decoder = ImageProcessor.getRawDecoder(fd);
 			Bitmap bmp = decoder.decodeRegion(new Rect(0, 0, 100, 100), new BitmapFactory.Options());
 			ByteBuffer buffer = ByteBuffer.allocate(bmp.getRowBytes() * bmp.getHeight());
-//			byte[] image = ImageUtils.getThumb(context, uri);
 			return new ExifOrientationStream(new ByteArrayInputStream(buffer.array()), 0);   //Wrap to turn off orientation
+//			byte[] image = ImageUtils.getThumb(context, uri);
+//			return new ExifOrientationStream(new ByteArrayInputStream(image), 0);   //Wrap to turn off orientation
 		}
 
 		@Override
