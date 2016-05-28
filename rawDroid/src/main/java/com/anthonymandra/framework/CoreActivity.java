@@ -974,16 +974,6 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected boolean writeThumb(ParcelFileDescriptor source, ParcelFileDescriptor destination)
-	{
-		return ImageProcessor.writeThumb(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd());
-	}
-
-	protected boolean writeThumbWatermark(ParcelFileDescriptor source, ParcelFileDescriptor destination, byte[] waterMap,
-	                                      int waterWidth, int waterHeight, Margins waterMargins) {
-		return ImageProcessor.writeThumb(source.getFd(), 100, Bitmap.Config.ARGB_8888, Bitmap.CompressFormat.JPEG, destination.getFd(), waterMap, waterMargins.getArray(), waterWidth, waterHeight);
-	}
-
 	@Nullable
 	public Watermark getWatermark(final boolean demo, final int width)
 	{
@@ -1130,28 +1120,30 @@ public abstract class CoreActivity extends DocumentActivity
 					switch(config.getType())
 					{
 						case jpeg:
-							// TODO: we're not setting the quality
+							int quality = ((JpegConfiguration)config).getQuality();
 							if (wm != null)
 							{
-								success = writeThumbWatermark(inputPfd, outputPfd, wm.getWatermark(), wm.getWaterWidth(), wm.getWaterHeight(), wm.getMargins()) && success;
-							}
-							else
-							{
-								success = writeThumb(inputPfd, outputPfd) && success;
-							}
-							break;
-						case tiff:
-							// TODO: we're not setting the compression
-							if (wm != null)
-							{
-								success = ImageProcessor.writeTiff(desiredName, inputPfd.getFd(),
+								success = ImageProcessor.writeThumb(inputPfd.getFd(), quality,
 										outputPfd.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
 										wm.getWaterWidth(), wm.getWaterHeight()) && success;
 							}
 							else
 							{
+								success = ImageProcessor.writeThumb(inputPfd.getFd(), quality, outputPfd.getFd()) && success;
+							}
+							break;
+						case tiff:
+							boolean compress = ((TiffConfiguration)config).getCompress();
+							if (wm != null)
+							{
 								success = ImageProcessor.writeTiff(desiredName, inputPfd.getFd(),
-										outputPfd.getFd());
+										outputPfd.getFd(), compress, wm.getWatermark(), wm.getMargins().getArray(),
+										wm.getWaterWidth(), wm.getWaterHeight()) && success;
+							}
+							else
+							{
+								success = ImageProcessor.writeTiff(desiredName, inputPfd.getFd(),
+										outputPfd.getFd(), compress);
 							}
 							break;
 						default: throw new UnsupportedOperationException("unimplemented save type.");
