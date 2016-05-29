@@ -17,6 +17,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
@@ -31,6 +32,7 @@ public class FullSettingsActivity extends PreferenceActivity
 
 	public static final String KEY_ShowImageInterface = "prefKeyShowImageInterface";
 	public static final String KEY_ShowNav = "prefKeyShowNav";
+	public static final String KEY_ResetSaveDefault = "prefKeyResetSaveDefault";
 	public static final String KEY_DefaultSaveType = "prefKeyDefaultSaveType";
 	public static final String KEY_DefaultSaveConfig = "prefKeyDefaultSaveConfig";
 	public static final String KEY_ShowXmpFiles = "prefKeyShowXmpFiles";
@@ -199,7 +201,7 @@ public class FullSettingsActivity extends PreferenceActivity
         public void onResume() {
             super.onResume();
             updateRecycleBin();
-	        Preference button = mPreferenceManager.findPreference(KEY_DefaultSaveConfig);
+	        Preference button = mPreferenceManager.findPreference(KEY_ResetSaveDefault);
 	        if (button != null)
 	        {
 		        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -211,6 +213,8 @@ public class FullSettingsActivity extends PreferenceActivity
 			        editor.remove(KEY_DefaultSaveConfig);
 			        editor.remove(KEY_DefaultSaveType);
 			        editor.apply();
+
+			        Snackbar.make(getView(), "Save default cleared!", Snackbar.LENGTH_SHORT ).show();
 			        return true;
 		        }
 	        });
@@ -504,8 +508,7 @@ public class FullSettingsActivity extends PreferenceActivity
 				    public boolean onPreferenceClick(Preference arg0)
 				    {
 					    LicenseManager.getLicense(mActivity.getBaseContext(), licenseHandler);
-					    Preference check = mPreferenceManager.findPreference(KEY_ManualLicense);
-					    check.setTitle(mActivity.getString(R.string.prefTitleManualLicense) + " (Request Sent)");
+					    Snackbar.make(getView(), R.string.licenseRequestSent, Snackbar.LENGTH_SHORT).show();
 					    return true;
 				    }
 			    });
@@ -539,13 +542,11 @@ public class FullSettingsActivity extends PreferenceActivity
     private static void updateLicense(License.LicenseState state)
     {
         Preference license = mPreferenceManager.findPreference(KEY_license);
-        Preference check = mPreferenceManager.findPreference(KEY_ManualLicense);
 
         // This might happen if the user switches tabs quickly while looking up license
-        if (check == null || license == null)
+        if (license == null)
             return;
 
-        check.setTitle(mActivity.getString(R.string.prefTitleManualLicense));
         license.setTitle(state.toString());
         switch (state)
         {

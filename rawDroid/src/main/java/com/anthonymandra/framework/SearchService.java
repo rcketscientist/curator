@@ -237,7 +237,7 @@ public class SearchService extends IntentService
 			String name = file.getName();
 			if (name == null)
 				continue;
-			if(ImageUtils.isImage(file.getName()))
+			if(ImageUtils.isImage(name))
 				result.add(file);
 		}
 		return result.toArray(new UsefulDocumentFile[result.size()]);

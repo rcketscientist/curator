@@ -179,144 +179,130 @@ public class GalleryActivity extends CoreActivity implements
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		Crashlytics crashlyticsKit = new Crashlytics.Builder()
+				.core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+				.build();
 
-		try (ParcelFileDescriptor pfd = ParcelFileDescriptor.open(new File("/sdcard/_image/canon_5dmii_01.CR2"), ParcelFileDescriptor.MODE_READ_ONLY))
+		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
+		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
+        setSupportActionBar(mToolbar);
+
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		findViewById(R.id.filterSidebarButton).setOnClickListener(new OnClickListener()
 		{
-			int fd = pfd.getFd();
-			byte[] b = ImageProcessor.getThumb(fd, new String[]{});
-			BitmapRegionDecoder decoder = ImageProcessor.getRawDecoder(fd);
-			Bitmap corner = decoder.decodeRegion(new Rect(0, 0, 100, 100), new BitmapFactory.Options());
-			int cornerWidth = corner.getWidth();
-		}
-		catch(Exception e)
+			@Override
+			public void onClick(View v)
+			{
+				mDrawerLayout.openDrawer(GravityCompat.START);
+			}
+		});
+		findViewById(R.id.xmpSidebarButton).setOnClickListener(new OnClickListener()
 		{
-			Log.e(getClass().getSimpleName() + ":getDecoder()", e.toString());
+			@Override
+			public void onClick(View v)
+			{
+				toggleEditXmpFragment();
+			}
+		});
+
+//		doFirstRun();
+
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
+
+		AppRater.app_launched(this);
+
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		inTutorial = false;
+
+		mDisplayWidth = metrics.widthPixels;
+
+		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
+		final int numColumns = (int) Math.floor(mDisplayWidth / (thumbSize + thumbSpacing));
+
+		GridLayoutManager mGridLayout = new GridLayoutManager(this, numColumns);
+		mGridLayout.setSmoothScrollbarEnabled(true);
+
+		mGalleryAdapter = new GalleryRecyclerAdapter(this, null);
+		mGalleryAdapter.setOnSelectionListener(this);
+		mGalleryAdapter.setOnItemClickListener(this);
+		mGalleryAdapter.setOnItemLongClickListener(this);
+
+		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
+
+		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
+		mImageGrid.setLayoutManager(mGridLayout);
+		mImageGrid.addItemDecoration(spacing);
+		mImageGrid.setHasFixedSize(true);
+		mImageGrid.setAdapter(mGalleryAdapter);
+
+		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
+		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_STARTED);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_COMPLETE);
+		mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES);
+		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
+		{
+			@Override
+			public void onReceive(Context context, Intent intent)
+			{
+				switch(intent.getAction())
+				{
+					case MetaService.BROADCAST_IMAGE_PARSED:
+						mToolbar.setSubtitle(new StringBuilder()
+								.append("Processed ")
+								.append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
+								.append(" of ")
+								.append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1)));//mGalleryAdapter.getCount()));
+						break;
+					case MetaService.BROADCAST_PROCESSING_COMPLETE:
+						mToolbar.setSubtitle("Updating...");
+						break;
+					case MetaService.BROADCAST_PARSE_COMPLETE:
+						mProgressBar.setVisibility(View.GONE);
+						mToolbar.setSubtitle("");
+						break;
+					case SearchService.BROADCAST_SEARCH_STARTED:
+						mToolbar.setSubtitle("Searching...");
+						break;
+					case SearchService.BROADCAST_FOUND_IMAGES:
+						mToolbar.setTitle(intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0) + " Images");
+						break;
+					case SearchService.BROADCAST_SEARCH_COMPLETE:
+						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS);
+						if (images.length == 0)
+						{
+							offerRequestPermission();
+						}
+						else
+						{
+							for (String image : images)
+							{
+								Uri uri = Uri.parse(image);
+								MetaWakefulReceiver.startMetaService(GalleryActivity.this, uri);
+							}
+						}
+						break;
+				}
+			}
+		}, mResponseIntentFilter);
+		setImageCountTitle();
+
+		if (getIntent().getData() != null)
+		{
+			ImageUtils.importKeywords(this, getIntent().getData());
 		}
 
-//		Crashlytics crashlyticsKit = new Crashlytics.Builder()
-//				.core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-//				.build();
-//
-//		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
-//		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//
-//        mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
-//		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
-//        setSupportActionBar(mToolbar);
-//
-//		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//		findViewById(R.id.filterSidebarButton).setOnClickListener(new OnClickListener()
-//		{
-//			@Override
-//			public void onClick(View v)
-//			{
-//				mDrawerLayout.openDrawer(GravityCompat.START);
-//			}
-//		});
-//		findViewById(R.id.xmpSidebarButton).setOnClickListener(new OnClickListener()
-//		{
-//			@Override
-//			public void onClick(View v)
-//			{
-//				toggleEditXmpFragment();
-//			}
-//		});
-//
-////		doFirstRun();
-//
-//		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
-//		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
-//		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
-//		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
-//		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
-//
-//		AppRater.app_launched(this);
-//
-//		DisplayMetrics metrics = new DisplayMetrics();
-//		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-//		inTutorial = false;
-//
-//		mDisplayWidth = metrics.widthPixels;
-//
-//		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
-//		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
-//		final int numColumns = (int) Math.floor(mDisplayWidth / (thumbSize + thumbSpacing));
-//
-//		GridLayoutManager mGridLayout = new GridLayoutManager(this, numColumns);
-//		mGridLayout.setSmoothScrollbarEnabled(true);
-//
-//		mGalleryAdapter = new GalleryRecyclerAdapter(this, null);
-//		mGalleryAdapter.setOnSelectionListener(this);
-//		mGalleryAdapter.setOnItemClickListener(this);
-//		mGalleryAdapter.setOnItemLongClickListener(this);
-//
-//		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
-//
-//		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
-//		mImageGrid.setLayoutManager(mGridLayout);
-//		mImageGrid.addItemDecoration(spacing);
-//		mImageGrid.setHasFixedSize(true);
-//		mImageGrid.setAdapter(mGalleryAdapter);
-//
-//		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
-//		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
-//		mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_STARTED);
-//		mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_COMPLETE);
-//		mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES);
-//		LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver()
-//		{
-//			@Override
-//			public void onReceive(Context context, Intent intent)
-//			{
-//				switch(intent.getAction())
-//				{
-//					case MetaService.BROADCAST_IMAGE_PARSED:
-//						mToolbar.setSubtitle(new StringBuilder()
-//								.append("Processed ")
-//								.append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
-//								.append(" of ")
-//								.append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1)));//mGalleryAdapter.getCount()));
-//						break;
-//					case MetaService.BROADCAST_PROCESSING_COMPLETE:
-//						mToolbar.setSubtitle("Updating...");
-//						break;
-//					case MetaService.BROADCAST_PARSE_COMPLETE:
-//						mProgressBar.setVisibility(View.GONE);
-//						mToolbar.setSubtitle("");
-//						break;
-//					case SearchService.BROADCAST_SEARCH_STARTED:
-//						mToolbar.setSubtitle("Searching...");
-//						break;
-//					case SearchService.BROADCAST_FOUND_IMAGES:
-//						mToolbar.setTitle(intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0) + " Images");
-//						break;
-//					case SearchService.BROADCAST_SEARCH_COMPLETE:
-//						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS);
-//						if (images.length == 0)
-//						{
-//							offerRequestPermission();
-//						}
-//						else
-//						{
-//							for (String image : images)
-//							{
-//								Uri uri = Uri.parse(image);
-//								MetaWakefulReceiver.startMetaService(GalleryActivity.this, uri);
-//							}
-//						}
-//						break;
-//				}
-//			}
-//		}, mResponseIntentFilter);
-//		setImageCountTitle();
-//
-//		if (getIntent().getData() != null)
-//		{
-//			ImageUtils.importKeywords(this, getIntent().getData());
-//		}
-//
-////		checkWriteAccess();
-//		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
+//		checkWriteAccess();
+		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
 	}
 
 	@TargetApi(Build.VERSION_CODES.M)

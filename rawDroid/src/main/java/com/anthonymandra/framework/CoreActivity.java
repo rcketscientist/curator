@@ -28,6 +28,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -256,6 +257,7 @@ public abstract class CoreActivity extends DocumentActivity
 		if (config != null)
 		{
 			saveImage(mItemsForIntent, destination, config);
+			return;
 		}
 
 		final Dialog dialog = new Dialog(this);
@@ -286,22 +288,29 @@ public abstract class CoreActivity extends DocumentActivity
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked)
 				{
-					AlertDialog.Builder b = new AlertDialog.Builder(CoreActivity.this);
-					b.setMessage(getResources().getString(R.string.saveDefaultConfirm) + "/n"
-					+ getResources().getString(R.string.settingsReset));
-					b.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							setDefault.setChecked(false);
-						}
-					});
-					b.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// do nothing
-						}
-					});
-					b.show();
+					Snackbar.make(dialog.getCurrentFocus(),
+						Html.fromHtml(
+							getResources().getString(R.string.saveDefaultConfirm) + "  "
+							+ "<i>" + getResources().getString(R.string.settingsReset) + "</i>"),
+						Snackbar.LENGTH_LONG)
+						.show();
+//					AlertDialog.Builder b = new AlertDialog.Builder(CoreActivity.this);
+//					b.setMessage(Html.fromHtml(
+//						getResources().getString(R.string.saveDefaultConfirm) + "<p>   "
+//						+ "<i>" + getResources().getString(R.string.settingsReset) + "</i>"));
+//					b.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							setDefault.setChecked(false);
+//						}
+//					});
+//					b.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							// do nothing
+//						}
+//					});
+//					b.show();
 				}
 			}
 		});

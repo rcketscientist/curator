@@ -66,7 +66,7 @@
     <string name="metadata">Metadata</string>
     <string name="tutorial">Tutorial</string>
 
-    <string name="saveDefaultConfirm">Hide this dialog and use these settings in the future?</string>
+    <string name="saveDefaultConfirm">This dialog will no longer appear.</string>
     <string name="settingsReset">This can be reset in the settings.</string>
 
     <!-- Results -->
@@ -318,4 +318,5 @@
     <string name="extractingImage">Extracting Image...</string>
     <string name="compress">compress</string>
     <string name="defaults">Defaults</string>
+    <string name="licenseRequestSent">License request sent...</string>
 </resources>
