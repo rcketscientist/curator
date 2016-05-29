@@ -30,14 +30,20 @@
             android:summary="@string/prefSummaryDeleteConfirmation"
             android:title="@string/prefTitleDeleteConfirmation" />
     </PreferenceCategory>
-<!--
-    <com.anthonymandra.widget.RemovableListPreference
-        android:key="@string/KEY_EXCLUDED_FOLDERS"
-        android:negativeButtonText=""
-        android:title="@string/excludedFolders"
-        android:summary="@string/excludedSummary"
-        android:dialogTitle="@string/excludedFolders"
-        android:dialogMessage="@string/excludedMessage"/>
--->
+    <PreferenceCategory android:title="@string/defaults">
+        <Preference
+            android:key="prefKeyResetSaveDefault"
+            android:summary="@string/prefSummaryResetSaveDefault"
+            android:title="@string/prefTitleResetSaveDefault" />
+    </PreferenceCategory>
+    <!--
+        <com.anthonymandra.widget.RemovableListPreference
+            android:key="@string/KEY_EXCLUDED_FOLDERS"
+            android:negativeButtonText=""
+            android:title="@string/excludedFolders"
+            android:summary="@string/excludedSummary"
+            android:dialogTitle="@string/excludedFolders"
+            android:dialogMessage="@string/excludedMessage"/>
+    -->
 
 </PreferenceScreen>

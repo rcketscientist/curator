@@ -31,6 +31,8 @@ public class FullSettingsActivity extends PreferenceActivity
 
 	public static final String KEY_ShowImageInterface = "prefKeyShowImageInterface";
 	public static final String KEY_ShowNav = "prefKeyShowNav";
+	public static final String KEY_DefaultSaveType = "prefKeyDefaultSaveType";
+	public static final String KEY_DefaultSaveConfig = "prefKeyDefaultSaveConfig";
 	public static final String KEY_ShowXmpFiles = "prefKeyShowXmpFiles";
 	public static final String KEY_ShowNativeFiles = "prefKeyShowNativeFiles";
 	public static final String KEY_ShowUnknownFiles = "prefKeyShowUnknownFiles";
@@ -197,6 +199,22 @@ public class FullSettingsActivity extends PreferenceActivity
         public void onResume() {
             super.onResume();
             updateRecycleBin();
+	        Preference button = mPreferenceManager.findPreference(KEY_DefaultSaveConfig);
+	        if (button != null)
+	        {
+		        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+		        {
+			        @Override
+			        public boolean onPreferenceClick(Preference arg0)
+			        {
+			        SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
+			        editor.remove(KEY_DefaultSaveConfig);
+			        editor.remove(KEY_DefaultSaveType);
+			        editor.apply();
+			        return true;
+		        }
+	        });
+	        }
         }
 
 		@Override

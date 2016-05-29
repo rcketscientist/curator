@@ -5,9 +5,11 @@
               android:layout_height="match_parent"
               android:background="#535353"
               android:padding="10dp">
+
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/compress"
-            android:id="@+id/switchCompress"/>
+            android:id="@+id/switchCompress"
+            android:switchPadding="10dp"/>
 </LinearLayout>

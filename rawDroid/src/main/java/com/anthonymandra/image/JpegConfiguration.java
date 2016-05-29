@@ -1,7 +1,7 @@
 package com.anthonymandra.image;
 
-public class JpegConfiguration implements ImageConfiguration {
-    int quality;
+public class JpegConfiguration extends ImageConfiguration {
+    private int quality;
 
     @Override
     public ImageType getType() {
@@ -11,6 +11,16 @@ public class JpegConfiguration implements ImageConfiguration {
     @Override
     public String getExtension() {
         return "jpg";
+    }
+
+    @Override
+    protected void parse(String config) {
+        quality = Integer.parseInt(config);
+    }
+
+    @Override
+    protected String convertToPreference() {
+        return String.valueOf(quality);
     }
 
     public int getQuality() {

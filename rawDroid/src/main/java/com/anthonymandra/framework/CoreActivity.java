@@ -34,6 +34,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -249,6 +251,13 @@ public abstract class CoreActivity extends DocumentActivity
 //            return;
 //        }
 
+		// Load default save config if it exists and automatically apply it
+		ImageConfiguration config = ImageConfiguration.loadPreference(CoreActivity.this);
+		if (config != null)
+		{
+			saveImage(mItemsForIntent, destination, config);
+		}
+
 		final Dialog dialog = new Dialog(this);
 		dialog.setContentView(R.layout.save_dialog);
 		dialog.setTitle(R.string.saveAs);
@@ -270,6 +279,33 @@ public abstract class CoreActivity extends DocumentActivity
 		final TextView qualityText = (TextView) dialog.findViewById(R.id.valueQuality);
 		final SeekBar qualityBar = (SeekBar) dialog.findViewById(R.id.seekBarQuality);
 		final Switch compressSwitch = (Switch) dialog.findViewById(R.id.switchCompress);
+
+		final CheckBox setDefault = (CheckBox) dialog.findViewById(R.id.checkBoxSetDefault);
+		setDefault.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked)
+				{
+					AlertDialog.Builder b = new AlertDialog.Builder(CoreActivity.this);
+					b.setMessage(getResources().getString(R.string.saveDefaultConfirm) + "/n"
+					+ getResources().getString(R.string.settingsReset));
+					b.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							setDefault.setChecked(false);
+						}
+					});
+					b.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// do nothing
+						}
+					});
+					b.show();
+				}
+			}
+		});
+
 		qualityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -301,6 +337,10 @@ public abstract class CoreActivity extends DocumentActivity
 						break;
 				}
 				dialog.dismiss();
+
+				if (setDefault.isChecked())
+					config.savePreference(CoreActivity.this);
+
 				saveImage(mItemsForIntent, destination, config);
 			}
 		});

@@ -1,7 +1,7 @@
 package com.anthonymandra.image;
 
-public class TiffConfiguration implements ImageConfiguration {
-    boolean compress;
+public class TiffConfiguration extends ImageConfiguration {
+    private boolean compress;
 
     @Override
     public ImageType getType() {
@@ -11,6 +11,16 @@ public class TiffConfiguration implements ImageConfiguration {
     @Override
     public String getExtension() {
         return "tiff";
+    }
+
+    @Override
+    protected void parse(String config) {
+        compress = Boolean.parseBoolean(config);
+    }
+
+    @Override
+    protected String convertToPreference() {
+        return String.valueOf(compress);
     }
 
     public boolean getCompress() {
