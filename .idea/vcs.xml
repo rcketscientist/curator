@@ -6,7 +6,6 @@
     <mapping directory="$PROJECT_DIR$/inscription" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/metadata-extractor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/rawprocessor" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/rawprocessor/jni/dng_sdk" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/rawprocessor/jni/jpeg" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/rawprocessor/jni/raw/LibRaw" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/rawprocessor/jni/raw/LibRaw-demosaic-pack-GPL2" vcs="Git" />
