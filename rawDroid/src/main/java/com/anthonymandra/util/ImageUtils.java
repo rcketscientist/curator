@@ -1048,20 +1048,21 @@ public class ImageUtils
     private static byte[] getTiffImage(int fileDescriptor, ContentValues values)
     {
         int[] dim = new int[2];
-        int[] imageData = ImageProcessor.getTiff("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
+        byte[] imageBytes = ImageProcessor.getTiffAsJpeg("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
         int width = dim[0];
         int height = dim[1];
         values.put(Meta.Data.WIDTH, width);
         values.put(Meta.Data.HEIGHT, height);
+        return imageBytes;
 
-        // This is necessary since BitmapRegionDecoder only supports jpg and png
-        // TODO: This could be done in native, we already have jpeg capability
-        // Alternatively maybe glide can handle int[]?
-        Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
-
-        return baos.toByteArray();
+//        // This is necessary since BitmapRegionDecoder only supports jpg and png
+//        // TODO: This could be done in native, we already have jpeg capability
+//        // Alternatively maybe glide can handle int[]?
+//        Bitmap bmp = Bitmap.createBitmap(imageData, width, height, Bitmap.Config.ARGB_8888);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//
+//        return baos.toByteArray();
     }
 
     private static byte[] getRawThumb(int fileDescriptor, ContentValues values)

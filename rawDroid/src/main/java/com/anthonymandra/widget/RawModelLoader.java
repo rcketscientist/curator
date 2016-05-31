@@ -1,14 +1,8 @@
 package com.anthonymandra.widget;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.Rect;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 
-import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
@@ -17,7 +11,6 @@ import com.bumptech.glide.load.model.stream.StreamModelLoader;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 
 public class RawModelLoader implements StreamModelLoader<Uri>
 {
