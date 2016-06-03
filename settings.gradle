@@ -2,12 +2,13 @@ include ':metadata-extractor'
 include ':DocumentActivity:library'
 
 // rawprocessor
-include ':jpeg'
+include ':jpeg-turbo'
 include ':cms'
 include ':raw'
 include ':tiff'
 include ':processor'
 include ':api'
+include ':exif'
 //include ':dng'
 
 // exiv2
@@ -19,7 +20,7 @@ include ':inscription'
 include ':rawDroid'
 
 // Rawprocessor redirection
-project(':jpeg').projectDir =       new File('rawprocessor/jni/jpeg')
+project(':jpeg-turbo').projectDir =       new File('rawprocessor/jni/libjpeg-turbo')
 project(':cms').projectDir =        new File('rawprocessor/jni/cms')
 project(':raw').projectDir =        new File('rawprocessor/jni/raw')
 project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
@@ -28,3 +29,4 @@ project(':processor').projectDir =  new File('rawprocessor/jni/processor')
 project(':api').projectDir =        new File('rawprocessor/library')
 //project(':expat').projectDir = new File('rawprocessor/jni/expat')
 //project(':exiv2').projectDir = new File('rawprocessor/jni/exiv2')
+project(':exif').projectDir = new File('rawprocessor/jni/libexif')
