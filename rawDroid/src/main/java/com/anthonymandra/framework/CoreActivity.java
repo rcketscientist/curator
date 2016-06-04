@@ -605,7 +605,8 @@ public abstract class CoreActivity extends DocumentActivity
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					restoreFiles(filesToRestore);
+					if (filesToRestore.isEmpty())
+						restoreFiles(filesToRestore);
 				}
 			})
 			.setMultiChoiceItems(shortNames.toArray(new String[shortNames.size()]), null, new DialogInterface.OnMultiChoiceClickListener()
@@ -1422,12 +1423,18 @@ public abstract class CoreActivity extends DocumentActivity
 		@SuppressWarnings("unchecked")
 		protected Boolean doInBackground(final Object... params)
 		{
-			if (!(params[0] instanceof  List<?>) || !(((List<?>) params[0]).get(0) instanceof String))
+			if (params.length == 0)
+				return false;
+			if (!(params[0] instanceof List<?>))
 				throw new IllegalArgumentException();
+
+			final List<String> totalImages = (List<String>) params[0];
+			if (totalImages.isEmpty())
+				return false;
 
 			// Create a copy to keep track of completed deletions in case this needs to be restarted
 			// to request write permission
-			final List<String> totalImages = (List<String>) params[0];
+
 			List<String> remainingImages = new ArrayList<>(totalImages);
 
 			boolean totalSuccess = true;
