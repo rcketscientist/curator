@@ -3,9 +3,9 @@ apply plugin: 'io.fabric'
 //apply plugin: 'com.google.gms.google-services'
 
 def versionMajor = 4
-def versionMinor = 7
-def versionPatch = 1
-def versionBuild = 0
+def versionMinor = 9
+def versionPatch = 0
+def versionBuild = 2
 
 android {
     compileSdkVersion 23

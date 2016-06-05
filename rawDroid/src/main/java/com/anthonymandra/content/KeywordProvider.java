@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class KeywordProvider extends PathEnumerationProvider
@@ -232,37 +233,37 @@ public class KeywordProvider extends PathEnumerationProvider
                 {
                     name = name.substring(1, name.length()-1);
 
-                    Cursor c = context.getContentResolver().query(
+                    try (Cursor c = context.getContentResolver().query(
                             Data.CONTENT_URI,
                             null,
                             Data._ID + "=?",
                             new String[]{Long.toString(parents.get(depth - 1))},
-                            null);
+                            null))
+                    {
 
-                    if (c == null)
-                        return false;
-                    
-                    c.moveToFirst();
-                    List<String> synonyms = new ArrayList<>();
-                    String[] activeSynonyms = ImageUtils.convertStringToArray(
-                            c.getString(c.getColumnIndex(Data.KEYWORD_SYNONYMS)));
-                    c.close();
-                    if (activeSynonyms == null)
-                        continue;
+                        if (c == null)
+                            continue;
 
-                    for (String synonym : activeSynonyms)
-                        synonyms.add(synonym);
-                    synonyms.add(name);
+                        c.moveToFirst();
+                        List<String> synonyms = new ArrayList<>();
+                        String[] activeSynonyms = ImageUtils.convertStringToArray(
+                                c.getString(c.getColumnIndex(Data.KEYWORD_SYNONYMS)));
 
-                    ContentValues cv = new ContentValues();
-                    cv.put(Data.KEYWORD_SYNONYMS, ImageUtils.convertArrayToString(
-                            synonyms.toArray(new String[synonyms.size()])));
-                    cv.put(Data._ID, parents.get(depth - 1));
-                    context.getContentResolver().update(
-                            ContentUris.withAppendedId(Data.CONTENT_URI, parents.get(depth - 1)),
-                            cv,
-                            null, null);
+                        if (activeSynonyms == null)
+                            continue;
 
+                        synonyms.addAll(Arrays.asList(activeSynonyms));
+                        synonyms.add(name);
+
+                        ContentValues cv = new ContentValues();
+                        cv.put(Data.KEYWORD_SYNONYMS, ImageUtils.convertArrayToString(
+                                synonyms.toArray(new String[synonyms.size()])));
+                        cv.put(Data._ID, parents.get(depth - 1));
+                        context.getContentResolver().update(
+                                ContentUris.withAppendedId(Data.CONTENT_URI, parents.get(depth - 1)),
+                                cv,
+                                null, null);
+                    }
                     continue;
                 }
 

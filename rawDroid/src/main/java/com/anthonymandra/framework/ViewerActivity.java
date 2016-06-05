@@ -172,31 +172,24 @@ public abstract class ViewerActivity extends CoreActivity implements
             mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
 
             Bundle dbQuery = getIntent().getBundleExtra(EXTRA_META_BUNDLE);
-            Cursor c = getContentResolver().query(
+            try(Cursor c = getContentResolver().query(
                 Meta.Data.CONTENT_URI,
                 dbQuery.getStringArray(META_PROJECTION_KEY),
                 dbQuery.getString(META_SELECTION_KEY),
                 dbQuery.getStringArray(META_SELECTION_ARGS_KEY),
-                dbQuery.getString(META_SORT_ORDER_KEY));
-            if (c == null)
-                return;
-            if (c.getCount() < 1)
-            {
-                c.close();
-                //TODO: Error message.
-                return;
-            }
-            else
-            {
-                while(c.moveToNext())
+                dbQuery.getString(META_SORT_ORDER_KEY))) {
+                if (c == null || c.getCount() < 1)
+                    return;
+                else
                 {
-                    String uri = c.getString(Meta.URI_COLUMN);
-                    if (uri == null)
-                        continue;
-                    mMediaItems.add(Uri.parse(uri));
+                    while (c.moveToNext()) {
+                        String uri = c.getString(Meta.URI_COLUMN);
+                        if (uri == null)
+                            continue;
+                        mMediaItems.add(Uri.parse(uri));
+                    }
                 }
             }
-            c.close();
         }
         else  // External intent
         {

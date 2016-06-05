@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.0"
+             versioncode="49000"
+             summary="Beta: Release Candidate"
+             date="4 JUN 2016"/>
+    <change>Feature: Write to TIFF</change>
+    <change>Feature: Encoder EXIF, saves now have metadata</change>
+    <change>Enhancement: Fully overhauled decoder...faster!everything!</change>
+    <change>Fixes: Way too many since this build took forever :(</change>
+    <change>Notes: Legacy viewer removed.  If you need this email me!</change>
     <release version="4.7.1"
              versioncode="47100"
              summary="Beta: Bug patch"

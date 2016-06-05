@@ -330,7 +330,10 @@ public class ImageUtils
 
     public static boolean isInDatabase(Context c, Uri uri)
     {
-        return getMetaCursor(c, uri).moveToFirst();
+        try (Cursor cursor = getMetaCursor(c, uri))
+        {
+            return cursor.moveToFirst();
+        }
     }
 
     public static String getWhere()
@@ -340,14 +343,9 @@ public class ImageUtils
 
     public static boolean isProcessed(Context c, Uri uri)
     {
-        final Cursor cursor = ImageUtils.getMetaCursor(c, uri);
-        try
+        try (Cursor cursor = ImageUtils.getMetaCursor(c, uri))
         {
             return cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0;
-        }
-        finally
-        {
-            Utils.closeSilently(cursor);
         }
     }
 
@@ -361,9 +359,9 @@ public class ImageUtils
     {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        try(Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null))
+        try( Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null))
         {
-            while (cursor.moveToNext())
+            while (cursor != null && cursor.moveToNext())
             {
                 String uriString = cursor.getString(Meta.URI_COLUMN);
                 if (uriString == null)  // we've got some bogus data, just remove
@@ -389,22 +387,15 @@ public class ImageUtils
 
     public static void setExifValues(final Uri uri, final Context c, final String[] exif)
     {
-        final Cursor cursor = getMetaCursor(c, uri);
-
-        try
+        try (final Cursor cursor = getMetaCursor(c, uri))
         {
             cursor.moveToFirst();
-            ContentValues values = new ContentValues();
 
             // Check if meta is already processed
             if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
             {
                 return;
             }
-        }
-        finally
-        {
-            cursor.close();
         }
 
         ContentValues cv = new ContentValues();
@@ -854,11 +845,9 @@ public class ImageUtils
     public static boolean importKeywords(Context c, Uri keywordUri)
     {
         boolean success = false;
-        InputStreamReader reader = null;
-        try
+        try (InputStream is = c.getContentResolver().openInputStream(keywordUri);
+             InputStreamReader reader = new InputStreamReader(is))
         {
-            InputStream is = c.getContentResolver().openInputStream(keywordUri);
-            reader = new InputStreamReader(is);
             // Attempt to import keywords
             success = KeywordProvider.importKeywords(c, reader);
             int message;
@@ -872,14 +861,11 @@ public class ImageUtils
             }
             Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
         }
-        catch (FileNotFoundException e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
-        finally
-        {
-            Utils.closeSilently(reader);
-        }
+
         return success;
     }
 

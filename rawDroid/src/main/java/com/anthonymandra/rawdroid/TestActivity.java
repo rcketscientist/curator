@@ -25,7 +25,7 @@ public class TestActivity extends AppCompatActivity {
     private static void testNativeRegionDecoder()
     {
         try {
-            ParcelFileDescriptor pfd = ParcelFileDescriptor.open(new File("/sdcard/IMG_0598.CR2"), ParcelFileDescriptor.MODE_READ_ONLY);
+            ParcelFileDescriptor pfd = ParcelFileDescriptor.open(new File("/sdcard/Orion_Tulips-11.CR2"), ParcelFileDescriptor.MODE_READ_ONLY);
             int fd = pfd.getFd();
             BitmapRegionDecoder decoder = ImageProcessor.getRawDecoder(fd);
             Bitmap bmp = decoder.decodeRegion(new Rect(0, 0, 100, 100), new BitmapFactory.Options());

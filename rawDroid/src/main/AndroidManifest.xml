@@ -315,8 +315,8 @@
             android:name="io.fabric.ApiKey"
             android:value="a2ac9da17c41a8a1b70fa478f3f705c6c2dc0ce6"/>
 
-        <activity android:name=".TestActivity">
-        </activity>
+        <activity android:name=".TestActivity"
+                  android:theme="@style/GalleryTheme"/>
     </application>
 
 </manifest>

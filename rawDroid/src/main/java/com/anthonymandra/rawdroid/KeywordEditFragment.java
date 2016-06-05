@@ -74,58 +74,55 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
 
                 mPauseListener = true;
 
-                Cursor selectedTree = null;
                 final Cursor keywords = mAdapter.getCursor();
-                try
+                if (((Checkable)view).isChecked())
                 {
-                    if (((Checkable)view).isChecked())
+                    try (Cursor selectedTree = getActivity().getContentResolver().query(
+                            ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
+                            null,
+                            PathEnumerationProvider.DESCENDANTS_QUERY_SELECTION,
+                            null, null))
                     {
-                        selectedTree = getActivity().getContentResolver().query(
-                                ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
-                                null,
-                                PathEnumerationProvider.DESCENDANTS_QUERY_SELECTION,
-                                null, null);
-                        while(selectedTree.moveToNext())
+                        while (selectedTree != null && selectedTree.moveToNext())
                         {
                             mSelectedKeywords.remove(selectedTree.getLong(KeywordProvider.Data.COLUMN_ID));
                         }
                         mAdapter.notifyDataSetChanged();
                     }
-                    else
+                }
+                else
+                {
+                    long time = System.currentTimeMillis(); // We all ancestors of single selection to share insert time
+                    try (Cursor selectedTree = getActivity().getContentResolver().query(
+                            ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
+                            null,
+                            PathEnumerationProvider.ANCESTORS_QUERY_SELECTION,
+                            null, null))
                     {
-                        long time = System.currentTimeMillis(); // We all ancestors of single selection to share insert time
-                        selectedTree = getActivity().getContentResolver().query(
-                                ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
-                                null,
-                                PathEnumerationProvider.ANCESTORS_QUERY_SELECTION,
-                                null, null);
-                        while (selectedTree.moveToNext())
+                        if (selectedTree != null)
                         {
-                            keywords.moveToPosition(-1);
-                            long selectedId = selectedTree.getLong(KeywordProvider.Data.COLUMN_ID);
-                            while (keywords.moveToNext())
+                            while (selectedTree.moveToNext())
                             {
-                                if (keywords.getLong(KeywordProvider.Data.COLUMN_ID) == selectedId)
+                                keywords.moveToPosition(-1);
+                                long selectedId = selectedTree.getLong(KeywordProvider.Data.COLUMN_ID);
+                                while (keywords.moveToNext())
                                 {
-                                    mSelectedKeywords.put(selectedId, keywords.getString(KeywordProvider.Data.COLUMN_NAME));
-                                    ContentValues cv = new ContentValues();
-                                    cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
-                                    getActivity().getContentResolver().update(
-                                            ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, selectedId),
-                                            cv,
-                                            null, null);
+                                    if (keywords.getLong(KeywordProvider.Data.COLUMN_ID) == selectedId)
+                                    {
+                                        mSelectedKeywords.put(selectedId, keywords.getString(KeywordProvider.Data.COLUMN_NAME));
+                                        ContentValues cv = new ContentValues();
+                                        cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
+                                        getActivity().getContentResolver().update(
+                                                ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, selectedId),
+                                                cv,
+                                                null, null);
+                                    }
                                 }
                             }
                         }
-                        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
                     }
+                    getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
                 }
-                finally
-                {
-                    Utils.closeSilently(selectedTree);
-                    Utils.closeSilently(keywords);
-                }
-
                 mPauseListener = false;
 
                 if (mListener != null)
@@ -197,28 +194,26 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
 
         final ArrayList<ContentProviderOperation> updateRecent = new ArrayList<>();
 
-        Cursor c = getActivity().getContentResolver().query(
+        try(Cursor c = getActivity().getContentResolver().query(
                 KeywordProvider.Data.CONTENT_URI,
                 null,
                 DbUtil.createMultipleIN(KeywordProvider.Data.KEYWORD_NAME, selected.size()),
                 selected.toArray(new String[selected.size()]),
-                null);
-
-        while (c != null && c.moveToNext())
+                null))
         {
-            long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
-            ContentValues cv = new ContentValues();
-            cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
+            while (c != null && c.moveToNext())
+            {
+                long id = c.getLong(KeywordProvider.Data.COLUMN_ID);
+                ContentValues cv = new ContentValues();
+                cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
 
-            updateRecent.add(ContentProviderOperation.newUpdate(ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id))
-                    .withValues(cv)
-                    .build());
+                updateRecent.add(ContentProviderOperation.newUpdate(ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id))
+                        .withValues(cv)
+                        .build());
 
-            mSelectedKeywords.put(id, c.getString(KeywordDataSource.COLUMN_NAME));
+                mSelectedKeywords.put(id, c.getString(KeywordDataSource.COLUMN_NAME));
+            }
         }
-
-        if (c != null)
-            c.close();
 
         if (updateRecent.size() > 0)
         {

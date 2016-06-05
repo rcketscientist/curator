@@ -1726,23 +1726,24 @@ public abstract class CoreActivity extends DocumentActivity
 				selectionArgs[i] = selectedImages.get(i).toString();
 			}
 
+			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
 			// Grab existing metadata
-			Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI,
+			try(Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI,
 					projection,
 					DbUtil.createMultipleIN(Meta.Data.URI, selectedImages.size()),
 					selectionArgs,
-					null);
-
-			if (c == null)
-				return;
-
-			// Create mappings with existing values
-			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
-			while (c.moveToNext())
+					null))
 			{
-				ContentValues cv = new ContentValues(projection.length);
-				DatabaseUtils.cursorRowToContentValues(c, cv);
-				xmpPairs.put(Uri.parse(cv.getAsString(Meta.Data.URI)), cv);
+
+				if (c == null)
+					return;
+
+				// Create mappings with existing values
+				while (c.moveToNext()) {
+					ContentValues cv = new ContentValues(projection.length);
+					DatabaseUtils.cursorRowToContentValues(c, cv);
+					xmpPairs.put(Uri.parse(cv.getAsString(Meta.Data.URI)), cv);
+				}
 			}
 
 			// Update singular fields in the existing values

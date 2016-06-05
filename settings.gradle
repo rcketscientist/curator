@@ -1,32 +1,28 @@
 include ':metadata-extractor'
 include ':DocumentActivity:library'
-
-// rawprocessor
-include ':jpeg-turbo'
-include ':cms'
-include ':raw'
-include ':tiff'
-include ':processor'
-include ':api'
-include ':exif'
-//include ':dng'
-
-// exiv2
-//include ':expat'
-//include ':exiv2'
-
 include ':showcaseView:library'
 include ':inscription'
 include ':rawDroid'
-
-// Rawprocessor redirection
-project(':jpeg-turbo').projectDir =       new File('rawprocessor/jni/libjpeg-turbo')
-project(':cms').projectDir =        new File('rawprocessor/jni/cms')
-project(':raw').projectDir =        new File('rawprocessor/jni/raw')
-project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
-//project(':dng').projectDir =        new File('rawprocessor/jni/dng_sdk')
-project(':processor').projectDir =  new File('rawprocessor/jni/processor')
+include ':api'
 project(':api').projectDir =        new File('rawprocessor/library')
+
+// submodules
+include ':jpeg-turbo'
+project(':jpeg-turbo').projectDir = new File('rawprocessor/jni/libjpeg-turbo')
+include ':cms'
+project(':cms').projectDir =        new File('rawprocessor/jni/cms')
+include ':raw'
+project(':raw').projectDir =        new File('rawprocessor/jni/raw')
+include ':tiff'
+project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
+include ':processor'
+project(':processor').projectDir =  new File('rawprocessor/jni/processor')
+include ':exif'
+project(':exif').projectDir =       new File('rawprocessor/jni/libexif')
+
+//include ':dng'
+//project(':dng').projectDir =        new File('rawprocessor/jni/dng_sdk')
+//include ':expat'
 //project(':expat').projectDir = new File('rawprocessor/jni/expat')
+//include ':exiv2'
 //project(':exiv2').projectDir = new File('rawprocessor/jni/exiv2')
-project(':exif').projectDir = new File('rawprocessor/jni/libexif')

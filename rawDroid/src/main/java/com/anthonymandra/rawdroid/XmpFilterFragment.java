@@ -185,13 +185,11 @@ public class XmpFilterFragment extends XmpBaseFragment
             {
                 final List<String> paths = new ArrayList<>();
 
-                Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
+                try(Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
                         new String[]{"DISTINCT " + Meta.Data.PARENT}, null, null,
-                        Meta.Data.PARENT + " ASC");
-
-                if (c != null)
+                        Meta.Data.PARENT + " ASC"))
                 {
-                    while (c.moveToNext())
+                    while (c != null && c.moveToNext())
                     {
                         String path = c.getString(c.getColumnIndex(Meta.Data.PARENT));
 
@@ -199,7 +197,6 @@ public class XmpFilterFragment extends XmpBaseFragment
                         if (!mExcludedFolders.contains(path))
                             paths.add(path);
                     }
-                    c.close();
                 }
 
                 // Place exclusions at the end

@@ -16,6 +16,7 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -64,24 +65,25 @@ public class KeywordFilterFragment extends KeywordBaseFragment
     public void onResume()
     {
         super.onResume();
-        Cursor cursor = getActivity().getContentResolver().query(Meta.Data.META_URI,
+        try(Cursor cursor = getActivity().getContentResolver().query(Meta.Data.META_URI,
                 new String[] {"DISTINCT " + Meta.Data.SUBJECT},
-                null, null, null);
-        mDataSource = new ArrayList<>();
-        Set uniqueKeywords = new HashSet<>();
-        while(cursor.moveToNext())
+                null, null, null))
         {
-            String all = cursor.getString(0);
-            if (all == null)
-                continue;
-            for (String keyword : ImageUtils.convertStringToArray(all))
+            mDataSource = new ArrayList<>();
+            Set<String> uniqueKeywords = new HashSet<>();
+            if (cursor != null)
             {
-                uniqueKeywords.add(keyword);
+                while (cursor.moveToNext())
+                {
+                    String all = cursor.getString(0);
+                    if (all == null)
+                        continue;
+                    uniqueKeywords.addAll(Arrays.asList(ImageUtils.convertStringToArray(all)));
+                }
             }
+            mDataSource.addAll(uniqueKeywords);
         }
-        cursor.close();
 
-        mDataSource.addAll(uniqueKeywords);
         mDataSource.remove(""); //Remove the blank
         Collections.sort(mDataSource);
 
