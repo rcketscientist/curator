@@ -1445,7 +1445,11 @@ public abstract class CoreActivity extends DocumentActivity
 				try
 				{
 					setWriteResume(WriteActions.RESTORE, new Object[]{remainingImages});
-					Uri uri = Uri.fromFile(recycleBin.getFile(image));
+					File recycledFile = recycleBin.getFile(image);
+					if (recycledFile == null)
+						continue;
+
+					Uri uri = Uri.fromFile(recycledFile);
 					moveFile(uri, toRestore);
 					onImageAdded(toRestore);
 					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, toRestore));

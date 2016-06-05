@@ -16,6 +16,8 @@
 
 package com.anthonymandra.framework;
 
+import com.drew.lang.annotations.Nullable;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -479,6 +481,7 @@ public final class DiskLruCache implements Closeable {
      * exist is not currently readable. If a value is returned, it is moved to
      * the head of the LRU queue.
      */
+    @Nullable
     public synchronized File getFile(String key, int index) throws IOException {
         checkNotClosed();
         validateKey(key);

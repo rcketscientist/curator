@@ -18,6 +18,7 @@ package com.anthonymandra.framework;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
@@ -190,6 +191,7 @@ public class RecycleBin
 	 *            Unique identifier for which item to get
 	 * @return The bitmap if found in cache, null otherwise
 	 */
+	@Nullable
 	public File getFile(String data)
 	{
 		final String key = fileToKey(data);
