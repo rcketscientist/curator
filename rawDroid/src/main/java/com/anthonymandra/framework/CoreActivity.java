@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.Html;
@@ -1484,70 +1485,72 @@ public abstract class CoreActivity extends DocumentActivity
 		Boolean xmpSuccess = true;
 		Boolean jpgSuccess = true;
 
-		UsefulDocumentFile sourceFile = UsefulDocumentFile.fromUri(this, source);
-		UsefulDocumentFile renameFile = getRenamedFile(sourceFile, baseName);
+		UsefulDocumentFile srcFile = UsefulDocumentFile.fromUri(this, source);
+		UsefulDocumentFile xmpFile = ImageUtils.getXmpFile(this, source);
+		UsefulDocumentFile jpgFile = ImageUtils.getJpgFile(this, source);
 
-		if (!renameAssociatedFile(sourceFile, baseName))
+		final String filename = srcFile.getName();
+		final String sourceExt = filename.substring(filename.lastIndexOf("."), filename.length());
+
+		final String srcRename = baseName + sourceExt;
+		final String xmpRename = baseName + ".xmp";
+		final String jpgRename = baseName + ".jpg";
+
+		// Do src first in case it's a jpg
+		if (srcFile.renameTo(srcRename))
+		{
+			Uri rename = DocumentUtil.getNeighborUri(source, srcRename);
+			if (rename == null)
+			{
+				UsefulDocumentFile parent = srcFile.getParentFile();
+				if (parent == null)
+					return false;
+				UsefulDocumentFile file = parent.findFile(srcRename);
+				if (file == null)
+					return false;
+				rename = file.getUri();
+			}
+			ContentValues imageValues = new ContentValues();
+			imageValues.put(Meta.Data.NAME, srcRename);
+			imageValues.put(Meta.Data.URI, rename.toString());
+
+			updates.add(
+					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+							.withSelection(ImageUtils.getWhere(), new String[]{source.toString()})
+							.withValues(imageValues)
+							.build());
+		}
+		else
 			return false;
 
-		ContentValues imageValues = new ContentValues();
-		imageValues.put(Meta.Data.NAME, renameFile.getName());
-		imageValues.put(Meta.Data.URI, renameFile.getUri().toString());
+		xmpFile.renameTo(xmpRename);
 
-		updates.add(
-				ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-						.withSelection(ImageUtils.getWhere(), new String[]{source.toString()})
-						.withValues(imageValues)
-						.build());
-
-		if (ImageUtils.hasXmpFile(this, source))
+		if (jpgFile.renameTo(jpgRename))
 		{
-			UsefulDocumentFile xmpDoc = ImageUtils.getXmpFile(this, source);
-			xmpSuccess = renameAssociatedFile(xmpDoc, baseName);
-		}
-		if (ImageUtils.hasJpgFile(this, source))
-		{
-			UsefulDocumentFile jpgDoc = ImageUtils.getJpgFile(this, source);
-			UsefulDocumentFile renamedJpeg = getRenamedFile(jpgDoc, baseName);
-			jpgSuccess = renameAssociatedFile(jpgDoc, baseName);
-
-			if (jpgSuccess)
+			Uri rename = DocumentUtil.getNeighborUri(source, srcRename);
+			if (rename == null)
 			{
-				ContentValues jpgValues = new ContentValues();
-				jpgValues.put(Meta.Data.NAME, renamedJpeg.getName());
-				jpgValues.put(Meta.Data.URI, renamedJpeg.getUri().toString());
-
-				updates.add(
-						ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
-								.withSelection(ImageUtils.getWhere(), new String[]{jpgDoc.getUri().toString()})
-								.withValues(jpgValues)
-								.build());
+				UsefulDocumentFile parent = srcFile.getParentFile();
+				if (parent == null)
+					return false;
+				UsefulDocumentFile file = parent.findFile(jpgRename);
+				if (file == null)
+					return false;
+				rename = file.getUri();
 			}
+
+			ContentValues jpgValues = new ContentValues();
+			jpgValues.put(Meta.Data.NAME, jpgRename);
+			jpgValues.put(Meta.Data.URI, rename.toString());
+
+			updates.add(
+					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+							.withSelection(ImageUtils.getWhere(), new String[]{jpgFile.getUri().toString()})
+							.withValues(jpgValues)
+							.build());
 		}
 
-		return xmpSuccess && jpgSuccess;
-	}
-
-	public boolean renameAssociatedFile(UsefulDocumentFile original, String baseName)
-			throws IOException
-	{
-		UsefulDocumentFile renameFile = getRenamedFile(original, baseName);
-		return moveFile(original.getUri(), renameFile.getUri());
-	}
-
-	/**
-	 * This will only work with hierarchical tree uris
-     */
-	public UsefulDocumentFile getRenamedFile(UsefulDocumentFile original, String baseName)
-	{
-		String filename = original.getName();
-		String ext = filename.substring(filename.lastIndexOf("."),
-				filename.length());
-
-		String rename = baseName + ext;
-		String parent = original.getParentFile().getUri().toString();
-		String renameUriString = parent + "/" + rename;
-		return UsefulDocumentFile.fromUri(this, Uri.parse(renameUriString));
+		return true;
 	}
 
 	private static int numDigits(int x)
