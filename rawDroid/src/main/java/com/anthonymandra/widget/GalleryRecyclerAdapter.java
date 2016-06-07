@@ -316,7 +316,10 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		Cursor c = (Cursor)getItem(position);   // This is the adapter cursor, don't close
 		if (c == null)
 			return null;
-		return Uri.parse(c.getString((c.getColumnIndex(Meta.Data.URI))));
+		final String uriString = c.getString(c.getColumnIndex(Meta.Data.URI));
+		if (uriString == null)
+			return null;
+		return Uri.parse(uriString);
 	}
 
 	public List<Uri> getSelectedItems()
