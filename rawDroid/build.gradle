@@ -9,7 +9,7 @@ def versionBuild = 2
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    buildToolsVersion '23.0.3'
 
     lintOptions {
         checkReleaseBuilds false

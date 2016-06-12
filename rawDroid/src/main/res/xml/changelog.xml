@@ -3,31 +3,34 @@
     <release version="4.9.0"
              versioncode="49000"
              summary="Beta: Release Candidate"
-             date="4 JUN 2016"/>
-    <change>Feature: Write to TIFF</change>
-    <change>Feature: Encoder EXIF, saves now have metadata</change>
-    <change>Enhancement: Fully overhauled decoder...faster!everything!</change>
-    <change>Fixes: Way too many since this build took forever :(</change>
-    <change>Notes: Legacy viewer removed.  If you need this email me!</change>
+             date="4 JUN 2016">
+        <change>Feature: Write to TIFF</change>
+        <change>Feature: Encoder EXIF, saves now have metadata</change>
+        <change>Enhancement: Fully overhauled decoder...faster!everything!</change>
+        <change>Fixes: Way too many since this build took forever :(</change>
+        <change>Notes: Legacy viewer removed.  If you need this email me!</change>
+    </release>
     <release version="4.7.1"
              versioncode="47100"
              summary="Beta: Bug patch"
-             date="23 MAR 2016"/>
-    <change>Enhancement: Faster histogram</change>
-    <change>Fixes: Minor bug roundup</change>
+             date="23 MAR 2016">
+        <change>Enhancement: Faster histogram</change>
+        <change>Fixes: Minor bug roundup</change>
+    </release>
     <release version="4.7"
              versioncode="47000"
              summary="Beta: Gallery Meta"
-             date="6 MAR 2016"/>
-    <change>Feature: Edit metadata directly in gallery on multiple images at once.</change>
-    <change>Enhancement: New gallery (~50% faster)</change>
-    <change>Enhancement: Optimized search (~100% faster deep searches)</change>
-    <change>Enhancement: Better feedback during search</change>
-    <change>Enhancement: Material design icons</change>
-    <change>Enhancement: Localized dates</change>
-    <change>Enhancement: Removed legacy (5.0 and below) code</change>
-    <change>Fixes: Flicker on gallery updates</change>
-    <change>Fixes: Many minor bugs from beta testers, thanks!</change>
+             date="6 MAR 2016">
+        <change>Feature: Edit metadata directly in gallery on multiple images at once.</change>
+        <change>Enhancement: New gallery (~50% faster)</change>
+        <change>Enhancement: Optimized search (~100% faster deep searches)</change>
+        <change>Enhancement: Better feedback during search</change>
+        <change>Enhancement: Material design icons</change>
+        <change>Enhancement: Localized dates</change>
+        <change>Enhancement: Removed legacy (5.0 and below) code</change>
+        <change>Fixes: Flicker on gallery updates</change>
+        <change>Fixes: Many minor bugs from beta testers, thanks!</change>
+    </release>
     <release version="4.5.0.3"
              versioncode="45001"
              summary="Beta: Bug patch"

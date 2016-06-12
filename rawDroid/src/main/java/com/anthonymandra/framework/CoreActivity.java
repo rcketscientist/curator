@@ -23,10 +23,10 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.Html;
@@ -46,11 +46,13 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.image.ImageConfiguration;
 import com.anthonymandra.image.JpegConfiguration;
 import com.anthonymandra.image.TiffConfiguration;
+import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Margins;
+import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
@@ -59,9 +61,6 @@ import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
-import com.anthonymandra.imageprocessor.ImageProcessor;
-import com.anthonymandra.imageprocessor.Margins;
-import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
@@ -1480,11 +1479,8 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	public boolean renameImage(Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws IOException
+	public boolean renameImage(@NonNull Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws IOException
 	{
-		Boolean xmpSuccess = true;
-		Boolean jpgSuccess = true;
-
 		UsefulDocumentFile srcFile = UsefulDocumentFile.fromUri(this, source);
 		UsefulDocumentFile xmpFile = ImageUtils.getXmpFile(this, source);
 		UsefulDocumentFile jpgFile = ImageUtils.getJpgFile(this, source);
@@ -1652,6 +1648,9 @@ public abstract class CoreActivity extends DocumentActivity
 				setWriteResume(WriteActions.WRITE_XMP, new Object[]{xmpPairing});
 
 				Map.Entry<Uri, ContentValues> pair = (Map.Entry) uris.next();
+				if (pair.getKey() == null)  //AJM: Not sure how this can be null, #167
+					continue;
+
 				ContentValues values = pair.getValue();
 				databaseUpdates.add(ImageUtils.newUpdate(pair.getKey(), values));
 

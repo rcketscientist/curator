@@ -7,18 +7,18 @@ include ':api'
 project(':api').projectDir =        new File('rawprocessor/library')
 
 // submodules
-include ':jpeg-turbo'
-project(':jpeg-turbo').projectDir = new File('rawprocessor/jni/libjpeg-turbo')
-include ':cms'
-project(':cms').projectDir =        new File('rawprocessor/jni/cms')
-include ':raw'
-project(':raw').projectDir =        new File('rawprocessor/jni/raw')
-include ':tiff'
-project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
-include ':processor'
-project(':processor').projectDir =  new File('rawprocessor/jni/processor')
-include ':exif'
-project(':exif').projectDir =       new File('rawprocessor/jni/libexif')
+//include ':jpeg-turbo'
+//project(':jpeg-turbo').projectDir = new File('rawprocessor/jni/libjpeg-turbo')
+//include ':cms'
+//project(':cms').projectDir =        new File('rawprocessor/jni/cms')
+//include ':raw'
+//project(':raw').projectDir =        new File('rawprocessor/jni/raw')
+//include ':tiff'
+//project(':tiff').projectDir =       new File('rawprocessor/jni/tiff')
+//include ':processor'
+//project(':processor').projectDir =  new File('rawprocessor/jni/processor')
+//include ':exif'
+//project(':exif').projectDir =       new File('rawprocessor/jni/libexif')
 
 //include ':dng'
 //project(':dng').projectDir =        new File('rawprocessor/jni/dng_sdk')

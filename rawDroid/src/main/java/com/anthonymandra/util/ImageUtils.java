@@ -285,7 +285,7 @@ public class ImageUtils
                 .build();
     }
 
-    public static ContentProviderOperation newUpdate(Uri image, ContentValues cv)
+    public static ContentProviderOperation newUpdate(@NonNull Uri image, ContentValues cv)
     {
         return ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
                 .withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
