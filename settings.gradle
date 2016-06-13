@@ -3,8 +3,8 @@ include ':DocumentActivity:library'
 include ':showcaseView:library'
 include ':inscription'
 include ':rawDroid'
-include ':api'
-project(':api').projectDir =        new File('rawprocessor/library')
+include ':rawprocessor'
+project(':rawprocessor').projectDir =        new File('rawprocessor/library')
 
 // submodules
 //include ':jpeg-turbo'
