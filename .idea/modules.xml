@@ -4,13 +4,19 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DocumentActivity/DocumentActivity.iml" filepath="$PROJECT_DIR$/DocumentActivity/DocumentActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/DocumentActivity/library/DocumentActivity-library.iml" filepath="$PROJECT_DIR$/DocumentActivity/library/DocumentActivity-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/jni/cms/cms.iml" filepath="$PROJECT_DIR$/rawprocessor/jni/cms/cms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/jni/libexif/exif.iml" filepath="$PROJECT_DIR$/rawprocessor/jni/libexif/exif.iml" />
       <module fileurl="file://$PROJECT_DIR$/inscription/inscription.iml" filepath="$PROJECT_DIR$/inscription/inscription.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/jni/libjpeg-turbo/jpeg-turbo.iml" filepath="$PROJECT_DIR$/rawprocessor/jni/libjpeg-turbo/jpeg-turbo.iml" />
       <module fileurl="file://$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" filepath="$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/jni/processor/processor.iml" filepath="$PROJECT_DIR$/rawprocessor/jni/processor/processor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/jni/raw/raw.iml" filepath="$PROJECT_DIR$/rawprocessor/jni/raw/raw.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawDroid/rawDroid.iml" filepath="$PROJECT_DIR$/rawDroid/rawDroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/showcaseView.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/library/showcaseView-library.iml" filepath="$PROJECT_DIR$/showcaseView/library/showcaseView-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/jni/tiff/tiff.iml" filepath="$PROJECT_DIR$/rawprocessor/jni/tiff/tiff.iml" />
     </modules>
   </component>
 </project>
