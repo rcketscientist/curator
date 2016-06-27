@@ -89,14 +89,14 @@ public class ImageUtils
      * @param uri
      * @return
      */
-    private static Metadata readMeta(Context c, Uri uri)
+    private static Metadata readMeta(Context c, @NonNull Uri uri)
     {
         InputStream image = null;
         Metadata meta = new Metadata();
         try
         {
             image = c.getContentResolver().openInputStream(uri);
-            meta = ImageMetadataReader.readMetadata(image);  //TODO: possibly replace with exiv, too much overhead
+            meta = ImageMetadataReader.readMetadata(image);
         }
         catch (Exception e)
         {

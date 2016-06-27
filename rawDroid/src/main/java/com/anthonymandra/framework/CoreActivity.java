@@ -1085,6 +1085,9 @@ public abstract class CoreActivity extends DocumentActivity
 	//TODO: CopyThumb and SaveTif should be able to be combined with a switch for which native to call
 	protected void saveImage(List<Uri> images, Uri destination, ImageConfiguration config)
 	{
+		if (images.size() < 0)
+			return;
+
 		// Just grab the first width and assume that will be sufficient for all images
 		Watermark wm = null;
 		try (Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
