@@ -674,6 +674,9 @@ public abstract class CoreActivity extends DocumentActivity
 		long spaceRequired = 0;
 		for (Uri toDelete : itemsToDelete)
 		{
+			if (toDelete == null)
+				continue;
+
 			File f = new File(toDelete.getPath());
 			if (f.exists())
 				spaceRequired += f.length();

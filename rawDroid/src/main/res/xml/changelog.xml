@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.0.5"
+             versioncode="49005"
+             summary="Beta: Release Candidate"
+             date="18 JUN 2016">
+        <change>Fixes: EXIF disabled when watermark is enabled due to a conflict</change>
+        <change>Fixes: Crashes due to empty selection (save, restore, etc)</change>
+        <change>Fixes: Rename</change>
+    </release>
     <release version="4.9.0"
              versioncode="49000"
              summary="Beta: Release Candidate"
