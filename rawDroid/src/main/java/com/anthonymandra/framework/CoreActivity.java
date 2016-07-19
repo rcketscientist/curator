@@ -984,9 +984,16 @@ public abstract class CoreActivity extends DocumentActivity
 					e.printStackTrace();
 					// We'll be automatically requesting write permission so kill this process
 					return false;
-				} catch (IOException e)
+				}
+				catch (IOException e)
 				{
 					e.printStackTrace();
+				}
+				catch (RuntimeException e)
+				{
+					e.printStackTrace();
+					Crashlytics.setString("uri", toCopy.toString());
+					Crashlytics.logException(e);
 				}
 				remainingImages.remove(toCopy);
 				onImageAdded(toCopy);

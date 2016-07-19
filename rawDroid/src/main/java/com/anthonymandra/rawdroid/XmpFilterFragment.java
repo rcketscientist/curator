@@ -568,7 +568,8 @@ public class XmpFilterFragment extends XmpBaseFragment
                     item.excluded = !item.excluded;
                     viewHolder.path.setChecked(!item.excluded);
 
-                    mListener.onVisibilityChanged(item);
+                    if (mListener != null)
+                        mListener.onVisibilityChanged(item);
                     notifyDataSetChanged();
                 }
             });
@@ -578,7 +579,9 @@ public class XmpFilterFragment extends XmpBaseFragment
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
                 {
                     item.visible = isChecked;
-                    mListener.onVisibilityChanged(item);
+
+                    if (mListener != null)
+                        mListener.onVisibilityChanged(item);
                 }
             });
 
