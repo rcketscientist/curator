@@ -361,6 +361,9 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
         if (mFilterListener != null)
         {
+            if (getActivity() == null)
+                return;
+
             SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
 
