@@ -316,7 +316,10 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		Cursor c = (Cursor)getItem(position);   // This is the adapter cursor, don't close
 		if (c == null)
 			return null;
-		final String uriString = c.getString(c.getColumnIndex(Meta.Data.URI));
+		int index = c.getColumnIndex(Meta.Data.URI);
+		if (index < 0)
+			return null; //TODO: Fabric #55 https://fabric.io/anthony-mandras-projects/android/apps/com.anthonymandra.rawdroid/issues/57569a4cffcdc04250f29fb7
+		final String uriString = c.getString(index);
 		if (uriString == null)
 			return null;
 		return Uri.parse(uriString);
@@ -426,16 +429,17 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 
 	public void selectAll()
 	{
-		if (getCursor().moveToFirst())
+		Cursor c = getCursor();
+		if (c != null && c.moveToFirst())
 		{
 			do
 			{
-				mSelectedItems.add(getUri(getCursor().getPosition()));
-			} while (getCursor().moveToNext());
-		}
+				mSelectedItems.add(getUri(c.getPosition()));
+			} while (c.moveToNext());
 
-		updateSelection();
-		notifyDataSetChanged();
+			updateSelection();
+			notifyDataSetChanged();
+		}
 	}
 
 	public void setOnSelectionListener(OnSelectionUpdatedListener listener)
