@@ -294,23 +294,6 @@ public abstract class CoreActivity extends DocumentActivity
 							+ "<i>" + getResources().getString(R.string.settingsReset) + "</i>"),
 						Snackbar.LENGTH_LONG)
 						.show();
-//					AlertDialog.Builder b = new AlertDialog.Builder(CoreActivity.this);
-//					b.setMessage(Html.fromHtml(
-//						getResources().getString(R.string.saveDefaultConfirm) + "<p>   "
-//						+ "<i>" + getResources().getString(R.string.settingsReset) + "</i>"));
-//					b.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener() {
-//						@Override
-//						public void onClick(DialogInterface dialog, int which) {
-//							setDefault.setChecked(false);
-//						}
-//					});
-//					b.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener() {
-//						@Override
-//						public void onClick(DialogInterface dialog, int which) {
-//							// do nothing
-//						}
-//					});
-//					b.show();
 				}
 			}
 		});
@@ -333,7 +316,6 @@ public abstract class CoreActivity extends DocumentActivity
 			@Override
 			public void onClick(View v) {
 				ImageConfiguration config = null;
-				int type;
 				switch(tabs.getCurrentTab())
 				{
 					case 0: //JPG
@@ -1006,7 +988,8 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		protected void onPostExecute(Boolean result)
 		{
-			mProgressDialog.dismiss();
+			if (!CoreActivity.this.isDestroyed() && mProgressDialog != null)
+				mProgressDialog.dismiss();
 
 			if (result)
 				clearWriteResume();
@@ -1113,7 +1096,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	public class SaveImageTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
-		final ProgressDialog mProgressDialog = new ProgressDialog(CoreActivity.this);
+		final ProgressDialog progressDialog = new ProgressDialog(CoreActivity.this);
 
 		public SaveImageTask()
 		{	}
@@ -1121,11 +1104,11 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		protected void onPreExecute()
 		{
-			mProgressDialog.setTitle(getString(R.string.extractingImage));
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			mProgressDialog.setCanceledOnTouchOutside(true);
-			mProgressDialog.setOnCancelListener(this);
-			mProgressDialog.show();
+			progressDialog.setTitle(getString(R.string.extractingImage));
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			progressDialog.setCanceledOnTouchOutside(true);
+			progressDialog.setOnCancelListener(this);
+			progressDialog.show();
 		}
 
 		@Override
@@ -1231,7 +1214,9 @@ public abstract class CoreActivity extends DocumentActivity
 		protected void onPostExecute(Boolean result)
 		{
 			onImageSetChanged();
-			mProgressDialog.dismiss();
+
+			if (!CoreActivity.this.isDestroyed() && progressDialog != null)
+				progressDialog.dismiss();
 		}
 
 		@Override
@@ -1239,11 +1224,11 @@ public abstract class CoreActivity extends DocumentActivity
 		{
 			if (values.length > 0)
 			{
-				mProgressDialog.setMessage(values[0]);
+				progressDialog.setMessage(values[0]);
 			}
 			else
 			{
-				mProgressDialog.incrementProgressBy(1);
+				progressDialog.incrementProgressBy(1);
 			}
 		}
 
@@ -1322,7 +1307,8 @@ public abstract class CoreActivity extends DocumentActivity
 			else
 				Snackbar.make(findViewById(android.R.id.content), R.string.deleteFail, Snackbar.LENGTH_LONG).show();
 
-			mProgressDialog.dismiss();
+			if (!CoreActivity.this.isDestroyed() && mProgressDialog != null)
+				mProgressDialog.dismiss();
 			onImageSetChanged();
 		}
 
@@ -1401,7 +1387,8 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		protected void onPostExecute(Void result)
 		{
-			mProgressDialog.dismiss();
+			if (!CoreActivity.this.isDestroyed() && mProgressDialog != null)
+				mProgressDialog.dismiss();
 			onImageSetChanged();
 		}
 
