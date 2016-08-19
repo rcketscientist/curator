@@ -90,7 +90,7 @@ public abstract class PathEnumerationProvider extends ContentProvider
 
         if (rowsAffected > 0)
         {
-            Uri metaUri = ContentUris.withAppendedId(Meta.Data.CONTENT_URI, childId);
+            Uri metaUri = ContentUris.withAppendedId(Meta.CONTENT_URI, childId);
             getContext().getContentResolver().notifyChange(metaUri, null);
             return metaUri;
         }

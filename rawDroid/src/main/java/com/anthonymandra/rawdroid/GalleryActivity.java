@@ -125,18 +125,6 @@ public class GalleryActivity extends CoreActivity implements
 	public static final String PREFS_SHOW_FILTER_HINT = "prefShowFilterHint";
 	public static final String PREFS_PERMISSIBLE_USB = "prefPermissibleUsb";
 
-	// TODO: Supposedly faster to use a projection
-//	private static final String[] GALLERY_PROJECTION =
-//	{
-//		Meta.Data._ID,
-//		Meta.Data.URI,
-//		Meta.Data.ORIENTATION,
-//		Meta.Data.RATING,
-//		Meta.Data.SUBJECT,
-//		Meta.Data.TIMESTAMP,
-//		Meta.Data.LABEL
-//	};
-
 	// Request codes
 	private static final int REQUEST_COPY_DIR = 12;
     private static final int REQUEST_UPDATE_PHOTO = 16;
@@ -361,7 +349,7 @@ public class GalleryActivity extends CoreActivity implements
 			{
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createMultipleIN(Meta.Data.LABEL, filter.xmp.label.length));
+				selection.append(DbUtil.createMultipleIN(Meta.LABEL, filter.xmp.label.length));
 				Collections.addAll(selectionArgs, filter.xmp.label);
 			}
 			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
@@ -370,7 +358,7 @@ public class GalleryActivity extends CoreActivity implements
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createMultipleLike(Meta.Data.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
+				selection.append(DbUtil.createMultipleLike(Meta.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
 			}
 			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
 			{
@@ -378,7 +366,7 @@ public class GalleryActivity extends CoreActivity implements
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createMultipleIN(Meta.Data.RATING, filter.xmp.rating.length));
+				selection.append(DbUtil.createMultipleIN(Meta.RATING, filter.xmp.rating.length));
 				for (int rating : filter.xmp.rating)
 				{
 					selectionArgs.add(Double.toString((double)rating));
@@ -390,7 +378,7 @@ public class GalleryActivity extends CoreActivity implements
 			if (requiresJoiner)
 				selection.append(AND);  // Always exclude the folders, don't OR
 
-			selection.append(DbUtil.createMultipleLike(Meta.Data.PARENT,
+			selection.append(DbUtil.createMultipleLike(Meta.PARENT,
 					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
 					selectionArgs,
 					AND,    // Requires AND so multiple hides don't negate each other
@@ -402,13 +390,13 @@ public class GalleryActivity extends CoreActivity implements
 
 		if (filter.segregateByType)
 		{
-			sort.append(Meta.Data.TYPE).append(" COLLATE NOCASE").append(" ASC, ");
+			sort.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ");
 		}
 		switch (filter.sortColumn)
 		{
-			case Date: sort.append(Meta.Data.TIMESTAMP).append(order); break;
-			case Name: sort.append(Meta.Data.NAME).append(" COLLATE NOCASE").append(order); break;
-			default: sort.append(Meta.Data.NAME).append(" COLLATE NOCASE").append(" ASC");
+			case Date: sort.append(Meta.TIMESTAMP).append(order); break;
+			case Name: sort.append(Meta.NAME).append(" COLLATE NOCASE").append(order); break;
+			default: sort.append(Meta.NAME).append(" COLLATE NOCASE").append(" ASC");
 		}
 
 		updateMetaLoader(null, selection.toString(), selectionArgs.toArray(new String[selectionArgs.size()]), sort.toString());
@@ -571,7 +559,7 @@ public class GalleryActivity extends CoreActivity implements
 				// Returns a new CursorLoader
 				return new CursorLoader(
 						this,   				// Parent activity context
-						Meta.Data.CONTENT_URI,  // Table to query
+						Meta.CONTENT_URI,  // Table to query
 						projection,				// Projection to return
 						selection,       		// No selection clause
 						selectionArgs, 			// No selection arguments
@@ -793,7 +781,7 @@ public class GalleryActivity extends CoreActivity implements
 					}
 				}).start();
 				Glide.get(GalleryActivity.this).clearMemory();
-				getContentResolver().delete(Meta.Data.CONTENT_URI, null, null);
+				getContentResolver().delete(Meta.CONTENT_URI, null, null);
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
 			case R.id.contextDelete:
@@ -886,7 +874,7 @@ public class GalleryActivity extends CoreActivity implements
 	protected boolean removeDatabaseReference(Uri toRemove)
 	{
 		int rowsDeleted = getContentResolver().delete(
-				Meta.Data.CONTENT_URI,
+				Meta.CONTENT_URI,
 				ImageUtils.getWhere(),
 				new String[] {toRemove.toString()});
 		return rowsDeleted > 0;
@@ -895,7 +883,7 @@ public class GalleryActivity extends CoreActivity implements
 	protected Uri addDatabaseReference(Uri toAdd)
 	{
 		return getContentResolver().insert(
-				Meta.Data.CONTENT_URI,
+				Meta.CONTENT_URI,
 				ImageUtils.getContentValues(this, toAdd));
 	}
 
@@ -1159,7 +1147,7 @@ public class GalleryActivity extends CoreActivity implements
 	        addDatabaseReference(Uri.fromFile(f4));
 	        addDatabaseReference(Uri.fromFile(f5));
 	        updateMetaLoader(null,
-			        Meta.Data.URI + " LIKE ?",
+			        Meta.URI + " LIKE ?",
 			        new String[] {"%"+tutorialDirectory.getName()+"%"}, null);}
 
         catch (FileNotFoundException e)

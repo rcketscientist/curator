@@ -161,13 +161,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		public static GalleryItem fromCursor(Cursor cursor)
 		{
 			GalleryItem item = new GalleryItem();
-			item.rotation = ImageUtils.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.Data.ORIENTATION)));
-			item.rating = cursor.getFloat(cursor.getColumnIndex(Meta.Data.RATING));
-			final String u = cursor.getString(cursor.getColumnIndex(Meta.Data.URI));
+			item.rotation = ImageUtils.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.ORIENTATION)));
+			item.rating = cursor.getFloat(cursor.getColumnIndex(Meta.RATING));
+			final String u = cursor.getString(cursor.getColumnIndex(Meta.URI));
 			item.uri = u != null ? Uri.parse(u) : null;
-			item.label = cursor.getString(cursor.getColumnIndex(Meta.Data.LABEL));
-			item.name = cursor.getString(cursor.getColumnIndex(Meta.Data.NAME));
-			item.hasSubject = cursor.getString(cursor.getColumnIndex(Meta.Data.SUBJECT)) != null;
+			item.label = cursor.getString(cursor.getColumnIndex(Meta.LABEL));
+			item.name = cursor.getString(cursor.getColumnIndex(Meta.NAME));
+			item.hasSubject = cursor.getString(cursor.getColumnIndex(Meta.SUBJECT)) != null;
 			return item;
 		}
 
@@ -316,7 +316,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		Cursor c = (Cursor)getItem(position);   // This is the adapter cursor, don't close
 		if (c == null)
 			return null;
-		int index = c.getColumnIndex(Meta.Data.URI);
+		int index = c.getColumnIndex(Meta.URI);
 		if (index < 0)
 			return null; //TODO: Fabric #55 https://fabric.io/anthony-mandras-projects/android/apps/com.anthonymandra.rawdroid/issues/57569a4cffcdc04250f29fb7
 		final String uriString = c.getString(index);
@@ -330,13 +330,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	{
 		if (mCursor == null)
 			return null;
-		int index = mCursor.getColumnIndex(Meta.Data.URI);
+		int index = mCursor.getColumnIndex(Meta.URI);
 		if (index < 0)
 			return null;
 
 		List<String> uris = new ArrayList<>();
 		while (mCursor.moveToNext()) {
-			String uri = mCursor.getString(Meta.URI_COLUMN);
+			String uri = mCursor.getString(index);
 			if (uri == null)
 				continue;
 			uris.add(uri);

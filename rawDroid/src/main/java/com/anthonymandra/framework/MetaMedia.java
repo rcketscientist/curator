@@ -41,9 +41,9 @@ public abstract class MetaMedia extends MediaItem
 	public MetaMedia(Context context, Cursor cursor) {
 		super(context, cursor);
 
-		width = cursor.getInt(cursor.getColumnIndex(Meta.Data.WIDTH));
-		height = cursor.getInt(cursor.getColumnIndex(Meta.Data.HEIGHT));
-		orientation = cursor.getInt(cursor.getColumnIndex(Meta.Data.ORIENTATION));
+		width = cursor.getInt(cursor.getColumnIndex(Meta.WIDTH));
+		height = cursor.getInt(cursor.getColumnIndex(Meta.HEIGHT));
+		orientation = cursor.getInt(cursor.getColumnIndex(Meta.ORIENTATION));
 	}
 
 	public int getOrientation()

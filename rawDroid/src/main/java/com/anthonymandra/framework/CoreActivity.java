@@ -129,7 +129,7 @@ public abstract class CoreActivity extends DocumentActivity
 	public static final String META_SELECTION_KEY = "selection";
 	public static final String META_SELECTION_ARGS_KEY = "selection_args";
 	public static final String META_SORT_ORDER_KEY = "sort_order";
-	public static final String META_DEFAULT_SORT = Meta.Data.NAME + " ASC";
+	public static final String META_DEFAULT_SORT = Meta.NAME + " ASC";
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -478,9 +478,9 @@ public abstract class CoreActivity extends DocumentActivity
 		if (selection != null)
 		{
 			ContentValues cv = new ContentValues();
-			cv.put(Meta.Data.LABEL, values.Label);
-			cv.put(Meta.Data.RATING, values.Rating);
-			cv.put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+			cv.put(Meta.LABEL, values.Label);
+			cv.put(Meta.RATING, values.Rating);
+			cv.put(Meta.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
 
 			Map<Uri, ContentValues> xmpPairing = new HashMap<>();
 			for (Uri uri : selection)
@@ -1085,11 +1085,14 @@ public abstract class CoreActivity extends DocumentActivity
 
 		// Just grab the first width and assume that will be sufficient for all images
 		Watermark wm = null;
-		try (Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
+		try (Cursor c = getContentResolver().query(Meta.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
 		{
 			if (c != null && c.moveToFirst())
 			{
-				final int width = c.getInt(Meta.WIDTH_COLUMN);
+				final int widthColumn = c.getColumnIndex(Meta.WIDTH);
+				if (widthColumn == -1)
+					return;
+				final int width = c.getInt(widthColumn);
 				wm = getWatermark(Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro, width);
 			}
 		}
@@ -1509,11 +1512,11 @@ public abstract class CoreActivity extends DocumentActivity
 				rename = file.getUri();
 			}
 			ContentValues imageValues = new ContentValues();
-			imageValues.put(Meta.Data.NAME, srcRename);
-			imageValues.put(Meta.Data.URI, rename.toString());
+			imageValues.put(Meta.NAME, srcRename);
+			imageValues.put(Meta.URI, rename.toString());
 
 			updates.add(
-					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+					ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
 							.withSelection(ImageUtils.getWhere(), new String[]{source.toString()})
 							.withValues(imageValues)
 							.build());
@@ -1538,11 +1541,11 @@ public abstract class CoreActivity extends DocumentActivity
 			}
 
 			ContentValues jpgValues = new ContentValues();
-			jpgValues.put(Meta.Data.NAME, jpgRename);
-			jpgValues.put(Meta.Data.URI, rename.toString());
+			jpgValues.put(Meta.NAME, jpgRename);
+			jpgValues.put(Meta.URI, rename.toString());
 
 			updates.add(
-					ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+					ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
 							.withSelection(ImageUtils.getWhere(), new String[]{jpgFile.getUri().toString()})
 							.withValues(jpgValues)
 							.build());
@@ -1658,9 +1661,9 @@ public abstract class CoreActivity extends DocumentActivity
 
 				final Metadata meta = new Metadata();
 				meta.addDirectory(new XmpDirectory());
-				ImageUtils.updateSubject(meta, ImageUtils.convertStringToArray(values.getAsString(Meta.Data.SUBJECT)));
-				ImageUtils.updateRating(meta, values.getAsInteger(Meta.Data.RATING));
-				ImageUtils.updateLabel(meta, values.getAsString(Meta.Data.LABEL));
+				ImageUtils.updateSubject(meta, ImageUtils.convertStringToArray(values.getAsString(Meta.SUBJECT)));
+				ImageUtils.updateRating(meta, values.getAsInteger(Meta.RATING));
+				ImageUtils.updateLabel(meta, values.getAsString(Meta.LABEL));
 
 				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, pair.getKey()).getUri();
 				final UsefulDocumentFile xmpDoc;
@@ -1713,7 +1716,7 @@ public abstract class CoreActivity extends DocumentActivity
 		private final List<Uri> selectedImages;
 		private final XmpEditFragment.XmpEditValues update;
 		private final XmpUpdateField updateType;
-		private final String[] projection = new String[] { Meta.Data.URI, Meta.Data.RATING, Meta.Data.LABEL, Meta.Data.SUBJECT };
+		private final String[] projection = new String[] { Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT };
 
 		public PrepareXmpRunnable(XmpEditFragment.XmpEditValues update, XmpUpdateField updateType)
 		{
@@ -1736,9 +1739,9 @@ public abstract class CoreActivity extends DocumentActivity
 
 			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
 			// Grab existing metadata
-			try(Cursor c = getContentResolver().query(Meta.Data.CONTENT_URI,
+			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
 					projection,
-					DbUtil.createMultipleIN(Meta.Data.URI, selectedImages.size()),
+					DbUtil.createMultipleIN(Meta.URI, selectedImages.size()),
 					selectionArgs,
 					null))
 			{
@@ -1750,7 +1753,7 @@ public abstract class CoreActivity extends DocumentActivity
 				while (c.moveToNext()) {
 					ContentValues cv = new ContentValues(projection.length);
 					DatabaseUtils.cursorRowToContentValues(c, cv);
-					xmpPairs.put(Uri.parse(cv.getAsString(Meta.Data.URI)), cv);
+					xmpPairs.put(Uri.parse(cv.getAsString(Meta.URI)), cv);
 				}
 			}
 
@@ -1760,13 +1763,13 @@ public abstract class CoreActivity extends DocumentActivity
 				switch(updateType)
 				{
 					case Label:
-						xmpPair.getValue().put(Meta.Data.LABEL, update.Label);
+						xmpPair.getValue().put(Meta.LABEL, update.Label);
 						break;
 					case Rating:
-						xmpPair.getValue().put(Meta.Data.RATING, update.Rating);
+						xmpPair.getValue().put(Meta.RATING, update.Rating);
 						break;
 					case Subject:
-						xmpPair.getValue().put(Meta.Data.SUBJECT, ImageUtils.convertArrayToString(update.Subject));
+						xmpPair.getValue().put(Meta.SUBJECT, ImageUtils.convertArrayToString(update.Subject));
 						break;
 				}
 			}

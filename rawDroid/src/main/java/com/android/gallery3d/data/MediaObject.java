@@ -54,10 +54,10 @@ public abstract class MediaObject implements RawObject {
 
     public MediaObject(Context c, Cursor cursor)
     {
-        this(c, Uri.parse(cursor.getString(cursor.getColumnIndex(Meta.Data.URI))));
+        this(c, Uri.parse(cursor.getString(cursor.getColumnIndex(Meta.URI))));
 
-        mName = cursor.getString(cursor.getColumnIndex(Meta.Data.NAME));
-        mType = cursor.getString(cursor.getColumnIndex(Meta.Data.TYPE));
+        mName = cursor.getString(cursor.getColumnIndex(Meta.NAME));
+        mType = cursor.getString(cursor.getColumnIndex(Meta.TYPE));
     }
 
     @Override

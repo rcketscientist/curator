@@ -185,13 +185,13 @@ public class XmpFilterFragment extends XmpBaseFragment
             {
                 final List<String> paths = new ArrayList<>();
 
-                try(Cursor c = getActivity().getContentResolver().query(Meta.Data.CONTENT_URI,
-                        new String[]{"DISTINCT " + Meta.Data.PARENT}, null, null,
-                        Meta.Data.PARENT + " ASC"))
+                try(Cursor c = getActivity().getContentResolver().query(Meta.CONTENT_URI,
+                        new String[]{"DISTINCT " + Meta.PARENT}, null, null,
+                        Meta.PARENT + " ASC"))
                 {
                     while (c != null && c.moveToNext())
                     {
-                        String path = c.getString(c.getColumnIndex(Meta.Data.PARENT));
+                        String path = c.getString(c.getColumnIndex(Meta.PARENT));
 
                         // We place the excluded folders at the end
                         if (!mExcludedFolders.contains(path))

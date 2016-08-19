@@ -22,6 +22,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
@@ -531,20 +532,22 @@ public class PhotoDataAdapter implements Model {
                 return;
 
             ImageData data = new ImageData();
-            data.height = c.getInt(c.getColumnIndex(Meta.Data.HEIGHT));
-            data.width = c.getInt(c.getColumnIndex(Meta.Data.WIDTH));
-            data.orientation = c.getInt(c.getColumnIndex(Meta.Data.ORIENTATION));
+            data.height = c.getInt(c.getColumnIndex(Meta.HEIGHT));
+            data.width = c.getInt(c.getColumnIndex(Meta.WIDTH));
+            data.orientation = c.getInt(c.getColumnIndex(Meta.ORIENTATION));
 
             imageData.put(uri, data);
         }
     }
 
-    private Cursor getCursor(Uri item)
+    private @Nullable Cursor getCursor(Uri item)
     {
         if (item == null)
             return null;
 
         Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item);
+        if (c == null)
+            return null;
 
         return c.moveToFirst() ? c : null;
     }

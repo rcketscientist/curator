@@ -40,9 +40,9 @@ public class MetaProvider extends ContentProvider
 	static
 	{
 		sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		sUriMatcher.addURI(Meta.AUTHORITY, Meta.Data.META, META);
+		sUriMatcher.addURI(Meta.AUTHORITY, Meta.META, META);
 		// use of the hash character indicates matching of an id
-		sUriMatcher.addURI(Meta.AUTHORITY, Meta.Data.META + "/#", META_ID);
+		sUriMatcher.addURI(Meta.AUTHORITY, Meta.META + "/#", META_ID);
 	}
 
 	private DatabaseHelper dbHelper;
@@ -65,34 +65,34 @@ public class MetaProvider extends ContentProvider
 			String createMetaTable = 
 					"CREATE TABLE " + META_TABLE_NAME + " (" + 
 					BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
-					Meta.Data.NAME 		    	+ " TEXT, " +
-					Meta.Data.TIMESTAMP     	+ " TEXT, " +
-					Meta.Data.MODEL 	    	+ " TEXT, " +
-					Meta.Data.APERTURE 	    	+ " TEXT, " +
-					Meta.Data.EXPOSURE 		    + " TEXT, " +
-					Meta.Data.FLASH 		    + " TEXT, " +
-					Meta.Data.FOCAL_LENGTH  	+ " TEXT, " +
-					Meta.Data.ISO 			    + " TEXT, " +
-					Meta.Data.WHITE_BALANCE     + " TEXT, " +
-					Meta.Data.HEIGHT 		    + " INTEGER, " +
-					Meta.Data.WIDTH 		    + " INTEGER, " +
-					Meta.Data.LATITUDE 		    + " TEXT, " +
-					Meta.Data.LONGITUDE 	    + " TEXT, " +
-					Meta.Data.ALTITUDE 		    + " TEXT, " +
-					Meta.Data.MEDIA_ID 		    + " TEXT, " +
-					Meta.Data.ORIENTATION 	    + " INTEGER, " +
-					Meta.Data.MAKE 			    + " TEXT, "	+
-					Meta.Data.URI 			    + " TEXT UNIQUE," 	+
-					Meta.Data.RATING			+ " REAL," +
-					Meta.Data.SUBJECT	    	+ " TEXT," +
-					Meta.Data.LABEL	    		+ " TEXT," +
-					Meta.Data.LENS_MODEL	    + " TEXT," +
-					Meta.Data.DRIVE_MODE	    + " TEXT," +
-					Meta.Data.EXPOSURE_MODE	    + " TEXT," +
-					Meta.Data.EXPOSURE_PROGRAM	+ " TEXT," +
-					Meta.Data.TYPE				+ " INTEGER," +
-					Meta.Data.PROCESSED			+ " BOOLEAN," +
-					Meta.Data.PARENT            + " TEXT);";
+					Meta.NAME 		    	+ " TEXT, " +
+					Meta.TIMESTAMP     	+ " TEXT, " +
+					Meta.MODEL 	    	+ " TEXT, " +
+					Meta.APERTURE 	    	+ " TEXT, " +
+					Meta.EXPOSURE 		    + " TEXT, " +
+					Meta.FLASH 		    + " TEXT, " +
+					Meta.FOCAL_LENGTH  	+ " TEXT, " +
+					Meta.ISO 			    + " TEXT, " +
+					Meta.WHITE_BALANCE     + " TEXT, " +
+					Meta.HEIGHT 		    + " INTEGER, " +
+					Meta.WIDTH 		    + " INTEGER, " +
+					Meta.LATITUDE 		    + " TEXT, " +
+					Meta.LONGITUDE 	    + " TEXT, " +
+					Meta.ALTITUDE 		    + " TEXT, " +
+					Meta.MEDIA_ID 		    + " TEXT, " +
+					Meta.ORIENTATION 	    + " INTEGER, " +
+					Meta.MAKE 			    + " TEXT, "	+
+					Meta.URI 			    + " TEXT UNIQUE," 	+
+					Meta.RATING			+ " REAL," +
+					Meta.SUBJECT	    	+ " TEXT," +
+					Meta.LABEL	    		+ " TEXT," +
+					Meta.LENS_MODEL	    + " TEXT," +
+					Meta.DRIVE_MODE	    + " TEXT," +
+					Meta.EXPOSURE_MODE	    + " TEXT," +
+					Meta.EXPOSURE_PROGRAM	+ " TEXT," +
+					Meta.TYPE				+ " INTEGER," +
+					Meta.PROCESSED			+ " BOOLEAN," +
+					Meta.PARENT            + " TEXT);";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 
@@ -136,10 +136,10 @@ public class MetaProvider extends ContentProvider
 		switch (sUriMatcher.match(uri))
 		{
 		case META:
-			return Meta.Data.CONTENT_TYPE;
+			return Meta.CONTENT_TYPE;
 
 		case META_ID:
-			return Meta.Data.CONTENT_META_TYPE;
+			return Meta.CONTENT_META_TYPE;
 
 		default:
 			throw new IllegalArgumentException("Unknown meta type: " + uri);
@@ -191,7 +191,7 @@ public class MetaProvider extends ContentProvider
 
         if (rowId > 0) 
         {
-            Uri metaUri = ContentUris.withAppendedId(Meta.Data.CONTENT_URI, rowId);
+            Uri metaUri = ContentUris.withAppendedId(Meta.CONTENT_URI, rowId);
             getContext().getContentResolver().notifyChange(metaUri, null);
             return metaUri;
         }

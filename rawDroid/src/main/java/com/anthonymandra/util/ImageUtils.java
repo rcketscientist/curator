@@ -19,6 +19,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
+import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -262,32 +263,32 @@ public class ImageUtils
         ContentValues cv = new ContentValues();
         if (fd != null)
         {
-            cv.put(Meta.Data.NAME, fd.name);
-            cv.put(Meta.Data.PARENT, fd.parent.toString());
-            cv.put(Meta.Data.TIMESTAMP, fd.lastModified);
+            cv.put(Meta.NAME, fd.name);
+            cv.put(Meta.PARENT, fd.parent.toString());
+            cv.put(Meta.TIMESTAMP, fd.lastModified);
         }
         else
         {
-            cv.put(Meta.Data.PARENT, file.getParentFile().getUri().toString());
+            cv.put(Meta.PARENT, file.getParentFile().getUri().toString());
         }
-        cv.put(Meta.Data.URI, image.toString());
-        cv.put(Meta.Data.TYPE, ImageUtils.getImageType(image));
+        cv.put(Meta.URI, image.toString());
+        cv.put(Meta.TYPE, ImageUtils.getImageType(image));
 
-       return ContentProviderOperation.newInsert(Meta.Data.CONTENT_URI)
+       return ContentProviderOperation.newInsert(Meta.CONTENT_URI)
                 .withValues(cv)
                 .build();
     }
 
     public static ContentProviderOperation newDelete(Uri image)
     {
-        return ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
+        return ContentProviderOperation.newDelete(Meta.CONTENT_URI)
                 .withSelection(ImageUtils.getWhere(), new String[] { image.toString() })
                 .build();
     }
 
     public static ContentProviderOperation newUpdate(@NonNull Uri image, ContentValues cv)
     {
-        return ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+        return ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
                 .withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
                 .withValues(cv)
                 .build();
@@ -319,9 +320,9 @@ public class ImageUtils
         return getContentValues(uri, meta, type);
     }
 
-    public static Cursor getMetaCursor(Context c, Uri uri)
+    public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
     {
-        return c.getContentResolver().query(Meta.Data.CONTENT_URI,
+        return c.getContentResolver().query(Meta.CONTENT_URI,
 		        null,
 		        getWhere(),
 		        new String[]{uri.toString()},
@@ -332,20 +333,25 @@ public class ImageUtils
     {
         try (Cursor cursor = getMetaCursor(c, uri))
         {
-            return cursor.moveToFirst();
+            return cursor != null && cursor.moveToFirst();
         }
     }
 
     public static String getWhere()
     {
-        return Meta.Data.URI + "=?";
+        return Meta.URI + "=?";
     }
 
     public static boolean isProcessed(Context c, Uri uri)
     {
         try (Cursor cursor = ImageUtils.getMetaCursor(c, uri))
         {
-            return cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0;
+            if (cursor == null)
+                return false;
+
+            final int processedColumn = cursor.getColumnIndex(Meta.PROCESSED);
+            return  cursor.moveToFirst() &&
+                    cursor.getInt(processedColumn) != 0;
         }
     }
 
@@ -359,22 +365,33 @@ public class ImageUtils
     {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        try( Cursor cursor = c.getContentResolver().query(Meta.Data.CONTENT_URI, null, null, null, null))
+        try( Cursor cursor = c.getContentResolver().query(Meta.CONTENT_URI, null, null, null, null))
         {
-            while (cursor != null && cursor.moveToNext())
+            if (cursor == null)
+                return;
+
+            final int uriColumn = cursor.getColumnIndex(Meta.URI);
+            final int idColumn = cursor.getColumnIndex(BaseColumns._ID);
+            if (uriColumn == -1 || idColumn == -1)
             {
-                String uriString = cursor.getString(Meta.URI_COLUMN);
+                Crashlytics.logException(new Exception("column not found"));
+                return;
+            }
+
+            while (cursor.moveToNext())
+            {
+                String uriString = cursor.getString(uriColumn);
                 if (uriString == null)  // we've got some bogus data, just remove
                 {
                     operations.add(ContentProviderOperation.newDelete(
-                            Uri.withAppendedPath(Meta.Data.CONTENT_URI, cursor.getString(Meta.ID_COLUMN))).build());
+                            Uri.withAppendedPath(Meta.CONTENT_URI, cursor.getString(idColumn))).build());
                     continue;
                 }
                 Uri uri = Uri.parse(uriString);
                 UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, uri);
                 if (!file.exists())
                 {
-                    operations.add(ContentProviderOperation.newDelete(Meta.Data.CONTENT_URI)
+                    operations.add(ContentProviderOperation.newDelete(Meta.CONTENT_URI)
                             .withSelection(getWhere(), new String[]{uriString}).build());
                 }
             }
@@ -389,13 +406,13 @@ public class ImageUtils
     {
         try (final Cursor cursor = getMetaCursor(c, uri))
         {
-            cursor.moveToFirst();
+            if (cursor == null)
+                return;
 
             // Check if meta is already processed
-            if (cursor.moveToFirst() && cursor.getInt(Meta.PROCESSED_COLUMN) != 0)
-            {
+            final int processedColumn = cursor.getColumnIndex(Meta.PROCESSED);
+            if (cursor.moveToFirst() && cursor.getInt(processedColumn) != 0)
                 return;
-            }
         }
 
         ContentValues cv = new ContentValues();
@@ -406,16 +423,15 @@ public class ImageUtils
             to the processing of the image for display this is reasonable.  It avoids
             constant flickering as the timestamps cause a database update.
              */
-            cv.put(Meta.Data.HEIGHT, Integer.parseInt(exif[10]));
-            cv.put(Meta.Data.WIDTH, Integer.parseInt(exif[11]));
-            cv.put(Meta.Data.ORIENTATION, Integer.parseInt(exif[7]));
-//                    cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[6].trim()).getTime());
+            cv.put(Meta.HEIGHT, Integer.parseInt(exif[10]));
+            cv.put(Meta.WIDTH, Integer.parseInt(exif[11]));
+            cv.put(Meta.ORIENTATION, Integer.parseInt(exif[7]));
         }
         catch (Exception e)
         {
             Log.d(TAG, "Exif parse failed:", e);
         }
-        c.getContentResolver().update(Meta.Data.CONTENT_URI, cv, getWhere(),
+        c.getContentResolver().update(Meta.CONTENT_URI, cv, getWhere(),
                 new String[]{uri.toString()});
     }
 
@@ -434,18 +450,18 @@ public class ImageUtils
             return null;
         }
 
-        cv.put(Meta.Data.ALTITUDE, getAltitude(meta));
-        cv.put(Meta.Data.APERTURE, getAperture(meta));
-        cv.put(Meta.Data.EXPOSURE, getExposure(meta));
-        cv.put(Meta.Data.FLASH, getFlash(meta));
-        cv.put(Meta.Data.FOCAL_LENGTH, getFocalLength(meta));
-        cv.put(Meta.Data.HEIGHT, getImageHeight(meta));
-        cv.put(Meta.Data.ISO, getIso(meta));
-        cv.put(Meta.Data.LATITUDE, getLatitude(meta));
-        cv.put(Meta.Data.LONGITUDE, getLongitude(meta));
-        cv.put(Meta.Data.MODEL, getModel(meta));
+        cv.put(Meta.ALTITUDE, getAltitude(meta));
+        cv.put(Meta.APERTURE, getAperture(meta));
+        cv.put(Meta.EXPOSURE, getExposure(meta));
+        cv.put(Meta.FLASH, getFlash(meta));
+        cv.put(Meta.FOCAL_LENGTH, getFocalLength(meta));
+        cv.put(Meta.HEIGHT, getImageHeight(meta));
+        cv.put(Meta.ISO, getIso(meta));
+        cv.put(Meta.LATITUDE, getLatitude(meta));
+        cv.put(Meta.LONGITUDE, getLongitude(meta));
+        cv.put(Meta.MODEL, getModel(meta));
 
-        cv.put(Meta.Data.ORIENTATION, getOrientation(meta));
+        cv.put(Meta.ORIENTATION, getOrientation(meta));
         String rawDate = getDateTime(meta);
         if (rawDate != null)  // Don't overwrite null since we can rely on file time
         {
@@ -453,25 +469,25 @@ public class ImageUtils
             try
             {
                 date = mMetaExtractorFormat.parse(rawDate);
-                cv.put(Meta.Data.TIMESTAMP, date.getTime());
+                cv.put(Meta.TIMESTAMP, date.getTime());
             }
             catch (ParseException e)
             {
                 e.printStackTrace();
             }
         }
-        cv.put(Meta.Data.WHITE_BALANCE, getWhiteBalance(meta));
-        cv.put(Meta.Data.WIDTH, getImageWidth(meta));
+        cv.put(Meta.WHITE_BALANCE, getWhiteBalance(meta));
+        cv.put(Meta.WIDTH, getImageWidth(meta));
 
-        cv.put(Meta.Data.RATING, getRating(meta));
-        cv.put(Meta.Data.SUBJECT, convertArrayToString(getSubject(meta)));
-        cv.put(Meta.Data.LABEL, getLabel(meta));
+        cv.put(Meta.RATING, getRating(meta));
+        cv.put(Meta.SUBJECT, convertArrayToString(getSubject(meta)));
+        cv.put(Meta.LABEL, getLabel(meta));
 
-        cv.put(Meta.Data.LENS_MODEL, getLensModel(meta));
-        cv.put(Meta.Data.DRIVE_MODE, getDriveMode(meta));
-        cv.put(Meta.Data.EXPOSURE_MODE, getExposureMode(meta));
-        cv.put(Meta.Data.EXPOSURE_PROGRAM, getExposureProgram(meta));
-        cv.put(Meta.Data.PROCESSED, true);
+        cv.put(Meta.LENS_MODEL, getLensModel(meta));
+        cv.put(Meta.DRIVE_MODE, getDriveMode(meta));
+        cv.put(Meta.EXPOSURE_MODE, getExposureMode(meta));
+        cv.put(Meta.EXPOSURE_PROGRAM, getExposureProgram(meta));
+        cv.put(Meta.PROCESSED, true);
 
         return cv;
     }
@@ -1025,8 +1041,8 @@ public class ImageUtils
 
             // Decode dimensions
             BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
-            values.put(Meta.Data.WIDTH, o.outWidth);
-            values.put(Meta.Data.HEIGHT, o.outHeight);
+            values.put(Meta.WIDTH, o.outWidth);
+            values.put(Meta.HEIGHT, o.outHeight);
         }
         return imageBytes;
     }
@@ -1037,8 +1053,8 @@ public class ImageUtils
         int[] imageData = ImageProcessor.getTiff("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
         int width = dim[0];
         int height = dim[1];
-        values.put(Meta.Data.WIDTH, width);
-        values.put(Meta.Data.HEIGHT, height);
+        values.put(Meta.WIDTH, width);
+        values.put(Meta.HEIGHT, height);
 
         // This is necessary since BitmapRegionDecoder only supports jpg and png
         // TODO: This could be done in native, we already have jpeg capability
@@ -1057,25 +1073,25 @@ public class ImageUtils
 
         try
         {
-            values.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
+            values.put(Meta.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        values.put(Meta.Data.APERTURE, exif[Exif.APERTURE]);
-        values.put(Meta.Data.MAKE, exif[Exif.MAKE]);
-        values.put(Meta.Data.MODEL, exif[Exif.MODEL]);
-        values.put(Meta.Data.FOCAL_LENGTH, exif[Exif.FOCAL]);
-        values.put(Meta.Data.APERTURE, exif[Exif.HEIGHT]);
-        values.put(Meta.Data.ISO, exif[Exif.ISO]);
-        values.put(Meta.Data.ORIENTATION, exif[Exif.ORIENTATION]);
-        values.put(Meta.Data.EXPOSURE, exif[Exif.SHUTTER]);
-        values.put(Meta.Data.HEIGHT, exif[Exif.HEIGHT]);
-        values.put(Meta.Data.WIDTH, exif[Exif.WIDTH]);
+        values.put(Meta.APERTURE, exif[Exif.APERTURE]);
+        values.put(Meta.MAKE, exif[Exif.MAKE]);
+        values.put(Meta.MODEL, exif[Exif.MODEL]);
+        values.put(Meta.FOCAL_LENGTH, exif[Exif.FOCAL]);
+        values.put(Meta.APERTURE, exif[Exif.HEIGHT]);
+        values.put(Meta.ISO, exif[Exif.ISO]);
+        values.put(Meta.ORIENTATION, exif[Exif.ORIENTATION]);
+        values.put(Meta.EXPOSURE, exif[Exif.SHUTTER]);
+        values.put(Meta.HEIGHT, exif[Exif.HEIGHT]);
+        values.put(Meta.WIDTH, exif[Exif.WIDTH]);
         //TODO: Placing thumb dimensions since we aren't decoding raw atm.
-        values.put(Meta.Data.HEIGHT, exif[Exif.THUMB_HEIGHT]);
-        values.put(Meta.Data.WIDTH, exif[Exif.THUMB_WIDTH]);
+        values.put(Meta.HEIGHT, exif[Exif.THUMB_HEIGHT]);
+        values.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
         // Are the thumb dimensions useful in database?
 
         return imageBytes;
@@ -1140,14 +1156,14 @@ public class ImageUtils
                         cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
                         if (cpc != null)
                         {
-                            cursor = cpc.query(Meta.Data.CONTENT_URI, new String[]{Meta.Data.PROCESSED},
+                            cursor = cpc.query(Meta.CONTENT_URI, new String[]{Meta.PROCESSED},
                                     ImageUtils.getWhere(), new String[]{uri.toString()}, null, null);
                             if (cursor != null)
                             {
                                 cursor.moveToFirst();
                                 if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
                                 {
-                                    cpc.update(Meta.Data.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+                                    cpc.update(Meta.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
                                 }
                             }
                         }

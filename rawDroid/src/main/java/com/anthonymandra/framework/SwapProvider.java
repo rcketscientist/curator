@@ -134,11 +134,15 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 {
                     if (c != null && c.moveToFirst())
                     {
-                        watermark = ImageUtils.getDemoWatermark(getContext(), c.getInt(Meta.WIDTH_COLUMN));
-                        waterData = ImageUtils.getBitmapBytes(watermark);
-                        waterWidth = watermark.getWidth();
-                        waterHeight = watermark.getHeight();
-                        margin = Margins.LowerRight;
+                        final int widthColumn = c.getColumnIndex(Meta.WIDTH);
+                        if (widthColumn != -1)
+                        {
+                            watermark = ImageUtils.getDemoWatermark(getContext(), c.getInt(widthColumn));
+                            waterData = ImageUtils.getBitmapBytes(watermark);
+                            waterWidth = watermark.getWidth();
+                            waterHeight = watermark.getHeight();
+                            margin = Margins.LowerRight;
+                        }
                     }
                 }
             }

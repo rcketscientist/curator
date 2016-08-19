@@ -144,7 +144,7 @@ public class LegacyViewerActivity extends ViewerActivity
 			}
 		}
 		Cursor c = mModel.getCursor();
-		return Uri.parse(c.getString(c.getColumnIndex(Meta.Data.URI)));
+		return Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
 	}
 
     @Override

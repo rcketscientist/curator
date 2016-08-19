@@ -114,7 +114,7 @@ public class LocalImage extends MetaMedia {
 				cpc = mContext.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
 				if (cpc != null)
 				{
-					c = cpc.query(Meta.Data.CONTENT_URI, new String[] { Meta.Data.PROCESSED },
+					c = cpc.query(Meta.CONTENT_URI, new String[] { Meta.PROCESSED },
 							ImageUtils.getWhere(), new String[] {mUri.toString()}, null, null);
 					if (c != null)
 					{
@@ -124,28 +124,28 @@ public class LocalImage extends MetaMedia {
 							ContentValues cv = new ContentValues();
 							try
 							{
-								cv.put(Meta.Data.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
+								cv.put(Meta.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
 							}
 							catch (Exception e)
 							{
 								e.printStackTrace();
 							}
-							cv.put(Meta.Data.APERTURE, exif[Exif.APERTURE]);
-							cv.put(Meta.Data.MAKE, exif[Exif.MAKE]);
-							cv.put(Meta.Data.MODEL, exif[Exif.MODEL]);
-							cv.put(Meta.Data.FOCAL_LENGTH, exif[Exif.FOCAL]);
-							cv.put(Meta.Data.APERTURE, exif[Exif.HEIGHT]);
-							cv.put(Meta.Data.ISO, exif[Exif.ISO]);
-							cv.put(Meta.Data.ORIENTATION, exif[Exif.ORIENTATION]);
-							cv.put(Meta.Data.EXPOSURE, exif[Exif.SHUTTER]);
-							cv.put(Meta.Data.HEIGHT, exif[Exif.HEIGHT]);
-							cv.put(Meta.Data.WIDTH, exif[Exif.WIDTH]);
+							cv.put(Meta.APERTURE, exif[Exif.APERTURE]);
+							cv.put(Meta.MAKE, exif[Exif.MAKE]);
+							cv.put(Meta.MODEL, exif[Exif.MODEL]);
+							cv.put(Meta.FOCAL_LENGTH, exif[Exif.FOCAL]);
+							cv.put(Meta.APERTURE, exif[Exif.HEIGHT]);
+							cv.put(Meta.ISO, exif[Exif.ISO]);
+							cv.put(Meta.ORIENTATION, exif[Exif.ORIENTATION]);
+							cv.put(Meta.EXPOSURE, exif[Exif.SHUTTER]);
+							cv.put(Meta.HEIGHT, exif[Exif.HEIGHT]);
+							cv.put(Meta.WIDTH, exif[Exif.WIDTH]);
 							//TODO: Placing thumb dimensions since we aren't decoding raw atm.
-							cv.put(Meta.Data.HEIGHT, exif[Exif.THUMB_HEIGHT]);
-							cv.put(Meta.Data.WIDTH, exif[Exif.THUMB_WIDTH]);
+							cv.put(Meta.HEIGHT, exif[Exif.THUMB_HEIGHT]);
+							cv.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
 							// Are the thumb dimensions useful in database?
 
-							cpc.update(Meta.Data.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {mUri.toString()});
+							cpc.update(Meta.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {mUri.toString()});
 						}
 					}
 				}

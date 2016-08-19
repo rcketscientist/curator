@@ -163,8 +163,12 @@ public class MetaService extends ThreadedPriorityIntentService
 
         try(Cursor c = ImageUtils.getMetaCursor(this, uri))
         {
+            if (c == null)
+                return;
+
             // Check if meta is already processed
-            if (c.moveToFirst() && c.getInt(Meta.PROCESSED_COLUMN) != 0)
+            final int processedColumn = c.getColumnIndex(Meta.PROCESSED);
+            if (c.moveToFirst() && c.getInt(processedColumn) != 0)
             {
                 ContentValues values = new ContentValues();
                 DatabaseUtils.cursorRowToContentValues(c, values);
@@ -188,12 +192,16 @@ public class MetaService extends ThreadedPriorityIntentService
                 // To allow service to operate on external images without database
                 if (c.getCount() > 0)
                 {
-                    getContentResolver().update(Meta.Data.CONTENT_URI,
+                    getContentResolver().update(Meta.CONTENT_URI,
                             values,
                             ImageUtils.getWhere(),
                             new String[]{uri.toString()});
 
-                    values.put(Meta.Data.NAME, c.getString(Meta.NAME_COLUMN));  // add name to broadcast
+                    int nameColumn = c.getColumnIndex(Meta.NAME);
+                    if (nameColumn == -1)
+                        return;
+
+                    values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
                 }
 
                 // TODO: external images won't have a name
@@ -264,7 +272,7 @@ public class MetaService extends ThreadedPriorityIntentService
 
     private synchronized void addUpdate(Uri uri, ContentValues values)
     {
-        mOperations.add(ContentProviderOperation.newUpdate(Meta.Data.CONTENT_URI)
+        mOperations.add(ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
                 .withSelection(ImageUtils.getWhere(), new String[] {uri.toString()})
                 .withValues(values)
                 .build());
