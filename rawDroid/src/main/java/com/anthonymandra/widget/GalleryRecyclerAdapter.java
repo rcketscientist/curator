@@ -407,6 +407,9 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	 */
 	private void addSelection(Uri uri, int position)
 	{
+		if (uri == null)
+			return;
+
 		mSelectedItems.add(uri);
 		mSelectedPositions.add(position);
 	}
@@ -429,6 +432,9 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	public void toggleSelection(View v, int position)
 	{
 		Uri uri = getUri(position);
+		if (uri == null)
+			return;
+
 		if (mSelectedItems.contains(uri))
 		{
 			removeSelection(v, uri, position);

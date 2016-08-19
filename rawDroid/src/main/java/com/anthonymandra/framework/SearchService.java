@@ -123,6 +123,9 @@ public class SearchService extends IntentService
         {
             for (Uri image : foundImages)
             {
+	            if (image == null)  // Somehow we can get null uris in here...
+		            continue;       // https://bitbucket.org/rcketscientist/rawdroid/issues/230/coreactivityjava-line-677-crashlytics
+
 	            operations.add(ImageUtils.newInsert(this, image));
 	            uriStrings.add(image.toString());
             }
@@ -214,6 +217,10 @@ public class SearchService extends IntentService
 
 				for (UsefulDocumentFile image: imageFiles)
 				{
+					Uri uri = image.getUri();
+					if (uri == null)    // Somehow we can get null uris in here...
+						continue;       // https://bitbucket.org/rcketscientist/rawdroid/issues/230/coreactivityjava-line-677-crashlytics
+
 					if (ImageUtils.isProcessed(mContext, image.getUri()))   //TODO: Might just want to check if it exists in db
 					{
 						continue;
