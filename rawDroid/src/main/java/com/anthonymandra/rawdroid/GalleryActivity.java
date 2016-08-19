@@ -1108,9 +1108,14 @@ public class GalleryActivity extends CoreActivity implements
 	        ActivityOptions.makeThumbnailScaleUpAnimation(v, v.getDrawingCache(), 0, 0).toBundle());
 		//TODO: If we want this to look smooth we should load the gallery thumb in viewer so there's a smooth transition
 
-		Bundle metaLoader = getCurrentMetaLoaderBundle();
-		viewer.putExtra(EXTRA_META_BUNDLE, metaLoader);
-		viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position);
+		List<String> imageset = mGalleryAdapter.getUris();
+		if (imageset == null)
+			return;
+
+		viewer.putExtra(EXTRA_VIEWER_IMAGESET, imageset.toArray(new String[imageset.size()]));
+//		Bundle metaLoader = getCurrentMetaLoaderBundle();
+//		viewer.putExtra(EXTRA_META_BUNDLE, metaLoader);
+//		viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position);
 
 		startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options);
 		v.setDrawingCacheEnabled(false);

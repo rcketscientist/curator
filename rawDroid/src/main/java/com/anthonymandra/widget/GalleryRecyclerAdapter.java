@@ -325,6 +325,25 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		return Uri.parse(uriString);
 	}
 
+	@Nullable
+	public List<String> getUris()
+	{
+		if (mCursor == null)
+			return null;
+		int index = mCursor.getColumnIndex(Meta.Data.URI);
+		if (index < 0)
+			return null;
+
+		List<String> uris = new ArrayList<>();
+		while (mCursor.moveToNext()) {
+			String uri = mCursor.getString(Meta.URI_COLUMN);
+			if (uri == null)
+				continue;
+			uris.add(uri);
+		}
+		return uris;
+	}
+
 	public List<Uri> getSelectedItems()
 	{
 		return new ArrayList<>(mSelectedItems);

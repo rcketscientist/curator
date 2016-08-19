@@ -171,25 +171,30 @@ public abstract class ViewerActivity extends CoreActivity implements
         {
             mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
 
-            Bundle dbQuery = getIntent().getBundleExtra(EXTRA_META_BUNDLE);
-            try(Cursor c = getContentResolver().query(
-                Meta.Data.CONTENT_URI,
-                dbQuery.getStringArray(META_PROJECTION_KEY),
-                dbQuery.getString(META_SELECTION_KEY),
-                dbQuery.getStringArray(META_SELECTION_ARGS_KEY),
-                dbQuery.getString(META_SORT_ORDER_KEY))) {
-                if (c == null || c.getCount() < 1)
-                    return;
-                else
-                {
-                    while (c.moveToNext()) {
-                        String uri = c.getString(Meta.URI_COLUMN);
-                        if (uri == null)
-                            continue;
-                        mMediaItems.add(Uri.parse(uri));
-                    }
-                }
+            String[] imageset = getIntent().getStringArrayExtra(EXTRA_VIEWER_IMAGESET);
+            for (String uri : imageset)
+            {
+                mMediaItems.add(Uri.parse(uri));
             }
+//            Bundle dbQuery = getIntent().getBundleExtra(EXTRA_META_BUNDLE);
+//            try(Cursor c = getContentResolver().query(
+//                Meta.Data.CONTENT_URI,
+//                dbQuery.getStringArray(META_PROJECTION_KEY),
+//                dbQuery.getString(META_SELECTION_KEY),
+//                dbQuery.getStringArray(META_SELECTION_ARGS_KEY),
+//                dbQuery.getString(META_SORT_ORDER_KEY))) {
+//                if (c == null || c.getCount() < 1)
+//                    return;
+//                else
+//                {
+//                    while (c.moveToNext()) {
+//                        String uri = c.getString(Meta.URI_COLUMN);
+//                        if (uri == null)
+//                            continue;
+//                        mMediaItems.add(Uri.parse(uri));
+//                    }
+//                }
+//            }
         }
         else  // External intent
         {

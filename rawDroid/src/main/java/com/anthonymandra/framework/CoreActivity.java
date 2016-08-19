@@ -122,6 +122,8 @@ public abstract class CoreActivity extends DocumentActivity
 
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
+
+	public static final String EXTRA_VIEWER_IMAGESET = "extra_imageset";
 	public static final String EXTRA_META_BUNDLE = "meta_bundle";
 	public static final String META_PROJECTION_KEY = "projection";
 	public static final String META_SELECTION_KEY = "selection";
