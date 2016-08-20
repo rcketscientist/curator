@@ -15,6 +15,8 @@ import android.os.ParcelFileDescriptor;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.FileNotFoundException;
 import java.util.Locale;
 
@@ -135,11 +137,11 @@ public class MetaProvider extends ContentProvider
 	{
 		switch (sUriMatcher.match(uri))
 		{
-		case META:
-			return Meta.CONTENT_TYPE;
+			case META:
+				return Meta.CONTENT_TYPE;
 
-		case META_ID:
-			return Meta.CONTENT_META_TYPE;
+			case META_ID:
+				return Meta.CONTENT_META_TYPE;
 
 		default:
 			throw new IllegalArgumentException("Unknown meta type: " + uri);
@@ -274,7 +276,16 @@ public class MetaProvider extends ContentProvider
 		//TODO: Not currently dealing with ids, but should have an id version
         switch (sUriMatcher.match(uri)) {
             case META:
-                count = db.update(META_TABLE_NAME, values, where, whereArgs);
+	            try
+	            {
+		            count = db.update(META_TABLE_NAME, values, where, whereArgs);
+	            }
+	            catch(Exception e)
+	            {
+		            Crashlytics.logException(e);    //TODO: Avoid https://bitbucket.org/rcketscientist/rawdroid/issues/190/metaproviderjava-line-277-crashlytics
+		            return 0;
+	            }
+
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -288,5 +299,10 @@ public class MetaProvider extends ContentProvider
 	public boolean onCreate() {
 		dbHelper = new DatabaseHelper(getContext());
         return true;
+	}
+
+	public static String getUriWhere()
+	{
+		return Meta.URI + "=?";
 	}
 }

@@ -16,8 +16,7 @@ public class Meta implements BaseColumns
 //        public static final String IMAGE = "image";
 
 	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_META;
-	public static final Uri META_URI = Uri.parse("content://" + AUTHORITY + "/" + META);
-	public static final Uri CONTENT_URI = META_URI;
+	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + META);
 
 	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rawdroid.meta";
 	public static final String CONTENT_META_TYPE = "vnd.android.cursor.item/vnd.rawdroid.meta";

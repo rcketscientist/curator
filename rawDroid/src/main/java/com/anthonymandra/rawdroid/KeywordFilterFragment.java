@@ -65,7 +65,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment
     public void onResume()
     {
         super.onResume();
-        try(Cursor cursor = getActivity().getContentResolver().query(Meta.META_URI,
+        try(Cursor cursor = getActivity().getContentResolver().query(Meta.CONTENT_URI,
                 new String[] {"DISTINCT " + Meta.SUBJECT},
                 null, null, null))
         {
