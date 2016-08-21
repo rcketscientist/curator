@@ -3,9 +3,9 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="distributionType" value="LOCAL" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$APPLICATION_HOME_DIR$/gradle/gradle-2.8" />
+        <option name="gradleHome" value="C:\android-studio\gradle\gradle-2.14.1" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -14,12 +14,6 @@
             <option value="$PROJECT_DIR$/inscription" />
             <option value="$PROJECT_DIR$/metadata-extractor" />
             <option value="$PROJECT_DIR$/rawDroid" />
-            <option value="$PROJECT_DIR$/rawprocessor/jni/cms" />
-            <option value="$PROJECT_DIR$/rawprocessor/jni/libexif" />
-            <option value="$PROJECT_DIR$/rawprocessor/jni/libjpeg-turbo" />
-            <option value="$PROJECT_DIR$/rawprocessor/jni/processor" />
-            <option value="$PROJECT_DIR$/rawprocessor/jni/raw" />
-            <option value="$PROJECT_DIR$/rawprocessor/jni/tiff" />
             <option value="$PROJECT_DIR$/rawprocessor/library" />
             <option value="$PROJECT_DIR$/showcaseView" />
             <option value="$PROJECT_DIR$/showcaseView/library" />
