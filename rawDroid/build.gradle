@@ -8,7 +8,7 @@ def versionPatch = 0
 def versionBuild = 5
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion '23.0.3'
 
     lintOptions {
@@ -28,6 +28,15 @@ android {
                 ((versionBuild != 0) ? ".${versionBuild}" : "")
         // Discard build only if build is zero M.m.p.bb
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
+
+        jackOptions {
+            enabled true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     signingConfigs {
@@ -106,9 +115,10 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
 
-    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:design:24.2.0'
+    compile 'com.android.support:support-v4:24.2.0'
+
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:support-v4:23.4.0'
 }
 crashlytics {
     enableNdk true

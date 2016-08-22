@@ -104,7 +104,7 @@ public class SearchService extends IntentService
 //			    search(new File(root), alwaysExcludeDir);
 //	    }
 
-	    ForkJoinPool pool = new ForkJoinPool(4);
+	    ForkJoinPool pool = new ForkJoinPool();
 	    Set<Uri> foundImages = new HashSet<>();
 	    if (uriRoots != null)
 	    {
@@ -190,7 +190,9 @@ public class SearchService extends IntentService
 				if (f == null)
 					continue;
 
-				if (f.isDirectory() && f.canRead())
+				UsefulDocumentFile.FileData details = f.getData();
+
+				if (f.getCachedData() != null && f.getCachedData().isDirectory && f.getCachedData().canRead)
 				{
 					SearchTask child = new SearchTask(mContext, f, mExcludeDir);
 					forks.add(child);
@@ -221,10 +223,11 @@ public class SearchService extends IntentService
 					if (uri == null)    // Somehow we can get null uris in here...
 						continue;       // https://bitbucket.org/rcketscientist/rawdroid/issues/230/coreactivityjava-line-677-crashlytics
 
-					if (ImageUtils.isProcessed(mContext, image.getUri()))   //TODO: Might just want to check if it exists in db
-					{
-						continue;
-					}
+					// If uri is unique we should not be able to add more than once.
+//					if (ImageUtils.isProcessed(mContext, image.getUri()))   //TODO: Might just want to check if it exists in db
+//					{
+//						continue;
+//					}
 
 					foundImages.add(image.getUri());
 				}
@@ -241,7 +244,9 @@ public class SearchService extends IntentService
 	{
 		List<UsefulDocumentFile> result = new ArrayList<>(files.length);
 		for (UsefulDocumentFile file : files) {
-			String name = file.getName();
+			if (file.getCachedData() == null)
+				continue;
+			String name = file.getCachedData().name;
 			if (name == null)
 				continue;
 			if(ImageUtils.isImage(name))
