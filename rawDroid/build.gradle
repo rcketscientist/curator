@@ -9,7 +9,7 @@ def versionBuild = 5
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '24.0.0 rc4'
 
     lintOptions {
         checkReleaseBuilds false
@@ -100,7 +100,6 @@ dependencies {
     compile project(':rawprocessor')
     compile project(':DocumentActivity:library')
     //includes support-v4 and appcompat-v7
-
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
@@ -111,13 +110,11 @@ dependencies {
         transitive = true
     }
     testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support:support-annotations:23.4.0'
+    androidTestCompile 'com.android.support:support-annotations:24.2.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-
     compile 'com.android.support:design:24.2.0'
     compile 'com.android.support:support-v4:24.2.0'
-
     compile 'com.github.bumptech.glide:glide:3.7.0'
 }
 crashlytics {
