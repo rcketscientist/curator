@@ -36,9 +36,9 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
-import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.rawdroid.R;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
@@ -1073,7 +1073,8 @@ public class ImageUtils
 
         try
         {
-            values.put(Meta.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
+            if (exif[Exif.TIMESTAMP] != null)
+                values.put(Meta.TIMESTAMP, mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
         }
         catch (Exception e)
         {
