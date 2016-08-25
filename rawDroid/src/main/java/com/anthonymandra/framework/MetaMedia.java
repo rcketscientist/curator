@@ -6,22 +6,6 @@ import android.net.Uri;
 
 import com.android.gallery3d.data.MediaItem;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.MetadataException;
-import com.drew.metadata.exif.ExifIFD0Directory;
-import com.drew.metadata.exif.ExifSubIFDDirectory;
-import com.drew.metadata.exif.GpsDirectory;
-import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
-import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory.CameraSettings;
-import com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory;
-import com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory;
-import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
-import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
-import com.drew.metadata.xmp.XmpDirectory;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public abstract class MetaMedia extends MediaItem
 {

@@ -10,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 
 import com.anthonymandra.framework.License;
-import com.anthonymandra.rawdroid.BuildConfig;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.LicenseChecker;

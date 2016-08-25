@@ -19,12 +19,10 @@ package com.anthonymandra.framework;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.util.FileUtil;
-import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -20,9 +20,7 @@ import android.widget.Checkable;
 import android.widget.GridView;
 import android.widget.SimpleCursorAdapter;
 
-import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.KeywordProvider;
-import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.KeywordDataSource;
 import com.anthonymandra.framework.PathEnumerationProvider;
 import com.anthonymandra.util.DbUtil;

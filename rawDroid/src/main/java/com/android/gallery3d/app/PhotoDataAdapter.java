@@ -41,10 +41,6 @@ import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
-import com.anthonymandra.widget.RawModelLoader;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;

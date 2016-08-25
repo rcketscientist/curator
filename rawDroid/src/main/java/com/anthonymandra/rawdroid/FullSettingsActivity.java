@@ -95,9 +95,6 @@ public class FullSettingsActivity extends PreferenceActivity
     private static String[] prefWatermarkLocations;
 
     private static Activity mActivity;
-    private static PreferenceManager mPreferenceManager;
-
-    private static Handler licenseHandler;
 
     @Override
     protected boolean isValidFragment (String fragmentName) {
@@ -113,43 +110,9 @@ public class FullSettingsActivity extends PreferenceActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        mPreferenceManager = getPreferenceManager();
         mActivity = this;
         prefShowOptions = getResources().getStringArray(R.array.showOptions);
         prefWatermarkLocations = getResources().getStringArray(R.array.watermarkLocations);
-
-//		String action = getIntent().getAction();
-
-//		if (action != null)
-//		{
-//            switch (action)
-//            {
-//                case PREFS_STORAGE:
-//                    addPreferencesFromResource(R.xml.preferences_storage);
-//                    break;
-//                case PREFS_METADATA:
-//                    addPreferencesFromResource(R.xml.preferences_metadata);
-//                    attachMetaButtons();
-//                    updateXmpColors();
-//                    break;
-//                case PREFS_VIEW:
-//                    addPreferencesFromResource(R.xml.preferences_view);
-//                    updateShowOptions();
-//                    break;
-//                case PREFS_LICENSE:
-//                    addPreferencesFromResource(R.xml.preferences_license);
-//                    attachLicenseButtons();
-//                    break;
-//                case PREFS_WATERMARK:
-//                    addPreferencesFromResource(R.xml.preferences_watermark);
-//                    updateWatermarkOptions();
-//                    break;
-//            }
-//		}
-//		else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
-//		{
-//			addPreferencesFromResource(R.xml.preference_headers_legacy);
-//		}
 	}
 
 	@Override
@@ -174,13 +137,6 @@ public class FullSettingsActivity extends PreferenceActivity
 	{
 		loadHeadersFromResource(R.xml.preference_headers, target);
 	}
-
-    private static void requestBuyPro()
-    {
-        Intent store = Util.getStoreIntent(mActivity, "com.anthonymandra.rawdroidpro");
-        if (store != null)
-            mActivity.startActivity(store);
-    }
 
     private void handleKeywordResult(final Uri keywordUri)
 	{
@@ -444,6 +400,7 @@ public class FullSettingsActivity extends PreferenceActivity
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static abstract class SettingFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
     {
+	    protected PreferenceManager mPreferenceManager;
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
@@ -466,36 +423,32 @@ public class FullSettingsActivity extends PreferenceActivity
         }
     }
 
-    private static class LicenseHandler extends Handler{
-        @Override
-        public void handleMessage(Message msg) {
-            License.LicenseState state = (License.LicenseState) msg.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-            updateLicense(state);
-        }
-    }
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class SettingsFragmentLicense extends PreferenceFragment
+    public static class SettingsFragmentLicense extends SettingFragment
     {
+	    final Handler mLicenseHandler = new Handler(message -> {
+		    License.LicenseState state = (License.LicenseState) message.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+		    updateLicense(state);
+		    return true;
+	    });
+
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences_license);
-
-            licenseHandler = new LicenseHandler();
         }
 
         @Override
         public void onResume() {
             super.onResume();
             mPreferenceManager = getPreferenceManager();
-            LicenseManager.getLicense(mActivity.getBaseContext(), licenseHandler);
+            LicenseManager.getLicense(mActivity.getBaseContext(), mLicenseHandler);
             attachLicenseButtons();
         }
 
 	    /**
-	     * Attachs meta related buttons.
+	     * Attaches meta related buttons.
 	     */
 	    private void attachLicenseButtons()
 	    {
@@ -507,7 +460,7 @@ public class FullSettingsActivity extends PreferenceActivity
 				    @Override
 				    public boolean onPreferenceClick(Preference arg0)
 				    {
-					    LicenseManager.getLicense(mActivity.getBaseContext(), licenseHandler);
+					    LicenseManager.getLicense(mActivity.getBaseContext(), mLicenseHandler);
 					    Snackbar.make(getView(), R.string.licenseRequestSent, Snackbar.LENGTH_SHORT).show();
 					    return true;
 				    }
@@ -537,57 +490,65 @@ public class FullSettingsActivity extends PreferenceActivity
 		    mActivity.startActivity(Intent.createChooser(emailIntent, "Send email..."));
 	    }
 
+	    private void updateLicense(License.LicenseState state)
+	    {
+		    Preference license = mPreferenceManager.findPreference(KEY_license);
+
+		    // This might happen if the user switches tabs quickly while looking up license
+		    if (license == null)
+			    return;
+
+		    license.setTitle(state.toString());
+		    switch (state)
+		    {
+			    case error:
+				    license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError));
+				    setBuyButton();
+				    break;
+			    case pro: license.setSummary(mActivity.getString(R.string.prefSummaryLicense));
+				    break;
+			    case demo: license.setSummary(mActivity.getString(R.string.buypro));
+				    setBuyButton();
+				    break;
+			    case modified_0x000:
+			    case modified_0x001:
+			    case modified_0x002:
+			    case modified_0x003:
+				    license.setSummary(R.string.prefSummaryLicenseModified);
+				    setBuyButton();
+				    break;
+			    default: license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError) + "\n" +
+					    mActivity.getString(R.string.buypro));
+				    setBuyButton();
+		    }
+	    }
+
+	    private void setBuyButton()
+	    {
+		    Preference license = mPreferenceManager.findPreference(KEY_license);
+		    if (license != null)
+		    {
+			    license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
+			    {
+				    @Override
+				    public boolean onPreferenceClick(Preference arg0)
+				    {
+					    Intent store = Util.getStoreIntent(mActivity, "com.anthonymandra.rawdroidpro");
+					    if (store != null)
+						    mActivity.startActivity(store);
+					    return true;
+				    }
+			    });
+		    }
+	    }
+
+	    @Override
+	    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s)
+	    {
+		    // do nothing
+	    }
     }
 
-    private static void updateLicense(License.LicenseState state)
-    {
-        Preference license = mPreferenceManager.findPreference(KEY_license);
-
-        // This might happen if the user switches tabs quickly while looking up license
-        if (license == null)
-            return;
-
-        license.setTitle(state.toString());
-        switch (state)
-        {
-            case error:
-                license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError));
-                setBuyButton();
-                break;
-            case pro: license.setSummary(mActivity.getString(R.string.prefSummaryLicense));
-                break;
-            case demo: license.setSummary(mActivity.getString(R.string.buypro));
-                setBuyButton();
-                break;
-            case modified_0x000:
-            case modified_0x001:
-            case modified_0x002:
-            case modified_0x003:
-                license.setSummary(R.string.prefSummaryLicenseModified);
-                setBuyButton();
-                break;
-            default: license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError) + "\n" +
-                    mActivity.getString(R.string.buypro));
-                setBuyButton();
-        }
-    }
-
-    private static void setBuyButton()
-    {
-        Preference license = mPreferenceManager.findPreference(KEY_license);
-        if (license != null)
-        {
-            license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
-            {
-                @Override
-                public boolean onPreferenceClick(Preference arg0)
-                {
-                    requestBuyPro();
-                    return true;
-                }
-            });
-        }
-    }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragmentWatermark extends SettingFragment

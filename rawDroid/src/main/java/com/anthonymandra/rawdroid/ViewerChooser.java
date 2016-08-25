@@ -10,8 +10,6 @@ import com.anthonymandra.framework.Util;
 
 public class ViewerChooser extends Activity {
 
-    private static int REQUEST_VIEWER = 1;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

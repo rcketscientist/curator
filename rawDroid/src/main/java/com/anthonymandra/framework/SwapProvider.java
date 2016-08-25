@@ -18,13 +18,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Margins;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.imageprocessor.ImageProcessor;
-import com.anthonymandra.imageprocessor.Margins;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;

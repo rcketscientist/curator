@@ -3,7 +3,6 @@ package com.anthonymandra.rawdroid;
 
 import android.support.v4.app.Fragment;
 
-
 import com.anthonymandra.content.KeywordProvider;
 
 import java.util.Collection;

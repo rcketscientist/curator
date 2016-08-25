@@ -16,9 +16,9 @@
 
 package com.google.android.vending.licensing;
 
-import java.util.regex.Pattern;
-
 import android.text.TextUtils;
+
+import java.util.regex.Pattern;
 
 /**
  * ResponseData from licensing server.

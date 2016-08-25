@@ -2,8 +2,6 @@ package com.anthonymandra.framework;
 
 import android.net.Uri;
 
-import java.io.File;
-
 public class DocumentRecycleBin extends RecycleBin
 {
 	DocumentActivity mActivity;

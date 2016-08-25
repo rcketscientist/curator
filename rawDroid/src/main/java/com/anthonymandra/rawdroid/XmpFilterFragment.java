@@ -66,10 +66,6 @@ public class XmpFilterFragment extends XmpBaseFragment
     private final static String mPrefSegregate = "segregate";
     private final static String mPrefHiddenFolders = "hiddenFolders";
     private final static String mPrefExcludedFolders = "excludedFolders";
-    // For not we're not saving xmp filters
-    private final static String mPrefLabel = "label";
-    private final static String mPrefSubject = "subject";
-    private final static String mPrefRating = "rating";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
