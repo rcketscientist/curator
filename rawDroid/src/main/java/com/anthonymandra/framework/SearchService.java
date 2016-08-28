@@ -104,7 +104,7 @@ public class SearchService extends IntentService
 //			    search(new File(root), alwaysExcludeDir);
 //	    }
 
-	    ForkJoinPool pool = new ForkJoinPool();
+	    ForkJoinPool pool = new ForkJoinPool();     // This should be a common pool for the app.  Currently only use
 	    Set<Uri> foundImages = new HashSet<>();
 	    if (uriRoots != null)
 	    {
@@ -190,8 +190,6 @@ public class SearchService extends IntentService
 				if (f == null)
 					continue;
 
-				UsefulDocumentFile.FileData details = f.getData();
-
 				if (f.getCachedData() != null && f.getCachedData().isDirectory && f.getCachedData().canRead)
 				{
 					SearchTask child = new SearchTask(mContext, f, mExcludeDir);
@@ -199,13 +197,6 @@ public class SearchService extends IntentService
 					child.fork();
 
 				}
-			}
-
-			for (SearchTask task : forks)
-			{
-				Set<Uri> childImages = task.join();
-				if (childImages != null)
-					foundImages.addAll(childImages);
 			}
 
 			UsefulDocumentFile[] imageFiles = listImages(contents);
@@ -231,6 +222,13 @@ public class SearchService extends IntentService
 
 					foundImages.add(image.getUri());
 				}
+			}
+
+			for (SearchTask task : forks)
+			{
+				Set<Uri> childImages = task.join();
+				if (childImages != null)
+					foundImages.addAll(childImages);
 			}
 
 			return foundImages;
