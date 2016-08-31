@@ -426,10 +426,15 @@ public class FullSettingsActivity extends PreferenceActivity
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragmentLicense extends SettingFragment
     {
-	    final Handler mLicenseHandler = new Handler(message -> {
-		    License.LicenseState state = (License.LicenseState) message.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
-		    updateLicense(state);
-		    return true;
+	    final Handler mLicenseHandler = new Handler(new Handler.Callback()
+	    {
+		    @Override
+		    public boolean handleMessage(Message message)
+		    {
+			    License.LicenseState state = (License.LicenseState) message.getData().getSerializable(License.KEY_LICENSE_RESPONSE);
+			    updateLicense(state);
+			    return true;
+		    }
 	    });
 
         @Override

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.1"
+             versioncode="49100"
+             summary="Beta: Release Candidate"
+             date="28 AUG 2016">
+        <change>Bug bash</change>
+    </release>
     <release version="4.9.0.5"
              versioncode="49005"
              summary="Beta: Release Candidate"

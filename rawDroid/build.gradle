@@ -4,12 +4,12 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 4
 def versionMinor = 9
-def versionPatch = 0
-def versionBuild = 5
+def versionPatch = 1
+def versionBuild = 2
 
 android {
     compileSdkVersion 24
-    buildToolsVersion '24.0.0 rc4'
+    buildToolsVersion '24.0.1'
 
     lintOptions {
         checkReleaseBuilds false
@@ -29,15 +29,16 @@ android {
         // Discard build only if build is zero M.m.p.bb
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
 
-        jackOptions {
-            enabled true
-        }
+        // Crashlytics doesn't support jack
+//        jackOptions {
+//            enabled true
+//        }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 
     signingConfigs {
         release {
