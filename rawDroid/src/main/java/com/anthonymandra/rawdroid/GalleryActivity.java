@@ -154,11 +154,7 @@ public class GalleryActivity extends CoreActivity implements
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		Crashlytics crashlyticsKit = new Crashlytics.Builder()
-				.core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-				.build();
 
-		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
