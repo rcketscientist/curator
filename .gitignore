@@ -11,6 +11,8 @@
 #Android studio
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/gradle.xml
+/.idea/vcs.xml
 /local.properties
 /captures
 *.iml #constant updates for line changes were too annoying
