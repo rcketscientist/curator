@@ -107,7 +107,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
         transitive = true;
     }
-    compile('com.afollestad:material-cab:0.1.9@aar') {
+    compile('com.afollestad:material-cab:0.1.12@aar') {
         transitive = true
     }
     testCompile 'junit:junit:4.12'
