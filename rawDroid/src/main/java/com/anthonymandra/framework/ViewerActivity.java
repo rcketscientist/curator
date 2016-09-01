@@ -167,7 +167,7 @@ public abstract class ViewerActivity extends CoreActivity implements
                 mMediaItems.add(Uri.parse(uri));
             }
         }
-        else if (getIntent().hasExtra(EXTRA_VIEWER_IMAGESET))
+        else if (getIntent().hasExtra(EXTRA_META_BUNDLE))
         {
             mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
 

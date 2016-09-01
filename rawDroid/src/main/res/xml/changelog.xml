@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.1.3"
+             versioncode="49103"
+             summary="Beta: Release Candidate"
+             date="1 SEP 2016">
+        <change>Viewer imageset fix</change>
+    </release>
     <release version="4.9.1"
              versioncode="49100"
              summary="Beta: Release Candidate"
