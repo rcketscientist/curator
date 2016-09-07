@@ -87,7 +87,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode)
             throws FileNotFoundException {
 
-        Log.v(TAG, "Called with uri: '" + uri + "'." + uri.getLastPathSegment());
+        Log.d(TAG, "Called with uri: '" + uri.getFragment() + "'.");
 
         Uri sourceUri = Uri.parse(uri.getFragment());
         // If it's a native file, just share it directly.
@@ -103,6 +103,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         File swapFile = new File(FileUtil.getDiskCacheDir(getContext(),
                 CoreActivity.SWAP_BIN_DIR),
                 jpg);
+
+        Log.d(TAG, "Swap.exists(" + swapFile.exists() + "): " + swapFile.getPath());
 
         // Don't keep recreating the swap file
         // Some receivers may call multiple times
@@ -188,7 +190,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             }
         }
 
-        return ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE);
+        return ParcelFileDescriptor.open(swapFile, modeToMode(mode));
     }
 
     /**
