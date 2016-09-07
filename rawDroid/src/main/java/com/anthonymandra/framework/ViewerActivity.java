@@ -197,10 +197,26 @@ public abstract class ViewerActivity extends CoreActivity implements
                 }
             }
         }
-        else  // External intent
+        else if (getIntent().hasExtra(Intent.EXTRA_STREAM)) // Correct share intent using extras
         {
             mImageIndex = 0;
-            mMediaItems.add(getIntent().getData());
+            if (Intent.ACTION_SEND.equals(getIntent().getAction()))
+            {
+                mMediaItems.add((Uri)getIntent().getParcelableExtra(Intent.EXTRA_STREAM));
+            }
+            else if (Intent.ACTION_SEND.equals(getIntent().getAction()))
+            {
+                ArrayList<Uri> images = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                mMediaItems.addAll(images);
+            }
+        }
+        else  // Simple external intent, try data
+        {
+            mImageIndex = 0;
+            Uri data = getIntent().getData();
+            if (data == null)
+                finish();
+            mMediaItems.add(data);
         }
 
         mResponseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META);
