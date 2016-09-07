@@ -541,11 +541,13 @@ public class PhotoDataAdapter implements Model {
         if (item == null)
             return null;
 
-        Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item);
-        if (c == null)
-            return null;
+        try(Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item))
+        {
+            if (c == null)
+                return null;
 
-        return c.moveToFirst() ? c : null;
+            return c.moveToFirst() ? c : null;
+        }
     }
 
     @Override

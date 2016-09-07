@@ -69,6 +69,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressLint("AndroidLintSimpleDateFormat") // These are for specific library formats
 public class ImageUtils
@@ -320,8 +321,11 @@ public class ImageUtils
         return getContentValues(uri, meta, type);
     }
 
+
+    private static AtomicInteger counter = new AtomicInteger(0);
     public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
     {
+        Log.d(TAG, "getMetaCursor " + counter.incrementAndGet());
         return c.getContentResolver().query(Meta.CONTENT_URI,
 		        null,
 		        getWhere(),

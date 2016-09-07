@@ -16,14 +16,14 @@
             android:name="com.anthonymandra.framework.SwapProvider"
             android:authorities="com.anthonymandra.rawdroid.SwapProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="true">
         </provider>
 
         <provider
             android:name="com.anthonymandra.content.KeywordProvider"
             android:authorities="com.anthonymandra.rawdroid.KeywordProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="true">
         </provider>
 
     </application>
