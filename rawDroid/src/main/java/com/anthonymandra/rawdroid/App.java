@@ -15,6 +15,13 @@ public class App extends Application
 	@Override
 	public void onCreate()
 	{
+		super.onCreate();
+		Crashlytics crashlyticsKit = new Crashlytics.Builder()
+				.core(new CrashlyticsCore.Builder().disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG).build())
+				.build();
+
+		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
+
 		if (BuildConfig.DEBUG) {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 					.detectDiskReads()
@@ -26,15 +33,7 @@ public class App extends Application
 					.detectLeakedSqlLiteObjects()
 					.detectLeakedClosableObjects()
 					.penaltyLog()
-					.penaltyDeath()
 					.build());
 		}
-
-		super.onCreate();
-		Crashlytics crashlyticsKit = new Crashlytics.Builder()
-				.core(new CrashlyticsCore.Builder().disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG).build())
-				.build();
-
-		Fabric.with(this, crashlyticsKit, new CrashlyticsNdk());
 	}
 }

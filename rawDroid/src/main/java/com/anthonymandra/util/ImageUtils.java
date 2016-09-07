@@ -1151,20 +1151,21 @@ public class ImageUtils
                 public void run()
                 {
                     ContentProviderClient cpc = null;
-                    Cursor cursor = null;
                     try
                     {
                         cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
                         if (cpc != null)
                         {
-                            cursor = cpc.query(Meta.CONTENT_URI, new String[]{Meta.PROCESSED},
-                                    ImageUtils.getWhere(), new String[]{uri.toString()}, null, null);
-                            if (cursor != null)
+                            try (Cursor cursor = cpc.query(Meta.CONTENT_URI, new String[]{Meta.PROCESSED},
+                                    ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
                             {
-                                cursor.moveToFirst();
-                                if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
+                                if (cursor != null)
                                 {
-                                    cpc.update(Meta.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+                                    cursor.moveToFirst();
+                                    if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
+                                    {
+                                        cpc.update(Meta.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+                                    }
                                 }
                             }
                         }
@@ -1177,7 +1178,6 @@ public class ImageUtils
                     {
                         if (cpc != null)
                             cpc.release();
-                        Utils.closeSilently(cursor);
                     }
                 }
             }).start();

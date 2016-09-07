@@ -53,21 +53,21 @@ public abstract class PathEnumerationProvider extends ContentProvider
         SQLiteDatabase db = getDbHelper().getWritableDatabase();
         if (initialValues.containsKey(getParentId()))
         {
-            Cursor parent = db.query(getTableName(),
+            try(Cursor parent = db.query(getTableName(),
                     new String[]{getColumnPath(), getColumnDepth()},
                     getColumnId() + " = ?",
                     new String[]{initialValues.getAsString(getParentId())},
-                    null, null, null);
-
-            initialValues.remove(getParentId());    // Remove the id since it's not an actual column
-
-            // If parent lookup succeeds set the path
-            if (parent.moveToFirst())
+                    null, null, null))
             {
-                parentPath = parent.getString(parent.getColumnIndex(getColumnPath())) + PATH_DELIMITER;
-                parentDepth = parent.getInt(parent.getColumnIndex(getColumnDepth()));
+                initialValues.remove(getParentId());    // Remove the id since it's not an actual column
+
+                // If parent lookup succeeds set the path
+                if (parent.moveToFirst())
+                {
+                    parentPath = parent.getString(parent.getColumnIndex(getColumnPath())) + PATH_DELIMITER;
+                    parentDepth = parent.getInt(parent.getColumnIndex(getColumnDepth()));
+                }
             }
-            parent.close();
         }
 
         // Since the column is unique we must put a unique placeholder
@@ -103,14 +103,16 @@ public abstract class PathEnumerationProvider extends ContentProvider
     protected Cursor getAncestors(long id)
     {
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
-        Cursor child = db.query(getTableName(), null,
+        String path;
+        try(Cursor child = db.query(getTableName(), null,
                 getColumnId() + "=?",
                 new String[] { Long.toString(id)},
-                null, null, null);
+                null, null, null))
+        {
 
-        child.moveToFirst();
-        String path = child.getString(child.getColumnIndex(getColumnPath()));
-        child.close();
+            child.moveToFirst();
+            path = child.getString(child.getColumnIndex(getColumnPath()));
+        }
 
         return db.query(getTableName(), null,
                 "? LIKE " + getColumnPath() + " || '%'",
@@ -126,14 +128,17 @@ public abstract class PathEnumerationProvider extends ContentProvider
     protected Cursor getDescendants(long id)
     {
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
-        Cursor parent = db.query(getTableName(), null,
+
+        String path;
+        try(Cursor parent = db.query(getTableName(), null,
                 getColumnId() + "=?",
                 new String[] { Long.toString(id)},
-                null, null, null);
+                null, null, null))
+        {
 
-        parent.moveToFirst();
-        String path = parent.getString(parent.getColumnIndex(getColumnPath()));
-        parent.close();
+            parent.moveToFirst();
+            path = parent.getString(parent.getColumnIndex(getColumnPath()));
+        }
 
         return db.query(getTableName(), null,
                 getColumnPath() + " LIKE ?" +  " || '%'",

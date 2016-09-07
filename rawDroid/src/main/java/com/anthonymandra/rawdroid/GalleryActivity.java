@@ -63,9 +63,6 @@ import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
-import com.crashlytics.android.Crashlytics;
-import com.crashlytics.android.core.CrashlyticsCore;
-import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -79,8 +76,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import io.fabric.sdk.android.Fabric;
 
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,

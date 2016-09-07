@@ -136,14 +136,16 @@ public class KeywordDataSource extends PathDataSource
                 {
                     name = name.substring(1, name.length()-2);
 
-                    Cursor c = db.query(KEYWORD_TABLE_NAME, null,
+                    List<String> synonyms = new ArrayList<>();
+                    String[] activeSynonyms;
+                    try(Cursor c = db.query(KEYWORD_TABLE_NAME, null,
                             KEYWORD_ID + "=?",
                             new String[] {Long.toString(parents.get(depth - 1))},
-                            null, null,null);
-                    c.moveToFirst();
-                    List<String> synonyms = new ArrayList<>();
-                    String[] activeSynonyms = ImageUtils.convertStringToArray(c.getString(c.getColumnIndex(KEYWORD_SYNONYMS)));
-                    c.close();
+                            null, null,null))
+                    {
+                        c.moveToFirst();
+                        activeSynonyms = ImageUtils.convertStringToArray(c.getString(c.getColumnIndex(KEYWORD_SYNONYMS)));
+                    }
 
                     if (activeSynonyms == null)
                         continue;

@@ -199,17 +199,9 @@ public class Utils {
         return i - 1;
     }
 
-    public static void closeSilently(ParcelFileDescriptor fd) {
+    public static void closeSilently(AutoCloseable closeable) {
         try {
-            if (fd != null) fd.close();
-        } catch (Throwable t) {
-            Log.w(TAG, "fail to close", t);
-        }
-    }
-
-    public static void closeSilently(Cursor cursor) {
-        try {
-            if (cursor != null) cursor.close();
+            if (closeable != null) closeable.close();
         } catch (Throwable t) {
             Log.w(TAG, "fail to close", t);
         }
