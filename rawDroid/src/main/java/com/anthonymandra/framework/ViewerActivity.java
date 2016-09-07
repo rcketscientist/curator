@@ -204,7 +204,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             {
                 mMediaItems.add((Uri)getIntent().getParcelableExtra(Intent.EXTRA_STREAM));
             }
-            else if (Intent.ACTION_SEND.equals(getIntent().getAction()))
+            else if (Intent.ACTION_SEND_MULTIPLE.equals(getIntent().getAction()))
             {
                 ArrayList<Uri> images = getIntent().getParcelableArrayListExtra(Intent.EXTRA_STREAM);
                 mMediaItems.addAll(images);
