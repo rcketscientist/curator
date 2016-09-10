@@ -2,7 +2,6 @@ package com.anthonymandra.rawdroid;
 
 import android.app.Application;
 import android.os.StrictMode;
-import android.util.Config;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;

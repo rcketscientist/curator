@@ -1026,12 +1026,27 @@ public class ImageUtils
         return false;
     }
 
-    public static String getMimeType(String url) {
+    public static String getMimeType(Uri uri) {
         String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension != null) {
+        String path = uri.getPath();
+
+	    /**
+	     * TODO: Fragments are how we handle share intents.  Since the uri in this case is ambiguous
+	     * we cheat and use our own fragment technique.  If another app sends a ContentProvider
+	     * uri this will fail to find the type.  Options:
+	     * a) simply attempt conversions without testing file type, if one fails try the next.  This will add overhead for later conversion types
+	     * b) store a doublet uri/type allowing us to store intent type for later
+	     * This *only* applies to received intents and only if they are not a typical document format
+	     */
+        String fragment = uri.getFragment();
+
+        String extension = null;
+        if (fragment != null)
+            extension = MimeTypeMap.getFileExtensionFromUrl(fragment);
+        if (extension == null)
+            extension = MimeTypeMap.getFileExtensionFromUrl(path);
+        if (extension != null)
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
-        }
         return type;
     }
 
@@ -1105,7 +1120,7 @@ public class ImageUtils
     @SuppressLint("SimpleDateFormat")
     public static byte[] getThumb(final Context c, final Uri uri) {
         //TODO: Split this into component methods
-        String type = getMimeType(uri.toString());
+        String type = getMimeType(uri);
 
         byte[] imageBytes = null;
         final ContentValues values = new ContentValues();
