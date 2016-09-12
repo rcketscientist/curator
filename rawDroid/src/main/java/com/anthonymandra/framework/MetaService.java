@@ -15,6 +15,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
+import com.drew.metadata.Metadata;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadFactory;
@@ -154,6 +155,18 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
+    public static boolean isProcessed(Cursor c)
+    {
+        final int processedColumn = c.getColumnIndex(Meta.PROCESSED);
+        return c.getInt(processedColumn) != 0;
+    }
+
+//    public static ContentValues processMetaData(Context c, Uri uri)
+//    {
+//        Metadata meta = ImageUtils.readMetadata(c, uri);
+//        return ImageUtils.getContentValues(uri);
+//    }
+
     /**
      * Parse given uris and add to database in a batch
      */
@@ -167,8 +180,7 @@ public class MetaService extends ThreadedPriorityIntentService
                 return;
 
             // Check if meta is already processed
-            final int processedColumn = c.getColumnIndex(Meta.PROCESSED);
-            if (c.moveToFirst() && c.getInt(processedColumn) != 0)
+            if (c.moveToFirst() && isProcessed(c))
             {
                 ContentValues values = new ContentValues();
                 DatabaseUtils.cursorRowToContentValues(c, values);

@@ -75,7 +75,6 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             Crashlytics.logException(new Exception("null uri requested swap)"));
             return null;
         }
-        String name = uri.getLastPathSegment(); //this is risky
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(SwapProvider.AUTHORITY)

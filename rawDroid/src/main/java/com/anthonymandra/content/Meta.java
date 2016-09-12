@@ -7,6 +7,18 @@ import com.anthonymandra.rawdroid.BuildConfig;
 
 public class Meta implements BaseColumns
 {
+	public enum ImageType
+	{
+		UNKNOWN (-1),
+		RAW (0),
+		COMMON (1),
+		TIFF (2);
+
+		private int value;
+		ImageType(int value) {this.value = value;}
+		public static ImageType fromOrdinal(int n) {return values()[n];}
+	}
+
 	public static final int RAW = 0;
 	public static final int COMMON = 1;
 	public static final int TIFF = 2;

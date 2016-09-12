@@ -8,6 +8,7 @@ import android.content.ContentProviderResult;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,6 +21,7 @@ import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
+import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -35,12 +37,16 @@ import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
+import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.rawdroid.R;
 import com.crashlytics.android.Crashlytics;
+import com.drew.imaging.FileType;
+import com.drew.imaging.FileTypeDetector;
 import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
@@ -55,6 +61,7 @@ import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -256,6 +263,26 @@ public class ImageUtils
         }
     }
 
+    public static void getImageFileInfo(Context c, Uri image, ContentValues cv)
+    {
+        UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, image);
+        UsefulDocumentFile.FileData fd = file.getData();
+
+        if (fd != null)
+        {
+            cv.put(Meta.NAME, fd.name);
+            cv.put(Meta.PARENT, fd.parent.toString());
+            cv.put(Meta.TIMESTAMP, fd.lastModified);
+        }
+        else
+        {
+            cv.put(Meta.PARENT, file.getParentFile().getUri().toString());
+        }
+        cv.put(Meta.URI, image.toString());
+
+        int
+    }
+
     public static ContentProviderOperation newInsert(Context c, Uri image)
     {
         UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, image);
@@ -308,6 +335,28 @@ public class ImageUtils
         return getContentValues(uri, meta, getImageType(uri));
     }
 
+    /**
+     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * @param c
+     * @param uri
+     * @return
+     */
+    public static ContentValues getContentValues(@NonNull InputStream stream, @NonNull FileType fileType)
+    {
+        Metadata meta = null;
+        try
+        {
+            meta = ImageMetadataReader.readMetadata(stream, -1, fileType);
+        } catch (ImageProcessingException e)
+        {
+            e.printStackTrace();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return getContentValues(uri, meta, getImageType(uri));
+    }
+
     //TODO: Perhaps this makes more sense in the meta provider itself?
     /**
      * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
@@ -321,11 +370,8 @@ public class ImageUtils
         return getContentValues(uri, meta, type);
     }
 
-
-    private static AtomicInteger counter = new AtomicInteger(0);
     public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
     {
-        Log.d(TAG, "getMetaCursor " + counter.incrementAndGet());
         return c.getContentResolver().query(Meta.CONTENT_URI,
 		        null,
 		        getWhere(),
@@ -469,10 +515,9 @@ public class ImageUtils
         String rawDate = getDateTime(meta);
         if (rawDate != null)  // Don't overwrite null since we can rely on file time
         {
-            Date date = null;
             try
             {
-                date = mMetaExtractorFormat.parse(rawDate);
+                Date date = mMetaExtractorFormat.parse(rawDate);
                 cv.put(Meta.TIMESTAMP, date.getTime());
             }
             catch (ParseException e)
@@ -857,6 +902,19 @@ public class ImageUtils
         return false;
     }
 
+    public static boolean isAndroidImage(final FileType fileType)
+    {
+        return  FileType.Bmp == fileType ||
+                FileType.Gif == fileType ||
+                FileType.Jpeg == fileType ||
+                FileType.Png == fileType;
+    }
+
+    public static boolean isTiffImage(final FileType fileType)
+    {
+        return FileType.Tiff == fileType;
+    }
+
     public static boolean isTiffMime(String mimeType)
     {
         return ImageConstants.TIFF_MIME.equals(mimeType);
@@ -889,64 +947,68 @@ public class ImageUtils
         return success;
     }
 
-    public static int getImageType(File file)
+	/**
+     * Attempt to derive the image type from the path
+     * @param file
+     * @return
+     */
+    public static Meta.ImageType getImageType(Uri file)
     {
-        if (isRaw(file)) return Meta.RAW;
-        if (isNative(file)) return Meta.COMMON;
-        if (isTiffImage(file)) return Meta.TIFF;
-        return -1;
+        if (isRaw(file)) return Meta.ImageType.RAW;
+        if (isNative(file)) return Meta.ImageType.COMMON;
+        if (isTiffImage(file)) return Meta.ImageType.TIFF;
+        return Meta.ImageType.UNKNOWN;
     }
 
-    public static int getImageType(Uri file)
+	/**
+     * Converts fileType to imageType for decoding purposes
+     * @param fileType
+     * @return
+     */
+    public static Meta.ImageType getImageType(FileType fileType)
     {
-        if (isRaw(file)) return Meta.RAW;
-        if (isNative(file)) return Meta.COMMON;
-        if (isTiffImage(file)) return Meta.TIFF;
-        return -1;
+        if (FileType.Unknown == fileType)
+            return Meta.ImageType.UNKNOWN;
+        if (isAndroidImage(fileType))
+            return Meta.ImageType.COMMON;
+        if (isTiffImage(fileType))
+            return  Meta.ImageType.TIFF;
+        return Meta.ImageType.RAW;
     }
 
-    public static class JpegFilter implements FileFilter
+	/**
+     * First attempts to derive the image type from path, then falls back to magic number
+     * @param c
+     * @param uri
+     * @return
+     */
+    public static Meta.ImageType getImageType(final Context c, final Uri uri)
     {
-        @Override
-        public boolean accept(File file) { return isJpeg(file); }
-    }
+        // Try to derive from path
+        Meta.ImageType type = getImageType(uri);
+        if (type != Meta.ImageType.UNKNOWN)
+            return type;
 
-    public static class RawFilter implements FileFilter
-    {
-        @Override
-        public boolean accept(File file) { return isRaw(file); }
-    }
-
-    public static class ImageFilter implements FileFilter
-    {
-        @Override
-        public boolean accept(File file)
+        // If that fails use the magic number
+        try (InputStream is = c.getContentResolver().openInputStream(uri))
         {
-            return isRaw(file) || isJpeg(file);
+            if (is == null)
+                return Meta.ImageType.UNKNOWN;
+
+            BufferedInputStream bis = new BufferedInputStream(is);
+            FileType fileType = FileTypeDetector.detectFileType(bis);
+            return getImageType(fileType);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return Meta.ImageType.UNKNOWN;
         }
     }
 
     public static boolean isImage(String name)
     {
         return isRaw(name) || isJpeg(name) || isTiffImage(name);
-    }
-
-    public static boolean isImage(File f)
-    {
-        return isImage(f.getName());
-    }
-
-    public static boolean isImage(Uri uri)
-    {
-        String path = uri.getPath();
-        if (path == null) // If the uri is not hierarchical
-            return false;
-        return isImage(path);
-    }
-
-    public static boolean isRaw(File file)
-    {
-        return isRaw(file.getName());
     }
 
     public static boolean isRaw(Uri uri)
@@ -1026,33 +1088,33 @@ public class ImageUtils
         return false;
     }
 
-    public static String getMimeType(Uri uri) {
+    public static String getMimeType(String url) {
         String type = null;
-        String path = uri.getPath();
-
-	    /**
-	     * TODO: Fragments are how we handle share intents.  Since the uri in this case is ambiguous
-	     * we cheat and use our own fragment technique.  If another app sends a ContentProvider
-	     * uri this will fail to find the type.  Options:
-	     * a) simply attempt conversions without testing file type, if one fails try the next.  This will add overhead for later conversion types
-	     * b) store a doublet uri/type allowing us to store intent type for later
-	     * This *only* applies to received intents and only if they are not a typical document format
-	     */
-        String fragment = uri.getFragment();
-
-        String extension = null;
-        if (fragment != null)
-            extension = MimeTypeMap.getFileExtensionFromUrl(fragment);
-        if (extension == null)
-            extension = MimeTypeMap.getFileExtensionFromUrl(path);
-        if (extension != null)
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+        }
         return type;
     }
 
     private static byte[] getAndroidImage(Context c, Uri uri, ContentValues values)
     {
         byte[] imageBytes = getImageBytes(c, uri);
+        if (imageBytes != null)
+        {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+
+            // Decode dimensions
+            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, o);
+            values.put(Meta.WIDTH, o.outWidth);
+            values.put(Meta.HEIGHT, o.outHeight);
+        }
+        return imageBytes;
+    }
+
+    private static byte[] getAndroidImage(byte[] imageBytes, ContentValues values)
+    {
         if (imageBytes != null)
         {
             BitmapFactory.Options o = new BitmapFactory.Options();
@@ -1118,9 +1180,83 @@ public class ImageUtils
     }
 
     @SuppressLint("SimpleDateFormat")
-    public static byte[] getThumb(final Context c, final Uri uri) {
-        //TODO: Split this into component methods
-        String type = getMimeType(uri);
+    public static byte[] getThumb(final Context c, final Uri uri)
+    {
+        boolean processed;
+        FileType fileType = null;
+        Meta.ImageType imageType;
+        ContentProviderClient cpc = null;
+        ContentValues values = new ContentValues();
+        try
+        {
+            cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
+            if (cpc != null)
+            {
+                try (Cursor cursor = getMetaCursor(c, uri))
+                {
+                    processed =
+                            cursor != null &&
+                            cursor.moveToFirst() &&
+                            cursor.getInt(cursor.getColumnIndex(Meta.PROCESSED)) != 0;
+
+                    BufferedInputStream imageStream = null;
+                    if (!processed)
+                    {
+                        AssetFileDescriptor fd = cpc.openAssetFile(uri, "r");
+                        if (fd == null)
+                            return null;
+                        imageStream = new BufferedInputStream(fd.createInputStream());
+                        fileType = FileTypeDetector.detectFileType(imageStream);
+                        imageType = getImageType(fileType);
+
+                        values = ImageUtils.getContentValues(c, uri);
+                    }
+                    else
+                    {
+                        try (Cursor metaCursor = cpc.query(Meta.CONTENT_URI, null,
+                                ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
+                        {
+                            imageType = Meta.ImageType(metaCursor.getInt(metaCursor.getColumnIndex(Meta.TYPE)));
+                        }
+                    }
+
+                    if (ImageUtils.isAndroidImage(fileType))
+                    {
+                        imageStream.reset();
+                        byte[] sourceBytes = Util.toByteArray(imageStream);
+                        BitmapFactory.Options o = new BitmapFactory.Options();
+                        o.inJustDecodeBounds = true;
+
+                        // Decode dimensions
+                        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
+                        values.put(Meta.WIDTH, o.outWidth);
+                        values.put(Meta.HEIGHT, o.outHeight);
+                        return sourceBytes;
+                    }
+
+                    imageStream.close();
+                    if (ImageUtils.isTiffImage(fileType))
+                    {
+                        return getTiffImage(fd.getParcelFileDescriptor().getFd(), values);
+                    }
+                    else
+                    {
+
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (cpc != null)
+                cpc.release();
+        }
+
+        String type = getMimeType(uri.toString());
 
         byte[] imageBytes = null;
         final ContentValues values = new ContentValues();

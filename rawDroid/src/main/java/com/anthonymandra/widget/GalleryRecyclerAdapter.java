@@ -228,6 +228,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		GalleryItem galleryItem = GalleryItem.fromCursor(cursor);
 		GalleryItem former = GalleryItem.fromViewHolder(vh);
 
+		/** This will use {@link ImageUtils#getThumb(Context, Uri)} which will load metadata if needed */
+		Glide.with(mContext)
+				.using(new RawModelLoader(mContext))
+				.load(galleryItem.uri)
+				.centerCrop()
+				.into(vh.mImageView);
+
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
 
 		// If nothing has changed avoid refreshing.
@@ -302,12 +309,6 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		vh.mFileName.setText(galleryItem.name);
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		vh.mBaseView.setTag(galleryItem.uri);   // store tag for compare
-
-		Glide.with(mContext)
-				.using(new RawModelLoader(mContext))
-				.load(galleryItem.uri)
-				.centerCrop()
-				.into(vh.mImageView);
 	}
 
 	@Nullable
