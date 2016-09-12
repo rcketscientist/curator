@@ -18,6 +18,7 @@ import com.anthonymandra.util.ImageUtils;
 import com.drew.metadata.Metadata;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -116,17 +117,19 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    //TODO: For some reason this is ending up single threaded
-//    @Override
-//    public void onCreate()
-//    {
-//        super.onCreate();
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        setThreadPool(Executors.newFixedThreadPool(2));
+
+        //TODO: For some reason this is ending up single threaded
 //        setThreadPool(new ThreadPoolExecutor(
 //                0, Runtime.getRuntime().availableProcessors(),
 //                60L, TimeUnit.SECONDS,
 //                new LinkedBlockingQueue<Runnable>(),
 //                new MetaThreadFactory()));
-//    }
+    }
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -225,12 +228,13 @@ public class MetaService extends ThreadedPriorityIntentService
             else
             {
                 addUpdate(uri, values);
-                Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
-                        .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
-                        .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
             }
+
+            Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
+                    .putExtra(EXTRA_URI, uri.toString())
+                    .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
+                    .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
 
         try

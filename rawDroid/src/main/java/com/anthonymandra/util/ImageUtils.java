@@ -38,6 +38,7 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.MetaService;
+import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
@@ -279,8 +280,7 @@ public class ImageUtils
             cv.put(Meta.PARENT, file.getParentFile().getUri().toString());
         }
         cv.put(Meta.URI, image.toString());
-
-        int
+        cv.put(Meta.TYPE, ImageUtils.getImageType(c, image).getValue());
     }
 
     public static ContentProviderOperation newInsert(Context c, Uri image)
@@ -289,18 +289,7 @@ public class ImageUtils
         UsefulDocumentFile.FileData fd = file.getData();
 
         ContentValues cv = new ContentValues();
-        if (fd != null)
-        {
-            cv.put(Meta.NAME, fd.name);
-            cv.put(Meta.PARENT, fd.parent.toString());
-            cv.put(Meta.TIMESTAMP, fd.lastModified);
-        }
-        else
-        {
-            cv.put(Meta.PARENT, file.getParentFile().getUri().toString());
-        }
-        cv.put(Meta.URI, image.toString());
-        cv.put(Meta.TYPE, ImageUtils.getImageType(image));
+        getImageFileInfo(c, image, cv);
 
        return ContentProviderOperation.newInsert(Meta.CONTENT_URI)
                 .withValues(cv)
@@ -332,13 +321,11 @@ public class ImageUtils
     public static ContentValues getContentValues(@NonNull Context c, @NonNull Uri uri)
     {
         Metadata meta = readMetadata(c, uri);
-        return getContentValues(uri, meta, getImageType(uri));
+        return getContentValues(meta);
     }
 
     /**
      * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-     * @param c
-     * @param uri
      * @return
      */
     public static ContentValues getContentValues(@NonNull InputStream stream, @NonNull FileType fileType)
@@ -354,20 +341,7 @@ public class ImageUtils
         {
             e.printStackTrace();
         }
-        return getContentValues(uri, meta, getImageType(uri));
-    }
-
-    //TODO: Perhaps this makes more sense in the meta provider itself?
-    /**
-     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-     * @param c
-     * @param uri
-     * @return
-     */
-    public static ContentValues getContentValues(Context c, Uri uri, int type)
-    {
-        Metadata meta = readMetadata(c, uri);
-        return getContentValues(uri, meta, type);
+        return getContentValues(meta);
     }
 
     public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
@@ -487,12 +461,11 @@ public class ImageUtils
 
     /**
      * Convert given meta into ContentValues for {@link com.anthonymandra.content.MetaProvider}
-     * @param uri
      * @param meta
      * @return
      */
     @Nullable
-    public static ContentValues getContentValues(@NonNull Uri uri, Metadata meta, int type)
+    public static ContentValues getContentValues(Metadata meta)
     {
         final ContentValues cv = new ContentValues();
         if (meta == null)
@@ -1179,166 +1152,86 @@ public class ImageUtils
         return imageBytes;
     }
 
+	public static BufferedInputStream getImageStream(ContentProviderClient cpc, Uri uri) throws IOException, RemoteException
+	{
+		AssetFileDescriptor fd = cpc.openAssetFile(uri, "r");
+		if (fd == null)
+			return null;
+		return new BufferedInputStream(fd.createInputStream());
+	}
+
     @SuppressLint("SimpleDateFormat")
     public static byte[] getThumb(final Context c, final Uri uri)
     {
         boolean processed;
-        FileType fileType = null;
+        FileType fileType;
         Meta.ImageType imageType;
-        ContentProviderClient cpc = null;
         ContentValues values = new ContentValues();
-        try
+
+        try(AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r"))
         {
-            cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
-            if (cpc != null)
+            if (fd == null)
+                return null;
+
+            BufferedInputStream imageStream = null;
+            try (Cursor metaCursor = c.getContentResolver().query(Meta.CONTENT_URI, null,
+                    ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
             {
-                try (Cursor cursor = getMetaCursor(c, uri))
+                processed = metaCursor != null &&
+	                    metaCursor.moveToFirst() &&
+	                    metaCursor.getInt(metaCursor.getColumnIndex(Meta.PROCESSED)) != 0;
+
+
+                if (!processed)
                 {
-                    processed =
-                            cursor != null &&
-                            cursor.moveToFirst() &&
-                            cursor.getInt(cursor.getColumnIndex(Meta.PROCESSED)) != 0;
-
-                    BufferedInputStream imageStream = null;
-                    if (!processed)
-                    {
-                        AssetFileDescriptor fd = cpc.openAssetFile(uri, "r");
-                        if (fd == null)
-                            return null;
-                        imageStream = new BufferedInputStream(fd.createInputStream());
-                        fileType = FileTypeDetector.detectFileType(imageStream);
-                        imageType = getImageType(fileType);
-
-                        values = ImageUtils.getContentValues(c, uri);
-                    }
-                    else
-                    {
-                        try (Cursor metaCursor = cpc.query(Meta.CONTENT_URI, null,
-                                ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
-                        {
-                            imageType = Meta.ImageType(metaCursor.getInt(metaCursor.getColumnIndex(Meta.TYPE)));
-                        }
-                    }
-
-                    if (ImageUtils.isAndroidImage(fileType))
-                    {
-                        imageStream.reset();
-                        byte[] sourceBytes = Util.toByteArray(imageStream);
-                        BitmapFactory.Options o = new BitmapFactory.Options();
-                        o.inJustDecodeBounds = true;
-
-                        // Decode dimensions
-                        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
-                        values.put(Meta.WIDTH, o.outWidth);
-                        values.put(Meta.HEIGHT, o.outHeight);
-                        return sourceBytes;
-                    }
-
-                    imageStream.close();
-                    if (ImageUtils.isTiffImage(fileType))
-                    {
-                        return getTiffImage(fd.getParcelFileDescriptor().getFd(), values);
-                    }
-                    else
-                    {
-
-                    }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            if (cpc != null)
-                cpc.release();
-        }
-
-        String type = getMimeType(uri.toString());
-
-        byte[] imageBytes = null;
-        final ContentValues values = new ContentValues();
-
-        // If it's a supported images, just get the bytes
-        if (ImageUtils.isAndroidImage(type))
-        {
-            imageBytes = getAndroidImage(c, uri, values);
-        }
-        // Otherwise we'll need a file descriptor to pass to native
-        else
-        {
-            // Get a file descriptor to pass to native methods
-            int fd;
-            ParcelFileDescriptor pfd = null;
-
-            try
-            {
-                pfd = c.getContentResolver().openFileDescriptor(uri, "r");
-                fd = pfd.getFd();
-                if (ImageUtils.isTiffMime(type))
-                {
-                    imageBytes = getTiffImage(fd, values);
+                    imageStream = new BufferedInputStream(fd.createInputStream());
+                    fileType = FileTypeDetector.detectFileType(imageStream);
+                    imageType = getImageType(fileType);
+                    MetaWakefulReceiver.startPriorityMetaService(c, uri);
                 }
                 else
                 {
-                    imageBytes = getRawThumb(fd, values);
+                    imageType = Meta.ImageType.fromInt(metaCursor.getInt(metaCursor.getColumnIndex(Meta.TYPE)));
                 }
             }
-            catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
-            }
-            finally
-            {
-                Utils.closeSilently(pfd);
-            }
-        }
 
-        // If there are content values fire off a thread to update the provider so we get the image
-        // asap while still having basic info for viewer if not fully processed yet
-        if (values.size() > 0)
+            if (Meta.ImageType.COMMON == imageType)
+            {
+                if (imageStream == null)
+                    imageStream = new BufferedInputStream(fd.createInputStream());
+                else
+                    imageStream.reset();
+
+                byte[] sourceBytes = Util.toByteArray(imageStream);
+                Utils.closeSilently(imageStream);
+
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inJustDecodeBounds = true;
+
+                // Decode dimensions
+                BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
+//                values.put(Meta.WIDTH, o.outWidth);
+//                values.put(Meta.HEIGHT, o.outHeight);
+                return sourceBytes;
+            }
+
+            Utils.closeSilently(imageStream);   // Remaining types don't use streams
+
+            if (Meta.ImageType.TIFF == imageType)
+            {
+                byte[] imageBytes = getTiffImage(fd.getParcelFileDescriptor().getFd(), values);
+                if (imageBytes != null)
+                    return imageBytes;
+            }
+
+            // Otherwise assume ImageType.RAW
+            return getRawThumb(fd.getParcelFileDescriptor().getFd(), values);
+        }
+        catch (Exception e)
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    ContentProviderClient cpc = null;
-                    try
-                    {
-                        cpc = c.getContentResolver().acquireContentProviderClient(Meta.AUTHORITY);
-                        if (cpc != null)
-                        {
-                            try (Cursor cursor = cpc.query(Meta.CONTENT_URI, new String[]{Meta.PROCESSED},
-                                    ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
-                            {
-                                if (cursor != null)
-                                {
-                                    cursor.moveToFirst();
-                                    if (cursor.getInt(0) == 0)   // If it hasn't been processed yet, insert basics
-                                    {
-                                        cpc.update(Meta.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    finally
-                    {
-                        if (cpc != null)
-                            cpc.release();
-                    }
-                }
-            }).start();
-
+	        e.printStackTrace();
         }
-        return imageBytes;
+	    return null;
     }
 
     private static byte[] getImageBytes(Context c, Uri uri)

@@ -2,8 +2,13 @@ package com.anthonymandra.content;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.SparseArray;
 
 import com.anthonymandra.rawdroid.BuildConfig;
+
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Meta implements BaseColumns
 {
@@ -14,9 +19,16 @@ public class Meta implements BaseColumns
 		COMMON (1),
 		TIFF (2);
 
+		private static final SparseArray<ImageType > lookup = new SparseArray<>();
+		static {
+			for (ImageType type : EnumSet.allOf(ImageType.class))
+				lookup.put(type.getValue(), type);
+		}
+
 		private int value;
 		ImageType(int value) {this.value = value;}
-		public static ImageType fromOrdinal(int n) {return values()[n];}
+		public static ImageType fromInt(int n) { return lookup.get(n); }
+		public int getValue() { return value; }
 	}
 
 	public static final int RAW = 0;
