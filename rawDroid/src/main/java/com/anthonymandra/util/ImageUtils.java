@@ -514,7 +514,7 @@ public class ImageUtils
         return cv;
     }
 
-    public static String strSeparator = "__,__";
+    private static String strSeparator = "__,__";
     public static String convertArrayToString(String[] array){
         if (array == null)
             return null;
@@ -800,10 +800,12 @@ public class ImageUtils
         checkXmpDirectory(meta);
 
         XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+	    if (xmp == null)
+		    return;
+
         if (value == null)
         {
-            if (xmp != null)
-                xmp.deleteProperty(tag);
+	        xmp.deleteProperty(tag);
         }
         else
         {
@@ -816,10 +818,12 @@ public class ImageUtils
         checkXmpDirectory(meta);
 
         XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+	    if (xmp == null)
+		    return;
+
         if (value == null  || value.length == 0)
         {
-            if (xmp != null)
-                xmp.deleteProperty(tag);
+	        xmp.deleteProperty(tag);
         }
         else
         {
@@ -832,10 +836,12 @@ public class ImageUtils
         checkXmpDirectory(meta);
 
         XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+	    if (xmp == null)
+		    return;
+
         if (value == null)
         {
-            if (xmp != null)
-                xmp.deleteProperty(tag);
+	        xmp.deleteProperty(tag);
         }
         else
         {
@@ -848,10 +854,12 @@ public class ImageUtils
         checkXmpDirectory(meta);
 
         XmpDirectory xmp = meta.getFirstDirectoryOfType(XmpDirectory.class);
+	    if (xmp == null)
+		    return;
+
         if (value == null)
         {
-            if (xmp != null)
-                xmp.deleteProperty(tag);
+            xmp.deleteProperty(tag);
         }
         else
         {
@@ -986,10 +994,9 @@ public class ImageUtils
 
     public static boolean isRaw(Uri uri)
     {
-        String path = uri.getPath();
-        if (path == null) // If the uri is not hierarchical
-            return false;
-        return isRaw(path);
+	    String path = uri.getPath();
+	    // If the uri is not hierarchical
+	    return path != null && isRaw(path);
     }
 
     public static boolean isRaw(String name)
@@ -1004,10 +1011,9 @@ public class ImageUtils
 
     public static boolean isJpeg(Uri uri)
     {
-        String path = uri.getPath();
-        if (path == null) // If the uri is not hierarchical
-            return false;
-        return isJpeg(path);
+	    String path = uri.getPath();
+	    // If the uri is not hierarchical
+	    return path != null && isJpeg(path);
     }
 
     public static boolean isJpeg(String name)
@@ -1020,17 +1026,11 @@ public class ImageUtils
         return endsWith(ImageConstants.COMMON_EXT, name);
     }
 
-    public static boolean isNative(File file)
+	public static boolean isNative(Uri uri)
     {
-        return isNative(file.getName());
-    }
-
-    public static boolean isNative(Uri uri)
-    {
-        String path = uri.getPath();
-        if (path == null) // If the uri is not hierarchical
-            return false;
-        return isNative(path);
+	    String path = uri.getPath();
+	    // If the uri is not hierarchical
+	    return path != null && isNative(path);
     }
 
     public static boolean isTiffImage(String name)
@@ -1045,10 +1045,9 @@ public class ImageUtils
 
     public static boolean isTiffImage(Uri uri)
     {
-        String path = uri.getPath();
-        if (path == null) // If the uri is not hierarchical
-            return false;
-        return isTiffImage(path);
+	    String path = uri.getPath();
+	    // If the uri is not hierarchical
+	    return path != null && isTiffImage(path);
     }
 
     private static boolean endsWith(String[] extensions, String path)
@@ -1199,8 +1198,6 @@ public class ImageUtils
             {
                 if (imageStream == null)
                     imageStream = new BufferedInputStream(fd.createInputStream());
-                else
-                    imageStream.reset();
 
                 byte[] sourceBytes = Util.toByteArray(imageStream);
                 Utils.closeSilently(imageStream);
@@ -1215,7 +1212,7 @@ public class ImageUtils
                 return sourceBytes;
             }
 
-            Utils.closeSilently(imageStream);   // Remaining types don't use streams
+//            Utils.closeSilently(imageStream);   // this actually coses the underlying pfd
 
             if (Meta.ImageType.TIFF == imageType)
             {
