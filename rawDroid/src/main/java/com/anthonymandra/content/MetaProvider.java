@@ -1,9 +1,12 @@
 package com.anthonymandra.content;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -13,27 +16,32 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 public class MetaProvider extends ContentProvider
 {
 	private static final String TAG = MetaProvider.class.getSimpleName();
-	public static final String DATABASE_NAME = "rawdroid.db";
+
+	// To avoid notify on every applyBatch transaction https://gist.github.com/saik0/4079112
+	private final ThreadLocal<Boolean> mApplyingBatch = new ThreadLocal<>();
+	private final ThreadLocal<Set<Uri>> mChangedUris = new ThreadLocal<>();
+
 	static int DATABASE_VERSION = 15;
 
 	public static final String META_TABLE_NAME = "meta";
 
 	private static final int META = 1;
 	private static final int META_ID = 2;
-    private static final int THUMB = 3;
-    private static final int THUMB_ID = 4;
-    private static final int IMAGE = 5;
-    private static final int IMAGE_ID = 6;
 
 	private static UriMatcher sUriMatcher;
 
@@ -51,7 +59,7 @@ public class MetaProvider extends ContentProvider
 
 	public static class DatabaseHelper extends SQLiteOpenHelper
 	{
-		public DatabaseHelper(Context context)
+		DatabaseHelper(Context context)
 		{
 			super(context, META_TABLE_NAME, null, DATABASE_VERSION);
 		}
@@ -107,7 +115,7 @@ public class MetaProvider extends ContentProvider
 	}
 
 	@Override
-	public int delete(Uri uri, String where, String[] whereArgs)
+	public int delete(@NonNull Uri uri, String where, String[] whereArgs)
 	{
 		int match = sUriMatcher.match(uri);
 		int affected;
@@ -117,6 +125,11 @@ public class MetaProvider extends ContentProvider
 		{
 			case META:
 				affected = db.delete(META_TABLE_NAME, where, whereArgs);
+				if (applyingBatch())
+					mChangedUris.get().add(uri);
+				else
+					//noinspection ConstantConditions
+					getContext().getContentResolver().notifyChange(uri, null);
 				break;
 			case META_ID:
 				long metaId = ContentUris.parseId(uri);
@@ -128,12 +141,11 @@ public class MetaProvider extends ContentProvider
 				throw new IllegalArgumentException("unknown meta element: " + uri);
 		}
 
-		getContext().getContentResolver().notifyChange(uri, null);
 		return affected;
 	}
 
 	@Override
-	public String getType(Uri uri)
+	public String getType(@NonNull Uri uri)
 	{
 		switch (sUriMatcher.match(uri))
 		{
@@ -153,7 +165,7 @@ public class MetaProvider extends ContentProvider
 	 * access the files of downloaded thumbnail images.
 	 */
 	@Override
-	public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException
+	public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException
 	{
 		// only support read only files
 		if (!"r".equals(mode.toLowerCase(Locale.US)))
@@ -163,13 +175,97 @@ public class MetaProvider extends ContentProvider
 
 		return openFileHelper(uri, mode);
 	}
-	
-	/**
-	 * The delegate insert method, which also takes a database parameter. Note that this method is a direct implementation of a content provider
-	 * method.
-	 */
+
+	private boolean applyingBatch() {
+		return mApplyingBatch.get() != null && mApplyingBatch.get();
+	}
+
+	@NonNull
 	@Override
-	public Uri insert(Uri uri, ContentValues initialValues)
+	public ContentProviderResult[] applyBatch(@NonNull ArrayList<ContentProviderOperation> operations) throws OperationApplicationException
+	{
+		ContentProviderResult[] result = new ContentProviderResult[operations.size()];
+		mChangedUris.set(new HashSet<Uri>());
+		
+		int i = 0;
+		// Opens the database object in "write" mode.
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		// Begin a transaction
+		db.beginTransaction();
+		try
+		{
+			for (ContentProviderOperation operation : operations)
+			{
+				// Chain the result for back references
+				result[i++] = operation.apply(this, result, i);
+
+			}
+
+			db.setTransactionSuccessful();
+		}
+		catch (OperationApplicationException e)
+		{
+			Log.d(TAG, "batch failed: " + e.getLocalizedMessage());
+		}
+		finally
+		{
+			db.endTransaction();
+			mApplyingBatch.set(false);
+			for (Uri uri : mChangedUris.get())
+			{
+				//noinspection ConstantConditions
+				getContext().getContentResolver().notifyChange(uri, null);
+			}
+		}
+
+		return result;
+	}
+
+	public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values)
+	{
+		int numInserted = 0;
+
+		if (sUriMatcher.match(uri) != META)
+		{
+			throw new IllegalArgumentException("Unknown URI " + uri);
+		}
+
+		SQLiteDatabase sqlDB = dbHelper.getWritableDatabase();
+		sqlDB.beginTransaction();
+		try
+		{
+			for (ContentValues cv : values)
+			{
+				try
+				{
+					long newID = sqlDB.insertOrThrow(META_TABLE_NAME, null, cv);
+					if (newID <= 0)
+					{
+						Log.e(TAG, "Failed to insert: " + cv.getAsString(Meta.URI));
+					}
+					else
+					{
+						numInserted++;
+					}
+				}
+				catch (Exception e)
+				{
+					Log.e(TAG, "Failed to insert: " + cv.getAsString(Meta.URI));
+				}
+			}
+			sqlDB.setTransactionSuccessful();
+			//noinspection ConstantConditions
+			getContext().getContentResolver().notifyChange(uri, null);
+		}
+		finally
+		{
+			sqlDB.endTransaction();
+		}
+		return numInserted;
+	}
+	
+	@Override
+	public Uri insert(@NonNull Uri uri, ContentValues initialValues)
 	{
 //		verifyValues(values);
 
@@ -187,65 +283,27 @@ public class MetaProvider extends ContentProvider
         }
         
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        
-//        long rowId = db.insert(META_TABLE_NAME, Data.KEYWORD_NAME, values);
+
 		long rowId = db.insertWithOnConflict(META_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         if (rowId > 0) 
         {
             Uri metaUri = ContentUris.withAppendedId(Meta.CONTENT_URI, rowId);
-            getContext().getContentResolver().notifyChange(metaUri, null);
+	        if (applyingBatch())
+		        mChangedUris.get().add(uri);
+	        else
+		        //noinspection ConstantConditions
+                getContext().getContentResolver().notifyChange(uri, null);
             return metaUri;
         }
  
         throw new SQLException("Failed to insert row into " + uri);
 	}
 
-//	private Long mediaExists(SQLiteDatabase db, String mediaID)
-//	{
-//		Cursor cursor = null;
-//		Long rowID = null;
-//		try
-//		{
-//			cursor = db.query(META_TABLE_NAME, null, Metadata.Values.MEDIA_ID + " = '" + mediaID + "'", null, null, null, null);
-//			if (cursor.moveToFirst())
-//			{
-//				rowID = cursor.getLong(Metadata.ID_COLUMN);
-//			}
-//		}
-//		finally
-//		{
-//			if (cursor != null)
-//			{
-//				cursor.close();
-//			}
-//		}
-//		return rowID;
-//	}
-//
-//	private void verifyValues(ContentValues values)
-//	{
-//		if (!values.containsKey(Metadata.Values.KEYWORD_NAME))
-//		{
-//			Resources r = Resources.getSystem();
-//			values.put(Metadata.Values.KEYWORD_NAME, r.getString(android.R.string.untitled));
-//		}
-//
-//		// Make sure that the fields are all set (missing a lot currently)...
-//		if (!values.containsKey(Metadata.Values.TIMESTAMP))
-//		{
-//			Long now = System.currentTimeMillis();
-//			values.put(Metadata.Values.TIMESTAMP, now);
-//		}
-//
-//		if (!values.containsKey(Metadata.Values.MEDIA_ID))
-//		{
-//			throw new IllegalArgumentException("Media ID not specified: " + values);
-//		}
-//	}
+
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+	public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
 	{
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(META_TABLE_NAME);
@@ -262,13 +320,14 @@ public class MetaProvider extends ContentProvider
  
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, sortOrder);
- 
+
+		//noinspection ConstantConditions
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String where, String[] whereArgs)
+	public int update(@NonNull Uri uri, ContentValues values, String where, String[] whereArgs)
 	{
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count;
@@ -279,6 +338,15 @@ public class MetaProvider extends ContentProvider
 	            try
 	            {
 		            count = db.update(META_TABLE_NAME, values, where, whereArgs);
+		            if (count > 0)
+		            {
+			            if (applyingBatch())
+				            mChangedUris.get().add(uri);
+			            else
+				            //noinspection ConstantConditions
+				            getContext().getContentResolver().notifyChange(uri, null);
+			            return count;
+		            }
 	            }
 	            catch(Exception e)
 	            {
@@ -290,8 +358,7 @@ public class MetaProvider extends ContentProvider
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
- 
-        getContext().getContentResolver().notifyChange(uri, null);
+
         return count;
 	}
 
@@ -301,7 +368,7 @@ public class MetaProvider extends ContentProvider
         return true;
 	}
 
-	public static String getUriWhere()
+	public static String whereUriSelection()
 	{
 		return Meta.URI + "=?";
 	}

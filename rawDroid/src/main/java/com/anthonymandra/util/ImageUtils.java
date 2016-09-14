@@ -946,7 +946,7 @@ public class ImageUtils
      * @param fileType
      * @return
      */
-    public static Meta.ImageType getImageType(FileType fileType)
+    private static Meta.ImageType getImageType(FileType fileType)
     {
         if (FileType.Unknown == fileType)
             return Meta.ImageType.UNKNOWN;
@@ -1172,7 +1172,6 @@ public class ImageUtils
             if (fd == null)
                 return null;
 
-            BufferedInputStream imageStream = null;
             try (Cursor metaCursor = c.getContentResolver().query(Meta.CONTENT_URI, null,
                     ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
             {
@@ -1183,9 +1182,7 @@ public class ImageUtils
 
                 if (!processed)
                 {
-                    imageStream = new BufferedInputStream(fd.createInputStream());
-                    fileType = FileTypeDetector.detectFileType(imageStream);
-                    imageType = getImageType(fileType);
+	                imageType = getImageType(c, uri);
                     MetaWakefulReceiver.startPriorityMetaService(c, uri);
                 }
                 else
@@ -1196,20 +1193,19 @@ public class ImageUtils
 
             if (Meta.ImageType.COMMON == imageType)
             {
-                if (imageStream == null)
-                    imageStream = new BufferedInputStream(fd.createInputStream());
+	            try(BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream()))
+	            {
+		            byte[] sourceBytes = Util.toByteArray(imageStream);
 
-                byte[] sourceBytes = Util.toByteArray(imageStream);
-                Utils.closeSilently(imageStream);
+		            BitmapFactory.Options o = new BitmapFactory.Options();
+		            o.inJustDecodeBounds = true;
 
-                BitmapFactory.Options o = new BitmapFactory.Options();
-                o.inJustDecodeBounds = true;
-
-                // Decode dimensions
-                BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
+		            // Decode dimensions
+		            BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
 //                values.put(Meta.WIDTH, o.outWidth);
 //                values.put(Meta.HEIGHT, o.outHeight);
-                return sourceBytes;
+		            return sourceBytes;
+	            }
             }
 
 //            Utils.closeSilently(imageStream);   // this actually coses the underlying pfd
