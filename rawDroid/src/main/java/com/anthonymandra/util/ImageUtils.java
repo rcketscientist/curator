@@ -267,7 +267,7 @@ public class ImageUtils
     public static void getImageFileInfo(Context c, Uri image, ContentValues cv)
     {
         UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, image);
-        UsefulDocumentFile.FileData fd = file.getData();
+        UsefulDocumentFile.FileData fd = file.getCachedData();
 
         if (fd != null)
         {
@@ -277,7 +277,9 @@ public class ImageUtils
         }
         else
         {
-            cv.put(Meta.PARENT, file.getParentFile().getUri().toString());
+            UsefulDocumentFile parent = file.getParentFile();
+            if (parent != null)
+                cv.put(Meta.PARENT, parent.toString());
         }
         cv.put(Meta.URI, image.toString());
         cv.put(Meta.TYPE, ImageUtils.getImageType(c, image).getValue());
@@ -285,9 +287,6 @@ public class ImageUtils
 
     public static ContentProviderOperation newInsert(Context c, Uri image)
     {
-        UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, image);
-        UsefulDocumentFile.FileData fd = file.getData();
-
         ContentValues cv = new ContentValues();
         getImageFileInfo(c, image, cv);
 
@@ -1163,8 +1162,7 @@ public class ImageUtils
     public static byte[] getThumb(final Context c, final Uri uri)
     {
         boolean processed;
-        FileType fileType;
-        Meta.ImageType imageType;
+        Meta.ImageType imageType = Meta.ImageType.UNPROCESSED;
         ContentValues values = new ContentValues();
 
         try(AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r"))
@@ -1175,50 +1173,44 @@ public class ImageUtils
             try (Cursor metaCursor = c.getContentResolver().query(Meta.CONTENT_URI, null,
                     ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
             {
-                processed = metaCursor != null &&
-	                    metaCursor.moveToFirst() &&
-	                    metaCursor.getInt(metaCursor.getColumnIndex(Meta.PROCESSED)) != 0;
-
-
-                if (!processed)
+                if (metaCursor != null && metaCursor.moveToFirst())
                 {
-	                imageType = getImageType(c, uri);
-                    MetaWakefulReceiver.startPriorityMetaService(c, uri);
-                }
-                else
-                {
+                    processed = metaCursor.getInt(metaCursor.getColumnIndex(Meta.PROCESSED)) != 0;
+                    if (!processed)
+                        MetaWakefulReceiver.startPriorityMetaService(c, uri);
+
                     imageType = Meta.ImageType.fromInt(metaCursor.getInt(metaCursor.getColumnIndex(Meta.TYPE)));
+                    if (Meta.ImageType.UNPROCESSED == imageType)
+                        imageType = getImageType(c, uri);
                 }
             }
 
-            if (Meta.ImageType.COMMON == imageType)
+            switch(imageType)
             {
-	            try(BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream()))
-	            {
-		            byte[] sourceBytes = Util.toByteArray(imageStream);
+                case COMMON:
+                    try(BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream()))
+                    {
+                        byte[] sourceBytes = Util.toByteArray(imageStream);
 
-		            BitmapFactory.Options o = new BitmapFactory.Options();
-		            o.inJustDecodeBounds = true;
+                        BitmapFactory.Options o = new BitmapFactory.Options();
+                        o.inJustDecodeBounds = true;
 
-		            // Decode dimensions
-		            BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
+                        // Decode dimensions
+                        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
 //                values.put(Meta.WIDTH, o.outWidth);
 //                values.put(Meta.HEIGHT, o.outHeight);
-		            return sourceBytes;
-	            }
+                        return sourceBytes;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.e(TAG, e.toString());
+                        return null;
+                    }
+                case TIFF:
+                    return getTiffImage(fd.getParcelFileDescriptor().getFd(), values);
+                default:
+                    return getRawThumb(fd.getParcelFileDescriptor().getFd(), values);
             }
-
-//            Utils.closeSilently(imageStream);   // this actually coses the underlying pfd
-
-            if (Meta.ImageType.TIFF == imageType)
-            {
-                byte[] imageBytes = getTiffImage(fd.getParcelFileDescriptor().getFd(), values);
-                if (imageBytes != null)
-                    return imageBytes;
-            }
-
-            // Otherwise assume ImageType.RAW
-            return getRawThumb(fd.getParcelFileDescriptor().getFd(), values);
         }
         catch (Exception e)
         {

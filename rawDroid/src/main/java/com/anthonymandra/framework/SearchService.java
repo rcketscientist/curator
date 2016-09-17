@@ -2,11 +2,13 @@ package com.anthonymandra.framework;
 
 import android.app.IntentService;
 import android.content.ContentProviderOperation;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -105,50 +107,37 @@ public class SearchService extends IntentService
 //	    }
 
 	    ForkJoinPool pool = new ForkJoinPool();     // This should be a common pool for the app.  Currently only use
-	    Set<Uri> foundImages = new HashSet<>();
+	    Set<ContentValues> foundImages = new HashSet<>();
 	    if (uriRoots != null)
 	    {
 		    for (String uri : uriRoots)
 		    {
 			    SearchTask task = new SearchTask(this, UsefulDocumentFile.fromUri(this, Uri.parse(uri)), alwaysExcludeDir);
-				Set<Uri> searchResults = pool.invoke(task);
+				Set<ContentValues> searchResults = pool.invoke(task);
 				if (searchResults != null)
 			    	foundImages.addAll(searchResults);
 		    }
 	    }
 
-	    ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-	    ArrayList<String> uriStrings = new ArrayList<>();
+	    Set<String> uriStrings = new HashSet<>();
         if (foundImages.size() > 0)
         {
-            for (Uri image : foundImages)
-            {
-	            if (image == null)  // Somehow we can get null uris in here...
-		            continue;       // https://bitbucket.org/rcketscientist/rawdroid/issues/230/coreactivityjava-line-677-crashlytics
-
-	            operations.add(ImageUtils.newInsert(this, image));
-	            uriStrings.add(image.toString());
-            }
-
-            try
-            {
-                // TODO: If I implement bulkInsert it's faster
-                getContentResolver().applyBatch(Meta.AUTHORITY, operations);
-            } catch (RemoteException | OperationApplicationException e)
-            {
-	            Crashlytics.logException(
-			            new Exception("SearchService: handleActionSearch applyBatch error", e));
-            }
+	        getContentResolver().bulkInsert(Meta.CONTENT_URI, foundImages.toArray(new ContentValues[foundImages.size()]));
         }
 
+	    for (ContentValues image : foundImages)
+	    {
+		    uriStrings.add(image.getAsString(Meta.URI));
+	    }
+
 	    broadcast = new Intent(BROADCAST_SEARCH_COMPLETE)
-			    .putExtra(EXTRA_IMAGE_URIS, uriStrings.toArray(new String[operations.size()]));
+			    .putExtra(EXTRA_IMAGE_URIS, uriStrings.toArray(new String[uriStrings.size()]));
 	    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
     }
 
-	class SearchTask extends RecursiveTask<Set<Uri>>
+	class SearchTask extends RecursiveTask<Set<ContentValues>>
 	{
-		Set<Uri> foundImages = new HashSet<>();
+		Set<ContentValues> foundImages = new HashSet<>();
 		final UsefulDocumentFile mRoot;
 		final String[] mExcludeDir;
 		final Context mContext;
@@ -160,7 +149,7 @@ public class SearchService extends IntentService
 		}
 
 		@Override
-		protected Set<Uri> compute()
+		protected Set<ContentValues> compute()
 		{
 			if (mRoot == null)
 				return null;
@@ -220,19 +209,41 @@ public class SearchService extends IntentService
 //						continue;
 //					}
 
-					foundImages.add(image.getUri());
+					foundImages.add(getImageFileInfo(image));
 				}
 			}
 
 			for (SearchTask task : forks)
 			{
-				Set<Uri> childImages = task.join();
+				Set<ContentValues> childImages = task.join();
 				if (childImages != null)
 					foundImages.addAll(childImages);
 			}
 
 			return foundImages;
 		}
+	}
+
+	public ContentValues getImageFileInfo(@NonNull UsefulDocumentFile file)
+	{
+		UsefulDocumentFile.FileData fd = file.getCachedData();
+		ContentValues cv = new ContentValues();
+
+		if (fd != null)
+		{
+			cv.put(Meta.NAME, fd.name);
+			cv.put(Meta.PARENT, fd.parent.toString());
+			cv.put(Meta.TIMESTAMP, fd.lastModified);
+		}
+		else
+		{
+			UsefulDocumentFile parent = file.getParentFile();
+			if (parent != null)
+				cv.put(Meta.PARENT, parent.toString());
+		}
+		cv.put(Meta.URI, file.getUri().toString());
+		cv.put(Meta.TYPE, ImageUtils.getImageType(this, file.getUri()).getValue());
+		return cv;
 	}
 
 	/**

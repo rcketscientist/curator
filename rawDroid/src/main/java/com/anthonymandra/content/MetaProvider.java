@@ -36,7 +36,7 @@ public class MetaProvider extends ContentProvider
 	private final ThreadLocal<Boolean> mApplyingBatch = new ThreadLocal<>();
 	private final ThreadLocal<Set<Uri>> mChangedUris = new ThreadLocal<>();
 
-	static int DATABASE_VERSION = 15;
+	static int DATABASE_VERSION = 16;
 
 	public static final String META_TABLE_NAME = "meta";
 

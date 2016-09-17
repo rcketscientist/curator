@@ -15,9 +15,10 @@ public class Meta implements BaseColumns
 	public enum ImageType
 	{
 		UNKNOWN (-1),
-		RAW (0),
-		COMMON (1),
-		TIFF (2);
+		UNPROCESSED (0),
+		RAW (1),
+		COMMON (2),
+		TIFF (3);
 
 		private static final SparseArray<ImageType > lookup = new SparseArray<>();
 		static {

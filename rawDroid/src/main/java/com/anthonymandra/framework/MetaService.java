@@ -278,7 +278,6 @@ public class MetaService extends ThreadedPriorityIntentService
         // Update the database periodically
         if (mOperations.size() > minBatchSize)
         {
-            // TODO: If I implement bulkInsert it's faster
             getContentResolver().applyBatch(Meta.AUTHORITY, mOperations);
             mOperations.clear();
             Intent broadcast = new Intent(BROADCAST_BULK_UPDATE);
