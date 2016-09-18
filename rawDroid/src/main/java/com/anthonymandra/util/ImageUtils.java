@@ -281,6 +281,8 @@ public class ImageUtils
             if (parent != null)
                 cv.put(Meta.PARENT, parent.toString());
         }
+
+        cv.put(Meta.DOCUMENT_ID, file.getDocumentId());
         cv.put(Meta.URI, image.toString());
         cv.put(Meta.TYPE, ImageUtils.getImageType(c, image).getValue());
     }

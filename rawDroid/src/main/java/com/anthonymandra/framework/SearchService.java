@@ -241,6 +241,8 @@ public class SearchService extends IntentService
 			if (parent != null)
 				cv.put(Meta.PARENT, parent.toString());
 		}
+
+		cv.put(Meta.DOCUMENT_ID, file.getDocumentId());
 		cv.put(Meta.URI, file.getUri().toString());
 		cv.put(Meta.TYPE, ImageUtils.getImageType(this, file.getUri()).getValue());
 		return cv;

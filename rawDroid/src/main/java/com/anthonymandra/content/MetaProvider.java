@@ -36,7 +36,7 @@ public class MetaProvider extends ContentProvider
 	private final ThreadLocal<Boolean> mApplyingBatch = new ThreadLocal<>();
 	private final ThreadLocal<Set<Uri>> mChangedUris = new ThreadLocal<>();
 
-	static int DATABASE_VERSION = 16;
+	static int DATABASE_VERSION = 17;
 
 	public static final String META_TABLE_NAME = "meta";
 
@@ -76,33 +76,34 @@ public class MetaProvider extends ContentProvider
 					"CREATE TABLE " + META_TABLE_NAME + " (" + 
 					BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
 					Meta.NAME 		    	+ " TEXT, " +
-					Meta.TIMESTAMP     	+ " TEXT, " +
-					Meta.MODEL 	    	+ " TEXT, " +
+					Meta.DOCUMENT_ID    	+ " TEXT UNIQUE, " +
+					Meta.TIMESTAMP     	    + " TEXT, " +
+					Meta.MODEL 	    	    + " TEXT, " +
 					Meta.APERTURE 	    	+ " TEXT, " +
 					Meta.EXPOSURE 		    + " TEXT, " +
-					Meta.FLASH 		    + " TEXT, " +
-					Meta.FOCAL_LENGTH  	+ " TEXT, " +
+					Meta.FLASH 		        + " TEXT, " +
+					Meta.FOCAL_LENGTH  	    + " TEXT, " +
 					Meta.ISO 			    + " TEXT, " +
-					Meta.WHITE_BALANCE     + " TEXT, " +
+					Meta.WHITE_BALANCE      + " TEXT, " +
 					Meta.HEIGHT 		    + " INTEGER, " +
-					Meta.WIDTH 		    + " INTEGER, " +
+					Meta.WIDTH 		        + " INTEGER, " +
 					Meta.LATITUDE 		    + " TEXT, " +
-					Meta.LONGITUDE 	    + " TEXT, " +
+					Meta.LONGITUDE 	        + " TEXT, " +
 					Meta.ALTITUDE 		    + " TEXT, " +
 					Meta.MEDIA_ID 		    + " TEXT, " +
 					Meta.ORIENTATION 	    + " INTEGER, " +
 					Meta.MAKE 			    + " TEXT, "	+
-					Meta.URI 			    + " TEXT UNIQUE," 	+
-					Meta.RATING			+ " REAL," +
+					Meta.URI 			    + " TEXT," 	+
+					Meta.RATING			    + " REAL," +
 					Meta.SUBJECT	    	+ " TEXT," +
 					Meta.LABEL	    		+ " TEXT," +
-					Meta.LENS_MODEL	    + " TEXT," +
-					Meta.DRIVE_MODE	    + " TEXT," +
+					Meta.LENS_MODEL	        + " TEXT," +
+					Meta.DRIVE_MODE	        + " TEXT," +
 					Meta.EXPOSURE_MODE	    + " TEXT," +
 					Meta.EXPOSURE_PROGRAM	+ " TEXT," +
 					Meta.TYPE				+ " INTEGER," +
 					Meta.PROCESSED			+ " BOOLEAN," +
-					Meta.PARENT            + " TEXT);";
+					Meta.PARENT             + " TEXT);";
 			sqLiteDatabase.execSQL(createMetaTable);
 		}
 

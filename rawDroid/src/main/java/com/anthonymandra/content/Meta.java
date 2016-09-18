@@ -48,6 +48,7 @@ public class Meta implements BaseColumns
 
 	// Uri
 	public static final String URI = "uri";
+	public static final String DOCUMENT_ID = "document_id";
 //        public static final String THUMBNAIL_URI = "thumbnail_uri";
 //        public static final String FULL_IMAGE_URI = "full_image_uri";
 
