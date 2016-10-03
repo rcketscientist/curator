@@ -250,11 +250,7 @@ public class GalleryActivity extends CoreActivity implements
 						}
 						else
 						{
-							for (String image : images)
-							{
-								Uri uri = Uri.parse(image);
-								MetaWakefulReceiver.startMetaService(GalleryActivity.this, uri);
-							}
+							MetaWakefulReceiver.startMetaService(GalleryActivity.this, images);
 						}
 						break;
 				}

@@ -347,11 +347,16 @@ public class ImageUtils
 
     public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
     {
+        return getMetaCursor(c, new String[]{uri.toString()});
+    }
+
+    public static @Nullable Cursor getMetaCursor(Context c, String[] uris)
+    {
         return c.getContentResolver().query(Meta.CONTENT_URI,
-		        null,
-		        getWhere(),
-		        new String[]{uri.toString()},
-		        null);
+                null,
+                DbUtil.createMultipleIN(Meta.URI, uris.length),
+                uris,
+                null);
     }
 
     public static boolean isInDatabase(Context c, Uri uri)

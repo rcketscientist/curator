@@ -171,11 +171,6 @@ public abstract class ViewerActivity extends CoreActivity implements
         {
             mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
 
-//            String[] imageset = getIntent().getStringArrayExtra(EXTRA_VIEWER_IMAGESET);
-//            for (String uri : imageset)
-//            {
-//                mMediaItems.add(Uri.parse(uri));
-//            }
             Bundle dbQuery = getIntent().getBundleExtra(EXTRA_META_BUNDLE);
             try(Cursor c = getContentResolver().query(
                 Meta.CONTENT_URI,

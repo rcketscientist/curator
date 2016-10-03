@@ -175,81 +175,88 @@ public class MetaService extends ThreadedPriorityIntentService
      */
     private void handleActionParse(Intent intent)
     {
-        Uri uri = intent.getData();
+        String[] uris;
+        if (intent.hasExtra(EXTRA_URIS))
+            uris = intent.getStringArrayExtra(EXTRA_URIS);
+        else
+            uris = new String[] {intent.getData().toString()};
 
-        try(Cursor c = ImageUtils.getMetaCursor(this, uri))
+        try(Cursor c = ImageUtils.getMetaCursor(this, uris))
         {
             if (c == null)
                 return;
 
-            // Check if meta is already processed
-            if (c.moveToFirst() && isProcessed(c))
+            while (c.moveToNext())
             {
-                ContentValues values = new ContentValues();
-                DatabaseUtils.cursorRowToContentValues(c, values);
+                Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
 
-                Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
-                        .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_METADATA, values);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-
-                WakefulBroadcastReceiver.completeWakefulIntent(intent);
-                return;
-            }
-
-            ContentValues values = ImageUtils.getContentValues(this, uri);
-            if (values == null)
-                return;
-
-            // If this is a high priority request then add to db immediately
-            if (isHigherThanDefault(intent))
-            {
-                // To allow service to operate on external images without database
-                if (c.getCount() > 0)
+                // Check if meta is already processed
+                if (isProcessed(c))
                 {
-                    getContentResolver().update(Meta.CONTENT_URI,
-                            values,
-                            ImageUtils.getWhere(),
-                            new String[]{uri.toString()});
+                    ContentValues values = new ContentValues();
+                    DatabaseUtils.cursorRowToContentValues(c, values);
 
-                    int nameColumn = c.getColumnIndex(Meta.NAME);
-                    if (nameColumn == -1)
-                        return;
+                    Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                            .putExtra(EXTRA_URI, uri.toString())
+                            .putExtra(EXTRA_METADATA, values);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
 
-                    values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
+                    WakefulBroadcastReceiver.completeWakefulIntent(intent);
+                    return;
                 }
 
-                // TODO: external images won't have a name
-                Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                ContentValues values = ImageUtils.getContentValues(this, uri);
+                if (values == null)
+                    return;
+
+                // If this is a high priority request then add to db immediately
+                if (isHigherThanDefault(intent))
+                {
+                    // To allow service to operate on external images without database
+                    if (c.getCount() > 0)
+                    {
+                        getContentResolver().update(Meta.CONTENT_URI,
+                                values,
+                                ImageUtils.getWhere(),
+                                new String[]{uri.toString()});
+
+                        int nameColumn = c.getColumnIndex(Meta.NAME);
+                        if (nameColumn == -1)
+                            return;
+
+                        values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
+                    }
+
+                    // TODO: external images won't have a name
+                    Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                            .putExtra(EXTRA_URI, uri.toString())
+                            .putExtra(EXTRA_METADATA, values);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+                } else
+                {
+                    addUpdate(uri, values);
+                }
+
+                Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
                         .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_METADATA, values);
+                        .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
+                        .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
             }
-            else
+
+            try
             {
-                addUpdate(uri, values);
+                processUpdates(20);
+            } catch (RemoteException | OperationApplicationException e)
+            {
+                //TODO: Notify user
+                e.printStackTrace();
+            } finally
+            {
+                WakefulBroadcastReceiver.completeWakefulIntent(intent);
             }
-
-            Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
-                    .putExtra(EXTRA_URI, uri.toString())
-                    .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
-                    .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
         }
 
-        try
-        {
-            processUpdates(20);
-        }
-        catch (RemoteException | OperationApplicationException e)
-        {
-            //TODO: Notify user
-            e.printStackTrace();
-        }
-        finally
-        {
-            WakefulBroadcastReceiver.completeWakefulIntent(intent);
-        }
     }
 
     @Override
