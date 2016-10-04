@@ -203,12 +203,6 @@ public class SearchService extends IntentService
 					if (uri == null)    // Somehow we can get null uris in here...
 						continue;       // https://bitbucket.org/rcketscientist/rawdroid/issues/230/coreactivityjava-line-677-crashlytics
 
-					// If uri is unique we should not be able to add more than once.
-//					if (ImageUtils.isProcessed(mContext, image.getUri()))   //TODO: Might just want to check if it exists in db
-//					{
-//						continue;
-//					}
-
 					foundImages.add(getImageFileInfo(image));
 				}
 			}
