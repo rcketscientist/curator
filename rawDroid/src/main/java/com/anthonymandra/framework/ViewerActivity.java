@@ -43,6 +43,7 @@ import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.HistogramView;
+import com.crashlytics.android.Crashlytics;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -184,10 +185,17 @@ public abstract class ViewerActivity extends CoreActivity implements
                 {
                     int columnIndex = c.getColumnIndex(Meta.URI);
                     while (c.moveToNext()) {
-                        String uri = c.getString(columnIndex);
-                        if (uri == null)
-                            continue;
-                        mMediaItems.add(Uri.parse(uri));
+                        try
+                        {
+                            String uri = c.getString(columnIndex);
+                            if (uri == null)
+                                continue;
+                            mMediaItems.add(Uri.parse(uri));
+                        }
+                        catch (Exception e)
+                        {
+                            Crashlytics.logException(e);
+                        }
                     }
                 }
             }
