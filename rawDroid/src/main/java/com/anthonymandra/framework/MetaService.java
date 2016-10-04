@@ -15,7 +15,6 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
-import com.drew.metadata.Metadata;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -85,6 +84,9 @@ public class MetaService extends ThreadedPriorityIntentService
     public static final String EXTRA_METADATA = "com.anthonymandra.framework.extra.EXTRA_METADATA";
 
     private final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
+
+    private static final AtomicInteger sJobsTotal = new AtomicInteger(0);
+    private static final AtomicInteger sJobsComplete = new AtomicInteger(0);
 
     /**
      * The default thread factory
@@ -164,6 +166,19 @@ public class MetaService extends ThreadedPriorityIntentService
         return c.getInt(processedColumn) != 0;
     }
 
+	/**
+     * Increment counter and if all jobs are complete reset the counters
+     */
+    private static void jobComplete()
+    {
+        int completed = sJobsComplete.incrementAndGet();
+        if (completed == sJobsTotal.get())
+        {
+            sJobsComplete.set(0);
+            sJobsTotal.set(0);
+        }
+    }
+
 //    public static ContentValues processMetaData(Context c, Uri uri)
 //    {
 //        Metadata meta = ImageUtils.readMetadata(c, uri);
@@ -181,6 +196,7 @@ public class MetaService extends ThreadedPriorityIntentService
         else
             uris = new String[] {intent.getData().toString()};
 
+        sJobsTotal.addAndGet(uris.length);
         try(Cursor c = ImageUtils.getMetaCursor(this, uris))
         {
             if (c == null)
@@ -193,6 +209,8 @@ public class MetaService extends ThreadedPriorityIntentService
                 // Check if meta is already processed
                 if (isProcessed(c))
                 {
+                    sJobsTotal.decrementAndGet();    // not really a job
+
                     ContentValues values = new ContentValues();
                     DatabaseUtils.cursorRowToContentValues(c, values);
 
@@ -238,24 +256,27 @@ public class MetaService extends ThreadedPriorityIntentService
                     addUpdate(uri, values);
                 }
 
+                jobComplete();
                 Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
                         .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_COMPLETED_JOBS, getCompletedJobs())
-                        .putExtra(EXTRA_TOTAL_JOBS, getTotalJobs());
+                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete)
+                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-            }
 
-            try
-            {
-                processUpdates(20);
-            } catch (RemoteException | OperationApplicationException e)
-            {
-                //TODO: Notify user
-                e.printStackTrace();
-            } finally
-            {
-                WakefulBroadcastReceiver.completeWakefulIntent(intent);
+                try
+                {
+                    processUpdates(20);
+                }
+                catch (RemoteException | OperationApplicationException e)
+                {
+                    //TODO: Notify user
+                    e.printStackTrace();
+                }
             }
+        }
+        finally
+        {
+            WakefulBroadcastReceiver.completeWakefulIntent(intent);
         }
 
     }
