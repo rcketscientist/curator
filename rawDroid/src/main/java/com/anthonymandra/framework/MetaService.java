@@ -202,12 +202,12 @@ public class MetaService extends ThreadedPriorityIntentService
                     LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
 
                     WakefulBroadcastReceiver.completeWakefulIntent(intent);
-                    return;
+                    continue;
                 }
 
                 ContentValues values = ImageUtils.getContentValues(this, uri);
                 if (values == null)
-                    return;
+                    continue;
 
                 // If this is a high priority request then add to db immediately
                 if (isHigherThanDefault(intent))
@@ -222,7 +222,7 @@ public class MetaService extends ThreadedPriorityIntentService
 
                         int nameColumn = c.getColumnIndex(Meta.NAME);
                         if (nameColumn == -1)
-                            return;
+                            continue;
 
                         values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
                     }
@@ -232,7 +232,8 @@ public class MetaService extends ThreadedPriorityIntentService
                             .putExtra(EXTRA_URI, uri.toString())
                             .putExtra(EXTRA_METADATA, values);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-                } else
+                }
+                else
                 {
                     addUpdate(uri, values);
                 }
