@@ -388,7 +388,8 @@ public class PhotoDataAdapter implements Model {
     public void pause() {
         mIsActive = false;
 
-        mReloadTask.terminate();
+        if (mReloadTask != null)
+            mReloadTask.terminate();
         mReloadTask = null;
 
         mActivity.removeContentListener(mSourceListener);
