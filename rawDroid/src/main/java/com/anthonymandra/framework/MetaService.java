@@ -179,11 +179,22 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-//    public static ContentValues processMetaData(Context c, Uri uri)
-//    {
-//        Metadata meta = ImageUtils.readMetadata(c, uri);
-//        return ImageUtils.getContentValues(uri);
-//    }
+    public static ContentValues processMetaData(Context c, Cursor metaCursor)
+    {
+        Uri uri = Uri.parse(metaCursor.getString(metaCursor.getColumnIndex(Meta.URI)));
+
+        ContentValues values = new ContentValues();
+        // Check if meta is already processed
+        if (isProcessed(metaCursor))
+        {
+            DatabaseUtils.cursorRowToContentValues(metaCursor, values);
+        }
+        else
+        {
+            values = ImageUtils.getContentValues(c, uri);
+        }
+        return values;
+    }
 
     /**
      * Parse given uris and add to database in a batch
@@ -206,22 +217,13 @@ public class MetaService extends ThreadedPriorityIntentService
             {
                 Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
 
-                // Check if meta is already processed
-                if (isProcessed(c))
-                {
-                    sJobsTotal.decrementAndGet();    // not really a job
+//                // Check if meta is already processed
+//                if (isProcessed(c))
+//                {
+//                    sJobsTotal.decrementAndGet();    // not really a job
+//                }
 
-                    ContentValues values = new ContentValues();
-                    DatabaseUtils.cursorRowToContentValues(c, values);
-
-                    Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
-                            .putExtra(EXTRA_URI, uri.toString())
-                            .putExtra(EXTRA_METADATA, values);
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-
-                    WakefulBroadcastReceiver.completeWakefulIntent(intent);
-                    continue;
-                }
+                processMetaData(this, c);
 
                 ContentValues values = ImageUtils.getContentValues(this, uri);
                 if (values == null)

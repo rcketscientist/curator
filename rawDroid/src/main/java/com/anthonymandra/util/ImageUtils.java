@@ -1168,7 +1168,27 @@ public class ImageUtils
     @SuppressLint("SimpleDateFormat")
     public static byte[] getThumb(final Context c, final Uri uri)
     {
-        boolean processed;
+        try (Cursor metaCursor = c.getContentResolver().query(
+                Meta.CONTENT_URI, null,
+                ImageUtils.getWhere(),
+                new String[]{uri.toString()}, null, null))
+        {
+            if (metaCursor != null)
+                metaCursor.moveToFirst();
+            return getThumb(c, uri, metaCursor);
+        }
+    }
+
+	/**
+     * Processes the thumbnail from an existing cursor pointing to the desired row
+     * @param c context
+     * @param uri uri to process
+     * @param metaCursor {@link Meta} cursor pointing to the proper row
+     * @return byte array jpeg for display
+     */
+    @SuppressLint("SimpleDateFormat")
+    public static byte[] getThumb(final Context c, final Uri uri, Cursor metaCursor)
+    {
         Meta.ImageType imageType = Meta.ImageType.UNPROCESSED;
         ContentValues values = new ContentValues();
 
@@ -1177,19 +1197,13 @@ public class ImageUtils
             if (fd == null)
                 return null;
 
-            try (Cursor metaCursor = c.getContentResolver().query(Meta.CONTENT_URI, null,
-                    ImageUtils.getWhere(), new String[]{uri.toString()}, null, null))
+            if (metaCursor != null)
             {
-                if (metaCursor != null && metaCursor.moveToFirst())
-                {
-                    processed = metaCursor.getInt(metaCursor.getColumnIndex(Meta.PROCESSED)) != 0;
-                    if (!processed)
-                        MetaWakefulReceiver.startPriorityMetaService(c, uri);
+                values = MetaService.processMetaData(c, metaCursor);
 
-                    imageType = Meta.ImageType.fromInt(metaCursor.getInt(metaCursor.getColumnIndex(Meta.TYPE)));
-                    if (Meta.ImageType.UNPROCESSED == imageType)
-                        imageType = getImageType(c, uri);
-                }
+                imageType = Meta.ImageType.fromInt(values.getAsInteger(Meta.TYPE));
+                if (Meta.ImageType.UNPROCESSED == imageType)
+                    imageType = getImageType(c, uri);
             }
 
             switch(imageType)
