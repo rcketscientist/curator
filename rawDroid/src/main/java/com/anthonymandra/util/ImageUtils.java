@@ -11,6 +11,7 @@ import android.content.OperationApplicationException;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
@@ -1165,6 +1166,12 @@ public class ImageUtils
 		return new BufferedInputStream(fd.createInputStream());
 	}
 
+    public static boolean isProcessed(ContentValues c)
+    {
+        Integer processed = c.getAsInteger(Meta.PROCESSED);
+        return processed != null && processed != 0;
+    }
+
     @SuppressLint("SimpleDateFormat")
     public static byte[] getThumb(final Context c, final Uri uri)
     {
@@ -1173,38 +1180,50 @@ public class ImageUtils
                 ImageUtils.getWhere(),
                 new String[]{uri.toString()}, null, null))
         {
+            ContentValues values = new ContentValues();
             if (metaCursor != null)
+            {
                 metaCursor.moveToFirst();
-            return getThumb(c, uri, metaCursor);
+                DatabaseUtils.cursorRowToContentValues(metaCursor, values);
+            }
+            return getThumb(c, values);
         }
     }
 
 	/**
      * Processes the thumbnail from an existing cursor pointing to the desired row
      * @param c context
-     * @param uri uri to process
-     * @param metaCursor {@link Meta} cursor pointing to the proper row
+     * @param metaCursor {@link ContentValues} representing a *FULL* row of a {@link Meta} cursor
      * @return byte array jpeg for display
      */
     @SuppressLint("SimpleDateFormat")
-    public static byte[] getThumb(final Context c, final Uri uri, Cursor metaCursor)
+    public static byte[] getThumb(final Context c, ContentValues metaCursor)
     {
         Meta.ImageType imageType = Meta.ImageType.UNPROCESSED;
-        ContentValues values = new ContentValues();
+        final Uri uri = Uri.parse(metaCursor.getAsString(Meta.URI));
 
         try(AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r"))
         {
             if (fd == null)
                 return null;
 
-            if (metaCursor != null)
-            {
-                values = MetaService.processMetaData(c, metaCursor);
+//            // Lets update the meta on the fly
+//            if (!isProcessed(metaCursor))
+//            {
+//                new Thread(new Runnable()
+//                {
+//                    @Override
+//                    public void run()
+//                    {
+//                        ContentValues values = getContentValues(c, uri);
+//                        c.getContentResolver().update(Meta.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+//                    }
+//                }).start();
+//            }
 
-                imageType = Meta.ImageType.fromInt(values.getAsInteger(Meta.TYPE));
-                if (Meta.ImageType.UNPROCESSED == imageType)
-                    imageType = getImageType(c, uri);
-            }
+            imageType = Meta.ImageType.fromInt(metaCursor.getAsInteger(Meta.TYPE));
+            if (Meta.ImageType.UNPROCESSED == imageType)
+                imageType = getImageType(c, uri);
 
             switch(imageType)
             {
@@ -1228,9 +1247,9 @@ public class ImageUtils
                         return null;
                     }
                 case TIFF:
-                    return getTiffImage(fd.getParcelFileDescriptor().getFd(), values);
+                    return getTiffImage(fd.getParcelFileDescriptor().getFd(), metaCursor);
                 default:
-                    return getRawThumb(fd.getParcelFileDescriptor().getFd(), values);
+                    return getRawThumb(fd.getParcelFileDescriptor().getFd(), metaCursor);
             }
         }
         catch (Exception e)

@@ -123,7 +123,7 @@ public class MetaService extends ThreadedPriorityIntentService
     public void onCreate()
     {
         super.onCreate();
-        setThreadPool(Executors.newFixedThreadPool(2));
+//        setThreadPool(Executors.newFixedThreadPool(2));
 
         //TODO: For some reason this is ending up single threaded
 //        setThreadPool(new ThreadPoolExecutor(
@@ -166,6 +166,11 @@ public class MetaService extends ThreadedPriorityIntentService
         return c.getInt(processedColumn) != 0;
     }
 
+    public static boolean isProcessed(ContentValues c)
+    {
+        return c.getAsInteger(Meta.PROCESSED) != 0;
+    }
+
 	/**
      * Increment counter and if all jobs are complete reset the counters
      */
@@ -176,6 +181,21 @@ public class MetaService extends ThreadedPriorityIntentService
         {
             sJobsComplete.set(0);
             sJobsTotal.set(0);
+        }
+    }
+
+    public static ContentValues processMetaData(final Context c, ContentValues metaCursor)
+    {
+        Uri uri = Uri.parse(metaCursor.getAsString(Meta.URI));
+
+        // Check if meta is already processed
+        if (isProcessed(metaCursor))
+        {
+            return metaCursor;
+        }
+        else
+        {
+            return ImageUtils.getContentValues(c, uri);
         }
     }
 
@@ -207,25 +227,19 @@ public class MetaService extends ThreadedPriorityIntentService
         else
             uris = new String[] {intent.getData().toString()};
 
-        sJobsTotal.addAndGet(uris.length);
         try(Cursor c = ImageUtils.getMetaCursor(this, uris))
         {
             if (c == null)
                 return;
 
+	        sJobsTotal.addAndGet(uris.length);
             while (c.moveToNext())
             {
                 Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
 
-//                // Check if meta is already processed
-//                if (isProcessed(c))
-//                {
-//                    sJobsTotal.decrementAndGet();    // not really a job
-//                }
+	            ContentValues values = processMetaData(this, c);
+	            jobComplete();
 
-                processMetaData(this, c);
-
-                ContentValues values = ImageUtils.getContentValues(this, uri);
                 if (values == null)
                     continue;
 
@@ -258,11 +272,10 @@ public class MetaService extends ThreadedPriorityIntentService
                     addUpdate(uri, values);
                 }
 
-                jobComplete();
                 Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
                         .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete)
-                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal);
+                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
+                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
 
                 try
@@ -291,7 +304,6 @@ public class MetaService extends ThreadedPriorityIntentService
         {
             Intent broadcast = new Intent(BROADCAST_PROCESSING_COMPLETE);
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-            //TODO: Is it possible that the thread this originated from could be reclaimed losing the update?
             processUpdates(0);
         }
         catch (RemoteException | OperationApplicationException e)
@@ -299,7 +311,6 @@ public class MetaService extends ThreadedPriorityIntentService
             e.printStackTrace();
         }
 
-        // TODO: Should change the extra if we want the number processed
         Intent broadcast = new Intent(BROADCAST_PARSE_COMPLETE);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
     }

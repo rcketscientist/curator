@@ -1,7 +1,9 @@
 package com.anthonymandra.widget;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Glide;
 
@@ -227,11 +230,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	{
 		GalleryItem galleryItem = GalleryItem.fromCursor(cursor);
 		GalleryItem former = GalleryItem.fromViewHolder(vh);
+		ContentValues values = new ContentValues();
+		DatabaseUtils.cursorRowToContentValues(cursor, values);
 
 		/** This will use {@link ImageUtils#getThumb(Context, Uri)} which will load metadata if needed */
 		Glide.with(mContext)
 				.using(new RawModelLoader(mContext))
-				.load(galleryItem.uri)
+				.load(values)
 				.centerCrop()
 				.into(vh.mImageView);
 
