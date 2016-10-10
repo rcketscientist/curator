@@ -40,23 +40,6 @@ public class FileUtil
 		return ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme());
 	}
 
-	/**
-	 * Returns a uri to a child file within a folder.  This can be used to get an assumed uri
-	 * to a child within a folder.  This avoids heavy calls to DocumentFile.listFiles or
-	 * write-locked createFile
-	 *
-	 * This will only work with a uri that is an heriacrchical tree similar to SCHEME_FILE
-	 * @param hierarchicalTreeUri folder to install into
-	 * @param filename filename of child file
-	 * @return Uri to the child file
-	 */
-	public static Uri getChildUri(Uri hierarchicalTreeUri, String filename)
-	{
-		// TODO: This technically doesn't work for content uris the url in code path separators
-		String childUriString = hierarchicalTreeUri.toString() + "/" + filename;
-		return Uri.parse(childUriString);
-	}
-
 	public static String getCanonicalPathSilently(File file)
 	{
 		try

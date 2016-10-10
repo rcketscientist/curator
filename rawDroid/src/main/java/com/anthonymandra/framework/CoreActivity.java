@@ -959,7 +959,7 @@ public abstract class CoreActivity extends DocumentActivity
 					setWriteResume(WriteActions.COPY, new Object[]{remainingImages});
 
 					UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toCopy);
-					Uri destinationFile = FileUtil.getChildUri(destinationFolder, source.getName());
+					Uri destinationFile = DocumentUtil.getChildUri(destinationFolder, source.getName());
 					copyAssociatedFiles(toCopy, destinationFile);
 					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile));
 				}
