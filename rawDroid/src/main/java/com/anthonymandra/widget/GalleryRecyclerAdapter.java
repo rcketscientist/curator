@@ -233,13 +233,6 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		ContentValues values = new ContentValues();
 		DatabaseUtils.cursorRowToContentValues(cursor, values);
 
-		/** This will use {@link ImageUtils#getThumb(Context, Uri)} which will load metadata if needed */
-		Glide.with(mContext)
-				.using(new RawModelLoader(mContext))
-				.load(values)
-				.centerCrop()
-				.into(vh.mImageView);
-
 		vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
 
 		// If nothing has changed avoid refreshing.
@@ -314,6 +307,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		vh.mFileName.setText(galleryItem.name);
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		vh.mBaseView.setTag(galleryItem.uri);   // store tag for compare
+
+		/** This will use {@link ImageUtils#getThumb(Context, Uri)} which will load metadata if needed */
+		Glide.with(mContext)
+				.using(new RawModelLoader(mContext))
+				.load(values)
+				.centerCrop()
+				.into(vh.mImageView);
 	}
 
 	@Nullable

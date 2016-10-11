@@ -1102,6 +1102,7 @@ public abstract class CoreActivity extends DocumentActivity
 	public class SaveImageTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
 	{
 		final ProgressDialog progressDialog = new ProgressDialog(CoreActivity.this);
+		final ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
 
 		public SaveImageTask()
 		{	}
@@ -1129,8 +1130,9 @@ public abstract class CoreActivity extends DocumentActivity
 			Watermark wm = (Watermark) params[2];
 			ImageConfiguration config = (ImageConfiguration) params[3];
 
+			progressDialog.setMax(totalImages.size());
+
 			boolean success = true;
-			ArrayList<ContentProviderOperation> dbInserts = new ArrayList<>();
 			for (Uri toThumb : totalImages)
 			{
 				setWriteResume(WriteActions.SAVE_IMAGE, new Object[] { remainingImages, destinationFolder, wm, config } );
@@ -1211,13 +1213,30 @@ public abstract class CoreActivity extends DocumentActivity
 
 				publishProgress();
 			}
-			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+
 			return success; //not used.
 		}
 
 		@Override
 		protected void onPostExecute(Boolean result)
 		{
+			new AlertDialog.Builder(CoreActivity.this)
+					.setMessage("Add converted images to the library?")
+					.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+						}
+					})
+					.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{ /*dismiss*/ }
+					}).create();
+
 			onImageSetChanged();
 
 			if (!CoreActivity.this.isDestroyed() && progressDialog != null)

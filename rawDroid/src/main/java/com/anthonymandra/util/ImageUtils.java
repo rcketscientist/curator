@@ -428,7 +428,6 @@ public class ImageUtils
             }
         }
 
-        // TODO: If I implement bulkInsert it's faster
         c.getContentResolver().applyBatch(Meta.AUTHORITY, operations);
     }
 
