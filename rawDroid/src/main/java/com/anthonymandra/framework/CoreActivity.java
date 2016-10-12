@@ -1,5 +1,6 @@
 package com.anthonymandra.framework;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -317,7 +318,7 @@ public abstract class CoreActivity extends DocumentActivity
 		save.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ImageConfiguration config = null;
+				ImageConfiguration config = new JpegConfiguration();
 				switch(tabs.getCurrentTab())
 				{
 					case 0: //JPG
@@ -768,6 +769,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected void showRenameDialog(final List<Uri> itemsToRename)
 	{
+		@SuppressLint("InflateParams")
 		final View dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null);
 		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
 		final EditText nameText = (EditText) dialogView.findViewById(R.id.editTextFormat);
@@ -781,6 +783,7 @@ public abstract class CoreActivity extends DocumentActivity
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
+			@SuppressLint("SetTextI18n")
 			@Override
 			public void afterTextChanged(Editable s)
 			{
@@ -794,6 +797,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 		format.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
 		{
+			@SuppressLint("SetTextI18n")
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
 			{
