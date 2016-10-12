@@ -1235,7 +1235,7 @@ public abstract class CoreActivity extends DocumentActivity
 						@Override
 						public void onClick(DialogInterface dialog, int which)
 						{ /*dismiss*/ }
-					}).create();
+					}).show();
 
 			onImageSetChanged();
 
