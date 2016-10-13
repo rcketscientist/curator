@@ -64,10 +64,16 @@
             android:id="@+id/gridview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
             android:padding="@dimen/image_thumbnail_margin"
             android:layout_below="@+id/filterSidebarButton"
             android:layout_toStartOf="@+id/editFragment"/>
+
+        <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+            android:id="@+id/fast_scroller"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/filterSidebarButton"
+            android:layout_alignParentEnd="true"/>
 
         <fragment
             android:id="@+id/editFragment"

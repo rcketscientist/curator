@@ -77,6 +77,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
+
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
 		GalleryRecyclerAdapter.OnItemLongClickListener,
@@ -203,6 +205,9 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.setOnItemLongClickListener(this);
 
 		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
+		VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) findViewById(R.id.fast_scroller);
+		fastScroller.setRecyclerView(mImageGrid);
+		mImageGrid.addOnScrollListener(fastScroller.getOnScrollListener());
 
 		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
 		mImageGrid.setLayoutManager(mGridLayout);
