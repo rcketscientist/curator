@@ -19,6 +19,7 @@ import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Glide;
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecyclerAdapter.ViewHolder>
+//	implements SectionTitleProvider
 {
 	private final int purple;
 	private final int blue;
@@ -41,6 +43,19 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	private OnSelectionUpdatedListener mSelectionListener;
 	private OnItemClickListener mOnItemClickListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
+
+//	@Override
+//	public String getSectionTitle(int position)
+//	{
+//		Cursor c = (Cursor)getItem(position);   // This is the adapter cursor, don't close
+//		if (c == null)
+//			return null;
+//		int index = c.getColumnIndex(Meta.NAME);
+//		final String name = c.getString(index);
+//		if (name == null)
+//			return null;
+//		return name.substring(0,1);
+//	}
 
 	/**
 	 * Interface definition for a callback to be invoked when an item in this

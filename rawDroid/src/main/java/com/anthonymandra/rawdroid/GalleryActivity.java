@@ -63,6 +63,7 @@ import com.anthonymandra.util.ImageUtils;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
+import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
@@ -76,8 +77,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
@@ -205,15 +204,14 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.setOnItemLongClickListener(this);
 
 		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
-		VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) findViewById(R.id.fast_scroller);
-		fastScroller.setRecyclerView(mImageGrid);
-		mImageGrid.addOnScrollListener(fastScroller.getOnScrollListener());
+		FastScroller fastScroller = (FastScroller) findViewById(R.id.fast_scroller);
 
 		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
 		mImageGrid.setLayoutManager(mGridLayout);
 		mImageGrid.addItemDecoration(spacing);
 		mImageGrid.setHasFixedSize(true);
 		mImageGrid.setAdapter(mGalleryAdapter);
+		fastScroller.setRecyclerView(mImageGrid);   //must be after adapter
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
