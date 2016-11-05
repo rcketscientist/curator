@@ -134,6 +134,8 @@ public abstract class UploadedTexture extends BasicTexture {
     private Bitmap getBitmap() {
         if (mBitmap == null) {
             mBitmap = onGetBitmap();
+            if (mBitmap == null)    // https://bitbucket.org/rcketscientist/rawdroid/issues/277/uploadedtexture-line-137-crashlytics
+                return null;
             int w = mBitmap.getWidth() + mBorder * 2;
             int h = mBitmap.getHeight() + mBorder * 2;
             if (mWidth == UNSPECIFIED) {

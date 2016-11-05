@@ -126,11 +126,6 @@ public class MetaProvider extends ContentProvider
 		{
 			case META:
 				affected = db.delete(META_TABLE_NAME, where, whereArgs);
-				if (applyingBatch())
-					mChangedUris.get().add(uri);
-				else
-					//noinspection ConstantConditions
-					getContext().getContentResolver().notifyChange(uri, null);
 				break;
 			case META_ID:
 				long metaId = ContentUris.parseId(uri);
@@ -141,6 +136,12 @@ public class MetaProvider extends ContentProvider
 			default:
 				throw new IllegalArgumentException("unknown meta element: " + uri);
 		}
+
+		if (applyingBatch())
+			mChangedUris.get().add(uri);
+		else
+			//noinspection ConstantConditions
+			getContext().getContentResolver().notifyChange(uri, null);
 
 		return affected;
 	}

@@ -422,8 +422,8 @@ public class ImageUtils
                 UsefulDocumentFile file = UsefulDocumentFile.fromUri(c, uri);
                 if (!file.exists())
                 {
-                    operations.add(ContentProviderOperation.newDelete(Meta.CONTENT_URI)
-                            .withSelection(getWhere(), new String[]{uriString}).build());
+                    operations.add(ContentProviderOperation.newDelete(
+                            Uri.withAppendedPath(Meta.CONTENT_URI, cursor.getString(idColumn))).build());
                 }
             }
         }
@@ -1253,7 +1253,10 @@ public class ImageUtils
         }
         catch (Exception e)
         {
-	        e.printStackTrace();
+            // Let's add the name to the message to see if there's a link to null FileDescriptors
+            Exception error = new Exception(e.getMessage() + ": " + metaCursor.getAsString(Meta.NAME));
+            error.setStackTrace(e.getStackTrace());
+            error.printStackTrace();
         }
 	    return null;
     }
