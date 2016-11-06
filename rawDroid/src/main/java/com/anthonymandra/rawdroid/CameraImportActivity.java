@@ -1,7 +1,9 @@
 package com.anthonymandra.rawdroid;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -10,21 +12,27 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.mtp.MtpDevice;
-import android.mtp.MtpDeviceInfo;
 import android.mtp.MtpObjectInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.provider.DocumentFile;
+import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.DocumentActivity;
-import com.anthonymandra.framework.Util;
+import com.anthonymandra.framework.SearchService;
+import com.anthonymandra.framework.UsefulDocumentFile;
+import com.anthonymandra.util.ImageUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class CameraImportActivity extends DocumentActivity
@@ -37,10 +45,7 @@ public class CameraImportActivity extends DocumentActivity
 	}
 
 	private MtpDevice mMtpDevice;
-//	private List<Integer> imageHandles = new ArrayList<>();
-	private int requiredSpace;
-	// private ProgressDialog mProgressDialog;
-	private File destination;
+	UsefulDocumentFile destination;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -84,15 +89,14 @@ public class CameraImportActivity extends DocumentActivity
 		}
 	}
 
-	private boolean getImageFiles()
+	private List<Integer> getImageFiles()
 	{
 		int[] storageIds = mMtpDevice.getStorageIds();
 		if (storageIds == null)
 		{
-			return false;
+			return null;
 		}
 
-		requiredSpace = 0;
 		List<Integer> imageHandles = new ArrayList<>();
 		for (int storageId : storageIds)
 		{
@@ -107,70 +111,18 @@ public class CameraImportActivity extends DocumentActivity
 					continue;
 				// TODO: Is this sufficient?
 				if (info.getImagePixHeight() > 0)// info.getAssociationType() != MtpConstants.ASSOCIATION_TYPE_GENERIC_FOLDER)
-				{
-                    String name = info.getName();
-                    File endFile = new File(destination, name);
-                    if (endFile.exists())
-                        continue;       // Don't count existing files which will be skipped.
-
-					requiredSpace += info.getCompressedSize();
 					imageHandles.add(objectId);
-				}
 			}
 		}
-        return true;
+        return imageHandles;
 	}
 
-	protected class FindImagesTask extends AsyncTask<Void, Void, Boolean>
-	{
-		private ProgressDialog mProgressDialog;
-
-		@Override
-		protected void onPreExecute()
-		{
-			mProgressDialog = new ProgressDialog(CameraImportActivity.this);
-			MtpDeviceInfo info = mMtpDevice.getDeviceInfo();
-            String title = "Import";
-            if (info != null)
-                 title = info.getManufacturer() + " " + info.getModel();
-			mProgressDialog = new ProgressDialog(CameraImportActivity.this);
-			mProgressDialog.setTitle(title);
-			mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			mProgressDialog.setIndeterminate(true);
-			mProgressDialog.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... params)
-		{
-			return getImageFiles();
-		}
-
-		@Override
-		protected void onPostExecute(Boolean result)
-		{
-            if (!result)
-            {
-                Toast.makeText(CameraImportActivity.this, "USB Error 04: Failed to access storage.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-			mProgressDialog.dismiss();
-			if (destination.getFreeSpace() < requiredSpace)
-			{
-				Toast.makeText(CameraImportActivity.this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-				finish();
-			}
-
-			ImportTask it = new ImportTask();
-			it.execute();
-		}
-	}
-
-	protected class ImportTask extends AsyncTask<List<Integer>, Void, Boolean> implements OnCancelListener
+	protected class ImportTask extends AsyncTask<Void, Void, Boolean> implements OnCancelListener
 	{
 		private boolean cancelled;
 		private ProgressDialog mProgressDialog;
+
+		final ArrayList<ContentValues> dbInserts = new ArrayList<>();
 
 		@Override
 		protected void onPreExecute()
@@ -183,10 +135,16 @@ public class CameraImportActivity extends DocumentActivity
 		}
 
 		@Override
-		protected Boolean doInBackground(List<Integer>... params)
+		protected Boolean doInBackground(Void... params)
 		{
-			final List<Integer> imageHandles = params[0];
-			mProgressDialog.setMax(imageHandles.size());    //Can this go here?  Otherwise just do work/total * 100
+			final List<Integer> imageHandles = getImageFiles();
+			if (imageHandles == null)
+			{
+                Toast.makeText(CameraImportActivity.this, "USB Error 04: Failed to access storage.", Toast.LENGTH_SHORT).show();
+                return false;
+			}
+
+			mProgressDialog.setMax(imageHandles.size());
 
 			for (int objectHandle : imageHandles)
 			{
@@ -200,27 +158,22 @@ public class CameraImportActivity extends DocumentActivity
 				if (info == null)
 					continue;
 				String name = info.getName();
-                File endFile = new File(destination, name);
-                if (endFile.exists())
-                    continue;   //skip files if re-importing
+				UsefulDocumentFile endFile = destination.createFile(null, name);
+				if (endFile.exists())
+					continue;       // Don't count existing files which will be skipped.
 
-				// KitKat and higher require the extra step of importing to the cache then moving
-				if (Util.hasKitkat())
+				try
 				{
-					try
-					{
-						File tmp = new File(getExternalCacheDir(), name);
-						mMtpDevice.importFile(objectHandle, tmp.getPath());
-						moveFile(tmp, endFile);
-					} catch (WritePermissionException e)
-					{
-						e.printStackTrace();
-						return false;
-					}
+					File tmp = new File(getExternalCacheDir(), name);
+					mMtpDevice.importFile(objectHandle, tmp.getPath());
+					copyFile(Uri.fromFile(tmp), endFile.getUri());
+					ContentValues cv = getImageFileInfo(endFile);
+					dbInserts.add(cv);
 				}
-				else
+				catch (IOException e)
 				{
-					mMtpDevice.importFile(objectHandle, endFile.getPath());
+					e.printStackTrace();
+					return false;
 				}
 
 				publishProgress();
@@ -234,11 +187,35 @@ public class CameraImportActivity extends DocumentActivity
 			if(mProgressDialog != null && mProgressDialog.isShowing())
 				mProgressDialog.dismiss();
 
-			if (success)
-				clearWriteResume();
-
 			Intent rawdroid = new Intent(CameraImportActivity.this, GalleryActivity.class);
-			rawdroid.putExtra(GalleryActivity.KEY_STARTUP_DIR, destination.getPath());
+
+			new AlertDialog.Builder(CameraImportActivity.this)
+					.setMessage("Add converted images to the library?")
+					.setPositiveButton(R.string.positive, new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							getContentResolver().bulkInsert(Meta.CONTENT_URI, dbInserts.toArray(new ContentValues[dbInserts.size()]));
+
+							Set<String> uriStrings = new HashSet<>();
+							for (ContentValues image : dbInserts)
+							{
+								uriStrings.add(image.getAsString(Meta.URI));
+							}
+
+							Intent broadcast = new Intent(SearchService.BROADCAST_SEARCH_COMPLETE)
+									.putExtra(SearchService.EXTRA_IMAGE_URIS, uriStrings.toArray(new String[uriStrings.size()]));
+							LocalBroadcastManager.getInstance(CameraImportActivity.this).sendBroadcast(broadcast);
+						}
+					})
+					.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{ /*dismiss*/ }
+					}).show();
+
 			startActivity(rawdroid);
 		}
 
@@ -252,6 +229,30 @@ public class CameraImportActivity extends DocumentActivity
 		public void onCancel(DialogInterface dialog)
 		{
 			cancelled = true;
+		}
+
+		public ContentValues getImageFileInfo(@NonNull UsefulDocumentFile file)
+		{
+			UsefulDocumentFile.FileData fd = file.getCachedData();
+			ContentValues cv = new ContentValues();
+
+			if (fd != null)
+			{
+				cv.put(Meta.NAME, fd.name);
+				cv.put(Meta.PARENT, fd.parent.toString());
+				cv.put(Meta.TIMESTAMP, fd.lastModified);
+			}
+			else
+			{
+				UsefulDocumentFile parent = file.getParentFile();
+				if (parent != null)
+					cv.put(Meta.PARENT, parent.toString());
+			}
+
+			cv.put(Meta.DOCUMENT_ID, file.getDocumentId());
+			cv.put(Meta.URI, file.getUri().toString());
+			cv.put(Meta.TYPE, ImageUtils.getImageType(CameraImportActivity.this, file.getUri()).getValue());
+			return cv;
 		}
 	}
 
@@ -280,22 +281,22 @@ public class CameraImportActivity extends DocumentActivity
 	@Override
 	protected void onResumeWriteAction(Enum callingMethod, Object[] callingParameters)
 	{
-		switch((WriteActions)callingMethod)
-		{
-			case IMPORT:
-				new ImportTask().execute((List<Integer>)callingParameters[0]);
-				break;
-		}
-		clearWriteResume();
+//		switch((WriteActions)callingMethod)
+//		{
+//			case IMPORT:
+//				new ImportTask().execute((List<Integer>)callingParameters[0]);
+//				break;
+//		}
+//		clearWriteResume();
 	}
 
 	private void handleImportDirResult(final Uri destinationUri)
 	{
-		DocumentFile destination = DocumentFile.fromTreeUri(this, destinationUri);
+		destination = UsefulDocumentFile.fromUri(this, destinationUri);
 
 		getMtpDevice();
 
-		FindImagesTask fit = new FindImagesTask();
-		fit.execute();
+		ImportTask task = new ImportTask();
+		task.execute();
 	}
 }
