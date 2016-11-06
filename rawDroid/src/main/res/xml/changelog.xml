@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.2"
+             versioncode="49200"
+             summary="Beta: Release Candidate"
+             date="5 NOV 2016">
+        <change>Feature: Scroll bar (wip)</change>
+        <change>Fix: Change unique identifier to avoid duplicate images</change>
+        <change>Fix: Reduce memory usage in indexer</change>
+        <change>Fix: Improve database interface, reduce overhead on large writes</change>
+        <change>Fix: Copy failing to write</change>
+        <change>Enhancement: Allow user to add copied images to db (not auto)</change>
+        <change>Numerous bug fixes</change>
+    </release>
     <release version="4.9.1.3"
              versioncode="49103"
              summary="Beta: Release Candidate"
