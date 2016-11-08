@@ -17,16 +17,21 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
         startWakefulService(context, intent.setComponent(comp));
     }
 
-    public static void startMetaService(Context context, String[] data)
+    public static void startMetaService(Context context, Uri data)
     {
         Intent intent = getService(context, data);
         context.sendBroadcast(intent);
     }
 
-    public static void startMetaService(Context context, Uri data)
+	/**
+     * Starts processing metadata of any previously unprocessed entries
+     * @param c
+     */
+    public static void startMetaService(Context c)
     {
-        Intent intent = getService(context, data);
-        context.sendBroadcast(intent);
+        Intent intent = new Intent(c, MetaWakefulReceiver.class);
+        intent.setAction(MetaService.ACTION_UPDATE);
+        c.sendBroadcast(intent);
     }
 
     public static void startMetaService(Context context, Uri data, int priority)
@@ -46,14 +51,6 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
         Intent intent = new Intent(context, MetaWakefulReceiver.class);
         intent.setAction(MetaService.ACTION_PARSE);
         intent.setData(data);
-        return intent;
-    }
-
-    private static Intent getService(Context context, String[] data)
-    {
-        Intent intent = new Intent(context, MetaWakefulReceiver.class);
-        intent.setAction(MetaService.ACTION_PARSE);
-        intent.putExtra(MetaService.EXTRA_URIS, data);
         return intent;
     }
 }

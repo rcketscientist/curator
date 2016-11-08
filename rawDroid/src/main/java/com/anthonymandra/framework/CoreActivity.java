@@ -1089,7 +1089,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 		// Just grab the first width and assume that will be sufficient for all images
 		Watermark wm = null;
-		try (Cursor c = getContentResolver().query(Meta.CONTENT_URI, null, ImageUtils.getWhere(), new String[] {images.get(0).toString()}, null))
+		try (Cursor c = getContentResolver().query(Meta.CONTENT_URI, null, ImageUtils.getWhereUri(), new String[] {images.get(0).toString()}, null))
 		{
 			if (c != null && c.moveToFirst())
 			{
@@ -1540,7 +1540,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 			updates.add(
 					ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-							.withSelection(ImageUtils.getWhere(), new String[]{source.toString()})
+							.withSelection(ImageUtils.getWhereUri(), new String[]{source.toString()})
 							.withValues(imageValues)
 							.build());
 		}
@@ -1569,7 +1569,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 			updates.add(
 					ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-							.withSelection(ImageUtils.getWhere(), new String[]{jpgFile.getUri().toString()})
+							.withSelection(ImageUtils.getWhereUri(), new String[]{jpgFile.getUri().toString()})
 							.withValues(jpgValues)
 							.build());
 		}

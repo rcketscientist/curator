@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
@@ -17,7 +18,6 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -59,6 +59,11 @@ public class MetaService extends ThreadedPriorityIntentService
     public static final String ACTION_PARSE = "com.anthonymandra.framework.action.ACTION_PARSE";
 
     /**
+     * Intent ID to request parsing of image meta data
+     */
+    public static final String ACTION_UPDATE = "com.anthonymandra.framework.action.ACTION_UPDATE";
+
+    /**
      * Intent extra containing URI of image(s) to parse for meta data
      */
     public static final String EXTRA_URIS = "com.anthonymandra.framework.extra.EXTRA_URIS";
@@ -87,6 +92,7 @@ public class MetaService extends ThreadedPriorityIntentService
 
     private static final AtomicInteger sJobsTotal = new AtomicInteger(0);
     private static final AtomicInteger sJobsComplete = new AtomicInteger(0);
+    private static final int sMinBatchSize = 20;
 
     /**
      * The default thread factory
@@ -107,7 +113,7 @@ public class MetaService extends ThreadedPriorityIntentService
                     "-thread-";
         }
 
-        public Thread newThread(Runnable r) {
+        public Thread newThread(@NonNull Runnable r) {
             Thread t = new Thread(group, r,
                     namePrefix + threadNumber.getAndIncrement(),
                     0);
@@ -157,6 +163,10 @@ public class MetaService extends ThreadedPriorityIntentService
             {
                 handleActionParse(intent);
             }
+            else if (ACTION_UPDATE.equals(action))
+            {
+                handleActionUpdate(intent);
+            }
         }
     }
 
@@ -164,11 +174,6 @@ public class MetaService extends ThreadedPriorityIntentService
     {
         final int processedColumn = c.getColumnIndex(Meta.PROCESSED);
         return c.getInt(processedColumn) != 0;
-    }
-
-    public static boolean isProcessed(ContentValues c)
-    {
-        return c.getAsInteger(Meta.PROCESSED) != 0;
     }
 
 	/**
@@ -184,36 +189,46 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    public static ContentValues processMetaData(final Context c, ContentValues metaCursor)
+    private void handleActionUpdate(Intent intent)
     {
-        Uri uri = Uri.parse(metaCursor.getAsString(Meta.URI));
+        try(Cursor c = ImageUtils.getUnprocessedMetaCursor(this))
+        {
+            if (c == null)
+                return;
 
-        // Check if meta is already processed
-        if (isProcessed(metaCursor))
-        {
-            return metaCursor;
-        }
-        else
-        {
-            return ImageUtils.getContentValues(c, uri);
-        }
-    }
+            sJobsTotal.addAndGet(c.getCount());
+            while (c.moveToNext())
+            {
+                Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
+                ContentValues values = ImageUtils.getContentValues(this, uri);
+                jobComplete();
 
-    public static ContentValues processMetaData(Context c, Cursor metaCursor)
-    {
-        Uri uri = Uri.parse(metaCursor.getString(metaCursor.getColumnIndex(Meta.URI)));
+                if (values == null)
+                    continue;
 
-        ContentValues values = new ContentValues();
-        // Check if meta is already processed
-        if (isProcessed(metaCursor))
-        {
-            DatabaseUtils.cursorRowToContentValues(metaCursor, values);
+                addUpdate(uri, values);
+
+                Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
+                        .putExtra(EXTRA_URI, uri.toString())
+                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
+                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+
+                try
+                {
+                    processUpdates();
+                }
+                catch (RemoteException | OperationApplicationException e)
+                {
+                    //TODO: Notify user
+                    e.printStackTrace();
+                }
+            }
         }
-        else
+        finally
         {
-            values = ImageUtils.getContentValues(c, uri);
+            WakefulBroadcastReceiver.completeWakefulIntent(intent);
         }
-        return values;
     }
 
     /**
@@ -225,19 +240,28 @@ public class MetaService extends ThreadedPriorityIntentService
         if (intent.hasExtra(EXTRA_URIS))
             uris = intent.getStringArrayExtra(EXTRA_URIS);
         else
-            uris = new String[] {intent.getData().toString()};
+            uris = new String[] { intent.getData().toString() };
 
         try(Cursor c = ImageUtils.getMetaCursor(this, uris))
         {
             if (c == null)
                 return;
 
-	        sJobsTotal.addAndGet(uris.length);
+	        sJobsTotal.addAndGet(c.getCount());
             while (c.moveToNext())
             {
                 Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
 
-	            ContentValues values = processMetaData(this, c);
+                ContentValues values = new ContentValues();
+                boolean isProcessed = isProcessed(c);
+                if (isProcessed)
+                {
+                    DatabaseUtils.cursorRowToContentValues(c, values);
+                }
+                else
+                {
+                    values = ImageUtils.getContentValues(this, uri);
+                }
 	            jobComplete();
 
                 if (values == null)
@@ -246,28 +270,26 @@ public class MetaService extends ThreadedPriorityIntentService
                 // If this is a high priority request then add to db immediately
                 if (isHigherThanDefault(intent))
                 {
-                    // To allow service to operate on external images without database
-                    if (c.getCount() > 0)
+                    if (!isProcessed)
                     {
                         getContentResolver().update(Meta.CONTENT_URI,
                                 values,
-                                ImageUtils.getWhere(),
-                                new String[]{uri.toString()});
-
-                        int nameColumn = c.getColumnIndex(Meta.NAME);
-                        if (nameColumn == -1)
-                            continue;
-
-                        values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
+                                ImageUtils.getWhereUri(),
+                                new String[]{ uri.toString() });
                     }
 
-                    // TODO: external images won't have a name
+                    int nameColumn = c.getColumnIndex(Meta.NAME);
+                    if (nameColumn == -1)
+                        continue;
+
+                    values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
+
                     Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
                             .putExtra(EXTRA_URI, uri.toString())
                             .putExtra(EXTRA_METADATA, values);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
                 }
-                else
+                else if (!isProcessed)
                 {
                     addUpdate(uri, values);
                 }
@@ -280,7 +302,7 @@ public class MetaService extends ThreadedPriorityIntentService
 
                 try
                 {
-                    processUpdates(20);
+                    processUpdates();
                 }
                 catch (RemoteException | OperationApplicationException e)
                 {
@@ -304,7 +326,7 @@ public class MetaService extends ThreadedPriorityIntentService
         {
             Intent broadcast = new Intent(BROADCAST_PROCESSING_COMPLETE);
             LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-            processUpdates(0);
+            processUpdates(true);
         }
         catch (RemoteException | OperationApplicationException e)
         {
@@ -315,10 +337,15 @@ public class MetaService extends ThreadedPriorityIntentService
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
     }
 
-    private synchronized void processUpdates(int minBatchSize) throws RemoteException, OperationApplicationException
+    private synchronized void processUpdates() throws RemoteException, OperationApplicationException
+    {
+        processUpdates(false);
+    }
+
+    private synchronized void processUpdates(boolean processNow) throws RemoteException, OperationApplicationException
     {
         // Update the database periodically
-        if (mOperations.size() > minBatchSize)
+        if (mOperations.size() > sMinBatchSize || processNow)
         {
             getContentResolver().applyBatch(Meta.AUTHORITY, mOperations);
             mOperations.clear();
@@ -330,7 +357,7 @@ public class MetaService extends ThreadedPriorityIntentService
     private synchronized void addUpdate(Uri uri, ContentValues values)
     {
         mOperations.add(ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-                .withSelection(ImageUtils.getWhere(), new String[] {uri.toString()})
+                .withSelection(ImageUtils.getWhereUri(), new String[] {uri.toString()})
                 .withValues(values)
                 .build());
     }

@@ -115,7 +115,7 @@ public class LocalImage extends MetaMedia {
 				if (cpc != null)
 				{
 					c = cpc.query(Meta.CONTENT_URI, new String[] { Meta.PROCESSED },
-							ImageUtils.getWhere(), new String[] {mUri.toString()}, null, null);
+							ImageUtils.getWhereUri(), new String[] {mUri.toString()}, null, null);
 					if (c != null)
 					{
 						c.moveToFirst();
@@ -145,7 +145,7 @@ public class LocalImage extends MetaMedia {
 							cv.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
 							// Are the thumb dimensions useful in database?
 
-							cpc.update(Meta.CONTENT_URI, cv, ImageUtils.getWhere(), new String[] {mUri.toString()});
+							cpc.update(Meta.CONTENT_URI, cv, ImageUtils.getWhereUri(), new String[] {mUri.toString()});
 						}
 					}
 				}

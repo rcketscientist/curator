@@ -253,7 +253,7 @@ public class GalleryActivity extends CoreActivity implements
 						}
 						else
 						{
-							MetaWakefulReceiver.startMetaService(GalleryActivity.this, images);
+							MetaWakefulReceiver.startMetaService(GalleryActivity.this);
 						}
 						break;
 				}
@@ -852,7 +852,7 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		int rowsDeleted = getContentResolver().delete(
 				Meta.CONTENT_URI,
-				ImageUtils.getWhere(),
+				ImageUtils.getWhereUri(),
 				new String[] {toRemove.toString()});
 		return rowsDeleted > 0;
 	}

@@ -19,10 +19,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.provider.BaseColumns;
-import android.renderscript.ScriptGroup;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -38,8 +36,6 @@ import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
-import com.anthonymandra.framework.MetaService;
-import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
@@ -66,8 +62,6 @@ import com.drew.metadata.xmp.XmpReader;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -78,7 +72,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressLint("AndroidLintSimpleDateFormat") // These are for specific library formats
 public class ImageUtils
@@ -301,14 +294,14 @@ public class ImageUtils
     public static ContentProviderOperation newDelete(Uri image)
     {
         return ContentProviderOperation.newDelete(Meta.CONTENT_URI)
-                .withSelection(ImageUtils.getWhere(), new String[] { image.toString() })
+                .withSelection(ImageUtils.getWhereUri(), new String[] { image.toString() })
                 .build();
     }
 
     public static ContentProviderOperation newUpdate(@NonNull Uri image, ContentValues cv)
     {
         return ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-                .withSelection(ImageUtils.getWhere(), new String[] {image.toString()})
+                .withSelection(ImageUtils.getWhereUri(), new String[] {image.toString()})
                 .withValues(cv)
                 .build();
     }
@@ -346,11 +339,32 @@ public class ImageUtils
         return getContentValues(meta);
     }
 
+    public static @Nullable Cursor getUnprocessedMetaCursor(Context c)
+    {
+        return c.getContentResolver().query(Meta.CONTENT_URI,
+                null,
+                getWhereNotProcessed(),
+                new String[] {""},
+                null);
+    }
+
+    /**
+     * Retrieves cursor for an array of uri
+     * @param c context
+     * @param uri array of uri to query
+     * @return cursor of row corresponding to uri
+     */
     public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
     {
         return getMetaCursor(c, new String[]{uri.toString()});
     }
 
+    /**
+     * Retrieves cursor for an array of uri
+     * @param c context
+     * @param uris array of uri to query (due to sql limitation this must be smaller than 999)
+     * @return cursor of rows corresponding to uris
+     */
     public static @Nullable Cursor getMetaCursor(Context c, String[] uris)
     {
         return c.getContentResolver().query(Meta.CONTENT_URI,
@@ -368,9 +382,13 @@ public class ImageUtils
         }
     }
 
-    public static String getWhere()
+    public static String getWhereUri()
     {
         return Meta.URI + "=?";
+    }
+    public static String getWhereNotProcessed()
+    {
+        return Meta.PROCESSED + " is null or " + Meta.PROCESSED + " = ?";
     }
 
     public static boolean isProcessed(Context c, Uri uri)
@@ -461,7 +479,7 @@ public class ImageUtils
         {
             Log.d(TAG, "Exif parse failed:", e);
         }
-        c.getContentResolver().update(Meta.CONTENT_URI, cv, getWhere(),
+        c.getContentResolver().update(Meta.CONTENT_URI, cv, getWhereUri(),
                 new String[]{uri.toString()});
     }
 
@@ -1176,7 +1194,7 @@ public class ImageUtils
     {
         try (Cursor metaCursor = c.getContentResolver().query(
                 Meta.CONTENT_URI, null,
-                ImageUtils.getWhere(),
+                ImageUtils.getWhereUri(),
                 new String[]{uri.toString()}, null, null))
         {
             ContentValues values = new ContentValues();
@@ -1215,7 +1233,7 @@ public class ImageUtils
 //                    public void run()
 //                    {
 //                        ContentValues values = getContentValues(c, uri);
-//                        c.getContentResolver().update(Meta.CONTENT_URI, values, ImageUtils.getWhere(), new String[]{uri.toString()});
+//                        c.getContentResolver().update(Meta.CONTENT_URI, values, ImageUtils.getWhereUri(), new String[]{uri.toString()});
 //                    }
 //                }).start();
 //            }
