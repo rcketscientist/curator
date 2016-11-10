@@ -1,11 +1,15 @@
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'io.fabric'
-//apply plugin: 'com.google.gms.google-services'
 
 def versionMajor = 4
 def versionMinor = 9
 def versionPatch = 2
-def versionBuild = 2
+def versionBuild = 3
 
 android {
     compileSdkVersion 25
@@ -29,7 +33,6 @@ android {
         // Discard build only if build is zero M.m.p.bb
         // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
 
-        // Crashlytics doesn't support jack
 //        jackOptions {
 //            enabled true
 //        }
@@ -101,7 +104,7 @@ dependencies {
     compile project(':rawprocessor')
     compile project(':DocumentActivity:library')
     //includes support-v4 and appcompat-v7
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {

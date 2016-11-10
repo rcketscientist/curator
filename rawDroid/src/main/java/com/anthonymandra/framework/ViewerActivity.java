@@ -803,7 +803,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @Override
-    public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
+    public void onActivityResult(final int requestCode, int resultCode, final Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
 

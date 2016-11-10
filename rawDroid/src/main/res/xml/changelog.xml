@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.2.3"
+             versioncode="49203"
+             summary="Beta: Release Candidate"
+             date="10 NOV 2016">
+        <change>Revert to old compiler</change>
+    </release>
+    <release version="4.9.2.2"
+             versioncode="49202"
+             summary="Beta: Release Candidate"
+             date="9 NOV 2016">
+        <change>Simplify indexer to avoid sqlite limitations</change>
+        <change>Testing new Android compiler</change>
+    </release>
     <release version="4.9.2"
              versioncode="49200"
              summary="Beta: Release Candidate"

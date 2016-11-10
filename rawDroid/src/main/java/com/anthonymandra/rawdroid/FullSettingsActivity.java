@@ -116,7 +116,7 @@ public class FullSettingsActivity extends PreferenceActivity
 	}
 
 	@Override
-	public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data)
+	public void onActivityResult(final int requestCode, int resultCode, final Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 
