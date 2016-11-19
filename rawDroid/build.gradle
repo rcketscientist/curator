@@ -11,6 +11,7 @@ def versionMinor = 9
 def versionPatch = 2
 def versionBuild = 3
 
+//noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion 25
     buildToolsVersion '24.0.2'
@@ -65,6 +66,7 @@ android {
         }
     }
 
+
     productFlavors {
         // These fields handle flavorized authorities for providers
         final FIELD_META = "PROVIDER_AUTHORITY_META"
@@ -76,18 +78,21 @@ android {
         final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
         final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
         final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
+        //noinspection GroovyMissingReturnStatement
         demo {
             applicationId 'com.anthonymandra.rawdroid'
             buildConfigField "String", FIELD_META, PROVIDER_META
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
             buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD
         }
+        //noinspection GroovyMissingReturnStatement
         pro {
             applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
             buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
+        //noinspection GroovyMissingReturnStatement
         proAmazon {
             applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
@@ -107,17 +112,17 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
-    compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.2@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.5@aar') {
         transitive = true;
     }
 
     testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support:support-annotations:25.0.0'
+    androidTestCompile 'com.android.support:support-annotations:25.0.1'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
 
-    compile 'com.android.support:design:25.0.0'
-    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support:support-v4:25.0.1'
 
     compile 'com.afollestad:material-cab:0.1.12'
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -126,6 +131,6 @@ dependencies {
 }
 crashlytics {
     enableNdk true
-    androidNdkOut '../rawprocessor/obj'
-    androidNdkLibsOut '../rawprocessor/libs'
+    androidNdkOut '../rawprocessor/library/build/intermediates/ndkBuild/debug/obj/local'
+    androidNdkLibsOut '../rawprocessor/library/build/intermediates/ndkBuild/release/obj/local'
 }
