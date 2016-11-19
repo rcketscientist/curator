@@ -33,23 +33,18 @@ public class LicenseManager extends License {
     private static final String firstInstall = "firstInstall";
     private static final long trialPeriod = 1200000;
 
-    private Context mContext;
-    private Handler mLicenseHandler;
-    private LicenseChecker mChecker;
-    private LicenseState lastResponse = LicenseState.pro;
+    private static LicenseState lastResponse = LicenseState.pro;
 
-    private LicenseManager(final Context context, final Handler h)
-    {
-        mContext = context;
-        mLicenseHandler = h;
-    }
-
-    public static void getLicense(final Context c, Handler h) {
-        final LicenseManager licenseManager = new LicenseManager(c, h);
+	/**
+     * Requests license in the background and resonds via handler
+     * @param c context
+     * @param h handler for async response
+     */
+    public static void getLicense(final Context c, final Handler h) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                licenseManager.checkLicense();
+                checkLicense(c, h);
             }
         }).start();
     }
@@ -59,9 +54,9 @@ public class LicenseManager extends License {
         return lastResponse;
     }
 
-    private void checkLicense() {
+    private static void checkLicense(final Context c , final Handler h) {
         AESObfuscator crypto = new AESObfuscator(SALT, "GoFuckYourself", "Leech");
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
 
         try {
             final String g = crypto.unobfuscate(goog, key);
@@ -72,28 +67,28 @@ public class LicenseManager extends License {
             if (settings.contains("license_modified"))
             {
                 String state = settings.getString("license_modified", LicenseState.modified_0x000.toString());
-                updateLicense(Enum.valueOf(LicenseState.class, state));
+                updateLicense(h, Enum.valueOf(LicenseState.class, state));
                 return;
             }
-            else if (packageExists(pkg1))
+            else if (packageExists(c, pkg1))
             {
                 LicenseState state = LicenseState.modified_0x001;
                 settings.edit().putString("license_modified", state.toString()).apply();
-                updateLicense(state);
+                updateLicense(h, state);
                 return;
             }
-            else if (packageExists(pkg2))
+            else if (packageExists(c, pkg2))
             {
                 LicenseState state = LicenseState.modified_0x002;
                 settings.edit().putString("license_modified", state.toString()).apply();
-                updateLicense(state);
+                updateLicense(h, state);
                 return;
             }
-            else if (!BuildConfig.DEBUG && scuttle(g, a))
+            else if (!BuildConfig.DEBUG && scuttle(c, g, a))
             {
                 LicenseState state = LicenseState.modified_0x003;
                 settings.edit().putString("license_modified", state.toString()).apply();
-                updateLicense(state);
+                updateLicense(h, state);
                 return;
             }
 
@@ -109,47 +104,57 @@ public class LicenseManager extends License {
         // Until trial period is up pro, after trial period check
         if (System.currentTimeMillis() > installTime + trialPeriod) {
             // Try to use more data here. ANDROID_ID is a single point of attack.
-            String deviceId = Settings.Secure.getString(mContext.getContentResolver(), Settings.Secure.ANDROID_ID);
-            // Library calls this when it's done.
-            LicenseCheckerCallback mLicenseCheckerCallback = new RawdroidLicenseCheckerCallback();
+            String deviceId = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
             // Construct the LicenseChecker with a policy.
-            ServerManagedPolicy smp = new ServerManagedPolicy(mContext, new AESObfuscator(SALT, mContext.getPackageName(), deviceId));
-            mChecker = new LicenseChecker(mContext, smp, BASE64_PUBLIC_KEY);
-            mChecker.checkAccess(mLicenseCheckerCallback);
+            ServerManagedPolicy smp = new ServerManagedPolicy(c, new AESObfuscator(SALT, c.getPackageName(), deviceId));
+            LicenseChecker checker = new LicenseChecker(c, smp, BASE64_PUBLIC_KEY);
+
+            // Library calls this when it's done.
+            LicenseCheckerCallback mLicenseCheckerCallback = new RawdroidLicenseCheckerCallback(h, checker);
+            checker.checkAccess(mLicenseCheckerCallback);
         } else {
-            updateLicense(LicenseState.pro);
+            updateLicense(h, LicenseState.pro);
         }
     }
 
-    private class RawdroidLicenseCheckerCallback implements LicenseCheckerCallback {
+    private static class RawdroidLicenseCheckerCallback implements LicenseCheckerCallback {
+        private LicenseChecker mChecker;
+        private Handler mHandler;
+
+        RawdroidLicenseCheckerCallback(Handler h, LicenseChecker checker)
+        {
+            mChecker = checker;
+            mHandler = h;
+        }
+
         public void allow(int policyReason) {
-            updateLicense(LicenseState.pro);
+            updateLicense(mHandler, LicenseState.pro);
             mChecker.onDestroy();
         }
 
         public void dontAllow(int policyReason) {
-            updateLicense(LicenseState.demo);
+            updateLicense(mHandler, LicenseState.demo);
             mChecker.onDestroy();
         }
 
         public void applicationError(int errorCode) {
-            updateLicense(LicenseState.error);
+            updateLicense(mHandler, LicenseState.error);
             mChecker.onDestroy();
         }
     }
 
-    private void updateLicense(LicenseState state) {
+    private static void updateLicense(final Handler h, final LicenseState state) {
         lastResponse = state;
-        Message response = mLicenseHandler.obtainMessage();
+        Message response = h.obtainMessage();
         Bundle b = new Bundle();
         b.putSerializable(KEY_LICENSE_RESPONSE, lastResponse);
         response.setData(b);
-        mLicenseHandler.sendMessage(response);
+        h.sendMessage(response);
     }
 
-    private boolean packageExists(final String packageName) {
+    private static boolean packageExists(final Context c, final String packageName) {
         try {
-            ApplicationInfo info = mContext.getPackageManager().getApplicationInfo(packageName, 0);
+            ApplicationInfo info = c.getPackageManager().getApplicationInfo(packageName, 0);
 
             return info != null;
 
@@ -160,23 +165,23 @@ public class LicenseManager extends License {
         return false;
     }
 
-    private boolean scuttle(String google, String amazon)
+    private static boolean scuttle(final Context c, String google, String amazon)
     {
         //Scallywags renamed your app?
 
-        if (mContext.getPackageName().compareTo(BuildConfig.APPLICATION_ID) != 0)
+        if (c.getPackageName().compareTo(BuildConfig.APPLICATION_ID) != 0)
         {
-            Crashlytics.logException(new Exception("SC001: " + mContext.getPackageName()));
+            Crashlytics.logException(new Exception("SC001: " + c.getPackageName()));
             return true; // BOOM!
         }
 
         //Rogues relocated your app?
 
-        String installer = mContext.getPackageManager().getInstallerPackageName(BuildConfig.APPLICATION_ID);
+        String installer = c.getPackageManager().getInstallerPackageName(BuildConfig.APPLICATION_ID);
 
         if (installer == null)
         {
-            Crashlytics.logException(new Exception("SC002: " + mContext.getPackageName()));
+            Crashlytics.logException(new Exception("SC002: " + c.getPackageName()));
             return true; // BOOM!
         }
 
