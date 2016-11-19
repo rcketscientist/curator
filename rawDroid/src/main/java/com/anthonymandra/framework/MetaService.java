@@ -11,6 +11,7 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
@@ -18,6 +19,7 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -189,27 +191,70 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    private void handleActionUpdate(Intent intent)
+    private static class UpdateInfo
     {
-        try(Cursor c = ImageUtils.getUnprocessedMetaCursor(this))
+        private static final String[] PROJECTION = {Meta.URI, Meta.NAME};
+        private String Uri;
+        private String Name;
+
+        UpdateInfo(String uri, String name)
+        {
+            Uri = uri;
+            Name = name;
+        }
+    }
+
+    private static @Nullable Cursor getUnprocessedMetaCursor(Context c)
+    {
+        return c.getContentResolver().query(Meta.CONTENT_URI,
+                UpdateInfo.PROJECTION,
+                Meta.PROCESSED + " is null or " + Meta.PROCESSED + " = ?",
+                new String[] {""},
+                null);
+    }
+
+    private static List<UpdateInfo> getUpdateArray(Context context)
+    {
+        try( Cursor c = getUnprocessedMetaCursor(context) )
         {
             if (c == null)
-                return;
+                return null;
 
-            sJobsTotal.addAndGet(c.getCount());
+            int uriIndex = c.getColumnIndex(Meta.URI);
+            int nameIndex = c.getColumnIndex(Meta.NAME);
+
+            List<UpdateInfo> updates = new ArrayList<>();
+
             while (c.moveToNext())
             {
-                Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
-                ContentValues values = ImageUtils.getContentValues(this, uri);
+                updates.add(new UpdateInfo(c.getString(uriIndex), c.getString(nameIndex)));
+            }
+            return updates;
+        }
+    }
+
+    private void handleActionUpdate(Intent intent)
+    {
+        List<UpdateInfo> updates = getUpdateArray(this);
+        if (updates == null)
+            return;
+
+        sJobsTotal.addAndGet(updates.size());
+
+        try
+        {
+            for (UpdateInfo update : updates)
+            {
+                ContentValues values = ImageUtils.getContentValues(this, Uri.parse(update.Uri));
                 jobComplete();
 
                 if (values == null)
                     continue;
 
-                addUpdate(uri, values);
+                addUpdate(update.Uri, values);
 
                 Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
-                        .putExtra(EXTRA_URI, uri.toString())
+                        .putExtra(EXTRA_URI, update.Uri)
                         .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
                         .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
@@ -217,8 +262,7 @@ public class MetaService extends ThreadedPriorityIntentService
                 try
                 {
                     processUpdates();
-                }
-                catch (RemoteException | OperationApplicationException e)
+                } catch (RemoteException | OperationApplicationException e)
                 {
                     //TODO: Notify user
                     e.printStackTrace();
@@ -291,7 +335,7 @@ public class MetaService extends ThreadedPriorityIntentService
                 }
                 else if (!isProcessed)
                 {
-                    addUpdate(uri, values);
+                    addUpdate(uri.toString(), values);
                 }
 
                 Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
@@ -354,10 +398,10 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    private synchronized void addUpdate(Uri uri, ContentValues values)
+    private synchronized void addUpdate(String uriString, ContentValues values)
     {
         mOperations.add(ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-                .withSelection(ImageUtils.getWhereUri(), new String[] {uri.toString()})
+                .withSelection(ImageUtils.getWhereUri(), new String[] {uriString})
                 .withValues(values)
                 .build());
     }

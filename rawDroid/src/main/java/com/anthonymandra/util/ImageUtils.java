@@ -339,15 +339,6 @@ public class ImageUtils
         return getContentValues(meta);
     }
 
-    public static @Nullable Cursor getUnprocessedMetaCursor(Context c)
-    {
-        return c.getContentResolver().query(Meta.CONTENT_URI,
-                null,
-                getWhereNotProcessed(),
-                new String[] {""},
-                null);
-    }
-
     /**
      * Retrieves cursor for an array of uri
      * @param c context
@@ -385,23 +376,6 @@ public class ImageUtils
     public static String getWhereUri()
     {
         return Meta.URI + "=?";
-    }
-    public static String getWhereNotProcessed()
-    {
-        return Meta.PROCESSED + " is null or " + Meta.PROCESSED + " = ?";
-    }
-
-    public static boolean isProcessed(Context c, Uri uri)
-    {
-        try (Cursor cursor = ImageUtils.getMetaCursor(c, uri))
-        {
-            if (cursor == null)
-                return false;
-
-            final int processedColumn = cursor.getColumnIndex(Meta.PROCESSED);
-            return  cursor.moveToFirst() &&
-                    cursor.getInt(processedColumn) != 0;
-        }
     }
 
     /**

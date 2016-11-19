@@ -455,24 +455,6 @@ public abstract class CoreActivity extends DocumentActivity
 		ft.commit();
 	}
 
-	protected void runCleanDatabase()
-	{
-		new Thread(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					ImageUtils.cleanDatabase(CoreActivity.this);
-				} catch (RemoteException | OperationApplicationException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}).start();
-	}
-
 	protected void writeXmpModifications(XmpEditFragment.XmpEditValues values)
 	{
 		List<Uri> selection = getSelectedImages();

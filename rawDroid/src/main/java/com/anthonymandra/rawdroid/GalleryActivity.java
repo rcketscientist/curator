@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.content.res.Configuration;
@@ -22,7 +23,10 @@ import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.ParcelFileDescriptor;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
@@ -30,6 +34,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +57,7 @@ import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.FileUtil;
+import com.anthonymandra.framework.MetaDataCleaner;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
@@ -240,6 +246,7 @@ public class GalleryActivity extends CoreActivity implements
 						mToolbar.setSubtitle("");
 						break;
 					case SearchService.BROADCAST_SEARCH_STARTED:
+						mProgressBar.setVisibility(View.VISIBLE);
 						mToolbar.setSubtitle("Searching...");
 						break;
 					case SearchService.BROADCAST_FOUND_IMAGES:
@@ -637,23 +644,32 @@ public class GalleryActivity extends CoreActivity implements
 	protected void scanRawFiles()
 	{
 		mProgressBar.setVisibility(View.VISIBLE);
-		runCleanDatabase();
+		mToolbar.setSubtitle("Cleaning...");
 
-		final Set<String> excludedFolders = mXmpFilterFragment.getExcludedFolders();
-
-		List<UriPermission> rootPermissions = getRootPermissions();
-		int size = rootPermissions.size();
-		String[] permissions = new String[size];
-		for (int i = 0; i < size; i++)
+		MetaDataCleaner.cleanDatabase(this, new Handler(new Handler.Callback()
 		{
-			permissions[i] = rootPermissions.get(i).getUri().toString();
-		}
+			@Override
+			public boolean handleMessage(Message message)
+			{
+				// Upon clean initiate search
+				final Set<String> excludedFolders = mXmpFilterFragment.getExcludedFolders();
 
-		SearchService.startActionSearch(
-				this,
-				/*TEST_ROOTS,MOUNT_ROOTS*/ null,    // Files unsupported on 4.4+
-				permissions,
-				excludedFolders.toArray(new String[excludedFolders.size()]));
+				List<UriPermission> rootPermissions = getRootPermissions();
+				int size = rootPermissions.size();
+				String[] permissions = new String[size];
+				for (int i = 0; i < size; i++)
+				{
+					permissions[i] = rootPermissions.get(i).getUri().toString();
+				}
+
+				SearchService.startActionSearch(
+						GalleryActivity.this,
+						null,    // Files unsupported on 4.4+
+						permissions,
+						excludedFolders.toArray(new String[excludedFolders.size()]));
+				return true;
+			}
+		}));
 	}
 
 	@Override
@@ -900,50 +916,6 @@ public class GalleryActivity extends CoreActivity implements
 			setShareUri(arrayUri);
 		}
 	}
-
-//	private final class GalleryActionMode implements ActionMode.Callback
-//	{
-//		@Override
-//		public boolean onCreateActionMode(ActionMode mode, Menu menu)
-//		{
-//			inActionMode = true;
-//			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
-//			MenuItem actionItem = menu.findItem(R.id.contextShare);
-//			if (actionItem != null)
-//			{
-//				mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
-//				mShareProvider.setOnShareTargetSelectedListener(GalleryActivity.this);
-//				mShareProvider.setShareIntent(mShareIntent);
-//			}
-//
-//			return true;
-//		}
-//
-//		@Override
-//		public boolean onPrepareActionMode(ActionMode mode, Menu menu)
-//		{
-//			return false;
-//		}
-//
-//		@Override
-//		public boolean onActionItemClicked(ActionMode mode, MenuItem item)
-//		{
-//			boolean handled = onOptionsItemSelected(item);
-//			if (handled && (item.getItemId() != R.id.toggleXmp)) //We don't exit context for xmp bar
-//			{
-//				mode.finish();
-//			}
-//			return handled;
-//		}
-//
-//		@Override
-//		public void onDestroyActionMode(ActionMode mode)
-//		{
-//			inActionMode = false;
-//			endMultiSelectMode();
-//            mContextMode = null;
-//		}
-//	}
 
 	private final class GalleryActionMode implements MaterialCab.Callback
 	{

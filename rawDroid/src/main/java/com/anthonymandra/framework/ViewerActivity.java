@@ -175,7 +175,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             Bundle dbQuery = getIntent().getBundleExtra(EXTRA_META_BUNDLE);
             try(Cursor c = getContentResolver().query(
                 Meta.CONTENT_URI,
-                dbQuery.getStringArray(META_PROJECTION_KEY),
+                new String[] { Meta.URI }, // dbQuery.getStringArray(META_PROJECTION_KEY),
                 dbQuery.getString(META_SELECTION_KEY),
                 dbQuery.getStringArray(META_SELECTION_ARGS_KEY),
                 dbQuery.getString(META_SORT_ORDER_KEY))) {

@@ -55,11 +55,6 @@
             android:src="@drawable/ic_tag"
             android:background="@color/tintDarkGreen"/>
 
-<!--        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefresh"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">-->
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gridview"
             android:layout_width="match_parent"
@@ -74,8 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_below="@+id/filterSidebarButton"
-            android:layout_alignParentEnd="true"
-            />
+            android:layout_alignEnd="@id/gridview"/>
 
         <fragment
             android:id="@+id/editFragment"
@@ -86,9 +80,7 @@
             android:layout_below="@+id/xmpSidebarButton"
             android:layout_gravity="end"
             tools:layout="@layout/xmp_edit_landscape"/>
-<!--
-        </android.support.v4.widget.SwipeRefreshLayout>
--->
+
     </RelativeLayout>
 
     <fragment
