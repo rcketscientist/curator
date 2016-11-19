@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -49,7 +50,7 @@ public class LicenseManager extends License {
         }).start();
     }
 
-    public LicenseState getLastResponse()
+    public static LicenseState getLastResponse()
     {
         return lastResponse;
     }
@@ -104,6 +105,7 @@ public class LicenseManager extends License {
         // Until trial period is up pro, after trial period check
         if (System.currentTimeMillis() > installTime + trialPeriod) {
             // Try to use more data here. ANDROID_ID is a single point of attack.
+            @SuppressLint("HardwareIds")
             String deviceId = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
             // Construct the LicenseChecker with a policy.
             ServerManagedPolicy smp = new ServerManagedPolicy(c, new AESObfuscator(SALT, c.getPackageName(), deviceId));

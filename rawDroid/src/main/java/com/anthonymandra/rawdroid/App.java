@@ -27,6 +27,7 @@ public class App extends Application
 					.detectDiskWrites()
 					.detectNetwork()   // or .detectAll() for all detectable problems
 					.penaltyLog()
+					.penaltyDeath()
 					.build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
 					.detectLeakedSqlLiteObjects()

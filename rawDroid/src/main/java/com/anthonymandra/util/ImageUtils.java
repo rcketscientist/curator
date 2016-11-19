@@ -414,7 +414,8 @@ public class ImageUtils
     {
         final ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 
-        try( Cursor cursor = c.getContentResolver().query(Meta.CONTENT_URI, null, null, null, null))
+        final String[] projection = new String[] { Meta.URI, BaseColumns._ID };
+        try( Cursor cursor = c.getContentResolver().query(Meta.CONTENT_URI, projection, null, null, null))
         {
             if (cursor == null)
                 return;
