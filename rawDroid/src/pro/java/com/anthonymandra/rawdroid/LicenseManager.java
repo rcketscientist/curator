@@ -46,7 +46,7 @@ public class LicenseManager extends License {
 
     public static void getLicense(final Context c, Handler h) {
         final LicenseManager licenseManager = new LicenseManager(c, h);
-        new Thread(new Runnable() { //TODO: Unused but doesn't spawn a thread
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 licenseManager.checkLicense();
