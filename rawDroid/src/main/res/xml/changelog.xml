@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="4.9.3.1"
+             versioncode="49301"
+             summary="Beta: Release Candidate"
+             date="23 NOV 2016">
+        <change>Fix pro share/edit permission issue.</change>
+    </release>
+    <release version="4.9.3"
+             versioncode="49300"
+             summary="Beta: Release Candidate"
+             date="19 NOV 2016">
+        <change>Fix database concurrency issues</change>
+    </release>
     <release version="4.9.2.3"
              versioncode="49203"
              summary="Beta: Release Candidate"

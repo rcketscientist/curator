@@ -342,12 +342,21 @@ public class ImageUtils
     /**
      * Retrieves cursor for an array of uri
      * @param c context
-     * @param uri array of uri to query
+     * @param uri uri to query
      * @return cursor of row corresponding to uri
      */
     public static @Nullable Cursor getMetaCursor(Context c, Uri uri)
     {
-        return getMetaCursor(c, new String[]{uri.toString()});
+        return getMetaCursor(c, uri, null);
+    }
+
+    public static @Nullable Cursor getMetaCursor(Context c, Uri uri, @Nullable String[] projection)
+    {
+        return c.getContentResolver().query(Meta.CONTENT_URI,
+                projection,
+                getWhereUri(),
+                new String[] {uri.toString()},
+                null);
     }
 
     /**
@@ -358,8 +367,13 @@ public class ImageUtils
      */
     public static @Nullable Cursor getMetaCursor(Context c, String[] uris)
     {
+        return getMetaCursor(c, uris, null);
+    }
+
+    public static @Nullable Cursor getMetaCursor(Context c, String[] uris, @Nullable String[] projection)
+    {
         return c.getContentResolver().query(Meta.CONTENT_URI,
-                null,
+                projection,
                 DbUtil.createMultipleIN(Meta.URI, uris.length),
                 uris,
                 null);

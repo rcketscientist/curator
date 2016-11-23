@@ -25,6 +25,7 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.crashlytics.android.Crashlytics;
@@ -130,8 +131,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
             if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
-                processWatermark = true;
-                try (Cursor c = ImageUtils.getMetaCursor(getContext(), image.getUri()))
+                final String[] projection = new String[] {Meta.WIDTH};
+                try (Cursor c = ImageUtils.getMetaCursor(getContext(), image.getUri(), projection))
                 {
                     if (c != null && c.moveToFirst())
                     {
@@ -143,17 +144,16 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                             waterWidth = watermark.getWidth();
                             waterHeight = watermark.getHeight();
                             margin = Margins.LowerRight;
+                            processWatermark = true;
                         }
                     }
                 }
             }
             else if (mShowWatermark)
             {
-                processWatermark = true;
                 if (mWatermarkText.isEmpty())
                 {
                     Toast.makeText(getContext(), R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
-                    processWatermark = false;
                 }
                 else
                 {
@@ -162,6 +162,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                     waterWidth = watermark.getWidth();
                     waterHeight = watermark.getHeight();
                     margin = mMargins;
+                    processWatermark = true;
                 }
             }
 

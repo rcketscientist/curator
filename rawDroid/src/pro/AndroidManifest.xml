@@ -9,7 +9,7 @@
             android:name="com.anthonymandra.content.MetaProvider"
             android:authorities="com.anthonymandra.content.MetaProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="false">
+            android:exported="true">
         </provider>
 
         <provider

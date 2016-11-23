@@ -8,8 +8,8 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 4
 def versionMinor = 9
-def versionPatch = 2
-def versionBuild = 3
+def versionPatch = 3
+def versionBuild = 1
 
 //noinspection GroovyMissingReturnStatement
 android {
