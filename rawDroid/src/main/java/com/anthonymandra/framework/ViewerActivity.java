@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ForkJoinPool;
 
 public abstract class ViewerActivity extends CoreActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener,
@@ -672,7 +673,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    protected class HistogramTask extends AsyncTask<Bitmap, Void, Histogram>
+    protected class HistogramTask extends AsyncTask<Bitmap, Void, Histogram.ColorBins>
     {
         @Override
         protected void onPreExecute() {
@@ -680,47 +681,21 @@ public abstract class ViewerActivity extends CoreActivity implements
             histView.clear();
         }
 
-        // http://zerocool.is-a-geek.net/?p=269
         @Override
-        protected Histogram doInBackground(Bitmap... params)
+        protected Histogram.ColorBins doInBackground(Bitmap... params)
         {
             Bitmap input = params[0];
-            Histogram result = new Histogram();
 
             if (input == null || input.isRecycled())
                 return null;
 
-            result.processBitmap(input);
-            return result;
-
-//            int[] pixels = new int[input.getWidth() * input.getHeight()];
-//            try
-//            {
-//                //TODO: Forkjoin row by row? http://stackoverflow.com/questions/17740059/how-to-generate-image-histogram-in-android
-//                input.getPixels(pixels, 0, input.getWidth(), 0, 0, input.getWidth(), input.getHeight());
-//                for (int pixel : pixels)
-////              for (int pixel = 0; pixel < pixels.length; pixel += stride)
-//                {
-//                    if (isCancelled())
-//                        return null;
-//                    result.processPixel(pixel);
-//                }
-//            }
-//            catch(IllegalStateException e)
-//            {
-//                Toast.makeText(ViewerActivity.this,
-//                        "Memory Error: Histogram failed due to recycled image.  Try swapping slower or using Legacy Viewer.",
-//                        Toast.LENGTH_SHORT).show();
-//                e.printStackTrace();
-//                return null;
-//            }
-////            int stride = pixels.length / 4095;
-//
-//            return result;
+            ForkJoinPool pool = new ForkJoinPool();
+            Histogram result = Histogram.createHistogram(input);
+            return pool.invoke(result);
         }
 
         @Override
-        protected void onPostExecute(Histogram result)
+        protected void onPostExecute(Histogram.ColorBins result)
         {
             if (result != null && !isCancelled())
                 histView.updateHistogram(result);

@@ -20,21 +20,17 @@ public class HistogramView extends View
 	private Paint p = new Paint();
 
     private static final int BORDER_WIDTH = 1;    // Put this in because it was starting before the BORDER_POINTS...seems to be a space but higher creates garble
-	private static final int COLOR_HEIGHT = 100;
+	private static final int COLOR_HEIGHT = 150;
     private static final int COLOR_WIDTH = 256;
-	private static final int HIST_SPACER = 2;
     private static final int HIST_WIDTH = COLOR_WIDTH + BORDER_WIDTH * 2;
-    private static final int HIST_HEIGHT = COLOR_HEIGHT * 3 + HIST_SPACER * 2 + BORDER_WIDTH * 2;
+    private static final int HIST_HEIGHT = COLOR_HEIGHT + BORDER_WIDTH * 2;
 
     private static final int GRIDLINES = 4;
     private static final int GRID_SPACING = COLOR_WIDTH / 5;
 
-    private static final int BLUE_START = HIST_HEIGHT - BORDER_WIDTH;
-    private static final int GREEN_START = BLUE_START - COLOR_HEIGHT - HIST_SPACER;
-    private static final int RED_START = GREEN_START - COLOR_HEIGHT - HIST_SPACER;
+    private static final int START = HIST_HEIGHT - BORDER_WIDTH;
 
     private static final float[] GRID_POINTS = new float[16 + GRIDLINES * 4];
-    // Only works the first time, disabled for now
     private static final float[] BORDER_POINTS = new float[]
             {
                     0,0, HIST_WIDTH - 1, 0,
@@ -42,8 +38,6 @@ public class HistogramView extends View
                     HIST_WIDTH - 1, HIST_HEIGHT - 1, 0, HIST_HEIGHT - 1,
                     0, HIST_HEIGHT - 1, 0, 0
             };
-
-
 
 	public HistogramView(Context context, AttributeSet attrs)
 	{
@@ -53,7 +47,7 @@ public class HistogramView extends View
 		greenPath = new Path();
 	}
 
-	public void updateHistogram(Histogram hist)
+	public void updateHistogram(Histogram.ColorBins hist)
 	{
         clear();
 
@@ -65,21 +59,21 @@ public class HistogramView extends View
         float scale = COLOR_HEIGHT / (float) max;
 
         // Bottom-right corner
-        redPath.moveTo(HIST_WIDTH - BORDER_WIDTH, RED_START);
-        greenPath.moveTo(HIST_WIDTH - BORDER_WIDTH, GREEN_START);
-        bluePath.moveTo(HIST_WIDTH - BORDER_WIDTH, BLUE_START);
+        redPath.moveTo(HIST_WIDTH - BORDER_WIDTH,START);
+        greenPath.moveTo(HIST_WIDTH - BORDER_WIDTH, START);
+        bluePath.moveTo(HIST_WIDTH - BORDER_WIDTH, START);
 
         // Create baseline
-        redPath.lineTo(BORDER_WIDTH, RED_START);
-        greenPath.lineTo(BORDER_WIDTH, GREEN_START);
-        bluePath.lineTo(BORDER_WIDTH, BLUE_START);
+        redPath.lineTo(BORDER_WIDTH, START);
+        greenPath.lineTo(BORDER_WIDTH, START);
+        bluePath.lineTo(BORDER_WIDTH, START);
 
 		for (int band = 0; band < COLOR_WIDTH; band++)
 		{
 			// All graphs use the same scale (max color)
-			redPath.lineTo(band + BORDER_WIDTH, RED_START - hist.getFreqR(band) * scale);
-			greenPath.lineTo(band + BORDER_WIDTH, GREEN_START - hist.getFreqG(band) * scale);
-			bluePath.lineTo(band + BORDER_WIDTH, BLUE_START - hist.getFreqB(band) * scale);
+			redPath.lineTo(band + BORDER_WIDTH, START - hist.red[band] * scale);
+			greenPath.lineTo(band + BORDER_WIDTH, START - hist.green[band] * scale);
+			bluePath.lineTo(band + BORDER_WIDTH, START - hist.blue[band] * scale);
 		}
 
         for (int i = 0; i < GRIDLINES * 4; ++i)

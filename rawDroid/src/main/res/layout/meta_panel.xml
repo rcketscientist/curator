@@ -10,7 +10,7 @@
         android:layout_above="@+id/tableLayoutMeta"
         android:layout_width="wrap_content"
         android:background="@drawable/white_border_translucent_black"
-        android:layout_height="200dp" />
+        android:layout_height="100dp" />
 
     <TableLayout
         android:id="@+id/tableLayoutMeta"
