@@ -369,7 +369,8 @@ public abstract class CoreActivity extends DocumentActivity
 					new DeleteTask().execute(callingParameters);
 					break;
 				case RECYCLE:
-					new RecycleTask().execute(callingParameters);
+					if (callingParameters != null)
+						new RecycleTask().execute(callingParameters);
 					break;
 				case RENAME:
 					new RenameTask().execute(callingParameters);
@@ -625,7 +626,7 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void deleteImages(final List<Uri> itemsToDelete)
+	protected void deleteImages(@NonNull final List<Uri> itemsToDelete)
 	{
 		if (itemsToDelete.size() == 0)
 		{
