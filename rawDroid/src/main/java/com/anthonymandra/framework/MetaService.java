@@ -178,6 +178,11 @@ public class MetaService extends ThreadedPriorityIntentService
         return c.getInt(processedColumn) != 0;
     }
 
+    public static boolean isProcessed(ContentValues c)
+    {
+        return c.getAsBoolean(Meta.PROCESSED);
+    }
+
 	/**
      * Increment counter and if all jobs are complete reset the counters
      */
@@ -275,6 +280,25 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
+    private List<ContentValues> getParseArray(String[] uris)
+    {
+        try( Cursor c = ImageUtils.getMetaCursor(this, uris ) )
+        {
+            if (c == null)
+                return null;
+
+            List<ContentValues> rows = new ArrayList<>();
+
+            while (c.moveToNext())
+            {
+                ContentValues values = new ContentValues();
+                DatabaseUtils.cursorRowToContentValues(c, values);
+                rows.add(values);
+            }
+            return rows;
+        }
+    }
+
     /**
      * Parse given uris and add to database in a batch
      */
@@ -285,6 +309,71 @@ public class MetaService extends ThreadedPriorityIntentService
             uris = intent.getStringArrayExtra(EXTRA_URIS);
         else
             uris = new String[] { intent.getData().toString() };
+
+        List<ContentValues> rows = getParseArray(uris);
+        if (rows == null)
+            return;
+
+        sJobsTotal.addAndGet(rows.size());
+
+        try
+        {
+            for (ContentValues values : rows)
+            {
+                Uri uri = Uri.parse(values.getAsString(Meta.URI));
+                boolean isProcessed = isProcessed(values);
+
+                // If the image is unprocessed process it now
+                if (!isProcessed)
+                    values = ImageUtils.getContentValues(this, uri, values);
+
+                jobComplete();
+
+                if (values == null)
+                    continue;
+
+                // If this is a high priority request then add to db immediately
+                if (isHigherThanDefault(intent))
+                {
+                    if (!isProcessed(values))
+                    {
+                        getContentResolver().update(Meta.CONTENT_URI,
+                                values,
+                                ImageUtils.getWhereUri(),
+                                new String[]{ uri.toString() });
+                    }
+
+                    Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
+                            .putExtra(EXTRA_URI, uri.toString())
+                            .putExtra(EXTRA_METADATA, values);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+                }
+                else if (!isProcessed)
+                {
+                    addUpdate(uri.toString(), values);
+                }
+
+                Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
+                        .putExtra(EXTRA_URI, uri.toString())
+                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
+                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
+                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+
+                try
+                {
+                    processUpdates();
+                }
+                catch (RemoteException | OperationApplicationException e)
+                {
+                    //TODO: Notify user
+                    e.printStackTrace();
+                }
+            }
+        }
+        finally
+        {
+            WakefulBroadcastReceiver.completeWakefulIntent(intent);
+        }
 
         try(Cursor c = ImageUtils.getMetaCursor(this, uris))
         {
@@ -389,7 +478,7 @@ public class MetaService extends ThreadedPriorityIntentService
     private synchronized void processUpdates(boolean processNow) throws RemoteException, OperationApplicationException
     {
         // Update the database periodically
-        if (mOperations.size() > sMinBatchSize || processNow)
+        if (processNow || mOperations.size() > sMinBatchSize)
         {
             getContentResolver().applyBatch(Meta.AUTHORITY, mOperations);
             mOperations.clear();

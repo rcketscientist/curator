@@ -321,6 +321,18 @@ public class ImageUtils
 
     /**
      * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * @param c
+     * @param uri
+     * @return
+     */
+    public static ContentValues getContentValues(@NonNull Context c, @NonNull Uri uri, @NonNull ContentValues toFill)
+    {
+        Metadata meta = readMetadata(c, uri);
+        return getContentValues(toFill, meta);
+    }
+
+    /**
+     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
      * @return
      */
     public static ContentValues getContentValues(@NonNull InputStream stream, @NonNull FileType fileType)
@@ -477,54 +489,65 @@ public class ImageUtils
      * @param meta
      * @return
      */
-    @Nullable
     public static ContentValues getContentValues(Metadata meta)
     {
-        final ContentValues cv = new ContentValues();
+        final ContentValues toFill = new ContentValues();
+        return  getContentValues(toFill, meta);
+    }
+
+	/**
+     * Convert given meta into ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * @param toFill
+     * @param meta
+     * @return
+     */
+    @Nullable
+    public static ContentValues getContentValues(ContentValues toFill, Metadata meta)
+    {
         if (meta == null)
         {
             return null;
         }
 
-        cv.put(Meta.ALTITUDE, getAltitude(meta));
-        cv.put(Meta.APERTURE, getAperture(meta));
-        cv.put(Meta.EXPOSURE, getExposure(meta));
-        cv.put(Meta.FLASH, getFlash(meta));
-        cv.put(Meta.FOCAL_LENGTH, getFocalLength(meta));
-        cv.put(Meta.HEIGHT, getImageHeight(meta));
-        cv.put(Meta.ISO, getIso(meta));
-        cv.put(Meta.LATITUDE, getLatitude(meta));
-        cv.put(Meta.LONGITUDE, getLongitude(meta));
-        cv.put(Meta.MODEL, getModel(meta));
+        toFill.put(Meta.ALTITUDE, getAltitude(meta));
+        toFill.put(Meta.APERTURE, getAperture(meta));
+        toFill.put(Meta.EXPOSURE, getExposure(meta));
+        toFill.put(Meta.FLASH, getFlash(meta));
+        toFill.put(Meta.FOCAL_LENGTH, getFocalLength(meta));
+        toFill.put(Meta.HEIGHT, getImageHeight(meta));
+        toFill.put(Meta.ISO, getIso(meta));
+        toFill.put(Meta.LATITUDE, getLatitude(meta));
+        toFill.put(Meta.LONGITUDE, getLongitude(meta));
+        toFill.put(Meta.MODEL, getModel(meta));
 
-        cv.put(Meta.ORIENTATION, getOrientation(meta));
+        toFill.put(Meta.ORIENTATION, getOrientation(meta));
         String rawDate = getDateTime(meta);
         if (rawDate != null)  // Don't overwrite null since we can rely on file time
         {
             try
             {
                 Date date = mMetaExtractorFormat.parse(rawDate);
-                cv.put(Meta.TIMESTAMP, date.getTime());
+                toFill.put(Meta.TIMESTAMP, date.getTime());
             }
-            catch (ParseException e)
+            catch (ParseException | ArrayIndexOutOfBoundsException e)
             {
-                e.printStackTrace();
+                Crashlytics.logException(e);
             }
         }
-        cv.put(Meta.WHITE_BALANCE, getWhiteBalance(meta));
-        cv.put(Meta.WIDTH, getImageWidth(meta));
+        toFill.put(Meta.WHITE_BALANCE, getWhiteBalance(meta));
+        toFill.put(Meta.WIDTH, getImageWidth(meta));
 
-        cv.put(Meta.RATING, getRating(meta));
-        cv.put(Meta.SUBJECT, convertArrayToString(getSubject(meta)));
-        cv.put(Meta.LABEL, getLabel(meta));
+        toFill.put(Meta.RATING, getRating(meta));
+        toFill.put(Meta.SUBJECT, convertArrayToString(getSubject(meta)));
+        toFill.put(Meta.LABEL, getLabel(meta));
 
-        cv.put(Meta.LENS_MODEL, getLensModel(meta));
-        cv.put(Meta.DRIVE_MODE, getDriveMode(meta));
-        cv.put(Meta.EXPOSURE_MODE, getExposureMode(meta));
-        cv.put(Meta.EXPOSURE_PROGRAM, getExposureProgram(meta));
-        cv.put(Meta.PROCESSED, true);
+        toFill.put(Meta.LENS_MODEL, getLensModel(meta));
+        toFill.put(Meta.DRIVE_MODE, getDriveMode(meta));
+        toFill.put(Meta.EXPOSURE_MODE, getExposureMode(meta));
+        toFill.put(Meta.EXPOSURE_PROGRAM, getExposureProgram(meta));
+        toFill.put(Meta.PROCESSED, true);
 
-        return cv;
+        return toFill;
     }
 
     private static String strSeparator = "__,__";
