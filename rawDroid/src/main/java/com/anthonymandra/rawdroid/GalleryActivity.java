@@ -5,13 +5,13 @@ import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
-import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
 import android.content.res.Configuration;
@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
@@ -34,7 +33,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -875,9 +873,11 @@ public class GalleryActivity extends CoreActivity implements
 
 	protected Uri addDatabaseReference(Uri toAdd)
 	{
-		return getContentResolver().insert(
-				Meta.CONTENT_URI,
-				ImageUtils.getContentValues(this, toAdd));
+		ContentValues cv = new ContentValues();
+		cv.put(Meta.URI, toAdd.toString());
+//		ImageUtils.getContentValues(this, toAdd, cv);
+
+		return getContentResolver().insert(Meta.CONTENT_URI, cv);
 	}
 
 	@Override
@@ -1367,11 +1367,11 @@ public class GalleryActivity extends CoreActivity implements
 	    removeDatabaseReference(Uri.fromFile(f4));
 	    removeDatabaseReference(Uri.fromFile(f5));
 
-	    f1.delete();
-	    f2.delete();
-	    f3.delete();
-	    f4.delete();
-	    f5.delete();
+//	    f1.delete();
+//	    f2.delete();
+//	    f3.delete();
+//	    f4.delete();
+//	    f5.delete();
 	    tutorialDirectory.delete();
 		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
     }

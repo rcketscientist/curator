@@ -1025,7 +1025,7 @@ public class ImageUtils
 
     public static boolean isImage(String name)
     {
-        return isRaw(name) || isJpeg(name) || isTiffImage(name);
+        return isRaw(name) || isNative(name) || isTiffImage(name);
     }
 
     public static boolean isRaw(Uri uri)
@@ -1250,7 +1250,12 @@ public class ImageUtils
 //                }).start();
 //            }
 
-            imageType = Meta.ImageType.fromInt(metaCursor.getAsInteger(Meta.TYPE));
+            Integer type = metaCursor.getAsInteger(Meta.TYPE);
+            if (type == null)
+                imageType = Meta.ImageType.UNPROCESSED;
+            else
+                imageType = Meta.ImageType.fromInt(type);
+
             if (Meta.ImageType.UNPROCESSED == imageType)
                 imageType = getImageType(c, uri);
 
@@ -1261,11 +1266,11 @@ public class ImageUtils
                     {
                         byte[] sourceBytes = Util.toByteArray(imageStream);
 
-                        BitmapFactory.Options o = new BitmapFactory.Options();
-                        o.inJustDecodeBounds = true;
+//                        BitmapFactory.Options o = new BitmapFactory.Options();
+//                        o.inJustDecodeBounds = true;
 
                         // Decode dimensions
-                        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
+//                        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
 //                values.put(Meta.WIDTH, o.outWidth);
 //                values.put(Meta.HEIGHT, o.outHeight);
                         return sourceBytes;

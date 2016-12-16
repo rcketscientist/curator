@@ -104,7 +104,7 @@
 <item>Nie</item>
 </string-array>
 
-<string name="clearCache">Zwischenspeicher löschen</string>
+<string name="clearLibrary">Bibliothek löschen</string>
 <string name="cacheCleared">Der Zwischenspeicher der Galerie wurde gelöscht.</string>
 <string name="accessRecycle">Papierkorb anzeigen</string>
 <string name="recycleBin">Papierkorb</string>

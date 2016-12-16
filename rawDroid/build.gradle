@@ -61,6 +61,7 @@ android {
         }
     }
 
+    flavorDimensions "market", "cycle"
 
     productFlavors {
         // These fields handle flavorized authorities for providers
@@ -73,26 +74,32 @@ android {
         final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
         final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
         final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
-        //noinspection GroovyMissingReturnStatement
         demo {
+            dimension "market"
             applicationId 'com.anthonymandra.rawdroid'
             buildConfigField "String", FIELD_META, PROVIDER_META
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
             buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD
         }
-        //noinspection GroovyMissingReturnStatement
         pro {
+            dimension "market"
             applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
             buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
-        //noinspection GroovyMissingReturnStatement
         proAmazon {
+            dimension "market"
             applicationId 'com.anthonymandra.rawdroidpro'
             buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
             buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
+        }
+        production {
+            dimension "cycle"
+        }
+        beta {
+            dimension "cycle"
         }
     }
 }

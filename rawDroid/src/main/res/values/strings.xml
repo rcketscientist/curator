@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RawDroid</string>
+    <string name="app_name">Curator</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="positive">Accept</string>
@@ -88,7 +88,7 @@
     <string name="warningWriteDisabled">You have selected a folder that has write access disabled.</string>
     <string name="warningWriteDisabledKitKat">You have selected a folder that has write access disabled.  Google disabled sdcard write access in Android 4.4.</string>
     <string name="warningAccessError">Access Error</string>
-    <string name="warningNoImages">No new images found.  Your can clear cache (Help:Clear Thumbnail Cache) to force reset.</string>
+    <string name="warningNoImages">No new images found.  Your can clear the library (Help: Clear Library) to force reset.</string>
 
     <!-- Preferences -->
     <string name="prefTitleImageInterface">Automatically display interface</string>
@@ -105,11 +105,11 @@
     <string name="prefTitleShowNativeFiles">Show Generic Images</string>
     <string name="prefSummaryShowNativeFiles">This will show jpg, gif, bmp, and png.</string>
     <string name="prefTitleShowUnknownFiles">Show Unhandled Files</string>
-    <string name="prefSummaryShowUnknownFiles">This will show files that RawDroid does not process.</string>
+    <string name="prefSummaryShowUnknownFiles">This will show files that Curator does not process.</string>
     <string name="prefTitleResetSaveDefault">Clear Save Defaults</string>
     <string name="prefSummaryResetSaveDefault">Click to reset default save configuration.</string>
     <string name="prefTitleImportKeywords">Import Keywords</string>
-    <string name="prefSummaryImportKeywords">Click to import a tab-delimited keyword file, such as that exported from Lightroom.</string>
+    <string name="prefSummaryImportKeywords">Click to import a tab-delimited keyword file, such as those exported from Lightroom.</string>
     <string name="prefTitleUseLegacyViewer">Use Legacy Viewer</string>
     <string name="prefSummaryUseLegacyViewer">Check only if you experience issues with the default viewer.\nPlease email me if this is necessary.</string>
     <string name="prefTitleShowNav">Show Navigation</string>
@@ -140,7 +140,7 @@
     <string name="prefTitleUseImmersive">Use Immersive</string>
     <string name="prefSummaryUseImmersive">(Android 4.4+) Hide nav and status bars until swiped in.</string>
 
-    <string name="buypro">Click here to upgrade to Rawdroid Pro to unlock features and improve speed!</string>
+    <string name="buypro">Click here to upgrade to Curator Pro to unlock features and improve speed!</string>
 
     <string-array name="showOptions">
         <item>Automatic</item>
@@ -156,7 +156,7 @@
         <item>Upper Right</item>
     </string-array>
 
-    <string name="clearCache">Clear Cache</string>
+    <string name="clearLibrary">Clear Library</string>
     <string name="cacheCleared">Gallery image cache cleared.</string>
     <string name="accessRecycle">Access Recycle Bin</string>
     <string name="recycleBin">Recycle Bin</string>
@@ -164,7 +164,7 @@
     <string name="emptyRecycleBin">Empty Recycle Bin</string>
     <string name="saveJpg">Save Jpeg</string>
     <string name="share">Share</string>
-    <string name="ratingRequest">If you enjoy using RawDroid please take a moment to rate it.\n\nIf you\'ve rated based on a bug that is now fixed please update your rating.\n\nThanks for your support!</string>
+    <string name="ratingRequest">If you enjoy using Curator please take a moment to rate it.\nThanks for your support!</string>
     <string name="importingImages">Importing Images...</string>
     <string name="exportingThumb">Exporting Thumbnails...</string>
     <string name="deletingFiles">Deleting Files...</string>
@@ -181,12 +181,12 @@
 
     <!-- Dialogs -->
     <string name="dialogWriteRequestTitle">Write Permission Guide</string>
-    <string name="dialogWriteRequestMessage">The following screen will grant Rawdroid write permission to the external SD card.  Choose the root directory 0000-0000 for full access.</string>
-    <string name="welcomeTitle">Welcome to RawDroid!</string>
-    <string name="welcomeMessage">RawDroid will operate as a fully functional demo with watermarking until RawDroid Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
+    <string name="dialogWriteRequestMessage">The following screen will grant Curator write permission to the external SD card.  Choose the root directory 0000-0000 for full access.</string>
+    <string name="welcomeTitle">Welcome to Curator!</string>
+    <string name="welcomeMessage">Curator will operate as a fully functional demo with watermarking until Curator Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nIf you have any issues you can submit a bug report or email me via the help menu.\n\nWould you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
     <string name="welcomeTutorial">Would you like to run the tutorial now (You can run it later at Help:Tutorial)?</string>
     <string name="writeAccessTitle">Write Access Disabled</string>
-    <string name="requestWriteAccess">Google disabled write access.  You may grant Rawdroid write access in the following window.  If you decline Rawdroid will be view images but will be unable to write metadata, delete, save thumbnails, etc.  Rawdroid will ONLY be able to access the folder you select, so the safest bet is to choose the whole sd card restoring previous access permissions to Rawdroid.  Write access is used ONLY for actions related to image workflow.</string>
+    <string name="requestWriteAccess">Google disabled write access.  You may grant Curator write access in the following window.  If you decline Curator will be view images but will be unable to write metadata, delete, save thumbnails, etc.  Curator will ONLY be able to access the folder you select, so the safest bet is to choose the whole sd card restoring previous access permissions to Curator.  Write access is used ONLY for actions related to image workflow.</string>
     <string name="kitkatWriteIssue">Google disabled write access in Android 4.4.  Without write access you cannot edit metadata, write xmp, delete, etc.  You have three options:\n
     1) Use an external reader connected via OTG USB.\n
     2) Upgrade to 5.0.  There is a fix in 5.0.\n
@@ -196,7 +196,7 @@
     <string name="zeroSearchSummary">No images were found.  If you know there are images on the device, please contact me to investigate why search failed.  Thank you for testing the beta!</string>
     <string name="offerSearchTitle">Initial Search</string>
     <string name="offerSearchMessage">Empty database detected.  Would you like to search the device for images?  You may manually search by pressing the following menu item.</string>
-    <string name="offerPermissionMessage">Android now requires that all apps explicitly request permission to use storage.  As this is your first time, you will have to give Rawdroid permission to search where you store your images.  Please select the root of the storage as depicted in the following screen.</string>
+    <string name="offerPermissionMessage">Android now requires that all apps explicitly request permission to use storage.  As this is your first time, you will have to give Curator permission to search where you store your images.  Please select the root of the storage as depicted in the following screen.</string>
 
     <!-- Colors for xmp -->
     <string name="red">Red</string>
@@ -215,14 +215,14 @@
     <string name="next">Next</string>
 
     <!-- Tutorials -->
-    <string name="tutorialWelcomeTitle">Welcome to the Rawdroid Tutorial</string>
+    <string name="tutorialWelcomeTitle">Welcome to the Curator Tutorial</string>
     <string name="tutorialWelcomeText">The tutorial is interactive and can be advanced by clicking the next button.</string>
     <string name="tutorialDisabled">Disabled during the tutorial</string>
 
     <string name="tutorialConnectTitle">How to Connect Images</string>
-    <string name="tutorialConnectText1">There are three main ways to access your images in Rawdroid.</string>
+    <string name="tutorialConnectText1">There are three main ways to access your images in Curator.</string>
     <string name="tutorialConnectText2">1. Insert an SD card directly into your device.</string>
-    <string name="tutorialConnectText3">2. You can connect your media card with a card reader and OTG cable.  This is the best way to use Rawdroid, fast and convenient.  A single-format card reader is best.</string>
+    <string name="tutorialConnectText3">2. You can connect your media card with a card reader and OTG cable.  This is the best way to use Curator, fast and convenient.  A single-format card reader is best.</string>
     <string name="tutorialConnectText4">3. You may connect the camera directly.  Due to many limitations in Android this is slow and requires a full import of images to your device.\nYour device must have enough storage.  This is not recommended</string>
     <string name="tutorialConnectText5">(Future addition) Eventually I will be adding network support.</string>
 
@@ -266,7 +266,7 @@
     <string name="tutorialRename">This will rename all selected files with a selected template.</string>
     <string name="tutorialImport">This will import selected images to a new destination.</string>
     <string name="tutorialExport">This will export selected images as a compressed jpeg thumbnail.</string>
-    <string name="tutorialStart">Welcome to the Rawdroid tutorial!\n   .</string>
+    <string name="tutorialStart">Welcome to the Curator tutorial!\n   .</string>
     <string name="tutorialConnect1">There are three ways to access data:</string>
     <string name="tutorialConnect2">1. Fastest: Transfer images to your device via PC connection.  Obviously not an ideal use.</string>
     <string name="tutorialConnect3">2. Fast: Connect your media card with a card reader and OTG cable.  A single format card reader is best.\n\ta. Some devices will require root.  My nexus did.  I use "StickMount" to connect.  More details on the website.</string>

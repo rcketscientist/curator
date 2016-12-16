@@ -2,6 +2,7 @@ package com.anthonymandra.content;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.anthonymandra.rawdroid.BuildConfig;
@@ -28,7 +29,7 @@ public class Meta implements BaseColumns
 
 		private int value;
 		ImageType(int value) {this.value = value;}
-		public static ImageType fromInt(int n) { return lookup.get(n); }
+		public static ImageType fromInt(@NonNull int n) { return lookup.get(n); }
 		public int getValue() { return value; }
 	}
 

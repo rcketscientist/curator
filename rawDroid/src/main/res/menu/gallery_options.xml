@@ -36,7 +36,7 @@
                 android:id="@+id/galleryClearCache"
                 android:orderInCategory="32"
                 app:showAsAction="never"
-                android:title="@string/clearCache"/>
+                android:title="@string/clearLibrary"/>
             <item
                 android:id="@+id/galleryTutorial"
                 android:orderInCategory="33"

@@ -94,7 +94,7 @@
 <string name="prefTitleImportKeywords">Importar Palabras Clave</string>
 <string name="prefSummaryImportKeywords">Haga clic para importar un archivo de palabras clave delimitado por tabuladores, como los exportados por Lightroom.</string>
 
-<string name="clearCache">Borrar la Caché</string>
+<string name="clearLibrary">Borrar biblioteca</string>
 <string name="cacheCleared">Caché de las imágenes de la galería borradas</string>
 <string name="accessRecycle">Acceso a la Papelera</string>
 <string name="recycleBin">Papelera</string>
