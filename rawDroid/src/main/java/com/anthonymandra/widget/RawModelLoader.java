@@ -3,6 +3,7 @@ package com.anthonymandra.widget;
 import android.content.ContentValues;
 import android.content.Context;
 
+import com.anthonymandra.content.Meta;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
@@ -58,7 +59,7 @@ public class RawModelLoader implements StreamModelLoader<ContentValues>
 		@Override
 		public String getId()
 		{
-			return values.toString();
+			return values.getAsString(Meta.URI);
 		}
 
 		@Override

@@ -40,6 +40,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,8 +69,13 @@ import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
+import com.github.amlcurran.showcaseview.MorphShowcaseDrawer;
 import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.MorphViewTarget;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
+import com.github.amlcurran.showcaseview.targets.Target;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.WhatsNewDialog;
 
@@ -81,6 +87,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
@@ -1072,11 +1079,11 @@ public class GalleryActivity extends CoreActivity implements
         //generate some example images
         try
         {
-	        File f1 = new File(tutorialDirectory, "Image1.png");
-	        File f2 = new File(tutorialDirectory, "Image2.png");
-	        File f3 = new File(tutorialDirectory, "Image3.png");
-	        File f4 = new File(tutorialDirectory, "Image4.png");
-	        File f5 = new File(tutorialDirectory, "Image5.png");
+	        File f1 = new File(tutorialDirectory, "Image1.jpg");
+	        File f2 = new File(tutorialDirectory, "Image2.jpg");
+	        File f3 = new File(tutorialDirectory, "Image3.jpg");
+	        File f4 = new File(tutorialDirectory, "Image4.jpg");
+	        File f5 = new File(tutorialDirectory, "Image5.jpg");
 
             FileOutputStream one = new FileOutputStream(f1);
             FileOutputStream two = new FileOutputStream(f2);
@@ -1084,11 +1091,11 @@ public class GalleryActivity extends CoreActivity implements
             FileOutputStream four = new FileOutputStream(f4);
             FileOutputStream five = new FileOutputStream(f5);
 
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial1).compress(Bitmap.CompressFormat.PNG, 100, one);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial2).compress(Bitmap.CompressFormat.PNG, 100, two);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial3).compress(Bitmap.CompressFormat.PNG, 100, three);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial4).compress(Bitmap.CompressFormat.PNG, 100, four);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial5).compress(Bitmap.CompressFormat.PNG, 100, five);
+            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial1).compress(Bitmap.CompressFormat.JPEG, 100, one);
+            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial2).compress(Bitmap.CompressFormat.JPEG, 100, two);
+            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial3).compress(Bitmap.CompressFormat.JPEG, 100, three);
+            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial4).compress(Bitmap.CompressFormat.JPEG, 100, four);
+            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial5).compress(Bitmap.CompressFormat.JPEG, 100, five);
 
 	        addDatabaseReference(Uri.fromFile(f1));
 	        addDatabaseReference(Uri.fromFile(f2));
@@ -1107,7 +1114,7 @@ public class GalleryActivity extends CoreActivity implements
         inTutorial = true;
 
         tutorial = new ShowcaseView.Builder(this)//, true)
-		        .withMaterialShowcase()
+		        .setShowcaseDrawer(new MorphShowcaseDrawer(getResources(), 20))
                 .setContentTitle(R.string.tutorialWelcomeTitle)
                 .setContentText(R.string.tutorialWelcomeText)
                 .doNotBlockTouches()
@@ -1154,43 +1161,36 @@ public class GalleryActivity extends CoreActivity implements
 			switch (tutorialStage)
 			{
 				case 0: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialConnectTitle));
                     tutorial.setContentText(getString(R.string.tutorialConnectText1));
                     setTutorialNoShowcase();
 					break;
 				case 1: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText2));
                     setTutorialNoShowcase();
                     break;
 				case 2: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText3));
                     setTutorialNoShowcase();
 					break;
 				case 3: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText4));
                     setTutorialNoShowcase();
 					break;
 				case 4: // Connection
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialConnectText5));
                     setTutorialNoShowcase();
 					break;
 				case 5: // Search
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialFindImagesText));
                     setTutorialActionView(R.id.galleryRefresh, false);
 					break;
 				case 6: // Long Select
-                    tutorial.setScaleMultiplier(20f);
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
                     view = mImageGrid.getChildAt(0);
                     if (view != null)
-                        tutorial.setShowcase(new ViewTarget(view), true);
+                        tutorial.setShowcase(new MorphViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
 					break;
@@ -1199,11 +1199,10 @@ public class GalleryActivity extends CoreActivity implements
 					if (!inActionMode)
 						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
 
-                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
                     view = mImageGrid.getChildAt(2);
                     if (view != null)
-                        tutorial.setShowcase(new ViewTarget(view), true);
+                        tutorial.setShowcase(new MorphViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
 					break;
@@ -1211,24 +1210,17 @@ public class GalleryActivity extends CoreActivity implements
 					// If the user is lazy select for them
 					if (mGalleryAdapter.getSelectedItemCount() < 2)
 					{
-						if (mMaterialCab != null)
-							mMaterialCab.finish();
 						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
 						onItemClick(mGalleryAdapter, mImageGrid.getChildAt(2), 2, 2);
 					}
 
-                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
-                    // This is ghetto, I know the spinner lies UNDER the selection view
-					//FIXME: Need something to point at
 					setTutorialTitleView(true);
-//					tutorial.setShowcase(new ToolbarActionItemTarget(mToolbar, mToolbar.getId()), true);
 					break;
 				case 9: // Select All
 					if (inActionMode)
 						mMaterialCab.finish();
 
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectAll));
                     setTutorialActionView(R.id.gallerySelectAll, true);
 					break;
@@ -1236,22 +1228,21 @@ public class GalleryActivity extends CoreActivity implements
 					// If the user is lazy select for them
 					if (mGalleryAdapter.getSelectedItemCount() < 1)
 					{
+						startContextualActionBar();
 						mGalleryAdapter.selectAll();
 					}
 
-                    tutorial.setScaleMultiplier(1f);
-                    tutorial.setContentText(getString(R.string.tutorialExitSelectionText));
+					tutorial.setContentText(getString(R.string.tutorialExitSelectionText));
                     setTutorialHomeView(true);
 					break;
                 case 11: // Select between beginning
                     if (mMaterialCab != null)
 						mMaterialCab.finish();
 
-                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
                     view = mImageGrid.getChildAt(1);		//WTF index is backwards.
                     if (view != null)
-                        tutorial.setShowcase(new ViewTarget(view), true);
+                        tutorial.setShowcase(new MorphViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
                     break;
@@ -1260,13 +1251,12 @@ public class GalleryActivity extends CoreActivity implements
 					if (mGalleryAdapter.getSelectedItemCount() < 1)
 						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(1), 1, 1);
 
-                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
 
 					setTutorialHomeView(true);
                     view = mImageGrid.getChildAt(3);	//WTF index is backwards.
                     if (view != null)
-                        tutorial.setShowcase(new ViewTarget(view), true);
+                        tutorial.setShowcase(new MorphViewTarget(view), true);
                     else
                         setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
                     break;
@@ -1278,17 +1268,13 @@ public class GalleryActivity extends CoreActivity implements
 						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(3), 3, 3);
 					}
 
-                    tutorial.setScaleMultiplier(1.5f);
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));
-                    // This is ghetto, I know the spinner lies UNDER the selection view
-					//FIXME: need something to point at
 	                setTutorialTitleView(true);
 	                break;
                 case 14: // Rename
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRenameTitle));
                     tutorial.setContentText(getString(R.string.tutorialRenameText));
                     setTutorialActionView(R.id.contextRename, true);
@@ -1297,7 +1283,6 @@ public class GalleryActivity extends CoreActivity implements
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialMoveTitle));
                     tutorial.setContentText(getString(R.string.tutorialMoveText));
                     setTutorialActionView(R.id.contextCopy, true);
@@ -1306,7 +1291,6 @@ public class GalleryActivity extends CoreActivity implements
 					if (!inActionMode)
 						startContextualActionBar();
 
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
                     tutorial.setContentText(getString(R.string.tutorialExportText));
                     setTutorialActionView(R.id.contextSaveAs, true);
@@ -1325,13 +1309,11 @@ public class GalleryActivity extends CoreActivity implements
                     if (mMaterialCab != null)
 						mMaterialCab.finish();
 
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
                     tutorial.setContentText(getString(R.string.tutorialRecycleText));
                     setTutorialActionView(R.id.gallery_recycle, true);
                     break;
                 case 19: // Actionbar help
-                    tutorial.setScaleMultiplier(0.5f);
                     tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle));
                     tutorial.setContentText(getString(R.string.tutorialActionbarHelpText));
                     setTutorialActionView(R.id.gallerySelectAll, true);
@@ -1355,11 +1337,11 @@ public class GalleryActivity extends CoreActivity implements
         tutorial.hide();
 
 	    File tutorialDirectory = FileUtil.getDiskCacheDir(this, "tutorial");
-	    File f1 = new File(tutorialDirectory, "Image1.png");
-	    File f2 = new File(tutorialDirectory, "Image2.png");
-	    File f3 = new File(tutorialDirectory, "Image3.png");
-	    File f4 = new File(tutorialDirectory, "Image4.png");
-	    File f5 = new File(tutorialDirectory, "Image5.png");
+	    File f1 = new File(tutorialDirectory, "Image1.jpg");
+	    File f2 = new File(tutorialDirectory, "Image2.jpg");
+	    File f3 = new File(tutorialDirectory, "Image3.jpg");
+	    File f4 = new File(tutorialDirectory, "Image4.jpg");
+	    File f5 = new File(tutorialDirectory, "Image5.jpg");
 
 	    removeDatabaseReference(Uri.fromFile(f1));
 	    removeDatabaseReference(Uri.fromFile(f2));
@@ -1367,11 +1349,11 @@ public class GalleryActivity extends CoreActivity implements
 	    removeDatabaseReference(Uri.fromFile(f4));
 	    removeDatabaseReference(Uri.fromFile(f5));
 
-//	    f1.delete();
-//	    f2.delete();
-//	    f3.delete();
-//	    f4.delete();
-//	    f5.delete();
+	    f1.delete();
+	    f2.delete();
+	    f3.delete();
+	    f4.delete();
+	    f5.delete();
 	    tutorialDirectory.delete();
 		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
     }
@@ -1422,7 +1404,10 @@ public class GalleryActivity extends CoreActivity implements
 	 */
     private void setTutorialHomeView(boolean animate)
     {
-        PointTarget home = new PointTarget(16,16);  //Design guideline is 32x32
+	    //action item touch area is 48x48 dp
+	    float actionItemWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
+	    int center = (int) actionItemWidth / 2;
+        PointTarget home = new PointTarget(center,center, actionItemWidth);  //touch are is 48x48 dp
         tutorial.setShowcase(home, animate);
     }
 
@@ -1431,7 +1416,12 @@ public class GalleryActivity extends CoreActivity implements
 	 */
 	private void setTutorialTitleView(boolean animate)
 	{
-		PointTarget title = new PointTarget(48,16);  //Design guideline is 32x32
+		//action item touch area is 48x48 dp
+		float actionItemWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
+		int center = (int) actionItemWidth / 2;
+
+		// We guestimate 2.5* wider, so 5* wider to center
+		PointTarget title = new PointTarget(5 * center, center, 3 * center );
 		tutorial.setShowcase(title, animate);
 	}
 
@@ -1442,17 +1432,30 @@ public class GalleryActivity extends CoreActivity implements
      */
     private void setTutorialActionView(int itemId, boolean animate)
     {
-		ViewTarget target;
+		Target target;
 		View itemView = findViewById(itemId);
 		if (itemView == null)
 		{
+			//action item touch area is 48x48 dp
+			float maybeOverflowMenuWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 134, getResources().getDisplayMetrics());
+
+			Toolbar t;
 			//List of all mToolbar items, assuming last is overflow
-			List<View> views = mToolbar.getTouchables();
-			target = new ViewTarget(views.get(views.size()-1)); //overflow
+			if (inActionMode)
+				t = mMaterialCab.getToolbar();
+			else
+				t = mToolbar;
+
+			List<View> views = t.getTouchables();
+			View overflow = views.get(views.size()-1);
+
+//			target = new PointTarget((int) (overflow.getX() + maybeOverflowMenuWidth), (int)(overflow.getY() + maybeOverflowMenuWidth), maybeOverflowMenuWidth );
+			target = new MorphViewTarget(views.get(views.size()-1)); //overflow
+			t.showOverflowMenu();
 		}
 		else
 		{
-			target = new ViewTarget(itemView);
+			target = new MorphViewTarget(itemView);
 		}
 
 		tutorial.setShowcase(target, animate);
