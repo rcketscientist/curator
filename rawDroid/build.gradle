@@ -88,13 +88,13 @@ android {
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
             buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
-        proAmazon {
-            dimension "market"
-            applicationId 'com.anthonymandra.rawdroidpro'
-            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
-            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
-            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
-        }
+//        proAmazon {
+//            dimension "market"
+//            applicationId 'com.anthonymandra.rawdroidpro'
+//            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+//            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+//            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
+//        }
         production {
             dimension "cycle"
         }
