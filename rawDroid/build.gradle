@@ -8,7 +8,7 @@ def versionBuild = 1
 
 //noinspection GroovyMissingReturnStatement
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '25.0.2'
 
     lintOptions {
@@ -20,7 +20,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 25
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName "${versionMajor}.${versionMinor}" +                                 // Always include major and minor M.m
@@ -105,7 +105,7 @@ android {
 }
 
 dependencies {
-    compile project(':showcaseView:library')
+    compile project(':showcaseView')
     compile project(':inscription')
     compile project(':metadata-extractor')
     compile project(':rawprocessor')
@@ -118,11 +118,11 @@ dependencies {
         transitive = true;
     }
     testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support:support-annotations:25.0.1'
+    androidTestCompile 'com.android.support:support-annotations:25.1.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:support-v4:25.1.0'
     compile 'com.afollestad:material-cab:0.1.12'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     //    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'

@@ -1,11 +1,12 @@
 include ':metadata-extractor'
 include ':documentActivity'
-include ':showcaseView:library'
+include ':showcaseView'
 include ':inscription'
 include ':rawDroid'
 include ':rawprocessor'
 project(':rawprocessor').projectDir =       new File('rawprocessor/library')
 project(':documentActivity').projectDir =   new File('DocumentActivity/library')
+project(':showcaseView').projectDir =       new File('showcaseView/library')
 
 // submodules
 //include ':jpeg-turbo'
