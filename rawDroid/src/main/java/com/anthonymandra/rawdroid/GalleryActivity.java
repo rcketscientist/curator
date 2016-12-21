@@ -34,6 +34,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.view.ActionMode;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
@@ -47,6 +48,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -71,23 +73,21 @@ import com.bumptech.glide.Glide;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.github.amlcurran.showcaseview.MorphShowcaseDrawer;
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionItemTarget;
 import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.github.amlcurran.showcaseview.targets.MorphViewTarget;
 import com.github.amlcurran.showcaseview.targets.PointTarget;
 import com.github.amlcurran.showcaseview.targets.Target;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.inscription.WhatsNewDialog;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
@@ -1077,39 +1077,41 @@ public class GalleryActivity extends CoreActivity implements
         }
 
         //generate some example images
-        try
-        {
-	        File f1 = new File(tutorialDirectory, "Image1.jpg");
-	        File f2 = new File(tutorialDirectory, "Image2.jpg");
-	        File f3 = new File(tutorialDirectory, "Image3.jpg");
-	        File f4 = new File(tutorialDirectory, "Image4.jpg");
-	        File f5 = new File(tutorialDirectory, "Image5.jpg");
+        File f1 = new File(tutorialDirectory, "Image1.jpg");
+        File f2 = new File(tutorialDirectory, "Image2.jpg");
+        File f3 = new File(tutorialDirectory, "Image3.jpg");
+        File f4 = new File(tutorialDirectory, "Image4.jpg");
+        File f5 = new File(tutorialDirectory, "Image5.jpg");
 
+
+		try(
             FileOutputStream one = new FileOutputStream(f1);
             FileOutputStream two = new FileOutputStream(f2);
             FileOutputStream three = new FileOutputStream(f3);
             FileOutputStream four = new FileOutputStream(f4);
-            FileOutputStream five = new FileOutputStream(f5);
-
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial1).compress(Bitmap.CompressFormat.JPEG, 100, one);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial2).compress(Bitmap.CompressFormat.JPEG, 100, two);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial3).compress(Bitmap.CompressFormat.JPEG, 100, three);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial4).compress(Bitmap.CompressFormat.JPEG, 100, four);
-            BitmapFactory.decodeResource(getResources(), R.drawable.tutorial5).compress(Bitmap.CompressFormat.JPEG, 100, five);
-
-	        addDatabaseReference(Uri.fromFile(f1));
-	        addDatabaseReference(Uri.fromFile(f2));
-	        addDatabaseReference(Uri.fromFile(f3));
-	        addDatabaseReference(Uri.fromFile(f4));
-	        addDatabaseReference(Uri.fromFile(f5));
-	        updateMetaLoader(null,
-			        Meta.URI + " LIKE ?",
-			        new String[] {"%"+tutorialDirectory.getName()+"%"}, null);}
-
-        catch (FileNotFoundException e)
+            FileOutputStream five = new FileOutputStream(f5))
         {
-            Toast.makeText(this, "Unable to open tutorial examples.  Please skip file selection.", Toast.LENGTH_LONG).show();
+
+		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial1).compress(Bitmap.CompressFormat.JPEG, 100, one);
+		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial2).compress(Bitmap.CompressFormat.JPEG, 100, two);
+		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial3).compress(Bitmap.CompressFormat.JPEG, 100, three);
+		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial4).compress(Bitmap.CompressFormat.JPEG, 100, four);
+		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial5).compress(Bitmap.CompressFormat.JPEG, 100, five);
+
+		        addDatabaseReference(Uri.fromFile(f1));
+		        addDatabaseReference(Uri.fromFile(f2));
+		        addDatabaseReference(Uri.fromFile(f3));
+		        addDatabaseReference(Uri.fromFile(f4));
+		        addDatabaseReference(Uri.fromFile(f5));
         }
+		catch (IOException e)
+		{
+			Toast.makeText(this, "Unable to open tutorial examples.  Please skip file selection.", Toast.LENGTH_LONG).show();
+		}
+
+		updateMetaLoader(null,
+			        Meta.URI + " LIKE ?",
+			        new String[] {"%"+tutorialDirectory.getName()+"%"}, null);
 
         inTutorial = true;
 
@@ -1432,32 +1434,19 @@ public class GalleryActivity extends CoreActivity implements
      */
     private void setTutorialActionView(int itemId, boolean animate)
     {
-		Target target;
-		View itemView = findViewById(itemId);
-		if (itemView == null)
-		{
-			//action item touch area is 48x48 dp
-			float maybeOverflowMenuWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 134, getResources().getDisplayMetrics());
+	    Target target;
+	    View itemView = findViewById(itemId);
+	    if (itemView == null)
+	    {
+		    //List of all mToolbar items, assuming last is overflow
+		    List<View> views = mToolbar.getTouchables();
+		    target = new MorphViewTarget(views.get(views.size()-1)); //overflow
+	    }
+	    else
+	    {
+		    target = new MorphViewTarget(itemView);
+	    }
 
-			Toolbar t;
-			//List of all mToolbar items, assuming last is overflow
-			if (inActionMode)
-				t = mMaterialCab.getToolbar();
-			else
-				t = mToolbar;
-
-			List<View> views = t.getTouchables();
-			View overflow = views.get(views.size()-1);
-
-//			target = new PointTarget((int) (overflow.getX() + maybeOverflowMenuWidth), (int)(overflow.getY() + maybeOverflowMenuWidth), maybeOverflowMenuWidth );
-			target = new MorphViewTarget(views.get(views.size()-1)); //overflow
-			t.showOverflowMenu();
-		}
-		else
-		{
-			target = new MorphViewTarget(itemView);
-		}
-
-		tutorial.setShowcase(target, animate);
+	    tutorial.setShowcase(target, animate);
     }
 }
