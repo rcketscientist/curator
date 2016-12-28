@@ -13,6 +13,11 @@ import com.anthonymandra.framework.Histogram;
 
 public class HistogramView extends View
 {
+	// Step alpha down for stacking layers G above R above B
+	private static final int BLUE = Color.argb(220, 80, 80, 255); //pure blue is hard to see on black
+	private static final int RED = Color.argb(200, 255, 0, 0);
+	private static final int GREEN = Color.argb(180, 0, 255, 0);
+
 	private Path redPath;
 	private Path bluePath;
 	private Path greenPath;
@@ -112,11 +117,12 @@ public class HistogramView extends View
 //        canvas.drawLines(BORDER_POINTS, p);
 
         p.setStyle(Paint.Style.FILL);
-		p.setColor(Color.argb(190, 255, 0, 0));
+		p.setColor(BLUE);
+		canvas.drawPath(bluePath, p);
+		p.setColor(RED);
 		canvas.drawPath(redPath, p);
-        p.setColor(Color.argb(190, 0, 255, 0));
+        p.setColor(GREEN);
         canvas.drawPath(greenPath, p);
-        p.setColor(Color.argb(190, 0, 0, 255));
-        canvas.drawPath(bluePath, p);
+
 	}
 }

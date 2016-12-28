@@ -811,21 +811,33 @@ public class ImageUtils
             meta.addDirectory(new XmpDirectory());
     }
 
-    public static void updateRating(Metadata meta, Integer rating)
+    /**
+     * Update the xmp:rating, passing null will delete existing value.
+     */
+    public static void updateRating(Metadata meta, @Nullable Integer rating)
     {
         updateXmpDouble(meta, XmpDirectory.TAG_RATING, rating == null ? null : rating.doubleValue());
     }
 
-    public static void updateRating(Metadata meta, Double rating)
+    /**
+     * Update the xmp:rating, passing null will delete existing value.
+     */
+    public static void updateRating(Metadata meta, @Nullable Double rating)
     {
         updateXmpDouble(meta, XmpDirectory.TAG_RATING, rating);
     }
 
-    public static void updateLabel(Metadata meta, String label)
+    /**
+     * Update the xmp:label, passing null will delete existing value.
+     */
+    public static void updateLabel(Metadata meta, @Nullable String label)
     {
         updateXmpString(meta, XmpDirectory.TAG_LABEL, label);
     }
 
+    /**
+     * Update the xmp:subject, passing null will delete existing value.
+     */
     public static void updateSubject(Metadata meta, String[] subject)
     {
         updateXmpStringArray(meta, XmpDirectory.TAG_SUBJECT, subject);

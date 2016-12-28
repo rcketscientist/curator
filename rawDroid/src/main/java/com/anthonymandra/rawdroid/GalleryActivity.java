@@ -14,11 +14,7 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.UriPermission;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.os.Build;
@@ -33,31 +29,23 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.view.ActionMode;
-import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.CoreActivity;
-import com.anthonymandra.framework.FileUtil;
 import com.anthonymandra.framework.MetaDataCleaner;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
@@ -71,18 +59,8 @@ import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
-import com.github.amlcurran.showcaseview.MorphShowcaseDrawer;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.MorphViewTarget;
-import com.github.amlcurran.showcaseview.targets.PointTarget;
-import com.github.amlcurran.showcaseview.targets.Target;
 import com.inscription.WhatsNewDialog;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -106,8 +84,6 @@ public class GalleryActivity extends CoreActivity implements
 
 	private final IntentFilter mResponseIntentFilter = new IntentFilter();
 
-	public static final String KEY_STARTUP_DIR = "keyStartupDir";
-
 	public static final String LICENSE_RESULT = "license_result";
 	public static final int LICENSE_ALLOW = 1;
 	public static final int LICENSE_DISALLOW = 2;
@@ -127,7 +103,6 @@ public class GalleryActivity extends CoreActivity implements
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
     private static boolean inTutorial = false;
-	private static boolean inActionMode = false;
 
 	// Widget handles
 	private RecyclerView mImageGrid;
@@ -142,9 +117,6 @@ public class GalleryActivity extends CoreActivity implements
 
 	private int mDisplayWidth;
 
-	private ActionMode mContextMode;
-
-	private ShowcaseView tutorial;
     private Toolbar mToolbar;
 	private MaterialCab mMaterialCab;
 	private XmpFilterFragment mXmpFilterFragment;
@@ -474,7 +446,7 @@ public class GalleryActivity extends CoreActivity implements
 	            @Override
 	            public void onClick(DialogInterface dialog, int which)
 	            {
-		            runTutorial();
+		            startActivity(new Intent(GalleryActivity.this, TutorialActivity.class));
 	            }
             });
 
@@ -807,7 +779,7 @@ public class GalleryActivity extends CoreActivity implements
 				}
 				return true;
 			case R.id.galleryTutorial:
-				runTutorial();
+				startActivity(new Intent(GalleryActivity.this, TutorialActivity.class));
 				return true;
 			case R.id.gallerySd:
 				requestWritePermission();
@@ -820,10 +792,7 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
 	{
-		if (mMaterialCab != null)
-			mMaterialCab.finish();
-//		if (mContextMode != null)
-//			mContextMode.finish(); // end the contextual action bar and multi-select mode
+		endContextMode();
 		return false;
 	}
 
@@ -888,19 +857,6 @@ public class GalleryActivity extends CoreActivity implements
 	}
 
 	@Override
-	public void onBackPressed()
-	{
-		if (inTutorial)
-		{
-			closeTutorial();
-		}
-		else
-		{
-			super.onBackPressed();
-		}
-	}
-
-	@Override
 	public void onSelectionUpdated(final Set<Uri> selectedUris)
 	{
 		if (mMaterialCab != null)
@@ -929,8 +885,6 @@ public class GalleryActivity extends CoreActivity implements
 		@Override
 		public boolean onCabCreated(MaterialCab cab, Menu menu)
 		{
-			inActionMode = true;
-//			getMenuInflater().inflate(R.menu.gallery_contextual, menu);
 			MenuItem actionItem = menu.findItem(R.id.contextShare);
 			if (actionItem != null)
 			{
@@ -946,17 +900,14 @@ public class GalleryActivity extends CoreActivity implements
 		public boolean onCabItemClicked(MenuItem item)
 		{
 			boolean handled = onOptionsItemSelected(item);
-			if (handled)// && (item.getItemId() != R.id.toggleXmp)) //We don't exit context for xmp bar
-			{
-				mMaterialCab.finish();
-			}
+			if (handled)
+				endContextMode();
 			return handled;
 		}
 
 		@Override
 		public boolean onCabFinished(MaterialCab cab)
 		{
-			inActionMode = false;
 			endMultiSelectMode();
 			mMaterialCab = null;
 			return true;
@@ -965,7 +916,7 @@ public class GalleryActivity extends CoreActivity implements
 
 	public void selectAll()
 	{
-		startContextualActionBar();
+		startContextMode();
 		mGalleryAdapter.selectAll();
 	}
 
@@ -981,13 +932,19 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.clearSelection();
 	}
 
-	private void startContextualActionBar()
+	protected void startContextMode()
 	{
 		mMaterialCab = new MaterialCab(this, R.id.cab_stub)
 				.setTitle(getString(R.string.selectItems))
 				.setMenu(R.menu.gallery_contextual)
 				.start(new GalleryActionMode());
 		startMultiSelectMode();
+	}
+
+	protected void endContextMode()
+	{
+		if (mMaterialCab != null)
+			mMaterialCab.finish();
 	}
 
 	@Override
@@ -1001,7 +958,7 @@ public class GalleryActivity extends CoreActivity implements
 		// Enter multi-select
 		else
 		{
-			startContextualActionBar();
+			startContextMode();
 			mGalleryAdapter.toggleSelection(view, position);
 		}
 
@@ -1052,11 +1009,6 @@ public class GalleryActivity extends CoreActivity implements
 	        ActivityOptions.makeThumbnailScaleUpAnimation(v, v.getDrawingCache(), 0, 0).toBundle());
 		//TODO: If we want this to look smooth we should load the gallery thumb in viewer so there's a smooth transition
 
-//		List<String> imageset = mGalleryAdapter.getUris();
-//		if (imageset == null)
-//			return;
-
-//		viewer.putExtra(EXTRA_VIEWER_IMAGESET, imageset.toArray(new String[imageset.size()]));
 		Bundle metaLoader = getCurrentMetaLoaderBundle();
 		viewer.putExtra(EXTRA_META_BUNDLE, metaLoader);
 		viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position);
@@ -1065,388 +1017,28 @@ public class GalleryActivity extends CoreActivity implements
 		v.setDrawingCacheEnabled(false);
 	}
 
-    int tutorialStage;
-	public void runTutorial()
+	protected RecyclerView getGalleryView()
 	{
-        tutorialStage = 0;
-        File tutorialDirectory = FileUtil.getDiskCacheDir(this, "tutorial");
-        if (!tutorialDirectory.exists())
-        {
-            if(!tutorialDirectory.mkdir())
-	            return;
-        }
-
-        //generate some example images
-        File f1 = new File(tutorialDirectory, "Image1.jpg");
-        File f2 = new File(tutorialDirectory, "Image2.jpg");
-        File f3 = new File(tutorialDirectory, "Image3.jpg");
-        File f4 = new File(tutorialDirectory, "Image4.jpg");
-        File f5 = new File(tutorialDirectory, "Image5.jpg");
-
-
-		try(
-            FileOutputStream one = new FileOutputStream(f1);
-            FileOutputStream two = new FileOutputStream(f2);
-            FileOutputStream three = new FileOutputStream(f3);
-            FileOutputStream four = new FileOutputStream(f4);
-            FileOutputStream five = new FileOutputStream(f5))
-        {
-
-		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial1).compress(Bitmap.CompressFormat.JPEG, 100, one);
-		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial2).compress(Bitmap.CompressFormat.JPEG, 100, two);
-		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial3).compress(Bitmap.CompressFormat.JPEG, 100, three);
-		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial4).compress(Bitmap.CompressFormat.JPEG, 100, four);
-		        BitmapFactory.decodeResource(getResources(), R.drawable.tutorial5).compress(Bitmap.CompressFormat.JPEG, 100, five);
-
-		        addDatabaseReference(Uri.fromFile(f1));
-		        addDatabaseReference(Uri.fromFile(f2));
-		        addDatabaseReference(Uri.fromFile(f3));
-		        addDatabaseReference(Uri.fromFile(f4));
-		        addDatabaseReference(Uri.fromFile(f5));
-        }
-		catch (IOException e)
-		{
-			Toast.makeText(this, "Unable to open tutorial examples.  Please skip file selection.", Toast.LENGTH_LONG).show();
-		}
-
-		updateMetaLoader(null,
-			        Meta.URI + " LIKE ?",
-			        new String[] {"%"+tutorialDirectory.getName()+"%"}, null);
-
-        inTutorial = true;
-
-        tutorial = new ShowcaseView.Builder(this)//, true)
-		        .setShowcaseDrawer(new MorphShowcaseDrawer(getResources(), 20))
-                .setContentTitle(R.string.tutorialWelcomeTitle)
-                .setContentText(R.string.tutorialWelcomeText)
-                .doNotBlockTouches()
-		        .setStyle(R.style.CustomShowcaseTheme2)
-		        .replaceEndButton(R.layout.tutorial_button)
-		        .setOnClickListener(new TutorialClickListener())
-                .build();
-
-        tutorial.setButtonText(getString(R.string.next));
-        tutorial.setButtonPosition(getRightParam(getResources()));
-		tutorial.setDetailTextAlignment(Layout.Alignment.ALIGN_OPPOSITE);
-        setTutorialNoShowcase();
+		return mImageGrid;
 	}
 
-//	/**
-//	 * Represents an Action item to showcase (e.g., one of the buttons on an ActionBar).
-//	 * To showcase specific action views such as the home button, use {@link ToolbarActionItemTarget}
-//	 *
-//	 * @see ToolbarActionItemTarget
-//	 */
-//	private class ToolbarActionItemTarget implements Target
-//	{
-//		private final Toolbar toolbar;
-//		private final int menuItemId;
-//
-//		public ToolbarActionItemTarget(Toolbar toolbar, @IdRes int itemId) {
-//			this.toolbar = toolbar;
-//			this.menuItemId = itemId;
-//		}
-//
-//		@Override
-//		public Point getPoint() {
-//			return new ViewTarget(toolbar.findViewById(menuItemId)).getPoint();
-//		}
-//	}
-
-	private class TutorialClickListener implements OnClickListener
+	protected GalleryRecyclerAdapter getGalleryAdapter()
 	{
-        //Note: Don't animate coming from "NoShowcase" it flies in from off screen which is silly.
-		View view;
-		@Override
-		public void onClick(View v)
-		{
-			switch (tutorialStage)
-			{
-				case 0: // Connection
-                    tutorial.setContentTitle(getString(R.string.tutorialConnectTitle));
-                    tutorial.setContentText(getString(R.string.tutorialConnectText1));
-                    setTutorialNoShowcase();
-					break;
-				case 1: // Connection
-                    tutorial.setContentText(getString(R.string.tutorialConnectText2));
-                    setTutorialNoShowcase();
-                    break;
-				case 2: // Connection
-                    tutorial.setContentText(getString(R.string.tutorialConnectText3));
-                    setTutorialNoShowcase();
-					break;
-				case 3: // Connection
-                    tutorial.setContentText(getString(R.string.tutorialConnectText4));
-                    setTutorialNoShowcase();
-					break;
-				case 4: // Connection
-                    tutorial.setContentText(getString(R.string.tutorialConnectText5));
-                    setTutorialNoShowcase();
-					break;
-				case 5: // Search
-                    tutorial.setContentText(getString(R.string.tutorialFindImagesText));
-                    setTutorialActionView(R.id.galleryRefresh, false);
-					break;
-				case 6: // Long Select
-                    tutorial.setContentTitle(getString(R.string.tutorialSelectTitle));
-                    tutorial.setContentText(getString(R.string.tutorialSingleSelectText));
-                    view = mImageGrid.getChildAt(0);
-                    if (view != null)
-                        tutorial.setShowcase(new MorphViewTarget(view), true);
-                    else
-                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-					break;
-				case 7: // Add select
-					// If the user is lazy select for them
-					if (!inActionMode)
-						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
-
-                    tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
-                    view = mImageGrid.getChildAt(2);
-                    if (view != null)
-                        tutorial.setShowcase(new MorphViewTarget(view), true);
-                    else
-                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-					break;
-				case 8: // Select feedback
-					// If the user is lazy select for them
-					if (mGalleryAdapter.getSelectedItemCount() < 2)
-					{
-						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(0), 0, 0);
-						onItemClick(mGalleryAdapter, mImageGrid.getChildAt(2), 2, 2);
-					}
-
-                    tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
-					setTutorialTitleView(true);
-					break;
-				case 9: // Select All
-					if (inActionMode)
-						mMaterialCab.finish();
-
-                    tutorial.setContentText(getString(R.string.tutorialSelectAll));
-                    setTutorialActionView(R.id.gallerySelectAll, true);
-					break;
-				case 10: // Exit Selection
-					// If the user is lazy select for them
-					if (mGalleryAdapter.getSelectedItemCount() < 1)
-					{
-						startContextualActionBar();
-						mGalleryAdapter.selectAll();
-					}
-
-					tutorial.setContentText(getString(R.string.tutorialExitSelectionText));
-                    setTutorialHomeView(true);
-					break;
-                case 11: // Select between beginning
-                    if (mMaterialCab != null)
-						mMaterialCab.finish();
-
-                    tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1));
-                    view = mImageGrid.getChildAt(1);		//WTF index is backwards.
-                    if (view != null)
-                        tutorial.setShowcase(new MorphViewTarget(view), true);
-                    else
-                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-                    break;
-                case 12: // Select between end
-					// If the user is lazy select for them
-					if (mGalleryAdapter.getSelectedItemCount() < 1)
-						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(1), 1, 1);
-
-                    tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
-
-					setTutorialHomeView(true);
-                    view = mImageGrid.getChildAt(3);	//WTF index is backwards.
-                    if (view != null)
-                        tutorial.setShowcase(new MorphViewTarget(view), true);
-                    else
-                        setTutorialNoShowcase();    //TODO: User set an empty folder, somehow???
-                    break;
-                case 13: // Select between feedback
-					// If the user is lazy select for them
-					if (mGalleryAdapter.getSelectedItemCount() < 2)
-					{
-						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(1), 1, 1);
-						onItemLongClick(mGalleryAdapter, mImageGrid.getChildAt(3), 3, 3);
-					}
-
-                    tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));
-	                setTutorialTitleView(true);
-	                break;
-                case 14: // Rename
-					if (!inActionMode)
-						startContextualActionBar();
-
-                    tutorial.setContentTitle(getString(R.string.tutorialRenameTitle));
-                    tutorial.setContentText(getString(R.string.tutorialRenameText));
-                    setTutorialActionView(R.id.contextRename, true);
-                    break;
-                case 15: // Move
-					if (!inActionMode)
-						startContextualActionBar();
-
-                    tutorial.setContentTitle(getString(R.string.tutorialMoveTitle));
-                    tutorial.setContentText(getString(R.string.tutorialMoveText));
-                    setTutorialActionView(R.id.contextCopy, true);
-                    break;
-                case 16: // Export
-					if (!inActionMode)
-						startContextualActionBar();
-
-                    tutorial.setContentTitle(getString(R.string.tutorialExportTitle));
-                    tutorial.setContentText(getString(R.string.tutorialExportText));
-                    setTutorialActionView(R.id.contextSaveAs, true);
-                    break;
-                case 17: // Share (can't figure out how to address the share button
-//					if (!inActionMode)
-//						startContextualActionBar();
-//
-//                    tutorial.setContentTitle(getString(R.string.tutorialShareTitle));
-//                    tutorial.setContentText(getString(R.string.tutorialShareText));
-//                    setTutorialShareView(true);
-//					setTutorialActionView(R.id.contextShare, true);
-//                    break;
-					tutorialStage++;
-                case 18: // Recycle
-                    if (mMaterialCab != null)
-						mMaterialCab.finish();
-
-                    tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
-                    tutorial.setContentText(getString(R.string.tutorialRecycleText));
-                    setTutorialActionView(R.id.gallery_recycle, true);
-                    break;
-                case 19: // Actionbar help
-                    tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle));
-                    tutorial.setContentText(getString(R.string.tutorialActionbarHelpText));
-                    setTutorialActionView(R.id.gallerySelectAll, true);
-                    break;
-				default: // We're done
-                    closeTutorial();
-                    break;
-			}
-            tutorialStage++;
-		}
+		return mGalleryAdapter;
 	}
 
-	@SuppressWarnings("ResultOfMethodCallIgnored")
-    public void closeTutorial()
-    {
-        inTutorial = false;
-		if (mMaterialCab != null)
-			mMaterialCab.finish();
-
-        closeOptionsMenu();
-        tutorial.hide();
-
-	    File tutorialDirectory = FileUtil.getDiskCacheDir(this, "tutorial");
-	    File f1 = new File(tutorialDirectory, "Image1.jpg");
-	    File f2 = new File(tutorialDirectory, "Image2.jpg");
-	    File f3 = new File(tutorialDirectory, "Image3.jpg");
-	    File f4 = new File(tutorialDirectory, "Image4.jpg");
-	    File f5 = new File(tutorialDirectory, "Image5.jpg");
-
-	    removeDatabaseReference(Uri.fromFile(f1));
-	    removeDatabaseReference(Uri.fromFile(f2));
-	    removeDatabaseReference(Uri.fromFile(f3));
-	    removeDatabaseReference(Uri.fromFile(f4));
-	    removeDatabaseReference(Uri.fromFile(f5));
-
-	    f1.delete();
-	    f2.delete();
-	    f3.delete();
-	    f4.delete();
-	    f5.delete();
-	    tutorialDirectory.delete();
-		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
-    }
-
-    //TODO: Hack for showcase appearing behind nav bar
-    public int getNavigationBarHeight(int orientation) {
-        try {
-            Resources resources = getResources();
-            int id = resources.getIdentifier(
-                    orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape",
-                    "dimen", "android");
-            if (id > 0) {
-                return resources.getDimensionPixelSize(id);
-            }
-        } catch (NullPointerException | IllegalArgumentException | Resources.NotFoundException e) {
-            return 0;
-        }
-        return 0;
-    }
-
-    //TODO: Hack for showcase appearing behind nav bar
-    public RelativeLayout.LayoutParams getRightParam(Resources res) {
-        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lps.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        int margin = ((Number) (res.getDisplayMetrics().density * 12)).intValue();
-        lps.setMargins(margin, margin, margin, getNavigationBarHeight(res.getConfiguration().orientation) + 5);
-        return lps;
-    }
-
-    static int bias = 1;
-    private void setTutorialNoShowcase()
-    {
-        //Using the same target multiple times doesn't update the showcase
-//        tutorial.setTarget(ViewTarget.NONE);
-
-        // So this funkiness places the showcase off screen flittering back and forth one pixel
-        // This doesn't screw up word wrap.
-//        tutorial.setScaleMultiplier(0.1f);
-
-        bias *= -1;
-        tutorial.setShowcaseX(mDisplayWidth + 1000 + bias);
-
-    }
-
-	/**
-	 * ballpark home (filter) location
-	 */
-    private void setTutorialHomeView(boolean animate)
-    {
-	    //action item touch area is 48x48 dp
-	    float actionItemWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
-	    int center = (int) actionItemWidth / 2;
-        PointTarget home = new PointTarget(center,center, actionItemWidth);  //touch are is 48x48 dp
-        tutorial.setShowcase(home, animate);
-    }
-
-	/**
-	 * ballpark title location
-	 */
-	private void setTutorialTitleView(boolean animate)
+	protected boolean isContextModeActive()
 	{
-		//action item touch area is 48x48 dp
-		float actionItemWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
-		int center = (int) actionItemWidth / 2;
-
-		// We guestimate 2.5* wider, so 5* wider to center
-		PointTarget title = new PointTarget(5 * center, center, 3 * center );
-		tutorial.setShowcase(title, animate);
+		return mMaterialCab != null && mMaterialCab.isActive();
 	}
 
-    /**
-     * Showcase item or overflow if it doesn't exist
-     * @param itemId menu id
-     * @param animate Animate the showcase from the previous spot.  Recommend FALSE if previous showcase was NONE
-     */
-    private void setTutorialActionView(int itemId, boolean animate)
-    {
-	    Target target;
-	    View itemView = findViewById(itemId);
-	    if (itemView == null)
-	    {
-		    //List of all mToolbar items, assuming last is overflow
-		    List<View> views = mToolbar.getTouchables();
-		    target = new MorphViewTarget(views.get(views.size()-1)); //overflow
-	    }
-	    else
-	    {
-		    target = new MorphViewTarget(itemView);
-	    }
+	protected Toolbar getToolbar()
+	{
+		return mToolbar;
+	}
 
-	    tutorial.setShowcase(target, animate);
-    }
+	protected int getDisplayWidth()
+	{
+		return mDisplayWidth;
+	}
 }
