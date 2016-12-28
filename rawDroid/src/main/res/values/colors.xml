@@ -29,5 +29,22 @@
     <color name="tintDarkGreen">#182b12</color>
     <color name="translucentDarkGreen">#b9182b12</color>
 
+    <color name="xmpButtonColor">#050d5e</color>
+
+    <!--Translucent indigo 700-->
+    <color name="xmpPanelColor">#cc303F9F</color>
+
+    <color name="headerColor">@color/indigo_800</color>
+    <color name="colorAccent">@color/blue_500</color>
+
+    <color name="toggle_hover">@color/blue_800</color>
+    <color name="toggle_normal">@color/colorAccent</color>
+    <color name="toggle_active">@color/blue_A100</color>
+    <color name="toggle_normal_off">@color/darkgray</color>
+
+    <color name="gainsboro">#DCdCdC</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="darkgray">#a9a9a9</color>
+    <color name="gray">#808080</color>
 
 </resources>

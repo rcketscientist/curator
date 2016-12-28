@@ -347,6 +347,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".TutorialActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/GalleryTheme"/>
+        <activity
             android:name=".LegacyViewerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/GalleryTheme"/>

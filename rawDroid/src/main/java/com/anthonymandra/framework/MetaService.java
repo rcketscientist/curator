@@ -180,7 +180,8 @@ public class MetaService extends ThreadedPriorityIntentService
 
     public static boolean isProcessed(ContentValues c)
     {
-        return c.getAsBoolean(Meta.PROCESSED);
+        Boolean isProcessed = c.getAsBoolean(Meta.PROCESSED);
+        return isProcessed != null ? isProcessed : false;
     }
 
 	/**

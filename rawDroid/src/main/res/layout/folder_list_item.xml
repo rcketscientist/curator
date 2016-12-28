@@ -3,24 +3,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp">
 
     <CheckBox
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textAppearance="@android:style/TextAppearance.Small"
-        android:text="PATH"
+        android:text="0000-0000:_example/path"
         android:id="@+id/checkBoxFolderPath"
         android:layout_gravity="center"
         android:button="@drawable/visible_selector"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="0dp"
-        android:paddingLeft="5dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp"
+        android:paddingStart="10dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
         android:layout_toStartOf="@+id/excludeButton"
-        android:layout_toLeftOf="@id/excludeButton"
-        android:singleLine="true"
+        android:maxLines="1"
         android:ellipsize="start"/>
 
     <ImageButton
@@ -29,11 +29,11 @@
         android:id="@id/excludeButton"
         android:src="@drawable/ic_folder_remove"
         android:background="@android:color/transparent"
-        android:layout_gravity="end|right"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="20dp"
+        android:layout_gravity="end"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="5dp"/>
+        android:layout_marginEnd="5dp"/>
 
 </RelativeLayout>
 

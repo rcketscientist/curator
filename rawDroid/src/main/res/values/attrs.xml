@@ -5,8 +5,13 @@
              This can be used as an overlay. -->
         <attr name="foreground" format="reference|color"/>
     </declare-styleable>
+
     <declare-styleable name="XmpLabelGroup">
         <!-- Defines whether multiple buttons can be selected simultaneously -->
         <attr name="multiselect" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="CompoundButton">
+        <attr name="android:button" />
     </declare-styleable>
 </resources>

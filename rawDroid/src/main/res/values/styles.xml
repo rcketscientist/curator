@@ -52,6 +52,11 @@
     </style>
 
     <style name="GalleryTheme" parent="@style/Theme.AppCompat">
+        <!--<item name="colorPrimary">@color/materialIndigo900</item>-->
+        <!--<item name="colorPrimaryDark">@color/xmpButtonColor</item>-->
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:dialogTheme">@style/GalleryDialog</item>
+        <item name="android:alertDialogTheme">@style/GalleryAlertDialog</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowActionModeOverlay">true</item>
@@ -104,9 +109,31 @@
         <item name="android:maxHeight">14dip</item>
     </style>
 
-    <style name="FolderDialog" parent="@android:style/Theme.Holo.Dialog">
+    <style name="GalleryDialog" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@color/Black_Medium</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="GalleryAlertDialog" parent="@style/Theme.AppCompat.Dialog.Alert">
+        <item name="android:windowBackground">@color/Black_Medium</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="FolderDialog" parent="@style/GalleryDialog">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:editTextBackground">@color/indigo_800</item>
         <item name="android:listChoiceIndicatorMultiple">@drawable/visible_selector</item>
         <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="BrightButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="BrightImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="RecycleDialog" parent="@android:style/Theme.Dialog">
@@ -114,15 +141,11 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="GalleryActionMode" parent="@style/Widget.AppCompat.ActionMode">
-	    <!--Wanted to leave a right margin, but layout styling has no effect-->
-        <!--<item name="android:paddingEnd">56dp</item>             WORKS-->
-        <!--<item name="background">@drawable/button_blue</item>    WORKS-->
-        <!--<item name="height">56dp</item>                         WORKS-->
-        <item name="android:layout_marginRight">56dp</item>
-        <!--<item name="android:layout_width">wrap_content</item>   FAILS-->
-	    <!--<item name="android:width">400dp</item>                 FAILS-->
-	    <!--<item name="android:layout_margin">200dp</item>         FAILS-->
+    <style name="ToggleButton" parent="@android:style/Widget.CompoundButton.RadioButton">
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/toggle_background</item>
     </style>
 
 </resources>

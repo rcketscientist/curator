@@ -1,115 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    android:id="@+id/xmp_filter_landscape"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/xmp_filter_landscape"
     android:layout_width="@dimen/xmp_filter_width"
     android:layout_height="match_parent"
-    android:background="@drawable/translucent_black_rect"
+    android:background="@color/xmpPanelColor"
     android:padding="3dp"
     android:clickable="true"
     >
     <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
 
-    <TextView
-        android:id="@+id/filterTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="left|bottom"
-        android:text="@string/filterTitle"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignBottom="@+id/clearButton"/>
-
-    <Button
+    <ImageButton
         android:id="@+id/clearButton"
         style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
-        android:text="@string/clear"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:gravity="end"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"/>
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/clearButton"
-        android:background="@android:color/darker_gray"/>
+    <LinearLayout
+        android:id="@+id/sortHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/clearButton"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp">
 
-    <TextView
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/blue_grey_500"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:elevation="1dp"
+            android:tint="@color/blue_grey_500"
+            app:srcCompat="@drawable/ic_sort"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/blue_grey_500"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/sortOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:paddingRight="5dp"
-        android:text="@string/sortTitle"
-        android:layout_below="@+id/divider"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold"
-        android:id="@+id/textView"
-        android:layout_above="@+id/segregateCheckBox"/>
+        android:layout_below="@+id/sortHeader"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="2dp">
 
-    <Spinner
-        android:id="@+id/sortSpinner"
-        style="@android:style/Widget.Holo.Spinner"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:entries="@array/sortValues"
-        android:gravity="end"
-        android:spinnerMode="dropdown"
-        android:layout_below="@+id/divider"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_toEndOf="@+id/filterTitle"
-        android:layout_toRightOf="@+id/filterTitle"/>
+        <RadioGroup
+            android:id="@+id/sortGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:orientation="horizontal">
+
+            <com.anthonymandra.widget.MaterialToggleButton
+                android:id="@+id/imageButtonSortAtoZ"
+                style="@style/ToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_sort_az"
+                android:buttonTint="@color/white"/>
+
+            <com.anthonymandra.widget.MaterialToggleButton
+                android:id="@+id/imageButtonSortZtoA"
+                style="@style/ToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_sort_za"
+                android:buttonTint="@color/white"/>
+
+            <com.anthonymandra.widget.MaterialToggleButton
+                android:id="@+id/imageButtonSort0to9"
+                style="@style/ToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_date_ascending"
+                android:buttonTint="@color/white"/>
+
+            <com.anthonymandra.widget.MaterialToggleButton
+                android:id="@+id/imageButtonSort9to0"
+                style="@style/ToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_date_descending"
+                android:buttonTint="@color/white"/>
+        </RadioGroup>
+
+    </android.support.v7.widget.CardView>
 
     <CheckBox
+        android:id="@+id/segregateCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sortOptions"
+        android:layout_centerHorizontal="true"
+        android:checked="true"
+        android:padding="4dp"
+        android:text="@string/segregate"
+        android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+    <LinearLayout
+        android:id="@+id/filterHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/segregate"
-        android:id="@+id/segregateCheckBox"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_below="@+id/sortSpinner"
-        android:layout_centerHorizontal="true"
-        android:checked="true"/>
+        android:layout_below="@id/segregateCheckBox"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/blue_grey_500"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:elevation="1dp"
+            android:tint="@color/blue_grey_500"
+            app:srcCompat="@drawable/ic_filter"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:background="@color/blue_grey_500"/>
+    </LinearLayout>
 
     <include
         android:id="@+id/labelAndRating"
         layout="@layout/xmp_core"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/segregateCheckBox"/>
+        android:layout_below="@+id/filterHeader"/>
 
     <Button
+        android:id="@+id/buttonFolders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/folders"
-        android:id="@+id/buttonFolders"
-        android:drawableLeft="@drawable/ic_folder_border"
-        android:layout_below="@+id/labelAndRating"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        />
+        android:layout_below="@+id/labelAndRating"
+        android:layout_marginEnd="3dp"
+        android:layout_marginStart="3dp"
+        android:drawableStart="@drawable/ic_folder_border"
+        android:text="@string/folders"
+        android:theme="@style/BrightButton"/>
 
     <RadioGroup
         android:id="@+id/andOrRadioGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/buttonFolders"
-        android:gravity="left|center_horizontal"
+        android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:paddingBottom="2dp"
         android:paddingTop="2dp">
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="left"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:text="@string/match"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold"/>
@@ -118,12 +185,16 @@
             android:id="@+id/andRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
             android:text="AND"/>
 
         <RadioButton
             android:id="@+id/orRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
             android:checked="true"
             android:text="OR"/>
 
@@ -135,6 +206,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/andOrRadioGroup"
-        tools:layout="@layout/xmp_subject"/>
+        tools:layout="@layout/xmp_subject"
+        tools:listitem="@layout/keyword_entry"/>
 
 </RelativeLayout>
