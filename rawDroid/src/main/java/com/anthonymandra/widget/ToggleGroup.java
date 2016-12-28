@@ -5,35 +5,26 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import com.anthonymandra.rawdroid.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnCheckedChangeListener
+public class ToggleGroup extends RadioGroup implements CompoundButton.OnCheckedChangeListener
 {
-    public interface OnLabelSelectionChangedListener
+    public interface OnCheckedChangedListener
     {
-        void onLabelSelectionChanged(List<Labels> checked);
-    }
-
-    public enum Labels
-    {
-        blue,
-        red,
-        green,
-        yellow,
-        purple
+        void onCheckedChanged(int[] checkedIds);
     }
 
     boolean mPauseListener;
     boolean mMultiSelect;
-    OnLabelSelectionChangedListener mListener;
-    CompoundButton mBlue, mRed, mGreen, mYellow, mPurple;
-    public XmpLabelGroup(Context context) { this(context, null); }
-    public XmpLabelGroup(Context context, AttributeSet attrs) { this(context, attrs, 0); }
-    public XmpLabelGroup(Context context, AttributeSet attrs, int defStyleAttr)
+    OnCheckedChangedListener mListener;
+    public ToggleGroup(Context context) { this(context, null); }
+    public ToggleGroup(Context context, AttributeSet attrs) { this(context, attrs, 0); }
+    public ToggleGroup(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.XmpLabelGroup);

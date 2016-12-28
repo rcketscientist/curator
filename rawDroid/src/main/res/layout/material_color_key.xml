@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sortOptions"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/sortHeader"
+    android:layout_centerHorizontal="true"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.anthonymandra.widget.MaterialToggleButton
+            android:id="@+id/blueLabel"
+            style="@style/ToggleButton"
+            android:gravity="center"
+            android:button="@drawable/ic_square_rounded"
+            android:buttonTint="@color/blue_900"/>
+
+        <com.anthonymandra.widget.MaterialToggleButton
+            android:id="@+id/redLabel"
+            style="@style/ToggleButton"
+            android:gravity="center"
+            android:button="@drawable/ic_square_rounded"
+            android:buttonTint="@color/red_900"/>
+
+        <com.anthonymandra.widget.MaterialToggleButton
+            android:id="@+id/greenLabel"
+            style="@style/ToggleButton"
+            android:gravity="center"
+            android:button="@drawable/ic_square_rounded"
+            android:buttonTint="@color/green_900"/>
+
+        <com.anthonymandra.widget.MaterialToggleButton
+            android:id="@+id/yellowLabel"
+            style="@style/ToggleButton"
+            android:gravity="center"
+            android:button="@drawable/ic_square_rounded"
+            android:buttonTint="@color/yellow_900"/>
+
+        <com.anthonymandra.widget.MaterialToggleButton
+            android:id="@+id/purpleLabel"
+            style="@style/ToggleButton"
+            android:gravity="center"
+            android:button="@drawable/ic_square_rounded"
+            android:buttonTint="@color/purple_900"/>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
+

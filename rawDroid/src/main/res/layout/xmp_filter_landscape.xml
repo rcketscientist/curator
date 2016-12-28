@@ -9,49 +9,56 @@
     android:background="@color/xmpPanelColor"
     android:padding="3dp"
     android:clickable="true"
+    tools:ignore="ContentDescription"
     >
     <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
 
-    <ImageButton
-        android:id="@+id/clearButton"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:gravity="end"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"/>
-
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/sortHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/clearButton"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="3dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="@color/blue_grey_500"/>
-
         <ImageView
-            android:layout_width="0dp"
+            android:id="@+id/sortIcon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
             android:elevation="1dp"
             android:tint="@color/blue_grey_500"
             app:srcCompat="@drawable/ic_sort"/>
 
         <View
-            android:layout_width="0dp"
+            android:id="@+id/leftSortDivider"
+            android:layout_width="wrap_content"
             android:layout_height="3dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/sortIcon"
+            android:background="@color/blue_grey_500"
+            android:layout_marginRight="3dp"/>
+
+        <View
+            android:id="@+id/rightSortDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/sortIcon"
+            android:layout_toStartOf="@id/clearButton"
             android:background="@color/blue_grey_500"/>
-    </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/clearButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            app:srcCompat="@drawable/ic_close"
+            android:tint="@color/white"/>
+
+    </RelativeLayout>
 
     <android.support.v7.widget.CardView
         android:id="@+id/sortOptions"
@@ -112,7 +119,7 @@
         android:text="@string/segregate"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/filterHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -120,28 +127,31 @@
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="3dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="@color/blue_grey_500"/>
-
         <ImageView
-            android:layout_width="0dp"
+            android:id="@+id/filterIcon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
             android:elevation="1dp"
+            android:layout_centerInParent="true"
             android:tint="@color/blue_grey_500"
             app:srcCompat="@drawable/ic_filter"/>
 
         <View
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="3dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/filterIcon"
             android:background="@color/blue_grey_500"/>
-    </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/filterIcon"
+            android:layout_alignParentEnd="true"
+            android:background="@color/blue_grey_500"/>
+    </RelativeLayout>
 
     <include
         android:id="@+id/labelAndRating"
@@ -187,7 +197,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
-            android:text="AND"/>
+            android:text="AND"
+            tools:ignore="HardcodedText"/>
 
         <RadioButton
             android:id="@+id/orRadioButton"
@@ -196,7 +207,8 @@
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:checked="true"
-            android:text="OR"/>
+            android:text="OR"
+            tools:ignore="HardcodedText"/>
 
     </RadioGroup>
 

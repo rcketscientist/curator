@@ -15,18 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
+import com.anthonymandra.widget.MaterialToggleButton;
 import com.anthonymandra.widget.XmpLabelGroup;
 import com.drew.lang.annotations.NotNull;
 
@@ -86,6 +86,10 @@ public class XmpFilterFragment extends XmpBaseFragment
         mSegregateByType = pref.getBoolean(mPrefSegregate, true);
         mHiddenFolders = new HashSet<>(pref.getStringSet(mPrefHiddenFolders, new HashSet<String>()));
         mExcludedFolders = new HashSet<>(pref.getStringSet(mPrefExcludedFolders, new HashSet<String>()));
+
+        initAndOr(mAndTrueOrFalse);
+        initSort(mSortAscending, mSortColumn);
+        initSegregate(mSegregateByType);
 
         attachButtons();
     }
@@ -241,6 +245,13 @@ public class XmpFilterFragment extends XmpBaseFragment
         onFilterUpdated();
     }
 
+    private void initAndOr(boolean andTrueOrFalse)
+    {
+//        if (andTrueOrFalse)
+        //TODO: Does this auto set the other radio?
+        ((RadioButton)getActivity().findViewById(R.id.andRadioButton)).setChecked(andTrueOrFalse);
+    }
+
     private void setSort(int checkedId)
     {
         switch (checkedId)
@@ -263,6 +274,29 @@ public class XmpFilterFragment extends XmpBaseFragment
                 break;
         }
         onFilterUpdated();
+    }
+
+    private void initSort(boolean sortAscending, XmpFilter.SortColumns sortType)
+    {
+        if (sortAscending)
+        {
+            if (XmpFilter.SortColumns.Name == sortType)
+                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSortAtoZ)).setChecked(true);
+            else
+                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSort0to9)).setChecked(true);
+        }
+        else
+        {
+            if (XmpFilter.SortColumns.Name == sortType)
+                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSortZtoA)).setChecked(true);
+            else
+                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSort9to0)).setChecked(true);
+        }
+    }
+
+    private void initSegregate(boolean checked)
+    {
+        ((CheckBox)getActivity().findViewById(R.id.segregateCheckBox)).setChecked(checked);
     }
 
     @SuppressWarnings("unused")
