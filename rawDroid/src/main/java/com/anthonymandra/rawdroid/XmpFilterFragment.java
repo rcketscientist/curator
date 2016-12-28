@@ -115,50 +115,17 @@ public class XmpFilterFragment extends XmpBaseFragment
             public void onCheckedChanged(RadioGroup group, int checkedId)
             {
                 setAndOr(checkedId);
-                onFilterUpdated();
             }
         });
 
-        Spinner sort = (Spinner) getActivity().findViewById(R.id.sortSpinner);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.right_align_dropdown_item, getResources().getStringArray(R.array.sortValues));
-        adapter.setDropDownViewResource(R.layout.right_align_dropdown_item);
-        sort.setAdapter(adapter);
-        sort.setSelection(0, false);
-        sort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        RadioGroup sort = (RadioGroup) getActivity().findViewById(R.id.sortGroup);
+        setSort(andOr.getCheckedRadioButtonId());
+        sort.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            public void onCheckedChanged(RadioGroup group, int checkedId)
             {
-                switch (position)
-                {
-                    case 0:
-                        mSortAscending = true;
-                        mSortColumn = XmpFilter.SortColumns.Name;
-                        break;
-                    case 1:
-                        mSortAscending = false;
-                        mSortColumn = XmpFilter.SortColumns.Name;
-                        break;
-                    case 2:
-                        mSortAscending = true;
-                        mSortColumn = XmpFilter.SortColumns.Date;
-                        break;
-                    case 3:
-                        mSortAscending = false;
-                        mSortColumn = XmpFilter.SortColumns.Date;
-                        break;
-                    default:
-                        mSortAscending = true;
-                        mSortColumn = XmpFilter.SortColumns.Name;
-                        break;
-                }
-                onFilterUpdated();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-                //Do nothing
+                setSort(checkedId);
             }
         });
 
@@ -269,6 +236,30 @@ public class XmpFilterFragment extends XmpBaseFragment
                 break;
             case R.id.orRadioButton:
                 mAndTrueOrFalse = false;
+                break;
+        }
+        onFilterUpdated();
+    }
+
+    private void setSort(int checkedId)
+    {
+        switch (checkedId)
+        {
+            case R.id.imageButtonSortAtoZ:
+                mSortAscending = true;
+                mSortColumn = XmpFilter.SortColumns.Name;
+                break;
+            case R.id.imageButtonSortZtoA:
+                mSortAscending = false;
+                mSortColumn = XmpFilter.SortColumns.Name;
+                break;
+            case R.id.imageButtonSort0to9:
+                mSortAscending = true;
+                mSortColumn = XmpFilter.SortColumns.Date;
+                break;
+            case R.id.imageButtonSort9to0:
+                mSortAscending = false;
+                mSortColumn = XmpFilter.SortColumns.Date;
                 break;
         }
         onFilterUpdated();
