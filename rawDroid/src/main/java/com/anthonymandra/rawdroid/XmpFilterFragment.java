@@ -27,6 +27,7 @@ import android.widget.RadioGroup;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.widget.MaterialToggleButton;
+import com.anthonymandra.widget.ToggleGroup;
 import com.anthonymandra.widget.XmpLabelGroup;
 import com.drew.lang.annotations.NotNull;
 
@@ -122,14 +123,14 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        RadioGroup sort = (RadioGroup) getActivity().findViewById(R.id.sortGroup);
+        ToggleGroup sort = (ToggleGroup) getActivity().findViewById(R.id.sortGroup);
         setSort(andOr.getCheckedRadioButtonId());
-        sort.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        sort.setOnCheckedChangeListener(new ToggleGroup.OnCheckedChangeListener()
         {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
+            public void onCheckedChanged(ToggleGroup group, int[] checkedId)
             {
-                setSort(checkedId);
+                setSort(group.getCheckedId());
             }
         });
 
