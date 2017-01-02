@@ -2,11 +2,14 @@ package com.anthonymandra.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Outline;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
@@ -25,6 +28,8 @@ public class ToggleGroup extends LinearLayout
 
     private boolean mExclusive;
     private boolean mUnselected;
+    private float mCornerRadius = -1;
+
     // tracks children radio buttons checked state
     private CompoundButton.OnCheckedChangeListener mChildOnCheckedChangeListener;
     // when true, mOnCheckedChangeListener discards events
@@ -55,6 +60,18 @@ public class ToggleGroup extends LinearLayout
         mExclusive = attributes.getBoolean(R.styleable.ToggleGroup_exclusive, false);
         mUnselected = attributes.getBoolean(R.styleable.ToggleGroup_allowUnselected, false);
 
+        final boolean material = attributes.getBoolean(R.styleable.ToggleGroup_styleMaterial, false);
+        if (material)
+        {
+            final float dp2 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+            setElevation(dp2);
+            mCornerRadius = dp2;
+        }
+        else
+        {
+            mCornerRadius = attributes.getFloat(R.styleable.ToggleGroup_cornerRadius, -1);
+        }
+
         int value = attributes.getResourceId(R.styleable.ToggleGroup_checkedButton, View.NO_ID);
         if (value != View.NO_ID) {
             mCheckedId = value; // We set this regardless to help with designer
@@ -71,6 +88,14 @@ public class ToggleGroup extends LinearLayout
         mChildOnCheckedChangeListener = new CheckedStateTracker();
         mPassThroughListener = new PassThroughHierarchyChangeListener();
         super.setOnHierarchyChangeListener(mPassThroughListener);
+
+        // This allows the (possibly) transparent ViewGroup to cast shadow.
+        setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                outline.setRect(0, 0, view.getWidth(), view.getHeight());
+            }
+        });
     }
 
     /**
