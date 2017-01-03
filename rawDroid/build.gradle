@@ -129,4 +129,5 @@ dependencies {
     //    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.4'
 //    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
+    compile project(path: ':togglegroup')
 }

@@ -26,7 +26,7 @@ import android.widget.RadioGroup;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
-import com.anthonymandra.widget.MaterialToggleButton;
+import com.anthonymandra.widget.ToggleButton;
 import com.anthonymandra.widget.ToggleGroup;
 import com.anthonymandra.widget.XmpLabelGroup;
 import com.drew.lang.annotations.NotNull;
@@ -282,16 +282,16 @@ public class XmpFilterFragment extends XmpBaseFragment
         if (sortAscending)
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSortAtoZ)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSortAtoZ)).setChecked(true);
             else
-                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSort0to9)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSort0to9)).setChecked(true);
         }
         else
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSortZtoA)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSortZtoA)).setChecked(true);
             else
-                ((MaterialToggleButton)getActivity().findViewById(R.id.imageButtonSort9to0)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSort9to0)).setChecked(true);
         }
     }
 

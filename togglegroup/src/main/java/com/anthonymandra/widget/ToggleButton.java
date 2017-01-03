@@ -7,9 +7,9 @@ import android.support.v4.widget.CompoundButtonCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
 
-public class MaterialToggleButton extends android.support.v7.widget.AppCompatRadioButton
+public class ToggleButton extends android.support.v7.widget.AppCompatRadioButton
 {
-	public MaterialToggleButton(Context context, AttributeSet attrs) {
+	public ToggleButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 

@@ -15,35 +15,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.anthonymandra.widget.MaterialToggleButton
+        <com.anthonymandra.widget.ToggleButton
             android:id="@+id/blueLabel"
             style="@style/ToggleButton"
             android:gravity="center"
             android:button="@drawable/ic_square_rounded"
             android:buttonTint="@color/blue_900"/>
 
-        <com.anthonymandra.widget.MaterialToggleButton
+        <com.anthonymandra.widget.ToggleButton
             android:id="@+id/redLabel"
             style="@style/ToggleButton"
             android:gravity="center"
             android:button="@drawable/ic_square_rounded"
             android:buttonTint="@color/red_900"/>
 
-        <com.anthonymandra.widget.MaterialToggleButton
+        <com.anthonymandra.widget.ToggleButton
             android:id="@+id/greenLabel"
             style="@style/ToggleButton"
             android:gravity="center"
             android:button="@drawable/ic_square_rounded"
             android:buttonTint="@color/green_900"/>
 
-        <com.anthonymandra.widget.MaterialToggleButton
+        <com.anthonymandra.widget.ToggleButton
             android:id="@+id/yellowLabel"
             style="@style/ToggleButton"
             android:gravity="center"
             android:button="@drawable/ic_square_rounded"
             android:buttonTint="@color/yellow_900"/>
 
-        <com.anthonymandra.widget.MaterialToggleButton
+        <com.anthonymandra.widget.ToggleButton
             android:id="@+id/purpleLabel"
             style="@style/ToggleButton"
             android:gravity="center"
