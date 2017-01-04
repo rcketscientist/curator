@@ -209,9 +209,10 @@
             android:id="@+id/toggleAnd"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="@drawable/lock_selector"
+            android:button="@drawable/and_selector"
             android:gravity="center"
             android:layout_below="@id/upperVertical"
+            android:buttonTint="@color/white"
             android:elevation="2dp"/>
 
         <View
