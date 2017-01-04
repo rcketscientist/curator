@@ -112,19 +112,19 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        RadioGroup andOr = (RadioGroup) getActivity().findViewById(R.id.andOrRadioGroup);
-        setAndOr(andOr.getCheckedRadioButtonId());
-        andOr.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        final ToggleButton andOr = (ToggleButton) getActivity().findViewById(R.id.toggleAnd);
+        setAndOr(andOr.isChecked());
+        andOr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
+            public void onCheckedChanged(CompoundButton button, boolean checked)
             {
-                setAndOr(checkedId);
+                setAndOr(andOr.isChecked());
             }
         });
 
         ToggleGroup sort = (ToggleGroup) getActivity().findViewById(R.id.sortGroup);
-        setSort(andOr.getCheckedRadioButtonId());
+        setSort(sort.getCheckedId());
         sort.setOnCheckedChangeListener(new ToggleGroup.OnCheckedChangeListener()
         {
             @Override
@@ -134,7 +134,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        CheckBox segregate = (CheckBox) getActivity().findViewById(R.id.segregateCheckBox);
+        ToggleButton segregate = (ToggleButton) getActivity().findViewById(R.id.toggleSegregate);
         segregate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -232,44 +232,34 @@ public class XmpFilterFragment extends XmpBaseFragment
         });
     }
 
-    private void setAndOr(int checkedId)
+    private void setAndOr(boolean and)
     {
-        switch (checkedId)
-        {
-            case R.id.andRadioButton:
-                mAndTrueOrFalse = true;
-                break;
-            case R.id.orRadioButton:
-                mAndTrueOrFalse = false;
-                break;
-        }
+        mAndTrueOrFalse = and;
         onFilterUpdated();
     }
 
     private void initAndOr(boolean andTrueOrFalse)
     {
-//        if (andTrueOrFalse)
-        //TODO: Does this auto set the other radio?
-        ((RadioButton)getActivity().findViewById(R.id.andRadioButton)).setChecked(andTrueOrFalse);
+        ((ToggleButton)getActivity().findViewById(R.id.toggleAnd)).setChecked(andTrueOrFalse);
     }
 
     private void setSort(int checkedId)
     {
         switch (checkedId)
         {
-            case R.id.imageButtonSortAtoZ:
+            case R.id.toggleSortAtoZ:
                 mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
-            case R.id.imageButtonSortZtoA:
+            case R.id.toggleSortZtoA:
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
-            case R.id.imageButtonSort0to9:
+            case R.id.toggleSort0to9:
                 mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
-            case R.id.imageButtonSort9to0:
+            case R.id.toggleSort9to0:
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
@@ -282,22 +272,22 @@ public class XmpFilterFragment extends XmpBaseFragment
         if (sortAscending)
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSortAtoZ)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleSortAtoZ)).setChecked(true);
             else
-                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSort0to9)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleSort0to9)).setChecked(true);
         }
         else
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSortZtoA)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleSortZtoA)).setChecked(true);
             else
-                ((ToggleButton)getActivity().findViewById(R.id.imageButtonSort9to0)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleSort9to0)).setChecked(true);
         }
     }
 
     private void initSegregate(boolean checked)
     {
-        ((CheckBox)getActivity().findViewById(R.id.segregateCheckBox)).setChecked(checked);
+        ((ToggleButton)getActivity().findViewById(R.id.toggleSegregate)).setChecked(checked);
     }
 
     @SuppressWarnings("unused")

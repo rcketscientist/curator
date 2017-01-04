@@ -6,19 +6,17 @@
     android:id="@+id/xmp_filter_landscape"
     android:layout_width="@dimen/xmp_filter_width"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/light_blue_200"
     android:padding="3dp"
     android:clickable="true"
-    tools:ignore="ContentDescription"
-    >
+    tools:ignore="ContentDescription">
     <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
 
     <RelativeLayout
         android:id="@+id/sortHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp">
+        android:layout_marginBottom="3dp">
 
         <ImageView
             android:id="@+id/sortIcon"
@@ -38,7 +36,7 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/sortIcon"
             android:background="@color/blue_grey_500"
-            android:layout_marginRight="3dp"/>
+            android:layout_marginEnd="3dp"/>
 
         <View
             android:id="@+id/rightSortDivider"
@@ -49,83 +47,69 @@
             android:layout_toStartOf="@id/clearButton"
             android:background="@color/blue_grey_500"/>
 
-        <ImageButton
-            android:id="@+id/clearButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_alignParentEnd="true"
-            app:srcCompat="@drawable/ic_close"
-            android:tint="@color/white"/>
-
     </RelativeLayout>
 
-    <com.anthonymandra.widget.ToggleGroup
-        android:id="@+id/sortGroup"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:styleMaterial="true"
-        app:exclusive="true"
-        android:orientation="horizontal"
-        android:layout_below="@+id/sortHeader"
-        android:layout_centerHorizontal="true">
-
-        <com.anthonymandra.widget.ToggleButton
-            android:id="@+id/imageButtonSortAtoZ"
-            style="@style/ToggleButton"
-            android:gravity="center"
-            android:button="@drawable/ic_sort_az"
-            android:buttonTint="@color/white"/>
-
-        <com.anthonymandra.widget.ToggleButton
-            android:id="@+id/imageButtonSortZtoA"
-            style="@style/ToggleButton"
-            android:gravity="center"
-            android:button="@drawable/ic_sort_za"
-            android:buttonTint="@color/white"/>
-
-        <com.anthonymandra.widget.ToggleButton
-            android:id="@+id/imageButtonSort0to9"
-            style="@style/ToggleButton"
-            android:gravity="center"
-            android:button="@drawable/ic_date_ascending"
-            android:buttonTint="@color/white"/>
-
-        <com.anthonymandra.widget.ToggleButton
-            android:id="@+id/imageButtonSort9to0"
-            style="@style/ToggleButton"
-            android:gravity="center"
-            android:button="@drawable/ic_date_descending"
-            android:buttonTint="@color/white"/>
-
-    </com.anthonymandra.widget.ToggleGroup>
-
-    <com.anthonymandra.widget.ToggleButton
-        android:id="@+id/imageButtonSegregate"
-        style="@style/ToggleButton"
-        android:gravity="center"
-        android:button="@drawable/ic_segregate3"
-        android:buttonTint="@color/white"
-        android:layout_toEndOf="@id/sortGroup"
-        android:layout_alignTop="@id/sortGroup"
-        android:layout_marginStart="10dp"/>
-
-    <CheckBox
-        android:id="@+id/segregateCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/sortGroup"
+        android:id="@+id/sortSection"
         android:layout_centerHorizontal="true"
-        android:checked="true"
-        android:padding="4dp"
-        android:text="@string/segregate"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:layout_below="@id/sortHeader">
+
+        <com.anthonymandra.widget.ToggleGroup
+            android:id="@+id/sortGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:styleMaterial="true"
+            app:exclusive="true"
+            android:orientation="horizontal">
+
+            <com.anthonymandra.widget.ToggleButton
+                android:id="@+id/toggleSortAtoZ"
+                style="@style/SortToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_sort_az"
+                android:buttonTint="@color/white"/>
+
+            <com.anthonymandra.widget.ToggleButton
+                android:id="@+id/toggleSortZtoA"
+                style="@style/SortToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_sort_za"
+                android:buttonTint="@color/white"/>
+
+            <com.anthonymandra.widget.ToggleButton
+                android:id="@+id/toggleSort0to9"
+                style="@style/SortToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_date_ascending"
+                android:buttonTint="@color/white"/>
+
+            <com.anthonymandra.widget.ToggleButton
+                android:id="@+id/toggleSort9to0"
+                style="@style/SortToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_date_descending"
+                android:buttonTint="@color/white"/>
+
+        </com.anthonymandra.widget.ToggleGroup>
+
+        <com.anthonymandra.widget.ToggleButton
+            android:id="@+id/toggleSegregate"
+            style="@style/SortToggleButton"
+            android:gravity="center"
+            android:button="@drawable/ic_segregate3"
+            android:buttonTint="@color/white"
+            android:elevation="2dp"
+            android:layout_marginStart="3dp"/>
+
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/filterHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/segregateCheckBox"
+        android:layout_below="@id/sortSection"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp">
 
@@ -155,72 +139,115 @@
             android:background="@color/blue_grey_500"/>
     </RelativeLayout>
 
+    <ImageButton
+        android:id="@+id/buttonFolders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/filterHeader"
+        android:src="@drawable/ic_folder_border"
+        android:theme="@style/BrightButton"/>
+
     <include
         android:id="@+id/labelAndRating"
         layout="@layout/xmp_core"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/filterHeader"/>
+        android:layout_below="@+id/buttonFolders"/>
 
-    <Button
-        android:id="@+id/buttonFolders"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/labelAndRating"
-        android:layout_marginEnd="3dp"
-        android:layout_marginStart="3dp"
-        android:drawableStart="@drawable/ic_folder_border"
-        android:text="@string/folders"
-        android:theme="@style/BrightButton"/>
-
-    <RadioGroup
-        android:id="@+id/andOrRadioGroup"
+    <RelativeLayout
+        android:id="@+id/andAnchor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_below="@+id/buttonFolders"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp">
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="3dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:text="@string/match"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"/>
+        <View
+            android:id="@+id/upperBullet"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="23dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/blue_grey_500"/>
 
-        <RadioButton
-            android:id="@+id/andRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:text="AND"
-            tools:ignore="HardcodedText"/>
+        <View
+            android:id="@+id/upperHorizontal"
+            android:layout_width="17dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="24dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/blue_grey_500"/>
 
-        <RadioButton
-            android:id="@+id/orRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:checked="true"
-            android:text="OR"
-            tools:ignore="HardcodedText"/>
+        <View
+            android:id="@+id/upperVertical"
+            android:layout_width="2dp"
+            android:layout_height="8dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/upperHorizontal"
+            android:background="@color/blue_grey_500"/>
 
-    </RadioGroup>
+        <com.anthonymandra.widget.ToggleButton
+            android:id="@+id/toggleAnd"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/lock_selector"
+            android:gravity="center"
+            android:layout_below="@id/upperVertical"
+            android:elevation="2dp"/>
+
+        <View
+            android:id="@+id/lowerVertical"
+            android:layout_width="2dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/toggleAnd"
+            android:background="@color/blue_grey_500"/>
+
+        <View
+            android:id="@+id/middleHorizontal"
+            android:layout_marginTop="4dp"
+            android:layout_below="@+id/toggleAnd"
+            android:layout_width="17dp"
+            android:layout_height="2dp"
+            android:background="@color/blue_grey_500"/>
+
+        <View
+            android:id="@+id/lowerBullet"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/lowerVertical"
+            android:background="@color/blue_grey_500"/>
+
+        <View
+            android:id="@+id/middleBullet"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:background="@color/blue_grey_500"
+            android:layout_marginTop="69dp"
+            android:layout_alignParentStart="true"/>
+
+    </RelativeLayout>
 
     <fragment
         android:id="@+id/keywordFragment"
         android:name="com.anthonymandra.rawdroid.KeywordFilterFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/andOrRadioGroup"
+        android:layout_below="@id/labelAndRating"
         tools:layout="@layout/xmp_subject"
         tools:listitem="@layout/keyword_entry"/>
+
+    <ImageButton
+        android:id="@+id/clearButton"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        app:srcCompat="@drawable/ic_close"
+        android:tint="@color/white"
+        android:layout_below="@+id/filterHeader"
+        android:layout_toEndOf="@+id/buttonFolders"/>
 
 </RelativeLayout>

@@ -9,7 +9,7 @@ def versionBuild = 1
 //noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.1'
+    buildToolsVersion '25.0.0'
 
     lintOptions {
         checkReleaseBuilds false
@@ -110,7 +110,8 @@ dependencies {
     compile project(':metadata-extractor')
     compile project(':rawprocessor')
     compile project(':documentActivity')
-    //includes support-v4 and appcompat-v7
+    compile project(':toggleButtons')
+
     compile('com.crashlytics.sdk.android:crashlytics:2.6.5@aar') {
         transitive = true;
     }
@@ -121,13 +122,13 @@ dependencies {
     androidTestCompile 'com.android.support:support-annotations:25.1.0'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
+
+    //includes support-v4 and appcompat-v7
     compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:cardview-v7:25.1.0'
-//    compile 'com.android.support:support-v4:25.1.0'
     compile 'com.afollestad:material-cab:0.1.12'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     //    compile 'xyz.danoz:recyclerviewfastscroller:0.1.3'
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.4'
 //    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
-    compile project(path: ':togglegroup')
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
 }
