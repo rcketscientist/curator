@@ -9,7 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/library/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/library/showcaseView.iml" />
-      <module fileurl="file://$PROJECT_DIR$/togglegroup/togglegroup.iml" filepath="$PROJECT_DIR$/togglegroup/togglegroup.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ToggleButtons/toggleButtons.iml" filepath="$PROJECT_DIR$/ToggleButtons/toggleButtons.iml" />
     </modules>
   </component>
 </project>
