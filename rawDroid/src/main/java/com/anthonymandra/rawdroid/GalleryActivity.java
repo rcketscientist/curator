@@ -25,6 +25,7 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -807,6 +808,12 @@ public class GalleryActivity extends CoreActivity implements
 	private void requestCopyDestination()
 	{
 		storeSelectionForIntent();
+		if (mItemsForIntent.size() < 1)
+		{
+			Snackbar.make(mImageGrid, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show();
+			return;
+		}
+
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 		startActivityForResult(intent, REQUEST_COPY_DIR);
 	}
