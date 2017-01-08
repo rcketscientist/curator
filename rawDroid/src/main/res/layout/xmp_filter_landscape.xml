@@ -158,8 +158,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:theme="@style/FilterButton"
-            android:tint="@color/white"
+            android:theme="@style/BrightButton"
+            android:tint="@color/red_300"
             app:srcCompat="@drawable/ic_filter_remove"/>
 
     </LinearLayout>
@@ -172,82 +172,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/filterButtons"/>
 
-    <RelativeLayout
-        android:id="@+id/andAnchor"
+    <com.anthonymandra.widget.ToggleButton
+        android:id="@+id/toggleAnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/filterButtons"
+        android:theme="@style/MatchButton"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="3dp">
-
-        <View
-            android:id="@+id/upperBullet"
-            android:layout_width="4dp"
-            android:layout_height="4dp"
-            android:layout_marginTop="23dp"
-            android:layout_alignParentTop="true"
-            android:background="@color/blue_grey_500"/>
-
-        <View
-            android:id="@+id/upperHorizontal"
-            android:layout_width="17dp"
-            android:layout_height="2dp"
-            android:layout_marginTop="24dp"
-            android:layout_alignParentTop="true"
-            android:background="@color/blue_grey_500"/>
-
-        <View
-            android:id="@+id/upperVertical"
-            android:layout_width="2dp"
-            android:layout_height="8dp"
-            android:layout_centerInParent="true"
-            android:layout_below="@id/upperHorizontal"
-            android:background="@color/blue_grey_500"/>
-
-        <com.anthonymandra.widget.ToggleButton
-            android:id="@+id/toggleAnd"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:button="@drawable/and_selector"
-            android:gravity="center"
-            android:layout_below="@id/upperVertical"
-            android:buttonTint="@color/white"
-            android:elevation="2dp"/>
-
-        <View
-            android:id="@+id/lowerVertical"
-            android:layout_width="2dp"
-            android:layout_height="24dp"
-            android:layout_centerInParent="true"
-            android:layout_below="@id/toggleAnd"
-            android:background="@color/blue_grey_500"/>
-
-        <View
-            android:id="@+id/middleHorizontal"
-            android:layout_marginTop="4dp"
-            android:layout_below="@+id/toggleAnd"
-            android:layout_width="17dp"
-            android:layout_height="2dp"
-            android:background="@color/blue_grey_500"/>
-
-        <View
-            android:id="@+id/lowerBullet"
-            android:layout_width="4dp"
-            android:layout_height="4dp"
-            android:layout_centerInParent="true"
-            android:layout_below="@id/lowerVertical"
-            android:background="@color/blue_grey_500"/>
-
-        <View
-            android:id="@+id/middleBullet"
-            android:layout_width="4dp"
-            android:layout_height="4dp"
-            android:background="@color/blue_grey_500"
-            android:layout_marginTop="69dp"
-            android:layout_alignParentStart="true"/>
-
-    </RelativeLayout>
+        android:layout_below="@id/filterButtons"
+        android:layout_above="@+id/keywordFragment"
+        android:layout_toEndOf="@+id/labelAndRating"
+        android:elevation="2dp"/>
 
     <fragment
         android:id="@+id/keywordFragment"

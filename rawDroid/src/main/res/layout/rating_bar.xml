@@ -1,49 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/ratingGroup"
+<com.anthonymandra.widget.ToggleGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ratingGroup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    app:styleMaterial="true"
     android:orientation="horizontal">
 
-    <CheckBox
+    <com.anthonymandra.widget.ToggleButton
         android:id="@+id/rating1"
-        android:layout_width="@dimen/color_button_size"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/btn_star_material"
-        android:button="@null"/>
+        style="@style/RatingButton"/>
 
-    <CheckBox
+    <com.anthonymandra.widget.ToggleButton
         android:id="@+id/rating2"
-        android:layout_width="@dimen/color_button_size"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/btn_star_material"
-        android:button="@null"
-        android:checked="false"/>
+        style="@style/RatingButton"/>
 
-    <CheckBox
+    <com.anthonymandra.widget.ToggleButton
         android:id="@+id/rating3"
-        android:layout_width="@dimen/color_button_size"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/btn_star_material"
-        android:button="@null"/>
+        style="@style/RatingButton"/>
 
-    <CheckBox
+    <com.anthonymandra.widget.ToggleButton
         android:id="@+id/rating4"
-        android:layout_width="@dimen/color_button_size"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/btn_star_material"
-        android:button="@null"/>
+        style="@style/RatingButton"/>
 
-    <CheckBox
+    <com.anthonymandra.widget.ToggleButton
         android:id="@+id/rating5"
-        android:layout_width="@dimen/color_button_size"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="@drawable/btn_star_material"
-        android:button="@null"/>
-</LinearLayout>
+        style="@style/RatingButton"/>
+</com.anthonymandra.widget.ToggleGroup>

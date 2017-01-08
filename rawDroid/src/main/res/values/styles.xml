@@ -131,15 +131,6 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="FilterButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:colorButtonNormal">@color/filterButton</item>
-    </style>
-
-    <style name="BrightImageButton" parent="Widget.AppCompat.ImageButton">
-        <item name="android:colorButtonNormal">@color/colorAccent</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
     <style name="RecycleDialog" parent="@android:style/Theme.Dialog">
         <item name="android:ellipsize">start</item>
         <item name="android:singleLine">true</item>
@@ -152,14 +143,28 @@
         <item name="android:background">@drawable/toggle_background</item>
     </style>
 
-    <style name="LabelToggleButton" parent="@style/ToggleButton">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">48dp</item>
+    <style name="ImageToggleButton" parent="ToggleButton">
+        <item name="android:gravity">center</item>
     </style>
 
-    <style name="SortToggleButton" parent="@style/ToggleButton">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">48dp</item>
+    <style name="ImageActionToggleButton" parent="ImageToggleButton">
+        <item name="android:layout_width">@dimen/action_button_size</item>
+        <item name="android:layout_height">@dimen/action_button_size</item>
+    </style>
+
+    <style name="LabelToggleButton" parent="@style/ImageActionToggleButton">
+        <item name="android:button">@drawable/ic_square_rounded</item>
+    </style>
+
+    <style name="SortToggleButton" parent="@style/ImageActionToggleButton"/>
+
+    <style name="RatingButton" parent="@style/ImageActionToggleButton">
+        <item name="android:button">@drawable/btn_star_material</item>
+    </style>
+
+    <style name="MatchButton" parent="BrightButton">
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="android:background">@drawable/and_selector</item>
     </style>
 
 </resources>

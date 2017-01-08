@@ -22,7 +22,7 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
     private boolean mMultiSelect = false;
     private boolean mPauseListener = false;
     Integer mRating = null;
-    CheckBox mOne, mTwo, mThree, mFour, mFive;
+    ToggleButton mOne, mTwo, mThree, mFour, mFive;
 
     public RatingBar(Context context) { this(context, null); }
     public RatingBar(Context context, AttributeSet attrs) { this(context, attrs, 0); }
@@ -36,11 +36,12 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
 
     private void attachButtons()
     {
-        mOne = (CheckBox)findViewById(R.id.rating1);
-        mTwo = (CheckBox)findViewById(R.id.rating2);
-        mThree = (CheckBox)findViewById(R.id.rating3);
-        mFour = (CheckBox)findViewById(R.id.rating4);
-        mFive = (CheckBox)findViewById(R.id.rating5);
+        //TODO: Now that these are ToggleButtons this class can be greatly simplified
+        mOne = (ToggleButton)findViewById(R.id.rating1);
+        mTwo = (ToggleButton)findViewById(R.id.rating2);
+        mThree = (ToggleButton)findViewById(R.id.rating3);
+        mFour = (ToggleButton)findViewById(R.id.rating4);
+        mFive = (ToggleButton)findViewById(R.id.rating5);
 
         mOne.setOnCheckedChangeListener(this);
         mTwo.setOnCheckedChangeListener(this);

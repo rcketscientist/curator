@@ -12,36 +12,26 @@
     <com.anthonymandra.widget.ToggleButton
         android:id="@+id/blueLabel"
         style="@style/LabelToggleButton"
-        android:gravity="center"
-        android:button="@drawable/ic_square_rounded"
         android:buttonTint="@color/blue_900"/>
 
     <com.anthonymandra.widget.ToggleButton
         android:id="@+id/redLabel"
         style="@style/LabelToggleButton"
-        android:gravity="center"
-        android:button="@drawable/ic_square_rounded"
         android:buttonTint="@color/red_800"/>
 
     <com.anthonymandra.widget.ToggleButton
         android:id="@+id/greenLabel"
         style="@style/LabelToggleButton"
-        android:gravity="center"
-        android:button="@drawable/ic_square_rounded"
         android:buttonTint="@color/green_900"/>
 
     <com.anthonymandra.widget.ToggleButton
         android:id="@+id/yellowLabel"
         style="@style/LabelToggleButton"
-        android:gravity="center"
-        android:button="@drawable/ic_square_rounded"
         android:buttonTint="@color/yellow_900"/>
 
     <com.anthonymandra.widget.ToggleButton
         android:id="@+id/purpleLabel"
         style="@style/LabelToggleButton"
-        android:gravity="center"
-        android:button="@drawable/ic_square_rounded"
         android:buttonTint="@color/purple_900"/>
 
 </com.anthonymandra.widget.ToggleGroup>

@@ -8,7 +8,7 @@
 
     <CheckBox
         android:id="@+id/blueLabel"
-        android:layout_width="@dimen/color_button_size"
+        android:layout_width="@dimen/action_button_size"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         android:background="@drawable/button_blue"
@@ -17,7 +17,7 @@
 
     <CheckBox
         android:id="@+id/redLabel"
-        android:layout_width="@dimen/color_button_size"
+        android:layout_width="@dimen/action_button_size"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         android:background="@drawable/button_red"
@@ -26,7 +26,7 @@
 
     <CheckBox
         android:id="@+id/greenLabel"
-        android:layout_width="@dimen/color_button_size"
+        android:layout_width="@dimen/action_button_size"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         android:background="@drawable/button_green"
@@ -35,7 +35,7 @@
 
     <CheckBox
         android:id="@+id/yellowLabel"
-        android:layout_width="@dimen/color_button_size"
+        android:layout_width="@dimen/action_button_size"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         android:background="@drawable/button_yellow"
@@ -44,7 +44,7 @@
 
     <CheckBox
         android:id="@+id/purpleLabel"
-        android:layout_width="@dimen/color_button_size"
+        android:layout_width="@dimen/action_button_size"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         android:background="@drawable/button_purple"
