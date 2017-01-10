@@ -1,38 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.anthonymandra.widget.ToggleGroup
+<android.support.v7.widget.ToggleGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sortOptions"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_below="@+id/sortHeader"
-    android:layout_centerHorizontal="true"
-    app:styleMaterial="true">
+    android:layout_centerHorizontal="true">
 
-    <com.anthonymandra.widget.ToggleButton
+    <android.support.v7.widget.ToggleButton
         android:id="@+id/blueLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/blue_900"/>
 
-    <com.anthonymandra.widget.ToggleButton
+    <android.support.v7.widget.ToggleButton
         android:id="@+id/redLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/red_800"/>
 
-    <com.anthonymandra.widget.ToggleButton
+    <android.support.v7.widget.ToggleButton
         android:id="@+id/greenLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/green_900"/>
 
-    <com.anthonymandra.widget.ToggleButton
+    <android.support.v7.widget.ToggleButton
         android:id="@+id/yellowLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/yellow_900"/>
 
-    <com.anthonymandra.widget.ToggleButton
+    <android.support.v7.widget.ToggleButton
         android:id="@+id/purpleLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/purple_900"/>
 
-</com.anthonymandra.widget.ToggleGroup>
+</android.support.v7.widget.ToggleGroup>
 

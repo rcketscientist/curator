@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.ToggleButton;
+import android.support.v7.widget.ToggleGroup;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +23,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
-import com.anthonymandra.widget.ToggleButton;
-import com.anthonymandra.widget.ToggleGroup;
 import com.anthonymandra.widget.XmpLabelGroup;
 import com.drew.lang.annotations.NotNull;
 
@@ -247,19 +245,19 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
         switch (checkedId)
         {
-            case R.id.toggleSortAtoZ:
+            case R.id.toggleSortAfirst:
                 mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
-            case R.id.toggleSortZtoA:
+            case R.id.toggleSortZfirst:
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
-            case R.id.toggleSort0to9:
+            case R.id.toggleYoungFirst:
                 mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
-            case R.id.toggleSort9to0:
+            case R.id.toggleOldFirst:
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
@@ -272,16 +270,16 @@ public class XmpFilterFragment extends XmpBaseFragment
         if (sortAscending)
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((ToggleButton)getActivity().findViewById(R.id.toggleSortAtoZ)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleSortAfirst)).setChecked(true);
             else
-                ((ToggleButton)getActivity().findViewById(R.id.toggleSort0to9)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleYoungFirst)).setChecked(true);
         }
         else
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((ToggleButton)getActivity().findViewById(R.id.toggleSortZtoA)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleSortZfirst)).setChecked(true);
             else
-                ((ToggleButton)getActivity().findViewById(R.id.toggleSort9to0)).setChecked(true);
+                ((ToggleButton)getActivity().findViewById(R.id.toggleOldFirst)).setChecked(true);
         }
     }
 

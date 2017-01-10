@@ -7,7 +7,7 @@
     android:layout_width="@dimen/xmp_filter_width"
     android:layout_height="match_parent"
     android:background="@color/light_blue_200"
-    android:padding="3dp"
+    android:padding="2dp"
     android:clickable="true"
     tools:ignore="ContentDescription">
     <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
@@ -55,46 +55,45 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/sortHeader">
 
-        <com.anthonymandra.widget.ToggleGroup
+        <android.support.v7.widget.ToggleGroup
             android:id="@+id/sortGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:styleMaterial="true"
             app:exclusive="true"
             android:orientation="horizontal">
 
-            <com.anthonymandra.widget.ToggleButton
-                android:id="@+id/toggleSortAtoZ"
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleSortAfirst"
                 style="@style/SortToggleButton"
-                android:button="@drawable/ic_sort_az"
+                android:button="@drawable/ic_a"
                 android:buttonTint="@color/white"
                 android:checked="false"
                 android:gravity="center"/>
 
-            <com.anthonymandra.widget.ToggleButton
-                android:id="@+id/toggleSortZtoA"
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleSortZfirst"
                 style="@style/SortToggleButton"
                 android:gravity="center"
-                android:button="@drawable/ic_sort_za"
+                android:button="@drawable/ic_z"
                 android:buttonTint="@color/white"/>
 
-            <com.anthonymandra.widget.ToggleButton
-                android:id="@+id/toggleSort0to9"
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleYoungFirst"
                 style="@style/SortToggleButton"
                 android:gravity="center"
-                android:button="@drawable/ic_date_ascending"
+                android:button="@drawable/ic_baby"
                 android:buttonTint="@color/white"/>
 
-            <com.anthonymandra.widget.ToggleButton
-                android:id="@+id/toggleSort9to0"
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleOldFirst"
                 style="@style/SortToggleButton"
                 android:gravity="center"
-                android:button="@drawable/ic_date_descending"
+                android:button="@drawable/ic_elder"
                 android:buttonTint="@color/white"/>
 
-        </com.anthonymandra.widget.ToggleGroup>
+        </android.support.v7.widget.ToggleGroup>
 
-        <com.anthonymandra.widget.ToggleButton
+        <android.support.v7.widget.ToggleButton
             android:id="@+id/toggleSegregate"
             style="@style/SortToggleButton"
             android:gravity="center"
@@ -117,7 +116,6 @@
             android:id="@+id/filterIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="1dp"
             android:layout_centerInParent="true"
             android:tint="@color/blue_grey_500"
             app:srcCompat="@drawable/ic_filter"/>
@@ -164,24 +162,23 @@
 
     </LinearLayout>
 
-
     <include
         android:id="@+id/labelAndRating"
         layout="@layout/xmp_core"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
         android:layout_below="@+id/filterButtons"/>
 
-    <com.anthonymandra.widget.ToggleButton
+    <android.support.v7.widget.ToggleButton
         android:id="@+id/toggleAnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:theme="@style/MatchButton"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/filterButtons"
-        android:layout_above="@+id/keywordFragment"
-        android:layout_toEndOf="@+id/labelAndRating"
-        android:elevation="2dp"/>
+        android:layout_alignTop="@id/labelAndRating"
+        android:layout_alignBottom="@id/labelAndRating"
+        android:layout_toEndOf="@+id/labelAndRating"/>
 
     <fragment
         android:id="@+id/keywordFragment"
