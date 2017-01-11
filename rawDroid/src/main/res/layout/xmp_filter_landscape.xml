@@ -78,14 +78,14 @@
                 android:buttonTint="@color/white"/>
 
             <android.support.v7.widget.ToggleButton
-                android:id="@+id/toggleYoungFirst"
+                android:id="@+id/toggleSortYoungFirst"
                 style="@style/SortToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_baby"
                 android:buttonTint="@color/white"/>
 
             <android.support.v7.widget.ToggleButton
-                android:id="@+id/toggleOldFirst"
+                android:id="@+id/toggleSortOldFirst"
                 style="@style/SortToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_elder"
@@ -97,7 +97,7 @@
             android:id="@+id/toggleSegregate"
             style="@style/SortToggleButton"
             android:gravity="center"
-            android:button="@drawable/ic_segregate3"
+            android:button="@drawable/ic_jpeg_bottom_borderless"
             android:buttonTint="@color/white"
             android:elevation="2dp"
             android:layout_marginStart="3dp"/>

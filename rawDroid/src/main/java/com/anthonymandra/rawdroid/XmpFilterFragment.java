@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.widget.ToggleButton;
 import android.support.v7.widget.ToggleGroup;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,7 +26,6 @@ import android.widget.ListView;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.widget.XmpLabelGroup;
-import com.drew.lang.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -110,7 +108,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        final ToggleButton andOr = (ToggleButton) getActivity().findViewById(R.id.toggleAnd);
+        final CompoundButton andOr = (CompoundButton) getActivity().findViewById(R.id.toggleAnd);
         setAndOr(andOr.isChecked());
         andOr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -132,7 +130,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        ToggleButton segregate = (ToggleButton) getActivity().findViewById(R.id.toggleSegregate);
+        CompoundButton segregate = (CompoundButton) getActivity().findViewById(R.id.toggleSegregate);
         segregate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -238,7 +236,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     private void initAndOr(boolean andTrueOrFalse)
     {
-        ((ToggleButton)getActivity().findViewById(R.id.toggleAnd)).setChecked(andTrueOrFalse);
+        ((CompoundButton)getActivity().findViewById(R.id.toggleAnd)).setChecked(andTrueOrFalse);
     }
 
     private void setSort(int checkedId)
@@ -253,11 +251,11 @@ public class XmpFilterFragment extends XmpBaseFragment
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
-            case R.id.toggleYoungFirst:
+            case R.id.toggleSortYoungFirst:
                 mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
-            case R.id.toggleOldFirst:
+            case R.id.toggleSortOldFirst:
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
@@ -270,22 +268,22 @@ public class XmpFilterFragment extends XmpBaseFragment
         if (sortAscending)
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((ToggleButton)getActivity().findViewById(R.id.toggleSortAfirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortAfirst)).setChecked(true);
             else
-                ((ToggleButton)getActivity().findViewById(R.id.toggleYoungFirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortZfirst)).setChecked(true);
         }
         else
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((ToggleButton)getActivity().findViewById(R.id.toggleSortZfirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortYoungFirst)).setChecked(true);
             else
-                ((ToggleButton)getActivity().findViewById(R.id.toggleOldFirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortOldFirst)).setChecked(true);
         }
     }
 
     private void initSegregate(boolean checked)
     {
-        ((ToggleButton)getActivity().findViewById(R.id.toggleSegregate)).setChecked(checked);
+        ((CompoundButton)getActivity().findViewById(R.id.toggleSegregate)).setChecked(checked);
     }
 
     @SuppressWarnings("unused")
@@ -431,7 +429,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             mSearchListener = listener;
         }
 
-        static FolderDialog newInstance(@NotNull String[] paths, @NotNull boolean[] visible, @NotNull boolean[] excluded, int x, int y)
+        static FolderDialog newInstance(@NonNull String[] paths, @NonNull boolean[] visible, @NonNull boolean[] excluded, int x, int y)
         {
             FolderDialog f = new FolderDialog();
             Bundle args = new Bundle();
