@@ -243,7 +243,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
         switch (checkedId)
         {
-            case R.id.toggleSortAfirst:
+            case R.id.toggleSortAfirst: // A is quantitatively lowest, ascending
                 mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
@@ -251,12 +251,12 @@ public class XmpFilterFragment extends XmpBaseFragment
                 mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Name;
                 break;
-            case R.id.toggleSortYoungFirst:
-                mSortAscending = true;
+            case R.id.toggleSortYoungFirst: // Young is quantitatively highest, descending
+                mSortAscending = false;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
             case R.id.toggleSortOldFirst:
-                mSortAscending = false;
+                mSortAscending = true;
                 mSortColumn = XmpFilter.SortColumns.Date;
                 break;
         }
@@ -270,14 +270,14 @@ public class XmpFilterFragment extends XmpBaseFragment
             if (XmpFilter.SortColumns.Name == sortType)
                 ((CompoundButton)getActivity().findViewById(R.id.toggleSortAfirst)).setChecked(true);
             else
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortZfirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortOldFirst)).setChecked(true);
         }
         else
         {
             if (XmpFilter.SortColumns.Name == sortType)
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortYoungFirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortZfirst)).setChecked(true);
             else
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortOldFirst)).setChecked(true);
+                ((CompoundButton)getActivity().findViewById(R.id.toggleSortYoungFirst)).setChecked(true);
         }
     }
 
