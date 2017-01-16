@@ -90,6 +90,9 @@ public class MetaService extends ThreadedPriorityIntentService
      */
     public static final String EXTRA_METADATA = "com.anthonymandra.framework.extra.EXTRA_METADATA";
 
+    private static final int TRUE = 1;
+    private static final int FALSE = 0;
+
     private final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
 
     private static final AtomicInteger sJobsTotal = new AtomicInteger(0);
@@ -178,10 +181,14 @@ public class MetaService extends ThreadedPriorityIntentService
         return c.getInt(processedColumn) != 0;
     }
 
-    public static boolean isProcessed(ContentValues c)
+    public static void setProcessed(ContentValues cv, boolean processed)
     {
-        Boolean isProcessed = c.getAsBoolean(Meta.PROCESSED);
-        return isProcessed != null ? isProcessed : false;
+        cv.put(Meta.PROCESSED, processed ? TRUE : FALSE);
+    }
+
+    public static boolean isProcessed(ContentValues cv)
+    {
+        return cv.getAsInteger(Meta.PROCESSED) == TRUE;
     }
 
 	/**

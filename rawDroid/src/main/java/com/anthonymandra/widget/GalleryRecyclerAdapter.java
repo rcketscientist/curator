@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
+import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,10 +17,8 @@ import android.widget.TextView;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtils;
 import com.bumptech.glide.Glide;
-import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,6 +42,9 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	private OnSelectionUpdatedListener mSelectionListener;
 	private OnItemClickListener mOnItemClickListener;
 	private OnItemLongClickListener mOnItemLongClickListener;
+
+	public static final String[] REQUIRED_COLUMNS = {BaseColumns._ID, Meta.LABEL, Meta.NAME,
+			Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI };
 
 //	@Override
 //	public String getSectionTitle(int position)

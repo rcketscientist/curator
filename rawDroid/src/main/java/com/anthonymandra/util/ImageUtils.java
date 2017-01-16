@@ -36,6 +36,7 @@ import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.MetaMedia;
+import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
@@ -545,7 +546,7 @@ public class ImageUtils
         toFill.put(Meta.DRIVE_MODE, getDriveMode(meta));
         toFill.put(Meta.EXPOSURE_MODE, getExposureMode(meta));
         toFill.put(Meta.EXPOSURE_PROGRAM, getExposureProgram(meta));
-        toFill.put(Meta.PROCESSED, true);
+        MetaService.setProcessed(toFill, true);
 
         return toFill;
     }
@@ -1206,12 +1207,6 @@ public class ImageUtils
 			return null;
 		return new BufferedInputStream(fd.createInputStream());
 	}
-
-    public static boolean isProcessed(ContentValues c)
-    {
-        Integer processed = c.getAsInteger(Meta.PROCESSED);
-        return processed != null && processed != 0;
-    }
 
     @SuppressLint("SimpleDateFormat")
     public static byte[] getThumb(final Context c, final Uri uri)

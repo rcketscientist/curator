@@ -63,6 +63,7 @@ import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.inscription.WhatsNewDialog;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -100,6 +101,7 @@ public class GalleryActivity extends CoreActivity implements
 	private static final int REQUEST_COPY_DIR = 12;
     private static final int REQUEST_UPDATE_PHOTO = 16;
 	private static final int REQUEST_ACCESS_USB = 17;
+	private static final int REQUEST_TUTORIAL = 18;
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
@@ -123,6 +125,20 @@ public class GalleryActivity extends CoreActivity implements
 	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
 	private DrawerLayout mDrawerLayout;
+
+	private static final String[] REQUIRED_COLUMNS = {
+			Meta.LABEL, Meta.NAME, Meta.PARENT, Meta.RATING, Meta.SUBJECT, Meta.TIMESTAMP,
+			Meta.TYPE, Meta.URI };
+
+	// Generate all needed columns for the projection
+	private static final String[] PROJECTION;
+	static
+	{
+		Set<String> ALL_COLUMNS = new HashSet<>();
+		ALL_COLUMNS.addAll(Arrays.asList(REQUIRED_COLUMNS));
+		ALL_COLUMNS.addAll(Arrays.asList(GalleryRecyclerAdapter.REQUIRED_COLUMNS));
+		PROJECTION = ALL_COLUMNS.toArray(new String[ALL_COLUMNS.size()]);
+	}
 
 	@Override
 	public int getContentView()
@@ -159,7 +175,7 @@ public class GalleryActivity extends CoreActivity implements
 			}
 		});
 
-//		doFirstRun();
+		doFirstRun();
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
@@ -439,7 +455,7 @@ public class GalleryActivity extends CoreActivity implements
 	            @Override
 	            public void onClick(DialogInterface dialog, int which)
 	            {
-		            // Do nothing
+		            offerRequestPermission();
 	            }
             });
             builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener()
@@ -504,7 +520,7 @@ public class GalleryActivity extends CoreActivity implements
 		switch (loaderID) {
 			case META_LOADER_ID:
 
-				String[] projection = null;//GALLERY_PROJECTION;
+				String[] projection = PROJECTION;
 				String selection = null;
 				String[] selectionArgs = null;
 				String sort = META_DEFAULT_SORT;
@@ -538,9 +554,6 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		mGalleryAdapter.swapCursor(cursor);
 		setImageCountTitle();
-
-		if (mGalleryAdapter.getItemCount() == 0)
-			offerRequestPermission();
 	}
 
 	@Override
@@ -674,6 +687,10 @@ public class GalleryActivity extends CoreActivity implements
 				{
 					handleUsbAccessRequest(data.getData());
 				}
+				break;
+			case REQUEST_TUTORIAL:
+				// We don't really care about a result, after tutorial offer to search.
+				offerRequestPermission();
 				break;
 		}
 	}
