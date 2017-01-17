@@ -50,13 +50,19 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDescriptor;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.exif.PanasonicRawIFD0Directory;
 import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.FujifilmMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.LeicaMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusCameraSettingsMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.OlympusEquipmentMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.PanasonicMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SigmaMakernoteDescriptor;
+import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
@@ -546,7 +552,7 @@ public class ImageUtils
         toFill.put(Meta.DRIVE_MODE, getDriveMode(meta));
         toFill.put(Meta.EXPOSURE_MODE, getExposureMode(meta));
         toFill.put(Meta.EXPOSURE_PROGRAM, getExposureProgram(meta));
-        MetaService.setProcessed(toFill, true);
+//        MetaService.setProcessed(toFill, true);
 
         return toFill;
     }
@@ -576,12 +582,14 @@ public class ImageUtils
      * --- Meta Getters ----------------------------------------------------------------------------
      */
 
-    private static String getDescription(Metadata meta, Class type, int tag)
+    private static String getDescription(Metadata meta, int tag)
     {
-        Directory dir = meta.getFirstDirectoryOfType(type);
-        if (dir == null || !dir.containsTag(tag))
-            return null;
-        return dir.getDescription(tag);
+        for (Directory dir : meta.getDirectories())
+        {
+            if (dir.containsTag(tag))
+                return dir.getDescription(tag);
+        }
+        return null;
     }
 
     private static String[] getStringArray(Metadata meta, Class type, int tag)
@@ -634,65 +642,78 @@ public class ImageUtils
 
     private static String getAperture(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_APERTURE);
+        String aperture = getDescription(meta, ExifSubIFDDirectory.TAG_FNUMBER);
+        if (aperture == null)
+            aperture = getDescription(meta, ExifSubIFDDirectory.TAG_APERTURE);
+        return aperture;
     }
 
     private static String getExposure(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
     }
 
     private static String getImageHeight(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+        String height = getDescription(meta, ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+        if (height == null)
+            height = getDescription(meta, ExifIFD0Directory.TAG_IMAGE_HEIGHT);
+        if (height == null)
+            height = getDescription(meta, PanasonicRawIFD0Directory.TagSensorHeight);
+        return height;
     }
 
     private static String getImageWidth(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
+        String width = getDescription(meta, ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
+        if (width == null)
+            width = getDescription(meta, ExifIFD0Directory.TAG_IMAGE_WIDTH);
+        if (width == null)
+            width = getDescription(meta, PanasonicRawIFD0Directory.TagSensorWidth);
+        return width;
     }
 
     private static String getFocalLength(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_FOCAL_LENGTH);
     }
 
     private static String getFlash(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_FLASH);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_FLASH);
     }
 
     private static String getShutterSpeed(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_SHUTTER_SPEED);
     }
 
     private static String getWhiteBalance(Metadata meta)
     {
-        if (meta.containsDirectoryOfType(CanonMakernoteDirectory.class))
+/*        if (meta.containsDirectoryOfType(CanonMakernoteDirectory.class))
             return meta.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE);
         if (meta.containsDirectoryOfType(PanasonicMakernoteDirectory.class))
             return meta.getFirstDirectoryOfType(PanasonicMakernoteDirectory.class).getDescription(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE);
         if (meta.containsDirectoryOfType(FujifilmMakernoteDirectory.class))
             return meta.getFirstDirectoryOfType(FujifilmMakernoteDirectory.class).getDescription(FujifilmMakernoteDirectory.TAG_WHITE_BALANCE);
         if (meta.containsDirectoryOfType(LeicaMakernoteDirectory.class))
-            return meta.getFirstDirectoryOfType(LeicaMakernoteDirectory.class).getDescription(LeicaMakernoteDirectory.TAG_WHITE_BALANCE);
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_WHITE_BALANCE);
+            return meta.getFirstDirectoryOfType(LeicaMakernoteDirectory.class).getDescription(LeicaMakernoteDirectory.TAG_WHITE_BALANCE);*/
+        return getDescription(meta, ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE);
     }
 
     private static String getExposureProgram(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_EXPOSURE_PROGRAM);
     }
 
     private static String getExposureMode(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_EXPOSURE_MODE);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_EXPOSURE_MODE);
     }
 
     private static String getLensMake(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_LENS_MAKE);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_LENS_MAKE);
     }
 
     private static String getLensModel(Metadata meta)
@@ -701,7 +722,11 @@ public class ImageUtils
             return meta.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.TAG_LENS_MODEL);
         if (meta.containsDirectoryOfType(NikonType2MakernoteDirectory.class))
             return meta.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_LENS);
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_LENS_MODEL);
+        if (meta.containsDirectoryOfType(OlympusEquipmentMakernoteDirectory.class))
+            return meta.getFirstDirectoryOfType(OlympusEquipmentMakernoteDirectory.class).getDescription(OlympusEquipmentMakernoteDirectory.TAG_LENS_TYPE);
+        if (meta.containsDirectoryOfType(SonyType1MakernoteDirectory.class))
+            return meta.getFirstDirectoryOfType(SonyType1MakernoteDirectory.class).getDescription(SonyType1MakernoteDirectory.TAG_LENS_ID);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_LENS_MODEL);
     }
 
     private static String getDriveMode(Metadata meta)
@@ -710,12 +735,17 @@ public class ImageUtils
             return meta.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.CameraSettings.TAG_CONTINUOUS_DRIVE_MODE);
         if (meta.containsDirectoryOfType(NikonType2MakernoteDirectory.class))
             return meta.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_SHOOTING_MODE);
+        if (meta.containsDirectoryOfType(OlympusCameraSettingsMakernoteDirectory.class))
+            return meta.getFirstDirectoryOfType(OlympusCameraSettingsMakernoteDirectory.class).getDescription(OlympusCameraSettingsMakernoteDirectory.TagDriveMode);
         return null;
     }
 
     private static String getIso(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
+        String iso = getDescription(meta, ExifSubIFDDirectory.TAG_ISO_EQUIVALENT);
+        if (iso == null)
+            iso = getDescription(meta, PanasonicRawIFD0Directory.TagIso);
+        return iso;
     }
 
     private static String getFNumber(Metadata meta)
@@ -733,17 +763,23 @@ public class ImageUtils
 
     private static String getDateTime(Metadata meta)
     {
-        return getDescription(meta, ExifSubIFDDirectory.class, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+        return getDescription(meta, ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
     }
 
     private static String getMake(Metadata meta)
     {
-        return getExifIFD0Description(meta, ExifIFD0Directory.TAG_MAKE);
+        String make = getExifIFD0Description(meta, ExifIFD0Directory.TAG_MAKE);
+        if (make == null)
+            make = getDescription(meta, PanasonicRawIFD0Directory.TagMake);
+        return make;
     }
 
     private static String getModel(Metadata meta)
     {
-        return getExifIFD0Description(meta, ExifIFD0Directory.TAG_MODEL);
+        String model = getExifIFD0Description(meta, ExifIFD0Directory.TAG_MODEL);
+        if (model == null)
+            model = getDescription(meta, PanasonicRawIFD0Directory.TagModel);
+        return model;
     }
 
     private static int getOrientation(Metadata meta)
@@ -776,17 +812,17 @@ public class ImageUtils
 
     private static String getAltitude(Metadata meta)
     {
-        return getDescription(meta, GpsDirectory.class, GpsDirectory.TAG_ALTITUDE);
+        return getDescription(meta, GpsDirectory.TAG_ALTITUDE);
     }
 
     private static String getLatitude(Metadata meta)
     {
-        return getDescription(meta, GpsDirectory.class, GpsDirectory.TAG_LATITUDE);
+        return getDescription(meta, GpsDirectory.TAG_LATITUDE);
     }
 
     private static String getLongitude(Metadata meta)
     {
-        return getDescription(meta, GpsDirectory.class, GpsDirectory.TAG_LONGITUDE);
+        return getDescription(meta, GpsDirectory.TAG_LONGITUDE);
     }
 
     private static Double getRating(Metadata meta)
