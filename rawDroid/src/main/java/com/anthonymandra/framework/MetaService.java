@@ -188,7 +188,8 @@ public class MetaService extends ThreadedPriorityIntentService
 
     public static boolean isProcessed(ContentValues cv)
     {
-        return cv.getAsInteger(Meta.PROCESSED) == TRUE;
+        Integer processed = cv.getAsInteger(Meta.PROCESSED);
+        return processed != null && processed == TRUE;
     }
 
 	/**
@@ -382,81 +383,6 @@ public class MetaService extends ThreadedPriorityIntentService
         {
             WakefulBroadcastReceiver.completeWakefulIntent(intent);
         }
-
-        try(Cursor c = ImageUtils.getMetaCursor(this, uris))
-        {
-            if (c == null)
-                return;
-
-	        sJobsTotal.addAndGet(c.getCount());
-            while (c.moveToNext())
-            {
-                Uri uri = Uri.parse(c.getString(c.getColumnIndex(Meta.URI)));
-
-                ContentValues values = new ContentValues();
-                boolean isProcessed = isProcessed(c);
-                if (isProcessed)
-                {
-                    DatabaseUtils.cursorRowToContentValues(c, values);
-                }
-                else
-                {
-                    values = ImageUtils.getContentValues(this, uri);
-                }
-	            jobComplete();
-
-                if (values == null)
-                    continue;
-
-                // If this is a high priority request then add to db immediately
-                if (isHigherThanDefault(intent))
-                {
-                    if (!isProcessed)
-                    {
-                        getContentResolver().update(Meta.CONTENT_URI,
-                                values,
-                                ImageUtils.getWhereUri(),
-                                new String[]{ uri.toString() });
-                    }
-
-                    int nameColumn = c.getColumnIndex(Meta.NAME);
-                    if (nameColumn == -1)
-                        continue;
-
-                    values.put(Meta.NAME, c.getString(nameColumn));  // add name to broadcast
-
-                    Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
-                            .putExtra(EXTRA_URI, uri.toString())
-                            .putExtra(EXTRA_METADATA, values);
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-                }
-                else if (!isProcessed)
-                {
-                    addUpdate(uri.toString(), values);
-                }
-
-                Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
-                        .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
-                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-
-                try
-                {
-                    processUpdates();
-                }
-                catch (RemoteException | OperationApplicationException e)
-                {
-                    //TODO: Notify user
-                    e.printStackTrace();
-                }
-            }
-        }
-        finally
-        {
-            WakefulBroadcastReceiver.completeWakefulIntent(intent);
-        }
-
     }
 
     @Override
