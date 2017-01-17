@@ -6,7 +6,6 @@
     android:id="@+id/xmp_filter_landscape"
     android:layout_width="@dimen/xmp_filter_width"
     android:layout_height="match_parent"
-    android:background="@color/light_blue_200"
     android:padding="2dp"
     android:clickable="true"
     tools:ignore="ContentDescription">
@@ -56,6 +55,7 @@
         android:layout_below="@id/sortHeader">
 
         <android.support.v7.widget.ToggleGroup
+            style="@style/Widget.Material.ToggleGroup"
             android:id="@+id/sortGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
 
             <android.support.v7.widget.ToggleButton
                 android:id="@+id/toggleSortAfirst"
-                style="@style/SortToggleButton"
+                style="@style/ImageActionToggleButton"
                 android:button="@drawable/ic_a"
                 android:buttonTint="@color/white"
                 android:checked="false"
@@ -72,21 +72,21 @@
 
             <android.support.v7.widget.ToggleButton
                 android:id="@+id/toggleSortZfirst"
-                style="@style/SortToggleButton"
+                style="@style/ImageActionToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_z"
                 android:buttonTint="@color/white"/>
 
             <android.support.v7.widget.ToggleButton
                 android:id="@+id/toggleSortYoungFirst"
-                style="@style/SortToggleButton"
+                style="@style/ImageActionToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_baby"
                 android:buttonTint="@color/white"/>
 
             <android.support.v7.widget.ToggleButton
                 android:id="@+id/toggleSortOldFirst"
-                style="@style/SortToggleButton"
+                style="@style/ImageActionToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_elder"
                 android:buttonTint="@color/white"/>
@@ -95,7 +95,7 @@
 
         <android.support.v7.widget.ToggleButton
             android:id="@+id/toggleSegregate"
-            style="@style/SortToggleButton"
+            style="@style/ImageActionToggleButton"
             android:gravity="center"
             android:button="@drawable/ic_jpeg_bottom_borderless"
             android:buttonTint="@color/white"
@@ -174,7 +174,7 @@
         android:id="@+id/toggleAnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:theme="@style/MatchButton"
+        android:background="@drawable/and_selector"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@id/labelAndRating"
         android:layout_alignBottom="@id/labelAndRating"

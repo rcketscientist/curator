@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.ToggleGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.Material.ToggleGroup"
     android:id="@+id/sortOptions"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -10,27 +11,27 @@
     <android.support.v7.widget.ToggleButton
         android:id="@+id/blueLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/blue_900"/>
+        android:buttonTint="@color/blue_500"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/redLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/red_800"/>
+        android:buttonTint="@color/red_500"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/greenLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/green_900"/>
+        android:buttonTint="@color/green_500"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/yellowLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/yellow_900"/>
+        android:buttonTint="@color/yellow_500"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/purpleLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/purple_900"/>
+        android:buttonTint="@color/purple_500"/>
 
 </android.support.v7.widget.ToggleGroup>
 

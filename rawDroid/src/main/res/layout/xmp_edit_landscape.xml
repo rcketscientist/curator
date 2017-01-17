@@ -6,52 +6,7 @@
     android:layout_width="256dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/translucent_black_rect">
-
-    <LinearLayout
-        android:id="@+id/titlebar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/editTitle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_weight="1"
-            android:gravity="left|bottom"
-            android:text="@string/editTitle"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
-
-        <Button
-            android:id="@+id/clearButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="@string/clear"/>
-    </LinearLayout>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/labelAndRating"
-        android:layout_below="@+id/titlebar"
-        android:background="@android:color/darker_gray"/>
-
-    <include
-        android:id="@+id/labelAndRating"
-        layout="@layout/xmp_core"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/divider"/>
+    android:background="@color/sidebarBackgroundColor">
 
     <fragment
         android:id="@+id/keywordFragment"
@@ -60,5 +15,42 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/labelAndRating"
         tools:layout="@layout/xmp_subject_edit"/>
+
+    <ImageButton
+        android:id="@+id/clearButton"
+        style="?android:attr/buttonBarButtonStyle"
+        android:src="@drawable/ic_remove_meta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/red_900"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_tag"
+        android:tint="@color/blue_grey_500"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="39dp"/>
+
+    <View
+        android:id="@+id/headerDivider"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:background="@color/blue_grey_500"
+        android:layout_alignBottom="@+id/clearButton"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/header"/>
+
+    <include
+        android:id="@+id/labelAndRating"
+        layout="@layout/xmp_core"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

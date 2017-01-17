@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.ToggleGroup
     xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.Material.ToggleGroup"
     android:id="@+id/ratingGroup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
