@@ -724,9 +724,10 @@ public class ImageUtils
             return meta.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_LENS);
         if (meta.containsDirectoryOfType(OlympusEquipmentMakernoteDirectory.class))
             return meta.getFirstDirectoryOfType(OlympusEquipmentMakernoteDirectory.class).getDescription(OlympusEquipmentMakernoteDirectory.TAG_LENS_TYPE);
-        if (meta.containsDirectoryOfType(SonyType1MakernoteDirectory.class))
+        String lens = getDescription(meta, ExifSubIFDDirectory.TAG_LENS_MODEL);                 // We prefer the exif over Sony maker,
+        if (lens == null && meta.containsDirectoryOfType(SonyType1MakernoteDirectory.class))    // but use maker if exif doesn't exist
             return meta.getFirstDirectoryOfType(SonyType1MakernoteDirectory.class).getDescription(SonyType1MakernoteDirectory.TAG_LENS_ID);
-        return getDescription(meta, ExifSubIFDDirectory.TAG_LENS_MODEL);
+        return lens;
     }
 
     private static String getDriveMode(Metadata meta)
