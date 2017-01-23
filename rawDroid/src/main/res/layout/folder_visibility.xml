@@ -81,7 +81,7 @@
 
         <Button
             android:id="@+id/buttonAddSearchRoot"
-            android:theme="@style/BrightButton"
+            android:theme="@style/SidebarButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_folder_add"

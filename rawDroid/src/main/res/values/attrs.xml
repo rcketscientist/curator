@@ -10,8 +10,4 @@
         <!-- Defines whether multiple buttons can be selected simultaneously -->
         <attr name="multiselect" format="boolean"/>
     </declare-styleable>
-
-    <declare-styleable name="CompoundButton">
-        <attr name="android:button" />
-    </declare-styleable>
 </resources>

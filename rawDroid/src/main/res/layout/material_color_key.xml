@@ -11,27 +11,27 @@
     <android.support.v7.widget.ToggleButton
         android:id="@+id/blueLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/blue_500"/>
+        android:buttonTint="@color/blue_700"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/redLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/red_500"/>
+        android:buttonTint="@color/red_700"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/greenLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/green_500"/>
+        android:buttonTint="@color/green_700"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/yellowLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/yellow_500"/>
+        android:buttonTint="@color/yellow_700"/>
 
     <android.support.v7.widget.ToggleButton
         android:id="@+id/purpleLabel"
         style="@style/LabelToggleButton"
-        android:buttonTint="@color/purple_500"/>
+        android:buttonTint="@color/purple_700"/>
 
 </android.support.v7.widget.ToggleGroup>
 

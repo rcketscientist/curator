@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:padding="2dp"
     android:clickable="true"
+    android:background="@color/sidebarBackgroundColor"
     tools:ignore="ContentDescription">
     <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
 
@@ -145,18 +146,18 @@
 
         <ImageButton
             android:id="@+id/buttonFolders"
+            android:theme="@style/SidebarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:src="@drawable/ic_folder_border"
-            android:theme="@style/BrightButton"/>
+            app:srcCompat="@drawable/ic_folder_border"/>
 
         <ImageButton
             android:id="@+id/clearButton"
+            android:theme="@style/SidebarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:theme="@style/BrightButton"
             android:tint="@color/red_300"
             app:srcCompat="@drawable/ic_filter_remove"/>
 
@@ -170,8 +171,10 @@
         android:layout_marginStart="4dp"
         android:layout_below="@+id/filterButtons"/>
 
+    <!-- TODO: Without theme here the background drawable won't work...?-->
     <android.support.v7.widget.ToggleButton
         android:id="@+id/toggleAnd"
+        android:theme="@style/SidebarButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/and_selector"

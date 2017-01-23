@@ -20,7 +20,7 @@
             android:layout_alignBottom="@+id/galleryToolbar"
             android:padding="16dp"
             android:src="@drawable/ic_filter"
-            android:background="@color/xmpButtonColor"/>
+            android:background="@color/xmpActionButtonColor"/>
         <android.support.v7.widget.Toolbar
             android:id="@+id/galleryToolbar"
             android:layout_width="match_parent"
@@ -53,7 +53,7 @@
             android:layout_alignParentEnd="true"
             android:padding="16dp"
             android:src="@drawable/ic_tag"
-            android:background="@color/xmpButtonColor"/>
+            android:background="@color/xmpActionButtonColor"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gridview"

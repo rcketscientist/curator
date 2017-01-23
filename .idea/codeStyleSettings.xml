@@ -3,7 +3,6 @@
   <component name="ProjectCodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
-        <option name="LINE_SEPARATOR" value="&#10;" />
         <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
         <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
         <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
@@ -64,19 +63,10 @@
           </extensions>
         </Objective-C-extensions>
         <XML>
-          <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+          <option name="XML_KEEP_LINE_BREAKS" value="false" />
+          <option name="XML_ALIGN_ATTRIBUTES" value="false" />
+          <option name="XML_SPACE_INSIDE_EMPTY_TAG" value="true" />
         </XML>
-        <codeStyleSettings language="JAVA">
-          <option name="BRACE_STYLE" value="2" />
-          <option name="CLASS_BRACE_STYLE" value="2" />
-          <option name="METHOD_BRACE_STYLE" value="2" />
-          <option name="CATCH_ON_NEW_LINE" value="true" />
-          <option name="FINALLY_ON_NEW_LINE" value="true" />
-          <indentOptions>
-            <option name="USE_TAB_CHARACTER" value="true" />
-            <option name="SMART_TABS" value="true" />
-          </indentOptions>
-        </codeStyleSettings>
         <codeStyleSettings language="XML">
           <option name="FORCE_REARRANGE_MODE" value="1" />
           <indentOptions>
@@ -89,7 +79,7 @@
                   <match>
                     <AND>
                       <NAME>xmlns:android</NAME>
-                      <XML_NAMESPACE>Namespace:</XML_NAMESPACE>
+                      <XML_NAMESPACE>^$</XML_NAMESPACE>
                     </AND>
                   </match>
                 </rule>
@@ -99,7 +89,7 @@
                   <match>
                     <AND>
                       <NAME>xmlns:.*</NAME>
-                      <XML_NAMESPACE>Namespace:</XML_NAMESPACE>
+                      <XML_NAMESPACE>^$</XML_NAMESPACE>
                     </AND>
                   </match>
                   <order>BY_NAME</order>
@@ -236,6 +226,6 @@
         </codeStyleSettings>
       </value>
     </option>
-    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+    <option name="PREFERRED_PROJECT_CODE_STYLE" value="Default (1)" />
   </component>
 </project>
