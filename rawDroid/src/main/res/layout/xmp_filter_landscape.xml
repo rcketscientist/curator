@@ -28,6 +28,15 @@
             android:tint="@color/blue_grey_500"
             app:srcCompat="@drawable/ic_sort"/>
 
+        <ImageButton
+            android:id="@+id/helpButton"
+            android:background="@null"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_help"
+            android:layout_alignParentEnd="true"/>
+
         <View
             android:id="@+id/leftSortDivider"
             android:layout_width="wrap_content"
@@ -43,6 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="3dp"
             android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/helpButton"
             android:layout_toEndOf="@id/sortIcon"
             android:background="@color/blue_grey_500"/>
 
@@ -111,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/sortSection"
         android:layout_marginBottom="3dp"
-        android:layout_marginTop="3dp">
+        android:layout_marginTop="6dp">
 
         <ImageView
             android:id="@+id/filterIcon"
@@ -137,31 +147,6 @@
             android:layout_alignParentEnd="true"
             android:background="@color/blue_grey_500"/>
     </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/filterButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/filterHeader">
-
-        <ImageButton
-            android:id="@+id/buttonFolders"
-            android:theme="@style/SidebarButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            app:srcCompat="@drawable/ic_folder_border"/>
-
-        <ImageButton
-            android:id="@+id/clearButton"
-            android:theme="@style/SidebarButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:tint="@color/red_300"
-            app:srcCompat="@drawable/ic_filter_remove"/>
-
-    </LinearLayout>
 
     <include
         android:id="@+id/labelAndRating"
@@ -191,5 +176,31 @@
         android:layout_below="@id/labelAndRating"
         tools:layout="@layout/xmp_subject"
         tools:listitem="@layout/keyword_entry"/>
+
+    <LinearLayout
+        android:id="@+id/filterButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filterHeader"
+        android:layout_alignParentStart="true">
+
+        <ImageButton
+            android:id="@+id/buttonFolders"
+            android:theme="@style/SidebarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            app:srcCompat="@drawable/ic_folder_border"/>
+
+        <ImageButton
+            android:id="@+id/clearButton"
+            android:theme="@style/SidebarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:tint="@color/red_300"
+            app:srcCompat="@drawable/ic_filter_remove"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
