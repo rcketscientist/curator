@@ -134,6 +134,11 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="BrightButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/blue_500</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="RecycleDialog" parent="@android:style/Theme.Dialog">
         <item name="android:ellipsize">start</item>
         <item name="android:singleLine">true</item>

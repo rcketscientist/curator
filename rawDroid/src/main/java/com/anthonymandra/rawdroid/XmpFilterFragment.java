@@ -188,12 +188,14 @@ public class XmpFilterFragment extends XmpBaseFragment
                     excluded[i++] = mExcludedFolders.contains(path);
                 }
 
+                int[] position = new int[2];
+                foldersButton.getLocationOnScreen(position);
                 FolderDialog dialog = FolderDialog.newInstance(
                         paths.toArray(new String[paths.size()]),
                         visible,
                         excluded,
-                        foldersButton.getLeft(),
-                        foldersButton.getTop());
+                        position[0],
+                        position[1]);
                 dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog);
                 dialog.setOnVisibilityChangedListener(new FolderAdapter.OnVisibilityChangedListener()
                 {

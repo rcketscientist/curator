@@ -9,6 +9,7 @@
     android:padding="2dp"
     android:clickable="true"
     android:background="@color/sidebarBackgroundColor"
+    tools:context=".GalleryActivity"
     tools:ignore="ContentDescription">
     <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
 
@@ -31,8 +32,8 @@
         <ImageButton
             android:id="@+id/helpButton"
             android:background="@null"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:tint="@color/white"
             app:srcCompat="@drawable/ic_help"
             android:layout_alignParentEnd="true"/>
@@ -121,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/sortSection"
         android:layout_marginBottom="3dp"
-        android:layout_marginTop="6dp">
+        android:layout_marginTop="8dp">
 
         <ImageView
             android:id="@+id/filterIcon"

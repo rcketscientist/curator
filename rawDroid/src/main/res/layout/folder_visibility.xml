@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:orientation="vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:id="@+id/folderDialogHeader"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
+        android:background="@color/headerColor"
+        android:padding="3dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/headerColor"
-        android:paddingTop="5dp">
+        tools:context=".GalleryActivity">
 
         <LinearLayout
-            android:background="#00000000"
+            android:id="@+id/visibleLabel"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="5dp"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp">
+            android:paddingEnd="10dp"
+            android:layout_alignParentTop="true">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,11 +45,13 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/excludeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp">
+            android:paddingEnd="10dp"
+            android:layout_below="@id/visibleLabel">
 
             <TextView
                 android:id="@+id/textView3"
@@ -81,23 +80,24 @@
 
         <Button
             android:id="@+id/buttonAddSearchRoot"
-            android:theme="@style/SidebarButton"
+            android:theme="@style/BrightButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_folder_add"
             android:text="@string/addRoot"
             android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"/>
-
-    </LinearLayout>
+            android:layout_marginEnd="4dp"
+            android:layout_below="@id/excludeLabel"/>
 
     <ListView
         android:id="@+id/listViewVisibility"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/black"
         android:layout_gravity="center_horizontal"
         android:divider="@android:drawable/divider_horizontal_dark"
         tools:listitem="@layout/folder_list_item"
         android:paddingStart="4dp"
-        android:paddingEnd="4dp"/>
-</LinearLayout>
+        android:paddingEnd="4dp"
+        android:layout_below="@id/buttonAddSearchRoot"/>
+</RelativeLayout>

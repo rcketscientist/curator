@@ -6,14 +6,23 @@
     android:layout_width="256dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/sidebarBackgroundColor">
+    android:background="@color/sidebarBackgroundColor"
+    tools:context=".GalleryActivity">
+
+    <include
+        android:id="@+id/metaLabelRating"
+        layout="@layout/xmp_core"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_centerHorizontal="true"/>
 
     <fragment
         android:id="@+id/keywordFragment"
         android:name="com.anthonymandra.rawdroid.KeywordEditFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/filterLabelRating"
+        android:layout_below="@id/metaLabelRating"
         tools:layout="@layout/xmp_subject_edit"/>
 
     <ImageButton
@@ -44,13 +53,5 @@
         android:layout_alignBottom="@+id/clearMetaButton"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/header"/>
-
-    <include
-        android:id="@+id/metaLabelRating"
-        layout="@layout/xmp_core"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/header"
-        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
