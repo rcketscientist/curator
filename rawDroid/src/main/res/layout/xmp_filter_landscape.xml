@@ -149,7 +149,7 @@
     </RelativeLayout>
 
     <include
-        android:id="@+id/labelAndRating"
+        android:id="@+id/filterLabelRating"
         layout="@layout/xmp_core"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -164,16 +164,16 @@
         android:layout_height="wrap_content"
         android:background="@drawable/and_selector"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@id/labelAndRating"
-        android:layout_alignBottom="@id/labelAndRating"
-        android:layout_toEndOf="@+id/labelAndRating"/>
+        android:layout_alignTop="@id/filterLabelRating"
+        android:layout_alignBottom="@id/filterLabelRating"
+        android:layout_toEndOf="@+id/filterLabelRating"/>
 
     <fragment
         android:id="@+id/keywordFragment"
         android:name="com.anthonymandra.rawdroid.KeywordFilterFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/labelAndRating"
+        android:layout_below="@id/filterLabelRating"
         tools:layout="@layout/xmp_subject"
         tools:listitem="@layout/keyword_entry"/>
 
@@ -193,7 +193,7 @@
             app:srcCompat="@drawable/ic_folder_border"/>
 
         <ImageButton
-            android:id="@+id/clearButton"
+            android:id="@+id/clearFilterButton"
             android:theme="@style/SidebarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

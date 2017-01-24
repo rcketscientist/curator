@@ -13,11 +13,11 @@
         android:name="com.anthonymandra.rawdroid.KeywordEditFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/labelAndRating"
+        android:layout_below="@+id/filterLabelRating"
         tools:layout="@layout/xmp_subject_edit"/>
 
     <ImageButton
-        android:id="@+id/clearButton"
+        android:id="@+id/clearMetaButton"
         style="?android:attr/buttonBarButtonStyle"
         android:src="@drawable/ic_remove_meta"
         android:layout_width="wrap_content"
@@ -41,12 +41,12 @@
         android:layout_width="wrap_content"
         android:layout_height="3dp"
         android:background="@color/blue_grey_500"
-        android:layout_alignBottom="@+id/clearButton"
+        android:layout_alignBottom="@+id/clearMetaButton"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/header"/>
 
     <include
-        android:id="@+id/labelAndRating"
+        android:id="@+id/metaLabelRating"
         layout="@layout/xmp_core"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

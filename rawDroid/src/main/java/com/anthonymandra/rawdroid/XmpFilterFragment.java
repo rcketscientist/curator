@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.ToggleGroup;
 import android.view.Gravity;
@@ -26,12 +27,16 @@ import android.widget.ListView;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.widget.XmpLabelGroup;
+import com.github.amlcurran.showcaseview.ShowcaseView;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 public class XmpFilterFragment extends XmpBaseFragment
 {
@@ -99,7 +104,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     private void attachButtons()
     {
-        getActivity().findViewById(R.id.clearButton).setOnClickListener(new View.OnClickListener()
+        getActivity().findViewById(R.id.clearMetaButton).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -224,6 +229,16 @@ public class XmpFilterFragment extends XmpBaseFragment
                 });
 
                 dialog.show(getFragmentManager(), TAG);
+            }
+        });
+
+        final ImageButton helpButton = (ImageButton) getActivity().findViewById(R.id.helpButton);
+        helpButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                startTutorial();
             }
         });
     }
@@ -599,4 +614,89 @@ public class XmpFilterFragment extends XmpBaseFragment
             return convertView;
         }
     }
+
+    private void startTutorial()
+    {
+	    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
+
+//	    ShowcaseConfig config = new ShowcaseConfig();
+//	    config.setFadeDuration(1);
+//	    config.setDelay(1);
+//
+////	    final RectangleShape rectangle = new RectangleShape(100, 100);
+////	    rectangle.setAdjustToTarget(true);
+////	    config.setShape(rectangle);
+//	    sequence.setConfig(config);
+
+	    // Sort group
+	    View sortgroup = getActivity().findViewById(R.id.sortGroup);
+	    sequence.addSequenceItem(getRectangularView(
+			    sortgroup,
+			    R.string.sortImages,
+			    R.string.sortCotent,
+			    R.string.ok));
+
+	    // Segregate
+	    View segregate = getActivity().findViewById(R.id.toggleSegregate);
+	    sequence.addSequenceItem(getRectangularView(
+			    segregate,
+			    R.string.sortImages,
+			    R.string.segregateContent,
+			    R.string.ok));
+
+	    // Folder
+	    View folder = getActivity().findViewById(R.id.buttonFolders);
+	    sequence.addSequenceItem(getRectangularView(
+			    folder,
+			    R.string.filterImages,
+			    R.string.folderContent,
+			    R.string.ok));
+
+	    // Clear
+	    View clearFilter = getActivity().findViewById(R.id.clearFilterButton);
+	    sequence.addSequenceItem(getRectangularView(
+			    clearFilter,
+			    R.string.filterImages,
+			    R.string.clearFilterContent,
+			    R.string.ok));
+
+	    // Rating
+	    View labelRating = getActivity().findViewById(R.id.filterLabelRating);
+	    sequence.addSequenceItem(getRectangularView(
+			    labelRating,
+			    R.string.filterImages,
+			    R.string.xmpContent,
+			    R.string.ok));
+
+	    // Match
+	    View andOr = getActivity().findViewById(R.id.toggleAnd);
+	    sequence.addSequenceItem(getRectangularView(
+			    andOr,
+			    R.string.filterImages,
+			    R.string.matchContent,
+			    R.string.ok));
+
+	    sequence.start();
+    }
+
+	private MaterialShowcaseView getRectangularView(View target, @StringRes int titleId, @StringRes int contentId, @StringRes int dismissId)
+	{
+		return getRectangularView(target,
+				getString(titleId),
+				getString(contentId),
+				getString(dismissId));
+	}
+
+	private MaterialShowcaseView getRectangularView(View target, String title, String content, String dismiss)
+	{
+		return new MaterialShowcaseView.Builder(getActivity())
+				.setTarget(target)
+				.setTitleText(title)
+				.setContentText(content)
+				.setDismissOnTouch(true)
+				.setDismissText(dismiss)
+				.withRectangleShape()
+//				.setFadeDuration(300)
+				.build();
+	}
 }

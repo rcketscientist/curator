@@ -166,7 +166,7 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	private void attachButtons()
 	{
-		getActivity().findViewById(R.id.clearButton).setOnClickListener(new OnClickListener()
+		getActivity().findViewById(R.id.clearMetaButton).setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)

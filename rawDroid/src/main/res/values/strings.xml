@@ -319,4 +319,16 @@
     <string name="compress">compress</string>
     <string name="defaults">Defaults</string>
     <string name="licenseRequestSent">License request sent...</string>
+
+    <!-- Filter sidebar tutorial-->
+    <string name="sortImages">Sort Images</string>
+    <string name="filterImages">Filter Images</string>
+    <string name="sortCotent">Sort images by name or age (icon is which image is first).</string>
+    <string name="segregateContent">This will sort compressed image after raw images.  So if you shot raw+jpeg, the jpeg will be at the end of the gallery.</string>
+    <string name="folderContent">This allows you to show/hide folders, add folders, and exclude folders from further searches.</string>
+    <string name="clearFilterContent">This will remove current filter constraints.</string>
+    <string name="xmpContent">This will filter based on XMP rating or label.</string>
+    <string name="matchContent">This will determine whether the filter matches ANY xmp field or ALL xmp fields.</string>
+
+
 </resources>
