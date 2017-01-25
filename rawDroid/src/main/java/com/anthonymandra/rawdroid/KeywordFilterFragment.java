@@ -41,7 +41,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        mGrid = (GridView) getView(); // getActivity().findViewById(R.id.keywordGridView);
+        mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override

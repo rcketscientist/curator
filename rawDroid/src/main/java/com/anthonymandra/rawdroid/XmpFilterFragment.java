@@ -27,7 +27,6 @@ import android.widget.ListView;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.widget.XmpLabelGroup;
-import com.github.amlcurran.showcaseview.ShowcaseView;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -621,17 +620,8 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
 	    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
 
-//	    ShowcaseConfig config = new ShowcaseConfig();
-//	    config.setFadeDuration(1);
-//	    config.setDelay(1);
-//
-////	    final RectangleShape rectangle = new RectangleShape(100, 100);
-////	    rectangle.setAdjustToTarget(true);
-////	    config.setShape(rectangle);
-//	    sequence.setConfig(config);
-
 	    // Sort group
-	    View sortgroup = getActivity().findViewById(R.id.sortGroup);
+	    View sortgroup = getView().findViewById(R.id.sortGroup);
 	    sequence.addSequenceItem(getRectangularView(
 			    sortgroup,
 			    R.string.sortImages,
@@ -639,7 +629,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 			    R.string.ok));
 
 	    // Segregate
-	    View segregate = getActivity().findViewById(R.id.toggleSegregate);
+	    View segregate = getView().findViewById(R.id.toggleSegregate);
 	    sequence.addSequenceItem(getRectangularView(
 			    segregate,
 			    R.string.sortImages,
@@ -647,7 +637,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 			    R.string.ok));
 
 	    // Folder
-	    View folder = getActivity().findViewById(R.id.buttonFolders);
+	    View folder = getView().findViewById(R.id.buttonFolders);
 	    sequence.addSequenceItem(getRectangularView(
 			    folder,
 			    R.string.filterImages,
@@ -655,7 +645,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 			    R.string.ok));
 
 	    // Clear
-	    View clearFilter = getActivity().findViewById(R.id.clearFilterButton);
+	    View clearFilter = getView().findViewById(R.id.clearFilterButton);
 	    sequence.addSequenceItem(getRectangularView(
 			    clearFilter,
 			    R.string.filterImages,
@@ -663,15 +653,23 @@ public class XmpFilterFragment extends XmpBaseFragment
 			    R.string.ok));
 
 	    // Rating
-	    View labelRating = getActivity().findViewById(R.id.filterLabelRating);
+	    View labelRating = getView().findViewById(R.id.filterLabelRating);
 	    sequence.addSequenceItem(getRectangularView(
 			    labelRating,
 			    R.string.filterImages,
-			    R.string.xmpContent,
+			    R.string.ratingLabelContent,
+			    R.string.ok));
+
+	    // Subject
+	    View subject = getView().findViewById(R.id.keywordFragment);
+	    sequence.addSequenceItem(getRectangularView(
+			    subject,
+			    R.string.filterImages,
+			    R.string.subjectContent,
 			    R.string.ok));
 
 	    // Match
-	    View andOr = getActivity().findViewById(R.id.toggleAnd);
+	    View andOr = getView().findViewById(R.id.toggleAnd);
 	    sequence.addSequenceItem(getRectangularView(
 			    andOr,
 			    R.string.filterImages,
@@ -698,7 +696,6 @@ public class XmpFilterFragment extends XmpBaseFragment
 				.setDismissOnTouch(true)
 				.setDismissText(dismiss)
 				.withRectangleShape()
-//				.setFadeDuration(300)
 				.build();
 	}
 }

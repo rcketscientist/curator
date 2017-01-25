@@ -26,7 +26,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
             android:elevation="1dp"
-            android:tint="@color/blue_grey_500"
+            android:tint="@color/sidebarHeader"
             app:srcCompat="@drawable/ic_sort"/>
 
         <ImageButton
@@ -45,7 +45,7 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/sortIcon"
-            android:background="@color/blue_grey_500"
+            android:background="@color/sidebarHeader"
             android:layout_marginEnd="3dp"/>
 
         <View
@@ -55,7 +55,7 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@id/helpButton"
             android:layout_toEndOf="@id/sortIcon"
-            android:background="@color/blue_grey_500"/>
+            android:background="@color/sidebarHeader"/>
 
     </RelativeLayout>
 
@@ -79,7 +79,7 @@
                 style="@style/ImageActionToggleButton"
                 android:button="@drawable/ic_a"
                 android:buttonTint="@color/white"
-                android:checked="false"
+                android:checked="true"
                 android:gravity="center"/>
 
             <android.support.v7.widget.ToggleButton
@@ -129,7 +129,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:tint="@color/blue_grey_500"
+            android:tint="@color/sidebarHeader"
             app:srcCompat="@drawable/ic_filter"/>
 
         <View
@@ -138,7 +138,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
             android:layout_toStartOf="@id/filterIcon"
-            android:background="@color/blue_grey_500"/>
+            android:background="@color/sidebarHeader"/>
 
         <View
             android:layout_width="wrap_content"
@@ -146,7 +146,7 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@id/filterIcon"
             android:layout_alignParentEnd="true"
-            android:background="@color/blue_grey_500"/>
+            android:background="@color/sidebarHeader"/>
     </RelativeLayout>
 
     <include
@@ -175,6 +175,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/filterLabelRating"
+        android:layout_marginTop="4dp"
         tools:layout="@layout/xmp_subject"
         tools:listitem="@layout/keyword_entry"/>
 
