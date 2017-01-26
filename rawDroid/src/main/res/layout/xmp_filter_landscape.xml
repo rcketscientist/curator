@@ -155,6 +155,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_below="@+id/filterButtons"/>
 
     <!-- TODO: Without theme here the background drawable won't work...?-->

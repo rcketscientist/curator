@@ -4,7 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/sidebarHeader">
+    android:background="@color/blue_grey_700"
+    android:paddingBottom="4dp">
 
     <ImageView
         android:layout_width="match_parent"
@@ -21,7 +22,6 @@
         android:layout_height="wrap_content"
         android:columnWidth="80sp"
         android:numColumns="auto_fit"
-        android:layout_marginStart="2dp"
-        android:layout_marginEnd="2dp"
+        android:background="@color/black"
         tools:listitem="@layout/keyword_entry"/>
 </LinearLayout>

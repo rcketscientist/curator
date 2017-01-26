@@ -145,6 +145,16 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
+        ImageButton clearFilter = (ImageButton) getView().findViewById(R.id.clearFilterButton);
+        clearFilter.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                clear();
+            }
+        });
+
         final ImageButton foldersButton = (ImageButton) getActivity().findViewById(R.id.buttonFolders);
         foldersButton.setOnClickListener(new View.OnClickListener()
         {

@@ -51,4 +51,10 @@
     <color name="blueGreyIdleButton">@color/blue_grey_500</color>
     <color name="blueGreyActiveButton">@color/blue_900</color>
 
+    <color name="colorKeyBlue">@color/blue_400</color>
+    <color name="colorKeyRed">@color/red_400</color>
+    <color name="colorKeyGreen">@color/green_400</color>
+    <color name="colorKeyYellow">@color/yellow_400</color>
+    <color name="colorKeyPurple">@color/purple_400</color>
+
 </resources>

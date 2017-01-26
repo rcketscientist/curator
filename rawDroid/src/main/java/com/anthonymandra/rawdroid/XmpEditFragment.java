@@ -1,10 +1,12 @@
 package com.anthonymandra.rawdroid;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.anthonymandra.widget.XmpLabelGroup;
 
@@ -14,7 +16,7 @@ import java.util.List;
 public class XmpEditFragment extends XmpBaseFragment
 {
 	private static final String TAG = XmpEditFragment.class.getSimpleName();
-	public static final String FRAGMENT_TAG = "XmpEditFragment";
+	private static final XmpEditValues recentXmp = new XmpEditValues();
 
 	public interface RatingChangedListener
 	{
@@ -64,17 +66,23 @@ public class XmpEditFragment extends XmpBaseFragment
 	@Override
 	protected void onXmpChanged(XmpValues xmp)
 	{
-		recentXmp = new XmpEditValues();
-		recentXmp.Subject = xmp.subject;
-		recentXmp.Rating = formatRating(xmp.rating);
-		recentXmp.Label = formatLabel(xmp.label);
+		// Don't make recent represent clear
+		if (xmp.rating != null && xmp.label != null && xmp.subject != null)
+		{
+			recentXmp.Subject = xmp.subject;
+			recentXmp.Rating = formatRating(xmp.rating);
+			recentXmp.Label = formatLabel(xmp.label);
+		}
+		fireMetaUpdate();
+	}
+
+	private void fireMetaUpdate()
+	{
 		mXmpChangedListener.onMetaChanged(
 				recentXmp.Rating,
 				recentXmp.Label,
 				recentXmp.Subject);
 	}
-
-	XmpEditValues recentXmp;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -174,27 +182,68 @@ public class XmpEditFragment extends XmpBaseFragment
 				clear();
 			}
 		});
+		getView().findViewById(R.id.recentMetaButton).setOnClickListener(new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				fireMetaUpdate();
+			}
+		});
 	}
 
 	@Override
 	public void onKeywordsSelected(Collection<String> selectedKeywords)
 	{
+		recentXmp.Subject = getSubject();
 		if (mSubjectListener != null)
-			mSubjectListener.onSubjectChanged(getSubject());
+			mSubjectListener.onSubjectChanged(recentXmp.Subject);
 	}
 
 	@Override
 	public void onLabelSelectionChanged(List<XmpLabelGroup.Labels> checked)
 	{
+		if (checked.size() > 0)
+		{
+			switch (checked.get(0))
+			{
+				case blue:
+					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyBlue));
+					break;
+				case red:
+					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyRed));
+					break;
+				case green:
+					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyGreen));
+					break;
+				case yellow:
+					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyYellow));
+					break;
+				case purple:
+					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyPurple));
+					break;
+			}
+		}
+		else
+		{
+			((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.white));
+		}
+		recentXmp.Label = getLabel();
 		if (mLabelListener != null)
-			mLabelListener.onLabelChanged(getLabel());
+			mLabelListener.onLabelChanged(recentXmp.Label);
 	}
 
 	@Override
 	public void onRatingSelectionChanged(List<Integer> checked)
 	{
+		recentXmp.Rating = getRating();
+		if (recentXmp.Rating != null && recentXmp.Rating > 0)
+			((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star);
+		else
+			((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star_border);
+
 		if (mRatingListener != null)
-			mRatingListener.onRatingChanged(getRating());
+			mRatingListener.onRatingChanged(recentXmp.Rating);
 	}
 
 	/**
