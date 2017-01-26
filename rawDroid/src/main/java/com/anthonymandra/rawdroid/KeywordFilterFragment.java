@@ -3,7 +3,9 @@ package com.anthonymandra.rawdroid;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,8 +119,13 @@ public class KeywordFilterFragment extends KeywordBaseFragment
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
+        public View getView(int position, View convertView, @NonNull ViewGroup parent)
         {
+            if (position % 2 == 0)
+                convertView.setAlpha(0.9f);
+            else
+                convertView.setAlpha(1);
+
             CheckedTextView v = (CheckedTextView) super.getView(position, convertView, parent);
             v.setChecked(mSelectedKeywords.contains(v.getText()));
             return v;

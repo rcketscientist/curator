@@ -250,11 +250,26 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
         }
 
         @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            if (convertView != null)
+            {
+                if (position % 2 == 0)
+                    convertView.setAlpha(0.5f);
+                else
+                    convertView.setAlpha(1);
+            }
+            return super.getView(position, convertView, parent);
+        }
+
+        @Override
         public void bindView(View view, Context context, Cursor cursor)
         {
             super.bindView(view, context, cursor);
             long id = cursor.getLong(KeywordProvider.Data.COLUMN_ID);
             ((Checkable) view).setChecked(mSelectedKeywords.get(id) != null);
         }
+
+
     }
 }
