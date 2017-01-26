@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="?android:attr/listPreferredItemHeight"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:paddingStart="5dp"
     android:paddingEnd="5dp">
@@ -11,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:textAppearance="@android:style/TextAppearance.Small"
-        android:text="0000-0000:_example/path"
+        tools:text="0000-0000:_example/path"
         android:id="@+id/checkBoxFolderPath"
         android:layout_gravity="center"
         android:button="@drawable/visible_selector"
