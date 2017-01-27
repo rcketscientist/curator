@@ -83,7 +83,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 		mPauseListener = true;
 		mKeywordFragment.clearSelectedKeywords();
 		if (colorKey != null)
-			colorKey.clearCheck();
+			colorKey.clearChecked();
 		if (mRatingBar != null)
 			mRatingBar.clearCheck();
 		mPauseListener = false;
@@ -250,7 +250,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 
 	protected void setMultiselect(boolean enable)
 	{
-		colorKey.setMultiselect(enable);
+		colorKey.setExclusive(!enable);
 		mRatingBar.setMultiselect(enable);
 	}
 

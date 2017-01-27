@@ -6,8 +6,8 @@
         <attr name="foreground" format="reference|color"/>
     </declare-styleable>
 
-    <declare-styleable name="XmpLabelGroup">
-        <!-- Defines whether multiple buttons can be selected simultaneously -->
+<!--    <declare-styleable name="XmpLabelGroup">
+        &lt;!&ndash; Defines whether multiple buttons can be selected simultaneously &ndash;&gt;
         <attr name="multiselect" format="boolean"/>
-    </declare-styleable>
+    </declare-styleable>-->
 </resources>

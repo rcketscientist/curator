@@ -2,6 +2,8 @@ package com.anthonymandra.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.IdRes;
+import android.support.v7.widget.ToggleGroup;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -11,7 +13,7 @@ import com.anthonymandra.rawdroid.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnCheckedChangeListener
+public class XmpLabelGroup extends ToggleGroup
 {
     public interface OnLabelSelectionChangedListener
     {
@@ -27,19 +29,14 @@ public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnChec
         purple
     }
 
-    boolean mPauseListener;
-    boolean mMultiSelect;
     OnLabelSelectionChangedListener mListener;
     CompoundButton mBlue, mRed, mGreen, mYellow, mPurple;
+
     public XmpLabelGroup(Context context) { this(context, null); }
     public XmpLabelGroup(Context context, AttributeSet attrs) { this(context, attrs, 0); }
     public XmpLabelGroup(Context context, AttributeSet attrs, int defStyleAttr)
     {
         super(context, attrs, defStyleAttr);
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.XmpLabelGroup);
-        mMultiSelect = a.getBoolean(R.styleable.XmpLabelGroup_multiselect, false);
-        a.recycle();
-
         inflate(context, R.layout.material_color_key, this);
         attachButtons();
     }
@@ -52,16 +49,15 @@ public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnChec
         mYellow = (CompoundButton)findViewById(R.id.yellowLabel);
         mPurple = (CompoundButton)findViewById(R.id.purpleLabel);
 
-        mBlue.setOnCheckedChangeListener(this);
-        mRed.setOnCheckedChangeListener(this);
-        mGreen.setOnCheckedChangeListener(this);
-        mYellow.setOnCheckedChangeListener(this);
-        mPurple.setOnCheckedChangeListener(this);
-    }
-
-    public void setMultiselect(boolean enable)
-    {
-        mMultiSelect = enable;
+        setOnCheckedChangeListener(new OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(ToggleGroup group, @IdRes int[] checkedId)
+            {
+                if (mListener != null)
+                    mListener.onLabelSelectionChanged(getCheckedLabels());
+            }
+        });
     }
 
     public void setChecked(Labels toCheck, boolean checked)
@@ -74,18 +70,6 @@ public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnChec
             case yellow: mYellow.setChecked(checked); break;
             case purple: mPurple.setChecked(checked); break;
         }
-    }
-
-    public void clearCheck()
-    {
-        mPauseListener = true;
-        mBlue.setChecked(false);
-        mRed.setChecked(false);
-        mGreen.setChecked(false);
-        mYellow.setChecked(false);
-        mPurple.setChecked(false);
-        mPauseListener = false;
-        mListener.onLabelSelectionChanged(getCheckedLabels());
     }
 
     public List<Labels> getCheckedLabels()
@@ -102,31 +86,6 @@ public class XmpLabelGroup extends LinearLayout implements CompoundButton.OnChec
         if (mPurple.isChecked())
             checked.add(Labels.purple);
         return checked;
-    }
-
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-    {
-        if (mPauseListener)
-            return;
-
-        if (!mMultiSelect)
-        {
-            mPauseListener = true;
-            if (mBlue != buttonView && mBlue.isChecked())
-                mBlue.setChecked(false);
-            if (mRed != buttonView && mRed.isChecked())
-                mRed.setChecked(false);
-            if (mGreen != buttonView && mGreen.isChecked())
-                mGreen.setChecked(false);
-            if (mYellow != buttonView && mYellow.isChecked())
-                mYellow.setChecked(false);
-            if (mPurple != buttonView && mPurple.isChecked())
-                mPurple.setChecked(false);
-            mPauseListener = false;
-        }
-
-        mListener.onLabelSelectionChanged(getCheckedLabels());
     }
 
     public void setOnLabelSelectionChangedListener(OnLabelSelectionChangedListener listener)

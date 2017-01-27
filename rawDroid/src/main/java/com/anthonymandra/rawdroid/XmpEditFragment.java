@@ -94,6 +94,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
+		setMultiselect(false);
 		attachButtons();
 	}
 
