@@ -66,13 +66,10 @@ public class XmpEditFragment extends XmpBaseFragment
 	@Override
 	protected void onXmpChanged(XmpValues xmp)
 	{
-		// Don't make recent represent clear
-		if (xmp.rating != null && xmp.label != null && xmp.subject != null)
-		{
-			recentXmp.Subject = xmp.subject;
-			recentXmp.Rating = formatRating(xmp.rating);
-			recentXmp.Label = formatLabel(xmp.label);
-		}
+		recentXmp.Subject = xmp.subject;
+		recentXmp.Rating = formatRating(xmp.rating);
+		recentXmp.Label = formatLabel(xmp.label);
+
 		fireMetaUpdate();
 	}
 
@@ -175,7 +172,7 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	private void attachButtons()
 	{
-		getActivity().findViewById(R.id.clearMetaButton).setOnClickListener(new OnClickListener()
+		getView().findViewById(R.id.clearMetaButton).setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
@@ -238,13 +235,36 @@ public class XmpEditFragment extends XmpBaseFragment
 	public void onRatingSelectionChanged(List<Integer> checked)
 	{
 		recentXmp.Rating = getRating();
-		if (recentXmp.Rating != null && recentXmp.Rating > 0)
-			((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star);
-		else
-			((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star_border);
-
 		if (mRatingListener != null)
 			mRatingListener.onRatingChanged(recentXmp.Rating);
+
+		if (recentXmp.Rating == null)
+		{
+			((ImageView) getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star_border);
+			return;
+		}
+
+		switch (recentXmp.Rating)
+		{
+			case 5:
+				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star5);
+				break;
+			case 4:
+				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star4);
+				break;
+			case 3:
+				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star3);
+				break;
+			case 2:
+				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star2);
+				break;
+			case 1:
+				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star1);
+				break;
+			default:
+				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star_border);
+				break;
+		}
 	}
 
 	/**

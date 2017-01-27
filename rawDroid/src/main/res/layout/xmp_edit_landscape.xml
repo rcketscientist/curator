@@ -58,21 +58,22 @@
             <ImageView
                 android:id="@+id/recentLabel"
                 android:theme="@style/RecentInternal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_square_rounded"
                 android:tint="@color/white"/>
             <ImageView
                 android:id="@+id/recentRating"
                 android:theme="@style/RecentInternal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_star_border"/>
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_star_border"
+                android:tint="@color/white"/>
             <ImageView
                 android:id="@+id/recentSubject"
                 android:theme="@style/RecentInternal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:src="@drawable/ic_key"
                 android:tint="@color/white"/>
 

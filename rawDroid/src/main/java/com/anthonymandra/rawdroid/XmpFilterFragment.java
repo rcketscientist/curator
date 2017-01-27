@@ -103,7 +103,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     private void attachButtons()
     {
-        getActivity().findViewById(R.id.clearMetaButton).setOnClickListener(new View.OnClickListener()
+        getView().findViewById(R.id.clearFilterButton).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
