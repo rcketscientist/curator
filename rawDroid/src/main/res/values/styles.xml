@@ -114,12 +114,10 @@
 
     <style name="GalleryDialog" parent="@style/Theme.AppCompat.Dialog">
         <item name="android:windowBackground">@color/Black_Medium</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="GalleryAlertDialog" parent="@style/Theme.AppCompat.Dialog.Alert">
         <item name="android:windowBackground">@color/Black_Medium</item>
-        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="FolderDialog" parent="@style/GalleryDialog">
@@ -132,6 +130,18 @@
     <style name="SidebarButton" parent="Widget.AppCompat.Button.Colored">
         <item name="android:colorButtonNormal">@color/sidebarButton</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RecentButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/sidebarButton</item>
+        <item name="colorAccent">@color/sidebarButton</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- This is a bit of a hack, need to override recent button parent theme,
+        so we choose a theme roughly representing the items-->
+    <style name="RecentInternal" parent="@android:style/Widget.Material.ActionButton">
+        <item name="android:clickable">false</item>
     </style>
 
     <style name="BrightButton" parent="Widget.AppCompat.Button.Colored">

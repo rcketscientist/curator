@@ -51,38 +51,32 @@
             android:id="@+id/recentMetaButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            style="@style/SidebarButton"
+            android:theme="@style/RecentButton"
             android:layout_weight="0.5"
             android:clickable="true">
 
             <ImageView
                 android:id="@+id/recentLabel"
+                android:theme="@style/RecentInternal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_square_rounded"
                 android:tint="@color/white"/>
             <ImageView
                 android:id="@+id/recentRating"
+                android:theme="@style/RecentInternal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_star_border"/>
             <ImageView
                 android:id="@+id/recentSubject"
+                android:theme="@style/RecentInternal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_key"
                 android:tint="@color/white"/>
 
         </LinearLayout>
-
-<!--        <ImageButton
-            android:id="@+id/recentMetaButton"
-            android:theme="@style/SidebarButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:tint="@color/white"
-            app:srcCompat="@drawable/ic_copy_meta"/>-->
 
         <ImageButton
             android:id="@+id/clearMetaButton"
