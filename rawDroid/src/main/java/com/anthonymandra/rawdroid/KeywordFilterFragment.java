@@ -3,8 +3,12 @@ package com.anthonymandra.rawdroid;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +27,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
-public class KeywordFilterFragment extends KeywordBaseFragment
+public class KeywordFilterFragment extends KeywordBaseFragment implements LoaderManager.LoaderCallbacks<Cursor>
 {
-    private List<String> mDataSource;
-    private ArrayAdapter<String> mAdapter;
-    private GridView mGrid;
-    private Set<String> mSelectedKeywords = new HashSet<>();
+    private final static int LOADER_ID = 1;
+    private final static String[] PROJECTION = new String[] {"DISTINCT " + Meta.SUBJECT};
+    private final static String SELECTION = Meta.SUBJECT + " is not null and " + Meta.SUBJECT + " is not ?";
+    private final static String[] ARGUMENTS = new String[] {""};
+
+    private SelectArrayAdapter<String> mAdapter;
+    private Set<String> mSelectedKeywords = new TreeSet<>();
 
     @Nullable
     @Override
@@ -42,7 +50,11 @@ public class KeywordFilterFragment extends KeywordBaseFragment
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
+
+        GridView mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
+        mAdapter = new SelectArrayAdapter<>(getActivity(), R.layout.keyword_entry);
+        mGrid.setAdapter(mAdapter);
+
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -52,7 +64,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment
                 if (mSelectedKeywords.contains(keyword))
                     mSelectedKeywords.remove(keyword);
                 else
-                    mSelectedKeywords.add(mAdapter.getItem(position));
+                    mSelectedKeywords.add(keyword);
 
                 if (mListener != null)
                     mListener.onKeywordsSelected(getSelectedKeywords());
@@ -60,36 +72,60 @@ public class KeywordFilterFragment extends KeywordBaseFragment
                 mAdapter.notifyDataSetChanged();
             }
         });
+
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
-    public void onResume()
+    public Loader<Cursor> onCreateLoader(int id, Bundle args)
     {
-        super.onResume();
-        try(Cursor cursor = getActivity().getContentResolver().query(Meta.CONTENT_URI,
-                new String[] {"DISTINCT " + Meta.SUBJECT},
-                null, null, null))
+        /*
+		 * Takes action based on the ID of the Loader that's being created
+		 */
+        switch (id) {
+            case LOADER_ID:
+
+                // Returns a new CursorLoader
+                return new CursorLoader(
+                        getActivity(),      	    // Parent activity context
+                        Meta.CONTENT_URI,           // Table to query
+                        PROJECTION,	                // Projection to return
+                        SELECTION,       		    // No selection clause
+                        ARGUMENTS, 			        // No selection arguments
+                        Meta.SUBJECT + " ASC"       // Default sort order
+                );
+            default:
+                // An invalid id was passed in
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
+    {
+        updateKeywords(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+        // Do nothing.
+    }
+
+    private void updateKeywords(Cursor cursor)
+    {
+        Set<String> uniqueKeywords = new HashSet<>();
+        if (cursor != null)
         {
-            mDataSource = new ArrayList<>();
-            Set<String> uniqueKeywords = new HashSet<>();
-            if (cursor != null)
+            while (cursor.moveToNext())
             {
-                while (cursor.moveToNext())
-                {
-                    String all = cursor.getString(0);
-                    if (all == null)
-                        continue;
-                    uniqueKeywords.addAll(Arrays.asList(ImageUtils.convertStringToArray(all)));
-                }
+                String all = cursor.getString(0);
+                uniqueKeywords.addAll(Arrays.asList(ImageUtils.convertStringToArray(all)));
             }
-            mDataSource.addAll(uniqueKeywords);
         }
 
-        mDataSource.remove(""); //Remove the blank
-        Collections.sort(mDataSource);
-
-        mAdapter = new SelectArrayAdapter<>(getActivity(), R.layout.keyword_entry, mDataSource);
-        mGrid.setAdapter(mAdapter);
+        mAdapter.clear();
+        mAdapter.addAll(uniqueKeywords);
     }
 
     public Collection<String> getSelectedKeywords()
@@ -109,8 +145,12 @@ public class KeywordFilterFragment extends KeywordBaseFragment
         mAdapter.notifyDataSetChanged();
     }
 
-    class SelectArrayAdapter<T> extends ArrayAdapter<T>
+    private class SelectArrayAdapter<T> extends ArrayAdapter<T>
     {
+        public SelectArrayAdapter(@NonNull Context context, @LayoutRes int resource)
+        {
+            super(context, resource);
+        }
 
         public SelectArrayAdapter(Context context, int resource, List<T> objects)
         {

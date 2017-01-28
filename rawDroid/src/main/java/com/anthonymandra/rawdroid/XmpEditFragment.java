@@ -145,21 +145,6 @@ public class XmpEditFragment extends XmpBaseFragment
 			return new String[]{label};
 	}
 
-	public void setRating(int rating)
-	{
-		super.setRating(formatRating(rating));
-	}
-
-	public void setLabel(String label)
-	{
-		super.setColorLabel(formatLabel(label));
-	}
-
-	public void setSubject(String[] subject)
-	{
-		super.setSubject(subject);
-	}
-
 	/**
 	 * Silently set xmp without firing listeners
 	 */
