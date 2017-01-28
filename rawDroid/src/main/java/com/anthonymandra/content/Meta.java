@@ -91,4 +91,6 @@ public class Meta implements BaseColumns
 	 * Name of the thumb data column.????
 	 */
 //		public static final String _DATA = "_data";
+
+	public static final String URI_SELECTION = Meta.URI + "=?";
 }

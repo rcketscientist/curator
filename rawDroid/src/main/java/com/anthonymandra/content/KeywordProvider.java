@@ -9,12 +9,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
 import com.anthonymandra.framework.PathEnumerationProvider;
 import com.anthonymandra.rawdroid.BuildConfig;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.DbUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class KeywordProvider extends PathEnumerationProvider
 {
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static final class Data implements BaseColumns
     {
         public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_KEYWORD;
@@ -50,11 +53,11 @@ public class KeywordProvider extends PathEnumerationProvider
         public static final int COLUMN_DEPTH = 5;
     }
 
-    public static final String KEYWORD_TABLE_NAME = "keyword_table";
+    private static final String KEYWORD_TABLE_NAME = "keyword_table";
     private static final int KEYWORDS = 1;
     private static final int KEYWORD_ID = 2;
 
-    private static UriMatcher sUriMatcher;
+    private static final UriMatcher sUriMatcher;
 
     // Statically construct a uri matcher that can detect URIs referencing
     // more than 1 video, a single video, or a single thumb nail image.
@@ -108,7 +111,7 @@ public class KeywordProvider extends PathEnumerationProvider
 
     private class KeywordDBOpenHelper extends SQLiteOpenHelper
     {
-        public KeywordDBOpenHelper(Context context)
+        KeywordDBOpenHelper(Context context)
         {
             super(context, KEYWORD_TABLE_NAME, null, DATABASE_VERSION);
         }
@@ -142,7 +145,7 @@ public class KeywordProvider extends PathEnumerationProvider
     }
 
     @Override
-    public String getType(Uri uri)
+    public String getType(@NonNull Uri uri)
     {
         switch (sUriMatcher.match(uri))
         {
@@ -163,8 +166,9 @@ public class KeywordProvider extends PathEnumerationProvider
         return true;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs)
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs)
     {
         int match = sUriMatcher.match(uri);
         int affected;
@@ -189,8 +193,9 @@ public class KeywordProvider extends PathEnumerationProvider
         return affected;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
+    public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs)
     {
         SQLiteDatabase db = getDbHelper().getWritableDatabase();
         int count;
@@ -214,7 +219,7 @@ public class KeywordProvider extends PathEnumerationProvider
     public static boolean importKeywords(Context context, Reader keywordList)
     {
         // Clear the existing database
-        int rowsDeleted = context.getContentResolver().delete(Data.CONTENT_URI, null, null);
+        context.getContentResolver().delete(Data.CONTENT_URI, null, null);
 
         try
         {
@@ -246,7 +251,7 @@ public class KeywordProvider extends PathEnumerationProvider
 
                         c.moveToFirst();
                         List<String> synonyms = new ArrayList<>();
-                        String[] activeSynonyms = ImageUtils.convertStringToArray(
+                        String[] activeSynonyms = DbUtil.convertStringToArray(
                                 c.getString(c.getColumnIndex(Data.KEYWORD_SYNONYMS)));
 
                         if (activeSynonyms == null)
@@ -256,7 +261,7 @@ public class KeywordProvider extends PathEnumerationProvider
                         synonyms.add(name);
 
                         ContentValues cv = new ContentValues();
-                        cv.put(Data.KEYWORD_SYNONYMS, ImageUtils.convertArrayToString(
+                        cv.put(Data.KEYWORD_SYNONYMS, DbUtil.convertArrayToString(
                                 synonyms.toArray(new String[synonyms.size()])));
                         cv.put(Data._ID, parents.get(depth - 1));
                         context.getContentResolver().update(

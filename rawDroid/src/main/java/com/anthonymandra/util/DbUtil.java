@@ -4,6 +4,8 @@ import java.util.List;
 
 public class DbUtil
 {
+	private static final String FIELD_SEPARATOR = "__,__";
+
 	public static String createMultipleLike(String column, String[] likes, List<String> selectionArgs, String joiner, boolean NOT)
 	{
 		StringBuilder selection = new StringBuilder();
@@ -20,19 +22,37 @@ public class DbUtil
 
 	public static String createMultipleIN(String column, int arguments)
 	{
-		StringBuilder selection = new StringBuilder();
-		selection.append(column)
-				.append(" IN (")
-				.append(makePlaceholders(arguments))
-				.append(")");
-		return selection.toString();
+		return column +
+				" IN (" +
+				makePlaceholders(arguments) +
+				")";
 	}
 
-	public static String makePlaceholders(int len) {
+	private static String makePlaceholders(int len) {
 		StringBuilder sb = new StringBuilder(len * 2 - 1);
 		sb.append("?");
 		for (int i = 1; i < len; i++)
 			sb.append(",?");
 		return sb.toString();
+	}
+
+	public static String convertArrayToString(String[] array){
+	    if (array == null)
+	        return null;
+	    String str = "";
+	    for (int i = 0;i<array.length; i++) {
+	        str = str+array[i];
+	        // Do not append comma at the end of last element
+	        if(i<array.length-1){
+	            str = str+ FIELD_SEPARATOR;
+	        }
+	    }
+	    return str;
+	}
+
+	public static String[] convertStringToArray(String str){
+	    if (str == null)
+	        return null;
+		return str.split(FIELD_SEPARATOR);
 	}
 }

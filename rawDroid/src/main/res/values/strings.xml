@@ -10,7 +10,9 @@
     <string name="saveAs">Save As…</string>
     <string name="export">Export</string>
     <string name="wallpaper">Set as wallpaper</string>
-    <string name="edit">Edit with...</string>
+    <string name="EDIT">EDIT</string>
+    <string name="ADD">ADD</string>
+    <string name="editWith">Edit with...</string>
     <string name="selectAll">Select All</string>
     <string name="help">Help</string>
     <string name="delete">Delete</string>
@@ -331,5 +333,13 @@
     <string name="subjectContent">This will filter based on XMP subject.</string>
     <string name="matchContent">This will determine whether the filter matches ANY xmp field or ALL xmp fields.</string>
 
+    <!-- Edit sidebar tutorial-->
+    <string name="editMetadata">Edit Metadata</string>
+    <string name="tutSetRecent">Apply the most recent metadata settings to the current selection.</string>
+    <string name="tutClearMeta">Clear metadata for the current selection.</string>
+    <string name="tutSetRatingLabel">Set rating or label for the current selection.</string>
+    <string name="tutSetSubject">Set subject for the current selection.</string>
+    <string name="tutAddSubject">Coming soon: Add a keyword.</string>
+    <string name="tutEditSubject">Coming soon: Edit a keyword (hierarchy, etc.)</string>
 
 </resources>

@@ -40,7 +40,8 @@ import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
+import com.anthonymandra.util.MetaUtil;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
@@ -542,7 +543,7 @@ public class PhotoDataAdapter implements Model {
         if (item == null)
             return null;
 
-        Cursor c = ImageUtils.getMetaCursor(mActivity.getAndroidContext(), item);
+        Cursor c = MetaUtil.getMetaCursor(mActivity.getAndroidContext(), item);
 
         if (c == null)
             return null;
@@ -574,7 +575,7 @@ public class PhotoDataAdapter implements Model {
         if (!imageData.containsKey(uri))
             return 0;
 
-        return ImageUtils.getRotation(imageData.get(uri).orientation);
+        return MetaUtil.getRotation(imageData.get(uri).orientation);
     }
 
     @Override
@@ -772,7 +773,7 @@ public class PhotoDataAdapter implements Model {
 
 		@Override
         public ScreenNail run(JobContext jc) {
-			Bitmap bitmap = ImageUtils.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL, mItem).run(jc);
+			Bitmap bitmap = ImageUtil.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL, mItem).run(jc);
             if (jc.isCancelled()) return null;
 
 //            if (bitmap != null) {
@@ -794,7 +795,7 @@ public class PhotoDataAdapter implements Model {
 
 		@Override
         public BitmapRegionDecoder run(JobContext jc) {
-            return ImageUtils.requestLargeImage(mActivity.getAndroidContext(), mItem).run(jc);
+            return ImageUtil.requestLargeImage(mActivity.getAndroidContext(), mItem).run(jc);
         }
     }
 

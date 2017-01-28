@@ -25,7 +25,7 @@ import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.DocumentActivity;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.UsefulDocumentFile;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -251,7 +251,7 @@ public class CameraImportActivity extends DocumentActivity
 
 			cv.put(Meta.DOCUMENT_ID, file.getDocumentId());
 			cv.put(Meta.URI, file.getUri().toString());
-			cv.put(Meta.TYPE, ImageUtils.getImageType(CameraImportActivity.this, file.getUri()).getValue());
+			cv.put(Meta.TYPE, ImageUtil.getImageType(CameraImportActivity.this, file.getUri()).getValue());
 			return cv;
 		}
 	}

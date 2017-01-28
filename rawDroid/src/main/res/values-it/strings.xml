@@ -8,7 +8,7 @@
 <string name="saveAs">Salva con nome</string>
 <string name="export">Esportazione</string>
 <string name="wallpaper">Imposta sfondo</string>
-<string name="edit">Montare con.....</string>
+<string name="editWith">Montare con.....</string>
 <string name="selectAll">Seleziona tutti</string>
 <string name="help">Aiuto</string>
 <string name="delete">Cancella</string>
@@ -80,8 +80,7 @@
 <string name="prefTitleImageInterface">Visualizza automaticamente l\'interfaccia</string>
 <string name="prefSummaryImageInterface">quando cambia immagine</string>
 <string name="prefTitleRecycleBin">Grandezza del cestino</string>
-<string name="prefSummaryRecycleBin">Spazio allocato nel cestino (Default: 50 MB, min: 30 MB, max: 500MB) 
-\nFare attenzione alle dimensioni, 500MB sono  oltre il 6% su un dispositivo di 8GB!</string>
+<string name="prefSummaryRecycleBin">Spazio allocato nel cestino (Default: 50 MB, min: 30 MB, max: 500MB)\nFare attenzione alle dimensioni, 500MB sono  oltre il 6% su un dispositivo di 8GB!</string>
 <string name="prefTitleFilter">Filtro Exif</string>
 <string name="prefTitleDeleteConfirmation"> Conferma Eliminazione</string>
 <string name="prefSummaryDeleteConfirmation">Se  disabiliti cancella non richiederà la conferma, anche se superano dimensioni del cestino.</string>

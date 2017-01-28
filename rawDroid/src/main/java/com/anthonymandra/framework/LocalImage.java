@@ -20,7 +20,7 @@ import com.android.gallery3d.util.ThreadPool.JobContext;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -59,7 +59,7 @@ public class LocalImage extends MetaMedia {
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public byte[] getThumb() {
-		if (ImageUtils.isAndroidImage(mType))
+		if (ImageUtil.isAndroidImage(mType))
 		{
 			byte[] imageBytes = getImageBytes();
 			if (imageBytes == null)
@@ -86,7 +86,7 @@ public class LocalImage extends MetaMedia {
 		{
 			pfd = mContext.getContentResolver().openFileDescriptor(mUri, "r");
 			fd = pfd.getFd();
-			if (ImageUtils.isTiffMime(mType))
+			if (ImageUtil.isTiffMime(mType))
 			{
 				int[] dim = new int[2];
 				int[] imageData = ImageProcessor.getTiff(mName, fd, dim);
@@ -115,7 +115,7 @@ public class LocalImage extends MetaMedia {
 				if (cpc != null)
 				{
 					c = cpc.query(Meta.CONTENT_URI, new String[] { Meta.PROCESSED },
-							ImageUtils.getWhereUri(), new String[] {mUri.toString()}, null, null);
+							Meta.URI_SELECTION, new String[] {mUri.toString()}, null, null);
 					if (c != null)
 					{
 						c.moveToFirst();
@@ -145,7 +145,7 @@ public class LocalImage extends MetaMedia {
 							cv.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
 							// Are the thumb dimensions useful in database?
 
-							cpc.update(Meta.CONTENT_URI, cv, ImageUtils.getWhereUri(), new String[] {mUri.toString()});
+							cpc.update(Meta.CONTENT_URI, cv, Meta.URI_SELECTION, new String[] {mUri.toString()});
 						}
 					}
 				}

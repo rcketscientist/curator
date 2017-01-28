@@ -1,20 +1,16 @@
 package com.anthonymandra.framework;
 
 import android.app.IntentService;
-import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
-import com.crashlytics.android.Crashlytics;
+import com.anthonymandra.util.ImageUtil;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -238,7 +234,7 @@ public class SearchService extends IntentService
 
 		cv.put(Meta.DOCUMENT_ID, file.getDocumentId());
 		cv.put(Meta.URI, file.getUri().toString());
-		cv.put(Meta.TYPE, ImageUtils.getImageType(this, file.getUri()).getValue());
+		cv.put(Meta.TYPE, ImageUtil.getImageType(this, file.getUri()).getValue());
 		return cv;
 	}
 
@@ -254,7 +250,7 @@ public class SearchService extends IntentService
 			String name = file.getCachedData().name;
 			if (name == null)
 				continue;
-			if(ImageUtils.isImage(name))
+			if(ImageUtil.isImage(name))
 				result.add(file);
 		}
 		return result.toArray(new UsefulDocumentFile[result.size()]);

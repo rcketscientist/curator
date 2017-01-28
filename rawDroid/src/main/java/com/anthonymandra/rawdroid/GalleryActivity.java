@@ -55,7 +55,7 @@ import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.util.DbUtil;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
@@ -264,7 +264,7 @@ public class GalleryActivity extends CoreActivity implements
 
 		if (getIntent().getData() != null)
 		{
-			ImageUtils.importKeywords(this, getIntent().getData());
+			ImageUtil.importKeywords(this, getIntent().getData());
 		}
 
 //		checkWriteAccess();
@@ -866,7 +866,7 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		int rowsDeleted = getContentResolver().delete(
 				Meta.CONTENT_URI,
-				ImageUtils.getWhereUri(),
+				Meta.URI_SELECTION,
 				new String[] {toRemove.toString()});
 		return rowsDeleted > 0;
 	}
@@ -875,7 +875,7 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		ContentValues cv = new ContentValues();
 		cv.put(Meta.URI, toAdd.toString());
-//		ImageUtils.getContentValues(this, toAdd, cv);
+//		ImageUtil.getContentValues(this, toAdd, cv);
 
 		return getContentResolver().insert(Meta.CONTENT_URI, cv);
 	}

@@ -8,7 +8,7 @@
 <string name="saveAs">Speichern unter ...</string>
 <string name="export">Exportieren</string>
 <string name="wallpaper">Als Hintergrund wählen</string>
-<string name="edit">Bearbeiten mit ...</string>
+<string name="editWith">Bearbeiten mit ...</string>
 <string name="selectAll">alle auswählen</string>
 <string name="help">Hilfe</string>
 <string name="delete">Löschen</string>
@@ -80,8 +80,7 @@
 <string name="prefTitleImageInterface">Interface automatisch anzeigen</string>
 <string name="prefSummaryImageInterface">beim Bildwechsel</string>
 <string name="prefTitleRecycleBin">Papierkorb Grösse</string>
-<string name="prefSummaryRecycleBin">Dem Papierkorb zugewiesene Größe (Standard: 50MB, Min: 30MB, Max: 500MB)
-\nVorsichtig mit der Größe: 500MB sind mehr als 6% eines 8GB Speichers!</string>
+<string name="prefSummaryRecycleBin">Dem Papierkorb zugewiesene Größe (Standard: 50MB, Min: 30MB, Max: 500MB)\nVorsichtig mit der Größe: 500MB sind mehr als 6% eines 8GB Speichers!</string>
 <string name="prefTitleFilter">Exif Filter</string>
 <string name="prefTitleDeleteConfirmation">Bestätigung beim Löschen</string>
 <string name="prefSummaryDeleteConfirmation">Falls deaktiviert, wird ohne Bestätigung gelöscht - selbst bei Dateien, die zu groß für den Papierkorb sind.</string>

@@ -20,7 +20,7 @@ import android.graphics.Bitmap;
 import android.util.Pools.Pool;
 import android.util.SparseArray;
 
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 
 public class SparseArrayBitmapPool {
 
@@ -86,7 +86,7 @@ public class SparseArrayBitmapPool {
         n.nextInPool = null;
         n.prevInBucket = null;
         n.prevInPool = null;
-        mSizeBytes -= ImageUtils.getBitmapSize(n.bitmap);
+        mSizeBytes -= ImageUtil.getBitmapSize(n.bitmap);
         if (recycleBitmap) n.bitmap.recycle();
         n.bitmap = null;
         mNodePool.release(n);
@@ -117,7 +117,7 @@ public class SparseArrayBitmapPool {
         if (b == null) {
             return false;
         }
-        int bytes = ImageUtils.getBitmapSize(b);
+        int bytes = ImageUtil.getBitmapSize(b);
         freeUpCapacity(bytes);
         Node newNode = mNodePool.acquire();
         if (newNode == null) {

@@ -23,7 +23,7 @@ import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.framework.ViewlessCursorAdapter;
 import com.anthonymandra.imageprocessor.Executor;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.IOException;
@@ -530,7 +530,7 @@ public class LegacyViewerActivity extends ViewerActivity
 			if (imageData == null)
 				return null;
 
-            return  ImageUtils.createBitmapLarge(imageData,
+            return  ImageUtil.createBitmapLarge(imageData,
                     LegacyViewerActivity.displayWidth,
                     LegacyViewerActivity.displayHeight,
                     true);

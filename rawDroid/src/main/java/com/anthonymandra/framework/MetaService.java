@@ -16,7 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.MetaUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -259,7 +259,7 @@ public class MetaService extends ThreadedPriorityIntentService
         {
             for (UpdateInfo update : updates)
             {
-                ContentValues values = ImageUtils.getContentValues(this, Uri.parse(update.Uri));
+                ContentValues values = MetaUtil.getContentValues(this, Uri.parse(update.Uri));
                 jobComplete();
 
                 if (values == null)
@@ -291,7 +291,7 @@ public class MetaService extends ThreadedPriorityIntentService
 
     private List<ContentValues> getParseArray(String[] uris)
     {
-        try( Cursor c = ImageUtils.getMetaCursor(this, uris ) )
+        try( Cursor c = MetaUtil.getMetaCursor(this, uris ) )
         {
             if (c == null)
                 return null;
@@ -334,7 +334,7 @@ public class MetaService extends ThreadedPriorityIntentService
 
                 // If the image is unprocessed process it now
                 if (!isProcessed)
-                    values = ImageUtils.getContentValues(this, uri, values);
+                    values = MetaUtil.getContentValues(this, uri, values);
 
                 jobComplete();
 
@@ -348,7 +348,7 @@ public class MetaService extends ThreadedPriorityIntentService
                     {
                         getContentResolver().update(Meta.CONTENT_URI,
                                 values,
-                                ImageUtils.getWhereUri(),
+                                Meta.URI_SELECTION,
                                 new String[]{ uri.toString() });
                     }
 
@@ -424,7 +424,7 @@ public class MetaService extends ThreadedPriorityIntentService
     private synchronized void addUpdate(String uriString, ContentValues values)
     {
         mOperations.add(ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-                .withSelection(ImageUtils.getWhereUri(), new String[] {uriString})
+                .withSelection(Meta.URI_SELECTION, new String[] {uriString})
                 .withValues(values)
                 .build());
     }

@@ -22,8 +22,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Add"
-            android:id="@+id/button"
+            android:text="@string/ADD"
+            android:id="@+id/addKeyword"
+            android:enabled="false"
             android:layout_weight="1"/>
 
         <Button
@@ -31,8 +32,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Edit"
-            android:id="@+id/button2"
+            android:text="@string/EDIT"
+            android:id="@+id/editKeyword"
+            android:enabled="false"
             android:layout_weight="1"/>
     </LinearLayout>
 </LinearLayout>

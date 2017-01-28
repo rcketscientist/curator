@@ -17,7 +17,8 @@ import android.widget.TextView;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
+import com.anthonymandra.util.MetaUtil;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -181,7 +182,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		public static GalleryItem fromCursor(Cursor cursor)
 		{
 			GalleryItem item = new GalleryItem();
-			item.rotation = ImageUtils.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.ORIENTATION)));
+			item.rotation = MetaUtil.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.ORIENTATION)));
 			item.rating = cursor.getFloat(cursor.getColumnIndex(Meta.RATING));
 			final String u = cursor.getString(cursor.getColumnIndex(Meta.URI));
 			item.uri = u != null ? Uri.parse(u) : null;
@@ -325,7 +326,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		vh.mBaseView.setTag(galleryItem.uri);   // store tag for compare
 
-		/** This will use {@link ImageUtils#getThumb(Context, Uri)} which will load metadata if needed */
+		/** This will use {@link ImageUtil#getThumb(Context, Uri)} which will load metadata if needed */
 		Glide.with(mContext)
 				.using(new RawModelLoader(mContext))
 				.load(values)

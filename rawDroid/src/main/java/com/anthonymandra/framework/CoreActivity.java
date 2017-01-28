@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -22,7 +21,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.ParcelFileDescriptor;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -64,7 +62,8 @@ import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
+import com.anthonymandra.util.MetaUtil;
 import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.xmp.XmpDirectory;
@@ -464,7 +463,7 @@ public abstract class CoreActivity extends DocumentActivity
 			ContentValues cv = new ContentValues();
 			cv.put(Meta.LABEL, values.Label);
 			cv.put(Meta.RATING, values.Rating);
-			cv.put(Meta.SUBJECT, ImageUtils.convertArrayToString(values.Subject));
+			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.Subject));
 
 			Map<Uri, ContentValues> xmpPairing = new HashMap<>();
 			for (Uri uri : selection)
@@ -898,15 +897,15 @@ public abstract class CoreActivity extends DocumentActivity
 	@SuppressWarnings("UnusedReturnValue")
 	private boolean copyAssociatedFiles(Uri fromImage, Uri toImage) throws IOException
 	{
-		if (ImageUtils.hasXmpFile(this, fromImage))
+		if (ImageUtil.hasXmpFile(this, fromImage))
 		{
-			copyFile(ImageUtils.getXmpFile(this, fromImage).getUri(),
-					ImageUtils.getXmpFile(this, toImage).getUri());
+			copyFile(ImageUtil.getXmpFile(this, fromImage).getUri(),
+					ImageUtil.getXmpFile(this, toImage).getUri());
 		}
-		if (ImageUtils.hasJpgFile(this, fromImage))
+		if (ImageUtil.hasJpgFile(this, fromImage))
 		{
-			copyFile(ImageUtils.getJpgFile(this, fromImage).getUri(),
-					ImageUtils.getJpgFile(this, toImage).getUri());
+			copyFile(ImageUtil.getJpgFile(this, fromImage).getUri(),
+					ImageUtil.getJpgFile(this, toImage).getUri());
 		}
 		return copyFile(fromImage, toImage);
 	}
@@ -948,7 +947,7 @@ public abstract class CoreActivity extends DocumentActivity
 					UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, toCopy);
 					Uri destinationFile = DocumentUtil.getChildUri(destinationFolder, source.getName());
 					copyAssociatedFiles(toCopy, destinationFile);
-					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile));
+					dbInserts.add(MetaUtil.newInsert(CoreActivity.this, destinationFile));
 				}
 				catch (WritePermissionException e)
 				{
@@ -970,7 +969,7 @@ public abstract class CoreActivity extends DocumentActivity
 				onImageAdded(toCopy);
 				publishProgress();
 			}
-			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+			MetaUtil.updateMetaDatabase(CoreActivity.this, dbInserts);
 			return true;
 		}
 
@@ -1017,8 +1016,8 @@ public abstract class CoreActivity extends DocumentActivity
 		boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
 		if (demo)
 		{
-			watermark = ImageUtils.getDemoWatermark(CoreActivity.this, width);
-			waterData = ImageUtils.getBitmapBytes(watermark);
+			watermark = ImageUtil.getDemoWatermark(CoreActivity.this, width);
+			waterData = ImageUtil.getBitmapBytes(watermark);
 			waterWidth = watermark.getWidth();
 			waterHeight = watermark.getHeight();
 
@@ -1048,11 +1047,11 @@ public abstract class CoreActivity extends DocumentActivity
 			}
 			else
 			{
-				watermark = ImageUtils.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+				watermark = ImageUtil.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
 				if (watermark == null)
 					return null;
 				waterWidth = watermark.getWidth();
-				waterData = ImageUtils.getBitmapBytes(watermark);
+				waterData = ImageUtil.getBitmapBytes(watermark);
 				waterHeight = watermark.getHeight();
 				return new Watermark(
 						waterWidth,
@@ -1072,7 +1071,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 		// Just grab the first width and assume that will be sufficient for all images
 		Watermark wm = null;
-		try (Cursor c = getContentResolver().query(Meta.CONTENT_URI, null, ImageUtils.getWhereUri(), new String[] {images.get(0).toString()}, null))
+		try (Cursor c = getContentResolver().query(Meta.CONTENT_URI, null, Meta.URI_SELECTION, new String[] {images.get(0).toString()}, null))
 		{
 			if (c != null && c.moveToFirst())
 			{
@@ -1190,7 +1189,7 @@ public abstract class CoreActivity extends DocumentActivity
 					}
 
 					onImageAdded(destinationFile.getUri());
-					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, destinationFile.getUri()));
+					dbInserts.add(MetaUtil.newInsert(CoreActivity.this, destinationFile.getUri()));
 					remainingImages.remove(toThumb);
 				}
 				catch(Exception e)
@@ -1214,7 +1213,7 @@ public abstract class CoreActivity extends DocumentActivity
 						@Override
 						public void onClick(DialogInterface dialog, int which)
 						{
-							ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+							MetaUtil.updateMetaDatabase(CoreActivity.this, dbInserts);
 						}
 					})
 					.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener()
@@ -1252,7 +1251,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	private boolean deleteAssociatedFiles(Uri image) throws WritePermissionException
 	{
-		Uri[] associatedFiles = ImageUtils.getAssociatedFiles(this, image);
+		Uri[] associatedFiles = ImageUtil.getAssociatedFiles(this, image);
 		for (Uri file : associatedFiles)
 			deleteFile(file);
 		return deleteFile(image);
@@ -1294,7 +1293,7 @@ public abstract class CoreActivity extends DocumentActivity
 					if (deleteAssociatedFiles(toDelete))
 					{
 						onImageRemoved(toDelete);
-						dbDeletes.add(ImageUtils.newDelete(toDelete));
+						dbDeletes.add(MetaUtil.newDelete(toDelete));
 					}
 				}
 				catch (WritePermissionException e)
@@ -1306,7 +1305,7 @@ public abstract class CoreActivity extends DocumentActivity
 				remainingDeletes.remove(toDelete);
 			}
 
-			ImageUtils.updateMetaDatabase(CoreActivity.this, dbDeletes);
+			MetaUtil.updateMetaDatabase(CoreActivity.this, dbDeletes);
 			return totalSuccess;
 		}
 
@@ -1374,7 +1373,7 @@ public abstract class CoreActivity extends DocumentActivity
 				{
 					//TODO: Handle related files
 					recycleBin.addFile(toRecycle);
-					dbDeletes.add(ImageUtils.newDelete(toRecycle));
+					dbDeletes.add(MetaUtil.newDelete(toRecycle));
 				}
 				catch (WritePermissionException e)
 				{
@@ -1391,7 +1390,7 @@ public abstract class CoreActivity extends DocumentActivity
 				onImageRemoved(toRecycle);
 			}
 
-			ImageUtils.updateMetaDatabase(CoreActivity.this, dbDeletes);
+			MetaUtil.updateMetaDatabase(CoreActivity.this, dbDeletes);
 			return null;
 		}
 
@@ -1463,7 +1462,7 @@ public abstract class CoreActivity extends DocumentActivity
 					Uri uri = Uri.fromFile(recycledFile);
 					moveFile(uri, toRestore);
 					onImageAdded(toRestore);
-					dbInserts.add(ImageUtils.newInsert(CoreActivity.this, toRestore));
+					dbInserts.add(MetaUtil.newInsert(CoreActivity.this, toRestore));
 				}
 				catch (WritePermissionException e)
 				{
@@ -1475,7 +1474,7 @@ public abstract class CoreActivity extends DocumentActivity
 				}
 			}
 
-			ImageUtils.updateMetaDatabase(CoreActivity.this, dbInserts);
+			MetaUtil.updateMetaDatabase(CoreActivity.this, dbInserts);
 			return totalSuccess;
 		}
 
@@ -1493,8 +1492,8 @@ public abstract class CoreActivity extends DocumentActivity
 	public boolean renameImage(@NonNull Uri source, String baseName, ArrayList<ContentProviderOperation> updates) throws IOException
 	{
 		UsefulDocumentFile srcFile = UsefulDocumentFile.fromUri(this, source);
-		UsefulDocumentFile xmpFile = ImageUtils.getXmpFile(this, source);
-		UsefulDocumentFile jpgFile = ImageUtils.getJpgFile(this, source);
+		UsefulDocumentFile xmpFile = ImageUtil.getXmpFile(this, source);
+		UsefulDocumentFile jpgFile = ImageUtil.getJpgFile(this, source);
 
 		final String filename = srcFile.getName();
 		final String sourceExt = filename.substring(filename.lastIndexOf("."), filename.length());
@@ -1523,7 +1522,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 			updates.add(
 					ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-							.withSelection(ImageUtils.getWhereUri(), new String[]{source.toString()})
+							.withSelection(Meta.URI_SELECTION, new String[]{source.toString()})
 							.withValues(imageValues)
 							.build());
 		}
@@ -1552,7 +1551,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 			updates.add(
 					ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-							.withSelection(ImageUtils.getWhereUri(), new String[]{jpgFile.getUri().toString()})
+							.withSelection(Meta.URI_SELECTION, new String[]{jpgFile.getUri().toString()})
 							.withValues(jpgValues)
 							.build());
 		}
@@ -1632,7 +1631,7 @@ public abstract class CoreActivity extends DocumentActivity
 				e.printStackTrace();
 			}
 
-			ImageUtils.updateMetaDatabase(CoreActivity.this, operations);
+			MetaUtil.updateMetaDatabase(CoreActivity.this, operations);
 			return true;
 		}
 
@@ -1663,15 +1662,15 @@ public abstract class CoreActivity extends DocumentActivity
 					continue;
 
 				ContentValues values = pair.getValue();
-				databaseUpdates.add(ImageUtils.newUpdate(pair.getKey(), values));
+				databaseUpdates.add(MetaUtil.newUpdate(pair.getKey(), values));
 
 				final Metadata meta = new Metadata();
 				meta.addDirectory(new XmpDirectory());
-				ImageUtils.updateSubject(meta, ImageUtils.convertStringToArray(values.getAsString(Meta.SUBJECT)));
-				ImageUtils.updateRating(meta, values.getAsInteger(Meta.RATING));
-				ImageUtils.updateLabel(meta, values.getAsString(Meta.LABEL));
+				MetaUtil.updateSubject(meta, DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)));
+				MetaUtil.updateRating(meta, values.getAsInteger(Meta.RATING));
+				MetaUtil.updateLabel(meta, values.getAsString(Meta.LABEL));
 
-				final Uri xmpUri = ImageUtils.getXmpFile(CoreActivity.this, pair.getKey()).getUri();
+				final Uri xmpUri = ImageUtil.getXmpFile(CoreActivity.this, pair.getKey()).getUri();
 				final UsefulDocumentFile xmpDoc;
 				try
 				{
@@ -1681,7 +1680,7 @@ public abstract class CoreActivity extends DocumentActivity
 				catch (WritePermissionException e)
 				{
 					// Write pending updates, method will resume with remaining images
-					ImageUtils.updateMetaDatabase(CoreActivity.this, databaseUpdates);
+					MetaUtil.updateMetaDatabase(CoreActivity.this, databaseUpdates);
 					return false;
 				}
 
@@ -1698,7 +1697,7 @@ public abstract class CoreActivity extends DocumentActivity
 				uris.remove();  //concurrency-safe remove
 			}
 
-			ImageUtils.updateMetaDatabase(CoreActivity.this, databaseUpdates);
+			MetaUtil.updateMetaDatabase(CoreActivity.this, databaseUpdates);
 			return true;
 		}
 
@@ -1775,7 +1774,7 @@ public abstract class CoreActivity extends DocumentActivity
 						xmpPair.getValue().put(Meta.RATING, update.Rating);
 						break;
 					case Subject:
-						xmpPair.getValue().put(Meta.SUBJECT, ImageUtils.convertArrayToString(update.Subject));
+						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.Subject));
 						break;
 				}
 			}

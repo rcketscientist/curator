@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.data.DataFetcher;
 import com.bumptech.glide.load.data.ExifOrientationStream;
@@ -46,7 +46,7 @@ public class RawModelLoader implements StreamModelLoader<ContentValues>
 		@Override
 		public InputStream loadData(Priority priority) throws Exception
 		{
-			byte[] image = ImageUtils.getThumb(context, values);
+			byte[] image = ImageUtil.getThumb(context, values);
 			return new ExifOrientationStream(new ByteArrayInputStream(image), 0);   //Wrap to turn off orientation
 		}
 

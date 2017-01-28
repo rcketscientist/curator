@@ -13,7 +13,7 @@
         android:orderInCategory="13"
         android:icon="@drawable/ic_brush"
         app:showAsAction="ifRoom"
-        android:title="@string/edit"/>
+        android:title="@string/editWith"/>
     <item
         android:id="@+id/view_delete"
         android:orderInCategory="11"

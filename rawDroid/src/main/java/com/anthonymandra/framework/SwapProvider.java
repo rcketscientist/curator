@@ -25,9 +25,9 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.FileUtil;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
+import com.anthonymandra.util.MetaUtil;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
@@ -91,7 +91,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
         Uri sourceUri = Uri.parse(uri.getFragment());
         // If it's a native file, just share it directly.
-        if (ImageUtils.isNative(sourceUri))
+        if (ImageUtil.isNative(sourceUri))
         {
             return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
         }
@@ -119,7 +119,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 e.printStackTrace();
             }
 
-            byte[] imageData = ImageUtils.getThumb(getContext(), image.getUri());
+            byte[] imageData = ImageUtil.getThumb(getContext(), image.getUri());
             if (imageData == null)
                 return null;
 
@@ -132,15 +132,15 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
                 final String[] projection = new String[] {Meta.WIDTH};
-                try (Cursor c = ImageUtils.getMetaCursor(getContext(), image.getUri(), projection))
+                try (Cursor c = MetaUtil.getMetaCursor(getContext(), image.getUri(), projection))
                 {
                     if (c != null && c.moveToFirst())
                     {
                         final int widthColumn = c.getColumnIndex(Meta.WIDTH);
                         if (widthColumn != -1)
                         {
-                            watermark = ImageUtils.getDemoWatermark(getContext(), c.getInt(widthColumn));
-                            waterData = ImageUtils.getBitmapBytes(watermark);
+                            watermark = ImageUtil.getDemoWatermark(getContext(), c.getInt(widthColumn));
+                            waterData = ImageUtil.getBitmapBytes(watermark);
                             waterWidth = watermark.getWidth();
                             waterHeight = watermark.getHeight();
                             margin = Margins.LowerRight;
@@ -157,8 +157,8 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 }
                 else
                 {
-                    watermark = ImageUtils.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
-                    waterData = ImageUtils.getBitmapBytes(watermark);
+                    watermark = ImageUtil.getWatermarkText(mWatermarkText, mWatermarkAlpha, mWatermarkSize, mWatermarkLocation);
+                    waterData = ImageUtil.getBitmapBytes(watermark);
                     waterWidth = watermark.getWidth();
                     waterHeight = watermark.getHeight();
                     margin = mMargins;

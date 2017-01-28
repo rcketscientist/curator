@@ -38,7 +38,7 @@ public class MetaProvider extends ContentProvider
 
 	static int DATABASE_VERSION = 17;
 
-	public static final String META_TABLE_NAME = "meta";
+	private static final String META_TABLE_NAME = "meta";
 
 	private static final int META = 1;
 	private static final int META_ID = 2;
@@ -57,7 +57,7 @@ public class MetaProvider extends ContentProvider
 
 	private DatabaseHelper dbHelper;
 
-	public static class DatabaseHelper extends SQLiteOpenHelper
+	private static class DatabaseHelper extends SQLiteOpenHelper
 	{
 		DatabaseHelper(Context context)
 		{
@@ -368,10 +368,5 @@ public class MetaProvider extends ContentProvider
 	public boolean onCreate() {
 		dbHelper = new DatabaseHelper(getContext());
         return true;
-	}
-
-	public static String whereUriSelection()
-	{
-		return Meta.URI + "=?";
 	}
 }

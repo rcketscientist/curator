@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.RemoteException;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,7 @@ public class MetaDataCleaner
 						{
 							operations.add(ContentProviderOperation
 									.newDelete(Meta.CONTENT_URI)
-									.withSelection(ImageUtils.getWhereUri(), new String[]{uriString}).build());
+									.withSelection(Meta.URI_SELECTION, new String[]{uriString}).build());
 						}
 					}
 

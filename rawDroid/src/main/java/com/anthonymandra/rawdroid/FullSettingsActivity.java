@@ -21,7 +21,7 @@ import android.support.design.widget.Snackbar;
 
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.widget.SeekBarPreference;
 
 import java.util.List;
@@ -140,7 +140,7 @@ public class FullSettingsActivity extends PreferenceActivity
 
     private void handleKeywordResult(final Uri keywordUri)
 	{
-		ImageUtils.importKeywords(this, keywordUri);
+		ImageUtil.importKeywords(this, keywordUri);
 	}
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

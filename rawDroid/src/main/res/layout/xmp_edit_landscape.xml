@@ -21,6 +21,15 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="8dp"/>
 
+    <ImageButton
+        android:id="@+id/helpButton"
+        android:background="@null"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:tint="@color/white"
+        app:srcCompat="@drawable/ic_help"
+        android:layout_alignParentEnd="true"/>
+
     <View
         android:id="@+id/headerDividerLeft"
         android:layout_width="wrap_content"
@@ -37,6 +46,7 @@
         android:layout_height="3dp"
         android:background="@color/sidebarHeader"
         android:layout_alignTop="@+id/headerDividerLeft"
+        android:layout_toStartOf="@id/helpButton"
         android:layout_toEndOf="@id/tagHeader"/>
 
     <LinearLayout

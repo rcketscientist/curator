@@ -41,7 +41,8 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.DbUtil;
+import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.widget.HistogramView;
 import com.crashlytics.android.Crashlytics;
 
@@ -62,8 +63,8 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private static final int REQUEST_CODE_EDIT = 3;
 
-    public static String EXTRA_START_INDEX = "viewer_index";
-    private static String EXTRA_URIS = "viewer_uris";
+    public static final String EXTRA_START_INDEX = "viewer_index";
+    private static final String EXTRA_URIS = "viewer_uris";     //TODO: This is not used!
 
     private HistogramView histView;
     private View metaPanel;
@@ -124,7 +125,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     public abstract void goToPrevPicture();
     public abstract void goToNextPicture();
 
-    protected List<Uri> mMediaItems = new ArrayList<>();
+    protected final List<Uri> mMediaItems = new ArrayList<>();
 
     /**
      * Since initial image configuration can occur BEFORE image generation
@@ -134,7 +135,7 @@ public abstract class ViewerActivity extends CoreActivity implements
     protected boolean mRequiresHistogramUpdate;
     private HistogramTask mHistogramTask;
 
-    private IntentFilter mResponseIntentFilter = new IntentFilter();
+    private final IntentFilter mResponseIntentFilter = new IntentFilter();
 
     @Override
     protected LicenseHandler getLicenseHandler()
@@ -629,7 +630,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         String rating = values.getAsString(Meta.RATING);  //Use string since double returns 0 for null
         mXmpFragment.initXmp(
                 rating == null ? null : (int) Double.parseDouble(rating),
-                ImageUtils.convertStringToArray(values.getAsString(Meta.SUBJECT)),
+                DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)),
                 values.getAsString(Meta.LABEL));
 
         autoHide = new Timer();
@@ -761,7 +762,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
 
         // Otherwise convert
-        Intent chooser = Intent.createChooser(action, getResources().getString(R.string.edit));
+        Intent chooser = Intent.createChooser(action, getResources().getString(R.string.editWith));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
     }
 
@@ -790,8 +791,8 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
 		try
 		{
-		    WallpaperManager.getInstance(this).setBitmap(ImageUtils.createBitmapToSize(
-                    ImageUtils.getThumb(this, getCurrentItem()), displayWidth, displayHeight));
+		    WallpaperManager.getInstance(this).setBitmap(ImageUtil.createBitmapToSize(
+                    ImageUtil.getThumb(this, getCurrentItem()), displayWidth, displayHeight));
 		}
 		catch (Exception e)
 		{
