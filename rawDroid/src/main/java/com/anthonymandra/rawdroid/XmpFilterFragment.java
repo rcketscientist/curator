@@ -95,12 +95,6 @@ public class XmpFilterFragment extends XmpBaseFragment
         attachButtons();
     }
 
-    @Override
-    public void onStart()
-    {
-        super.onStart();
-    }
-
     private void attachButtons()
     {
         getView().findViewById(R.id.clearFilterButton).setOnClickListener(new View.OnClickListener()
@@ -243,7 +237,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        final ImageButton helpButton = (ImageButton) getActivity().findViewById(R.id.helpButton);
+        final ImageButton helpButton = (ImageButton) getView().findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener()
         {
             @Override

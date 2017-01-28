@@ -1,11 +1,13 @@
 package com.anthonymandra.rawdroid;
 
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.anthonymandra.widget.XmpLabelGroup;
@@ -13,9 +15,11 @@ import com.anthonymandra.widget.XmpLabelGroup;
 import java.util.Collection;
 import java.util.List;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+
 public class XmpEditFragment extends XmpBaseFragment
 {
-	private static final String TAG = XmpEditFragment.class.getSimpleName();
 	private static final XmpEditValues recentXmp = new XmpEditValues();
 
 	public interface RatingChangedListener
@@ -173,6 +177,16 @@ public class XmpEditFragment extends XmpBaseFragment
 				fireMetaUpdate();
 			}
 		});
+
+		final ImageButton helpButton = (ImageButton) getView().findViewById(R.id.helpButton);
+		helpButton.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				startTutorial();
+			}
+		});
 	}
 
 	@Override
@@ -260,5 +274,76 @@ public class XmpEditFragment extends XmpBaseFragment
 		public Integer Rating = null;
 		public String[] Subject = null;
 		public String Label = null;
+	}
+
+	private void startTutorial()
+	{
+		MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
+
+		// Sort group
+		View sortgroup = getView().findViewById(R.id.recentMetaButton);
+		sequence.addSequenceItem(getRectangularView(
+				sortgroup,
+				R.string.tutSetRecent));
+
+		// Segregate
+		View segregate = getView().findViewById(R.id.clearMetaButton);
+		sequence.addSequenceItem(getRectangularView(
+				segregate,
+				R.string.tutClearMeta));
+
+		// Rating
+		View labelRating = getView().findViewById(R.id.metaLabelRating);
+		sequence.addSequenceItem(getRectangularView(
+				labelRating,
+				R.string.tutSetRatingLabel));
+
+		// Subject
+		View subject = getView().findViewById(R.id.keywordFragment);
+		sequence.addSequenceItem(getRectangularView(
+				subject,
+				R.string.tutSetSubject));
+
+		// Match
+		View addKeyword = getView().findViewById(R.id.addKeyword);
+		sequence.addSequenceItem(getRectangularView(
+				addKeyword,
+				R.string.tutAddSubject));
+
+		// Match
+		View editKeyword = getView().findViewById(R.id.editKeyword);
+		sequence.addSequenceItem(getRectangularView(
+				editKeyword,
+				R.string.tutEditSubject));
+
+		sequence.start();
+	}
+
+	private MaterialShowcaseView getRectangularView(View target, @StringRes int contentId)
+	{
+		return getRectangularView(target,
+				R.string.editMetadata,
+				contentId,
+				R.string.ok);
+	}
+
+	private MaterialShowcaseView getRectangularView(View target, @StringRes int titleId, @StringRes int contentId, @StringRes int dismissId)
+	{
+		return getRectangularView(target,
+				getString(titleId),
+				getString(contentId),
+				getString(dismissId));
+	}
+
+	private MaterialShowcaseView getRectangularView(View target, String title, String content, String dismiss)
+	{
+		return new MaterialShowcaseView.Builder(getActivity())
+				.setTarget(target)
+				.setTitleText(title)
+				.setContentText(content)
+				.setDismissOnTouch(true)
+				.setDismissText(dismiss)
+				.withRectangleShape()
+				.build();
 	}
 }

@@ -18,7 +18,7 @@ import android.widget.CheckedTextView;
 import android.widget.GridView;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.util.ImageUtils;
+import com.anthonymandra.util.DbUtil;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -118,7 +118,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
             while (cursor.moveToNext())
             {
                 String all = cursor.getString(0);
-                uniqueKeywords.addAll(Arrays.asList(ImageUtils.convertStringToArray(all)));
+                uniqueKeywords.addAll(Arrays.asList(DbUtil.convertStringToArray(all)));
             }
         }
 

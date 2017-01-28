@@ -8,6 +8,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.anthonymandra.content.Meta;
 
@@ -28,7 +29,7 @@ public abstract class PathEnumerationProvider extends ContentProvider
     private static final String PATH_DELIMITER = "/";
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         if (ANCESTORS_QUERY_SELECTION.equals(selection))
         {
@@ -41,12 +42,17 @@ public abstract class PathEnumerationProvider extends ContentProvider
         else
         {
             SQLiteDatabase db = getDbHelper().getReadableDatabase();
-            return db.query(getTableName(), projection, selection, selectionArgs, null, null, sortOrder);
+            Cursor c = db.query(getTableName(), projection, selection, selectionArgs, null, null, sortOrder);
+
+            //noinspection ConstantConditions
+            c.setNotificationUri(getContext().getContentResolver(), uri);
+            return c;
         }
     }
 
     @Override
-    public Uri insert(Uri uri, ContentValues initialValues)
+    @SuppressWarnings("ConstantConditions")
+    public Uri insert(@NonNull Uri uri, ContentValues initialValues)
     {
         String parentPath = PATH_DELIMITER;  // Default path defines a root node
         int parentDepth = -1;
@@ -96,11 +102,11 @@ public abstract class PathEnumerationProvider extends ContentProvider
     }
 
     /**
-     * Returns a cursor containing all ancestor rows
+     * Get the ancestors (parents) of id
      * @param id child row id
-     * @return
+     * @return cursor containing all ancestor rows
      */
-    protected Cursor getAncestors(long id)
+    private Cursor getAncestors(long id)
     {
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
         String path;
@@ -121,11 +127,11 @@ public abstract class PathEnumerationProvider extends ContentProvider
     }
 
     /**
-     * Returns a cursor containing all descendant rows
+     * Gets the descendants (children) of id
      * @param id parent row id
-     * @return
+     * @return cursor containing all descendant rows
      */
-    protected Cursor getDescendants(long id)
+    private Cursor getDescendants(long id)
     {
         SQLiteDatabase db = getDbHelper().getReadableDatabase();
 

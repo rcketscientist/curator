@@ -23,7 +23,6 @@ import android.widget.GridView;
 import android.widget.SimpleCursorAdapter;
 
 import com.anthonymandra.content.KeywordProvider;
-import com.anthonymandra.framework.KeywordDataSource;
 import com.anthonymandra.framework.PathEnumerationProvider;
 import com.anthonymandra.util.DbUtil;
 import com.crashlytics.android.Crashlytics;
@@ -40,7 +39,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
     private static final int KEYWORD_LOADER_ID = 1;
     private SimpleCursorAdapter mAdapter;
     @SuppressLint("UseSparseArrays")
-    private Set<String> mSelectedKeywords = new HashSet<>();
+    private final Set<String> mSelectedKeywords = new HashSet<>();
 
     private boolean mPauseListener;
 
@@ -56,10 +55,8 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
     {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(KEYWORD_LOADER_ID, null, this);
-        String[] from = new String[] { KeywordProvider.Data.KEYWORD_NAME };
-        int[] to = new int[] { R.id.keyword_entry };
-        mAdapter = new SelectCursorAdapter(getActivity(), R.layout.keyword_entry, null,
-                from, to, 0);
+
+        mAdapter = new SelectCursorAdapter(getActivity());
         GridView mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -121,7 +118,6 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                             }
                         }
                     }
-                    getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, KeywordEditFragment.this);
                 }
                 mPauseListener = false;
 
@@ -130,10 +126,6 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
             }
         });
         mGrid.setAdapter(mAdapter);
-
-        //TODO: Do I still want a generic keyword set?
-//        if (getActivity().getContentResolver()..getCount() < 1)
-//            generateKeywordTemplate();
     }
 
     @Override
@@ -211,7 +203,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                         .withValues(cv)
                         .build());
 
-                mSelectedKeywords.add(c.getString(KeywordDataSource.COLUMN_NAME));  //TODO: Why the provider AND datasource
+                mSelectedKeywords.add(c.getString(KeywordProvider.Data.COLUMN_NAME));
             }
         }
 
@@ -234,7 +226,6 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                 }
             }).start();
         }
-        getLoaderManager().restartLoader(KEYWORD_LOADER_ID, null, this);    //TODO: Is this right?  Should manage itself...
     }
 
     public void clearSelectedKeywords()
@@ -245,9 +236,11 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
 
     private class SelectCursorAdapter extends SimpleCursorAdapter
     {
-        SelectCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags)
+        SelectCursorAdapter(Context context)
         {
-            super(context, layout, c, from, to, flags);
+            super(context, R.layout.keyword_entry, null,
+                    new String[] { KeywordProvider.Data.KEYWORD_NAME },
+                    new int[] { R.id.keyword_entry }, 0);
         }
 
         @Override
@@ -262,6 +255,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                 view.getBackground().setAlpha(230);
 
             CheckedTextView v = (CheckedTextView) view;
+            //noinspection SuspiciousMethodCalls
             v.setChecked(mSelectedKeywords.contains(v.getText()));
         }
 
