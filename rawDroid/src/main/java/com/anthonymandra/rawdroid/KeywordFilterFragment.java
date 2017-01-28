@@ -37,7 +37,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
     private final static String[] ARGUMENTS = new String[] {""};
 
     private SelectArrayAdapter<String> mAdapter;
-    private Set<String> mSelectedKeywords = new TreeSet<>();
+    private Set<String> mSelectedKeywords = new HashSet<>();
 
     @Nullable
     @Override
@@ -114,7 +114,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
 
     private void updateKeywords(Cursor cursor)
     {
-        Set<String> uniqueKeywords = new HashSet<>();
+        final Set<String> uniqueKeywords = new TreeSet<>();
         if (cursor != null)
         {
             while (cursor.moveToNext())
