@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import android.annotation.SuppressLint;
 import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Checkable;
+import android.widget.CheckedTextView;
 import android.widget.GridView;
 import android.widget.SimpleCursorAdapter;
 
@@ -28,8 +30,8 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 public class
 
@@ -37,8 +39,8 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
 {
     private static final int KEYWORD_LOADER_ID = 1;
     private SimpleCursorAdapter mAdapter;
-    private GridView mGrid;
-    private Map<Long, String> mSelectedKeywords = new HashMap<>();
+    @SuppressLint("UseSparseArrays")
+    private Set<String> mSelectedKeywords = new HashSet<>();
 
     private boolean mPauseListener;
 
@@ -58,7 +60,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
         int[] to = new int[] { R.id.keyword_entry };
         mAdapter = new SelectCursorAdapter(getActivity(), R.layout.keyword_entry, null,
                 from, to, 0);
-        mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
+        GridView mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -83,7 +85,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                     {
                         while (selectedTree != null && selectedTree.moveToNext())
                         {
-                            mSelectedKeywords.remove(selectedTree.getLong(KeywordProvider.Data.COLUMN_ID));
+                            mSelectedKeywords.remove(selectedTree.getString(KeywordProvider.Data.COLUMN_NAME));
                         }
                         mAdapter.notifyDataSetChanged();
                     }
@@ -107,7 +109,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                                 {
                                     if (keywords.getLong(KeywordProvider.Data.COLUMN_ID) == selectedId)
                                     {
-                                        mSelectedKeywords.put(selectedId, keywords.getString(KeywordProvider.Data.COLUMN_NAME));
+                                        mSelectedKeywords.add(keywords.getString(KeywordProvider.Data.COLUMN_NAME));
                                         ContentValues cv = new ContentValues();
                                         cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
                                         getActivity().getContentResolver().update(
@@ -172,7 +174,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
 
     public Collection<String> getSelectedKeywords()
     {
-        return mSelectedKeywords.values();
+        return mSelectedKeywords;
     }
 
     public void setSelectedKeywords(Collection<String> selected)
@@ -209,7 +211,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                         .withValues(cv)
                         .build());
 
-                mSelectedKeywords.put(id, c.getString(KeywordDataSource.COLUMN_NAME));
+                mSelectedKeywords.add(c.getString(KeywordDataSource.COLUMN_NAME));  //TODO: Why the provider AND datasource
             }
         }
 
@@ -241,9 +243,9 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
         mAdapter.notifyDataSetChanged();
     }
 
-    class SelectCursorAdapter extends SimpleCursorAdapter
+    private class SelectCursorAdapter extends SimpleCursorAdapter
     {
-        public SelectCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags)
+        SelectCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags)
         {
             super(context, layout, c, from, to, flags);
         }
@@ -259,8 +261,8 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
             else
                 view.getBackground().setAlpha(230);
 
-            long id = cursor.getLong(KeywordProvider.Data.COLUMN_ID);
-            ((Checkable) view).setChecked(mSelectedKeywords.get(id) != null);
+            CheckedTextView v = (CheckedTextView) view;
+            v.setChecked(mSelectedKeywords.contains(v.getText()));
         }
 
 
