@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="5.1.0"
+             versioncode="51000"
+             summary="Release Candidate 2"
+             date="28 JAN 2017">
+        <change>New branding, welcome to Curator!</change>
+        <change>Redesigned sidebars</change>
+        <change>Improved keyword handling (xmp:subject)</change>
+        <change>Add support for missing meta fields on some cameras.</change>
+        <change>Fix Google bug that caused images to be reprocessed.</change>
+        <change>Improved histogram processing.</change>
+        <change>Fix and update tutorial.</change>
+        <change>Remove search nag on empty library, only asks on first run.</change>
+    </release>
     <release version="4.9.3.1"
              versioncode="49301"
              summary="Beta: Release Candidate"
