@@ -118,9 +118,7 @@ public class GalleryActivity extends CoreActivity implements
 	// Selection support
 	private boolean multiSelectMode;
 
-	private int mDisplayWidth;
-
-    private Toolbar mToolbar;
+	private Toolbar mToolbar;
 	private MaterialCab mMaterialCab;
 	private XmpFilterFragment mXmpFilterFragment;
 	private ProgressBar mProgressBar;
@@ -189,7 +187,7 @@ public class GalleryActivity extends CoreActivity implements
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		inTutorial = false;
 
-		mDisplayWidth = metrics.widthPixels;
+		int mDisplayWidth = metrics.widthPixels;
 
 		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
 		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
@@ -1059,10 +1057,5 @@ public class GalleryActivity extends CoreActivity implements
 	protected Toolbar getToolbar()
 	{
 		return mToolbar;
-	}
-
-	protected int getDisplayWidth()
-	{
-		return mDisplayWidth;
 	}
 }

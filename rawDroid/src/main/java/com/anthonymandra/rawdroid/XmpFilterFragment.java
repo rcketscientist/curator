@@ -42,13 +42,13 @@ public class XmpFilterFragment extends XmpBaseFragment
     private static final String TAG = XmpBaseFragment.class.getSimpleName();
 
     private MetaFilterChangedListener mFilterListener;
-    public interface MetaFilterChangedListener
+    interface MetaFilterChangedListener
     {
         void onMetaFilterChanged(XmpFilter xmpFilter);
     }
 
     private SearchRootRequestedListener mRequestListener;
-    public interface SearchRootRequestedListener
+    interface SearchRootRequestedListener
     {
         void onSearchRootRequested();
     }
@@ -74,30 +74,49 @@ public class XmpFilterFragment extends XmpBaseFragment
         return inflater.inflate(R.layout.xmp_filter_landscape, container, false);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState)
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState)
+	{
+		super.onViewCreated(view, savedInstanceState);
+		setMultiselect(true);
+
+		// Pull up stored filter configuration
+		SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
+		mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false);
+		mSortAscending = pref.getBoolean(mPrefAscending, true);
+		mSortColumn = XmpFilter.SortColumns.valueOf(pref.getString(mPrefColumn, XmpFilter.SortColumns.Name.toString()));
+		mSegregateByType = pref.getBoolean(mPrefSegregate, true);
+		mHiddenFolders = new HashSet<>(pref.getStringSet(mPrefHiddenFolders, new HashSet<String>()));
+		mExcludedFolders = new HashSet<>(pref.getStringSet(mPrefExcludedFolders, new HashSet<String>()));
+
+		// Initial match setting
+		((CompoundButton)view.findViewById(R.id.toggleAnd)).setChecked(mAndTrueOrFalse);
+
+		// Initial sort setting
+		if (mSortAscending)
+		{
+			if (XmpFilter.SortColumns.Name == mSortColumn)
+				((CompoundButton)view.findViewById(R.id.toggleSortAfirst)).setChecked(true);
+			else
+				((CompoundButton)view.findViewById(R.id.toggleSortOldFirst)).setChecked(true);
+		}
+		else
+		{
+			if (XmpFilter.SortColumns.Name == mSortColumn)
+				((CompoundButton)view.findViewById(R.id.toggleSortZfirst)).setChecked(true);
+			else
+				((CompoundButton)view.findViewById(R.id.toggleSortYoungFirst)).setChecked(true);
+		}
+
+		// Initial segregate value
+		((CompoundButton)getActivity().findViewById(R.id.toggleSegregate)).setChecked(mSegregateByType);
+
+		attachButtons(view);
+	}
+
+	private void attachButtons(View root)
     {
-        super.onActivityCreated(savedInstanceState);
-        setMultiselect(true);
-
-        SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
-        mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false);
-        mSortAscending = pref.getBoolean(mPrefAscending, true);
-        mSortColumn = XmpFilter.SortColumns.valueOf(pref.getString(mPrefColumn, XmpFilter.SortColumns.Name.toString()));
-        mSegregateByType = pref.getBoolean(mPrefSegregate, true);
-        mHiddenFolders = new HashSet<>(pref.getStringSet(mPrefHiddenFolders, new HashSet<String>()));
-        mExcludedFolders = new HashSet<>(pref.getStringSet(mPrefExcludedFolders, new HashSet<String>()));
-
-        initAndOr(mAndTrueOrFalse);
-        initSort(mSortAscending, mSortColumn);
-        initSegregate(mSegregateByType);
-
-        attachButtons();
-    }
-
-    private void attachButtons()
-    {
-        getView().findViewById(R.id.clearFilterButton).setOnClickListener(new View.OnClickListener()
+        root.findViewById(R.id.clearFilterButton).setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -139,7 +158,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        ImageButton clearFilter = (ImageButton) getView().findViewById(R.id.clearFilterButton);
+        ImageButton clearFilter = (ImageButton) root.findViewById(R.id.clearFilterButton);
         clearFilter.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -237,7 +256,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        final ImageButton helpButton = (ImageButton) getView().findViewById(R.id.helpButton);
+        final ImageButton helpButton = (ImageButton) root.findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -252,11 +271,6 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
         mAndTrueOrFalse = and;
         onFilterUpdated();
-    }
-
-    private void initAndOr(boolean andTrueOrFalse)
-    {
-        ((CompoundButton)getActivity().findViewById(R.id.toggleAnd)).setChecked(andTrueOrFalse);
     }
 
     private void setSort(int checkedId)
@@ -281,29 +295,6 @@ public class XmpFilterFragment extends XmpBaseFragment
                 break;
         }
         onFilterUpdated();
-    }
-
-    private void initSort(boolean sortAscending, XmpFilter.SortColumns sortType)
-    {
-        if (sortAscending)
-        {
-            if (XmpFilter.SortColumns.Name == sortType)
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortAfirst)).setChecked(true);
-            else
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortOldFirst)).setChecked(true);
-        }
-        else
-        {
-            if (XmpFilter.SortColumns.Name == sortType)
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortZfirst)).setChecked(true);
-            else
-                ((CompoundButton)getActivity().findViewById(R.id.toggleSortYoungFirst)).setChecked(true);
-        }
-    }
-
-    private void initSegregate(boolean checked)
-    {
-        ((CompoundButton)getActivity().findViewById(R.id.toggleSegregate)).setChecked(checked);
     }
 
     @SuppressWarnings("unused")
@@ -475,7 +466,8 @@ public class XmpFilterFragment extends XmpBaseFragment
 
             // Set the position of the dialog
             Window window = getDialog().getWindow();
-            window.setGravity(Gravity.TOP|Gravity.START);
+	        //noinspection ConstantConditions
+	        window.setGravity(Gravity.TOP|Gravity.START);
             WindowManager.LayoutParams params = window.getAttributes();
             params.x = x;
             params.y = y;
@@ -530,9 +522,9 @@ public class XmpFilterFragment extends XmpBaseFragment
         boolean excluded;
     }
 
-    private static class FolderAdapter extends ArrayAdapter<FolderVisibility>   //TODO: Recycler
+    private static class FolderAdapter extends ArrayAdapter<FolderVisibility>
     {
-        public interface OnVisibilityChangedListener
+        interface OnVisibilityChangedListener
         {
             void onVisibilityChanged(FolderVisibility visibility);
         }
@@ -544,18 +536,19 @@ public class XmpFilterFragment extends XmpBaseFragment
         }
 
         private OnVisibilityChangedListener mListener;
-        public void setOnVisibilityChangedListener(OnVisibilityChangedListener listener)
+        void setOnVisibilityChangedListener(OnVisibilityChangedListener listener)
         {
             mListener = listener;
         }
 
-        public FolderAdapter(Context context, List<FolderVisibility> objects)
+        FolderAdapter(Context context, List<FolderVisibility> objects)
         {
             super(context, R.layout.folder_list_item, objects);
         }
 
+        @NonNull
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent)
+        public View getView(final int position, View convertView, @NonNull ViewGroup parent)
         {
             final ViewHolder viewHolder;
             final FolderVisibility item = getItem(position);
@@ -624,58 +617,55 @@ public class XmpFilterFragment extends XmpBaseFragment
     {
 	    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
 
+	    View root = getView();
+	    if (root == null)
+	    	return;
+
 	    // Sort group
-	    View sortgroup = getView().findViewById(R.id.sortGroup);
 	    sequence.addSequenceItem(getRectangularView(
-			    sortgroup,
+                root.findViewById(R.id.sortGroup),
 			    R.string.sortImages,
 			    R.string.sortCotent,
 			    R.string.ok));
 
 	    // Segregate
-	    View segregate = getView().findViewById(R.id.toggleSegregate);
 	    sequence.addSequenceItem(getRectangularView(
-			    segregate,
+                root.findViewById(R.id.toggleSegregate),
 			    R.string.sortImages,
 			    R.string.segregateContent,
 			    R.string.ok));
 
 	    // Folder
-	    View folder = getView().findViewById(R.id.buttonFolders);
 	    sequence.addSequenceItem(getRectangularView(
-			    folder,
+                root.findViewById(R.id.buttonFolders),
 			    R.string.filterImages,
 			    R.string.folderContent,
 			    R.string.ok));
 
 	    // Clear
-	    View clearFilter = getView().findViewById(R.id.clearFilterButton);
 	    sequence.addSequenceItem(getRectangularView(
-			    clearFilter,
+                root.findViewById(R.id.clearFilterButton),
 			    R.string.filterImages,
 			    R.string.clearFilterContent,
 			    R.string.ok));
 
 	    // Rating
-	    View labelRating = getView().findViewById(R.id.filterLabelRating);
 	    sequence.addSequenceItem(getRectangularView(
-			    labelRating,
+                root.findViewById(R.id.filterLabelRating),
 			    R.string.filterImages,
 			    R.string.ratingLabelContent,
 			    R.string.ok));
 
 	    // Subject
-	    View subject = getView().findViewById(R.id.keywordFragment);
 	    sequence.addSequenceItem(getRectangularView(
-			    subject,
+                root.findViewById(R.id.keywordFragment),
 			    R.string.filterImages,
 			    R.string.subjectContent,
 			    R.string.ok));
 
 	    // Match
-	    View andOr = getView().findViewById(R.id.toggleAnd);
 	    sequence.addSequenceItem(getRectangularView(
-			    andOr,
+                root.findViewById(R.id.toggleAnd),
 			    R.string.filterImages,
 			    R.string.matchContent,
 			    R.string.ok));

@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.R;
-import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.util.MetaUtil;
 import com.bumptech.glide.Glide;
 
@@ -147,16 +146,16 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		void onSelectionUpdated(Set<Uri> selectedUris);
 	}
 
-	public static class ViewHolder extends RecyclerView.ViewHolder
+	static class ViewHolder extends RecyclerView.ViewHolder
 	{
-		public final ImageView mImageView;
-		public final TextView mFileName;
-		public final View mLabel;
-		public final android.widget.RatingBar mRatingBar;
-		public final CheckableRelativeLayout mBaseView;
-		public final ImageView mXmpView;
+		final ImageView mImageView;
+		final TextView mFileName;
+		final View mLabel;
+		final android.widget.RatingBar mRatingBar;
+		final CheckableRelativeLayout mBaseView;
+		final ImageView mXmpView;
 
-		public ViewHolder(View view)
+		ViewHolder(View view)
 		{
 			super(view);
 
@@ -170,7 +169,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		}
 	}
 
-	public static class GalleryItem
+	private static class GalleryItem
 	{
 		private String name;
 		private int  rotation;
@@ -179,7 +178,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		private Uri uri;
 		private boolean hasSubject;
 
-		public static GalleryItem fromCursor(Cursor cursor)
+		static GalleryItem fromCursor(Cursor cursor)
 		{
 			GalleryItem item = new GalleryItem();
 			item.rotation = MetaUtil.getRotation(cursor.getInt(cursor.getColumnIndex(Meta.ORIENTATION)));
@@ -192,7 +191,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			return item;
 		}
 
-		public static GalleryItem fromViewHolder(ViewHolder vh)
+		static GalleryItem fromViewHolder(ViewHolder vh)
 		{
 			GalleryItem item = new GalleryItem();
 			item.rotation = (int)vh.mImageView.getRotation();
@@ -326,7 +325,6 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		vh.mBaseView.setTag(galleryItem.uri);   // store tag for compare
 
-		/** This will use {@link ImageUtil#getThumb(Context, Uri)} which will load metadata if needed */
 		Glide.with(mContext)
 				.using(new RawModelLoader(mContext))
 				.load(values)
@@ -347,25 +345,6 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		if (uriString == null)
 			return null;
 		return Uri.parse(uriString);
-	}
-
-	@Nullable
-	public List<String> getUris()
-	{
-		if (mCursor == null)
-			return null;
-		int index = mCursor.getColumnIndex(Meta.URI);
-		if (index < 0)
-			return null;
-
-		List<String> uris = new ArrayList<>();
-		while (mCursor.moveToNext()) {
-			String uri = mCursor.getString(index);
-			if (uri == null)
-				continue;
-			uris.add(uri);
-		}
-		return uris;
 	}
 
 	public List<Uri> getSelectedItems()

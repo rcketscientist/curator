@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.anthonymandra.widget.XmpLabelGroup;
@@ -21,6 +20,8 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 public class XmpEditFragment extends XmpBaseFragment
 {
 	private static final XmpEditValues recentXmp = new XmpEditValues();
+	private ImageView recentRating;
+	private ImageView recentLabel;
 
 	public interface RatingChangedListener
 	{
@@ -92,11 +93,11 @@ public class XmpEditFragment extends XmpBaseFragment
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
+	public void onViewCreated(View view, Bundle savedInstanceState)
 	{
-		super.onActivityCreated(savedInstanceState);
+		super.onViewCreated(view, savedInstanceState);
 		setMultiselect(false);
-		attachButtons();
+		attachButtons(view);
 	}
 
 	/**
@@ -159,9 +160,9 @@ public class XmpEditFragment extends XmpBaseFragment
 				subject);
 	}
 
-	private void attachButtons()
+	private void attachButtons(View parent)
 	{
-		getView().findViewById(R.id.clearMetaButton).setOnClickListener(new OnClickListener()
+		parent.findViewById(R.id.clearMetaButton).setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
@@ -169,7 +170,7 @@ public class XmpEditFragment extends XmpBaseFragment
 				clear();
 			}
 		});
-		getView().findViewById(R.id.recentMetaButton).setOnClickListener(new OnClickListener()
+		parent.findViewById(R.id.recentMetaButton).setOnClickListener(new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
@@ -178,8 +179,7 @@ public class XmpEditFragment extends XmpBaseFragment
 			}
 		});
 
-		final ImageButton helpButton = (ImageButton) getView().findViewById(R.id.helpButton);
-		helpButton.setOnClickListener(new View.OnClickListener()
+		parent.findViewById(R.id.helpButton).setOnClickListener(new View.OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
@@ -187,6 +187,9 @@ public class XmpEditFragment extends XmpBaseFragment
 				startTutorial();
 			}
 		});
+
+		recentLabel = (ImageView)parent.findViewById(R.id.recentLabel);
+		recentRating = (ImageView)parent.findViewById(R.id.recentRating);
 	}
 
 	@Override
@@ -205,25 +208,25 @@ public class XmpEditFragment extends XmpBaseFragment
 			switch (checked.get(0))
 			{
 				case blue:
-					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyBlue));
+					recentLabel.setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyBlue));
 					break;
 				case red:
-					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyRed));
+					recentLabel.setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyRed));
 					break;
 				case green:
-					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyGreen));
+					recentLabel.setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyGreen));
 					break;
 				case yellow:
-					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyYellow));
+					recentLabel.setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyYellow));
 					break;
 				case purple:
-					((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyPurple));
+					recentLabel.setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.colorKeyPurple));
 					break;
 			}
 		}
 		else
 		{
-			((ImageView)getView().findViewById(R.id.recentLabel)).setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.white));
+			recentLabel.setImageTintList(ContextCompat.getColorStateList(getContext(), R.color.white));
 		}
 		recentXmp.Label = getLabel();
 		if (mLabelListener != null)
@@ -239,29 +242,29 @@ public class XmpEditFragment extends XmpBaseFragment
 
 		if (recentXmp.Rating == null)
 		{
-			((ImageView) getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star_border);
+			recentRating.setImageResource(R.drawable.ic_star_border);
 			return;
 		}
 
 		switch (recentXmp.Rating)
 		{
 			case 5:
-				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star5);
+				recentRating.setImageResource(R.drawable.ic_star5);
 				break;
 			case 4:
-				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star4);
+				recentRating.setImageResource(R.drawable.ic_star4);
 				break;
 			case 3:
-				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star3);
+				recentRating.setImageResource(R.drawable.ic_star3);
 				break;
 			case 2:
-				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star2);
+				recentRating.setImageResource(R.drawable.ic_star2);
 				break;
 			case 1:
-				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star1);
+				recentRating.setImageResource(R.drawable.ic_star1);
 				break;
 			default:
-				((ImageView)getView().findViewById(R.id.recentRating)).setImageResource(R.drawable.ic_star_border);
+				recentRating.setImageResource(R.drawable.ic_star_border);
 				break;
 		}
 	}
@@ -280,40 +283,38 @@ public class XmpEditFragment extends XmpBaseFragment
 	{
 		MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
 
+		View root = getView();
+		if (root == null)
+			return;
+
 		// Sort group
-		View sortgroup = getView().findViewById(R.id.recentMetaButton);
 		sequence.addSequenceItem(getRectangularView(
-				sortgroup,
+				root.findViewById(R.id.recentMetaButton),
 				R.string.tutSetRecent));
 
 		// Segregate
-		View segregate = getView().findViewById(R.id.clearMetaButton);
 		sequence.addSequenceItem(getRectangularView(
-				segregate,
+				root.findViewById(R.id.clearMetaButton),
 				R.string.tutClearMeta));
 
 		// Rating
-		View labelRating = getView().findViewById(R.id.metaLabelRating);
 		sequence.addSequenceItem(getRectangularView(
-				labelRating,
+				root.findViewById(R.id.metaLabelRating),
 				R.string.tutSetRatingLabel));
 
 		// Subject
-		View subject = getView().findViewById(R.id.keywordFragment);
 		sequence.addSequenceItem(getRectangularView(
-				subject,
+				root.findViewById(R.id.keywordFragment),
 				R.string.tutSetSubject));
 
 		// Match
-		View addKeyword = getView().findViewById(R.id.addKeyword);
 		sequence.addSequenceItem(getRectangularView(
-				addKeyword,
+				root.findViewById(R.id.addKeyword),
 				R.string.tutAddSubject));
 
 		// Match
-		View editKeyword = getView().findViewById(R.id.editKeyword);
 		sequence.addSequenceItem(getRectangularView(
-				editKeyword,
+				root.findViewById(R.id.editKeyword),
 				R.string.tutEditSubject));
 
 		sequence.start();
