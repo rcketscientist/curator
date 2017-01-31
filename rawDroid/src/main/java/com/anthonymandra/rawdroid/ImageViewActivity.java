@@ -46,9 +46,6 @@ public class ImageViewActivity extends PhotoPage
 	}
 
 	@Override
-	/**
-	 * This seems to occur when the first image is loaded.
-	 */
 	public void onCurrentImageUpdated()
 	{
         super.onCurrentImageUpdated();

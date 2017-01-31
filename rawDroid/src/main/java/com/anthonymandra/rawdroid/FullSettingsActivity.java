@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -35,9 +34,6 @@ public class FullSettingsActivity extends PreferenceActivity
 	public static final String KEY_ResetSaveDefault = "prefKeyResetSaveDefault";
 	public static final String KEY_DefaultSaveType = "prefKeyDefaultSaveType";
 	public static final String KEY_DefaultSaveConfig = "prefKeyDefaultSaveConfig";
-	public static final String KEY_ShowXmpFiles = "prefKeyShowXmpFiles";
-	public static final String KEY_ShowNativeFiles = "prefKeyShowNativeFiles";
-	public static final String KEY_ShowUnknownFiles = "prefKeyShowUnknownFiles";
 	public static final String KEY_RecycleBinSize = "prefKeyRecycleBinSize";
 	public static final String KEY_DeleteConfirmation = "prefKeyDeleteConfirmation";
 	public static final String KEY_UseRecycleBin = "prefKeyUseRecycleBin";
@@ -94,8 +90,6 @@ public class FullSettingsActivity extends PreferenceActivity
 	private static String[] prefShowOptions;
     private static String[] prefWatermarkLocations;
 
-    private static Activity mActivity;
-
     @Override
     protected boolean isValidFragment (String fragmentName) {
         return
@@ -110,7 +104,6 @@ public class FullSettingsActivity extends PreferenceActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-        mActivity = this;
         prefShowOptions = getResources().getStringArray(R.array.showOptions);
         prefWatermarkLocations = getResources().getStringArray(R.array.watermarkLocations);
 	}
@@ -170,7 +163,8 @@ public class FullSettingsActivity extends PreferenceActivity
 			        editor.remove(KEY_DefaultSaveType);
 			        editor.apply();
 
-			        Snackbar.make(getView(), "Save default cleared!", Snackbar.LENGTH_SHORT ).show();
+				    if (getView() != null)
+			            Snackbar.make(getView(), "Save default cleared!", Snackbar.LENGTH_SHORT ).show();
 			        return true;
 		        }
 	        });
@@ -208,7 +202,7 @@ public class FullSettingsActivity extends PreferenceActivity
 		private void updateRecycleBin()
 		{
 			EditTextPreference option = (EditTextPreference) mPreferenceManager.findPreference(KEY_RecycleBinSize);
-			option.setTitle(mActivity.getString(R.string.prefTitleRecycleBin) + " (" + option.getText() + "MB)");
+			option.setTitle(getActivity().getString(R.string.prefTitleRecycleBin) + " (" + option.getText() + "MB)");
 		}
     }
 
@@ -308,7 +302,7 @@ public class FullSettingsActivity extends PreferenceActivity
         {
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 			intent.setType("text/plain");
-			mActivity.startActivityForResult(intent, REQUEST_CODE_PICK_KEYWORD_FILE);
+			getActivity().startActivityForResult(intent, REQUEST_CODE_PICK_KEYWORD_FILE);
         }
 	}
 
@@ -448,7 +442,7 @@ public class FullSettingsActivity extends PreferenceActivity
         public void onResume() {
             super.onResume();
             mPreferenceManager = getPreferenceManager();
-            LicenseManager.getLicense(mActivity.getBaseContext(), mLicenseHandler);
+            LicenseManager.getLicense(getActivity(), mLicenseHandler);
             attachLicenseButtons();
         }
 
@@ -465,8 +459,10 @@ public class FullSettingsActivity extends PreferenceActivity
 				    @Override
 				    public boolean onPreferenceClick(Preference arg0)
 				    {
-					    LicenseManager.getLicense(mActivity.getBaseContext(), mLicenseHandler);
-					    Snackbar.make(getView(), R.string.licenseRequestSent, Snackbar.LENGTH_SHORT).show();
+					    LicenseManager.getLicense(getActivity(), mLicenseHandler);
+
+					    if (getView() != null)
+					        Snackbar.make(getView(), R.string.licenseRequestSent, Snackbar.LENGTH_SHORT).show();
 					    return true;
 				    }
 			    });
@@ -492,7 +488,7 @@ public class FullSettingsActivity extends PreferenceActivity
 		    Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 		    emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"rawdroid@anthonymandra.com"});
 		    emailIntent.setType("plain/text");
-		    mActivity.startActivity(Intent.createChooser(emailIntent, "Send email..."));
+		    getActivity().startActivity(Intent.createChooser(emailIntent, "Send email..."));
 	    }
 
 	    private void updateLicense(License.LicenseState state)
@@ -507,12 +503,12 @@ public class FullSettingsActivity extends PreferenceActivity
 		    switch (state)
 		    {
 			    case error:
-				    license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError));
+				    license.setSummary(getActivity().getString(R.string.prefSummaryLicenseError));
 				    setBuyButton();
 				    break;
-			    case pro: license.setSummary(mActivity.getString(R.string.prefSummaryLicense));
+			    case pro: license.setSummary(getActivity().getString(R.string.prefSummaryLicense));
 				    break;
-			    case demo: license.setSummary(mActivity.getString(R.string.buypro));
+			    case demo: license.setSummary(getActivity().getString(R.string.buypro));
 				    setBuyButton();
 				    break;
 			    case modified_0x000:
@@ -522,8 +518,8 @@ public class FullSettingsActivity extends PreferenceActivity
 				    license.setSummary(R.string.prefSummaryLicenseModified);
 				    setBuyButton();
 				    break;
-			    default: license.setSummary(mActivity.getString(R.string.prefSummaryLicenseError) + "\n" +
-					    mActivity.getString(R.string.buypro));
+			    default: license.setSummary(getActivity().getString(R.string.prefSummaryLicenseError) + "\n" +
+					    getActivity().getString(R.string.buypro));
 				    setBuyButton();
 		    }
 	    }
@@ -538,9 +534,9 @@ public class FullSettingsActivity extends PreferenceActivity
 				    @Override
 				    public boolean onPreferenceClick(Preference arg0)
 				    {
-					    Intent store = Util.getStoreIntent(mActivity, "com.anthonymandra.rawdroidpro");
+					    Intent store = Util.getStoreIntent(getActivity(), "com.anthonymandra.rawdroidpro");
 					    if (store != null)
-						    mActivity.startActivity(store);
+						    getActivity().startActivity(store);
 					    return true;
 				    }
 			    });
@@ -621,7 +617,7 @@ public class FullSettingsActivity extends PreferenceActivity
 		    SeekBarPreference watermarkSize = (SeekBarPreference) mPreferenceManager.findPreference(KEY_WatermarkSize);
 		    watermarkSize.setSummary(mPreferenceManager.getSharedPreferences().getInt(KEY_WatermarkSize, 150)
 				    + "\n" +
-				    mActivity.getString(R.string.prefSummaryWatermarkSize));
+				    getActivity().getString(R.string.prefSummaryWatermarkSize));
 	    }
 
 	    private void updateWatermarkAlpha()
@@ -656,25 +652,25 @@ public class FullSettingsActivity extends PreferenceActivity
 		    if (top.getText() != null)
 		    {
 			    String topValue = top.getText().equals("-1") ? "" : ": " + top.getText();
-			    top.setTitle(mActivity.getString(R.string.prefTitleTopMargin) + topValue);
+			    top.setTitle(getActivity().getString(R.string.prefTitleTopMargin) + topValue);
 		    }
 
 		    if (bottom.getText() != null)
 		    {
 			    String bottomValue = bottom.getText().equals("-1") ? "" : ": " + bottom.getText();
-			    bottom.setTitle(mActivity.getString(R.string.prefTitleBottomMargin) + bottomValue);
+			    bottom.setTitle(getActivity().getString(R.string.prefTitleBottomMargin) + bottomValue);
 		    }
 
 		    if (left.getText() != null)
 		    {
 			    String leftValue = left.getText().equals("-1") ? "" : ": " + left.getText();
-			    left.setTitle(mActivity.getString(R.string.prefTitleLeftMargin) + leftValue);
+			    left.setTitle(getActivity().getString(R.string.prefTitleLeftMargin) + leftValue);
 		    }
 
 		    if (right.getText() != null)
 		    {
 			    String rightValue = right.getText().equals("-1") ? "" : ": " + right.getText();
-			    right.setTitle(mActivity.getString(R.string.prefTitleRightMargin) + rightValue);
+			    right.setTitle(getActivity().getString(R.string.prefTitleRightMargin) + rightValue);
 		    }
 	    }
 
@@ -688,7 +684,7 @@ public class FullSettingsActivity extends PreferenceActivity
 		    EditTextPreference left = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkLeftMargin);
 		    EditTextPreference right = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkRightMargin);
 
-		    if (position.equals(mActivity.getString(R.string.upperLeft)))
+		    if (position.equals(getActivity().getString(R.string.upperLeft)))
 		    {
 			    top.setText("0");
 			    top.setEnabled(true);
@@ -700,7 +696,7 @@ public class FullSettingsActivity extends PreferenceActivity
 			    right.setText("-1");
 			    right.setEnabled(false);
 		    }
-		    else if (position.equals(mActivity.getString(R.string.upperRight)))
+		    else if (position.equals(getActivity().getString(R.string.upperRight)))
 		    {
 			    top.setText("0");
 			    top.setEnabled(true);
@@ -712,7 +708,7 @@ public class FullSettingsActivity extends PreferenceActivity
 			    left.setText("-1");
 			    left.setEnabled(false);
 		    }
-		    else if (position.equals(mActivity.getString(R.string.lowerLeft)))
+		    else if (position.equals(getActivity().getString(R.string.lowerLeft)))
 		    {
 			    bottom.setText("0");
 			    bottom.setEnabled(true);
@@ -724,7 +720,7 @@ public class FullSettingsActivity extends PreferenceActivity
 			    right.setText("-1");
 			    right.setEnabled(false);
 		    }
-		    else if (position.equals(mActivity.getString(R.string.lowerRight)))
+		    else if (position.equals(getActivity().getString(R.string.lowerRight)))
 		    {
 			    bottom.setText("0");
 			    bottom.setEnabled(true);

@@ -34,6 +34,7 @@ import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -187,9 +188,9 @@ public class MetaUtil
 
 	/**
 	 * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-	 * @param c
-	 * @param uri
-	 * @return
+	 * @param c context
+	 * @param uri uri of image to parse
+	 * @return processed metadata values or null if failed
 	 */
 	public static ContentValues getContentValues(@NonNull Context c, @NonNull Uri uri)
 	{
@@ -199,9 +200,9 @@ public class MetaUtil
 
 	/**
 	 * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-	 * @param c
-	 * @param uri
-	 * @return
+	 * @param c context
+	 * @param uri uri of image to parse
+	 * @return processed metadata values or null if failed
 	 */
 	public static ContentValues getContentValues(@NonNull Context c, @NonNull Uri uri, @NonNull ContentValues toFill)
 	{
@@ -211,7 +212,10 @@ public class MetaUtil
 
 	/**
 	 * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-	 * @return
+	 * @param stream stream to process
+	 * @param fileType type of file to process (see
+	 * {@link com.drew.imaging.FileTypeDetector#detectFileType(BufferedInputStream)})};
+	 * @return processed metadata values or null if failed
 	 */
 	public static ContentValues getContentValues(@NonNull InputStream stream, @NonNull FileType fileType)
 	{
