@@ -30,6 +30,7 @@ public class RatingBar extends ToggleGroup
 
         inflate(context, R.layout.rating_bar, this);
         attachButtons();
+        setDrawable();
     }
 
     private void attachButtons()
@@ -73,6 +74,23 @@ public class RatingBar extends ToggleGroup
                     mListener.onRatingSelectionChanged(getCheckedRatings());
             }
         });
+    }
+
+    @Override
+    public void setExclusive(boolean exclusive)
+    {
+        super.setExclusive(exclusive);
+        setDrawable();
+    }
+
+    private void setDrawable()
+    {
+        int drawableId = isExclusive() ? R.drawable.ic_star_border : R.drawable.multi_select_star;
+        mOne.setButtonDrawable(drawableId);
+        mTwo.setButtonDrawable(drawableId);
+        mThree.setButtonDrawable(drawableId);
+        mFour.setButtonDrawable(drawableId);
+        mFive.setButtonDrawable(drawableId);
     }
 
     public List<Integer> getCheckedRatings()

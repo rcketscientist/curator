@@ -79,8 +79,9 @@ public class XmpFilterFragment extends XmpBaseFragment
 	{
 		super.onViewCreated(view, savedInstanceState);
 		setExclusive(false);
+        setAllowUnselected(true);
 
-		// Pull up stored filter configuration
+        // Pull up stored filter configuration
 		SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
 		mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false);
 		mSortAscending = pref.getBoolean(mPrefAscending, true);

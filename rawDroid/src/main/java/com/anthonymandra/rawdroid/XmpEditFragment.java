@@ -97,6 +97,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	{
 		super.onViewCreated(view, savedInstanceState);
 		setExclusive(true);
+		setAllowUnselected(true);
 		attachButtons(view);
 	}
 

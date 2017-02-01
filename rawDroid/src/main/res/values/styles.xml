@@ -170,7 +170,8 @@
     </style>
 
     <style name="RatingButton" parent="@style/ImageActionToggleButton">
-        <item name="android:button">@drawable/btn_star_material</item>
+        <item name="android:background">@color/blueGreyIdleButton</item>
+        <item name="android:button">@drawable/multi_select_star</item>
     </style>
 
 </resources>

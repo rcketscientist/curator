@@ -74,7 +74,6 @@ public abstract class XmpBaseFragment extends Fragment implements
 		super.onViewCreated(view, savedInstanceState);
 		mRatingBar = (RatingBar) view.findViewById(R.id.ratingBar);
 		colorKey = (XmpLabelGroup) view.findViewById(R.id.colorKey);
-		colorKey.setAllowUnselected(true);
 		mKeywordFragment = (KeywordBaseFragment) getChildFragmentManager().findFragmentById(R.id.keywordFragment);
 		attachButtons();
 	}
@@ -250,6 +249,12 @@ public abstract class XmpBaseFragment extends Fragment implements
 	{
 		colorKey.setExclusive(enable);
 		mRatingBar.setExclusive(enable);
+	}
+
+	protected void setAllowUnselected(boolean allow)
+	{
+		colorKey.setAllowUnselected(allow);
+		mRatingBar.setAllowUnselected(allow);
 	}
 
 	protected void setSubject(String[] subject)
