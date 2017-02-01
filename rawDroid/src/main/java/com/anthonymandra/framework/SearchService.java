@@ -76,31 +76,18 @@ public class SearchService extends IntentService
             final String action = intent.getAction();
             if (ACTION_SEARCH.equals(action))
             {
-                final String[] root = intent.getStringArrayExtra(EXTRA_FILEPATH_ROOTS);
 	            final String[] uris = intent.getStringArrayExtra(EXTRA_DOCUMENT_TREE_URI_ROOTS);
                 final String[] skip = intent.getStringArrayExtra(EXTRA_SKIP);
-                handleActionSearch(root, uris, skip);//, ext);
+                handleActionSearch(uris, skip);
             }
         }
     }
 
-    private void handleActionSearch(@Nullable String[] filePathRoots, @Nullable String[] uriRoots, @Nullable String[] alwaysExcludeDir)
+    private void handleActionSearch(@Nullable String[] uriRoots, @Nullable String[] alwaysExcludeDir)
     {
 	    mImageCount.set(0);
 	    Intent broadcast = new Intent(BROADCAST_SEARCH_STARTED);
 	    LocalBroadcastManager.getInstance(SearchService.this).sendBroadcast(broadcast);
-	    // If filePathRoots is null we won't even search ExternalStorageDirectory.
-	    // This allows a strictly SAF search
-//	    if (filePathRoots != null)
-//	    {
-//		    // Ensure 'official' storage is part of our search list
-//		    mExternalStorageDir = Environment.getExternalStorageDirectory();
-//		    Set<String> rootDirs = new HashSet<>(Arrays.asList(filePathRoots));
-//		    rootDirs.add(mExternalStorageDir.getPath());
-//
-//		    for (String root : rootDirs)
-//			    search(new File(root), alwaysExcludeDir);
-//	    }
 
 	    ForkJoinPool pool = new ForkJoinPool();     // This should be a common pool for the app.  Currently only use
 	    Set<ContentValues> foundImages = new HashSet<>();

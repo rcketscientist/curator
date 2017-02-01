@@ -3,6 +3,16 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0">
       <entry_point TYPE="method" FQNAME="com.anthonymandra.widget.GalleryRecyclerAdapter com.anthonymandra.widget.GalleryRecyclerAdapter.OnItemClickListener getOnItemClickListener()" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil com.drew.metadata.Metadata readXmp(android.content.Context c, android.net.Uri uri)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void updateXmpInteger(com.drew.metadata.Metadata meta, int tag, java.lang.Integer value)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void updateRating(com.drew.metadata.Metadata meta, java.lang.Double rating)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getMake(com.drew.metadata.Metadata meta)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getFNumber(com.drew.metadata.Metadata meta)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getLensMake(com.drew.metadata.Metadata meta)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getShutterSpeed(com.drew.metadata.Metadata meta)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void setExifValues(android.net.Uri uri, android.content.Context c, java.lang.String[] exif)" />
+      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil android.content.ContentValues getContentValues(java.io.InputStream stream, com.drew.imaging.FileType fileType)" />
+      <entry_point TYPE="implicit.constructor" FQNAME="com.anthonymandra.util.MetaUtil" />
     </entry_points>
   </component>
   <component name="NullableNotNullManager">

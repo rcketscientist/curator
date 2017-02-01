@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
-import java.util.ArrayList;
-
 public class MetaWakefulReceiver extends WakefulBroadcastReceiver
 {
     @Override
@@ -17,6 +15,7 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
         startWakefulService(context, intent.setComponent(comp));
     }
 
+    @SuppressWarnings("unused")
     public static void startMetaService(Context context, Uri data)
     {
         Intent intent = getService(context, data);
@@ -25,7 +24,7 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
 
 	/**
      * Starts processing metadata of any previously unprocessed entries
-     * @param c
+     * @param c context
      */
     public static void startMetaService(Context c)
     {

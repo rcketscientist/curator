@@ -14,9 +14,6 @@ public abstract class ImageConfiguration {
         raw
     }
 
-    // For more than one config setting
-    protected static final String DELIMITER = "_";
-
     public abstract ImageType getType();
     public abstract String getExtension();
     protected abstract void parse(String config);
