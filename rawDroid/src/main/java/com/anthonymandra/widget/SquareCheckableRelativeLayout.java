@@ -17,13 +17,14 @@ public class SquareCheckableRelativeLayout extends CheckableRelativeLayout {
 		super(context, attrs, defStyleAttr);
 	}
 
-	public SquareCheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		super(context, attrs, defStyleAttr, defStyleRes);
-	}
+//	public SquareCheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+//		super(context, attrs, defStyleAttr, defStyleRes);
+//	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		// Set a square layout.
+		//noinspection SuspiciousNameCombination
 		super.onMeasure(widthMeasureSpec, widthMeasureSpec);
 	}
 

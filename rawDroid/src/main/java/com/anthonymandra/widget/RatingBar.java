@@ -20,7 +20,7 @@ public class RatingBar extends ToggleGroup
     }
 
     private OnRatingSelectionChangedListener mListener;
-    CompoundButton mOne, mTwo, mThree, mFour, mFive;
+	private CompoundButton mOne, mTwo, mThree, mFour, mFive;
 
     public RatingBar(Context context) { this(context, null); }
     public RatingBar(Context context, AttributeSet attrs) { this(context, attrs, 0); }
@@ -109,6 +109,7 @@ public class RatingBar extends ToggleGroup
         return checked;
     }
 
+    @SuppressWarnings("unused")
     @Nullable
     public Integer getRating()
     {
@@ -142,6 +143,7 @@ public class RatingBar extends ToggleGroup
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setRating(Integer rating)
     {
         switch (rating)

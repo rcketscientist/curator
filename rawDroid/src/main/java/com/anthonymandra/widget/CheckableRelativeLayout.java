@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Checkable;
@@ -23,6 +24,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
      * Interface definition for a callback to be invoked when the checked state
      * of a compound button changed.
      */
+    @SuppressWarnings("WeakerAccess")
     public interface OnCheckedChangeListener {
         /**
          * Called when the checked state of a compound button has changed.
@@ -41,6 +43,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     public CheckableRelativeLayout(Context context) { this(context, null); }
     public CheckableRelativeLayout(Context context, AttributeSet attrs) { this(context, attrs, 0); }
     public CheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {this(context, attrs, defStyleAttr, 0);}
+    @SuppressWarnings({"WeakerAccess", "SameParameterValue"})
     public CheckableRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes)
     {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -101,7 +104,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     }
 
     @Override
-    protected boolean verifyDrawable(Drawable who) {
+    protected boolean verifyDrawable(@NonNull Drawable who) {
         return super.verifyDrawable(who) || (who == mForeground);
     }
 
@@ -129,6 +132,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
         setChecked(!mChecked);
     }
 
+    @SuppressWarnings("unused")
     public void setCheckedChangedListener(OnCheckedChangeListener listener)
     {
         mCheckedChangedListener = listener;
@@ -175,7 +179,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
 
         private SavedState(final Parcel in) {
             super(in);
-            checked = (Boolean) in.readValue(null);
+            checked = (Boolean) in.readValue(getClass().getClassLoader());
         }
 
         @Override

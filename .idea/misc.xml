@@ -13,6 +13,7 @@
       <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void setExifValues(android.net.Uri uri, android.content.Context c, java.lang.String[] exif)" />
       <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil android.content.ContentValues getContentValues(java.io.InputStream stream, com.drew.imaging.FileType fileType)" />
       <entry_point TYPE="implicit.constructor" FQNAME="com.anthonymandra.util.MetaUtil" />
+      <entry_point TYPE="class" FQNAME="com.anthonymandra.widget.CheckableRelativeLayout.OnCheckedChangeListener" />
     </entry_points>
   </component>
   <component name="NullableNotNullManager">

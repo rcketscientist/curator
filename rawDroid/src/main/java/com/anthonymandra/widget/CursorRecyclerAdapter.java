@@ -29,15 +29,15 @@ import android.support.v7.widget.RecyclerView;
 
 public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
-	protected boolean mDataValid;
-	protected Cursor mCursor;
-	protected int mRowIDColumn;
+	private boolean mDataValid;
+	private Cursor mCursor;
+	private int mRowIDColumn;
 
-	public CursorRecyclerAdapter(Cursor c) {
+	CursorRecyclerAdapter(Cursor c) {
 		init(c);
 	}
 
-	void init(Cursor c) {
+	private void init(Cursor c) {
 		boolean cursorPresent = c != null;
 		mCursor = c;
 		mDataValid = cursorPresent;
@@ -57,8 +57,10 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 		onBindViewHolder(holder, position, mCursor);
 	}
 
+	@SuppressWarnings({"WeakerAccess", "UnusedParameters"})
 	public abstract void onBindViewHolder(VH holder, int position, Cursor cursor);
 
+	@SuppressWarnings("WeakerAccess")
 	public Cursor getCursor() {
 		return mCursor;
 	}
@@ -75,6 +77,7 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 	/**
 	 * @see android.widget.ListAdapter#getItem(int)
 	 */
+	@SuppressWarnings("WeakerAccess")
 	@Nullable
 	public Object getItem(int position) {
 		if (mDataValid && mCursor != null) {
@@ -104,6 +107,7 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 	 *
 	 * @param cursor The new cursor to be used
 	 */
+	@SuppressWarnings({"WeakerAccess", "unused"})
 	public void changeCursor(Cursor cursor) {
 		Cursor old = swapCursor(cursor);
 		if (old != null) {
@@ -150,6 +154,7 @@ public abstract class CursorRecyclerAdapter<VH extends RecyclerView.ViewHolder> 
 	 * @param cursor the cursor to convert to a CharSequence
 	 * @return a CharSequence representing the value
 	 */
+	@SuppressWarnings("unused")
 	public CharSequence convertToString(Cursor cursor) {
 		return cursor == null ? "" : cursor.toString();
 	}

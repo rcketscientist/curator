@@ -13,10 +13,10 @@ import com.bumptech.glide.load.model.stream.StreamModelLoader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-public class RawModelLoader implements StreamModelLoader<ContentValues>
+class RawModelLoader implements StreamModelLoader<ContentValues>
 {
 	private final Context context;
-	public RawModelLoader(Context c)
+	RawModelLoader(Context c)
 	{
 		context = c;
 	}
@@ -38,7 +38,7 @@ public class RawModelLoader implements StreamModelLoader<ContentValues>
 		private final ContentValues values;
 		private final Context context;
 
-		public RawFetcher(Context context, ContentValues uri) {
+		RawFetcher(Context context, ContentValues uri) {
 			this.context = context.getApplicationContext();
 			this.values = uri;
 		}

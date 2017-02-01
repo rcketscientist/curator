@@ -27,8 +27,8 @@ public class XmpLabelGroup extends ToggleGroup
         purple
     }
 
-    OnLabelSelectionChangedListener mListener;
-    CompoundButton mBlue, mRed, mGreen, mYellow, mPurple;
+    private OnLabelSelectionChangedListener mListener;
+    private CompoundButton mBlue, mRed, mGreen, mYellow, mPurple;
 
     public XmpLabelGroup(Context context) { this(context, null); }
     public XmpLabelGroup(Context context, AttributeSet attrs) { this(context, attrs, 0); }

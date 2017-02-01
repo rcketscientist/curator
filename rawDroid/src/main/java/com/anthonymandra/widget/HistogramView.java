@@ -18,11 +18,11 @@ public class HistogramView extends View
 	private static final int RED = Color.argb(200, 255, 0, 0);
 	private static final int GREEN = Color.argb(180, 0, 255, 0);
 
-	private Path redPath;
-	private Path bluePath;
-	private Path greenPath;
+	private final Path redPath = new Path();
+	private final Path bluePath = new Path();
+	private final Path greenPath = new Path();
 
-	private Paint p = new Paint();
+	private final Paint p = new Paint();
 
     private static final int BORDER_WIDTH = 1;    // Put this in because it was starting before the BORDER_POINTS...seems to be a space but higher creates garble
 	private static final int COLOR_HEIGHT = 150;
@@ -47,9 +47,6 @@ public class HistogramView extends View
 	public HistogramView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
-		redPath = new Path();
-		bluePath = new Path();
-		greenPath = new Path();
 	}
 
 	public void updateHistogram(Histogram.ColorBins hist)

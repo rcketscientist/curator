@@ -32,11 +32,12 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     private static final String androidns="http://schemas.android.com/apk/res/android";
 
     private SeekBar mSeekBar;
-    private TextView mSplashText,mValueText;
-    private Context mContext;
+    private TextView mValueText;
+    private final Context mContext;
 
-    private String mDialogMessage, mSuffix;
-    private int mDefault, mMax, mValue = 0;
+    private final String mDialogMessage, mSuffix;
+    private final int mDefault;
+    private int mMax, mValue = 0;
     // ------------------------------------------------------------------------------------------
 
 
@@ -76,7 +77,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(6,6,6,6);
 
-        mSplashText = new TextView(mContext);
+        TextView mSplashText = new TextView(mContext);
         if (mDialogMessage != null)
             mSplashText.setText(mDialogMessage);
         layout.addView(mSplashText);
@@ -136,14 +137,18 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     @Override
     public void onStopTrackingTouch(SeekBar seek) {}
 
+    @SuppressWarnings("unused")
     public void setMax(int max) { mMax = max; }
+    @SuppressWarnings("unused")
     public int getMax() { return mMax; }
 
+    @SuppressWarnings("unused")
     public void setProgress(int progress) {
         mValue = progress;
         if (mSeekBar != null)
             mSeekBar.setProgress(progress);
     }
+    @SuppressWarnings("unused")
     public int getProgress() { return mValue; }
     // ------------------------------------------------------------------------------------------
 
@@ -165,7 +170,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
         if (shouldPersist())
             persistInt(mSeekBar.getProgress());
-        callChangeListener(Integer.valueOf(mSeekBar.getProgress()));
+        callChangeListener(mSeekBar.getProgress());
 
         getDialog().dismiss();
     }
