@@ -1,16 +1,18 @@
 package com.anthonymandra.widget;
 
 import android.content.Context;
+import android.support.annotation.IdRes;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.ToggleGroup;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 
 import com.anthonymandra.rawdroid.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedChangeListener
+public class RatingBar extends ToggleGroup
 {
     public interface OnRatingSelectionChangedListener
     {
@@ -18,9 +20,6 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
     }
 
     private OnRatingSelectionChangedListener mListener;
-    private boolean mMultiSelect = false;
-    private boolean mPauseListener = false;
-    Integer mRating = null;
     CompoundButton mOne, mTwo, mThree, mFour, mFive;
 
     public RatingBar(Context context) { this(context, null); }
@@ -35,41 +34,45 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
 
     private void attachButtons()
     {
-        //TODO: Now that these are ToggleButtons this class can be greatly simplified
         mOne = (CompoundButton)findViewById(R.id.rating1);
         mTwo = (CompoundButton)findViewById(R.id.rating2);
         mThree = (CompoundButton)findViewById(R.id.rating3);
         mFour = (CompoundButton)findViewById(R.id.rating4);
         mFive = (CompoundButton)findViewById(R.id.rating5);
 
-        mOne.setOnCheckedChangeListener(this);
-        mTwo.setOnCheckedChangeListener(this);
-        mThree.setOnCheckedChangeListener(this);
-        mFour.setOnCheckedChangeListener(this);
-        mFive.setOnCheckedChangeListener(this);
-    }
+        setOnCheckedChangeListener(new OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(ToggleGroup group, @IdRes int[] checkedId)
+            {
+                // In exclusive mode this will behave like a factory rating bar
+                if (isExclusive())
+                {
+                    resetIcons();
 
-    public void setMultiselect(boolean enable)
-    {
-        mMultiSelect = enable;
-    }
+                     if(checkedId.length > 0)
+                     {
+                         switch (checkedId[0])
+                         {
+                             // Cascade selected stars down like a typical ratingbar
+                             case R.id.rating5:
+                                 mFive.setButtonDrawable(R.drawable.ic_star);
+                             case R.id.rating4:
+                                 mFour.setButtonDrawable(R.drawable.ic_star);
+                             case R.id.rating3:
+                                 mThree.setButtonDrawable(R.drawable.ic_star);
+                             case R.id.rating2:
+                                 mTwo.setButtonDrawable(R.drawable.ic_star);
+                             case R.id.rating1:
+                                 mOne.setButtonDrawable(R.drawable.ic_star);
+                         }
+                     }
+                }
 
-    public void clearCheck()
-    {
-        mPauseListener = true;
-        clear();
-        mPauseListener = false;
-        mListener.onRatingSelectionChanged(getCheckedRatings());
-    }
-
-    private void clear()
-    {
-        mRating = null;
-        mOne.setChecked(false);
-        mTwo.setChecked(false);
-        mThree.setChecked(false);
-        mFour.setChecked(false);
-        mFive.setChecked(false);
+                if (mListener != null)
+                    mListener.onRatingSelectionChanged(getCheckedRatings());
+            }
+        });
     }
 
     public List<Integer> getCheckedRatings()
@@ -85,60 +88,33 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
             checked.add(2);
         if (mOne.isChecked())
             checked.add(1);
-        if (mRating != null && mRating == 0)
-            checked.add(0);
         return checked;
     }
 
+    @Nullable
     public Integer getRating()
     {
-        return mRating;
+        List<Integer> ratings = getCheckedRatings();
+        return ratings.size() > 0 ? ratings.get(0) : null ;
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+    private void resetIcons()
     {
-        if (mPauseListener)
-            return;
-
-        if (!mMultiSelect)
-        {
-            Integer intendedRating = null;
-            switch(buttonView.getId())
-            {
-                case R.id.rating1: intendedRating = 1; break;
-                case R.id.rating2: intendedRating = 2; break;
-                case R.id.rating3: intendedRating = 3; break;
-                case R.id.rating4: intendedRating = 4; break;
-                case R.id.rating5: intendedRating = 5; break;
-            }
-
-            // When selecting an already selected rating, clear instead
-            // When selecting a lower or higher rating set the rating
-            // Ex: 3 set, 2 intended, set to 2
-            // 3 set, 3 intended, clear
-            // 3 set, 4 intended, set to
-            if (isChecked || intendedRating != null && !intendedRating.equals(mRating))
-            {
-                setRating(intendedRating);
-                return; // setRating already handled listener updates
-            }
-            else
-            {
-                mPauseListener = true;
-                clear();
-                mPauseListener = false;
-            }
-        }
-
-        mListener.onRatingSelectionChanged(getCheckedRatings());
+        mFive.setButtonDrawable(R.drawable.ic_star_border);
+        mFour.setButtonDrawable(R.drawable.ic_star_border);
+        mThree.setButtonDrawable(R.drawable.ic_star_border);
+        mTwo.setButtonDrawable(R.drawable.ic_star_border);
+        mOne.setButtonDrawable(R.drawable.ic_star_border);
     }
 
-
+    /**
+     * Sets the given ratings, if null is passed all ratings will be cleared.
+     * @param ratings ratings to check
+     */
     public void setRating(Integer[] ratings)
     {
         if (ratings == null)
-            clearCheck();
+            clearChecked();
         else
         {
             for (int rating : ratings)
@@ -150,37 +126,15 @@ public class RatingBar extends LinearLayout implements CompoundButton.OnCheckedC
 
     public void setRating(Integer rating)
     {
-        if (!mMultiSelect)
+        switch (rating)
         {
-            mPauseListener = true;
-            clear();
-            switch (rating)
-            {
-                // Cascade on purpose
-                case 5: mFive.setChecked(true);
-                case 4: mFour.setChecked(true);
-                case 3: mThree.setChecked(true);
-                case 2: mTwo.setChecked(true);
-                case 1: mOne.setChecked(true);
-                    break;
-                default: clear();
-            }
-            mPauseListener = false;
-            mListener.onRatingSelectionChanged(getCheckedRatings());
+            case 5: mFive.setChecked(true); break;
+            case 4: mFour.setChecked(true); break;
+            case 3: mThree.setChecked(true); break;
+            case 2: mTwo.setChecked(true); break;
+            case 1: mOne.setChecked(true); break;
+            default: break;
         }
-        else
-        {
-            switch (rating)
-            {
-                case 5: mFive.setChecked(true); break;
-                case 4: mFour.setChecked(true); break;
-                case 3: mThree.setChecked(true); break;
-                case 2: mTwo.setChecked(true); break;
-                case 1: mOne.setChecked(true); break;
-                default: break;
-            }
-        }
-        mRating = rating;
     }
 
     public void setOnRatingSelectionChangedListener(OnRatingSelectionChangedListener listener)

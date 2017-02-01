@@ -72,7 +72,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 	public void onViewCreated(View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-		mRatingBar = ((RatingBar) view.findViewById(R.id.ratingBar));
+		mRatingBar = (RatingBar) view.findViewById(R.id.ratingBar);
 		colorKey = (XmpLabelGroup) view.findViewById(R.id.colorKey);
 		colorKey.setAllowUnselected(true);
 		mKeywordFragment = (KeywordBaseFragment) getChildFragmentManager().findFragmentById(R.id.keywordFragment);
@@ -86,7 +86,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 		if (colorKey != null)
 			colorKey.clearChecked();
 		if (mRatingBar != null)
-			mRatingBar.clearCheck();
+			mRatingBar.clearChecked();
 //		mPauseListener = false;
 		onXmpChanged(getXmp());
 	}
@@ -243,16 +243,13 @@ public abstract class XmpBaseFragment extends Fragment implements
 
 	protected void setRating(Integer[] ratings)
 	{
-		if (ratings != null)
-			mRatingBar.setRating(ratings);
-		else
-			mRatingBar.clearCheck();
+		mRatingBar.setRating(ratings);
 	}
 
-	protected void setMultiselect(boolean enable)
+	protected void setExclusive(boolean enable)
 	{
-		colorKey.setExclusive(!enable);
-		mRatingBar.setMultiselect(enable);
+		colorKey.setExclusive(enable);
+		mRatingBar.setExclusive(enable);
 	}
 
 	protected void setSubject(String[] subject)

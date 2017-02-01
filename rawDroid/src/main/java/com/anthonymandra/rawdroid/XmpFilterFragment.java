@@ -78,7 +78,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 	public void onViewCreated(View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-		setMultiselect(true);
+		setExclusive(false);
 
 		// Pull up stored filter configuration
 		SharedPreferences pref = getActivity().getSharedPreferences(mPrefName, Context.MODE_PRIVATE);
@@ -109,7 +109,7 @@ public class XmpFilterFragment extends XmpBaseFragment
 		}
 
 		// Initial segregate value
-		((CompoundButton)getActivity().findViewById(R.id.toggleSegregate)).setChecked(mSegregateByType);
+		((CompoundButton)view.findViewById(R.id.toggleSegregate)).setChecked(mSegregateByType);
 
 		attachButtons(view);
 	}
@@ -125,7 +125,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        final CompoundButton andOr = (CompoundButton) getActivity().findViewById(R.id.toggleAnd);
+        final CompoundButton andOr = (CompoundButton) root.findViewById(R.id.toggleAnd);
         setAndOr(andOr.isChecked());
         andOr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -136,7 +136,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        ToggleGroup sort = (ToggleGroup) getActivity().findViewById(R.id.sortGroup);
+        ToggleGroup sort = (ToggleGroup) root.findViewById(R.id.sortGroup);
         setSort(sort.getCheckedId());
         sort.setOnCheckedChangeListener(new ToggleGroup.OnCheckedChangeListener()
         {
@@ -147,7 +147,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        CompoundButton segregate = (CompoundButton) getActivity().findViewById(R.id.toggleSegregate);
+        CompoundButton segregate = (CompoundButton) root.findViewById(R.id.toggleSegregate);
         segregate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             @Override
@@ -168,7 +168,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             }
         });
 
-        final ImageButton foldersButton = (ImageButton) getActivity().findViewById(R.id.buttonFolders);
+        final ImageButton foldersButton = (ImageButton) root.findViewById(R.id.buttonFolders);
         foldersButton.setOnClickListener(new View.OnClickListener()
         {
             @Override

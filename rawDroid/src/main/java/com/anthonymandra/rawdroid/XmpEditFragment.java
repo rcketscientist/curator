@@ -96,7 +96,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	public void onViewCreated(View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-		setMultiselect(false);
+		setExclusive(true);
 		attachButtons(view);
 	}
 
