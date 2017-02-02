@@ -21,46 +21,10 @@ public abstract class XmpBaseFragment extends Fragment implements
 		XmpLabelGroup.OnLabelSelectionChangedListener,
 		KeywordBaseFragment.OnKeywordsSelectedListener
 {
-	private static final String TAG = XmpBaseFragment.class.getSimpleName();
-
-	public interface RatingChangedListener
-	{
-		void onRatingChanged(Integer[] rating);
-	}
-
-	public interface LabelChangedListener
-	{
-		void onLabelChanged(String[] label);
-	}
-
-	public interface SubjectChangedListener
-	{
-		void onSubjectChanged(String[] subject);
-	}
-
 	private RatingBar mRatingBar;
 	private XmpLabelGroup colorKey;
 	private KeywordBaseFragment mKeywordFragment;
 	private boolean mPauseListener = false;
-
-	private RatingChangedListener mRatingListener;
-	private LabelChangedListener mLabelListener;
-	private SubjectChangedListener mSubjectListener;
-
-	public void setRatingListener(RatingChangedListener listener)
-	{
-		mRatingListener = listener;
-	}
-
-	public void setLabelListener(LabelChangedListener listener)
-	{
-		mLabelListener = listener;
-	}
-
-	public void setSubjectListener(SubjectChangedListener listener)
-	{
-		mSubjectListener = listener;
-	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
@@ -211,8 +175,9 @@ public abstract class XmpBaseFragment extends Fragment implements
 
 	/**
 	 * Silently set the xmp without firing onXmpChanged
-	 * @param xmp
+	 * @param xmp xmpValues (rating, label, subject) to init
 	 */
+	@SuppressWarnings("unused")
 	protected void initXmp(XmpValues xmp)
 	{
 		mPauseListener = true;
@@ -222,9 +187,9 @@ public abstract class XmpBaseFragment extends Fragment implements
 
 	/**
 	 * Silently set the xmp without firing onXmpChanged
-	 * @param rating
-	 * @param label
-	 * @param subject
+	 * @param rating rating
+	 * @param label label
+	 * @param subject keywords
 	 */
 	protected void initXmp(Integer[] rating, String[] label, String[] subject)
 	{
