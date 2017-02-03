@@ -324,17 +324,9 @@ public class XmpEditFragment extends XmpBaseFragment
 	private MaterialShowcaseView getRectangularView(View target, @StringRes int contentId)
 	{
 		return getRectangularView(target,
-				R.string.editMetadata,
-				contentId,
-				R.string.ok);
-	}
-
-	private MaterialShowcaseView getRectangularView(View target, @StringRes int titleId, @StringRes int contentId, @StringRes int dismissId)
-	{
-		return getRectangularView(target,
-				getString(titleId),
+				getString(R.string.editMetadata),
 				getString(contentId),
-				getString(dismissId));
+				getString(R.string.ok));
 	}
 
 	private MaterialShowcaseView getRectangularView(View target, String title, String content, String dismiss)

@@ -3,7 +3,6 @@ package com.anthonymandra.rawdroid;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -23,7 +22,6 @@ import com.anthonymandra.util.DbUtil;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,7 +33,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
     private final static String[] ARGUMENTS = new String[] {""};
 
     private SelectArrayAdapter<String> mAdapter;
-    private Set<String> mSelectedKeywords = new HashSet<>();
+    private final Set<String> mSelectedKeywords = new HashSet<>();
 
     @Nullable
     @Override
@@ -49,8 +47,8 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
     {
         super.onViewCreated(view, savedInstanceState);
 
-        GridView mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
-        mAdapter = new SelectArrayAdapter<>(getActivity(), R.layout.keyword_entry);
+        GridView mGrid = (GridView) view.findViewById(R.id.keywordGridView);
+        mAdapter = new SelectArrayAdapter<>(getActivity());
         mGrid.setAdapter(mAdapter);
 
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -145,14 +143,9 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
 
     private class SelectArrayAdapter<T> extends ArrayAdapter<T>
     {
-        public SelectArrayAdapter(@NonNull Context context, @LayoutRes int resource)
+        SelectArrayAdapter(@NonNull Context context)
         {
-            super(context, resource);
-        }
-
-        public SelectArrayAdapter(Context context, int resource, List<T> objects)
-        {
-            super(context, resource, objects);
+            super(context, R.layout.keyword_entry);
         }
 
         @NonNull
@@ -166,6 +159,7 @@ public class KeywordFilterFragment extends KeywordBaseFragment implements Loader
             else
                 v.getBackground().setAlpha(230);
 
+            //noinspection SuspiciousMethodCalls
             v.setChecked(mSelectedKeywords.contains(v.getText()));
             return v;
         }

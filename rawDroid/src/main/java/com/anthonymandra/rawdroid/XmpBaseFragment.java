@@ -27,12 +27,6 @@ public abstract class XmpBaseFragment extends Fragment implements
 	private boolean mPauseListener = false;
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-	}
-
-	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
