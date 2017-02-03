@@ -626,60 +626,60 @@ public class XmpFilterFragment extends XmpBaseFragment
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.sortGroup),
 			    R.string.sortImages,
-			    R.string.sortCotent,
-			    R.string.ok));
+			    R.string.sortCotent
+        ));
 
 	    // Segregate
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.toggleSegregate),
 			    R.string.sortImages,
-			    R.string.segregateContent,
-			    R.string.ok));
+			    R.string.segregateContent
+        ));
 
 	    // Folder
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.buttonFolders),
 			    R.string.filterImages,
-			    R.string.folderContent,
-			    R.string.ok));
+			    R.string.folderContent
+        ));
 
 	    // Clear
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.clearFilterButton),
 			    R.string.filterImages,
-			    R.string.clearFilterContent,
-			    R.string.ok));
+			    R.string.clearFilterContent
+        ));
 
 	    // Rating
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.filterLabelRating),
 			    R.string.filterImages,
-			    R.string.ratingLabelContent,
-			    R.string.ok));
+			    R.string.ratingLabelContent
+        ));
 
 	    // Subject
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.keywordFragment),
 			    R.string.filterImages,
-			    R.string.subjectContent,
-			    R.string.ok));
+			    R.string.subjectContent
+        ));
 
 	    // Match
 	    sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.toggleAnd),
 			    R.string.filterImages,
-			    R.string.matchContent,
-			    R.string.ok));
+			    R.string.matchContent
+        ));
 
 	    sequence.start();
     }
 
-	private MaterialShowcaseView getRectangularView(View target, @StringRes int titleId, @StringRes int contentId, @StringRes int dismissId)
+	private MaterialShowcaseView getRectangularView(View target, @StringRes int titleId, @StringRes int contentId)
 	{
 		return getRectangularView(target,
 				getString(titleId),
 				getString(contentId),
-				getString(dismissId));
+				getString(R.string.ok));
 	}
 
 	private MaterialShowcaseView getRectangularView(View target, String title, String content, String dismiss)

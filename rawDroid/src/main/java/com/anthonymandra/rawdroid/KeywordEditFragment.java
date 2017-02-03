@@ -51,13 +51,11 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(KEYWORD_LOADER_ID, null, this);
-
+        super.onViewCreated(view, savedInstanceState);
         mAdapter = new SelectCursorAdapter(getActivity());
-        GridView mGrid = (GridView) getView().findViewById(R.id.keywordGridView);
+        GridView mGrid = (GridView) view.findViewById(R.id.keywordGridView);
         mGrid.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -126,6 +124,13 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
             }
         });
         mGrid.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(KEYWORD_LOADER_ID, null, this);
     }
 
     @Override
