@@ -36,14 +36,14 @@ public class MetaProvider extends ContentProvider
 	private final ThreadLocal<Boolean> mApplyingBatch = new ThreadLocal<>();
 	private final ThreadLocal<Set<Uri>> mChangedUris = new ThreadLocal<>();
 
-	static int DATABASE_VERSION = 17;
+	private static final int DATABASE_VERSION = 17;
 
 	private static final String META_TABLE_NAME = "meta";
 
 	private static final int META = 1;
 	private static final int META_ID = 2;
 
-	private static UriMatcher sUriMatcher;
+	private static final UriMatcher sUriMatcher;
 
 	// Statically construct a uri matcher that can detect URIs referencing
 	// more than 1 video, a single video, or a single thumb nail image.
@@ -108,7 +108,7 @@ public class MetaProvider extends ContentProvider
 		}
 
 		@Override
-		public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldv, int newv)
+		public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion)
 		{
 			sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + META_TABLE_NAME + ";");
 			createTable(sqLiteDatabase);
