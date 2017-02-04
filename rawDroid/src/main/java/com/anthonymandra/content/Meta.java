@@ -2,14 +2,12 @@ package com.anthonymandra.content;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import com.anthonymandra.rawdroid.BuildConfig;
+import com.drew.lang.annotations.Nullable;
 
 import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Meta implements BaseColumns
 {
@@ -29,17 +27,11 @@ public class Meta implements BaseColumns
 
 		private int value;
 		ImageType(int value) {this.value = value;}
-		public static ImageType fromInt(@NonNull int n) { return lookup.get(n); }
+		public static @Nullable ImageType fromInt(int n) { return lookup.get(n); }
 		public int getValue() { return value; }
 	}
 
-	public static final int RAW = 0;
-	public static final int COMMON = 1;
-	public static final int TIFF = 2;
-
 	public static final String META = "meta";
-//        public static final String THUMB = "thumb";
-//        public static final String IMAGE = "image";
 
 	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_META;
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + META);

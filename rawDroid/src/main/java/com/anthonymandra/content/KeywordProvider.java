@@ -137,7 +137,7 @@ public class KeywordProvider extends PathEnumerationProvider
         }
 
         @Override
-        public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldv, int newv)
+        public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion)
         {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + KEYWORD_TABLE_NAME + ";");
             createTable(sqLiteDatabase);
