@@ -173,6 +173,25 @@ public class GalleryActivity extends CoreActivity implements
 			}
 		});
 
+		mXmpFilterFragment = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
+		mXmpFilterFragment.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
+		{
+			@Override
+			public void onMetaFilterChanged(XmpFilter filter)
+			{
+				updateMetaLoaderXmp(filter);
+			}
+		});
+		mXmpFilterFragment.registerSearchRootRequestedListener(new XmpFilterFragment.SearchRootRequestedListener()
+		{
+			@Override
+			public void onSearchRootRequested()
+			{
+				setWriteResume(WriteResume.Search, null);
+				requestWritePermission();
+			}
+		});
+
 		doFirstRun();
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
@@ -425,7 +444,8 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		super.onPostCreate(savedInstanceState);
 
-		loadXmpFilter();	//must be done here due to fragment/activity lifecycle
+		// This must be here due to the lifecycle
+		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 		if (settings.getBoolean(PREFS_SHOW_FILTER_HINT, true))
@@ -478,31 +498,6 @@ public class GalleryActivity extends CoreActivity implements
         }
 	}
 
-	private void loadXmpFilter()
-	{
-		mXmpFilterFragment = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
-		mXmpFilterFragment.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
-		{
-			@Override
-			public void onMetaFilterChanged(XmpFilter filter)
-			{
-				updateMetaLoaderXmp(filter);
-			}
-		});
-		mXmpFilterFragment.registerSearchRootRequestedListener(new XmpFilterFragment.SearchRootRequestedListener()
-		{
-			@Override
-			public void onSearchRootRequested()
-			{
-				setWriteResume(WriteResume.Search, null);
-				requestWritePermission();
-			}
-		});
-
-		// load filter data initially (must be done here due to
-		updateMetaLoaderXmp(mXmpFilterFragment.getXmpFilter());
-	}
-
 	/*
 	* Callback that's invoked when the system has initialized the Loader and
 	* is ready to start the query. This usually happens when initLoader() is
@@ -552,6 +547,7 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		mGalleryAdapter.swapCursor(cursor);
 		setImageCountTitle();
+		mXmpFilterFragment.updatePaths();
 	}
 
 	@Override
@@ -1019,7 +1015,7 @@ public class GalleryActivity extends CoreActivity implements
             return;
         }
 
-		Intent viewer = new Intent(this, ViewerChooser.class);
+		Intent viewer = new Intent(this, PagerViewActivity.class);//ViewerChooser.class);
 		viewer.setData(uri);
 
 		Bundle options = new Bundle();

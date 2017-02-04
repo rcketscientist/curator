@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid;
 
 import android.app.Dialog;
+import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -25,11 +26,18 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.AsyncTask;
+import com.anthonymandra.framework.CoreActivity;
+import com.anthonymandra.framework.DocumentActivity;
 import com.anthonymandra.framework.DocumentUtil;
+import com.anthonymandra.util.MetaUtil;
 import com.anthonymandra.widget.XmpLabelGroup;
+import com.crashlytics.android.Crashlytics;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,6 +67,8 @@ public class XmpFilterFragment extends XmpBaseFragment
     private XmpFilter.SortColumns mSortColumn;
     private Set<String> mHiddenFolders;
     private Set<String> mExcludedFolders;
+    private final Set<String> mPaths = new HashSet<>();
+    private FolderDialog mFolderDialog;
 
     private final static String mPrefName = "galleryFilter";
     private final static String mPrefRelational = "relational";
@@ -175,52 +185,16 @@ public class XmpFilterFragment extends XmpBaseFragment
             @Override
             public void onClick(View v)
             {
-                final List<String> paths = new ArrayList<>();
-
-                try(Cursor c = getActivity().getContentResolver().query(Meta.CONTENT_URI,
-                        new String[]{"DISTINCT " + Meta.PARENT}, null, null,
-                        Meta.PARENT + " ASC"))
-                {
-                    while (c != null && c.moveToNext())
-                    {
-                        String path = c.getString(c.getColumnIndex(Meta.PARENT));
-
-                        // We place the excluded folders at the end
-                        if (!mExcludedFolders.contains(path))
-                            paths.add(path);
-                    }
-                }
-
-                // Place exclusions at the end
-                for (String exclusion : mExcludedFolders)
-                {
-                    paths.add(exclusion);
-                }
-
-                final boolean[] visible = new boolean[paths.size()];
-                int i = 0;
-                for (String path : paths)
-                {
-                    visible[i++] = !mExcludedFolders.contains(path) && !mHiddenFolders.contains(path);
-                }
-
-                final boolean[] excluded = new boolean[paths.size()];
-                i = 0;
-                for (String path : paths)
-                {
-                    excluded[i++] = mExcludedFolders.contains(path);
-                }
-
                 int[] position = new int[2];
                 foldersButton.getLocationOnScreen(position);
-                FolderDialog dialog = FolderDialog.newInstance(
-                        paths.toArray(new String[paths.size()]),
-                        visible,
-                        excluded,
+                FolderDialog mFolderDialog = FolderDialog.newInstance(
+                        new ArrayList<>(mPaths),
+                        new ArrayList<>(mHiddenFolders),
+                        new ArrayList<>(mExcludedFolders),
                         position[0],
                         position[1]);
-                dialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog);
-                dialog.setOnVisibilityChangedListener(new FolderAdapter.OnVisibilityChangedListener()
+                mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog);
+                mFolderDialog.setOnVisibilityChangedListener(new FolderAdapter.OnVisibilityChangedListener()
                 {
                     @Override
                     public void onVisibilityChanged(FolderVisibility visibility)
@@ -244,7 +218,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                         onFilterUpdated();
                     }
                 });
-                dialog.setSearchRequestedListener(new SearchRootRequestedListener()
+                mFolderDialog.setSearchRequestedListener(new SearchRootRequestedListener()
                 {
                     @Override
                     public void onSearchRootRequested()
@@ -253,7 +227,16 @@ public class XmpFilterFragment extends XmpBaseFragment
                     }
                 });
 
-                dialog.show(getFragmentManager(), TAG);
+                try
+                {
+                    mFolderDialog.show(getFragmentManager(), TAG);
+                }
+                catch(IllegalStateException e)
+                {
+                    // We do nothing here, this is an onSaveInstanceState issue,
+                    // possibly due to a slow query.  We don't care they can open the dialog again
+                    Crashlytics.log(e.toString());  // log nonfatal in case this becomes too common
+                }
             }
         });
 
@@ -266,6 +249,11 @@ public class XmpFilterFragment extends XmpBaseFragment
                 startTutorial();
             }
         });
+    }
+
+    public void updatePaths()
+    {
+        new UpdateFolderTask().execute();
     }
 
     private void setAndOr(boolean and)
@@ -429,6 +417,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         public static final String ARG_Y = "y";
 
         private final List<FolderVisibility> items = new ArrayList<>();
+        private FolderAdapter mAdapter;
 
         private FolderAdapter.OnVisibilityChangedListener mVisibilityListener;
         public void setOnVisibilityChangedListener(FolderAdapter.OnVisibilityChangedListener listener)
@@ -441,13 +430,13 @@ public class XmpFilterFragment extends XmpBaseFragment
             mSearchListener = listener;
         }
 
-        static FolderDialog newInstance(@NonNull String[] paths, @NonNull boolean[] visible, @NonNull boolean[] excluded, int x, int y)
+        static FolderDialog newInstance(@NonNull ArrayList<String> paths, @NonNull ArrayList<String> visible, @NonNull ArrayList<String> excluded, int x, int y)
         {
             FolderDialog f = new FolderDialog();
             Bundle args = new Bundle();
-            args.putStringArray(ARG_PATHS, paths);
-            args.putBooleanArray(ARG_VISIBLE, visible);
-            args.putBooleanArray(ARG_EXCLUDED, excluded);
+            args.putStringArrayList(ARG_PATHS, paths);
+            args.putStringArrayList(ARG_VISIBLE, visible);
+            args.putStringArrayList(ARG_EXCLUDED, excluded);
             args.putInt(ARG_X, x);
             args.putInt(ARG_Y, y);
 
@@ -459,9 +448,9 @@ public class XmpFilterFragment extends XmpBaseFragment
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.inflate(R.layout.folder_visibility, container, false);
-            String[] paths = getArguments().getStringArray(ARG_PATHS);
-            boolean[] visible = getArguments().getBooleanArray(ARG_VISIBLE);
-            boolean[] excluded = getArguments().getBooleanArray(ARG_EXCLUDED);
+            ArrayList<String> paths = getArguments().getStringArrayList(ARG_PATHS);
+            ArrayList<String> visible = getArguments().getStringArrayList(ARG_VISIBLE);
+            ArrayList<String> excluded = getArguments().getStringArrayList(ARG_EXCLUDED);
             int x = getArguments().getInt(ARG_X);
             int y = getArguments().getInt(ARG_Y);
 
@@ -474,25 +463,13 @@ public class XmpFilterFragment extends XmpBaseFragment
             params.y = y;
             window.setAttributes(params);
 
-            //noinspection ConstantConditions
-            for (int i = 0; i < paths.length; i++)
-            {
-                FolderVisibility fv = new FolderVisibility();
-                fv.Path = paths[i];
-                //noinspection NullableProblems,ConstantConditions
-                fv.visible = visible[i];
-                //noinspection NullableProblems,ConstantConditions
-                fv.excluded = excluded[i];
-                items.add(fv);
-            }
-
-            FolderAdapter adapter = new FolderAdapter(v.getContext(), items);
-            adapter.setOnVisibilityChangedListener(mVisibilityListener);
+            mAdapter = new FolderAdapter(v.getContext(), items);
+            mAdapter.setOnVisibilityChangedListener(mVisibilityListener);
             ListView listView = (ListView) v.findViewById(R.id.listViewVisibility);
-            listView.setAdapter(adapter);
+            listView.setAdapter(mAdapter);
+            updateListEntries(paths, visible, excluded);
 
-            final Button addRootButton = (Button) v.findViewById(R.id.buttonAddSearchRoot);
-            addRootButton.setOnClickListener(new View.OnClickListener()
+            v.findViewById(R.id.buttonAddSearchRoot).setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
@@ -513,6 +490,68 @@ public class XmpFilterFragment extends XmpBaseFragment
             // request a window without the title
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             return dialog;
+        }
+
+        public void updateListEntries(@NonNull ArrayList<String> paths, @NonNull ArrayList<String> hiddenFolders, @NonNull ArrayList<String> excludedFolders)
+        {
+            // Not sure we can change this after creation
+            getArguments().putStringArrayList(ARG_PATHS, paths);
+            getArguments().putStringArrayList(ARG_VISIBLE, hiddenFolders);
+            getArguments().putStringArrayList(ARG_EXCLUDED, excludedFolders);
+
+            items.clear();
+            for (String path : paths)
+            {
+                FolderVisibility fv = new FolderVisibility();
+                fv.Path = path;
+                fv.visible = !excludedFolders.contains(path) && !hiddenFolders.contains(path);
+                fv.excluded = excludedFolders.contains(path);
+                items.add(fv);
+            }
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private class UpdateFolderTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(final Void... params)
+        {
+            final Set<String> paths = new HashSet<>();
+            try(Cursor c = getContext().getContentResolver().query(Meta.CONTENT_URI,
+                    new String[]{"DISTINCT " + Meta.PARENT}, null, null,
+                    Meta.PARENT + " ASC"))
+            {
+                while (c != null && c.moveToNext())
+                {
+                    paths.add(c.getString(c.getColumnIndex(Meta.PARENT)));
+                }
+            }
+
+            mPaths.clear();
+            for (String path : paths)
+            {
+                // We place the excluded folders at the end
+                if (!mExcludedFolders.contains(path))
+                    mPaths.add(path);
+            }
+
+            // Place exclusions at the end
+            for (String exclusion : mExcludedFolders)
+            {
+                mPaths.add(exclusion);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result)
+        {
+            if (mFolderDialog != null)
+                mFolderDialog.updateListEntries(
+                        new ArrayList<>(mPaths),
+                        new ArrayList<>(mHiddenFolders),
+                        new ArrayList<>(mExcludedFolders));
         }
     }
 
