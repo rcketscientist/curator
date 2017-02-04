@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/mainLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_alignParentTop="true"/>
+
+    <include
+        android:id="@+id/navPanel"
+        layout="@layout/nav_panel"
+        android:layout_alignParentStart="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"/>
+
+    <include
+        android:id="@+id/metaPanel"
+        layout="@layout/meta_panel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/viewerToolbar"
+        android:layout_toStartOf="@+id/editFragment"/>
+
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+        android:layout_width="@dimen/xmp_filter_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/viewerToolbar"
+        android:layout_gravity="end"
+        tools:layout="@layout/xmp_edit_landscape"/>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/viewerToolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentStart="false"
+        android:layout_toLeftOf="@+id/xmpSidebarButton"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/translucent_black_rect"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    </android.support.v7.widget.Toolbar>
+
+    <ImageView
+        android:id="@+id/xmpSidebarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/viewerToolbar"
+        android:layout_alignBottom="@id/viewerToolbar"
+        android:layout_alignParentEnd="true"
+        android:padding="16dp"
+        android:layout_marginLeft="1dp"
+        android:src="@drawable/ic_tag"
+        android:background="@drawable/translucent_black_rect"/>
+
+</RelativeLayout>
