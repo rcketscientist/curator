@@ -90,9 +90,6 @@ public class MetaService extends ThreadedPriorityIntentService
      */
     public static final String EXTRA_METADATA = "com.anthonymandra.framework.extra.EXTRA_METADATA";
 
-    private static final int TRUE = 1;
-    private static final int FALSE = 0;
-
     private final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
 
     private static final AtomicInteger sJobsTotal = new AtomicInteger(0);
@@ -179,17 +176,6 @@ public class MetaService extends ThreadedPriorityIntentService
     {
         final int processedColumn = c.getColumnIndex(Meta.PROCESSED);
         return c.getInt(processedColumn) != 0;
-    }
-
-    public static void setProcessed(ContentValues cv, boolean processed)
-    {
-        cv.put(Meta.PROCESSED, processed ? TRUE : FALSE);
-    }
-
-    public static boolean isProcessed(ContentValues cv)
-    {
-        Integer processed = cv.getAsInteger(Meta.PROCESSED);
-        return processed != null && processed == TRUE;
     }
 
 	/**
@@ -330,7 +316,7 @@ public class MetaService extends ThreadedPriorityIntentService
             for (ContentValues values : rows)
             {
                 Uri uri = Uri.parse(values.getAsString(Meta.URI));
-                boolean isProcessed = isProcessed(values);
+                boolean isProcessed = MetaUtil.isProcessed(values);
 
                 // If the image is unprocessed process it now
                 if (!isProcessed)
@@ -344,7 +330,7 @@ public class MetaService extends ThreadedPriorityIntentService
                 // If this is a high priority request then add to db immediately
                 if (isHigherThanDefault(intent))
                 {
-                    if (!isProcessed(values))
+                    if (!isProcessed)
                     {
                         getContentResolver().update(Meta.CONTENT_URI,
                                 values,

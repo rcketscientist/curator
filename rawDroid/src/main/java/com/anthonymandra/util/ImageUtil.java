@@ -520,7 +520,7 @@ public class ImageUtil
     @SuppressLint("SimpleDateFormat")
     public static byte[] getThumb(final Context c, ContentValues metaCursor)
     {
-        Meta.ImageType imageType = Meta.ImageType.UNPROCESSED;
+        Meta.ImageType imageType;
         final Uri uri = Uri.parse(metaCursor.getAsString(Meta.URI));
 
         try(AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r"))

@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
@@ -48,6 +49,9 @@ public class MetaUtil
 
 	static SimpleDateFormat mLibrawFormatter = new SimpleDateFormat("EEE MMM d hh:mm:ss yyyy");
 	private static SimpleDateFormat mMetaExtractorFormat = new SimpleDateFormat("yyyy:MM:dd H:m:s");
+
+	private static final int TRUE = 1;
+	private static final int FALSE = 0;
 
 	public static Metadata readMetadata(Context c, Uri uri)
 	{
@@ -365,9 +369,20 @@ public class MetaUtil
 	    toFill.put(Meta.DRIVE_MODE, getDriveMode(meta));
 	    toFill.put(Meta.EXPOSURE_MODE, getExposureMode(meta));
 	    toFill.put(Meta.EXPOSURE_PROGRAM, getExposureProgram(meta));
-	//        MetaService.setProcessed(toFill, true);
+        setProcessed(toFill, true);
 
 	    return toFill;
+	}
+
+	public static boolean isProcessed(ContentValues cv)
+	{
+		Integer processed = cv.getAsInteger(Meta.PROCESSED);
+		return processed != null && processed == TRUE;
+	}
+
+	private static void setProcessed(ContentValues cv, boolean processed)
+	{
+		cv.put(Meta.PROCESSED, processed ? TRUE : FALSE);
 	}
 
 	/**
