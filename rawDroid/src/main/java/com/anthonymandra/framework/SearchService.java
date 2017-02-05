@@ -118,7 +118,7 @@ public class SearchService extends IntentService
 	    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
     }
 
-	class SearchTask extends RecursiveTask<Set<ContentValues>>
+	private class SearchTask extends RecursiveTask<Set<ContentValues>>
 	{
 		Set<ContentValues> foundImages = new HashSet<>();
 		final UsefulDocumentFile mRoot;

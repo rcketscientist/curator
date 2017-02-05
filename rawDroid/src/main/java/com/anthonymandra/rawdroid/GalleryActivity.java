@@ -1015,7 +1015,7 @@ public class GalleryActivity extends CoreActivity implements
             return;
         }
 
-		Intent viewer = new Intent(this, PagerViewActivity.class);//ViewerChooser.class);
+		Intent viewer = new Intent(this, ViewerChooser.class);
 		viewer.setData(uri);
 
 		Bundle options = new Bundle();

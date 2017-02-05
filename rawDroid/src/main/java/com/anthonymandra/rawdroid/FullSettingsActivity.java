@@ -138,6 +138,12 @@ public class FullSettingsActivity extends PreferenceActivity
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class SettingsFragmentStorage extends SettingFragment
 	{
+		@Override
+		public void onCreate(Bundle savedInstanceState)
+		{
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.preferences_storage);
+		}
 
 		@Override
         public void onResume() {
@@ -202,6 +208,12 @@ public class FullSettingsActivity extends PreferenceActivity
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class SettingsFragmentMeta extends SettingFragment
 	{
+		@Override
+		public void onCreate(Bundle savedInstanceState)
+		{
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.preferences_metadata);
+		}
 
 		@Override
         public void onResume() {
@@ -296,6 +308,12 @@ public class FullSettingsActivity extends PreferenceActivity
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 	public static class SettingsFragmentView extends SettingFragment
 	{
+		@Override
+		public void onCreate(Bundle savedInstanceState)
+		{
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.preferences_view);
+		}
 
 		@Override
         public void onResume() {
@@ -376,6 +394,11 @@ public class FullSettingsActivity extends PreferenceActivity
     public static abstract class SettingFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener
     {
 	    protected PreferenceManager mPreferenceManager;
+        @Override
+        public void onCreate(Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+        }
 
 	    @Override
         public void onResume()
@@ -408,6 +431,13 @@ public class FullSettingsActivity extends PreferenceActivity
 	    });
 
 	    @Override
+        public void onCreate(Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences_license);
+        }
+
+        @Override
         public void onResume() {
             super.onResume();
             mPreferenceManager = getPreferenceManager();
@@ -523,6 +553,12 @@ public class FullSettingsActivity extends PreferenceActivity
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragmentWatermark extends SettingFragment
     {
+        @Override
+        public void onCreate(Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.preferences_watermark);
+        }
 
 	    @Override
         public void onResume() {

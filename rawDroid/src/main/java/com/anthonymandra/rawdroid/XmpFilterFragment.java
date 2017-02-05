@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid;
 
 import android.app.Dialog;
-import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -27,20 +25,16 @@ import android.widget.ListView;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.AsyncTask;
-import com.anthonymandra.framework.CoreActivity;
-import com.anthonymandra.framework.DocumentActivity;
 import com.anthonymandra.framework.DocumentUtil;
-import com.anthonymandra.util.MetaUtil;
 import com.anthonymandra.widget.XmpLabelGroup;
-import com.crashlytics.android.Crashlytics;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
@@ -67,7 +61,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     private XmpFilter.SortColumns mSortColumn;
     private Set<String> mHiddenFolders;
     private Set<String> mExcludedFolders;
-    private final Set<String> mPaths = new HashSet<>();
+    private final Set<String> mPaths = new LinkedHashSet<>();
     private FolderDialog mFolderDialog;
 
     private final static String mPrefName = "galleryFilter";
@@ -187,7 +181,7 @@ public class XmpFilterFragment extends XmpBaseFragment
             {
                 int[] position = new int[2];
                 foldersButton.getLocationOnScreen(position);
-                FolderDialog mFolderDialog = FolderDialog.newInstance(
+                mFolderDialog = FolderDialog.newInstance(
                         new ArrayList<>(mPaths),
                         new ArrayList<>(mHiddenFolders),
                         new ArrayList<>(mExcludedFolders),
@@ -227,16 +221,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                     }
                 });
 
-                try
-                {
-                    mFolderDialog.show(getFragmentManager(), TAG);
-                }
-                catch(IllegalStateException e)
-                {
-                    // We do nothing here, this is an onSaveInstanceState issue,
-                    // possibly due to a slow query.  We don't care they can open the dialog again
-                    Crashlytics.log(e.toString());  // log nonfatal in case this becomes too common
-                }
+                mFolderDialog.show(getFragmentManager(), TAG);
             }
         });
 
@@ -517,7 +502,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         @Override
         protected Void doInBackground(final Void... params)
         {
-            final Set<String> paths = new HashSet<>();
+            final Set<String> paths = new TreeSet<>();
             try(Cursor c = getContext().getContentResolver().query(Meta.CONTENT_URI,
                     new String[]{"DISTINCT " + Meta.PARENT}, null, null,
                     Meta.PARENT + " ASC"))

@@ -29,6 +29,7 @@ public class ViewerChooser extends Activity {
 //        else
 //        {
             viewer.setClass(this, ImageViewActivity.class);
+//            viewer.setClass(this, PagerViewActivity.class);
 //        }
 
 //        viewer.setData(getIntent().getData());
