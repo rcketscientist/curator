@@ -211,7 +211,7 @@ public class TutorialActivity extends GalleryActivity
 					endContextMode();
 
 					tutorial.setContentText(getString(R.string.tutorialSelectAll));
-					setTutorialActionView(R.id.gallerySelectAll, true);
+					setTutorialActionView(R.id.menu_selectAll, true);
 					break;
 				case 10: // Exit Selection
 					// If the user is lazy select for them
@@ -295,12 +295,12 @@ public class TutorialActivity extends GalleryActivity
 
 					tutorial.setContentTitle(getString(R.string.tutorialRecycleTitle));
 					tutorial.setContentText(getString(R.string.tutorialRecycleText));
-					setTutorialActionView(R.id.gallery_recycle, true);
+					setTutorialActionView(R.id.menu_recycle, true);
 					break;
 				case 19: // Actionbar help
 					tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle));
 					tutorial.setContentText(getString(R.string.tutorialActionbarHelpText));
-					setTutorialActionView(R.id.gallerySelectAll, true);
+					setTutorialActionView(R.id.menu_selectAll, true);
 					break;
 				default: // We're done
 					finish();

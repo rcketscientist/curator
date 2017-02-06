@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/gallerySelectAll"
+        android:id="@+id/menu_selectAll"
         android:icon="@drawable/ic_select_all"
         app:showAsAction="always"
         android:title="@string/selectAll"/>
@@ -13,7 +13,7 @@
         app:showAsAction="always"
         android:visible="false"/>
     <item
-        android:id="@+id/gallery_recycle"
+        android:id="@+id/menu_recycle"
         android:icon="@drawable/ic_recycle"
         android:orderInCategory="12"
         app:showAsAction="ifRoom"

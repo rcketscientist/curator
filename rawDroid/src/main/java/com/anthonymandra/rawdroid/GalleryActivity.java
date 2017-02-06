@@ -762,18 +762,10 @@ public class GalleryActivity extends CoreActivity implements
 				getContentResolver().delete(Meta.CONTENT_URI, null, null);
 				Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
 				return true;
-			case R.id.contextDelete:
-				deleteImages(getSelectedImages());
-				return true;
 			case R.id.contextCopy:
 				requestCopyDestination();
 				return true;
-			case R.id.gallery_recycle:
-            case R.id.context_recycle:
-				showRecycleBin();
-				return true;
-			case R.id.gallerySelectAll:
-            case R.id.contextSelectAll:
+			case R.id.menu_selectAll:
 				selectAll();
 				return false;
 			case R.id.galleryRefresh:

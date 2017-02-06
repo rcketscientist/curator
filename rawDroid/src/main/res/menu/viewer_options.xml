@@ -3,7 +3,7 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/view_recycle"
+        android:id="@+id/menu_recycle"
         android:orderInCategory="27"
         android:icon="@drawable/ic_recycle"
         app:showAsAction="ifRoom"
@@ -15,7 +15,7 @@
         app:showAsAction="ifRoom"
         android:title="@string/editWith"/>
     <item
-        android:id="@+id/view_delete"
+        android:id="@+id/menu_delete"
         android:orderInCategory="11"
         android:icon="@drawable/ic_delete"
         app:showAsAction="always"
@@ -54,7 +54,7 @@
         app:showAsAction="ifRoom"
         android:title="@string/settings"/>
     <item
-        android:id="@+id/share"
+        android:id="@+id/menu_share"
         android:orderInCategory="14"
         android:icon="@drawable/ic_share"
         app:showAsAction="always"

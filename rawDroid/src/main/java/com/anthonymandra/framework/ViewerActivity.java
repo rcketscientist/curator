@@ -722,12 +722,6 @@ public abstract class ViewerActivity extends CoreActivity implements
             case R.id.view_wallpaper:
                 setWallpaper();
                 return true;
-            case R.id.view_delete:
-                deleteImage(getCurrentItem());
-                return true;
-            case R.id.view_recycle:
-                showRecycleBin();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

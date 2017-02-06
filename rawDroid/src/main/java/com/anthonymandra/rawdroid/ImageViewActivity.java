@@ -35,6 +35,7 @@ public class ImageViewActivity extends PhotoPage
     @Override
 	protected void onImageSetChanged()
 	{
+		// TODO: This should be handled in ViewerActivity and requery
         mPhotoView.setUpdateForContentChange(true);
         notifyContentChanged();
 	}

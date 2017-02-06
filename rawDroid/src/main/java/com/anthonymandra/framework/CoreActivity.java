@@ -203,10 +203,16 @@ public abstract class CoreActivity extends DocumentActivity
 				storeSelectionForIntent();
 				requestSaveAsDestination();
 				return true;
+			case R.id.menu_delete:
+				deleteImages(getSelectedImages());
+				return true;
+			case R.id.menu_recycle:
+				showRecycleBin();
+				return true;
 			case R.id.settings:
 				requestSettings();
 				return true;
-			case R.id.share:
+			case R.id.menu_share:
 				requestShare();
 				return true;
 			default:
@@ -565,7 +571,7 @@ public abstract class CoreActivity extends DocumentActivity
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					if (filesToRestore.isEmpty())
+					if (!filesToRestore.isEmpty())
 						restoreFiles(filesToRestore);
 				}
 			})
