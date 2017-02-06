@@ -4,8 +4,7 @@ apply plugin: 'maven'
 
 def versionMajor = 5
 def versionMinor = 1
-def versionPatch = 0
-def versionBuild = 0
+def versionPatch = 6
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -23,12 +22,9 @@ android {
         minSdkVersion 21
         targetSdkVersion 25
 
-        versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
-        versionName "${versionMajor}.${versionMinor}" +                                 // Always include major and minor M.m
-                ((versionPatch != 0 || versionBuild != 0) ? ".${versionPatch}" : "") +  // Discard patch and build only if both are zero M.m.p
-                ((versionBuild != 0) ? ".${versionBuild}" : "")
-        // Discard build only if build is zero M.m.p.bb
-        // The current design does not allow versioning over 9.  Minor 10 would be 1 major.  Build allows up to 99.
+        versionCode versionMajor * 100000 + versionMinor * 1000 + versionPatch
+        versionName "${versionMajor}.${versionMinor}" +         // Always include major and minor M.m
+                ((versionPatch != 0) ? ".${versionPatch}" : "") // Discard patch if zero, 5.1 or 5.1.1
 
 //        jackOptions {
 //            enabled true
