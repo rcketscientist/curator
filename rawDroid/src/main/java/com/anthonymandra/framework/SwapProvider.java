@@ -3,6 +3,7 @@ package com.anthonymandra.framework;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -69,7 +70,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
      * @return String uri to request a swap file
      */
     @Nullable
-    public static Uri createSwapUri(Uri uri)
+    public static Uri createSwapUri(Context c, Uri uri)
     {
         if (uri == null)
         {
@@ -79,16 +80,15 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
         return new Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
                 .authority(SwapProvider.AUTHORITY)
+                .path(FileUtil.swapExtention(UsefulDocumentFile.fromUri(c, uri).getName(), "jpg"))
                 .fragment(uri.toString())
                 .build();
     }
 
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode)
-            throws FileNotFoundException {
-
-        Log.d(TAG, "Called with uri: '" + uri.getFragment() + "'.");
-
+            throws FileNotFoundException
+    {
         Uri sourceUri = Uri.parse(uri.getFragment());
         // If it's a native file, just share it directly.
         if (ImageUtil.isNative(sourceUri))
@@ -96,9 +96,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
         }
 
-        UsefulDocumentFile image = UsefulDocumentFile.fromUri(getContext(), sourceUri);
-        String name = image.getName();
-        String jpg = FileUtil.swapExtention(name, "jpg");
+        String jpg = uri.getPath();
 
         File swapFile = new File(FileUtil.getDiskCacheDir(getContext(),
                 CoreActivity.SWAP_BIN_DIR),
@@ -119,7 +117,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
                 e.printStackTrace();
             }
 
-            byte[] imageData = ImageUtil.getThumb(getContext(), image.getUri());
+            byte[] imageData = ImageUtil.getThumb(getContext(), sourceUri);
             if (imageData == null)
                 return null;
 
@@ -132,7 +130,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             if (Constants.VariantCode < 10 || LicenseManager.getLastResponse() != License.LicenseState.pro)
             {
                 final String[] projection = new String[] {Meta.WIDTH};
-                try (Cursor c = MetaUtil.getMetaCursor(getContext(), image.getUri(), projection))
+                try (Cursor c = MetaUtil.getMetaCursor(getContext(), sourceUri, projection))
                 {
                     if (c != null && c.moveToFirst())
                     {
@@ -169,11 +167,11 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
             boolean success;
             if (processWatermark)
             {
-                success = writeThumbWatermark(image.getUri(), swapFile, waterData, waterWidth, waterHeight, margin);
+                success = writeThumbWatermark(sourceUri, swapFile, waterData, waterWidth, waterHeight, margin);
             }
             else
             {
-                success = writeThumb(image.getUri(), swapFile);
+                success = writeThumb(sourceUri, swapFile);
             }
 
             if (!success)
@@ -287,7 +285,7 @@ public class SwapProvider extends ContentProvider implements SharedPreferences.O
 
     @Override
     public String getType(Uri uri) {
-        return null;
+        return "image/jpeg";
     }
 
     @Override

@@ -341,5 +341,6 @@
     <string name="tutSetSubject">Set subject for the current selection.</string>
     <string name="tutAddSubject">Coming soon: Add a keyword.</string>
     <string name="tutEditSubject">Coming soon: Edit a keyword (hierarchy, etc.)</string>
+    <string name="shareSubset">Share limited to ten images!</string>
 
 </resources>

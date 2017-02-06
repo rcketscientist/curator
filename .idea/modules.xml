@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DocumentActivity/library/documentActivity.iml" filepath="$PROJECT_DIR$/DocumentActivity/library/documentActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/inscription/inscription.iml" filepath="$PROJECT_DIR$/inscription/inscription.iml" />
-      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" filepath="$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawDroid/rawDroid.iml" filepath="$PROJECT_DIR$/rawDroid/rawDroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />

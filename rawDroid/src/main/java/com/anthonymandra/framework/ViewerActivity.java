@@ -17,9 +17,6 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.view.ActionProvider;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
@@ -55,8 +52,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ForkJoinPool;
 
 public abstract class ViewerActivity extends CoreActivity implements
-        SharedPreferences.OnSharedPreferenceChangeListener, ActionProvider.SubUiVisibilityListener,
-        ScaleChangedListener, DataListener
+        SharedPreferences.OnSharedPreferenceChangeListener, ScaleChangedListener, DataListener
 {
 
     private static final String TAG = ViewerActivity.class.getSimpleName();
@@ -144,9 +140,9 @@ public abstract class ViewerActivity extends CoreActivity implements
     }
 
     @Override
-    protected List<Uri> getSelectedImages()
+    protected ArrayList<Uri> getSelectedImages()
     {
-        List<Uri> currentImage = new ArrayList<>();
+        ArrayList<Uri> currentImage = new ArrayList<>();
         currentImage.add(mCurrentUri);
         return currentImage;
     }
@@ -278,8 +274,6 @@ public abstract class ViewerActivity extends CoreActivity implements
     public void onPhotoChanged(int index, Uri item)
     {
         mCurrentUri = item;
-
-        setShareUri(SwapProvider.createSwapUri(item));
         updateImageDetails();
     }
 
@@ -447,11 +441,11 @@ public abstract class ViewerActivity extends CoreActivity implements
         });
     }
 
-    @Override
-    public void onSubUiVisibilityChanged(boolean isVisible) {
-        if (isVisible && autoHide != null)
-            autoHide.cancel();
-    }
+//    @Override
+//    public void onSubUiVisibilityChanged(boolean isVisible) {
+//        if (isVisible && autoHide != null)
+//            autoHide.cancel();
+//    }
 
     private class PreviousImageClickListener implements View.OnClickListener
     {
@@ -706,13 +700,6 @@ public abstract class ViewerActivity extends CoreActivity implements
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.viewer_options, menu);
-        MenuItem actionItem = menu.findItem(R.id.viewShare);
-        if (actionItem != null)
-        {
-            mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
-            mShareProvider.setShareIntent(mShareIntent);
-            mShareProvider.setSubUiVisibilityListener(this);
-        }
         return true;
     }
 
@@ -758,7 +745,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         // Convert if no editor for raw exists
         if (!intentExists(action))
         {
-            action.setDataAndType(SwapProvider.createSwapUri(media), "image/jpeg");
+            action.setDataAndType(SwapProvider.createSwapUri(this, media), "image/jpeg");
         }
 
         // Otherwise convert

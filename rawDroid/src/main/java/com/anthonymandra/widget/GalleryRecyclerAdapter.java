@@ -347,7 +347,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		return Uri.parse(uriString);
 	}
 
-	public List<Uri> getSelectedItems()
+	public ArrayList<Uri> getSelectedItems()
 	{
 		return new ArrayList<>(mSelectedItems);
 	}
@@ -434,6 +434,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 
 	public void toggleSelection(View v, int position)
 	{
+		// TODO: This is wrong, activity should be told of a checkedChanged, not toggling items itself
 		Uri uri = getUri(position);
 		if (uri == null)
 			return;

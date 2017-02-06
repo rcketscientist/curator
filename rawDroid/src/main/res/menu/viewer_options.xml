@@ -54,10 +54,10 @@
         app:showAsAction="ifRoom"
         android:title="@string/settings"/>
     <item
-        android:id="@+id/viewShare"
+        android:id="@+id/share"
         android:orderInCategory="14"
-        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        android:icon="@drawable/ic_share"
         app:showAsAction="always"
-        android:title="@string/shareWith"/>
+        android:title="@string/share"/>
 
 </menu>

@@ -26,10 +26,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.ShareActionProvider;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -106,9 +106,6 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected ProgressDialog mProgressDialog;
 
-	protected ShareActionProvider mShareProvider;
-	protected Intent mShareIntent;
-
 	protected XmpEditFragment mXmpFragment;
 
 	protected boolean mActivityVisible;
@@ -138,10 +135,6 @@ public abstract class CoreActivity extends DocumentActivity
 		setStoragePermissionRequestEnabled(true);
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		mShareIntent = new Intent(Intent.ACTION_SEND);
-		mShareIntent.setType("image/jpeg");
-		mShareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-		mShareIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 	}
 
 	@Override
@@ -213,9 +206,9 @@ public abstract class CoreActivity extends DocumentActivity
 			case R.id.settings:
 				requestSettings();
 				return true;
-//			case R.id.toggleXmp:
-//				toggleEditXmpFragment();
-//				return true;
+			case R.id.share:
+				requestShare();
+				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -840,22 +833,43 @@ public abstract class CoreActivity extends DocumentActivity
 	/**
 	 * Returns any selected images
 	 */
-	protected abstract List<Uri> getSelectedImages();
+	protected abstract ArrayList<Uri> getSelectedImages();
 
-	protected void setShareUri(Uri share)
+	protected void requestShare()
 	{
-		mShareIntent.setAction(Intent.ACTION_SEND);
-		mShareIntent.putExtra(Intent.EXTRA_STREAM, share);
-		if (mShareProvider != null)
-			mShareProvider.setShareIntent(mShareIntent);
-	}
+		Intent intent = new Intent();
+		intent.setType("image/jpeg");
+		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
-	protected void setShareUri(ArrayList<Uri> shares)
-	{
-		mShareIntent.setAction(Intent.ACTION_SEND_MULTIPLE);
-		mShareIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, shares);
-		if (mShareProvider != null)
-			mShareProvider.setShareIntent(mShareIntent);
+		ArrayList<Uri> selectedItems = getSelectedImages();
+		if (selectedItems.size() > 1)
+		{
+			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+			boolean tooManyShares = selectedItems.size() > 10;
+
+			if (tooManyShares)
+			{
+				Toast shareLimit = Toast.makeText(this, R.string.shareSubset, Toast.LENGTH_LONG);
+				shareLimit.setGravity(Gravity.CENTER, 0, 0);
+				shareLimit.show();
+			}
+
+			ArrayList<Uri> share = new ArrayList<>();
+			// We need to limit the number of shares to avoid TransactionTooLargeException
+			for (Uri selection : tooManyShares ? selectedItems.subList(0, 10) : selectedItems)
+			{
+				share.add(SwapProvider.createSwapUri(this, selection));
+			}
+			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, share);
+		}
+		else
+		{
+			intent.setAction(Intent.ACTION_SEND);
+			intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, selectedItems.get(0)));
+		}
+
+		startActivity(Intent.createChooser(intent, getString(R.string.share)));
 	}
 
 	public static class LicenseHandler extends Handler

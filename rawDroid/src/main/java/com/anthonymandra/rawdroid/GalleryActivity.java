@@ -28,11 +28,9 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -51,7 +49,6 @@ import com.anthonymandra.framework.MetaDataCleaner;
 import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
-import com.anthonymandra.framework.SwapProvider;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.ViewerActivity;
 import com.anthonymandra.util.DbUtil;
@@ -72,7 +69,6 @@ import java.util.Set;
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
 		GalleryRecyclerAdapter.OnItemLongClickListener,
-        ShareActionProvider.OnShareTargetSelectedListener,
 		LoaderManager.LoaderCallbacks<Cursor>,
 		GalleryRecyclerAdapter.OnSelectionUpdatedListener
 {
@@ -801,13 +797,6 @@ public class GalleryActivity extends CoreActivity implements
 		}
 	}
 
-	@Override
-	public boolean onShareTargetSelected(ShareActionProvider source, Intent intent)
-	{
-		endContextMode();
-		return false;
-	}
-
 	private void requestRename()
 	{
 		if (mGalleryAdapter.getSelectedItemCount() == 0)
@@ -844,7 +833,7 @@ public class GalleryActivity extends CoreActivity implements
 	}
 
 	@Override
-	protected List<Uri> getSelectedImages()
+	protected ArrayList<Uri> getSelectedImages()
 	{
 		return mGalleryAdapter.getSelectedItems();
 	}
@@ -881,21 +870,6 @@ public class GalleryActivity extends CoreActivity implements
 		{
 			mMaterialCab.setTitle(selectedUris.size() + " " + getString(R.string.selected));
 		}
-
-		ArrayList<Uri> arrayUri = new ArrayList<>();
-		for (Uri selection : selectedUris)
-		{
-			arrayUri.add(SwapProvider.createSwapUri(selection));
-		}
-
-		if (selectedUris.size() == 1)
-		{
-			setShareUri(arrayUri.get(0));
-		}
-		else if (selectedUris.size() > 1)
-		{
-			setShareUri(arrayUri);
-		}
 	}
 
 	private final class GalleryActionMode implements MaterialCab.Callback
@@ -903,14 +877,6 @@ public class GalleryActivity extends CoreActivity implements
 		@Override
 		public boolean onCabCreated(MaterialCab cab, Menu menu)
 		{
-			MenuItem actionItem = menu.findItem(R.id.contextShare);
-			if (actionItem != null)
-			{
-				mShareProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(actionItem);
-				mShareProvider.setOnShareTargetSelectedListener(GalleryActivity.this);
-				mShareProvider.setShareIntent(mShareIntent);
-			}
-
 			return true;
 		}
 

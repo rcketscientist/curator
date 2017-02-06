@@ -430,7 +430,6 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void requestNextImageWithMeta()
 		{
-            setShareUri(SwapProvider.createSwapUri(getCurrentItem()));
 			loadExif();
 
 			// First request the current screen nail
