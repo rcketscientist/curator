@@ -509,7 +509,9 @@ public class XmpFilterFragment extends XmpBaseFragment
             {
                 while (c != null && c.moveToNext())
                 {
-                    paths.add(c.getString(c.getColumnIndex(Meta.PARENT)));
+                    String parent = c.getString(c.getColumnIndex(Meta.PARENT));
+                    if (parent != null)
+                        paths.add(parent);
                 }
             }
 
