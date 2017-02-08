@@ -4,7 +4,7 @@ apply plugin: 'maven'
 
 def versionMajor = 5
 def versionMinor = 1
-def versionPatch = 6
+def versionPatch = 7
 
 //noinspection GroovyMissingReturnStatement
 android {

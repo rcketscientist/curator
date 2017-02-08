@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="5.1.7"
+             versioncode="501007"
+             summary="Release Candidate 2"
+             date="7 FEB 2017">
+        <change>Possible fix for filesystem issue</change>
+    </release>
     <release version="5.1.6"
              versioncode="501006"
              summary="Release Candidate 2"
