@@ -194,7 +194,7 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
         try(Cursor c = getActivity().getContentResolver().query(
                 KeywordProvider.Data.CONTENT_URI,
                 null,
-                DbUtil.createMultipleIN(KeywordProvider.Data.KEYWORD_NAME, selected.size()),
+                DbUtil.createIN(KeywordProvider.Data.KEYWORD_NAME, selected.size()),
                 selected.toArray(new String[selected.size()]),
                 null))
         {

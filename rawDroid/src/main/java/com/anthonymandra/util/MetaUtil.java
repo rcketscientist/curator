@@ -14,7 +14,6 @@ import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.MetaService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
@@ -270,7 +269,7 @@ public class MetaUtil
 	{
 	    return c.getContentResolver().query(Meta.CONTENT_URI,
 	            projection,
-	            DbUtil.createMultipleIN(Meta.URI, uris.length),
+	            DbUtil.createIN(Meta.URI, uris.length),
 	            uris,
 	            null);
 	}

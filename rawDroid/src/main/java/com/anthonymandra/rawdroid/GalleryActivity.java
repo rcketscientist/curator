@@ -340,7 +340,7 @@ public class GalleryActivity extends CoreActivity implements
 			{
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createMultipleIN(Meta.LABEL, filter.xmp.label.length));
+				selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.length));
 				Collections.addAll(selectionArgs, filter.xmp.label);
 			}
 			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
@@ -349,7 +349,10 @@ public class GalleryActivity extends CoreActivity implements
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createMultipleLike(Meta.SUBJECT, filter.xmp.subject, selectionArgs, joiner, false));
+				selection.append(DbUtil.createLike(Meta.SUBJECT, filter.xmp.subject,
+						selectionArgs, joiner, false,
+						"%", "%",   // openended wildcards, match subject anywhere
+						null));
 			}
 			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
 			{
@@ -357,7 +360,7 @@ public class GalleryActivity extends CoreActivity implements
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createMultipleIN(Meta.RATING, filter.xmp.rating.length));
+				selection.append(DbUtil.createIN(Meta.RATING, filter.xmp.rating.length));
 				for (int rating : filter.xmp.rating)
 				{
 					selectionArgs.add(Double.toString((double)rating));
@@ -369,11 +372,14 @@ public class GalleryActivity extends CoreActivity implements
 			if (requiresJoiner)
 				selection.append(AND);  // Always exclude the folders, don't OR
 
-			selection.append(DbUtil.createMultipleLike(Meta.PARENT,
+			selection.append(DbUtil.createLike(Meta.PARENT,
 					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
 					selectionArgs,
 					AND,    // Requires AND so multiple hides don't negate each other
-					true));
+					true,   // NOT
+					null,   // No wild to start, matches path exactly
+					"%",    // Wildcard end to match all children
+					"%"));  // Uri contain '%' which means match any so escape them
 		}
 
 		String order = filter.sortAscending ? " ASC" : " DESC";

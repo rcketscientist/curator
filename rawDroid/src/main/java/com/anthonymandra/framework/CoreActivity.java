@@ -1756,6 +1756,7 @@ public abstract class CoreActivity extends DocumentActivity
 			if (selectedImages.size() == 0)
 				return;
 
+			// TODO: This can be done without cursor lookups, use position and lookup from cursor
 			String[] selectionArgs = new String[selectedImages.size()];
 			for (int i = 0; i < selectedImages.size(); i++)
 			{
@@ -1766,7 +1767,7 @@ public abstract class CoreActivity extends DocumentActivity
 			// Grab existing metadata
 			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
 					projection,
-					DbUtil.createMultipleIN(Meta.URI, selectedImages.size()),
+					DbUtil.createIN(Meta.URI, selectedImages.size()),
 					selectionArgs,
 					null))
 			{
