@@ -26,6 +26,7 @@ import android.widget.ListView;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.DocumentUtil;
+import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.widget.XmpLabelGroup;
 
 import java.util.ArrayList;
@@ -196,18 +197,38 @@ public class XmpFilterFragment extends XmpBaseFragment
                         if (visibility.visible)
                         {
                             mHiddenFolders.remove(visibility.Path);
+                            for (String path : mPaths)
+                            {
+                                if (path.startsWith(visibility.Path))
+                                    mHiddenFolders.remove(path);
+                            }
                         }
                         else
                         {
                             mHiddenFolders.add(visibility.Path);
+                            for (String path : mPaths)
+                            {
+                                if (path.startsWith(visibility.Path))
+                                    mHiddenFolders.add(path);
+                            }
                         }
                         if (visibility.excluded)
                         {
                             mExcludedFolders.add(visibility.Path);
+                            for (String path : mPaths)
+                            {
+                                if (path.startsWith(visibility.Path))
+                                    mExcludedFolders.add(path);
+                            }
                         }
                         else
                         {
                             mExcludedFolders.remove(visibility.Path);
+                            for (String path : mPaths)
+                            {
+                                if (path.startsWith(visibility.Path))
+                                    mExcludedFolders.remove(path);
+                            }
                         }
                         onFilterUpdated();
                     }
@@ -502,7 +523,7 @@ public class XmpFilterFragment extends XmpBaseFragment
         @Override
         protected Void doInBackground(final Void... params)
         {
-            final Set<String> paths = new TreeSet<>();
+            final Set<String> directParents = new TreeSet<>();
             try(Cursor c = getContext().getContentResolver().query(Meta.CONTENT_URI,
                     new String[]{"DISTINCT " + Meta.PARENT}, null, null,
                     Meta.PARENT + " ASC"))
@@ -511,12 +532,25 @@ public class XmpFilterFragment extends XmpBaseFragment
                 {
                     String parent = c.getString(c.getColumnIndex(Meta.PARENT));
                     if (parent != null)
-                        paths.add(parent);
+                        directParents.add(parent);
+                }
+            }
+
+            final Set<String> allParents = new TreeSet<>(directParents);
+            // Now we want to check for shell parents as well
+            for (String path : directParents)
+            {
+                UsefulDocumentFile folder = UsefulDocumentFile.fromUri(getContext(),  Uri.parse(path));
+                UsefulDocumentFile parent = folder.getParentFile();
+                while (parent != null)
+                {
+                    allParents.add(parent.getUri().toString());
+                    parent = parent.getParentFile();
                 }
             }
 
             mPaths.clear();
-            for (String path : paths)
+            for (String path : allParents)
             {
                 // We place the excluded folders at the end
                 if (!mExcludedFolders.contains(path))

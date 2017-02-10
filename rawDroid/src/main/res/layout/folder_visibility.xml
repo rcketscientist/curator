@@ -1,93 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:background="@color/headerColor"
-        android:padding="3dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/headerColor"
+    android:padding="3dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context=".GalleryActivity">
+
+    <LinearLayout
+        android:id="@+id/visibleLabel"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:context=".GalleryActivity">
+        android:paddingTop="5dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_alignParentTop="true">
 
-        <LinearLayout
-            android:id="@+id/visibleLabel"
-            android:orientation="horizontal"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_alignParentTop="true">
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/tap"
+            android:id="@+id/textView5"
+            android:layout_gravity="center"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/tap"
-                android:id="@+id/textView5"
-                android:layout_gravity="center"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_visibility"
-                android:id="@+id/imageView"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/tapVisibility"
-                android:paddingStart="4dp"
-                android:id="@+id/textView6"
-                android:layout_gravity="center"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/excludeLabel"
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_below="@id/visibleLabel">
+            android:src="@drawable/ic_visibility"
+            android:id="@+id/imageView"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/tap"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/ic_folder_remove"/>
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/tapExclude"
-                android:textAppearance="?android:attr/textAppearanceSmall"/>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/buttonAddSearchRoot"
-            android:theme="@style/BrightButton"
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_folder_add"
-            android:text="@string/addRoot"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_below="@id/excludeLabel"/>
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/tapVisibility"
+            android:paddingStart="4dp"
+            android:id="@+id/textView6"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/excludeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_below="@id/visibleLabel">
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/tap"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_folder_remove"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/tapExclude"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonAddSearchRoot"
+        android:theme="@style/BrightButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/ic_folder_add"
+        android:text="@string/addRoot"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_below="@id/excludeLabel"/>
 
     <ListView
         android:id="@+id/listViewVisibility"

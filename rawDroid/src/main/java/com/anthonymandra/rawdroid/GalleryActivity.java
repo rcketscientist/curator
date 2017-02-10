@@ -526,7 +526,7 @@ public class GalleryActivity extends CoreActivity implements
 				// Returns a new CursorLoader
 				return new CursorLoader(
 						this,   				// Parent activity context
-						Meta.CONTENT_URI,  // Table to query
+						Meta.CONTENT_URI,       // Table to query
 						projection,				// Projection to return
 						selection,       		// No selection clause
 						selectionArgs, 			// No selection arguments

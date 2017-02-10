@@ -113,11 +113,11 @@
     </style>
 
     <style name="GalleryDialog" parent="@style/Theme.AppCompat.Dialog">
-        <item name="android:windowBackground">@color/Black_Medium</item>
+        <item name="android:windowBackground">@android:color/transparent</item> <!--remove border-->
     </style>
 
     <style name="GalleryAlertDialog" parent="@style/Theme.AppCompat.Dialog.Alert">
-        <item name="android:windowBackground">@color/Black_Medium</item>
+        <item name="android:windowBackground">@android:color/transparent</item> <!--remove border-->
     </style>
 
     <style name="FolderDialog" parent="@style/GalleryDialog">
