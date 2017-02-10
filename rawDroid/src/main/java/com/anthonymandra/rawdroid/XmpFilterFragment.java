@@ -514,7 +514,8 @@ public class XmpFilterFragment extends XmpBaseFragment
                 fv.excluded = excludedFolders.contains(path);
                 items.add(fv);
             }
-            mAdapter.notifyDataSetChanged();
+            if (mAdapter != null)
+                mAdapter.notifyDataSetChanged();
         }
     }
 

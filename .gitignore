@@ -39,3 +39,4 @@ obj
 /build
 *.iml
 build
+/.idea/misc.xml
