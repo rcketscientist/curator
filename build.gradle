@@ -2,20 +2,15 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.0-beta3'
-        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
-        maven { url "https://jitpack.io" }
-        maven { url 'https://maven.fabric.io/public' }
-        maven { name 'glide-snapshot'; url 'http://oss.sonatype.org/content/repositories/snapshots' }
     }
 }
 
