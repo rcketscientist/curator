@@ -678,11 +678,12 @@ public abstract class ViewerActivity extends CoreActivity implements
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        updateImageDetails();   // For small screens this will fix the meta panel shape
-    }
+    // Pretty sure this is unneeded.
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        updateImageDetails();   // For small screens this will fix the meta panel shape
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
