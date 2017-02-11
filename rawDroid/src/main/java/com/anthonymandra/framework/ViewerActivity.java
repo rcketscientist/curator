@@ -54,13 +54,11 @@ import java.util.concurrent.ForkJoinPool;
 public abstract class ViewerActivity extends CoreActivity implements
         SharedPreferences.OnSharedPreferenceChangeListener, ScaleChangedListener, DataListener
 {
-
     private static final String TAG = ViewerActivity.class.getSimpleName();
 
     private static final int REQUEST_CODE_EDIT = 3;
 
     public static final String EXTRA_START_INDEX = "viewer_index";
-    private static final String EXTRA_URIS = "viewer_uris";     //TODO: This is not used!
 
     private HistogramView histView;
     private View metaPanel;
@@ -156,17 +154,7 @@ public abstract class ViewerActivity extends CoreActivity implements
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         initialize();
 
-        if (getIntent().hasExtra(EXTRA_URIS))
-        {
-            mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
-
-            String[] uris = getIntent().getStringArrayExtra(EXTRA_URIS);
-            for (String uri : uris)
-            {
-                mMediaItems.add(Uri.parse(uri));
-            }
-        }
-        else if (getIntent().hasExtra(EXTRA_META_BUNDLE))
+        if (getIntent().hasExtra(EXTRA_META_BUNDLE))
         {
             mImageIndex = getIntent().getIntExtra(EXTRA_START_INDEX, 0);
 
