@@ -67,7 +67,6 @@
         android:layout_below="@id/sortHeader">
 
         <android.support.v7.widget.ToggleGroup
-            style="@style/Widget.Material.ToggleGroup"
             android:id="@+id/sortGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
