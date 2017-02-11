@@ -21,4 +21,8 @@
     <dimen name="image_thumbnail_spacing">2dp</dimen>
     <dimen name="image_thumbnail_margin">1dp</dimen>
 
+    <dimen name="metaTextSize">10sp</dimen>
+    <dimen name="metaLabelLength">80sp</dimen>
+    <dimen name="metaValueLength">120sp</dimen>
+    <dimen name="histogramHeight">100sp</dimen> <!-- 1/2 of full meta width -->
 </resources>

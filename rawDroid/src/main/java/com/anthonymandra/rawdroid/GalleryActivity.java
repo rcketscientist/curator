@@ -240,7 +240,6 @@ public class GalleryActivity extends CoreActivity implements
 				{
 					case MetaService.BROADCAST_IMAGE_PARSED:
 						mToolbar.setSubtitle(new StringBuilder()
-								.append("Processed ")
 								.append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
 								.append(" of ")
 								.append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1)));//mGalleryAdapter.getCount()));
