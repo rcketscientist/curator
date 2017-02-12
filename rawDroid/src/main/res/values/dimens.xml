@@ -31,4 +31,6 @@
     <dimen name="metaValueLength">96sp</dimen>
     <dimen name="histogramHeight">80sp</dimen> <!-- 1/2 of full meta width -->
 
+    <dimen name="helpButtonSize">36dp</dimen>
+
 </resources>

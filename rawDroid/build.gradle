@@ -8,17 +8,15 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        maven { url "https://jitpack.io" }
-        maven { url 'https://maven.fabric.io/public' }
-        maven { name 'glide-snapshot'; url 'http://oss.sonatype.org/content/repositories/snapshots' }
-    }
+repositories {
+    maven { url "https://jitpack.io" }
+    maven { url 'https://maven.fabric.io/public' }
+    maven { name 'glide-snapshot'; url 'http://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'maven'
+//apply plugin: 'maven'
 
 def versionMajor = 5
 def versionMinor = 2
@@ -41,8 +39,7 @@ android {
         targetSdkVersion 25
 
         versionCode versionMajor * 100000 + versionMinor * 1000 + versionPatch
-        versionName "${versionMajor}.${versionMinor}" +         // Always include major and minor M.m
-                ((versionPatch != 0) ? ".${versionPatch}" : "") // Discard patch if zero, 5.1 or 5.1.1
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
 
 //        jackOptions {
 //            enabled true

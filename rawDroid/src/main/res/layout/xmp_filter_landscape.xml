@@ -16,8 +16,7 @@
     <RelativeLayout
         android:id="@+id/sortHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="3dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/sortIcon"
@@ -25,15 +24,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
-            android:elevation="1dp"
             android:tint="@color/sidebarHeader"
             app:srcCompat="@drawable/ic_sort"/>
 
         <ImageButton
             android:id="@+id/helpButton"
             android:background="@null"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="@dimen/helpButtonSize"
+            android:layout_height="@dimen/helpButtonSize"
             android:tint="@color/white"
             app:srcCompat="@drawable/ic_help"
             android:layout_alignParentEnd="true"/>
@@ -70,6 +68,7 @@
             android:id="@+id/sortGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="4dp"
             app:exclusive="true"
             android:orientation="horizontal">
 
@@ -107,21 +106,18 @@
         <android.support.v7.widget.ToggleButton
             android:id="@+id/toggleSegregate"
             style="@style/ImageActionToggleButton"
-            android:gravity="center"
             android:button="@drawable/ic_jpeg_bottom_borderless"
             android:buttonTint="@color/white"
-            android:elevation="2dp"
-            android:layout_marginStart="3dp"/>
+            android:layout_margin="4dp"
+            android:elevation="2dp"/>
 
     </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/filterHeader"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sortSection"
-        android:layout_marginBottom="3dp"
-        android:layout_marginTop="8dp">
+        android:layout_height="@dimen/helpButtonSize"
+        android:layout_below="@id/sortSection">
 
         <ImageView
             android:id="@+id/filterIcon"
@@ -153,8 +149,6 @@
         layout="@layout/xmp_core"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginBottom="4dp"
         android:layout_below="@+id/filterButtons"/>
 
     <!-- TODO: Without theme here the background drawable won't work...?-->
@@ -188,10 +182,10 @@
 
         <ImageButton
             android:id="@+id/buttonFolders"
-            android:theme="@style/SidebarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:theme="@style/SidebarButton"
             app:srcCompat="@drawable/ic_folder_border"/>
 
         <ImageButton

@@ -6,16 +6,15 @@
     android:orientation="vertical">
 
     <com.anthonymandra.widget.XmpLabelGroup
-        style="@style/Widget.Material.ToggleGroup"
         android:id="@+id/colorKey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="6dp"/>
+        android:layout_margin="4dp"/>
 
     <com.anthonymandra.widget.RatingBar
-        style="@style/Widget.Material.ToggleGroup"
         android:id="@+id/ratingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:stepSize="1"/>
 </LinearLayout>

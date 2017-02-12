@@ -24,8 +24,8 @@
     <ImageButton
         android:id="@+id/helpButton"
         android:background="@null"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/helpButtonSize"
+        android:layout_height="@dimen/helpButtonSize"
         android:tint="@color/white"
         app:srcCompat="@drawable/ic_help"
         android:layout_alignParentEnd="true"/>
