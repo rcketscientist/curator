@@ -262,7 +262,8 @@ public class GalleryActivity extends CoreActivity implements
 						String[] images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS);
 						if (images.length == 0)
 						{
-							offerRequestPermission();
+							if (mActivityVisible)
+								offerRequestPermission();
 						}
 						else
 						{
@@ -596,9 +597,6 @@ public class GalleryActivity extends CoreActivity implements
 
 	private void offerRequestPermission()
 	{
-		if (!mActivityVisible)
-			return; // User might switch apps waiting for search to complete
-
 		AlertDialog.Builder builder =
 				new AlertDialog.Builder(this).
 						setTitle(R.string.offerSearchTitle).
@@ -684,6 +682,19 @@ public class GalleryActivity extends CoreActivity implements
 				}
 				break;
 			case REQUEST_TUTORIAL:
+				if (resultCode == RESULT_CANCELED)
+				{
+					Snackbar.make(getGalleryView(), "Tutorial error. Please contact support if this continues.", 5000)
+							.setAction(R.string.contact, new View.OnClickListener()
+							{
+								@Override
+								public void onClick(View v)
+								{
+									requestEmailIntent("Tutorial Error");
+								}
+							})
+							.show();
+				}
 				// We don't really care about a result, after tutorial offer to search.
 				offerRequestPermission();
 				break;
@@ -784,7 +795,7 @@ public class GalleryActivity extends CoreActivity implements
 				}
 				return true;
 			case R.id.galleryTutorial:
-				startActivity(new Intent(GalleryActivity.this, TutorialActivity.class));
+				startActivityForResult(new Intent(GalleryActivity.this, TutorialActivity.class), REQUEST_TUTORIAL);
 				return true;
 			case R.id.gallerySd:
 				requestWritePermission();

@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.text.Layout;
 import android.util.TypedValue;
 import android.view.View;
@@ -89,7 +90,7 @@ public class TutorialActivity extends GalleryActivity
 		}
 		catch (IOException e)
 		{
-			Toast.makeText(this, "Unable to open tutorial examples.  Please skip file selection.", Toast.LENGTH_LONG).show();
+			closeTutorialWithError();
 		}
 	}
 
@@ -146,6 +147,28 @@ public class TutorialActivity extends GalleryActivity
 		tutorialDirectory.delete();
 	}
 
+	private void programmaticClick(int position)
+	{
+		if (getGalleryAdapter().getItemCount() < position + 1)
+			closeTutorialWithError();
+		else
+			onItemClick(getGalleryAdapter(), getGalleryView().getChildAt(position), position, position);
+	}
+
+	private void programmaticLongClick(int position)
+	{
+		if (getGalleryAdapter().getItemCount() < position + 1)
+			closeTutorialWithError();
+		else
+			onItemLongClick(getGalleryAdapter(), getGalleryView().getChildAt(position), position, position);
+	}
+
+	private void closeTutorialWithError()
+	{
+		setResult(RESULT_CANCELED);
+		finish();
+	}
+
 	private class TutorialClickListener implements View.OnClickListener
 	{
 		//Note: Don't animate coming from "NoShowcase" it flies in from off screen which is silly.
@@ -187,7 +210,7 @@ public class TutorialActivity extends GalleryActivity
 				case 7: // Add select
 					// If the user is lazy select for them
 					if (!isContextModeActive())
-						onItemLongClick(getGalleryAdapter(), getGalleryView().getChildAt(0), 0, 0);
+						programmaticLongClick(0);
 
 					tutorial.setContentText(getString(R.string.tutorialMultiSelectText));
 					view = getGalleryView().getChildAt(2);
@@ -200,8 +223,8 @@ public class TutorialActivity extends GalleryActivity
 					// If the user is lazy select for them
 					if (getGalleryAdapter().getSelectedItemCount() < 2)
 					{
-						onItemLongClick(getGalleryAdapter(), getGalleryView().getChildAt(0), 0, 0);
-						onItemClick(getGalleryAdapter(), getGalleryView().getChildAt(2), 2, 2);
+						programmaticLongClick(0);
+						programmaticClick(2);
 					}
 
 					tutorial.setContentText(getString(R.string.tutorialMultiSelectText2));
@@ -232,9 +255,12 @@ public class TutorialActivity extends GalleryActivity
 						tutorial.setShowcase(Target.NONE, false);    //TODO: User set an empty folder, somehow???
 					break;
 				case 12: // Select between end
+					if (getGalleryAdapter().getItemCount() < 4)
+						closeTutorialWithError();
+
 					// If the user is lazy select for them
 					if (getGalleryAdapter().getSelectedItemCount() < 1)
-						onItemLongClick(getGalleryAdapter(), getGalleryView().getChildAt(1), 1, 1);
+						programmaticLongClick(1);
 
 					tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2));
 
@@ -248,10 +274,7 @@ public class TutorialActivity extends GalleryActivity
 				case 13: // Select between feedback
 					// If the user is lazy select for them
 					if (getGalleryAdapter().getSelectedItemCount() < 2)
-					{
-						onItemLongClick(getGalleryAdapter(), getGalleryView().getChildAt(1), 1, 1);
-						onItemLongClick(getGalleryAdapter(), getGalleryView().getChildAt(3), 3, 3);
-					}
+						programmaticLongClick(3);
 
 					tutorial.setContentText(getString(R.string.tutorialSelectBetweenText3));
 					setTutorialTitleView(true);
@@ -303,6 +326,7 @@ public class TutorialActivity extends GalleryActivity
 					setTutorialActionView(R.id.menu_selectAll, true);
 					break;
 				default: // We're done
+					setResult(RESULT_OK);
 					finish();
 					break;
 			}
