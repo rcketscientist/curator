@@ -12,6 +12,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.adobe.xmp.XMPException;
+import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.options.PropertyOptions;
+import com.adobe.xmp.properties.XMPProperty;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.UsefulDocumentFile;
@@ -22,6 +26,7 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
+import com.drew.metadata.Schema;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
@@ -51,6 +56,22 @@ public class MetaUtil
 
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
+
+	private static class XmpProperty
+	{
+		public final String Schema;
+		public final String Name;
+
+		public XmpProperty(String schema, String name)
+		{
+			this.Schema = schema;
+			this.Name = name;
+		}
+	}
+	public static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label");
+	public static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating");
+	public static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject");
+
 
 	public static Metadata readMetadata(Context c, Uri uri)
 	{
@@ -633,19 +654,60 @@ public class MetaUtil
 
 	private static Double getRating(Metadata meta)
 	{
-	    return getDouble(meta, XmpDirectory.class, XmpDirectory.TAG_RATING);
+		for (Directory dir : meta.getDirectoriesOfType(XmpDirectory.class))
+		{
+			XMPMeta xmp = ((XmpDirectory)dir).getXMPMeta();
+			try
+			{
+				return xmp.getPropertyDouble(RATING.Schema, RATING.Name);
+			}
+			catch (XMPException e)
+			{
+				// do nothing
+			}
+		}
+		return null;
 	}
 
 	private static String getLabel(Metadata meta)
 	{
-	    if (meta.containsDirectoryOfType(XmpDirectory.class))
-	        return meta.getFirstDirectoryOfType(XmpDirectory.class).getDescription(XmpDirectory.TAG_LABEL);
-	    return null;
+		for (Directory dir : meta.getDirectoriesOfType(XmpDirectory.class))
+		{
+			XMPMeta xmp = ((XmpDirectory)dir).getXMPMeta();
+			try
+			{
+				return xmp.getPropertyString(LABEL.Schema, LABEL.Name);
+			}
+			catch (XMPException e)
+			{
+				// do nothing
+			}
+		}
+		return null;
 	}
 
 	private static String[] getSubject(Metadata meta)
 	{
-	    return getStringArray(meta, XmpDirectory.class, XmpDirectory.TAG_SUBJECT);
+		for (Directory dir : meta.getDirectoriesOfType(XmpDirectory.class))
+		{
+			XMPMeta xmp = ((XmpDirectory)dir).getXMPMeta();
+			try
+			{
+				//XMP iterators are 1-based
+				int count = xmp.countArrayItems(SUBJECT.Schema, SUBJECT.Name);
+				String[] subjects = new String[count];
+				for ( int i = 1; i <= count; ++i)
+				{
+					subjects[i-1] = xmp.getArrayItem(SUBJECT.Schema, SUBJECT.Name, i).getValue();
+				}
+				return subjects;
+			}
+			catch (XMPException e)
+			{
+				// do nothing
+			}
+		}
+		return null;
 	}
 
 	private static void checkXmpDirectory(Metadata meta)
@@ -659,7 +721,7 @@ public class MetaUtil
 	 */
 	public static void updateRating(Metadata meta, @Nullable Integer rating)
 	{
-	    updateXmpDouble(meta, XmpDirectory.TAG_RATING, rating == null ? null : rating.doubleValue());
+	    updateXmpDouble(meta, RATING, rating == null ? null : rating.doubleValue());
 	}
 
 	/**
@@ -667,7 +729,7 @@ public class MetaUtil
 	 */
 	public static void updateRating(Metadata meta, @Nullable Double rating)
 	{
-	    updateXmpDouble(meta, XmpDirectory.TAG_RATING, rating);
+	    updateXmpDouble(meta, RATING, rating);
 	}
 
 	/**
@@ -675,7 +737,7 @@ public class MetaUtil
 	 */
 	public static void updateLabel(Metadata meta, @Nullable String label)
 	{
-	    updateXmpString(meta, XmpDirectory.TAG_LABEL, label);
+	    updateXmpString(meta, LABEL, label);
 	}
 
 	/**
@@ -683,10 +745,10 @@ public class MetaUtil
 	 */
 	public static void updateSubject(Metadata meta, String[] subject)
 	{
-	    updateXmpStringArray(meta, XmpDirectory.TAG_SUBJECT, subject);
+	    updateXmpStringArray(meta, SUBJECT, subject);
 	}
 
-	private static void updateXmpString(Metadata meta, int tag, String value)
+	private static void updateXmpString(Metadata meta, XmpProperty prop, String value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -696,15 +758,22 @@ public class MetaUtil
 
 	    if (value == null)
 	    {
-		    xmp.deleteProperty(tag);
+		    xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
 	    }
 	    else
 	    {
-	        xmp.updateString(tag, value);
+		    try
+		    {
+			    xmp.getXMPMeta().setProperty(prop.Schema, prop.Name, value);
+		    }
+		    catch (XMPException e)
+		    {
+			    e.printStackTrace();
+		    }
 	    }
 	}
 
-	private static void updateXmpStringArray(Metadata meta, int tag, String[] value)
+	private static void updateXmpStringArray(Metadata meta, XmpProperty prop, String[] value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -712,17 +781,26 @@ public class MetaUtil
 		if (xmp == null)
 			return;
 
-	    if (value == null  || value.length == 0)
-	    {
-		    xmp.deleteProperty(tag);
-	    }
-	    else
-	    {
-	        xmp.updateStringArray(tag, value);
-	    }
+		xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
+		if (value == null || value.length == 0)
+			return; // If the value is invalid this is just a delete.
+
+		PropertyOptions po = new PropertyOptions().setArray(true);
+		for (String item : value)
+		{
+			try
+			{
+				xmp.getXMPMeta().appendArrayItem(prop.Schema, prop.Name, po, item, null);
+			}
+			catch (XMPException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
 	}
 
-	private static void updateXmpDouble(Metadata meta, int tag, Double value)
+	private static void updateXmpDouble(Metadata meta, XmpProperty prop, Double value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -732,15 +810,22 @@ public class MetaUtil
 
 	    if (value == null)
 	    {
-		    xmp.deleteProperty(tag);
+		    xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
 	    }
 	    else
 	    {
-	        xmp.updateDouble(tag, value);
+		    try
+		    {
+			    xmp.getXMPMeta().setPropertyDouble(prop.Schema, prop.Name, value);
+		    }
+		    catch (XMPException e)
+		    {
+			    e.printStackTrace();
+		    }
 	    }
 	}
 
-	private static void updateXmpInteger(Metadata meta, int tag, Integer value)
+	private static void updateXmpInteger(Metadata meta, XmpProperty prop, Integer value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -750,11 +835,18 @@ public class MetaUtil
 
 	    if (value == null)
 	    {
-	        xmp.deleteProperty(tag);
+		    xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
 	    }
 	    else
 	    {
-	        xmp.updateInt(tag, value);
+		    try
+		    {
+			    xmp.getXMPMeta().setPropertyInteger(prop.Schema, prop.Name, value);
+		    }
+		    catch (XMPException e)
+		    {
+			    e.printStackTrace();
+		    }
 	    }
 	}
 }
