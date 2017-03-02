@@ -68,9 +68,9 @@ public class MetaUtil
 			this.Name = name;
 		}
 	}
-	public static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label");
-	public static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating");
-	public static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject");
+	private static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label");
+	private static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating");
+	private static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject");
 
 
 	public static Metadata readMetadata(Context c, Uri uri)
