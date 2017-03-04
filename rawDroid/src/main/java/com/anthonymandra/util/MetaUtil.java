@@ -35,6 +35,7 @@ import com.drew.metadata.exif.makernotes.CanonMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.NikonType2MakernoteDirectory;
 import com.drew.metadata.exif.makernotes.OlympusCameraSettingsMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.OlympusEquipmentMakernoteDirectory;
+import com.drew.metadata.exif.makernotes.SigmaMakernoteDirectory;
 import com.drew.metadata.exif.makernotes.SonyType1MakernoteDirectory;
 import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
@@ -548,11 +549,18 @@ public class MetaUtil
 	        return meta.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.TAG_LENS_MODEL);
 	    if (meta.containsDirectoryOfType(NikonType2MakernoteDirectory.class))
 	        return meta.getFirstDirectoryOfType(NikonType2MakernoteDirectory.class).getDescription(NikonType2MakernoteDirectory.TAG_LENS);
+		if (meta.containsDirectoryOfType(SigmaMakernoteDirectory.class))
+			return meta.getFirstDirectoryOfType(SigmaMakernoteDirectory.class).getDescription(SigmaMakernoteDirectory.TAG_LENS_TYPE);
 	    if (meta.containsDirectoryOfType(OlympusEquipmentMakernoteDirectory.class))
 	        return meta.getFirstDirectoryOfType(OlympusEquipmentMakernoteDirectory.class).getDescription(OlympusEquipmentMakernoteDirectory.TAG_LENS_TYPE);
-	    String lens = getDescription(meta, ExifSubIFDDirectory.TAG_LENS_MODEL);                 // We prefer the exif over Sony maker,
-	    if (lens == null && meta.containsDirectoryOfType(SonyType1MakernoteDirectory.class))    // but use maker if exif doesn't exist
-	        return meta.getFirstDirectoryOfType(SonyType1MakernoteDirectory.class).getDescription(SonyType1MakernoteDirectory.TAG_LENS_ID);
+		// We prefer the exif over some maker notes
+	    String lens = getDescription(meta, ExifSubIFDDirectory.TAG_LENS_MODEL);
+	    if (lens == null)
+	    {
+		    // but use maker if exif doesn't exist
+		    if (meta.containsDirectoryOfType(SonyType1MakernoteDirectory.class))
+			    return meta.getFirstDirectoryOfType(SonyType1MakernoteDirectory.class).getDescription(SonyType1MakernoteDirectory.TAG_LENS_ID);
+	    }
 	    return lens;
 	}
 
