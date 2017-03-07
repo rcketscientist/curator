@@ -266,6 +266,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				public void onClick(View v)
 				{
 					int currentPos = vh.getAdapterPosition();
+					if (currentPos < 0)     // Most likely due to a dataset change
+						return;             // Just do nothing
 					mOnItemClickListener.onItemClick(GalleryRecyclerAdapter.this, v, currentPos, getItemId(currentPos));
 				}
 			});
@@ -279,6 +281,8 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 				public boolean onLongClick(View v)
 				{
 					int currentPos = vh.getAdapterPosition();
+					if (currentPos < 0)     // Most likely due to a dataset change
+						return false;       // Just do nothing
 					return mOnItemLongClickListener.onItemLongClick(GalleryRecyclerAdapter.this, v, currentPos, getItemId(currentPos));
 				}
 			});
@@ -367,7 +371,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			}
 		}
 		updateSelection();
-		notifyDataSetChanged();
+		notifyItemRangeChanged(start, end - start);
 	}
 
 	public void addBetweenSelection(int position)
@@ -404,7 +408,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 
 	/**
 	 * Add a selection without updating the view
-	 * This will generally require a call to notifyDataSetChanged()
+	 * This will generally require a call to notify...()
 	 * @param uri of selection
 	 * @param position of selection
 	 */
@@ -429,12 +433,15 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		mSelectedItems.clear();
 		mSelectedPositions.clear();
 		updateSelection();
-		notifyDataSetChanged();
+		// Lazy update to all, but avoid notifyDatasetChanged since there's no structural changes
+		notifyItemRangeChanged(0, getItemCount());
 	}
 
 	public void toggleSelection(View v, int position)
 	{
-		// TODO: This is wrong, activity should be told of a checkedChanged, not toggling items itself
+		// We could handle this internally with an extra unnoticed toggle when entering viewer,
+		// but we'd still need the selection range logic, which doesn't have access to each
+		// individual view, so might as well do everything the same way
 		Uri uri = getUri(position);
 		if (uri == null)
 			return;
@@ -467,7 +474,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 			} while (c.moveToNext());
 
 			updateSelection();
-			notifyDataSetChanged();
+			notifyItemRangeChanged(0, getItemCount());
 		}
 	}
 
