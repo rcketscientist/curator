@@ -434,14 +434,12 @@ public class ImageUtil
         return imageBytes;
     }
 
-    private static byte[] getTiffImage(int fileDescriptor, ContentValues values)
+    private static byte[] getTiffImage(int fileDescriptor)
     {
         int[] dim = new int[2];
         int[] imageData = ImageProcessor.getTiff("", fileDescriptor, dim);  //TODO: I could get name here, but is it worth it?  Does this name do anything?
         int width = dim[0];
         int height = dim[1];
-        values.put(Meta.WIDTH, width);
-        values.put(Meta.HEIGHT, height);
 
         // This is necessary since BitmapRegionDecoder only supports jpg and png
         // TODO: This could be done in native, we already have jpeg capability
@@ -453,33 +451,33 @@ public class ImageUtil
         return baos.toByteArray();
     }
 
-    private static byte[] getRawThumb(int fileDescriptor, ContentValues values)
+    private static byte[] getRawThumb(int fileDescriptor)
     {
         String[] exif = new String[12];
         byte[] imageBytes = ImageProcessor.getThumb(fileDescriptor, exif);
 
-        try
-        {
-            if (exif[Exif.TIMESTAMP] != null)
-                values.put(Meta.TIMESTAMP, MetaUtil.mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        values.put(Meta.APERTURE, exif[Exif.APERTURE]);
-        values.put(Meta.MAKE, exif[Exif.MAKE]);
-        values.put(Meta.MODEL, exif[Exif.MODEL]);
-        values.put(Meta.FOCAL_LENGTH, exif[Exif.FOCAL]);
-        values.put(Meta.APERTURE, exif[Exif.HEIGHT]);
-        values.put(Meta.ISO, exif[Exif.ISO]);
-        values.put(Meta.ORIENTATION, exif[Exif.ORIENTATION]);
-        values.put(Meta.EXPOSURE, exif[Exif.SHUTTER]);
-        values.put(Meta.HEIGHT, exif[Exif.HEIGHT]);
-        values.put(Meta.WIDTH, exif[Exif.WIDTH]);
-        //TODO: Placing thumb dimensions since we aren't decoding raw atm.
-        values.put(Meta.HEIGHT, exif[Exif.THUMB_HEIGHT]);
-        values.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
+//        try
+//        {
+//            if (exif[Exif.TIMESTAMP] != null)
+//                values.put(Meta.TIMESTAMP, MetaUtil.mLibrawFormatter.parse(exif[Exif.TIMESTAMP]).getTime());
+//        }
+//        catch (Exception e)
+//        {
+//            e.printStackTrace();
+//        }
+//        values.put(Meta.APERTURE, exif[Exif.APERTURE]);
+//        values.put(Meta.MAKE, exif[Exif.MAKE]);
+//        values.put(Meta.MODEL, exif[Exif.MODEL]);
+//        values.put(Meta.FOCAL_LENGTH, exif[Exif.FOCAL]);
+//        values.put(Meta.APERTURE, exif[Exif.HEIGHT]);
+//        values.put(Meta.ISO, exif[Exif.ISO]);
+//        values.put(Meta.ORIENTATION, exif[Exif.ORIENTATION]);
+//        values.put(Meta.EXPOSURE, exif[Exif.SHUTTER]);
+//        values.put(Meta.HEIGHT, exif[Exif.HEIGHT]);
+//        values.put(Meta.WIDTH, exif[Exif.WIDTH]);
+//        //TODO: Placing thumb dimensions since we aren't decoding raw atm.
+//        values.put(Meta.HEIGHT, exif[Exif.THUMB_HEIGHT]);
+//        values.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
         // Are the thumb dimensions useful in database?
 
         return imageBytes;
@@ -493,60 +491,34 @@ public class ImageUtil
 		return new BufferedInputStream(fd.createInputStream());
 	}
 
-    @SuppressLint("SimpleDateFormat")
+	private static final String[] TYPE_PROJECTION = new String[] {Meta.TYPE};
     public static byte[] getThumb(final Context c, final Uri uri)
     {
         try (Cursor metaCursor = c.getContentResolver().query(
-                Meta.CONTENT_URI, null,
+                Meta.CONTENT_URI, TYPE_PROJECTION,
                 Meta.URI_SELECTION,
                 new String[]{uri.toString()}, null, null))
         {
-            ContentValues values = new ContentValues();
-            if (metaCursor != null)
-            {
-                metaCursor.moveToFirst();
-                DatabaseUtils.cursorRowToContentValues(metaCursor, values);
-            }
-            return getThumb(c, values);
+            // TODO: Does this check really save anything over just looking at the file every time?
+            Meta.ImageType type = null;
+            if (metaCursor != null && metaCursor.moveToFirst())
+                type = Meta.ImageType.fromInt(metaCursor.getInt(metaCursor.getColumnIndex(Meta.TYPE)));
+            return getThumb(c, uri, type);
         }
     }
 
 	/**
      * Processes the thumbnail from an existing cursor pointing to the desired row
      * @param c context
-     * @param metaCursor {@link ContentValues} representing a *FULL* row of a {@link Meta} cursor
      * @return byte array jpeg for display
      */
     @SuppressLint("SimpleDateFormat")
-    public static byte[] getThumb(final Context c, ContentValues metaCursor)
+    public static byte[] getThumb(final Context c, final Uri uri, Meta.ImageType imageType)
     {
-        Meta.ImageType imageType;
-        final Uri uri = Uri.parse(metaCursor.getAsString(Meta.URI));
-
         try(AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r"))
         {
             if (fd == null)
                 return null;
-
-//            // Lets update the meta on the fly
-//            if (!isProcessed(metaCursor))
-//            {
-//                new Thread(new Runnable()
-//                {
-//                    @Override
-//                    public void run()
-//                    {
-//                        ContentValues values = getContentValues(c, uri);
-//                        c.getContentResolver().update(Meta.CONTENT_URI, values, Meta.URI_SELECTION, new String[]{uri.toString()});
-//                    }
-//                }).start();
-//            }
-
-            Integer type = metaCursor.getAsInteger(Meta.TYPE);
-            if (type == null)
-                imageType = Meta.ImageType.UNPROCESSED;
-            else
-                imageType = Meta.ImageType.fromInt(type);
 
             if (Meta.ImageType.UNPROCESSED == imageType)
                 imageType = getImageType(c, uri);
@@ -557,14 +529,6 @@ public class ImageUtil
                     try(BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream()))
                     {
                         byte[] sourceBytes = Util.toByteArray(imageStream);
-
-//                        BitmapFactory.Options o = new BitmapFactory.Options();
-//                        o.inJustDecodeBounds = true;
-
-                        // Decode dimensions
-//                        BitmapFactory.decodeByteArray(sourceBytes, 0, sourceBytes.length, o);
-//                values.put(Meta.WIDTH, o.outWidth);
-//                values.put(Meta.HEIGHT, o.outHeight);
                         return sourceBytes;
                     }
                     catch (Exception e)
@@ -573,15 +537,15 @@ public class ImageUtil
                         return null;
                     }
                 case TIFF:
-                    return getTiffImage(fd.getParcelFileDescriptor().getFd(), metaCursor);
+                    return getTiffImage(fd.getParcelFileDescriptor().getFd());
                 default:
-                    return getRawThumb(fd.getParcelFileDescriptor().getFd(), metaCursor);
+                    return getRawThumb(fd.getParcelFileDescriptor().getFd());
             }
         }
         catch (Exception e)
         {
             // Let's add the name to the message to see if there's a link to null FileDescriptors
-            Exception error = new Exception(e.getMessage() + ": " + metaCursor.getAsString(Meta.NAME));
+            Exception error = new Exception(e.getMessage() + ": " + uri);
             error.setStackTrace(e.getStackTrace());
             error.printStackTrace();
         }
