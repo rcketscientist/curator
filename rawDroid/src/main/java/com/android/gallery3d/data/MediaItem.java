@@ -45,9 +45,6 @@ public abstract class MediaItem extends MediaObject {
     // TODO: fix default value for latlng and change this.
     public static final double INVALID_LATLNG = 0f;
 
-    public abstract Job<Bitmap> requestImage(GalleryApp app, int type);
-    public abstract Job<BitmapRegionDecoder> requestLargeImage();
-
     public MediaItem(Context c, Uri path) {
         super(c, path);
     }
