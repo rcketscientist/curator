@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
  */
-public class MetaService extends ThreadedPriorityIntentService
+public class MetaService extends PriorityIntentService//ThreadedPriorityIntentService
 {
     //TODO: May need to handle Android 6.0 Doze issues.
     /**
@@ -96,50 +96,10 @@ public class MetaService extends ThreadedPriorityIntentService
     private static final AtomicInteger sJobsComplete = new AtomicInteger(0);
     private static final int sMinBatchSize = 20;
 
-    /**
-     * The default thread factory
-     */
-    static class MetaThreadFactory implements ThreadFactory
-    {
-        private static final AtomicInteger poolNumber = new AtomicInteger(1);
-        private final ThreadGroup group;
-        private final AtomicInteger threadNumber = new AtomicInteger(1);
-        private final String namePrefix;
-
-        MetaThreadFactory() {
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() :
-                    Thread.currentThread().getThreadGroup();
-            namePrefix = "MetaService-" +
-                    poolNumber.getAndIncrement() +
-                    "-thread-";
-        }
-
-        public Thread newThread(@NonNull Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0);
-            if (t.isDaemon())
-                t.setDaemon(false);
-            if (t.getPriority() != Thread.MIN_PRIORITY)
-                t.setPriority(Thread.MIN_PRIORITY);
-            return t;
-        }
-    }
-
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-//        setThreadPool(Executors.newFixedThreadPool(2));
-
-        //TODO: For some reason this is ending up single threaded
-//        setThreadPool(new ThreadPoolExecutor(
-//                0, Runtime.getRuntime().availableProcessors(),
-//                60L, TimeUnit.SECONDS,
-//                new LinkedBlockingQueue<Runnable>(),
-//                new MetaThreadFactory()));
-    }
+	public MetaService()
+	{
+		super("MetaService");
+	}
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -170,12 +130,6 @@ public class MetaService extends ThreadedPriorityIntentService
                 handleActionUpdate(intent);
             }
         }
-    }
-
-    public static boolean isProcessed(Cursor c)
-    {
-        final int processedColumn = c.getColumnIndex(Meta.PROCESSED);
-        return c.getInt(processedColumn) != 0;
     }
 
 	/**
@@ -328,7 +282,7 @@ public class MetaService extends ThreadedPriorityIntentService
                     continue;
 
                 // If this is a high priority request then add to db immediately
-                if (isHigherThanDefault(intent))
+                if (isHighPriority(intent))
                 {
                     if (!isProcessed)
                     {
@@ -371,24 +325,24 @@ public class MetaService extends ThreadedPriorityIntentService
         }
     }
 
-    @Override
-    public void onStop()
-    {
-        super.onStop();
-        try
-        {
-            Intent broadcast = new Intent(BROADCAST_PROCESSING_COMPLETE);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-            processUpdates(true);
-        }
-        catch (RemoteException | OperationApplicationException e)
-        {
-            e.printStackTrace();
-        }
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		try
+		{
+			Intent broadcast = new Intent(BROADCAST_PROCESSING_COMPLETE);
+			LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+			processUpdates(true);
+		}
+		catch (RemoteException | OperationApplicationException e)
+		{
+			e.printStackTrace();
+		}
 
-        Intent broadcast = new Intent(BROADCAST_PARSE_COMPLETE);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-    }
+		Intent broadcast = new Intent(BROADCAST_PARSE_COMPLETE);
+		LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
+	}
 
     private synchronized void processUpdates() throws RemoteException, OperationApplicationException
     {

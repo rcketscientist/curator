@@ -16,6 +16,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ThreadedPriorityIntentService extends Service
 {
+	private static final int DEFAULT_PRIORITY = 0;
+	public static final String EXTRA_PRIORITY = "priority";
+
+	private final Executor mPool;
+	private final Executor mPriorityPool;
+
+	protected abstract int getNumNormalThreads();
+	protected abstract int getNumPriorityThreads();
+
+	private final ConcurrentHashMap<Integer, Boolean> mTasks = new ConcurrentHashMap<Integer, Boolean>();
+	private final Handler mUiThreadHandler = new Handler(Looper.getMainLooper());
+	private final AtomicInteger mCompletedJobs = new AtomicInteger();
+	private final AtomicInteger mTotalJobs = new AtomicInteger();
+
+	private final PriorityBlockingQueue<QueueItem> mQueue= new PriorityBlockingQueue<>();
+	private boolean mRedelivery;
+
+	private int mLatestStartId;
+
+	protected ThreadedPriorityIntentService()
+	{
+		mPool = Executors.newFixedThreadPool(getNumNormalThreads());
+		mPriorityPool = Executors.newFixedThreadPool(getNumPriorityThreads());
+	}
 
     private final class QueueItem implements Comparable<QueueItem>
     {
@@ -40,18 +64,6 @@ public abstract class ThreadedPriorityIntentService extends Service
             }
         }
     }
-
-    private static final int DEFAULT_PRIORITY = 0;
-    private static Executor mPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    public static void setThreadPool(Executor executor)
-    {
-        mPool = executor;
-    }
-
-    private final ConcurrentHashMap<Integer, Boolean> mTasks = new ConcurrentHashMap<Integer, Boolean>();
-    private final Handler mUiThreadHandler = new Handler(Looper.getMainLooper());
-    private final AtomicInteger mCompletedJobs = new AtomicInteger();
-    private final AtomicInteger mTotalJobs = new AtomicInteger();
 
     private class Task implements Runnable
     {
@@ -88,28 +100,9 @@ public abstract class ThreadedPriorityIntentService extends Service
         }
     }
 
-    public static final String EXTRA_PRIORITY = "priority";
-    private PriorityBlockingQueue<QueueItem> mQueue;
-    private boolean mRedelivery;
-
-    private int mLatestStartId;
-
-    @Override
-    public void onCreate()
-    {
-        super.onCreate();
-        mQueue = new PriorityBlockingQueue<QueueItem>();
-    }
-
     @Override
     public void onStart(Intent intent, int startId)
     {
-        // Clear the completed jobs on the first job we receive
-        if (mQueue.isEmpty())
-        {
-            resetCounters();
-        }
-
         final QueueItem item = new QueueItem();
         item.intent = intent;
         item.startId = startId;
@@ -124,22 +117,6 @@ public abstract class ThreadedPriorityIntentService extends Service
         mLatestStartId = startId;
         mTasks.put(startId, Boolean.TRUE);
         mPool.execute(new Task());
-    }
-
-    private final void resetCounters()
-    {
-        mTotalJobs.set(0);
-        mCompletedJobs.set(0);
-    }
-
-    protected final int getCompletedJobs()
-    {
-        return mCompletedJobs.get();
-    }
-
-    protected final int getTotalJobs()
-    {
-        return mTotalJobs.get();
     }
 
     protected final int getPriority(Intent intent)
@@ -233,7 +210,6 @@ public abstract class ThreadedPriorityIntentService extends Service
      */
     public final void stopMe(int startId)
     {
-        resetCounters();
         onStop();
         stopSelf(startId);
     }
