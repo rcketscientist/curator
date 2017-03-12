@@ -31,6 +31,11 @@ class RawModelLoader implements StreamModelLoader<RawModelLoader.ImageInfo>
 	{
 		Uri ImageUri;
 		Meta.ImageType ImageType;
+		ImageInfo(Uri uri, Meta.ImageType type)
+		{
+			this.ImageUri = uri;
+			this.ImageType = type;
+		}
 	}
 
 	@Override

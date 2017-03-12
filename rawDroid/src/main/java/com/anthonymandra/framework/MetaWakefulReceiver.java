@@ -33,16 +33,16 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
         c.sendBroadcast(intent);
     }
 
-    public static void startMetaService(Context context, Uri data, int priority)
+    public static void startMetaService(Context context, Uri data, boolean priority)
     {
         Intent intent = getService(context, data);
-        intent.putExtra(ThreadedPriorityIntentService.EXTRA_PRIORITY, priority);
+        intent.putExtra(MetaService.EXTRA_HIGH_PRIORITY, priority);
         context.sendBroadcast(intent);
     }
 
     public static void startPriorityMetaService(Context context, Uri data)
     {
-        startMetaService(context, data, 5);
+        startMetaService(context, data, true);
     }
 
     private static Intent getService(Context context, Uri data)

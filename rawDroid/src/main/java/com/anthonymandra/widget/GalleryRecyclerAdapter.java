@@ -44,7 +44,7 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 	private OnItemLongClickListener mOnItemLongClickListener;
 
 	public static final String[] REQUIRED_COLUMNS = {BaseColumns._ID, Meta.LABEL, Meta.NAME,
-			Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI };
+			Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI, Meta.TYPE };
 
 //	@Override
 //	public String getSectionTitle(int position)
@@ -329,9 +329,13 @@ public class GalleryRecyclerAdapter extends CursorRecyclerAdapter<GalleryRecycle
 		vh.mXmpView.setVisibility(galleryItem.hasSubject ? View.VISIBLE : View.GONE);
 		vh.mBaseView.setTag(galleryItem.uri);   // store tag for compare
 
+		Meta.ImageType imageType;
+		Integer type = cursor.getInt(cursor.getColumnIndex(Meta.TYPE));
+		imageType = Meta.ImageType.fromInt(type);
+
 		Glide.with(mContext)
 				.using(new RawModelLoader(mContext))
-				.load(values)
+				.load(new RawModelLoader.ImageInfo(galleryItem.uri, imageType))
 				.centerCrop()
 				.into(vh.mImageView);
 	}

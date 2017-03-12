@@ -455,6 +455,8 @@ public class ImageUtil
     {
         String[] exif = new String[12];
         byte[] imageBytes = ImageProcessor.getThumb(fileDescriptor, exif);
+        if (imageBytes == null)
+            return null;
 
 //        try
 //        {

@@ -72,12 +72,6 @@ public abstract class MediaObject implements RawObject {
         return mUri;
     }
 
-    @Override
-    public String getMimeType()
-    {
-        return mType;
-    }
-
     public void rotate(int degrees) {
         throw new UnsupportedOperationException();
     }
