@@ -243,16 +243,10 @@ public class ImageUtil
         {
             // Attempt to import keywords
             success = KeywordProvider.importKeywords(c, reader);
-            int message;
             if (success)
-            {
-                message = R.string.resultImportSuccessful;
-            }
+                Toast.makeText(c, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show();
             else
-            {
-                message = R.string.resultImportFailed;
-            }
-            Toast.makeText(c, message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(c, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
         }
         catch (IOException e)
         {

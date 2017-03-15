@@ -101,8 +101,6 @@ public class GalleryActivity extends CoreActivity implements
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 
-    private static boolean inTutorial = false;
-
 	// Widget handles
 	private RecyclerView mImageGrid;
 	private GalleryRecyclerAdapter mGalleryAdapter;
@@ -200,7 +198,6 @@ public class GalleryActivity extends CoreActivity implements
 
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		inTutorial = false;
 
 		int mDisplayWidth = metrics.widthPixels;
 
@@ -321,6 +318,10 @@ public class GalleryActivity extends CoreActivity implements
 			Intent request = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
 			request.putExtra(DocumentsContract.EXTRA_PROMPT, getString(R.string.selectUsb));
 			startActivityForResult(request, REQUEST_ACCESS_USB);
+		}
+		else if (getIntent().getData() != null)
+		{
+			ImageUtil.importKeywords(this, getIntent().getData());
 		}
 	}
 
@@ -757,9 +758,6 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		if (inTutorial)
-			Toast.makeText(this, R.string.tutorialDisabled, Toast.LENGTH_SHORT).show();
-		// Handle item selection
 		switch (item.getItemId())
 		{
 			case R.id.contextRename:
@@ -982,12 +980,6 @@ public class GalleryActivity extends CoreActivity implements
 			mXmpFragment.reset();   // reset the panel to ensure it's clear it's not tied to existing values
 			return;
 		}
-
-        if (inTutorial)
-        {
-            Toast.makeText(this, R.string.tutorialDisabled, Toast.LENGTH_SHORT).show();
-            return;
-        }
 
 		Intent viewer = new Intent(this, ViewerChooser.class);
 		viewer.setData(uri);

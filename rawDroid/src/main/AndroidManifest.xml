@@ -388,12 +388,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:host="*"/>
                 <data android:scheme="file"/>
                 <data android:scheme="content"/>
-                <data android:mimeType="*/*"/>
-                <data android:pathPattern="/.*\\.txt"/>
-                <data android:pathPattern="/.*\\.TXT"/>
+                <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity-alias>
 
