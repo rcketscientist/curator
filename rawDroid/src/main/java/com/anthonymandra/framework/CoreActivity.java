@@ -1690,7 +1690,12 @@ public abstract class CoreActivity extends DocumentActivity
 				MetaUtil.updateRating(meta, values.getAsInteger(Meta.RATING));
 				MetaUtil.updateLabel(meta, values.getAsString(Meta.LABEL));
 
-				final Uri xmpUri = ImageUtil.getXmpFile(CoreActivity.this, pair.getKey()).getUri();
+				//TODO: This logic needs cleanup
+				final UsefulDocumentFile xmp = ImageUtil.getXmpFile(CoreActivity.this, pair.getKey());
+				if (xmp == null)
+					continue;
+
+				final Uri xmpUri = xmp.getUri();
 				final UsefulDocumentFile xmpDoc;
 				try
 				{
