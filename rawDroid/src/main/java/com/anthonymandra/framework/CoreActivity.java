@@ -1025,84 +1025,13 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	@Nullable
-	public Watermark getWatermark(final boolean demo, final int width)
-	{
-		Bitmap watermark;
-		byte[] waterData;
-		int waterWidth, waterHeight;
-
-		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(CoreActivity.this);
-		boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
-		if (demo)
-		{
-			watermark = ImageUtil.getDemoWatermark(CoreActivity.this, width);
-			waterData = ImageUtil.getBitmapBytes(watermark);
-			waterWidth = watermark.getWidth();
-			waterHeight = watermark.getHeight();
-
-			return new Watermark(
-					waterWidth,
-					waterHeight,
-					Margins.LowerRight,
-					waterData);
-		}
-		else if (showWatermark)
-		{
-			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
-			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
-			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
-
-			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
-			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
-			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
-			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
-			Margins margins = new Margins(top, left, bottom, right);
-
-			if (watermarkText.isEmpty())
-			{
-				Toast.makeText(CoreActivity.this, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
-				return null;
-			}
-			else
-			{
-				watermark = ImageUtil.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
-				if (watermark == null)
-					return null;
-				waterWidth = watermark.getWidth();
-				waterData = ImageUtil.getBitmapBytes(watermark);
-				waterHeight = watermark.getHeight();
-				return new Watermark(
-						waterWidth,
-						waterHeight,
-						margins,
-						waterData);
-			}
-		}
-		return null;
-	}
-
-	//TODO: CopyThumb and SaveTif should be able to be combined with a switch for which native to call
 	protected void saveImage(List<Uri> images, Uri destination, ImageConfiguration config)
 	{
 		if (images.size() < 0)
 			return;
 
 		// Just grab the first width and assume that will be sufficient for all images
-		Watermark wm = null;
-		try (Cursor c = getContentResolver().query(Meta.CONTENT_URI, null, Meta.URI_SELECTION, new String[] {images.get(0).toString()}, null))
-		{
-			if (c != null && c.moveToFirst())
-			{
-				final int widthColumn = c.getColumnIndex(Meta.WIDTH);
-				if (widthColumn == -1)
-					return;
-				final int width = c.getInt(widthColumn);
-				wm = getWatermark(Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro, width);
-			}
-		}
-		new SaveImageTask().execute(images, destination, wm, config);
+		new SaveImageTask().execute(images, destination, ImageUtil.getWatermark(this, images.get(0)), config);
 	}
 
 	public class SaveImageTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener

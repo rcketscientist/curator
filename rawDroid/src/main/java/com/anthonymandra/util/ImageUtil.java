@@ -7,6 +7,7 @@ import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -19,7 +20,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
@@ -31,11 +34,18 @@ import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool;
 import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.DocumentUtil;
+import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Margins;
+import com.anthonymandra.imageprocessor.Watermark;
+import com.anthonymandra.rawdroid.Constants;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
@@ -1032,5 +1042,76 @@ public class ImageUtil
         canvas.drawText(text, 0, baseline, paint);
 
         return watermark;
+    }
+
+    @Nullable
+    public static Watermark getWatermark(final Context c, Uri source)
+    {
+        Bitmap watermark;
+        byte[] waterData;
+        int waterWidth, waterHeight;
+        final boolean demo = Constants.VariantCode < 11 || LicenseManager.getLastResponse() != License.LicenseState.pro;
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(c);
+        boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+        if (demo)
+        {
+            final String[] projection = new String[] {Meta.WIDTH};
+            int width = -1;
+            // TODO: This could be eliminated by allowing native to request image, it knows the image size already
+            // TODO: It's possible this image is not processed meaning this would fail!
+            try (Cursor metaCursor = MetaUtil.getMetaCursor(c, source, projection))
+                {
+                if (c != null && metaCursor.moveToFirst())
+                    width = metaCursor.getInt(metaCursor.getColumnIndex(Meta.WIDTH));
+            }
+            if (width == -1)
+                return null;
+
+            watermark = ImageUtil.getDemoWatermark(c, width);
+            waterData = ImageUtil.getBitmapBytes(watermark);
+            waterWidth = watermark.getWidth();
+            waterHeight = watermark.getHeight();
+
+            return new Watermark(
+                    waterWidth,
+                    waterHeight,
+                    Margins.LowerRight,
+                    waterData);
+        }
+        else if (showWatermark)
+        {
+            String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+            int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+            int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
+            String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
+            int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
+            int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
+            int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
+            int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
+            Margins margins = new Margins(top, left, bottom, right);
+
+            if (watermarkText.isEmpty())
+            {
+                Toast.makeText(c, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+                return null;
+            }
+            else
+            {
+                watermark = ImageUtil.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+                if (watermark == null)
+                    return null;
+                waterWidth = watermark.getWidth();
+                waterData = ImageUtil.getBitmapBytes(watermark);
+                waterHeight = watermark.getHeight();
+                return new Watermark(
+                        waterWidth,
+                        waterHeight,
+                        margins,
+                        waterData);
+            }
+        }
+        return null;
     }
 }
