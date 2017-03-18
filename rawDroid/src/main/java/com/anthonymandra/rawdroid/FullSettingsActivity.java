@@ -81,6 +81,10 @@ public class FullSettingsActivity extends PreferenceActivity
     public static final String KEY_WatermarkLeftMargin = "prefKeyWatermarkLeftMargin";
     public static final String KEY_WatermarkRightMargin = "prefKeyWatermarkRightMargin";
 
+	public static final String KEY_ShareFormat = "prefKeyShareFormat";
+	public static final String KEY_EditFormat = "prefKeyEditFormat";
+
+
 	public static final int defRecycleBin = 50;
 
 	private static final int minRecycleBin = 30;
@@ -96,7 +100,8 @@ public class FullSettingsActivity extends PreferenceActivity
         SettingsFragmentMeta.class.getName().equals(fragmentName) ||
         SettingsFragmentStorage.class.getName().equals(fragmentName) ||
         SettingsFragmentView.class.getName().equals(fragmentName) ||
-        SettingsFragmentWatermark.class.getName().equals(fragmentName);
+        SettingsFragmentWatermark.class.getName().equals(fragmentName) ||
+	    SettingsFragmentShare.class.getName().equals(fragmentName);
     }
 
 	@Override
@@ -136,7 +141,7 @@ public class FullSettingsActivity extends PreferenceActivity
 	}
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class SettingsFragmentStorage extends SettingFragment
+	public static class SettingsFragmentStorage extends PreferenceFragment
 	{
 		@Override
 		public void onCreate(Bundle savedInstanceState)
@@ -148,8 +153,7 @@ public class FullSettingsActivity extends PreferenceActivity
 		@Override
         public void onResume() {
             super.onResume();
-            updateRecycleBin();
-	        Preference button = mPreferenceManager.findPreference(KEY_ResetSaveDefault);
+	        Preference button = getPreferenceManager().findPreference(KEY_ResetSaveDefault);
 	        if (button != null)
 	        {
 		        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -169,44 +173,10 @@ public class FullSettingsActivity extends PreferenceActivity
 	        });
 	        }
         }
-
-		@Override
-		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-		{
-			switch (key)
-			{
-				case KEY_RecycleBinSize:
-					int value;
-					EditTextPreference option = (EditTextPreference) mPreferenceManager.findPreference(KEY_RecycleBinSize);
-					try
-					{
-						value = Integer.parseInt(option.getText());
-					}
-					catch (NumberFormatException e)
-					{
-						value = 0;
-					}
-					if (value < minRecycleBin)
-					{
-						option.setText(String.valueOf(minRecycleBin));
-					} else if (value > maxRecycleBin)
-					{
-						option.setText(String.valueOf(maxRecycleBin));
-					}
-					updateRecycleBin();
-					break;
-			}
-		}
-
-		private void updateRecycleBin()
-		{
-			EditTextPreference option = (EditTextPreference) mPreferenceManager.findPreference(KEY_RecycleBinSize);
-			option.setTitle(getActivity().getString(R.string.prefTitleRecycleBin) + " (" + option.getText() + "MB)");
-		}
     }
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class SettingsFragmentMeta extends SettingFragment
+	public static class SettingsFragmentMeta extends PreferenceFragment
 	{
 		@Override
 		public void onCreate(Bundle savedInstanceState)
@@ -218,7 +188,7 @@ public class FullSettingsActivity extends PreferenceActivity
 		@Override
         public void onResume() {
             super.onResume();
-            Preference button = mPreferenceManager.findPreference(KEY_ImportKeywords);
+            Preference button = getPreferenceManager().findPreference(KEY_ImportKeywords);
             if (button != null)
             {
                 button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
@@ -231,71 +201,7 @@ public class FullSettingsActivity extends PreferenceActivity
                     }
                 });
             }
-            updateXmpColors();
         }
-
-		@Override
-		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-		{
-			switch (key)
-			{
-				case KEY_XmpRed:
-					updateRed(sharedPreferences);
-					break;
-				case KEY_XmpBlue:
-					updateBlue(sharedPreferences);
-					break;
-				case KEY_XmpGreen:
-					updateGreen(sharedPreferences);
-					break;
-				case KEY_XmpYellow:
-					updateYellow(sharedPreferences);
-					break;
-				case KEY_XmpPurple:
-					updatePurple(sharedPreferences);
-					break;
-			}
-		}
-
-		private void updateXmpColors()
-		{
-			SharedPreferences sharedPreferences = mPreferenceManager.getSharedPreferences();
-			updateRed(sharedPreferences);
-			updateBlue(sharedPreferences);
-			updateGreen(sharedPreferences);
-			updateYellow(sharedPreferences);
-			updatePurple(sharedPreferences);
-		}
-
-		private void updateRed(SharedPreferences sharedPreferences)
-		{
-			Preference showMeta = mPreferenceManager.findPreference(KEY_XmpRed);
-			showMeta.setTitle(sharedPreferences.getString(KEY_XmpRed, "Red"));
-		}
-
-		private void updateBlue(SharedPreferences sharedPreferences)
-		{
-			Preference blue = mPreferenceManager.findPreference(KEY_XmpBlue);
-			blue.setTitle(sharedPreferences.getString(KEY_XmpBlue, "Blue"));
-		}
-
-		private void updateGreen(SharedPreferences sharedPreferences)
-		{
-			Preference green = mPreferenceManager.findPreference(KEY_XmpGreen);
-			green.setTitle(sharedPreferences.getString(KEY_XmpGreen, "Green"));
-		}
-
-		private void updateYellow(SharedPreferences sharedPreferences)
-		{
-			Preference yellow = mPreferenceManager.findPreference(KEY_XmpYellow);
-			yellow.setTitle(sharedPreferences.getString(KEY_XmpYellow, "Yellow"));
-		}
-
-		private void updatePurple(SharedPreferences sharedPreferences)
-		{
-			Preference purple = mPreferenceManager.findPreference(KEY_XmpPurple);
-			purple.setTitle(sharedPreferences.getString(KEY_XmpPurple, "Purple"));
-		}
 
 		private void requestImportKeywords()
         {
@@ -306,7 +212,7 @@ public class FullSettingsActivity extends PreferenceActivity
 	}
 
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static class SettingsFragmentView extends SettingFragment
+	public static class SettingsFragmentView extends PreferenceFragment
 	{
 		@Override
 		public void onCreate(Bundle savedInstanceState)
@@ -314,79 +220,16 @@ public class FullSettingsActivity extends PreferenceActivity
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.preferences_view);
 		}
+	}
 
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+	public static class SettingsFragmentShare extends PreferenceFragment
+	{
 		@Override
-        public void onResume() {
-            super.onResume();
-            updateShowOptions();
-        }
-
-		@Override
-		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+		public void onCreate(Bundle savedInstanceState)
 		{
-			switch (key)
-			{
-				case KEY_ShowMeta:
-					updateShowMeta(sharedPreferences);
-					break;
-				case KEY_ShowNav:
-					updateShowNav(sharedPreferences);
-					break;
-				case KEY_ShowHist:
-					updateShowHist(sharedPreferences);
-					break;
-				case KEY_ShowToolbar:
-					updateShowToolbar(sharedPreferences);
-					break;
-			}
-		}
-
-		private void updateShowOptions()
-		{
-			SharedPreferences sharedPreferences = mPreferenceManager.getSharedPreferences();
-			updateShowMeta(sharedPreferences);
-			updateShowNav(sharedPreferences);
-			updateShowHist(sharedPreferences);
-			updateShowToolbar(sharedPreferences);
-		}
-
-		private void updateShowMeta(SharedPreferences sharedPreferences)
-		{
-			updateShowView(sharedPreferences, KEY_ShowMeta);
-		}
-
-		private void updateShowNav(SharedPreferences sharedPreferences)
-		{
-			updateShowView(sharedPreferences, KEY_ShowNav);
-		}
-
-		private void updateShowHist(SharedPreferences sharedPreferences)
-		{
-			updateShowView(sharedPreferences, KEY_ShowHist);
-		}
-
-		private void updateShowToolbar(SharedPreferences sharedPreferences)
-		{
-			updateShowView(sharedPreferences, KEY_ShowToolbar);
-		}
-
-		private void updateShowView(SharedPreferences sharedPreferences, String key)
-		{
-			ListPreference showViewPref = (ListPreference) mPreferenceManager.findPreference(key);
-			showViewPref.setSummary(translateShowOptionsText(sharedPreferences.getString(key, "Automatic")));
-		}
-
-		private String translateShowOptionsText(String result)
-		{
-			switch (result)
-			{
-				case "Always":
-					return prefShowOptions[1];
-				case "Never":
-					return prefShowOptions[2];
-				default:
-					return prefShowOptions[0]; // Automatic
-			}
+			super.onCreate(savedInstanceState);
+			addPreferencesFromResource(R.xml.preferences_share);
 		}
 	}
 
@@ -583,15 +426,6 @@ public class FullSettingsActivity extends PreferenceActivity
 			    case KEY_WatermarkRightMargin:
 				    updateWatermarkMargins();
 				    break;
-			    case KEY_WatermarkSize:
-				    updateWatermarkSize();
-				    break;
-			    case KEY_WatermarkAlpha:
-				    updateWatermarkAlpha();
-				    break;
-			    case KEY_WatermarkText:
-				    updateWatermarkText();
-				    break;
 		    }
 	    }
 
@@ -600,29 +434,6 @@ public class FullSettingsActivity extends PreferenceActivity
 		    updateWatermarkEnabled();
 		    updateWatermarkLocation();
 		    updateWatermarkMargins();
-		    updateWatermarkAlpha();
-		    updateWatermarkSize();
-		    updateWatermarkText();
-	    }
-
-	    private void updateWatermarkText()
-	    {
-		    EditTextPreference watermarkText = (EditTextPreference) mPreferenceManager.findPreference(KEY_WatermarkText);
-		    watermarkText.setSummary(mPreferenceManager.getSharedPreferences().getString(KEY_WatermarkText, ""));
-	    }
-
-	    private void updateWatermarkSize()
-	    {
-		    SeekBarPreference watermarkSize = (SeekBarPreference) mPreferenceManager.findPreference(KEY_WatermarkSize);
-		    watermarkSize.setSummary(mPreferenceManager.getSharedPreferences().getInt(KEY_WatermarkSize, 150)
-				    + "\n" +
-				    getActivity().getString(R.string.prefSummaryWatermarkSize));
-	    }
-
-	    private void updateWatermarkAlpha()
-	    {
-		    SeekBarPreference watermarkAlpha = (SeekBarPreference) mPreferenceManager.findPreference(KEY_WatermarkAlpha);
-		    watermarkAlpha.setSummary("" + mPreferenceManager.getSharedPreferences().getInt(KEY_WatermarkAlpha, 75));
 	    }
 
 	    private void updateWatermarkEnabled()

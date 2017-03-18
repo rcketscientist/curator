@@ -1,130 +1,58 @@
-/* The following code was written by Matthew Wiggins 
- * and is released under the APACHE 2.0 license 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Improvements :
- * - save the value on positive button click, not on seekbar change
- * - handle @string/... values in xml file
- */
-
 package com.anthonymandra.widget;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.preference.DialogPreference;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 
-public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener, OnClickListener
+public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener
 {
-    // ------------------------------------------------------------------------------------------
-    // Private attributes :
     private static final String androidns="http://schemas.android.com/apk/res/android";
 
     private SeekBar mSeekBar;
     private TextView mValueText;
     private final Context mContext;
 
-    private final String mDialogMessage, mSuffix;
-    private final int mDefault;
-    private int mMax, mValue = 0;
-    // ------------------------------------------------------------------------------------------
+    private final String mSuffix;
+    private int mMax;
+	private boolean mValueSet;
 
-
-
-    // ------------------------------------------------------------------------------------------
-    // Constructor :
     public SeekBarPreference(Context context, AttributeSet attrs) {
 
         super(context,attrs);
         mContext = context;
-
-        // Get string value for dialogMessage :
-        int mDialogMessageId = attrs.getAttributeResourceValue(androidns, "dialogMessage", 0);
-        if(mDialogMessageId == 0) mDialogMessage = attrs.getAttributeValue(androidns, "dialogMessage");
-        else mDialogMessage = mContext.getString(mDialogMessageId);
 
         // Get string value for suffix (text attribute in xml file) :
         int mSuffixId = attrs.getAttributeResourceValue(androidns, "text", 0);
         if(mSuffixId == 0) mSuffix = attrs.getAttributeValue(androidns, "text");
         else mSuffix = mContext.getString(mSuffixId);
 
-        // Get default and max seekbar values :
-        mDefault = attrs.getAttributeIntValue(androidns, "defaultValue", 0);
         mMax = attrs.getAttributeIntValue(androidns, "max", 100);
-    }
-    // ------------------------------------------------------------------------------------------
-
-
-
-    // ------------------------------------------------------------------------------------------
-    // DialogPreference methods :
-    @Override
-    protected View onCreateDialogView() {
-
-        LinearLayout.LayoutParams params;
-        LinearLayout layout = new LinearLayout(mContext);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(6,6,6,6);
-
-        TextView mSplashText = new TextView(mContext);
-        if (mDialogMessage != null)
-            mSplashText.setText(mDialogMessage);
-        layout.addView(mSplashText);
-
-        mValueText = new TextView(mContext);
-        mValueText.setGravity(Gravity.CENTER_HORIZONTAL);
-        mValueText.setTextSize(32);
-        params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT);
-        layout.addView(mValueText, params);
-
-        mSeekBar = new SeekBar(mContext);
-        mSeekBar.setOnSeekBarChangeListener(this);
-        layout.addView(mSeekBar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        if (shouldPersist())
-            mValue = getPersistedInt(mDefault);
-
-        mSeekBar.setMax(mMax);
-        mSeekBar.setProgress(mValue);
-
-        return layout;
+	    setDialogLayoutResource(R.layout.seekbar_preference);
     }
 
-    @Override
-    protected void onBindDialogView(@NonNull View v) {
-        super.onBindDialogView(v);
-        mSeekBar.setMax(mMax);
-        mSeekBar.setProgress(mValue);
-    }
+	@Override
+	protected void onBindDialogView(View view)
+	{
+		super.onBindDialogView(view);
+		mSeekBar = (SeekBar) view.findViewById(R.id.seekBar);
+		mSeekBar.setOnSeekBarChangeListener(this);
+		mSeekBar.setMax(mMax);
 
-    @Override
-    protected void onSetInitialValue(boolean restore, Object defaultValue)
+		mValueText = (TextView) view.findViewById(R.id.textView);
+	}
+
+	@Override
+    protected void onSetInitialValue(boolean restoreValue, Object defaultValue)
     {
-        super.onSetInitialValue(restore, defaultValue);
-        if (restore)
-            mValue = shouldPersist() ? getPersistedInt(mDefault) : 0;
-        else
-            mValue = (Integer)defaultValue;
+	    setProgress(restoreValue ? getPersistedInt(mSeekBar.getProgress()) : (int) defaultValue);
     }
-    // ------------------------------------------------------------------------------------------
 
-
-
-    // ------------------------------------------------------------------------------------------
-    // OnSeekBarChangeListener methods :
     @Override
     public void onProgressChanged(SeekBar seek, int value, boolean fromTouch)
     {
@@ -144,35 +72,97 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
     @SuppressWarnings("unused")
     public void setProgress(int progress) {
-        mValue = progress;
-        if (mSeekBar != null)
-            mSeekBar.setProgress(progress);
+	    // Always persist/notify the first time.
+	    final boolean changed = mSeekBar.getProgress() == progress;
+	    if (changed || !mValueSet) {
+		    mSeekBar.setProgress(progress);
+		    mValueSet = true;
+		    persistInt(progress);
+		    if (changed) {
+			    notifyChanged();
+		    }
+	    }
     }
+
     @SuppressWarnings("unused")
-    public int getProgress() { return mValue; }
-    // ------------------------------------------------------------------------------------------
+    public int getProgress() { return mSeekBar.getProgress(); }
 
+	@Override
+	protected void onDialogClosed(boolean positiveResult) {
+		super.onDialogClosed(positiveResult);
 
+		if (positiveResult) {
+			if (callChangeListener(getProgress())) {
+				setProgress(getProgress());
+			}
+		}
+	}
 
-    // ------------------------------------------------------------------------------------------
-    // Set the positive button listener and onClick action : 
+    // According to ListPreference implementation
     @Override
-    public void showDialog(Bundle state) {
-
-        super.showDialog(state);
-
-        Button positiveButton = ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE);
-        positiveButton.setOnClickListener(this);
+    public CharSequence getSummary() {
+        String text = Integer.toString(mSeekBar.getProgress());
+        CharSequence summary = super.getSummary();
+        if (summary != null) {
+            return String.format(summary.toString(), text);
+        } else {
+            return null;
+        }
     }
 
-    @Override
-    public void onClick(View v) {
+	@Override
+	protected Parcelable onSaveInstanceState() {
+		final Parcelable superState = super.onSaveInstanceState();
+		if (isPersistent()) {
+			// No need to save instance state since it's persistent
+			return superState;
+		}
 
-        if (shouldPersist())
-            persistInt(mSeekBar.getProgress());
-        callChangeListener(mSeekBar.getProgress());
+		final SavedState myState = new SavedState(superState);
+		myState.value = getProgress();
+		return myState;
+	}
 
-        getDialog().dismiss();
-    }
-    // ------------------------------------------------------------------------------------------
+	@Override
+	protected void onRestoreInstanceState(Parcelable state) {
+		if (state == null || !state.getClass().equals(SavedState.class)) {
+			// Didn't save state for us in onSaveInstanceState
+			super.onRestoreInstanceState(state);
+			return;
+		}
+
+		SavedState myState = (SavedState) state;
+		super.onRestoreInstanceState(myState.getSuperState());
+		setProgress(myState.value);
+	}
+
+	private static class SavedState extends BaseSavedState {
+		int value;
+
+		public SavedState(Parcel source) {
+			super(source);
+			value = source.readInt();
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			super.writeToParcel(dest, flags);
+			dest.writeInt(value);
+		}
+
+		public SavedState(Parcelable superState) {
+			super(superState);
+		}
+
+		public static final Parcelable.Creator<SavedState> CREATOR =
+				new Parcelable.Creator<SavedState>() {
+					public SavedState createFromParcel(Parcel in) {
+						return new SavedState(in);
+					}
+
+					public SavedState[] newArray(int size) {
+						return new SavedState[size];
+					}
+				};
+	}
 }

@@ -8,13 +8,14 @@
         android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentStorage"
         android:title="@string/storage" />
     <header
+        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentShare"
+        android:title="@string/share" />
+    <header
         android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentView"
         android:title="@string/view" />
-
     <header
         android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentWatermark"
         android:title="@string/watermark" />
-
     <header
         android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentLicense"
         android:title="@string/license" />

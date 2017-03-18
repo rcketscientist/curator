@@ -19,8 +19,8 @@ apply plugin: 'io.fabric'
 //apply plugin: 'maven'
 
 def versionMajor = 5
-def versionMinor = 2
-def versionPatch = 4
+def versionMinor = 3
+def versionPatch = 0
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -40,6 +40,8 @@ android {
 
         versionCode versionMajor * 100000 + versionMinor * 1000 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+
+        buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
 
 //        jackOptions {
 //            enabled true

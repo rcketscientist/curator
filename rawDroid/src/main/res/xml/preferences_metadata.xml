@@ -10,27 +10,32 @@
             android:icon="@drawable/button_red"
             android:key="prefKeyXmpRed"
             android:defaultValue="Red"
-            android:title="Red" />
+            android:title="Red"
+            android:summary="@string/prefAutoSummary"/>
         <EditTextPreference
             android:icon="@drawable/button_blue"
             android:key="prefKeyXmpBlue"
             android:defaultValue="Blue"
-            android:title="Blue" />
+            android:title="Blue"
+            android:summary="@string/prefAutoSummary"/>
         <EditTextPreference
             android:icon="@drawable/button_green"
             android:key="prefKeyXmpGreen"
             android:defaultValue="Green"
-            android:title="Green" />
+            android:title="Green"
+            android:summary="@string/prefAutoSummary"/>
         <EditTextPreference
             android:icon="@drawable/button_yellow"
             android:key="prefKeyXmpYellow"
             android:defaultValue="Yellow"
-            android:title="Yellow" />
+            android:title="Yellow"
+            android:summary="@string/prefAutoSummary"/>
         <EditTextPreference
             android:icon="@drawable/button_purple"
             android:key="prefKeyXmpPurple"
             android:defaultValue="Purple"
-            android:title="Purple" />
+            android:title="Purple"
+            android:summary="@string/prefAutoSummary"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/prefTitleFilter" >
         <CheckBoxPreference

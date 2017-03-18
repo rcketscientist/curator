@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <ListPreference
+        android:key="prefKeyShareFormat"
+        android:title="@string/prefTitleShareFormat"
+        android:dialogTitle="@string/prefTitleShareFormat"
+        android:entries="@array/shareFormats"
+        android:entryValues="@array/shareFormats"
+        android:summary="@string/prefAutoSummary"
+        android:defaultValue="JPG" />
+    <ListPreference
+        android:key="prefKeyEditFormat"
+        android:title="@string/prefTitleEditFormat"
+        android:dialogTitle="@string/prefTitleEditFormat"
+        android:entries="@array/shareFormats"
+        android:entryValues="@array/shareFormats"
+        android:summary="@string/prefAutoSummary"
+        android:defaultValue="JPG" />
+</PreferenceScreen>

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="shareFormatsValues">
+        <item>JPG</item>
+        <item>RAW</item>
+    </string-array>
+
     <string-array name="showOptionsValues">
         <item>Automatic</item>
         <item>Always</item>
         <item>Never</item>
-    </string-array>
-
-    <string-array name="testArray">
-        <item>Test1</item>
-        <item>Test2</item>
-        <item>Test3</item>
     </string-array>
 
     <string-array name="watermarkLocationsValues">
@@ -18,12 +17,5 @@
         <item>Lower Right</item>
         <item>Upper Left</item>
         <item>Upper Right</item>
-    </string-array>
-
-    <string-array name="sortValues">
-        <item>@string/Name_ascending</item>
-        <item>@string/Name_descending</item>
-        <item>@string/Date_ascending</item>
-        <item>@string/Date_descending</item>
     </string-array>
 </resources>

@@ -96,7 +96,7 @@
     <string name="prefTitleImageInterface">Automatically display interface</string>
     <string name="prefSummaryImageInterface">when image changes</string>
     <string name="prefTitleRecycleBin">Recycle Bin Size</string>
-    <string name="prefSummaryRecycleBin">Space allocated to recycle bin (Default: 50MB, Min: 30MB, Max: 500MB)\nBe careful with size, 500MB is over 6% of an 8GB device!</string>
+    <string name="prefSummaryRecycleBin">%s MB allocated to recycle bin.</string>
     <string name="prefTitleFilter">Exif Filter</string>
     <string name="prefTitleDeleteConfirmation">Delete Confirmation</string>
     <string name="prefSummaryDeleteConfirmation">If disabled deletes will not require confirmation even if they exceed recycle bin size.</string>
@@ -126,8 +126,7 @@
     <string name="prefTitleEnableWatermark">Enable Watermark</string>
     <string name="prefSummaryEnableWatermark">Enable to place watermark on exported photos.</string>
     <string name="prefTitleWatermarkText">Watermark Text</string>
-    <string name="prefTitleWatermarkSize">Watermark Size</string>
-    <string name="prefSummaryWatermarkSize">This is the pixel size of the text as opposed to a font size.\nFor large images this should be > 100.</string>
+    <string name="prefTitleWatermarkSize">Watermark Height (Pixels)</string>
     <string name="prefTitleWatermarkLocation">Location of Watermark</string>
     <string name="prefTitleWatermarkAlpha">Watermark Transparency</string>
     <string name="prefSummaryContact">Click to send me an email.</string>
@@ -135,14 +134,22 @@
     <string name="prefTitleRightMargin">Right</string>
     <string name="prefTitleTopMargin">Top</string>
     <string name="prefTitleBottomMargin">Bottom</string>
-    <string name="prefSummaryLeftMargin">Distance from left edge of image to left edge of watermark.</string>
-    <string name="prefSummaryRightMargin">Distance from right edge of image to right edge of watermark.</string>
-    <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark.</string>
-    <string name="prefSummaryBottomMargin">Distance from bottom edge of image to bottom edge of watermark.</string>
+    <string name="prefSummaryLeftMargin">Distance from left edge of image to left edge of watermark: %s.</string>
+    <string name="prefSummaryRightMargin">Distance from right edge of image to right edge of watermark: %s</string>
+    <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark: %s</string>
+    <string name="prefSummaryBottomMargin">Distance from bottom edge of image to bottom edge of watermark: %s</string>
     <string name="prefTitleUseImmersive">Use Immersive</string>
     <string name="prefSummaryUseImmersive">(Android 4.4+) Hide nav and status bars until swiped in.</string>
+    <string name="prefTitleShareFormat">Share Format</string>
+    <string name="prefTitleEditFormat">Edit Format</string>
+    <string name="prefAutoSummary">%s</string>
 
     <string name="buypro">Click here to upgrade to Curator Pro to unlock features and improve speed!</string>
+
+    <string-array name="shareFormats">
+        <item>JPG</item>
+        <item>RAW</item>
+    </string-array>
 
     <string-array name="showOptions">
         <item>Automatic</item>

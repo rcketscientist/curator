@@ -526,7 +526,7 @@ public class ImageUtil
             if (fd == null)
                 return null;
 
-            if (Meta.ImageType.UNPROCESSED == imageType)
+            if (imageType == null || imageType == Meta.ImageType.UNPROCESSED)
                 imageType = getImageType(c, uri);
 
             switch(imageType)

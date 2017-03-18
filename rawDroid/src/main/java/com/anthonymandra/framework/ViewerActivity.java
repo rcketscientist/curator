@@ -189,7 +189,8 @@ public abstract class ViewerActivity extends CoreActivity implements
         else if (getIntent().hasExtra(Intent.EXTRA_STREAM)) // Correct share intent using extras
         {
             mImageIndex = 0;
-            if (Intent.ACTION_SEND.equals(getIntent().getAction()))
+	        String action = getIntent().getAction();
+            if (Intent.ACTION_SEND.equals(action) || Intent.ACTION_VIEW.equals(action))
             {
                 mMediaItems.add((Uri)getIntent().getParcelableExtra(Intent.EXTRA_STREAM));
             }

@@ -128,6 +128,8 @@ public abstract class CoreActivity extends DocumentActivity
 	public static final String META_SORT_ORDER_KEY = "sort_order";
 	public static final String META_DEFAULT_SORT = Meta.NAME + " ASC";
 
+	private static final long EXPIRATION = 4629746000L; //~60 days
+
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -135,6 +137,14 @@ public abstract class CoreActivity extends DocumentActivity
 		setStoragePermissionRequestEnabled(true);
 		mProgressDialog = new ProgressDialog(this);
 		mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+
+		if ("beta".equals(BuildConfig.FLAVOR_cycle) &&
+			BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis())
+		{
+			Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show();
+			//TODO: Add link to Curator store page
+			finish();
+		}
 	}
 
 	@Override
@@ -523,8 +533,9 @@ public abstract class CoreActivity extends DocumentActivity
 		int binSizeMb;
 		try
 		{
-			binSizeMb = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(this).getString(FullSettingsActivity.KEY_RecycleBinSize,
-					Integer.toString(FullSettingsActivity.defRecycleBin)));
+			binSizeMb = PreferenceManager.getDefaultSharedPreferences(this).getInt(
+					FullSettingsActivity.KEY_RecycleBinSize,
+					FullSettingsActivity.defRecycleBin);
 		} catch (NumberFormatException e)
 		{
 			binSizeMb = 0;
