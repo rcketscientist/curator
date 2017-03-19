@@ -15,27 +15,25 @@ import com.anthonymandra.rawdroid.R;
 //TODO: Move these to a library
 public class SeekBarPreference extends DialogPreference
 {
-    private static final String androidns="http://schemas.android.com/apk/res/android";
+    private static final String ANDROID_NS ="http://schemas.android.com/apk/res/android";
 
     private SeekBar mSeekBar;
-    private final Context mContext;
 
     private final String mSuffix;
-	private int mProgress;  // Master value when the seekbar would be null when dialog isn't visible
+	private int mProgress;
     private int mMax;
 	private boolean mValueSet;
 
     public SeekBarPreference(Context context, AttributeSet attrs) {
 
         super(context,attrs);
-        mContext = context;
 
         // Get string value for suffix (text attribute in xml file) :
-        int mSuffixId = attrs.getAttributeResourceValue(androidns, "text", 0);
-        if(mSuffixId == 0) mSuffix = attrs.getAttributeValue(androidns, "text");
-        else mSuffix = mContext.getString(mSuffixId);
+        int mSuffixId = attrs.getAttributeResourceValue(ANDROID_NS, "text", 0);
+        if(mSuffixId == 0) mSuffix = attrs.getAttributeValue(ANDROID_NS, "text");
+        else mSuffix = context.getString(mSuffixId);
 
-        mMax = attrs.getAttributeIntValue(androidns, "max", 100);
+        mMax = attrs.getAttributeIntValue(ANDROID_NS, "max", 100);
 	    setDialogLayoutResource(R.layout.seekbar_preference);
     }
 
@@ -150,7 +148,7 @@ public class SeekBarPreference extends DialogPreference
 	private static class SavedState extends BaseSavedState {
 		int value;
 
-		public SavedState(Parcel source) {
+		SavedState(Parcel source) {
 			super(source);
 			value = source.readInt();
 		}
@@ -161,7 +159,7 @@ public class SeekBarPreference extends DialogPreference
 			dest.writeInt(value);
 		}
 
-		public SavedState(Parcelable superState) {
+		SavedState(Parcelable superState) {
 			super(superState);
 		}
 
