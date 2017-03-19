@@ -6,31 +6,31 @@
             android:key="prefKeyImportKeywords"
             android:summary="@string/prefSummaryImportKeywords"
             android:title="@string/prefTitleImportKeywords" />
-        <EditTextPreference
+        <com.anthonymandra.widget.FriendlyEditTextPreference
             android:icon="@drawable/button_red"
             android:key="prefKeyXmpRed"
             android:defaultValue="Red"
             android:title="Red"
             android:summary="@string/prefAutoSummary"/>
-        <EditTextPreference
+        <com.anthonymandra.widget.FriendlyEditTextPreference
             android:icon="@drawable/button_blue"
             android:key="prefKeyXmpBlue"
             android:defaultValue="Blue"
             android:title="Blue"
             android:summary="@string/prefAutoSummary"/>
-        <EditTextPreference
+        <com.anthonymandra.widget.FriendlyEditTextPreference
             android:icon="@drawable/button_green"
             android:key="prefKeyXmpGreen"
             android:defaultValue="Green"
             android:title="Green"
             android:summary="@string/prefAutoSummary"/>
-        <EditTextPreference
+        <com.anthonymandra.widget.FriendlyEditTextPreference
             android:icon="@drawable/button_yellow"
             android:key="prefKeyXmpYellow"
             android:defaultValue="Yellow"
             android:title="Yellow"
             android:summary="@string/prefAutoSummary"/>
-        <EditTextPreference
+        <com.anthonymandra.widget.FriendlyEditTextPreference
             android:icon="@drawable/button_purple"
             android:key="prefKeyXmpPurple"
             android:defaultValue="Purple"

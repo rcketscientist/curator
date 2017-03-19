@@ -1,6 +1,7 @@
 package com.anthonymandra.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
@@ -9,16 +10,18 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.anthonymandra.rawdroid.R;
 
-public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener
+//TODO: Move these to a library
+public class SeekBarPreference extends DialogPreference
 {
     private static final String androidns="http://schemas.android.com/apk/res/android";
 
     private SeekBar mSeekBar;
-    private TextView mValueText;
     private final Context mContext;
 
     private final String mSuffix;
+	private int mProgress;  // Master value when the seekbar would be null when dialog isn't visible
     private int mMax;
 	private boolean mValueSet;
 
@@ -40,30 +43,38 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 	protected void onBindDialogView(View view)
 	{
 		super.onBindDialogView(view);
-		mSeekBar = (SeekBar) view.findViewById(R.id.seekBar);
-		mSeekBar.setOnSeekBarChangeListener(this);
-		mSeekBar.setMax(mMax);
+		final TextView valueText = (TextView) view.findViewById(R.id.textView);
 
-		mValueText = (TextView) view.findViewById(R.id.textView);
+		mSeekBar = (SeekBar) view.findViewById(R.id.seekBar);
+		mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+		{
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+			{
+				String t = String.valueOf(progress);
+				valueText.setText(mSuffix == null ? t : t.concat(" " + mSuffix));
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {}
+		});
+		mSeekBar.setMax(mMax);
+		mSeekBar.setProgress(mProgress);
+	}
+
+	@Override
+	protected Object onGetDefaultValue(TypedArray a, int index) {
+		return a.getInt(index, 0);
 	}
 
 	@Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue)
     {
-	    setProgress(restoreValue ? getPersistedInt(mSeekBar.getProgress()) : (int) defaultValue);
+	    setProgress(restoreValue ? getPersistedInt(mProgress) : (int) defaultValue);
     }
-
-    @Override
-    public void onProgressChanged(SeekBar seek, int value, boolean fromTouch)
-    {
-        String t = String.valueOf(value);
-        mValueText.setText(mSuffix == null ? t : t.concat(" " + mSuffix));
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seek) {}
-    @Override
-    public void onStopTrackingTouch(SeekBar seek) {}
 
     @SuppressWarnings("unused")
     public void setMax(int max) { mMax = max; }
@@ -73,9 +84,9 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     @SuppressWarnings("unused")
     public void setProgress(int progress) {
 	    // Always persist/notify the first time.
-	    final boolean changed = mSeekBar.getProgress() == progress;
+	    final boolean changed = mProgress != progress;
 	    if (changed || !mValueSet) {
-		    mSeekBar.setProgress(progress);
+		    mProgress = progress;
 		    mValueSet = true;
 		    persistInt(progress);
 		    if (changed) {
@@ -85,7 +96,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     }
 
     @SuppressWarnings("unused")
-    public int getProgress() { return mSeekBar.getProgress(); }
+    public int getProgress() { return mProgress; }
 
 	@Override
 	protected void onDialogClosed(boolean positiveResult) {
@@ -93,7 +104,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
 		if (positiveResult) {
 			if (callChangeListener(getProgress())) {
-				setProgress(getProgress());
+				setProgress(mSeekBar.getProgress());
 			}
 		}
 	}
@@ -101,7 +112,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
     // According to ListPreference implementation
     @Override
     public CharSequence getSummary() {
-        String text = Integer.toString(mSeekBar.getProgress());
+        String text = Integer.toString(getProgress());
         CharSequence summary = super.getSummary();
         if (summary != null) {
             return String.format(summary.toString(), text);
