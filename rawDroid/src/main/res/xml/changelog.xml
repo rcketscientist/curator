@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="5.4.0"
+             versioncode="504000"
+             summary="Release Candidate 3"
+             date="19 MAR 2017">
+        <change>Fix incoming 'view' shares</change>
+        <change>New Settings:Share format [JPG|RAW]</change>
+        <change>You may now share/edit raw directly to editors (Snapseed, etc)</change>
+    </release>
     <release version="5.3.0"
              versioncode="503000"
              summary="Release Candidate 3"

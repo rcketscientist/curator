@@ -12,6 +12,7 @@
             android:title="@string/prefTitleRecycleBin"
             android:summary="@string/prefSummaryRecycleBin"
             android:defaultValue="50"
+            android:text="MB"
             android:max="500" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/delete" >

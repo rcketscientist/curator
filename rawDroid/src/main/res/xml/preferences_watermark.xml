@@ -12,14 +12,16 @@
     <com.anthonymandra.widget.SeekBarPreference
         android:key="prefKeyWatermarkSize"
         android:title="@string/prefTitleWatermarkSize"
-        android:summary="@string/prefAutoSummary"
+        android:summary="%s pixels"
         android:defaultValue="150"
+        android:text="Pixels"
         android:max="600" />
     <com.anthonymandra.widget.SeekBarPreference
         android:key="prefKeyWatermarkAlpha"
         android:title="@string/prefTitleWatermarkAlpha"
-        android:summary="@string/prefAutoSummary"
+        android:summary="%s %%"
         android:defaultValue="75"
+        android:text="%"
         android:max="100" />
     <ListPreference
         android:defaultValue="Center"

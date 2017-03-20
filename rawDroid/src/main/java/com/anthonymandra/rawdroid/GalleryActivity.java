@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -187,6 +188,17 @@ public class GalleryActivity extends CoreActivity implements
 		});
 
 		doFirstRun();
+
+		//TODO: Temporarily convert pref from string to int
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		try
+		{
+			// This will throw if it's not a string.
+			String binSize = prefs.getString(FullSettingsActivity.KEY_RecycleBinSize, "n/a");
+			// noinspection AndroidLintApplySharedPref
+			prefs.edit().putInt(FullSettingsActivity.KEY_RecycleBinSize, Integer.parseInt(binSize)).commit();
+		}
+		catch (Exception ignored){}
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);

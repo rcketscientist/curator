@@ -854,10 +854,25 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected void requestShare()
 	{
+		String format = PreferenceManager.getDefaultSharedPreferences(this).getString(
+				FullSettingsActivity.KEY_ShareFormat,
+				getResources().getStringArray(R.array.shareFormats)[0]);
+
 		Intent intent = new Intent();
-		intent.setType("image/jpeg");
 		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+		boolean convert = true;
+		if ("JPG".equals(format))
+		{
+			intent.setType("image/jpeg");
+			convert = true;
+		}
+		else if ("RAW".equals(format))
+		{
+			intent.setType("image/*");
+			convert = false;
+		}
 
 		ArrayList<Uri> selectedItems = getSelectedImages();
 		if (selectedItems.size() > 1)
@@ -876,14 +891,20 @@ public abstract class CoreActivity extends DocumentActivity
 			// We need to limit the number of shares to avoid TransactionTooLargeException
 			for (Uri selection : tooManyShares ? selectedItems.subList(0, 10) : selectedItems)
 			{
-				share.add(SwapProvider.createSwapUri(this, selection));
+				if (convert)
+					share.add(SwapProvider.createSwapUri(this, selection));
+				else
+					share.add(selection);
 			}
 			intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, share);
 		}
 		else
 		{
 			intent.setAction(Intent.ACTION_SEND);
-			intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, selectedItems.get(0)));
+			if (convert)
+				intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, selectedItems.get(0)));
+			else
+				intent.putExtra(Intent.EXTRA_STREAM, selectedItems.get(0));
 		}
 
 		startActivity(Intent.createChooser(intent, getString(R.string.share)));

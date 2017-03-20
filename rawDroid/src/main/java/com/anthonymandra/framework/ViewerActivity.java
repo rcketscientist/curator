@@ -721,19 +721,24 @@ public abstract class ViewerActivity extends CoreActivity implements
     {
         Uri media = getCurrentItem();
 
-        Intent action = new Intent(Intent.ACTION_EDIT);
-        action.setDataAndType(media, "");
-        action.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        action.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        String format = PreferenceManager.getDefaultSharedPreferences(this).getString(
+                FullSettingsActivity.KEY_EditFormat,
+                getResources().getStringArray(R.array.shareFormats)[0]);
 
-        // Convert if no editor for raw exists
-        if (!intentExists(action))
+        Intent intent = new Intent(Intent.ACTION_EDIT);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+        if ("JPG".equals(format))
         {
-            action.setDataAndType(SwapProvider.createSwapUri(this, media), "image/jpeg");
+            intent.setDataAndType(SwapProvider.createSwapUri(this, media), "image/jpeg");
+        }
+        else if ("RAW".equals(format))
+        {
+            intent.setDataAndType(media, "image/*");
         }
 
-        // Otherwise convert
-        Intent chooser = Intent.createChooser(action, getResources().getString(R.string.editWith));
+        Intent chooser = Intent.createChooser(intent, getResources().getString(R.string.editWith));
         startActivityForResult(chooser, REQUEST_CODE_EDIT);
     }
 
