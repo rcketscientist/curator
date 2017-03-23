@@ -5,10 +5,29 @@
         <item>RAW</item>
     </string-array>
 
+    <string-array name="shareFormats">
+        <item>JPG</item>
+        <item>RAW</item>
+    </string-array>
+
+    <string-array name="showOptions">
+        <item>@string/automatic</item>
+        <item>@string/always</item>
+        <item>@string/never</item>
+    </string-array>
+    
     <string-array name="showOptionsValues">
         <item>Automatic</item>
         <item>Always</item>
         <item>Never</item>
+    </string-array>
+
+    <string-array name="watermarkLocations">
+        <item>@string/center</item>
+        <item>@string/lowerLeft</item>
+        <item>@string/lowerRight</item>
+        <item>@string/upperLeft</item>
+        <item>@string/upperRight</item>
     </string-array>
 
     <string-array name="watermarkLocationsValues">

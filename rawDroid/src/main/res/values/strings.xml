@@ -146,24 +146,10 @@
 
     <string name="buypro">Click here to upgrade to Curator Pro to unlock features and improve speed!</string>
 
-    <string-array name="shareFormats">
-        <item>JPG</item>
-        <item>RAW</item>
-    </string-array>
-
-    <string-array name="showOptions">
-        <item>Automatic</item>
-        <item>Always</item>
-        <item>Never</item>
-    </string-array>
-
-    <string-array name="watermarkLocations">
-        <item>Center</item>
-        <item>Lower Left</item>
-        <item>Lower Right</item>
-        <item>Upper Left</item>
-        <item>Upper Right</item>
-    </string-array>
+    <!-- Show options -->
+    <string name="automatic">Automatic</string>
+    <string name="always">Always</string>
+    <string name="never">Never</string>
 
     <string name="clearLibrary">Clear Library</string>
     <string name="cacheCleared">Gallery image cache cleared.</string>
@@ -217,6 +203,7 @@
 
     <!-- Locations -->
     <string name="margins">Margins</string>
+    <string name="center">Center</string>
     <string name="lowerLeft">Lower Left</string>
     <string name="lowerRight">Lower Right</string>
     <string name="upperLeft">Upper Left</string>
