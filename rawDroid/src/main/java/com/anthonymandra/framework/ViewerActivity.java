@@ -280,6 +280,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void initialize()
     {
+        getTheme().applyStyle(FullSettingsActivity.getMetaStyle(this), true);
         lookupViews();
         setMetaVisibility();
         setDisplayMetrics();
@@ -781,16 +782,20 @@ public abstract class ViewerActivity extends CoreActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         setMetaVisibility();
-        Uri media = getCurrentItem();
-
-        if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
+        if ("prefKeyMetaSize".equals(key))
         {
-            Intent viewer = getViewerIntent();
-            viewer.setData(media);
-            //TODO: finish() before startActivity???
-            finish();
-            startActivity(viewer);
+            recreate(); // Change to style requires a restart, theming is handled in initialize()
         }
+//        Uri media = getCurrentItem();
+//
+//        if (key.equals(FullSettingsActivity.KEY_UseLegacyViewer))
+//        {
+//            Intent viewer = getViewerIntent();
+//            viewer.setData(media);
+//            //TODO: finish() before startActivity???
+//            finish();
+//            startActivity(viewer);
+//        }
     }
 
     private void setImageFocus()

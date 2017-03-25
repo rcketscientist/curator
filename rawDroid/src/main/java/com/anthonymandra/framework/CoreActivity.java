@@ -600,28 +600,6 @@ public abstract class CoreActivity extends DocumentActivity
 			.show();
 	}
 
-	protected Intent getViewerIntent()
-	{
-		Intent viewer = new Intent();
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		if (!settings.contains(FullSettingsActivity.KEY_UseLegacyViewer))
-		{
-			SharedPreferences.Editor editor = settings.edit();
-			editor.putBoolean(FullSettingsActivity.KEY_UseLegacyViewer, !Util.hasHoneycomb());
-			editor.apply();
-		}
-
-		if (settings.getBoolean(FullSettingsActivity.KEY_UseLegacyViewer, false))
-		{
-			viewer.setClass(this, LegacyViewerActivity.class);
-		}
-		else
-		{
-			viewer.setClass(this, ImageViewActivity.class);
-		}
-		return viewer;
-	}
-
 	/**
 	 * Deletes a file and determines if a recycle is necessary.
 	 *

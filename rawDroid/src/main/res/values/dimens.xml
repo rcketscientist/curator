@@ -26,11 +26,6 @@
     <dimen name="xmp_filter_width">280dp</dimen>
     <dimen name="xmp_edit_width">246dp</dimen> <!-- Best if width is divisible by three for the keyword grid -->
 
-    <dimen name="metaTextSize">8sp</dimen>
-    <dimen name="metaLabelLength">64sp</dimen>
-    <dimen name="metaValueLength">96sp</dimen>
-    <dimen name="histogramHeight">80sp</dimen> <!-- 1/2 of full meta width -->
-
     <dimen name="helpButtonSize">36dp</dimen>
 
 </resources>

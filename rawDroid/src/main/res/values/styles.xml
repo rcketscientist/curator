@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Meta"/>
+    <style name="Meta.Small">
+        <item name="metaTextSize">8sp</item>
+        <item name="metaLabelLength">64sp</item> <!-- 8char -->
+        <item name="metaValueLength">96sp</item> <!-- 12char -->
+        <item name="histogramHeight">80sp</item> <!-- ~10char -->
+    </style>
+    <style name="Meta.Medium">
+        <item name="metaTextSize">10sp</item>
+        <item name="metaLabelLength">80sp</item>
+        <item name="metaValueLength">120sp</item>
+        <item name="histogramHeight">100sp</item>
+    </style>
+    <style name="Meta.Large">
+        <item name="metaTextSize">12sp</item>
+        <item name="metaLabelLength">96sp</item>
+        <item name="metaValueLength">144sp</item>
+        <item name="histogramHeight">120sp</item>
+    </style>
+
     <style name="MetaRow">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -8,7 +28,7 @@
 
     <style name="MetaTextAppearance">
         <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">@dimen/metaTextSize</item>
+        <item name="android:textSize">?attr/metaTextSize</item>
         <item name="android:shadowColor">#000000</item>
         <item name="android:shadowDx">1</item>
         <item name="android:shadowDy">1</item>
@@ -23,13 +43,14 @@
         <item name="android:textIsSelectable">false</item>
     </style>
 
+    <!--TODO: what's with android:width, try removing it -->
     <style name="MetaLabel" parent="@style/MetaField">
-        <item name="android:layout_width">@dimen/metaLabelLength</item>
+        <item name="android:layout_width">?attr/metaLabelLength</item>
         <item name="android:width">100sp</item>
     </style>
 
     <style name="MetaValue" parent="@style/MetaField">
-        <item name="android:layout_width">@dimen/metaValueLength</item>
+        <item name="android:layout_width">?attr/metaValueLength</item>
         <item name="android:maxLines">1</item>
     </style>
 

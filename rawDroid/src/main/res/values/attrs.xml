@@ -6,8 +6,11 @@
         <attr name="foreground" format="reference|color"/>
     </declare-styleable>
 
-<!--    <declare-styleable name="XmpLabelGroup">
-        &lt;!&ndash; Defines whether multiple buttons can be selected simultaneously &ndash;&gt;
-        <attr name="multiselect" format="boolean"/>
-    </declare-styleable>-->
+    <declare-styleable name="MetaStyle">
+        <attr name="metaTextSize" format="dimension" />
+        <attr name="metaLabelLength" format="dimension" />
+        <attr name="metaValueLength" format="dimension" />
+        <attr name="histogramHeight" format="dimension" />
+    </declare-styleable>
+
 </resources>

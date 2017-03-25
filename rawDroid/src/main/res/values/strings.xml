@@ -115,6 +115,7 @@
     <string name="prefTitleUseLegacyViewer">Use Legacy Viewer</string>
     <string name="prefSummaryUseLegacyViewer">Check only if you experience issues with the default viewer.\nPlease email me if this is necessary.</string>
     <string name="prefTitleShowNav">Show Navigation</string>
+    <string name="prefTitleMetaFontSize">Metadata Font Size</string>
     <string name="prefTitleShowMeta">Show Metadata</string>
     <string name="prefTitleShowHist">Show Histogram</string>
     <string name="prefTitleShowToolbar">Show Toolbar</string>
@@ -336,5 +337,9 @@
     <string name="tutAddSubject">Coming soon: Add a keyword.</string>
     <string name="tutEditSubject">Coming soon: Edit a keyword (hierarchy, etc.)</string>
     <string name="shareSubset">Share limited to ten images!</string>
+
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
 
 </resources>

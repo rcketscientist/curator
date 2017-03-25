@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -84,6 +85,7 @@ public class FullSettingsActivity extends PreferenceActivity
 	public static final String KEY_ShareFormat = "prefKeyShareFormat";
 	public static final String KEY_EditFormat = "prefKeyEditFormat";
 
+	public static final String KEY_MetaSize = "prefKeyMetaSize";
 
 	public static final int defRecycleBin = 50;
 
@@ -230,6 +232,24 @@ public class FullSettingsActivity extends PreferenceActivity
 		{
 			super.onCreate(savedInstanceState);
 			addPreferencesFromResource(R.xml.preferences_share);
+		}
+	}
+
+	public static int getMetaStyle(Context c)
+	{
+		String styleName = PreferenceManager.getDefaultSharedPreferences(c).getString(KEY_MetaSize, "Medium");
+
+		if ("Small".equals(styleName))
+		{
+			return R.style.Meta_Small;
+		}
+		else if ("Large".equals(styleName))
+		{
+			return R.style.Meta_Large;
+		}
+		else
+		{
+			return R.style.Meta_Medium;
 		}
 	}
 

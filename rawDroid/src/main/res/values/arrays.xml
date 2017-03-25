@@ -37,4 +37,17 @@
         <item>Upper Left</item>
         <item>Upper Right</item>
     </string-array>
+
+    <string-array name="metaSizeOptions">
+        <item>@string/small</item>
+        <item>@string/medium</item>
+        <item>@string/large</item>
+    </string-array>
+
+    <string-array name="metaSizeValues">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+
 </resources>

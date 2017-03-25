@@ -12,6 +12,13 @@
             android:summary="@string/prefSummaryImageInterface"
             android:title="@string/prefTitleImageInterface" />
         <ListPreference
+            android:defaultValue="Medium"
+            android:key="prefKeyMetaSize"
+            android:title="@string/prefTitleMetaFontSize"
+            android:summary="@string/prefAutoSummary"
+            android:entries="@array/metaSizeOptions"
+            android:entryValues="@array/metaSizeValues" />
+        <ListPreference
             android:defaultValue="Automatic"
             android:key="prefKeyShowNav"
             android:title="@string/prefTitleShowNav"
