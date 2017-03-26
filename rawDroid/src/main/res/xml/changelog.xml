@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="5.5.2"
+             versioncode="505002"
+             summary="Release Candidate 3"
+             date="26 MAR 2017">
+        <change>Metadata size setting</change>
+        <change>Fix incompatible setting translation</change>
+        <change>Ignore empty share requests</change>
+    </release>
     <release version="5.4.0"
              versioncode="504000"
              summary="Release Candidate 3"
