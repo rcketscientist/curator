@@ -120,7 +120,6 @@ public abstract class CoreActivity extends DocumentActivity
 	// Identifies a particular Loader being used in this component
 	public static final int META_LOADER_ID = 0;
 
-	public static final String EXTRA_VIEWER_IMAGESET = "extra_imageset";
 	public static final String EXTRA_META_BUNDLE = "meta_bundle";
 	public static final String META_PROJECTION_KEY = "projection";
 	public static final String META_SELECTION_KEY = "selection";
@@ -165,6 +164,14 @@ public abstract class CoreActivity extends DocumentActivity
 	 * @return The resource id of the layout to load
 	 */
 	public abstract int getContentView();
+
+	/**
+	 * @return The root view for this activity.
+	 */
+	public View getRootView()
+	{
+		return findViewById(android.R.id.content);
+	}
 
 	@Override
 	protected void onPause()
@@ -834,7 +841,7 @@ public abstract class CoreActivity extends DocumentActivity
 	{
 		if (getSelectedImages().size() < 1)
 		{
-			Snackbar.make(findViewById(getContentView()), R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show();
+			Snackbar.make(getRootView(), R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -1280,7 +1287,7 @@ public abstract class CoreActivity extends DocumentActivity
 			if (result)
 				clearWriteResume();
 			else
-				Snackbar.make(findViewById(android.R.id.content), R.string.deleteFail, Snackbar.LENGTH_LONG).show();
+				Snackbar.make(getRootView(), R.string.deleteFail, Snackbar.LENGTH_LONG).show();
 
 			if (!CoreActivity.this.isDestroyed() && mProgressDialog != null)
 				mProgressDialog.dismiss();
@@ -1449,7 +1456,7 @@ public abstract class CoreActivity extends DocumentActivity
 			if (result)
 				clearWriteResume();
 			else
-				Snackbar.make(findViewById(android.R.id.content), R.string.restoreFail, Snackbar.LENGTH_LONG).show();
+				Snackbar.make(getRootView(), R.string.restoreFail, Snackbar.LENGTH_LONG).show();
 			onImageSetChanged();
 		}
 	}
