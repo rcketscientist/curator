@@ -32,8 +32,7 @@
 <string name="storage">貯存</string>
 <string name="firstImage">第一影像</string>
 <string name="lastImage">最後影像</string>
-<string name="licensed">已授權</string>
-<string name="unlicensed">未授權</string>
+	<string name="unlicensed">未授權</string>
 
 <!-- Meta -->
 <string name="altitude">海拔高度</string>

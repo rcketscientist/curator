@@ -38,8 +38,7 @@
 <string name="storage">储存</string>
 <string name="firstImage">第一副图像</string>
 <string name="lastImage">最后副图像</string>
-<string name="licensed">授权的</string>
-<string name="unlicensed">未授权的</string>
+	<string name="unlicensed">未授权的</string>
 
 <!-- Meta -->
 <string name="altitude">海拔</string>

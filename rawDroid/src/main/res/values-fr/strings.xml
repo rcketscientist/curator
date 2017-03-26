@@ -104,8 +104,7 @@
 <string name="restoreFile">Restaure le fichier</string>
 <string name="emptyRecycleBin">Vide la poubelle</string>
 <string name="saveJpg">Exporte les miniatures</string>
-<string name="shareWith">Partager avec ...</string>
-<string name="importingImages">Importation d\\\'images...</string>
+	<string name="importingImages">Importation d\\\'images...</string>
 <string name="exportingThumb">Exportation des miniatures...</string>
 <string name="deletingFiles">Suppression des fichiers...</string>
 <string name="recyclingFiles">Recyclage des fichiers...</string>

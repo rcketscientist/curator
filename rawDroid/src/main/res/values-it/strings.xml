@@ -38,8 +38,7 @@
 <string name="storage">Memoria</string>
 <string name="firstImage">Prima Immagine</string>
 <string name="lastImage">Ultima Immagine</string>
-<string name="licensed">Licenza</string>
-<string name="unlicensed">Senza Licenza</string>
+	<string name="unlicensed">Senza Licenza</string>
 
 <!-- Meta -->
 <string name="altitude">Altitudine</string>
@@ -74,13 +73,11 @@
 <string name="warningNoRecycleBin">Cestino non esiste. I file saranno cancellati direttamente</string>
 <string name="warningGenericImagesOff">Immagini generiche (es: jpg) sono state disabilitate nelle impostazioni.</string>
 <string name="warningInvalidLabel">è un etichetta non valida. Le etichette possono essere personalizzate nelle impostazioni.</string>
-<string name="warningInvalidSidebar">Attivazione barra laterale non valido, si prega di riprovare</string>
 
-<!-- Preferences -->
+	<!-- Preferences -->
 <string name="prefTitleImageInterface">Visualizza automaticamente l\'interfaccia</string>
 <string name="prefSummaryImageInterface">quando cambia immagine</string>
 <string name="prefTitleRecycleBin">Grandezza del cestino</string>
-<string name="prefSummaryRecycleBin">Spazio allocato nel cestino (Default: 50 MB, min: 30 MB, max: 500MB)\nFare attenzione alle dimensioni, 500MB sono  oltre il 6% su un dispositivo di 8GB!</string>
 <string name="prefTitleFilter">Filtro Exif</string>
 <string name="prefTitleDeleteConfirmation"> Conferma Eliminazione</string>
 <string name="prefSummaryDeleteConfirmation">Se  disabiliti cancella non richiederà la conferma, anche se superano dimensioni del cestino.</string>
@@ -111,8 +108,7 @@
 <string name="restoreFile">Ripristina File</string>
 <string name="emptyRecycleBin">Svuota Cestino</string>
 <string name="saveJpg">Miniature di esportazione</string>
-<string name="shareWith">Condividi con </string>
-<string name="ratingRequest">Se vi piace  RawDroid si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
+	<string name="ratingRequest">Se vi piace  RawDroid si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
 <string name="importingImages">Importazione di immagini ...</string>
 <string name="exportingThumb">Esportazione Miniature...</string>
 <string name="deletingFiles">Eliminazione dei file....</string>

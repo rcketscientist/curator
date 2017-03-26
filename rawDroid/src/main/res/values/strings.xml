@@ -12,7 +12,7 @@
     <string name="wallpaper">Set as wallpaper</string>
     <string name="EDIT">EDIT</string>
     <string name="ADD">ADD</string>
-    <string name="editWith">Edit with...</string>
+    <string name="editWith">Edit with…</string>
     <string name="selectAll">Select All</string>
     <string name="help">Help</string>
     <string name="delete">Delete</string>
@@ -161,10 +161,10 @@
     <string name="saveJpg">Save Jpeg</string>
     <string name="share">Share</string>
     <string name="ratingRequest">If you enjoy using Curator please take a moment to rate it.\nThanks for your support!</string>
-    <string name="importingImages">Importing Images...</string>
-    <string name="exportingThumb">Exporting Thumbnails...</string>
-    <string name="deletingFiles">Deleting Files...</string>
-    <string name="recyclingFiles">Recycling Files...</string>
+    <string name="importingImages">Importing Images…</string>
+    <string name="exportingThumb">Exporting Thumbnails…</string>
+    <string name="deletingFiles">Deleting Files…</string>
+    <string name="recyclingFiles">Recycling Files…</string>
     <string name="clear">Clear</string>
     <string name="reuse">Reuse</string>
     <string name="customKeywords">Custom Keywords</string>
@@ -177,7 +177,7 @@
 
     <!-- Dialogs -->
     <string name="dialogWriteRequestTitle">Write Permission Guide</string>
-    <string name="dialogWriteRequestMessage">The following screen will grant Curator write permission to the external SD card.  Choose the root directory 0000-0000 for full access.</string>
+    <string name="dialogWriteRequestMessage">The following screen will grant Curator write permission to the external SD card.  Choose the root directory 0000–0000 for full access.</string>
     <string name="welcomeTitle">Welcome to Curator!</string>
     <string name="welcomeMessage">Curator will operate as a fully functional demo with watermarking until Curator Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nWould you like to run the tutorial now? (You can run it later at Help:Tutorial)</string>
     <string name="welcomeTutorial">Would you like to run the tutorial now? (You can run it later at Help:Tutorial)</string>
@@ -312,10 +312,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="extractingImage">Extracting Image...</string>
+    <string name="extractingImage">Extracting Image…</string>
     <string name="compress">compress</string>
     <string name="defaults">Defaults</string>
-    <string name="licenseRequestSent">License request sent...</string>
+    <string name="licenseRequestSent">License request sent…</string>
 
     <!-- Filter sidebar tutorial-->
     <string name="sortImages">Sort Images</string>

@@ -35,9 +35,8 @@
 <string name="firstImage">最初の画像</string>
 <string name="lastImage">最後の画像</string>
 <string name="unlicensed">ライセンスなし</string>
-<string name="error">エラー</string>
 
-<!-- Meta -->
+	<!-- Meta -->
 <string name="altitude">標高</string>
 <string name="aperture">f値</string>
 <string name="dimensions">解像度</string>
@@ -75,8 +74,6 @@
 <string name="prefTitleImageInterface">表示の自動更新</string>
 <string name="prefSummaryImageInterface">画像が変化した時に更新します。</string>
 <string name="prefTitleRecycleBin">ゴミ箱のサイズ</string>
-<string name="prefSummaryRecycleBin">ゴミ箱に割り当てる容量(標準: 50MB, 最小: 30MB, 最大: 500MB)
-\n容量に注意してください。500MBは8GB端末の容量の6%以上を占めます。</string>
 <string name="prefTitleFilter">Exifフィルター</string>
 <string name="prefTitleDeleteConfirmation">削除の確認</string>
 <string name="prefSummaryDeleteConfirmation">無効にした場合、ファイルがゴミ箱のサイズを超えても削除の確認はありません。</string>
@@ -129,8 +126,7 @@
 <string name="restoreFile">ファイル復元</string>
 <string name="emptyRecycleBin">ゴミ箱を空にする</string>
 <string name="saveJpg">サムネイル出力</string>
-<string name="shareWith">共有</string>
-<string name="ratingRequest">Rawdroidをお楽しみいただいているなら評価にご協力をお願いします。
+	<string name="ratingRequest">Rawdroidをお楽しみいただいているなら評価にご協力をお願いします。
 \n
 \nもし修正済みのバグを元に評価されている場合は評価の更新をお願いします。
 \n
@@ -189,8 +185,7 @@
 <string name="tutorialUsbTitle">USBマウント探索</string>
 <string name="tutorialUsb">任意のUSB機器の既知のマウントポイントを探索します。もし機器が見つからない場合はマウントポイントをメールしてください。(例: "/mnt/weird/device/usb")</string>
 
-<string name="unit_mm">mm</string>
-<string name="no_thumbnail">サムネイルがありません</string>
+	<string name="no_thumbnail">サムネイルがありません</string>
 <string name="license">ライセンス</string>
 <string name="watermark">ウォーターマーク(Pro)</string>
     <string name="Name_ascending">ファイル名 \u25BC</string>

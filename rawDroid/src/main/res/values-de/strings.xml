@@ -39,8 +39,7 @@
 <string name="storage">Speicherort </string>
 <string name="firstImage">Erstes Bild</string>
 <string name="lastImage">Letztes Bild</string>
-<string name="licensed">lizenziert</string>
-<string name="unlicensed">unlizenziert</string>
+	<string name="unlicensed">unlizenziert</string>
 
 <!-- Meta -->
 <string name="altitude">Höhe</string>
@@ -80,7 +79,6 @@
 <string name="prefTitleImageInterface">Interface automatisch anzeigen</string>
 <string name="prefSummaryImageInterface">beim Bildwechsel</string>
 <string name="prefTitleRecycleBin">Papierkorb Grösse</string>
-<string name="prefSummaryRecycleBin">Dem Papierkorb zugewiesene Größe (Standard: 50MB, Min: 30MB, Max: 500MB)\nVorsichtig mit der Größe: 500MB sind mehr als 6% eines 8GB Speichers!</string>
 <string name="prefTitleFilter">Exif Filter</string>
 <string name="prefTitleDeleteConfirmation">Bestätigung beim Löschen</string>
 <string name="prefSummaryDeleteConfirmation">Falls deaktiviert, wird ohne Bestätigung gelöscht - selbst bei Dateien, die zu groß für den Papierkorb sind.</string>
@@ -110,8 +108,7 @@
 <string name="restoreFile">Datei wiederherstellen</string>
 <string name="emptyRecycleBin">Papierkorb leeren</string>
 <string name="saveJpg">Bildvorschauen exportieren</string>
-<string name="shareWith">Teilen mit...</string>
-<string name="ratingRequest">Falls dir RawDroid gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.
+	<string name="ratingRequest">Falls dir RawDroid gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.
 \n
 \nSollte deine bisherige Wertung wegen eines Fehlers sein, der mittlerweile behoben wurde, aktualisiere doch bitte deine Bewertung.
 \n
@@ -142,7 +139,6 @@
 <string name="tutorialUsbTitle">Suche vorhandene USB Verbindungen</string>
 <string name="tutorialUsb">Durchsuche alle bekannten USB-Geräte. Wenn Dein Gerät nicht erkannt wird, schicke eine mail mit dem mount point, z.B. "/mnt/weird/device/usb"</string>
 
-<string name="unit_mm">mm</string>
-<string name="no_thumbnail">Keine Thumbnails (Miniaturen)</string>
+	<string name="no_thumbnail">Keine Thumbnails (Miniaturen)</string>
     <string name="Name_ascending">Name \u25BC</string>
 </resources>

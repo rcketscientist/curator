@@ -78,8 +78,6 @@
 <string name="prefTitleImageInterface">Mostrar automáticamente el display</string>
 <string name="prefSummaryImageInterface">cuando cambie la imagen</string>
 <string name="prefTitleRecycleBin">Tamaño de la Papelera</string>
-<string name="prefSummaryRecycleBin">Espacio para dedicar a la papelera (Por defecto: 50MB, Min: 30MB, Max: 500MB)
-\nTenga cuidado con el tamaño, 500MB es alrededor del 6% de un dispositivo de 8GB) </string>
 <string name="prefTitleFilter">Filtro Exif</string>
 <string name="prefTitleDeleteConfirmation">Confirmación de Borrado</string>
 <string name="prefSummaryDeleteConfirmation">Si deshabilitado, no pedirá confirmación de borrado salvo si no cabe en la papelera.</string>
@@ -101,8 +99,7 @@
 <string name="restoreFile">Restaurar Archivo</string>
 <string name="emptyRecycleBin">Vaciar Papelera</string>
 <string name="saveJpg">Exportar Miniaturas</string>
-<string name="shareWith">Compartir con ...</string>
-<string name="ratingRequest">Si le ha gustado RawDroid, por favor dedique un momento a valorarlo.
+	<string name="ratingRequest">Si le ha gustado RawDroid, por favor dedique un momento a valorarlo.
 \nSi ya lo ha valorado basándose en un fallo que ha sido solucionado, actualice su valoración.
 \n¡Gracias por su ayuda!</string>
 <string name="importingImages">Importando Imágenes ...</string>

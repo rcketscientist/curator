@@ -22,7 +22,6 @@ import android.support.design.widget.Snackbar;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.util.ImageUtil;
-import com.anthonymandra.widget.SeekBarPreference;
 
 import java.util.List;
 

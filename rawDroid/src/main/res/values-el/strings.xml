@@ -70,8 +70,6 @@
 
 <!-- Preferences -->
 <string name="prefTitleRecycleBin">Μέγεθος Κάδου Ανακύκλωσης</string>
-<string name="prefSummaryRecycleBin">Διατεθειμένος χώρος στον Κάδο Ανακύκλωσης (Προεπιλογή: 50MB, Ελάχιστο: 30ΜΒ, Μέγιστο: 500ΜΒ)
-\nΠροσοχή στον ορισμό του μεγέθους: 500ΜΒ είναι πάνω από το 6% της μνήμης μιας συσκευής των 8GB!</string>
 <string name="prefTitleFilter">Φίλτρα Exif</string>
 <string name="prefTitleDeleteConfirmation">Επιβεβαίωση Διαγραφής</string>
 <string name="prefSummaryDeleteConfirmation">Αν απενεργοποιηθεί, οι διαγραφές δεν θα χρειάζονται επιβεβαίωση ακόμα και αν ξεπερνάνε το μέγεθος του Κάδου Ανακύκλωσης.</string>
@@ -88,8 +86,7 @@
 <string name="reuse">Επαναχρησιμοποίηση</string>
 <string name="customKeywords">Προσαρμοσμένες λέξεις-κλειδιά</string>
 <string name="addKeyword">Προσθήκη λέξης-κλειδιού</string>
-<string name="directory">Φάκελος</string>
-<string name="search">Αναζήτηση</string>
+    <string name="search">Αναζήτηση</string>
 
 <!-- Colors for xmp -->
 <string name="red">Κόκκινο</string>
