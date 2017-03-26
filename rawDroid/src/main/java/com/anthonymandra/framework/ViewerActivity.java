@@ -147,6 +147,7 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getTheme().applyStyle(FullSettingsActivity.getMetaStyle(this), true);   //must be called before setContentView
         super.onCreate(savedInstanceState);
         Toolbar toolbar = (Toolbar) findViewById(R.id.viewerToolbar);
         setSupportActionBar(toolbar);
@@ -280,7 +281,6 @@ public abstract class ViewerActivity extends CoreActivity implements
 
     private void initialize()
     {
-        getTheme().applyStyle(FullSettingsActivity.getMetaStyle(this), true);
         lookupViews();
         setMetaVisibility();
         setDisplayMetrics();

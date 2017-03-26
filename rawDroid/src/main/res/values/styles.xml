@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Meta"/>
-    <style name="Meta.Small">
+    <style name="MetaStyle"/>
+    <style name="MetaStyle.Small">
         <item name="metaTextSize">8sp</item>
         <item name="metaLabelLength">64sp</item> <!-- 8char -->
         <item name="metaValueLength">96sp</item> <!-- 12char -->
         <item name="histogramHeight">80sp</item> <!-- ~10char -->
     </style>
-    <style name="Meta.Medium">
-        <item name="metaTextSize">10sp</item>
-        <item name="metaLabelLength">80sp</item>
-        <item name="metaValueLength">120sp</item>
-        <item name="histogramHeight">100sp</item>
-    </style>
-    <style name="Meta.Large">
+    <style name="MetaStyle.Medium">
         <item name="metaTextSize">12sp</item>
         <item name="metaLabelLength">96sp</item>
         <item name="metaValueLength">144sp</item>
         <item name="histogramHeight">120sp</item>
+    </style>
+    <style name="MetaStyle.Large">
+        <item name="metaTextSize">16sp</item>
+        <item name="metaLabelLength">128sp</item>
+        <item name="metaValueLength">192sp</item>
+        <item name="histogramHeight">160sp</item>
     </style>
 
     <style name="MetaRow">

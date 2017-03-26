@@ -241,15 +241,15 @@ public class FullSettingsActivity extends PreferenceActivity
 
 		if ("Small".equals(styleName))
 		{
-			return R.style.Meta_Small;
+			return R.style.MetaStyle_Small;
 		}
 		else if ("Large".equals(styleName))
 		{
-			return R.style.Meta_Large;
+			return R.style.MetaStyle_Large;
 		}
 		else
 		{
-			return R.style.Meta_Medium;
+			return R.style.MetaStyle_Medium;
 		}
 	}
 
