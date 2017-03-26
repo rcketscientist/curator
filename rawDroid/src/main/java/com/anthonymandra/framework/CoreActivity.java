@@ -832,6 +832,12 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected void requestShare()
 	{
+		if (getSelectedImages().size() < 1)
+		{
+			Snackbar.make(findViewById(getContentView()), R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show();
+			return;
+		}
+
 		String format = PreferenceManager.getDefaultSharedPreferences(this).getString(
 				FullSettingsActivity.KEY_ShareFormat,
 				getResources().getStringArray(R.array.shareFormats)[0]);
