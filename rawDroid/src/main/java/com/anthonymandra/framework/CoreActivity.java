@@ -144,6 +144,23 @@ public abstract class CoreActivity extends DocumentActivity
 			//TODO: Add link to Curator store page
 			finish();
 		}
+
+		//TODO: Temporarily convert pref from string to int
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		try
+		{
+			// This will throw if it's not a string.
+			String binSize = prefs.getString(FullSettingsActivity.KEY_RecycleBinSize, "n/a");
+			// noinspection AndroidLintApplySharedPref
+			prefs.edit().putInt(FullSettingsActivity.KEY_RecycleBinSize, Integer.parseInt(binSize)).commit();
+		}
+		catch (Exception ignored){}
+
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
 	}
 
 	@Override

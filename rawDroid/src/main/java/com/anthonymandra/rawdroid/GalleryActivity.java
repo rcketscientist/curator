@@ -189,23 +189,6 @@ public class GalleryActivity extends CoreActivity implements
 
 		doFirstRun();
 
-		//TODO: Temporarily convert pref from string to int
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		try
-		{
-			// This will throw if it's not a string.
-			String binSize = prefs.getString(FullSettingsActivity.KEY_RecycleBinSize, "n/a");
-			// noinspection AndroidLintApplySharedPref
-			prefs.edit().putInt(FullSettingsActivity.KEY_RecycleBinSize, Integer.parseInt(binSize)).commit();
-		}
-		catch (Exception ignored){}
-
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false);
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false);
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
-
 		AppRater.app_launched(this);
 
 		DisplayMetrics metrics = new DisplayMetrics();
