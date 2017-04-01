@@ -81,9 +81,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
-        <item name="fastscroll__style">@style/DefaultScrollerStyle</item>
         <item name="actionModeShareDrawable">@drawable/ic_share</item>
-        <!--<item name="showcaseViewStyle">@style/CustomShowcaseTheme</item>-->
         <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
         <item name="toggleGroupStyle">@style/Widget.Material.ToggleGroup</item>
         <item name="toggleButtonStyle">@style/Widget.Material.ToggleButton</item>
@@ -92,12 +90,6 @@
     <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
     <style name="Custom.Widget.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_overflow</item>
-    </style>
-
-    <style name="DefaultScrollerStyle">
-        <item name="fastscroll__bubbleTextAppearance">@android:style/TextAppearance.Small</item>
-        <item name="fastscroll__bubbleColor">@android:color/white</item>
-        <item name="fastscroll__handleColor">@android:color/darker_gray</item>
     </style>
 
     <style name="CustomShowcaseTheme2" parent="ShowcaseView">

@@ -4,7 +4,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="contentDescription"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:id="@+id/galleryLayout"
@@ -30,13 +32,6 @@
             android:layout_toStartOf="@+id/xmpSidebarButton"
             android:minHeight="?android:attr/actionBarSize"
             android:background="?android:attr/colorPrimary">
-            <ProgressBar
-                android:id="@+id/toolbarSpinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:indeterminate="true"
-                android:visibility="gone" />
         </android.support.v7.widget.Toolbar>
         <ViewStub
             android:id="@+id/cab_stub"
@@ -55,21 +50,32 @@
             android:src="@drawable/ic_tag"
             android:background="@color/xmpActionButtonColor"/>
 
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding"
+            android:layout_below="@id/galleryToolbar"
+            android:id="@+id/toolbarProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            app:mpb_showProgressBackground="false"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gridview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/image_thumbnail_margin"
-            android:layout_below="@+id/filterSidebarButton"
+            android:layout_below="@+id/toolbarProgress"
             android:layout_toStartOf="@+id/editFragment"/>
 
-        <com.futuremind.recyclerviewfastscroll.FastScroller
+        <com.pluscubed.recyclerfastscroll.RecyclerFastScroller
             android:id="@+id/fast_scroller"
-            android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_below="@+id/filterSidebarButton"
-            android:layout_alignEnd="@id/gridview"/>
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/galleryToolbar"/>
 
         <fragment
             android:id="@+id/editFragment"

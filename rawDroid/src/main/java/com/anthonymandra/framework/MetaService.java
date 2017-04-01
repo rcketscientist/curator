@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.content.MetaProvider;
 import com.anthonymandra.util.MetaUtil;
 
 import java.util.ArrayList;
@@ -90,11 +91,8 @@ public class MetaService extends PriorityIntentService//ThreadedPriorityIntentSe
      */
     public static final String EXTRA_METADATA = "com.anthonymandra.framework.extra.EXTRA_METADATA";
 
-    private final ArrayList<ContentProviderOperation> mOperations = new ArrayList<>();
-
     private static final AtomicInteger sJobsTotal = new AtomicInteger(0);
     private static final AtomicInteger sJobsComplete = new AtomicInteger(0);
-    private static final int sMinBatchSize = 20;
 
 	public MetaService()
 	{
@@ -205,22 +203,13 @@ public class MetaService extends PriorityIntentService//ThreadedPriorityIntentSe
                 if (values == null)
                     continue;
 
-                addUpdate(update.Uri, values);
+                updateProvider(update.Uri, values);
 
                 Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
                         .putExtra(EXTRA_URI, update.Uri)
                         .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
                         .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-
-                try
-                {
-                    processUpdates();
-                } catch (RemoteException | OperationApplicationException e)
-                {
-                    //TODO: Notify user
-                    e.printStackTrace();
-                }
             }
         }
         finally
@@ -281,25 +270,17 @@ public class MetaService extends PriorityIntentService//ThreadedPriorityIntentSe
                 if (values == null)
                     continue;
 
-                // If this is a high priority request then add to db immediately
                 if (isHighPriority(intent))
                 {
-                    if (!isProcessed)
-                    {
-                        getContentResolver().update(Meta.CONTENT_URI,
-                                values,
-                                Meta.URI_SELECTION,
-                                new String[]{ uri.toString() });
-                    }
-
                     Intent broadcast = new Intent(BROADCAST_REQUESTED_META)
                             .putExtra(EXTRA_URI, uri.toString())
                             .putExtra(EXTRA_METADATA, values);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
                 }
-                else if (!isProcessed)
+
+                if (!isProcessed)
                 {
-                    addUpdate(uri.toString(), values);
+                    updateProvider(uri.toString(), values);
                 }
 
                 Intent broadcast = new Intent(BROADCAST_IMAGE_PARSED)
@@ -307,16 +288,6 @@ public class MetaService extends PriorityIntentService//ThreadedPriorityIntentSe
                         .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
                         .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get());
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-
-                try
-                {
-                    processUpdates();
-                }
-                catch (RemoteException | OperationApplicationException e)
-                {
-                    //TODO: Notify user
-                    e.printStackTrace();
-                }
             }
         }
         finally
@@ -329,43 +300,16 @@ public class MetaService extends PriorityIntentService//ThreadedPriorityIntentSe
 	public void onDestroy()
 	{
 		super.onDestroy();
-		try
-		{
-			Intent broadcast = new Intent(BROADCAST_PROCESSING_COMPLETE);
-			LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-			processUpdates(true);
-		}
-		catch (RemoteException | OperationApplicationException e)
-		{
-			e.printStackTrace();
-		}
 
 		Intent broadcast = new Intent(BROADCAST_PARSE_COMPLETE);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
 	}
 
-    private synchronized void processUpdates() throws RemoteException, OperationApplicationException
+	private void updateProvider(String uri, ContentValues values)
     {
-        processUpdates(false);
-    }
-
-    private synchronized void processUpdates(boolean processNow) throws RemoteException, OperationApplicationException
-    {
-        // Update the database periodically
-        if (processNow || mOperations.size() > sMinBatchSize)
-        {
-            getContentResolver().applyBatch(Meta.AUTHORITY, mOperations);
-            mOperations.clear();
-            Intent broadcast = new Intent(BROADCAST_BULK_UPDATE);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast);
-        }
-    }
-
-    private synchronized void addUpdate(String uriString, ContentValues values)
-    {
-        mOperations.add(ContentProviderOperation.newUpdate(Meta.CONTENT_URI)
-                .withSelection(Meta.URI_SELECTION, new String[] {uriString})
-                .withValues(values)
-                .build());
+        getContentResolver().update(Meta.CONTENT_URI,
+                values,
+                Meta.URI_SELECTION,
+                new String[]{ uri });
     }
 }

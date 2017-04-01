@@ -81,19 +81,8 @@
             android:name=".ImageViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/GalleryTheme">
-            <!--<meta-data-->
-                <!--android:name="android.support.PARENT_ACTIVITY"-->
-                <!--android:value=".GalleryActivity"/>-->
         </activity>
-        <activity
-            android:name=".PagerViewActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/GalleryTheme">
-            <!--<meta-data-->
-                <!--android:name="android.support.PARENT_ACTIVITY"-->
-                <!--android:value=".GalleryActivity"/>-->
-        </activity>
-        <activity
+		<activity
             android:name=".FullSettingsActivity"
             android:theme="@style/Theme.AppCompat"/>
 
