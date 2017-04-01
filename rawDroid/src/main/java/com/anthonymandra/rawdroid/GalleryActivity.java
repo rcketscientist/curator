@@ -1,6 +1,5 @@
 package com.anthonymandra.rawdroid;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
@@ -39,7 +38,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.afollestad.materialcab.MaterialCab;
@@ -57,8 +55,8 @@ import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
-import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.inscription.WhatsNewDialog;
+import com.pluscubed.recyclerfastscroll.RecyclerFastScroller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +64,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
@@ -116,7 +116,7 @@ public class GalleryActivity extends CoreActivity implements
 	private Toolbar mToolbar;
 	private MaterialCab mMaterialCab;
 	private XmpFilterFragment mXmpFilterFragment;
-	private ProgressBar mProgressBar;
+	private MaterialProgressBar mProgressBar;
 	private DrawerLayout mDrawerLayout;
 
 	private static final String[] REQUIRED_COLUMNS = {
@@ -147,7 +147,7 @@ public class GalleryActivity extends CoreActivity implements
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mToolbar = (Toolbar) findViewById(R.id.galleryToolbar);
-		mProgressBar = (ProgressBar) findViewById(R.id.toolbarSpinner);
+		mProgressBar = (MaterialProgressBar) findViewById(R.id.toolbarProgress);
         setSupportActionBar(mToolbar);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -209,14 +209,15 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.setOnItemLongClickListener(this);
 
 		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
-		FastScroller fastScroller = (FastScroller) findViewById(R.id.fast_scroller);
 
 		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
 		mImageGrid.setLayoutManager(mGridLayout);
 		mImageGrid.addItemDecoration(spacing);
 		mImageGrid.setHasFixedSize(true);
 		mImageGrid.setAdapter(mGalleryAdapter);
-		fastScroller.setRecyclerView(mImageGrid);   //must be after adapter
+
+		RecyclerFastScroller fastScroller = (RecyclerFastScroller) findViewById(R.id.fast_scroller);
+		fastScroller.attachRecyclerView(mImageGrid);
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
@@ -240,7 +241,7 @@ public class GalleryActivity extends CoreActivity implements
 						mToolbar.setSubtitle("Updating...");
 						break;
 					case MetaService.BROADCAST_PARSE_COMPLETE:
-						mProgressBar.setVisibility(View.GONE);
+						mProgressBar.setVisibility(View.INVISIBLE);
 						mToolbar.setSubtitle("");
 						break;
 					case SearchService.BROADCAST_SEARCH_STARTED:

@@ -241,18 +241,11 @@ public class MetaProvider extends ContentProvider
 				try
 				{
 					long newID = sqlDB.insertOrThrow(META_TABLE_NAME, null, cv);
-					if (newID <= 0)
-					{
-						Log.e(TAG, "Failed to insert: " + cv.getAsString(Meta.URI));
-					}
-					else
-					{
-						numInserted++;
-					}
+					numInserted++;
 				}
 				catch (Exception e)
 				{
-					Log.e(TAG, "Failed to insert: " + cv.getAsString(Meta.URI));
+					Log.e(TAG, "Failed to insert: " + cv.getAsString(Meta.URI), e);
 				}
 			}
 			sqlDB.setTransactionSuccessful();
