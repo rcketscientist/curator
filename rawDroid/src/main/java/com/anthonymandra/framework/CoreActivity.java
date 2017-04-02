@@ -161,6 +161,15 @@ public abstract class CoreActivity extends DocumentActivity
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false);
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false);
+
+		findViewById(R.id.xmpSidebarButton).setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				toggleEditXmpFragment();
+			}
+		});
 	}
 
 	@Override
@@ -469,22 +478,34 @@ public abstract class CoreActivity extends DocumentActivity
 				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Subject)).start();
 			}
 		});
-		toggleEditXmpFragment(); // Keep fragment visible in designer, but hide initially
+		hidedEditXmpFragment();
 	}
 
 	protected void toggleEditXmpFragment()
 	{
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		if (mXmpFragment.isHidden())
 		{
-			ft.show(mXmpFragment);
-			ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left);
+			showEditXmpFragment();
 		}
 		else
 		{
-			ft.hide(mXmpFragment);
-			ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+			hidedEditXmpFragment();
 		}
+	}
+
+	protected void hidedEditXmpFragment()
+	{
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.hide(mXmpFragment);
+		ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+		ft.commit();
+	}
+
+	protected void showEditXmpFragment()
+	{
+		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+		ft.show(mXmpFragment);
+		ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left);
 		ft.commit();
 	}
 

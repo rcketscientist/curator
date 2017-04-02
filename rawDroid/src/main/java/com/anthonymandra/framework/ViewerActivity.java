@@ -421,14 +421,6 @@ public abstract class ViewerActivity extends CoreActivity implements
                 onZoomLockChanged(isChecked);
             }
         });
-        findViewById(R.id.xmpSidebarButton).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                toggleEditXmpFragment();
-            }
-        });
     }
 
 //    @Override

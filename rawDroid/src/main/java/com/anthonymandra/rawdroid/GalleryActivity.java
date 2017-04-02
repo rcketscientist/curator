@@ -159,14 +159,7 @@ public class GalleryActivity extends CoreActivity implements
 				mDrawerLayout.openDrawer(GravityCompat.START);
 			}
 		});
-		findViewById(R.id.xmpSidebarButton).setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				toggleEditXmpFragment();
-			}
-		});
+
 
 		mXmpFilterFragment = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
 		mXmpFilterFragment.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
