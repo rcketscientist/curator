@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,13 +49,10 @@ import com.anthonymandra.image.ImageConfiguration;
 import com.anthonymandra.image.JpegConfiguration;
 import com.anthonymandra.image.TiffConfiguration;
 import com.anthonymandra.imageprocessor.ImageProcessor;
-import com.anthonymandra.imageprocessor.Margins;
 import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
-import com.anthonymandra.rawdroid.ImageViewActivity;
-import com.anthonymandra.rawdroid.LegacyViewerActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
@@ -213,7 +209,7 @@ public abstract class CoreActivity extends DocumentActivity
 	{
 		if (!mXmpFragment.isHidden())
 		{
-			toggleEditXmpFragment();
+			hideEditXmpFragment();
 			return;
 		}
 		super.onBackPressed();
@@ -478,7 +474,7 @@ public abstract class CoreActivity extends DocumentActivity
 				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Subject)).start();
 			}
 		});
-		hidedEditXmpFragment();
+		hideEditXmpFragment();
 	}
 
 	protected void toggleEditXmpFragment()
@@ -489,11 +485,11 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 		else
 		{
-			hidedEditXmpFragment();
+			hideEditXmpFragment();
 		}
 	}
 
-	protected void hidedEditXmpFragment()
+	protected void hideEditXmpFragment()
 	{
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		ft.hide(mXmpFragment);

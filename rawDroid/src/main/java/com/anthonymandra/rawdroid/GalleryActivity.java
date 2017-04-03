@@ -188,10 +188,13 @@ public class GalleryActivity extends CoreActivity implements
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
 		int mDisplayWidth = metrics.widthPixels;
+		int shortSide = Math.min(mDisplayWidth, metrics.heightPixels);
 
-		final int thumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
-		final int thumbSpacing = 2 * getResources().getDimensionPixelSize(R.dimen.image_thumbnail_margin);
-		final int numColumns = (int) Math.floor(mDisplayWidth / (thumbSize + thumbSpacing));
+		// we want three divisions on short side, convert that to a column value
+		// This will always be 3 in portrait, x in landscape (with 3 rows)
+		final float thumbSize = shortSide / 3 ;
+		final int numColumns = Math.round(mDisplayWidth / thumbSize);
+		//TODO: 16:9 => 5 x 2.x or 3 x 5.3, which means rotation will call up slightly different sized thumbs, we need to ensure glide is initially creating the slightly larger variant
 
 		GridLayoutManager mGridLayout = new GridLayoutManager(this, numColumns);
 		mGridLayout.setSmoothScrollbarEnabled(true);
