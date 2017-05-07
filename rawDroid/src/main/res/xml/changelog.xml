@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="5.5.5"
+             versioncode="505005"
+             summary="Release Candidate 3"
+             date="7 MAY 2017">
+        <change>New progress bar</change>
+        <change>Universal gallery grid layout</change>
+        <change>Minor bug fixes</change>
+    </release>
     <release version="5.5.2"
              versioncode="505002"
              summary="Release Candidate 3"
