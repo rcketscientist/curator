@@ -237,7 +237,7 @@ public class GalleryActivity extends CoreActivity implements
 						mToolbar.setSubtitle("Updating...");
 						break;
 					case MetaService.BROADCAST_PARSE_COMPLETE:
-						mProgressBar.setVisibility(View.INVISIBLE);
+						mProgressBar.setVisibility(View.GONE);
 						mToolbar.setSubtitle("");
 						break;
 					case SearchService.BROADCAST_SEARCH_STARTED:
