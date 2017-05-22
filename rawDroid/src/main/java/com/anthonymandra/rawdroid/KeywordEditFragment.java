@@ -41,8 +41,6 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
     @SuppressLint("UseSparseArrays")
     private final Set<String> mSelectedKeywords = new HashSet<>();
 
-    private boolean mPauseListener;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -61,15 +59,6 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                if (mPauseListener)
-                    return;
-
-                // TODO: This will drastically affect the code
-//                boolean checked = ((CheckedTextView) mAdapter.getItem(position)).isChecked();
-
-                mPauseListener = true;
-
-                final Cursor keywords = mAdapter.getCursor();
                 if (((Checkable)view).isChecked())
                 {
                     try (Cursor selectedTree = getActivity().getContentResolver().query(
@@ -82,42 +71,31 @@ KeywordEditFragment extends KeywordBaseFragment implements LoaderManager.LoaderC
                         {
                             mSelectedKeywords.remove(selectedTree.getString(KeywordProvider.Data.COLUMN_NAME));
                         }
-                        mAdapter.notifyDataSetChanged();
                     }
+                    mAdapter.notifyDataSetChanged();
                 }
                 else
                 {
-                    long time = System.currentTimeMillis(); // We all ancestors of single selection to share insert time
+                    final long time = System.currentTimeMillis(); // All ancestors of single selection share insert time
                     try (Cursor selectedTree = getActivity().getContentResolver().query(
                             ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, id),
                             null,
                             PathEnumerationProvider.ANCESTORS_QUERY_SELECTION,
                             null, null))
                     {
-                        if (selectedTree != null)
+                        while (selectedTree != null && selectedTree.moveToNext())
                         {
-                            while (selectedTree.moveToNext())
-                            {
-                                keywords.moveToPosition(-1);
-                                long selectedId = selectedTree.getLong(KeywordProvider.Data.COLUMN_ID);
-                                while (keywords.moveToNext())
-                                {
-                                    if (keywords.getLong(KeywordProvider.Data.COLUMN_ID) == selectedId)
-                                    {
-                                        mSelectedKeywords.add(keywords.getString(KeywordProvider.Data.COLUMN_NAME));
-                                        ContentValues cv = new ContentValues();
-                                        cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
-                                        getActivity().getContentResolver().update(
-                                                ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, selectedId),
-                                                cv,
-                                                null, null);
-                                    }
-                                }
-                            }
+                            long selectedId = selectedTree.getLong(KeywordProvider.Data.COLUMN_ID);
+                            mSelectedKeywords.add(selectedTree.getString(KeywordProvider.Data.COLUMN_NAME));
+                            ContentValues cv = new ContentValues();
+                            cv.put(KeywordProvider.Data.KEYWORD_RECENT, time);
+                            getActivity().getContentResolver().update(
+                                    ContentUris.withAppendedId(KeywordProvider.Data.CONTENT_URI, selectedId),
+                                    cv,
+                                    null, null);
                         }
                     }
                 }
-                mPauseListener = false;
 
                 if (mListener != null)
                     mListener.onKeywordsSelected(getSelectedKeywords());
