@@ -114,40 +114,43 @@ public abstract class XmpBaseFragment extends Fragment implements
 
 	protected void setColorLabel(String[] labels)
 	{
+		if (labels == null)
+		{
+			colorKey.clearChecked();
+			return;
+		}
+
 		Context c = getContext();
 		if (c == null)
 			return;
 
-		if (labels != null)
-		{
-			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
-			String red = sp.getString(FullSettingsActivity.KEY_XmpRed, "Red");
-			String blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, "Blue");
-			String green = sp.getString(FullSettingsActivity.KEY_XmpGreen, "Green");
-			String yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, "Yellow");
-			String purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, "Purple");
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+		String red = sp.getString(FullSettingsActivity.KEY_XmpRed, "Red");
+		String blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, "Blue");
+		String green = sp.getString(FullSettingsActivity.KEY_XmpGreen, "Green");
+		String yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, "Yellow");
+		String purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, "Purple");
 
-			for (String label : labels)
+		for (String label : labels)
+		{
+			if (label.equals(blue))
 			{
-				if (label.equals(blue))
-				{
-					colorKey.setChecked(XmpLabelGroup.Labels.blue, true);
-				} else if (label.equals(red))
-				{
-					colorKey.setChecked(XmpLabelGroup.Labels.red, true);
-				} else if (label.equals(yellow))
-				{
-					colorKey.setChecked(XmpLabelGroup.Labels.yellow, true);
-				} else if (label.equals(green))
-				{
-					colorKey.setChecked(XmpLabelGroup.Labels.green, true);
-				} else if (label.equals(purple))
-				{
-					colorKey.setChecked(XmpLabelGroup.Labels.purple, true);
-				} else
-				{
-					Toast.makeText(c, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show();
-				}
+				colorKey.setChecked(XmpLabelGroup.Labels.blue, true);
+			} else if (label.equals(red))
+			{
+				colorKey.setChecked(XmpLabelGroup.Labels.red, true);
+			} else if (label.equals(yellow))
+			{
+				colorKey.setChecked(XmpLabelGroup.Labels.yellow, true);
+			} else if (label.equals(green))
+			{
+				colorKey.setChecked(XmpLabelGroup.Labels.green, true);
+			} else if (label.equals(purple))
+			{
+				colorKey.setChecked(XmpLabelGroup.Labels.purple, true);
+			} else
+			{
+				Toast.makeText(c, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show();
 			}
 		}
 	}
