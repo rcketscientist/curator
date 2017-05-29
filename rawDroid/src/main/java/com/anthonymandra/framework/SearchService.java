@@ -155,6 +155,10 @@ public class SearchService extends IntentService
 				}
 			}
 
+			UsefulDocumentFile[] imageFiles = listImages(contents);
+			if (imageFiles == null) // .nomedia, don't recurse
+				return foundImages;
+
 			// Recursion pass
 			List<SearchTask> forks = new LinkedList<>();
 			for (UsefulDocumentFile f : contents)
@@ -167,11 +171,8 @@ public class SearchService extends IntentService
 					SearchTask child = new SearchTask(mContext, f, mExcludeDir);
 					forks.add(child);
 					child.fork();
-
 				}
 			}
-
-			UsefulDocumentFile[] imageFiles = listImages(contents);
 
 			if (imageFiles.length > 0)
 			{
@@ -227,6 +228,8 @@ public class SearchService extends IntentService
 
 	/**
 	 * emulate File.listFiles(ImageFilter)
+	 * @param files files to process
+	 * @return list of image files, or null if .nomedia is encountered
 	 */
 	public static UsefulDocumentFile[] listImages(UsefulDocumentFile[] files)
 	{
@@ -237,6 +240,8 @@ public class SearchService extends IntentService
 			String name = file.getCachedData().name;
 			if (name == null)
 				continue;
+			if (".nomedia".equals(name))    // if .nomedia clear results and return
+				return null;
 			if(ImageUtil.isImage(name))
 				result.add(file);
 		}
