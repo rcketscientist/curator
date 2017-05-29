@@ -157,7 +157,7 @@ public class SearchService extends IntentService
 
 			UsefulDocumentFile[] imageFiles = listImages(contents);
 			if (imageFiles == null) // .nomedia, don't recurse
-				return foundImages;
+				return null;
 
 			// Recursion pass
 			List<SearchTask> forks = new LinkedList<>();
