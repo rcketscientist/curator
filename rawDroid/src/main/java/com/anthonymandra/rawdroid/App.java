@@ -31,8 +31,9 @@ public class App extends Application
 					.build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
 					.detectLeakedSqlLiteObjects()
-					.detectLeakedClosableObjects()
+//					.detectLeakedClosableObjects()  disabled to avoid disklrucache and focus on cursors
 					.penaltyLog()
+					.penaltyDeath()
 					.build());
 		}
 	}

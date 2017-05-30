@@ -180,6 +180,9 @@ public class XmpFilterFragment extends XmpBaseFragment
             @Override
             public void onClick(View v)
             {
+
+                updatePaths();
+
                 int[] position = new int[2];
                 foldersButton.getLocationOnScreen(position);
                 mFolderDialog = FolderDialog.newInstance(
@@ -482,6 +485,7 @@ public class XmpFilterFragment extends XmpBaseFragment
                 {
                     if (mSearchListener != null)
                         mSearchListener.onSearchRootRequested();
+                    dismiss();
                 }
             });
 

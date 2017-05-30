@@ -177,6 +177,7 @@ public class GalleryActivity extends CoreActivity implements
 			{
 				setWriteResume(WriteResume.Search, null);
 				requestWritePermission();
+				mDrawerLayout.closeDrawer(GravityCompat.START);
 			}
 		});
 
@@ -542,7 +543,6 @@ public class GalleryActivity extends CoreActivity implements
 	{
 		mGalleryAdapter.swapCursor(cursor);
 		setImageCountTitle();
-		mXmpFilterFragment.updatePaths();
 	}
 
 	@Override
