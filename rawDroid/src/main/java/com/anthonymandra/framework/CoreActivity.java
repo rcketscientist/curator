@@ -44,6 +44,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adobe.xmp.XMPMeta;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.image.ImageConfiguration;
 import com.anthonymandra.image.JpegConfiguration;
@@ -1670,16 +1671,22 @@ public abstract class CoreActivity extends DocumentActivity
 				ContentValues values = pair.getValue();
 				databaseUpdates.add(MetaUtil.newUpdate(pair.getKey(), values));
 
-				final Metadata meta = new Metadata();
-				meta.addDirectory(new XmpDirectory());
-				MetaUtil.updateSubject(meta, DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)));
-				MetaUtil.updateRating(meta, values.getAsInteger(Meta.RATING));
-				MetaUtil.updateLabel(meta, values.getAsString(Meta.LABEL));
+//				final Metadata meta = new Metadata(); // TODO: need to pull the existing metadata, this wipes everything
+//				meta.addDirectory(new XmpDirectory());
+//				MetaUtil.updateSubject(meta, DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)));
+//				MetaUtil.updateRating(meta, values.getAsInteger(Meta.RATING));
+//				MetaUtil.updateLabel(meta, values.getAsString(Meta.LABEL));
 
 				//TODO: This logic needs cleanup
 				final UsefulDocumentFile xmp = ImageUtil.getXmpFile(CoreActivity.this, pair.getKey());
 				if (xmp == null)
 					continue;
+
+				final XMPMeta meta = MetaUtil.readXmp(CoreActivity.this, xmp);
+				MetaUtil.updateXmpStringArray(meta, MetaUtil.SUBJECT, DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)));
+				MetaUtil.updateXmpInteger(meta, MetaUtil.RATING, values.getAsInteger(Meta.RATING));
+				MetaUtil.updateXmpString(meta, MetaUtil.LABEL, values.getAsString(Meta.LABEL));
+//				MetaUtil.updateXmpString(meta, MetaUtil.CREATOR, "test");
 
 				final Uri xmpUri = xmp.getUri();
 				final UsefulDocumentFile xmpDoc;
@@ -1697,8 +1704,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 				try(OutputStream os = getContentResolver().openOutputStream(xmpDoc.getUri()))
 				{
-					if (meta.containsDirectoryOfType(XmpDirectory.class))
-						XmpWriter.write(os, meta);
+					MetaUtil.writeXmp(os, meta);
 				}
 				catch (Exception e)
 				{

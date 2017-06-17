@@ -14,7 +14,10 @@ import android.util.Log;
 
 import com.adobe.xmp.XMPException;
 import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.XMPMetaFactory;
+import com.adobe.xmp.impl.XMPMetaImpl;
 import com.adobe.xmp.options.PropertyOptions;
+import com.adobe.xmp.options.SerializeOptions;
 import com.adobe.xmp.properties.XMPProperty;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
@@ -41,8 +44,10 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,9 +74,11 @@ public class MetaUtil
 			this.Name = name;
 		}
 	}
-	private static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label");
-	private static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating");
-	private static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject");
+
+	public static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label");
+	public static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating");
+	public static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject");
+	public static final XmpProperty CREATOR = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Creator");    //TODO: TEST
 
 
 	public static Metadata readMetadata(Context c, Uri uri)
@@ -144,6 +151,55 @@ public class MetaUtil
 	    {
 	        Utils.closeSilently(xmpStream);
 	    }
+	}
+
+	public static XMPMeta readXmp(Context c, UsefulDocumentFile file)
+	{
+		try (InputStream is = FileUtil.getInputStream(c, file.getUri()))
+		{
+			return readXmp(is);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return new XMPMetaImpl();
+		}
+		catch (XMPException e)          // TODO: What might this mean?
+		{
+			e.printStackTrace();
+			return new XMPMetaImpl();
+		}
+	}
+
+	public static XMPMeta readXmp(InputStream is) throws XMPException
+	{
+		return XMPMetaFactory.parse(is);
+	}
+
+	/**
+	 * Serializes the <code>XMPMeta</code> into an <code>OutputStream</code>
+	 * @param c Context
+	 * @param file xmp file
+	 * @param meta populated metadata
+	 * @return serialize success
+	 */
+	public static void writeXmp(Context c, UsefulDocumentFile file, XMPMeta meta) throws IOException, XMPException
+	{
+		try(OutputStream os = c.getContentResolver().openOutputStream(file.getUri()))
+		{
+			writeXmp(os, meta);
+		}
+	}
+
+	/**
+	 * Serializes the XmpDirectory component of <code>Metadata</code> into an <code>OutputStream</code>
+	 * @param os Destination for the xmp data
+	 * @param meta populated metadata
+	 */
+	public static void writeXmp(OutputStream os, XMPMeta meta) throws XMPException
+	{
+		SerializeOptions so = new SerializeOptions().setOmitPacketWrapper(true);
+		XMPMetaFactory.serialize(meta, os, so);
 	}
 
 	/**
@@ -756,7 +812,7 @@ public class MetaUtil
 	    updateXmpStringArray(meta, SUBJECT, subject);
 	}
 
-	private static void updateXmpString(Metadata meta, XmpProperty prop, String value)
+	public static void updateXmpString(Metadata meta, XmpProperty prop, String value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -764,24 +820,29 @@ public class MetaUtil
 		if (xmp == null)
 			return;
 
-	    if (value == null)
-	    {
-		    xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
-	    }
-	    else
-	    {
-		    try
-		    {
-			    xmp.getXMPMeta().setProperty(prop.Schema, prop.Name, value);
-		    }
-		    catch (XMPException e)
-		    {
-			    e.printStackTrace();
-		    }
-	    }
+		updateXmpString(xmp.getXMPMeta(), prop, value);
 	}
 
-	private static void updateXmpStringArray(Metadata meta, XmpProperty prop, String[] value)
+	public static void updateXmpString(XMPMeta meta, XmpProperty prop, String value)
+	{
+		if (value == null)
+		{
+			meta.deleteProperty(prop.Schema, prop.Name);
+		}
+		else
+		{
+			try
+			{
+				meta.setProperty(prop.Schema, prop.Name, value);
+			}
+			catch (XMPException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void updateXmpStringArray(Metadata meta, XmpProperty prop, String[] value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -789,7 +850,12 @@ public class MetaUtil
 		if (xmp == null)
 			return;
 
-		xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
+		updateXmpStringArray(xmp.getXMPMeta(), prop, value);
+	}
+
+	public static void updateXmpStringArray(XMPMeta meta, XmpProperty prop, String[] value)
+	{
+		meta.deleteProperty(prop.Schema, prop.Name);
 		if (value == null || value.length == 0)
 			return; // If the value is invalid this is just a delete.
 
@@ -798,17 +864,16 @@ public class MetaUtil
 		{
 			try
 			{
-				xmp.getXMPMeta().appendArrayItem(prop.Schema, prop.Name, po, item, null);
+				meta.appendArrayItem(prop.Schema, prop.Name, po, item, null);
 			}
 			catch (XMPException e)
 			{
-				e.printStackTrace();
+				e.printStackTrace();    // TODO: We should throw this
 			}
 		}
-
 	}
 
-	private static void updateXmpDouble(Metadata meta, XmpProperty prop, Double value)
+	public static void updateXmpDouble(Metadata meta, XmpProperty prop, Double value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -816,24 +881,29 @@ public class MetaUtil
 		if (xmp == null)
 			return;
 
-	    if (value == null)
-	    {
-		    xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
-	    }
-	    else
-	    {
-		    try
-		    {
-			    xmp.getXMPMeta().setPropertyDouble(prop.Schema, prop.Name, value);
-		    }
-		    catch (XMPException e)
-		    {
-			    e.printStackTrace();
-		    }
-	    }
+		updateXmpDouble(xmp.getXMPMeta(), prop, value);
 	}
 
-	private static void updateXmpInteger(Metadata meta, XmpProperty prop, Integer value)
+	public static void updateXmpDouble(XMPMeta meta, XmpProperty prop, Double value)
+	{
+		if (value == null)
+		{
+			meta.deleteProperty(prop.Schema, prop.Name);
+		}
+		else
+		{
+			try
+			{
+				meta.setPropertyDouble(prop.Schema, prop.Name, value);
+			}
+			catch (XMPException e)
+			{
+				e.printStackTrace();    // TODO: We should throw this
+			}
+		}
+	}
+
+	public static void updateXmpInteger(Metadata meta, XmpProperty prop, Integer value)
 	{
 	    checkXmpDirectory(meta);
 
@@ -841,20 +911,25 @@ public class MetaUtil
 		if (xmp == null)
 			return;
 
-	    if (value == null)
-	    {
-		    xmp.getXMPMeta().deleteProperty(prop.Schema, prop.Name);
-	    }
-	    else
-	    {
-		    try
-		    {
-			    xmp.getXMPMeta().setPropertyInteger(prop.Schema, prop.Name, value);
-		    }
-		    catch (XMPException e)
-		    {
-			    e.printStackTrace();
-		    }
-	    }
+		updateXmpInteger(xmp.getXMPMeta(), prop, value);
+	}
+
+	public static void updateXmpInteger(XMPMeta meta, XmpProperty prop, Integer value)
+	{
+		if (value == null)
+		{
+			meta.deleteProperty(prop.Schema, prop.Name);
+		}
+		else
+		{
+			try
+			{
+				meta.setPropertyInteger(prop.Schema, prop.Name, value);
+			}
+			catch (XMPException e)
+			{
+				e.printStackTrace();    // TODO: We should throw this
+			}
+		}
 	}
 }

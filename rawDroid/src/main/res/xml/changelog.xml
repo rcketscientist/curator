@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="5.6.3"
+             versioncode="506003"
+             summary="Release Candidate"
+             date="30 MAY 2017">
+        <change>Fix color label refresh in viewer</change>
+        <change>Simplify keyword database access</change>
+        <change>Skip hidden folders in image search.</change>
+        <change>Greatly reduced gallery overhead; images should process very quickly now.</change>
+        <change>Nav drawer will automatically dismiss when a search is started.</change>
+    </release>
     <release version="5.5.5"
              versioncode="505005"
-             summary="Release Candidate 3"
+             summary="Release Candidate"
              date="7 MAY 2017">
         <change>New progress bar</change>
         <change>Universal gallery grid layout</change>
@@ -10,7 +20,7 @@
     </release>
     <release version="5.5.2"
              versioncode="505002"
-             summary="Release Candidate 3"
+             summary="Release Candidate"
              date="26 MAR 2017">
         <change>Metadata size setting</change>
         <change>Fix incompatible setting translation</change>
@@ -18,7 +28,7 @@
     </release>
     <release version="5.4.0"
              versioncode="504000"
-             summary="Release Candidate 3"
+             summary="Release Candidate"
              date="19 MAR 2017">
         <change>Fix incoming 'view' shares</change>
         <change>New Settings:Share format [JPG|RAW]</change>
@@ -26,7 +36,7 @@
     </release>
     <release version="5.3.0"
              versioncode="503000"
-             summary="Release Candidate 3"
+             summary="Release Candidate"
              date="17 MAR 2017">
         <change>New metadata parser for sigma/x3f</change>
         <change>Revert decoder temporarily</change>
@@ -36,19 +46,19 @@
     </release>
     <release version="5.2.0"
              versioncode="502000"
-             summary="Release Candidate 2"
+             summary="Release Candidate"
              date="11 FEB 2017">
         <change>Folder filter will now show all parents in a tree.  Hiding a folder will automatically hide all children.</change>
     </release>
     <release version="5.1.7"
              versioncode="501007"
-             summary="Release Candidate 2"
+             summary="Release Candidate"
              date="7 FEB 2017">
         <change>Possible fix for filesystem issue</change>
     </release>
     <release version="5.1.6"
              versioncode="501006"
-             summary="Release Candidate 2"
+             summary="Release Candidate"
              date="6 FEB 2017">
         <change>Fix restore</change>
         <change>Fix share</change>
@@ -57,7 +67,7 @@
     </release>
     <release version="5.1.0"
              versioncode="51000"
-             summary="Release Candidate 2"
+             summary="Release Candidate"
              date="28 JAN 2017">
         <change>New branding, welcome to Curator!</change>
         <change>Redesigned sidebars</change>
