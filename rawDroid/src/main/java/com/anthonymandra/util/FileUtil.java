@@ -96,7 +96,7 @@ public class FileUtil
 	 * @param context The context.
 	 * @param uri The Uri to query.
 	 */
-	public static InputStream getInputStream(final Context context, final Uri uri) throws FileNotFoundException
+	public static InputStream getInputStream(final Context context, final Uri uri) throws FileNotFoundException, IllegalArgumentException
 	{
 		if (isFileScheme(uri))
 		{

@@ -20,7 +20,7 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 5
 def versionMinor = 6
-def versionPatch = 3
+def versionPatch = 4
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -125,13 +125,14 @@ dependencies {
     compile project(':metadata-extractor')
     compile project(':rawprocessor')
     compile project(':documentActivity')
-    compile project(':toggleButtons')
     compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true;
     }
     compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
         transitive = true;
     }
+
+    compile 'com.anthonymandra:ToggleButtons:2.0.0'
 
     //includes support-v4 and appcompat-v7
     compile "com.android.support:design:${rootProject.ext.supportLibVersion}"

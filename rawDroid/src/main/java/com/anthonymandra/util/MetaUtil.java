@@ -169,6 +169,11 @@ public class MetaUtil
 			e.printStackTrace();
 			return new XMPMetaImpl();
 		}
+		catch (IllegalArgumentException e)  //This nonsense is thrown when the file doesn't exist in SAF...
+		{
+			e.printStackTrace();
+			return new XMPMetaImpl();
+		}
 	}
 
 	public static XMPMeta readXmp(InputStream is) throws XMPException
