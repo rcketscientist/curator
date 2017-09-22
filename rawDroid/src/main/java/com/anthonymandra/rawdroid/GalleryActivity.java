@@ -67,6 +67,8 @@ import java.util.Set;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
+import static com.anthonymandra.rawdroid.TutorialActivity.RESULT_ERROR;
+
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
 		GalleryRecyclerAdapter.OnItemLongClickListener,
@@ -675,7 +677,7 @@ public class GalleryActivity extends CoreActivity implements
 				}
 				break;
 			case REQUEST_TUTORIAL:
-				if (resultCode == RESULT_CANCELED)
+				if (resultCode == RESULT_ERROR)
 				{
 					Snackbar.make(getGalleryView(), "Tutorial error. Please contact support if this continues.", 5000)
 							.setAction(R.string.contact, new View.OnClickListener()

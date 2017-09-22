@@ -12,9 +12,11 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url 'https://maven.fabric.io/public' }
     maven { name 'glide-snapshot'; url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    mavenCentral()
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
 //apply plugin: 'maven'
 
@@ -145,6 +147,7 @@ dependencies {
     compile 'com.github.pluscubed:recycler-fast-scroll:0.3.2@aar'
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 crashlytics {
