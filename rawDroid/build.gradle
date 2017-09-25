@@ -50,6 +50,10 @@ android {
 //        }
     }
 
+    dataBinding {
+        enabled = true
+    }
+
 //    compileOptions {
 //        sourceCompatibility JavaVersion.VERSION_1_8
 //        targetCompatibility JavaVersion.VERSION_1_8
@@ -139,6 +143,10 @@ dependencies {
     //includes support-v4 and appcompat-v7
     compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+    compile 'android.arch.lifecycle:extensions:' + rootProject.archLifecycleVersion
+    compile 'android.arch.persistence.room:runtime:' + rootProject.archRoomVersion
+    annotationProcessor 'android.arch.lifecycle:compiler:' + rootProject.archLifecycleVersion
+    annotationProcessor 'android.arch.persistence.room:compiler:' + rootProject.archRoomVersion
 
     compile 'com.afollestad:material-cab:0.1.12'
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -148,6 +156,8 @@ dependencies {
     compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    implementation "android.arch.lifecycle:common-java8:1.0.0-beta1"
 }
 
 crashlytics {
