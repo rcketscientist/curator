@@ -18,3 +18,7 @@
 	path = rawprocessor
 	url = https://rcketscientist@bitbucket.org/rcketscientist/rawprocessor.git
 	branch = master
+[submodule "ToggleButtons"]
+	path = ToggleButtons
+	url = https://github.com/rcketscientist/ToggleButtons.git
+	

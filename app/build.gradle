@@ -126,36 +126,37 @@ android {
 }
 
 dependencies {
-    compile project(':showcaseView')
-    compile project(':inscription')
-    compile project(':metadata-extractor')
-    compile project(':rawprocessor')
-    compile project(':documentActivity')
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+    implementation project(':showcaseView')
+    implementation project(':inscription')
+    implementation project(':metadata-extractor')
+    implementation project(':rawprocessor')
+    implementation project(':documentActivity')
+    implementation project(':toggleButtons')
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true;
     }
-    compile('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
         transitive = true;
     }
 
-    compile 'com.anthonymandra:ToggleButtons:2.0.0'
+//    implementation 'com.anthonymandra:ToggleButtons:2.0.0'
 
     //includes support-v4 and appcompat-v7
-    compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
-    compile 'android.arch.lifecycle:extensions:' + rootProject.archLifecycleVersion
-    compile 'android.arch.persistence.room:runtime:' + rootProject.archRoomVersion
-    annotationProcessor 'android.arch.lifecycle:compiler:' + rootProject.archLifecycleVersion
-    annotationProcessor 'android.arch.persistence.room:compiler:' + rootProject.archRoomVersion
+    implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+    implementation 'android.arch.lifecycle:extensions:' + rootProject.archLifecycleVersion
+    implementation 'android.arch.persistence.room:runtime:' + rootProject.archRoomVersion
+    kapt 'android.arch.lifecycle:compiler:' + rootProject.archLifecycleVersion
+    kapt 'android.arch.persistence.room:compiler:' + rootProject.archRoomVersion
 
-    compile 'com.afollestad:material-cab:0.1.12'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
+    implementation 'com.afollestad:material-cab:0.1.12'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
 
-    compile 'com.github.pluscubed:recycler-fast-scroll:0.3.2@aar'
-    compile 'com.github.deano2390:MaterialShowcaseView:1.1.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.github.pluscubed:recycler-fast-scroll:0.3.2@aar'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation "android.arch.lifecycle:common-java8:1.0.0-beta1"
 }

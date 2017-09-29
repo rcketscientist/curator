@@ -2,8 +2,10 @@ include ':metadata-extractor'
 include ':documentActivity'
 include ':showcaseView'
 include ':inscription'
-include ':rawDroid'
+include ':app'
 include ':rawprocessor'
+include ':toggleButtons'
 project(':rawprocessor').projectDir = new File('rawprocessor/library')
 project(':documentActivity').projectDir = new File('DocumentActivity/library')
 project(':showcaseView').projectDir = new File('showcaseView/library')
+project(':toggleButtons').projectDir = new File('ToggleButtons/library')

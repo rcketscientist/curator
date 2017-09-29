@@ -207,7 +207,7 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.setOnItemClickListener(this);
 		mGalleryAdapter.setOnItemLongClickListener(this);
 
-		mImageGrid = ((RecyclerView) findViewById(R.id.gridview));
+		mImageGrid = findViewById(R.id.gridview);
 
 		ItemOffsetDecoration spacing = new ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin);
 		mImageGrid.setLayoutManager(mGridLayout);
@@ -215,8 +215,8 @@ public class GalleryActivity extends CoreActivity implements
 		mImageGrid.setHasFixedSize(true);
 		mImageGrid.setAdapter(mGalleryAdapter);
 
-		RecyclerFastScroller fastScroller = (RecyclerFastScroller) findViewById(R.id.fast_scroller);
-		fastScroller.attachRecyclerView(mImageGrid);
+//		RecyclerFastScroller fastScroller = (RecyclerFastScroller) findViewById(R.id.fast_scroller);
+//		fastScroller.attachRecyclerView(mImageGrid);
 
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED);
 		mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE);
