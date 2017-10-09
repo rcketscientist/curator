@@ -245,6 +245,7 @@ public class GalleryActivity extends CoreActivity implements
 						break;
 					case SearchService.BROADCAST_SEARCH_STARTED:
 						mProgressBar.setVisibility(View.VISIBLE);
+						mProgressBar.setIndeterminate(true);
 						mToolbar.setSubtitle("Searching...");
 						break;
 					case SearchService.BROADCAST_FOUND_IMAGES:
@@ -623,6 +624,7 @@ public class GalleryActivity extends CoreActivity implements
 	protected void scanRawFiles()
 	{
 		mProgressBar.setVisibility(View.VISIBLE);
+		mProgressBar.setIndeterminate(true);        //TODO: Determinate?
 		mToolbar.setSubtitle("Cleaning...");
 
 		MetaDataCleaner.cleanDatabase(this, new Handler(new Handler.Callback()
@@ -711,10 +713,38 @@ public class GalleryActivity extends CoreActivity implements
 //			return;
 //		}
 
-		new CopyTask().execute(mItemsForIntent, destination);
+//		new CopyTask().execute(mItemsForIntent, destination);
+		copyImages(mItemsForIntent, destination);
 	}
 
-//	private long getSelectedImageSize()
+	@Override
+	protected void updateMessage(String message)
+	{
+		mToolbar.setSubtitle(message);
+	}
+
+	@Override
+	protected void setMaxProgress(int max)
+	{
+		mProgressBar.setMax(max);
+		mProgressBar.setIndeterminate(false);
+		mProgressBar.setVisibility(View.VISIBLE);
+
+	}
+
+	@Override
+	protected void incrementProgress()
+	{
+		mProgressBar.incrementProgressBy(1);
+	}
+
+	@Override
+	protected void endProgress()
+	{
+		mProgressBar.setVisibility(View.GONE);
+	}
+
+	//	private long getSelectedImageSize()
 //	{
 //		long selectionSize = 0;
 //		for (Uri selected : mGalleryAdapter.getSelectedItems())

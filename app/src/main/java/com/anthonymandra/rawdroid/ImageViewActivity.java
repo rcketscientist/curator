@@ -14,6 +14,30 @@ import java.util.WeakHashMap;
 
 public class ImageViewActivity extends PhotoPage
 {
+	@Override
+	protected void updateMessage(String message)
+	{
+
+	}
+
+	@Override
+	protected void setMaxProgress(int max)
+	{
+
+	}
+
+	@Override
+	protected void incrementProgress()
+	{
+
+	}
+
+	@Override
+	protected void endProgress()
+	{
+
+	}
+
 	@SuppressWarnings("unused")
     private static final String TAG = ImageViewActivity.class.getSimpleName();
 

@@ -30,6 +30,30 @@ import java.io.IOException;
 
 public class LegacyViewerActivity extends ViewerActivity
 {
+	@Override
+	protected void updateMessage(String message)
+	{
+
+	}
+
+	@Override
+	protected void setMaxProgress(int max)
+	{
+
+	}
+
+	@Override
+	protected void incrementProgress()
+	{
+
+	}
+
+	@Override
+	protected void endProgress()
+	{
+
+	}
+
 	private static final String TAG = LegacyViewerActivity.class.getSimpleName();
 
 	private ImageViewer mImageViewer;

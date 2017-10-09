@@ -1,11 +1,17 @@
-include ':metadata-extractor'
-include ':documentActivity'
-include ':showcaseView'
-include ':inscription'
 include ':app'
-include ':rawprocessor'
-include ':toggleButtons'
-project(':rawprocessor').projectDir = new File('rawprocessor/library')
+include ':inscription'
+
+include ':metadata-extractor'
+
+include ':documentActivity'
 project(':documentActivity').projectDir = new File('DocumentActivity/library')
+
+include ':showcaseView'
 project(':showcaseView').projectDir = new File('showcaseView/library')
+
+include ':rawprocessor'
+project(':rawprocessor').projectDir = new File('rawprocessor/library')
+
+
+include ':toggleButtons'
 project(':toggleButtons').projectDir = new File('ToggleButtons/library')

@@ -28,6 +28,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -67,6 +68,8 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
 
+import org.reactivestreams.Subscription;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -77,6 +80,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public abstract class CoreActivity extends DocumentActivity
 {
@@ -961,6 +971,11 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
+	protected abstract void setMaxProgress(int max);
+	protected abstract void incrementProgress();
+	protected abstract void endProgress();
+	protected abstract void updateMessage(String message);
+
 	/**
 	 * File operation tasks
 	 */
@@ -986,6 +1001,53 @@ public abstract class CoreActivity extends DocumentActivity
 					ImageUtil.getJpgFile(this, toImage).getUri());
 		}
 		return copyFile(fromImage, toImage);
+	}
+
+	public void copyImages(final List<Uri> images, final Uri destination) {
+		setMaxProgress(images.size());
+		updateMessage("Copying...");
+		Observable.fromIterable(images)
+				.flatMap(image -> copyImage(image, destination)
+						.subscribeOn(Schedulers.io()), 10)  // concurrency must be on inner
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Observer<Uri>()
+				{
+					@Override
+					public void onSubscribe(Disposable d) {}
+
+					@Override
+					public void onNext(Uri uri)
+					{
+						incrementProgress();
+					}
+
+					@Override
+					public void onError(Throwable e)
+					{
+						//TODO
+					}
+
+					@Override
+					public void onComplete()
+					{
+						endProgress();
+						updateMessage(null);
+					}
+				});
+	}
+
+	private Observable<Uri> copyImage(final Uri uri, final Uri destinationFolder) {
+		return Observable.fromCallable(() ->
+		{
+			UsefulDocumentFile source = UsefulDocumentFile.fromUri(CoreActivity.this, uri);
+			Uri destinationFile = DocumentUtil.getChildUri(destinationFolder, source.getName());
+			copyAssociatedFiles(uri, destinationFile);
+			ContentValues cv = new ContentValues();
+			MetaUtil.getImageFileInfo(this, uri, cv);
+			getContentResolver().insert(Meta.CONTENT_URI, cv);
+			onImageAdded(uri);
+			return destinationFile;
+		});
 	}
 
 	public class CopyTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
