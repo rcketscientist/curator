@@ -56,7 +56,6 @@ import com.anthonymandra.widget.GalleryRecyclerAdapter;
 import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
 import com.inscription.WhatsNewDialog;
-import com.pluscubed.recyclerfastscroll.RecyclerFastScroller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
