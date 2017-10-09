@@ -2,11 +2,11 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="rectangle">
 
-	<solid android:color="@android:color/darker_gray" />
+	<solid android:color="@color/track_bar" />
 
 	<padding
-		android:top="10dp"
-		android:left="10dp"
-		android:right="10dp"
-		android:bottom="10dp"/>
+		android:top="2dp"
+		android:left="2dp"
+		android:right="2dp"
+		android:bottom="2dp"/>
 </shape>
