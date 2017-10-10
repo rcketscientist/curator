@@ -61,35 +61,6 @@ public class FileUtil
 	}
 
 	/**
-	 * Get the value of the data column for this Uri. This is useful for
-	 * MediaStore Uris, and other file-based ContentProviders.
-	 *
-	 * @param context The context.
-	 * @param uri The Uri to query.
-	 * @param selection (Optional) Filter used in the query.
-	 * @param selectionArgs (Optional) Selection arguments used in the query.
-	 * @return The value of the _data column, which is typically a file path.
-	 */
-	public static String getDataColumn(Context context, Uri uri, String selection,
-	                                   String[] selectionArgs) {
-
-		final String column = "_data";
-		final String[] projection = {
-				column
-		};
-
-		try (Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-					null))
-		{
-			if (cursor != null && cursor.moveToFirst()) {
-				final int column_index = cursor.getColumnIndexOrThrow(column);
-				return cursor.getString(column_index);
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Opens an InputStream to uri.  Checks if it's a local file to create a FileInputStream,
 	 * otherwise resorts to using the ContentResolver to request a stream.
 	 *
@@ -211,17 +182,6 @@ public class FileUtil
 		{
 			Utils.closeSilently(bos);
 			Utils.closeSilently(is);
-		}
-	}
-
-	public static String getRealPathFromURI(Context context, Uri contentUri)
-	{
-		final String[] proj = {MediaStore.Images.Media.DATA};
-		try (Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null))
-		{
-			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-			cursor.moveToFirst();
-			return cursor.getString(column_index);
 		}
 	}
 
