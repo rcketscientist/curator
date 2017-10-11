@@ -35,11 +35,23 @@ android {
 //        abortOnError false
     }
 
+    def schemaLocation = "$projectDir/schemas".toString()
+
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 26
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": schemaLocation]
+            }
+        }
+    }
+
+    sourceSets {
+        androidTest.assets.srcDirs += files(schemaLocation)
     }
 
     dataBinding {

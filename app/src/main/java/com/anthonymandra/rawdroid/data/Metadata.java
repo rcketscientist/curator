@@ -8,6 +8,9 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.anthonymandra.content.Meta;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 @Entity(tableName = Meta.META,
 		indices = { @Index(value = Meta.URI, unique = true),
@@ -84,6 +87,8 @@ public class Metadata
 
 class Xmp
 {
+	public static final String SELECT = Meta.RATING + ", " + Meta.SUBJECT + ", " + Meta.LABEL;
+
 	@ColumnInfo(name = Meta.RATING)
 	public String rating;
 
@@ -92,6 +97,11 @@ class Xmp
 
 	@ColumnInfo(name = Meta.LABEL)
 	public String label;
+
+	public static String getSelect()
+	{
+		return SELECT;
+	}
 }
 
 class FileInfo
@@ -110,7 +120,13 @@ class FileInfo
 
 	@ColumnInfo(name = Meta.URI)
 	public String uri;
+}
 
-	@ColumnInfo(name = Meta.DOCUMENT_ID)
-	public String documentId;
+class UriName
+{
+	@ColumnInfo(name = Meta.NAME)
+	public String name;
+
+	@ColumnInfo(name = Meta.URI)
+	public String uri;
 }

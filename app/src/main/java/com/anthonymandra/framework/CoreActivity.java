@@ -1822,6 +1822,7 @@ public abstract class CoreActivity extends DocumentActivity
 				selectionArgs[i] = selectedImages.get(i).toString();
 			}
 
+
 			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
 			// Grab existing metadata
 			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
