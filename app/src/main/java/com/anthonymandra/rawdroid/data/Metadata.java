@@ -92,16 +92,12 @@ class Xmp
 	@ColumnInfo(name = Meta.RATING)
 	public String rating;
 
-	@ColumnInfo(name = Meta.SUBJECT)
-	public String subject;
+	//FIXME: Handled by routing table
+//	@ColumnInfo(name = Meta.SUBJECT)
+//	public String subject;
 
 	@ColumnInfo(name = Meta.LABEL)
 	public String label;
-
-	public static String getSelect()
-	{
-		return SELECT;
-	}
 }
 
 class FileInfo
