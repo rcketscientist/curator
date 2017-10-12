@@ -124,6 +124,8 @@ class FileInfo
 
 class UriName
 {
+	public static final String SELECT = Meta.URI + "," + Meta.NAME;
+
 	@ColumnInfo(name = Meta.NAME)
 	public String name;
 

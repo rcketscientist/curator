@@ -50,6 +50,7 @@ import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.rawdroid.data.MetadataAccess;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;

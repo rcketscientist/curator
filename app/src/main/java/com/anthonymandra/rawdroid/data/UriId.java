@@ -6,6 +6,8 @@ import com.anthonymandra.content.Meta;
 
 public class UriId
 {
+	public static final String SELECT = Meta.URI + "," + Meta._ID;
+
 	@ColumnInfo(name = Meta.URI)
 	public String uri;
 

@@ -7,55 +7,76 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.net.Uri;
+import android.support.annotation.RestrictTo;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.XmpFilter;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Dao
 public abstract class MetadataAccess
 {
 	private static final String FROM_META = " FROM " + Meta.META;
-
-	private static final List<String> URI_ID = Arrays.asList(Meta.URI, Meta._ID);
-	private static final String URI_NAME = Meta.URI + "," + Meta.NAME;
-	private static final List<String> XMP =Arrays.asList(Meta.URI, Meta.RATING, Meta.SUBJECT, Meta.LABEL);
 	private static final String WHERE_UNPROCESSED = Meta.PROCESSED + " IS NULL OR " + Meta.PROCESSED + " = \"\"";
 	private static final String WHERE_URI = " WHERE " + Meta.URI;
 
 	@Query("SELECT COUNT(*)" + FROM_META)
 	public abstract int count();
 
-	@Query("SELECT :URI_ID" + FROM_META)
+	@Query("SELECT " + UriId.SELECT + FROM_META)
 	public abstract LiveData<List<UriId>> getUriId();
 
 	@Query("SELECT *" + FROM_META)
 	public abstract LiveData<List<Metadata>> getAll();
 
 	@Query("SELECT " + GalleryImage.SELECT +
-			" WHERE " + Meta.LABEL + " IN (:labels) :andOr :subjectsLikeClause :andOR" +
-			Meta.RATING + " IN (:ratings) AND :foldersLikeClause :orderClause" + FROM_META)
-	public abstract LiveData<List<GalleryImage>> getGalleryImages(
+			" WHERE " + Meta.LABEL + " IN (:labels) " +
+			"AND :subjectsLikeClause " +
+			"AND " + Meta.RATING + " IN (:ratings) " +
+			"AND :foldersLikeClause " +
+			"ORDER BY :orderClause" + FROM_META)
+	abstract LiveData<List<GalleryImage>> getGalleryImagesAND(
 			List<String> labels,
 			String subjectsLikeClause,
 			String foldersLikeClause,
 			List<Integer> ratings,
-			String andOr,
 			String orderClause);
 
-	public LiveData<List<GalleryImage>> getGalleryImages(List<String> labels,
-	                                                     String subjectsLikeClause,
-	                                                     String foldersLikeClause,
-	                                                     List<Integer> ratings,
-	                                                     String andOr,
-	                                                     String orderClause)
+	@Query("SELECT " + GalleryImage.SELECT +
+			" WHERE " + Meta.LABEL + " IN (:labels) " +
+			"OR :subjectsLikeClause " +
+			"OR " + Meta.RATING + " IN (:ratings) " +
+			"AND :foldersLikeClause " +
+			"ORDER BY :orderClause" + FROM_META)
+	abstract LiveData<List<GalleryImage>> getGalleryImagesOR(
+			List<String> labels,
+			String subjectsLikeClause,
+			String foldersLikeClause,
+			List<Integer> ratings,
+			String orderClause);
+
+	public LiveData<List<GalleryImage>> getGalleryImages(
+		List<String> labels,
+		List<String> subjects,
+		List<String> folders,
+		List<Integer> ratings,
+		boolean and,
+		boolean segregate,
+		boolean ascending,
+		XmpFilter.SortColumns sortBy)
 	{
-		String subjectClause =
+		String subjectClause = createLike(subjects, false, and, "%", "%");
+		String folderClause = createLike(folders, true, true, null, "%");
+		String orderClause = createOrderClause(segregate, sortBy, ascending);
+
+		if (and)
+			return getGalleryImagesAND(labels, subjectClause, folderClause, ratings, orderClause);
+		else
+			return getGalleryImagesOR(labels, subjectClause, folderClause, ratings, orderClause);
 	}
 
-	@Query("SELECT :URI_NAME" + " WHERE " + WHERE_UNPROCESSED + FROM_META)
+	@Query("SELECT " + UriName.SELECT + " WHERE " + WHERE_UNPROCESSED + FROM_META)
 	public abstract LiveData<List<UriName>> getUnprocessed();
 
 	@Query("SELECT " + Meta.URI + " WHERE " + " :where " + " ORDER BY " + " :order" + FROM_META)
@@ -97,7 +118,7 @@ public abstract class MetadataAccess
 	@Delete
 	public abstract void delete();
 
-	public static String createLike(List<String> likes, boolean not, boolean and)
+	public static String createLike(List<String> likes, boolean not, boolean and, String preWild, String postWild)
 	{
 		String LIKE = not ? " NOT LIKE " : " LIKE ";
 		String JOIN = and ? " AND " : " OR ";
@@ -105,7 +126,9 @@ public abstract class MetadataAccess
 
 		for (String like : likes)
 		{
+			if(preWild != null) clause.append(preWild);
 			clause.append(LIKE + " " + like + JOIN);
+			if(postWild != null) clause.append(postWild);
 		}
 
 		String result = clause.toString();
@@ -113,20 +136,22 @@ public abstract class MetadataAccess
 		return result;
 	}
 
-	public static String createOrderClause(boolean segregate, XmpFilter.SortColumns sortColumn)
+	public static String createOrderClause(boolean segregate, XmpFilter.SortColumns sortColumn, boolean ascending)
 	{
-		StringBuilder order = new StringBuilder();
-		order.append(" ORDER BY ");
+		// TODO: We could technically do this in an annotation
+		String order = ascending ? " ASC" : " DESC";
+		StringBuilder sort = new StringBuilder();
 		if (segregate)
-			order.append(Meta.TYPE + " COLLATE NOCASE ASC, ");
+			sort.append(Meta.TYPE + " COLLATE NOCASE ASC, ");
 
 		switch (sortColumn)
 		{
-			case Date: order.append(Meta.TIMESTAMP).append(order); break;
-			case Name: order.append(Meta.NAME).append(" COLLATE NOCASE").append(order); break;
-			default: order.append(Meta.NAME).append(" COLLATE NOCASE").append(" ASC");
+			// TODO: This is the data, move the enum here
+			case Date: sort.append(Meta.TIMESTAMP).append(order); break;
+			case Name: sort.append(Meta.NAME).append(" COLLATE NOCASE").append(order); break;
+			default: sort.append(Meta.NAME).append(" COLLATE NOCASE").append(" ASC");
 		}
-		return order.toString();
+		return sort.toString();
 	}
 
 //	public class Converters {
