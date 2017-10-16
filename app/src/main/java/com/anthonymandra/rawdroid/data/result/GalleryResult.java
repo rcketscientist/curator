@@ -1,11 +1,12 @@
-package com.anthonymandra.rawdroid.data;
+package com.anthonymandra.rawdroid.data.result;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawdroid.data.Xmp;
 
-public class GalleryImage
+public class GalleryResult
 {
 	public static final String SELECT = Xmp.SELECT + ", " +
 		Meta._ID + ", " + Meta.URI + ", " + Meta.NAME + ", " + Meta.TIMESTAMP + ", " +

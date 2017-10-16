@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.data;
+package com.anthonymandra.rawdroid.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -6,10 +6,11 @@ import android.arch.persistence.room.ForeignKey;
 import android.provider.BaseColumns;
 
 @Entity(foreignKeys =
-		@ForeignKey(entity = XmpSubject.class,
-					parentColumns = XmpSubject._ID,
-					childColumns = XmpSynonyms.SUBJECT_ID))
-public class XmpSynonyms {
+		@ForeignKey(entity = SubjectEntity.class,
+					parentColumns = SubjectEntity._ID,
+					childColumns = SynonymEntity.SUBJECT_ID))
+public class SynonymEntity
+{
 	public static final String _ID = BaseColumns._ID;
 	public static final String SUBJECT_ID = "subject_id";
 	public static final String SYNONYM = "synonym";
@@ -18,7 +19,7 @@ public class XmpSynonyms {
 	public long id;
 
 	@ColumnInfo(name = SUBJECT_ID)
-	private String subjectId;
+	public long subjectId;
 
 	@ColumnInfo(name = SYNONYM)
 	public String synonym;

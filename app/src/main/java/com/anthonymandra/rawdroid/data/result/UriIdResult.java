@@ -1,10 +1,10 @@
-package com.anthonymandra.rawdroid.data;
+package com.anthonymandra.rawdroid.data.result;
 
 import android.arch.persistence.room.ColumnInfo;
 
 import com.anthonymandra.content.Meta;
 
-public class UriId
+public class UriIdResult
 {
 	public static final String SELECT = Meta.URI + "," + Meta._ID;
 

@@ -1,8 +1,9 @@
-package com.anthonymandra.rawdroid.data;
+package com.anthonymandra.rawdroid.data.result;
 
 import android.arch.persistence.room.ColumnInfo;
 
 import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawdroid.data.Xmp;
 
 public class XmpResult extends Xmp
 {

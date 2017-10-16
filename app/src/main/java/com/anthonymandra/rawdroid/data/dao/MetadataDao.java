@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.data;
+package com.anthonymandra.rawdroid.data.dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
@@ -7,15 +7,20 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.net.Uri;
-import android.support.annotation.RestrictTo;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.XmpFilter;
+import com.anthonymandra.rawdroid.data.FileInfo;
+import com.anthonymandra.rawdroid.data.entity.MetadataEntity;
+import com.anthonymandra.rawdroid.data.result.GalleryResult;
+import com.anthonymandra.rawdroid.data.result.UriIdResult;
+import com.anthonymandra.rawdroid.data.result.UriNameResult;
+import com.anthonymandra.rawdroid.data.result.XmpResult;
 
 import java.util.List;
 
 @Dao
-public abstract class MetadataAccess
+public abstract class MetadataDao
 {
 	private static final String FROM_META = " FROM " + Meta.META;
 	private static final String WHERE_UNPROCESSED = Meta.PROCESSED + " IS NULL OR " + Meta.PROCESSED + " = \"\"";
@@ -24,39 +29,39 @@ public abstract class MetadataAccess
 	@Query("SELECT COUNT(*)" + FROM_META)
 	public abstract int count();
 
-	@Query("SELECT " + UriId.SELECT + FROM_META)
-	public abstract LiveData<List<UriId>> getUriId();
+	@Query("SELECT " + UriIdResult.SELECT + FROM_META)
+	public abstract LiveData<List<UriIdResult>> getUriId();
 
 	@Query("SELECT *" + FROM_META)
-	public abstract LiveData<List<Metadata>> getAll();
+	public abstract LiveData<List<MetadataEntity>> getAll();
 
-	@Query("SELECT " + GalleryImage.SELECT +
+	@Query("SELECT " + GalleryResult.SELECT +
 			" WHERE " + Meta.LABEL + " IN (:labels) " +
 			"AND :subjectsLikeClause " +
 			"AND " + Meta.RATING + " IN (:ratings) " +
 			"AND :foldersLikeClause " +
 			"ORDER BY :orderClause" + FROM_META)
-	abstract LiveData<List<GalleryImage>> getGalleryImagesAND(
+	abstract LiveData<List<GalleryResult>> getGalleryImagesAND(
 			List<String> labels,
 			String subjectsLikeClause,
 			String foldersLikeClause,
 			List<Integer> ratings,
 			String orderClause);
 
-	@Query("SELECT " + GalleryImage.SELECT +
+	@Query("SELECT " + GalleryResult.SELECT +
 			" WHERE " + Meta.LABEL + " IN (:labels) " +
 			"OR :subjectsLikeClause " +
 			"OR " + Meta.RATING + " IN (:ratings) " +
 			"AND :foldersLikeClause " +
 			"ORDER BY :orderClause" + FROM_META)
-	abstract LiveData<List<GalleryImage>> getGalleryImagesOR(
+	abstract LiveData<List<GalleryResult>> getGalleryImagesOR(
 			List<String> labels,
 			String subjectsLikeClause,
 			String foldersLikeClause,
 			List<Integer> ratings,
 			String orderClause);
 
-	public LiveData<List<GalleryImage>> getGalleryImages(
+	public LiveData<List<GalleryResult>> getGalleryImages(
 		List<String> labels,
 		List<String> subjects,
 		List<String> folders,
@@ -76,8 +81,8 @@ public abstract class MetadataAccess
 			return getGalleryImagesOR(labels, subjectClause, folderClause, ratings, orderClause);
 	}
 
-	@Query("SELECT " + UriName.SELECT + " WHERE " + WHERE_UNPROCESSED + FROM_META)
-	public abstract LiveData<List<UriName>> getUnprocessed();
+	@Query("SELECT " + UriNameResult.SELECT + " WHERE " + WHERE_UNPROCESSED + FROM_META)
+	public abstract LiveData<List<UriNameResult>> getUnprocessed();
 
 	@Query("SELECT " + Meta.URI + " WHERE " + " :where " + " ORDER BY " + " :order" + FROM_META)
 	public abstract LiveData<List<String>> getFilteredUri(String where, String order);
@@ -89,16 +94,16 @@ public abstract class MetadataAccess
 	public abstract LiveData<Integer> getType();
 
 	@Query("SELECT " + ":select" +  " WHERE " + ":where" + FROM_META)
-	public abstract LiveData<List<Metadata>> get(String select, String where);
+	public abstract LiveData<List<MetadataEntity>> get(String select, String where);
 
 	@Query("SELECT * " + " WHERE " + Meta.URI + " IN (:uris)" + FROM_META)
-	public abstract LiveData<List<Metadata>> getAll(List<Uri> uris);
+	public abstract LiveData<List<MetadataEntity>> getAll(List<Uri> uris);
 
 	@Query("SELECT " + XmpResult.SELECT + " WHERE " + Meta.URI + " IN (:uris)" + FROM_META)
 	public abstract LiveData<List<XmpResult>> getXmp(List<Uri> uris);
 
 	@Query("SELECT " + ":select" +  " WHERE " + ":where" + " ORDER BY " + " :order" + FROM_META)
-	public abstract LiveData<List<Metadata>> get(String select, String where, String order);
+	public abstract LiveData<List<MetadataEntity>> get(String select, String where, String order);
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	public abstract long insert(FileInfo file);
@@ -107,13 +112,13 @@ public abstract class MetadataAccess
 	public abstract long[] insert(FileInfo... files);
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public abstract long insert(Metadata datum);
+	public abstract long insert(MetadataEntity datum);
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public abstract long[] insert(Metadata... datums);
+	public abstract long[] insert(MetadataEntity... datums);
 
 	@Delete
-	public abstract void delete(Metadata... datums);
+	public abstract void delete(MetadataEntity... datums);
 
 	@Delete
 	public abstract void delete();

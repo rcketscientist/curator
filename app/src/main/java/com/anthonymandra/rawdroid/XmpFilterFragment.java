@@ -122,142 +122,84 @@ public class XmpFilterFragment extends XmpBaseFragment
 
 	private void attachButtons(View root)
     {
-        root.findViewById(R.id.clearFilterButton).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                clear();
-            }
-        });
+        root.findViewById(R.id.clearFilterButton).setOnClickListener(v -> clear());
 
-        final CompoundButton andOr = (CompoundButton) root.findViewById(R.id.toggleAnd);
+        final CompoundButton andOr = root.findViewById(R.id.toggleAnd);
         setAndOr(andOr.isChecked());
-        andOr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton button, boolean checked)
-            {
-                setAndOr(andOr.isChecked());
-            }
-        });
+        andOr.setOnCheckedChangeListener((button, checked) -> setAndOr(andOr.isChecked()));
 
-        ToggleGroup sort = (ToggleGroup) root.findViewById(R.id.sortGroup);
+        ToggleGroup sort = root.findViewById(R.id.sortGroup);
         setSort(sort.getCheckedId());
-        sort.setOnCheckedChangeListener(new ToggleGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(ToggleGroup group, int[] checkedId)
-            {
-                setSort(group.getCheckedId());
-            }
-        });
+        sort.setOnCheckedChangeListener((group, checkedId) -> setSort(group.getCheckedId()));
 
-        CompoundButton segregate = (CompoundButton) root.findViewById(R.id.toggleSegregate);
-        segregate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        CompoundButton segregate = root.findViewById(R.id.toggleSegregate);
+        segregate.setOnCheckedChangeListener((buttonView, isChecked) -> setSegregate(isChecked));
+
+        ImageButton clearFilter = root.findViewById(R.id.clearFilterButton);
+        clearFilter.setOnClickListener(v -> clear());
+
+        final ImageButton foldersButton = root.findViewById(R.id.buttonFolders);
+        foldersButton.setOnClickListener(v ->
         {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+
+            updatePaths();
+
+            int[] position = new int[2];
+            foldersButton.getLocationOnScreen(position);
+            mFolderDialog = FolderDialog.newInstance(
+                    new ArrayList<>(mPaths),
+                    new ArrayList<>(mHiddenFolders),
+                    new ArrayList<>(mExcludedFolders),
+                    position[0],
+                    position[1]);
+            mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog);
+            mFolderDialog.setOnVisibilityChangedListener(visibility ->
             {
-                mSegregateByType = isChecked;
+                if (visibility.visible)
+                {
+                    mHiddenFolders.remove(visibility.Path);
+                    for (String path : mPaths)
+                    {
+                        if (path.startsWith(visibility.Path))
+                            mHiddenFolders.remove(path);
+                    }
+                }
+                else
+                {
+                    mHiddenFolders.add(visibility.Path);
+                    for (String path : mPaths)
+                    {
+                        if (path.startsWith(visibility.Path))
+                            mHiddenFolders.add(path);
+                    }
+                }
+                if (visibility.excluded)
+                {
+                    mExcludedFolders.add(visibility.Path);
+                    for (String path : mPaths)
+                    {
+                        if (path.startsWith(visibility.Path))
+                            mExcludedFolders.add(path);
+                    }
+                }
+                else
+                {
+                    mExcludedFolders.remove(visibility.Path);
+                    for (String path : mPaths)
+                    {
+                        if (path.startsWith(visibility.Path))
+                            mExcludedFolders.remove(path);
+                    }
+                }
                 onFilterUpdated();
-            }
+            });
+            mFolderDialog.setSearchRequestedListener(() -> mRequestListener.onSearchRootRequested());
+
+            mFolderDialog.show(getFragmentManager(), TAG);
         });
 
-        ImageButton clearFilter = (ImageButton) root.findViewById(R.id.clearFilterButton);
-        clearFilter.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                clear();
-            }
-        });
-
-        final ImageButton foldersButton = (ImageButton) root.findViewById(R.id.buttonFolders);
-        foldersButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-
-                updatePaths();
-
-                int[] position = new int[2];
-                foldersButton.getLocationOnScreen(position);
-                mFolderDialog = FolderDialog.newInstance(
-                        new ArrayList<>(mPaths),
-                        new ArrayList<>(mHiddenFolders),
-                        new ArrayList<>(mExcludedFolders),
-                        position[0],
-                        position[1]);
-                mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog);
-                mFolderDialog.setOnVisibilityChangedListener(new FolderAdapter.OnVisibilityChangedListener()
-                {
-                    @Override
-                    public void onVisibilityChanged(FolderVisibility visibility)
-                    {
-                        if (visibility.visible)
-                        {
-                            mHiddenFolders.remove(visibility.Path);
-                            for (String path : mPaths)
-                            {
-                                if (path.startsWith(visibility.Path))
-                                    mHiddenFolders.remove(path);
-                            }
-                        }
-                        else
-                        {
-                            mHiddenFolders.add(visibility.Path);
-                            for (String path : mPaths)
-                            {
-                                if (path.startsWith(visibility.Path))
-                                    mHiddenFolders.add(path);
-                            }
-                        }
-                        if (visibility.excluded)
-                        {
-                            mExcludedFolders.add(visibility.Path);
-                            for (String path : mPaths)
-                            {
-                                if (path.startsWith(visibility.Path))
-                                    mExcludedFolders.add(path);
-                            }
-                        }
-                        else
-                        {
-                            mExcludedFolders.remove(visibility.Path);
-                            for (String path : mPaths)
-                            {
-                                if (path.startsWith(visibility.Path))
-                                    mExcludedFolders.remove(path);
-                            }
-                        }
-                        onFilterUpdated();
-                    }
-                });
-                mFolderDialog.setSearchRequestedListener(new SearchRootRequestedListener()
-                {
-                    @Override
-                    public void onSearchRootRequested()
-                    {
-                        mRequestListener.onSearchRootRequested();
-                    }
-                });
-
-                mFolderDialog.show(getFragmentManager(), TAG);
-            }
-        });
-
-        final ImageButton helpButton = (ImageButton) root.findViewById(R.id.helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                startTutorial();
-            }
-        });
+        final ImageButton helpButton = root.findViewById(R.id.helpButton);
+        helpButton.setOnClickListener(v -> startTutorial());
     }
 
     public void updatePaths()
@@ -268,6 +210,12 @@ public class XmpFilterFragment extends XmpBaseFragment
     private void setAndOr(boolean and)
     {
         mAndTrueOrFalse = and;
+        onFilterUpdated();
+    }
+
+    private void setSegregate(boolean segregate)
+    {
+        mSegregateByType = segregate;
         onFilterUpdated();
     }
 

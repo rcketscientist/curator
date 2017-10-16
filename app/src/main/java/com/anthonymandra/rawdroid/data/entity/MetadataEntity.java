@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.data;
+package com.anthonymandra.rawdroid.data.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
@@ -7,15 +7,14 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.anthonymandra.content.Meta;
-
-import java.util.Arrays;
-import java.util.List;
+import com.anthonymandra.rawdroid.data.FileInfo;
+import com.anthonymandra.rawdroid.data.Xmp;
 
 
 @Entity(tableName = Meta.META,
 		indices = { @Index(value = Meta.URI, unique = true),
 					@Index(value = Meta.DOCUMENT_ID, unique = true) })
-public class Metadata
+public class MetadataEntity
 {
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = Meta._ID)
@@ -85,46 +84,3 @@ public class Metadata
 	public String exposureProgram;
 }
 
-class Xmp
-{
-	public static final String SELECT = Meta.RATING + ", " + Meta.SUBJECT + ", " + Meta.LABEL;
-
-	@ColumnInfo(name = Meta.RATING)
-	public String rating;
-
-	//FIXME: Handled by routing table
-//	@ColumnInfo(name = Meta.SUBJECT)
-//	public String subject;
-
-	@ColumnInfo(name = Meta.LABEL)
-	public String label;
-}
-
-class FileInfo
-{
-	@ColumnInfo(name = Meta.NAME)
-	public String name;
-
-	@ColumnInfo(name = Meta.TYPE)
-	public int type;
-
-	@ColumnInfo(name = Meta.PROCESSED)
-	public Boolean processed;
-
-	@ColumnInfo(name = Meta.PARENT)
-	public String parent;
-
-	@ColumnInfo(name = Meta.URI)
-	public String uri;
-}
-
-class UriName
-{
-	public static final String SELECT = Meta.URI + "," + Meta.NAME;
-
-	@ColumnInfo(name = Meta.NAME)
-	public String name;
-
-	@ColumnInfo(name = Meta.URI)
-	public String uri;
-}
