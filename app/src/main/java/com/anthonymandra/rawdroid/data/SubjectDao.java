@@ -1,25 +1,17 @@
-package com.anthonymandra.rawdroid.data.dao;
+package com.anthonymandra.rawdroid.data;
 
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Relation;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.util.SparseArray;
 
 import com.anthonymandra.content.KeywordProvider;
-import com.anthonymandra.rawdroid.data.entity.FolderEntity;
-import com.anthonymandra.rawdroid.data.entity.SynonymEntity;
-import com.anthonymandra.util.DbUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Dao
 public abstract class SubjectDao extends PathDao

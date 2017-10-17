@@ -164,6 +164,13 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:" + rootProject.archRoomVersion
     annotationProcessor "android.arch.persistence.room:compiler:" + rootProject.archRoomVersion
     testImplementation "android.arch.persistence.room:testing:" + rootProject.archRoomVersion
+
+    // Required for local unit tests (JUnit 4 framework)
+    testCompile 'junit:junit:4.12'
+
+    // Required for instrumented tests
+    androidTestCompile 'com.android.support:support-annotations:26.1.0'
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
 }
 
 crashlytics {

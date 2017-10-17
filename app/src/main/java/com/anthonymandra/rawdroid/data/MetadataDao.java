@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.data.dao;
+package com.anthonymandra.rawdroid.data;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
@@ -10,12 +10,6 @@ import android.net.Uri;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.XmpFilter;
-import com.anthonymandra.rawdroid.data.FileInfo;
-import com.anthonymandra.rawdroid.data.entity.MetadataEntity;
-import com.anthonymandra.rawdroid.data.result.GalleryResult;
-import com.anthonymandra.rawdroid.data.result.UriIdResult;
-import com.anthonymandra.rawdroid.data.result.UriNameResult;
-import com.anthonymandra.rawdroid.data.result.XmpResult;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.data.dao;
+package com.anthonymandra.rawdroid.data;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -6,8 +6,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 import android.database.SQLException;
-
-import com.anthonymandra.rawdroid.data.entity.PathEntity;
 
 import java.util.List;
 

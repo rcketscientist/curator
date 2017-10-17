@@ -1,4 +1,4 @@
-package com.anthonymandra.rawdroid.data.entity;
+package com.anthonymandra.rawdroid.data;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;
