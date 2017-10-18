@@ -9,16 +9,18 @@ import android.provider.BaseColumns;
 import java.util.List;
 
 @Entity(tableName = SubjectEntity.DATABASE)
-public class SubjectEntity extends PathEntity
+public abstract class SubjectEntity extends PathEntity
 {
 	public static final String DATABASE = "xmp_subject";
-	public static final String _ID = BaseColumns._ID;
 	public static final String NAME = "name";
 	public static final String RECENT = "recent";
 
-	@PrimaryKey(autoGenerate = true)
-	@ColumnInfo(name = _ID)
-	public long id;
+	SubjectEntity(long id, String path, int depth, String name, String recent)
+	{
+		super(id, path, depth);
+		this.name = name;
+		this.recent = recent;
+	}
 
 	@ColumnInfo(name = NAME)
 	public String name;
@@ -26,6 +28,6 @@ public class SubjectEntity extends PathEntity
 	@ColumnInfo(name = RECENT)
 	public String recent;
 
-	@Relation(projection = SynonymEntity.SYNONYM, parentColumn = _ID, entityColumn = SynonymEntity.SUBJECT_ID)
+	@Relation(projection = SynonymEntity.SYNONYM, entityColumn = _ID, parentColumn = SynonymEntity.SUBJECT_ID)
 	public List<String> synonyms;
 }

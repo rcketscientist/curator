@@ -12,7 +12,7 @@ public class Xmp
 	@ColumnInfo(name = Meta.RATING)
 	public String rating;
 
-	@Relation(parentColumn = Meta._ID, entityColumn = Meta.SUBJECT)
+	@Relation(parentColumn = Meta._ID, entityColumn = SubjectEntity._ID)
 	public String subject;
 
 	@ColumnInfo(name = Meta.LABEL)

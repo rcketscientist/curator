@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 import android.net.Uri;
 
 import com.anthonymandra.content.Meta;
@@ -29,51 +30,51 @@ public abstract class MetadataDao
 	@Query("SELECT *" + FROM_META)
 	public abstract LiveData<List<MetadataEntity>> getAll();
 
-	@Query("SELECT " + GalleryResult.SELECT +
-			" WHERE " + Meta.LABEL + " IN (:labels) " +
-			"AND :subjectsLikeClause " +
-			"AND " + Meta.RATING + " IN (:ratings) " +
-			"AND :foldersLikeClause " +
-			"ORDER BY :orderClause" + FROM_META)
-	abstract LiveData<List<GalleryResult>> getGalleryImagesAND(
-			List<String> labels,
-			String subjectsLikeClause,
-			String foldersLikeClause,
-			List<Integer> ratings,
-			String orderClause);
+//	@Query("SELECT " + GalleryResult.SELECT +
+//			" WHERE " + Meta.LABEL + " IN (:labels) " +
+//			"AND :subjectsLikeClause " +
+//			"AND " + Meta.RATING + " IN (:ratings) " +
+//			"AND :foldersLikeClause " +
+//			"ORDER BY :orderClause FROM " + Meta.META)
+//	abstract LiveData<List<GalleryResult>> getGalleryImagesAND(
+//			List<String> labels,
+//			String subjectsLikeClause,
+//			String foldersLikeClause,
+//			List<Integer> ratings,
+//			String orderClause);
 
-	@Query("SELECT " + GalleryResult.SELECT +
-			" WHERE " + Meta.LABEL + " IN (:labels) " +
-			"OR :subjectsLikeClause " +
-			"OR " + Meta.RATING + " IN (:ratings) " +
-			"AND :foldersLikeClause " +
-			"ORDER BY :orderClause" + FROM_META)
-	abstract LiveData<List<GalleryResult>> getGalleryImagesOR(
-			List<String> labels,
-			String subjectsLikeClause,
-			String foldersLikeClause,
-			List<Integer> ratings,
-			String orderClause);
+//	@Query("SELECT " + GalleryResult.SELECT +
+//			" WHERE " + Meta.LABEL + " IN (:labels) " +
+//			"OR :subjectsLikeClause " +
+//			"OR " + Meta.RATING + " IN (:ratings) " +
+//			"AND :foldersLikeClause " +
+//			"ORDER BY :orderClause" + FROM_META)
+//	abstract LiveData<List<GalleryResult>> getGalleryImagesOR(
+//			List<String> labels,
+//			String subjectsLikeClause,
+//			String foldersLikeClause,
+//			List<Integer> ratings,
+//			String orderClause);
 
-	public LiveData<List<GalleryResult>> getGalleryImages(
-		List<String> labels,
-		List<String> subjects,
-		List<String> folders,
-		List<Integer> ratings,
-		boolean and,
-		boolean segregate,
-		boolean ascending,
-		XmpFilter.SortColumns sortBy)
-	{
-		String subjectClause = createLike(subjects, false, and, "%", "%");
-		String folderClause = createLike(folders, true, true, null, "%");
-		String orderClause = createOrderClause(segregate, sortBy, ascending);
-
-		if (and)
-			return getGalleryImagesAND(labels, subjectClause, folderClause, ratings, orderClause);
-		else
-			return getGalleryImagesOR(labels, subjectClause, folderClause, ratings, orderClause);
-	}
+//	public LiveData<List<GalleryResult>> getGalleryImages(
+//		List<String> labels,
+//		List<String> subjects,
+//		List<String> folders,
+//		List<Integer> ratings,
+//		boolean and,
+//		boolean segregate,
+//		boolean ascending,
+//		XmpFilter.SortColumns sortBy)
+//	{
+//		String subjectClause = createLike(subjects, false, and, "%", "%");
+//		String folderClause = createLike(folders, true, true, null, "%");
+//		String orderClause = createOrderClause(segregate, sortBy, ascending);
+//
+//		if (and)
+//			return getGalleryImagesAND(labels, subjectClause, folderClause, ratings, orderClause);
+//		else
+//			return getGalleryImagesOR(labels, subjectClause, folderClause, ratings, orderClause);
+//	}
 
 	@Query("SELECT " + UriNameResult.SELECT + " WHERE " + WHERE_UNPROCESSED + FROM_META)
 	public abstract LiveData<List<UriNameResult>> getUnprocessed();
@@ -86,6 +87,9 @@ public abstract class MetadataDao
 
 	@Query("SELECT " + Meta.TYPE + WHERE_URI + " = :uri" + FROM_META)
 	public abstract LiveData<Integer> getType();
+
+	@Query("SELECT * " +  " WHERE " + Meta._ID + " = :id " + FROM_META)
+	public abstract LiveData<MetadataEntity> get(long id);
 
 	@Query("SELECT " + ":select" +  " WHERE " + ":where" + FROM_META)
 	public abstract LiveData<List<MetadataEntity>> get(String select, String where);
@@ -110,6 +114,9 @@ public abstract class MetadataDao
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	public abstract long[] insert(MetadataEntity... datums);
+
+	@Update
+	public abstract void update(MetadataEntity... datums);
 
 	@Delete
 	public abstract void delete(MetadataEntity... datums);

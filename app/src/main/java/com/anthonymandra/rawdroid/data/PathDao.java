@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public abstract class PathDao
 {
-	protected final static String DATABASE = "Overwrite Me";
+	protected final static String DATABASE = "Overwrite";
 	private static final String PATH_DELIMITER = "/";
 
 	@Query("SELECT * FROM " + DATABASE + " WHERE " + PathEntity._ID + "= :id ")
@@ -27,7 +27,7 @@ public abstract class PathDao
 	abstract List<Long> getAncestorsInternal(String path);
 
 	@Insert
-	abstract long insertInternal(PathEntity... entities);
+	abstract void insertInternal(PathEntity... entities);
 
 //	@Insert
 //	abstract List<Long> insertInternal(PathEntity... entities);

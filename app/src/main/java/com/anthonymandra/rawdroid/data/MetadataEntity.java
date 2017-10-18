@@ -5,10 +5,9 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.Relation;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.rawdroid.data.FileInfo;
-import com.anthonymandra.rawdroid.data.Xmp;
 
 
 @Entity(tableName = Meta.META,
@@ -18,13 +17,40 @@ public class MetadataEntity
 {
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = Meta._ID)
-	public long id;
+	public Integer id;
 
-	@Embedded
-	public FileInfo fileInfo;
+	@ColumnInfo(name = Meta.NAME)
+	public String name;
 
-	@Embedded
-	public Xmp xmp;
+	@ColumnInfo(name = Meta.TYPE)
+	public int type;
+
+	@ColumnInfo(name = Meta.PROCESSED)
+	public Boolean processed;
+
+	@ColumnInfo(name = Meta.URI)
+	public String uri;
+
+//	@Embedded
+//	public FileInfo fileInfo;
+
+	@ColumnInfo(name = Meta.DOCUMENT_ID)
+	public String documentId;
+
+	@Relation(projection = FolderEntity.DOCUMENT_ID, parentColumn = Meta._ID, entityColumn = FolderEntity._ID)
+	public String parent;
+
+//	@Embedded
+//	public Xmp xmp;
+
+	@ColumnInfo(name = Meta.RATING)
+	public String rating;
+
+	@Relation(parentColumn = Meta._ID, entityColumn = SubjectEntity._ID)
+	public String subject;
+
+	@ColumnInfo(name = Meta.LABEL)
+	public String label;
 
 	@ColumnInfo(name = Meta.TIMESTAMP)
 	public String timestamp;

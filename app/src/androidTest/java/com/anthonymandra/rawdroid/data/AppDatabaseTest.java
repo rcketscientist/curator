@@ -11,20 +11,19 @@ import java.util.List;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 
 public class AppDatabaseTest
 {
-	AppDatabase db;
-	FolderDao folderDao;
-	MetadataDao metadataDao;
-	SubjectDao subjectDao;
+	private AppDatabase db;
+	private FolderDao folderDao;
+	private MetadataDao metadataDao;
+	private SubjectDao subjectDao;
 
 	@Before
 	public void setUp() throws Exception
 	{
-		db=AppDatabase.create(InstrumentationRegistry.getTargetContext(), true);
+		db = AppDatabase.create(InstrumentationRegistry.getTargetContext(), true);
 		folderDao = db.folderDao();
 		metadataDao = db.metadataDao();
 		subjectDao = db.subjectDao();
@@ -37,46 +36,127 @@ public class AppDatabaseTest
 	}
 
 	@Test
-	public void loadFolders() {
-		assertNotNull(folderDao.getAll().getValue());   //TODO: Does zero = null return?
-		assertEquals(0, folderDao.getAll().getValue().size());
+	public void testFolders() {
+		assertEquals(0, folderDao.count());
 		final FolderEntity first = new FolderEntity(
 				"source:folder/file", 0, "/0", 0);
 
 		folderDao.insert(first);
 
-		assertNotNull(first.id);    //TODO: Does this update?
+		assertFolder(first);
 
+		final FolderEntity updated = new FolderEntity(
+				first.documentId,
+				first.id,
+				first.path,
+				first.depth);
+
+		updated.documentId = "source:/folder2/file2";
+		updated.depth = 1;
+
+		folderDao.update(updated);
+		assertFolder(updated);
+
+		folderDao.delete(updated);
+		assertEquals(0, folderDao.count());
+	}
+
+	private void assertFolder(FolderEntity entity) {
 		List<FolderEntity> results = folderDao.getAll().getValue();
+
 		assertNotNull(results);
 		assertEquals(1, results.size());
-		assertTrue(first.equals(results.get(0)));
+		assertTrue(entity.equals(results.get(0)));
 
-		assertTrue(areIdentical(trip, results.get(0)));
+		FolderEntity result = folderDao.get(entity.id).getValue();
 
-
-		assertTrip(store, first);
-		final Trip updated=new Trip(first.id, "Foo!!!", 1440);
-		store.update(updated);
-		assertTrip(store, updated);
-		store.delete(updated);
-		assertEquals(0, store.selectAll().size());
+		assertNotNull(result);
+		assertTrue(result.equals(entity));
 	}
-
 
 	@Test
-	public void basics() {
-		assertEquals(0, store.selectAll().size());
-		final Trip first=new Trip("Foo", 2880);
-		assertNotNull(first.id);
-		assertNotEquals(0, first.id.length());
-		store.insert(first);
-		assertTrip(store, first);
-		final Trip updated=new Trip(first.id, "Foo!!!", 1440);
-		store.update(updated);
-		assertTrip(store, updated);
-		store.delete(updated);
-		assertEquals(0, store.selectAll().size());
+	public void testMetadata() {
+		assertEquals(0, metadataDao.count());
+		final MetadataEntity first = getTestData(false);
+
+		metadataDao.insert(first);
+
+		assertMetadata(first);
+
+		final MetadataEntity updated = getTestData(true);
+
+		metadataDao.update(updated);
+		assertMetadata(updated);
+
+		metadataDao.delete(updated);
+		assertEquals(0, metadataDao.count());
+	}
+	
+	private MetadataEntity getTestData(boolean update) {
+		final MetadataEntity meta = new MetadataEntity();
+		meta.altitude = update ? "altitude" : "altitude2";
+		meta.aperture = update ? "aperture" : "aperture2";
+		meta.driveMode = update ? "driveMode" : "driveMode2";
+		meta.exposure = update ? "exposure" : "exposure2";
+		meta.exposureMode = update ? "exposureMode" : "exposureMode2";
+		meta.exposureProgram = update ? "exposureProgram" : "exposureProgram2";
+		meta.flash = update ? "flash" : "flash2";
+		meta.focalLength = update ? "focalLength" : "focalLength2";
+		meta.height = update ? 1080 : 2160;
+		meta.width = update ? 1920 : 3840;
+		meta.iso = update ? "iso" : "iso2";
+		meta.latitude = update ? "latitude" : "latitude2";
+		meta.lens = update ? "lens" : "lens2";
+		meta.longitude = update ? "longitude" : "longitude2";
+		meta.make = update ? "make" : "make2";
+		meta.orientation = update ? 12 : 24;
+		meta.timestamp = update ? "timestamp" : "timestamp2";  //TODO: long?
+		meta.model = update ? "model" : "model2";
+		meta.whiteBalance = update ? "whiteBalance" : "whiteBalance2";
+		meta.xmp = new Xmp();
+		meta.xmp.label = update ? "label" : "label2";
+		meta.xmp.rating = update ? "rating" : "rating2";
+		meta.xmp.subject = update ? "subject" : "subject2";
+		return meta;
 	}
 
+	private void assertMetadata(MetadataEntity entity) {
+		List<MetadataEntity> results = metadataDao.getAll().getValue();
+
+		assertNotNull(results);
+		assertEquals(1, results.size());
+		assertMetaEquality(results.get(0), entity);
+		
+		MetadataEntity result = metadataDao.get(entity.id).getValue();
+
+		assertNotNull(result);
+		assertMetaEquality(result, entity);
+	}
+
+
+	private void assertMetaEquality(MetadataEntity one, MetadataEntity two) {
+		assertTrue(
+		one.altitude.equals(two.altitude) &&
+		one.aperture.equals(two.aperture) &&
+		one.driveMode.equals(two.driveMode) &&
+		one.exposure.equals(two.exposure) &&
+		one.exposureMode.equals(two.exposureMode) &&
+		one.exposureProgram.equals(two.exposureProgram) &&
+		one.flash.equals(two.flash) &&
+		one.focalLength.equals(two.focalLength) &&
+		one.height == two.height &&
+		one.width == two.width &&
+		one.iso.equals(two.iso) &&
+		one.latitude.equals(two.latitude) &&
+		one.lens.equals(two.lens) &&
+		one.longitude.equals(two.longitude) &&
+		one.make.equals(two.make) &&
+		one.orientation == two.orientation &&
+		one.timestamp.equals(two.timestamp) &&
+		one.model.equals(two.model) &&
+		one.whiteBalance.equals(two.whiteBalance) &&
+		one.xmp.label.equals(two.xmp.label) &&
+		one.xmp.rating.equals(two.xmp.rating) &&
+		one.xmp.subject.equals(two.xmp.subject));
+	}
 }

@@ -17,7 +17,7 @@ public class FolderEntity extends PathEntity
 	}
 
 	@ColumnInfo(name = DOCUMENT_ID)
-	public String documentId;
+	public String documentId;   // TODO: This might not be necessary, prolly should have uri though
 
 	@Override
 	public boolean equals(Object obj)
