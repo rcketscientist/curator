@@ -27,6 +27,9 @@ public abstract class PathDao
 	abstract List<Long> getAncestorsInternal(String path);
 
 	@Insert
+	abstract Long insertInternal(PathEntity entities);
+
+	@Insert
 	abstract void insertInternal(PathEntity... entities);
 
 //	@Insert
@@ -65,7 +68,7 @@ public abstract class PathDao
 		// Since the column is unique we must put a unique placeholder
 //		entity.path = UUID.randomUUID().toString();
 
-		long childId = insertInternal(entity);
+		Long childId = insertInternal(entity);
 		if (childId == -1)
 			return -1;
 

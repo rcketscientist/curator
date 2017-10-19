@@ -28,6 +28,6 @@ public abstract class SubjectEntity extends PathEntity
 	@ColumnInfo(name = RECENT)
 	public String recent;
 
-	@Relation(projection = SynonymEntity.SYNONYM, entityColumn = _ID, parentColumn = SynonymEntity.SUBJECT_ID)
+	@Relation(projection = SynonymEntity.SYNONYM, entityColumn = SynonymEntity.SUBJECT_ID, parentColumn = _ID)
 	public List<String> synonyms;
 }

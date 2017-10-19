@@ -20,12 +20,12 @@ public abstract class PathEntity
 
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = _ID)
-	public long id;
+	public Long id;
 
 	@ColumnInfo(name = PATH)
 	public String path;
 
-	public long parent = -1;
+	public Long parent = null;
 
 	@ColumnInfo(name = DEPTH)
 	public int depth;

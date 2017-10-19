@@ -14,20 +14,21 @@ import com.anthonymandra.rawdroid.XmpFilter;
 
 import java.util.List;
 
+import static com.anthonymandra.content.Meta.META;
+
 @Dao
 public abstract class MetadataDao
 {
-	private static final String FROM_META = " FROM " + Meta.META;
 	private static final String WHERE_UNPROCESSED = Meta.PROCESSED + " IS NULL OR " + Meta.PROCESSED + " = \"\"";
 	private static final String WHERE_URI = " WHERE " + Meta.URI;
 
-	@Query("SELECT COUNT(*)" + FROM_META)
+	@Query("SELECT COUNT(*) FROM " + Meta.META)
 	public abstract int count();
 
-	@Query("SELECT " + UriIdResult.SELECT + FROM_META)
+	@Query("SELECT " + UriIdResult.SELECT + " FROM " + Meta.META)
 	public abstract LiveData<List<UriIdResult>> getUriId();
 
-	@Query("SELECT *" + FROM_META)
+	@Query("SELECT * FROM " + Meta.META)
 	public abstract LiveData<List<MetadataEntity>> getAll();
 
 //	@Query("SELECT " + GalleryResult.SELECT +
@@ -48,7 +49,7 @@ public abstract class MetadataDao
 //			"OR :subjectsLikeClause " +
 //			"OR " + Meta.RATING + " IN (:ratings) " +
 //			"AND :foldersLikeClause " +
-//			"ORDER BY :orderClause" + FROM_META)
+//			"ORDER BY :orderClause" + FROM " + Meta.META)
 //	abstract LiveData<List<GalleryResult>> getGalleryImagesOR(
 //			List<String> labels,
 //			String subjectsLikeClause,
@@ -76,38 +77,33 @@ public abstract class MetadataDao
 //			return getGalleryImagesOR(labels, subjectClause, folderClause, ratings, orderClause);
 //	}
 
-	@Query("SELECT " + UriNameResult.SELECT + " WHERE " + WHERE_UNPROCESSED + FROM_META)
-	public abstract LiveData<List<UriNameResult>> getUnprocessed();
+//	@Query("SELECT " + UriNameResult.SELECT + " WHERE " + WHERE_UNPROCESSED + " FROM " + Meta.META)
+//	public abstract LiveData<List<UriNameResult>> getUnprocessed();
 
-	@Query("SELECT " + Meta.URI + " WHERE " + " :where " + " ORDER BY " + " :order" + FROM_META)
-	public abstract LiveData<List<String>> getFilteredUri(String where, String order);
+//	@Query("SELECT " + Meta.URI + " WHERE " + " :where " + " ORDER BY " + " :order" + FROM " + Meta.META)
+//	public abstract LiveData<List<String>> getFilteredUri(String where, String order);
 
-	@Query("SELECT DISTINCT " + Meta.PARENT + " ORDER BY " + Meta.PARENT + " ASC" + FROM_META)
-	public abstract LiveData<List<String>> getFolders();
+	//TODO: FolderDao.getAll should suffice?
+//	@Query("SELECT DISTINCT " + Meta.PARENT + " FROM " + Meta.META + " ORDER BY " + Meta.PARENT + " ASC")
+//	public abstract LiveData<List<String>> getParentFolders();
 
-	@Query("SELECT " + Meta.TYPE + WHERE_URI + " = :uri" + FROM_META)
-	public abstract LiveData<Integer> getType();
+//	@Query("SELECT " + Meta.TYPE + WHERE_URI + " = :uri" + FROM " + Meta.META)
+//	public abstract LiveData<Integer> getType();
 
-	@Query("SELECT * " +  " WHERE " + Meta._ID + " = :id " + FROM_META)
+	@Query("SELECT * FROM " + Meta.META +  " WHERE " + Meta._ID + " = :id")
 	public abstract LiveData<MetadataEntity> get(long id);
 
-	@Query("SELECT " + ":select" +  " WHERE " + ":where" + FROM_META)
-	public abstract LiveData<List<MetadataEntity>> get(String select, String where);
+//	@Query("SELECT " + ":select" +  " WHERE " + ":where" + FROM " + Meta.META)
+//	public abstract LiveData<List<MetadataEntity>> get(String select, String where);
 
-	@Query("SELECT * " + " WHERE " + Meta.URI + " IN (:uris)" + FROM_META)
-	public abstract LiveData<List<MetadataEntity>> getAll(List<Uri> uris);
+	@Query("SELECT * FROM " + Meta.META + " WHERE " + Meta.URI + " IN (:uris)")
+	public abstract LiveData<List<MetadataEntity>> getAll(List<String> uris);
 
-	@Query("SELECT " + XmpResult.SELECT + " WHERE " + Meta.URI + " IN (:uris)" + FROM_META)
-	public abstract LiveData<List<XmpResult>> getXmp(List<Uri> uris);
+	@Query("SELECT " + XmpResult.SELECT + " FROM " + Meta.META + " WHERE " + Meta.URI + " IN (:uris)")
+	public abstract LiveData<List<XmpResult>> getXmp(List<String> uris);
 
-	@Query("SELECT " + ":select" +  " WHERE " + ":where" + " ORDER BY " + " :order" + FROM_META)
-	public abstract LiveData<List<MetadataEntity>> get(String select, String where, String order);
-
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public abstract long insert(FileInfo file);
-
-	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public abstract long[] insert(FileInfo... files);
+//	@Query("SELECT " + ":select" +  " WHERE " + ":where" + " ORDER BY " + " :order" + FROM " + Meta.META)
+//	public abstract LiveData<List<MetadataEntity>> get(String select, String where, String order);
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
 	public abstract long insert(MetadataEntity datum);
@@ -120,9 +116,6 @@ public abstract class MetadataDao
 
 	@Delete
 	public abstract void delete(MetadataEntity... datums);
-
-	@Delete
-	public abstract void delete();
 
 	public static String createLike(List<String> likes, boolean not, boolean and, String preWild, String postWild)
 	{

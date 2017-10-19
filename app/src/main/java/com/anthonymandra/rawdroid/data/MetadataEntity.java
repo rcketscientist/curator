@@ -9,12 +9,25 @@ import android.arch.persistence.room.Relation;
 
 import com.anthonymandra.content.Meta;
 
+import java.util.List;
+
 
 @Entity(tableName = Meta.META,
 		indices = { @Index(value = Meta.URI, unique = true),
 					@Index(value = Meta.DOCUMENT_ID, unique = true) })
 public class MetadataEntity
 {
+	public static MetadataEntity createMetadataEntity(SearchEntity file) {
+		MetadataEntity meta = new MetadataEntity();
+		meta.name = file.name;
+		meta.type = file.type;
+		meta.parent = file.parent;
+		meta.uri = file.uri;
+		meta.documentId = file.documentId;
+		meta.timestamp = file.timestamp;
+		return meta;
+	}
+
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = Meta._ID)
 	public Integer id;
@@ -31,26 +44,22 @@ public class MetadataEntity
 	@ColumnInfo(name = Meta.URI)
 	public String uri;
 
-//	@Embedded
-//	public FileInfo fileInfo;
-
 	@ColumnInfo(name = Meta.DOCUMENT_ID)
 	public String documentId;
 
 	@Relation(projection = FolderEntity.DOCUMENT_ID, parentColumn = Meta._ID, entityColumn = FolderEntity._ID)
 	public String parent;
 
-//	@Embedded
-//	public Xmp xmp;
-
-	@ColumnInfo(name = Meta.RATING)
-	public String rating;
-
-	@Relation(parentColumn = Meta._ID, entityColumn = SubjectEntity._ID)
-	public String subject;
-
-	@ColumnInfo(name = Meta.LABEL)
-	public String label;
+	@Embedded
+	public Xmp xmp;
+//	@ColumnInfo(name = Meta.RATING)
+//	public String rating;
+//
+//	@Relation(entity = SubjectJunction.class, parentColumn = Meta._ID, entityColumn = SubjectJunction.META_ID)
+//	public List<SubjectJunction> subject;
+//
+//	@ColumnInfo(name = Meta.LABEL)
+//	public String label;
 
 	@ColumnInfo(name = Meta.TIMESTAMP)
 	public String timestamp;
