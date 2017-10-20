@@ -21,7 +21,7 @@ public class MetadataEntity
 		MetadataEntity meta = new MetadataEntity();
 		meta.name = file.name;
 		meta.type = file.type;
-		meta.parent = file.parent;
+//		meta.parent = file.parent;  //TODO:
 		meta.uri = file.uri;
 		meta.documentId = file.documentId;
 		meta.timestamp = file.timestamp;
@@ -48,18 +48,16 @@ public class MetadataEntity
 	public String documentId;
 
 	@Relation(projection = FolderEntity.DOCUMENT_ID, parentColumn = Meta._ID, entityColumn = FolderEntity._ID)
-	public String parent;
+	public List<String> parent;
 
-	@Embedded
-	public Xmp xmp;
-//	@ColumnInfo(name = Meta.RATING)
-//	public String rating;
-//
-//	@Relation(entity = SubjectJunction.class, parentColumn = Meta._ID, entityColumn = SubjectJunction.META_ID)
-//	public List<SubjectJunction> subject;
-//
-//	@ColumnInfo(name = Meta.LABEL)
-//	public String label;
+	@ColumnInfo(name = Meta.RATING)
+	public String rating;
+
+	@Relation(entity = SubjectJunction.class, projection = SubjectJunction.SUBJECT_ID, parentColumn = Meta._ID, entityColumn = SubjectJunction.META_ID)
+	public List<Long> subject;
+
+	@ColumnInfo(name = Meta.LABEL)
+	public String label;
 
 	@ColumnInfo(name = Meta.TIMESTAMP)
 	public String timestamp;

@@ -1,6 +1,10 @@
 package com.anthonymandra.rawdroid.data;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,11 +16,38 @@ import com.anthonymandra.content.KeywordProvider;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.List;
 
 @Dao
-public abstract class SubjectDao extends PathDao
+public abstract class SubjectDao extends PathBase
 {
-	protected final static String DATABASE = FolderEntity.DATABASE;
+	protected final static String DATABASE = SubjectEntity.DATABASE;
+
+	@Query("SELECT * FROM " + DATABASE + " WHERE " + SubjectEntity._ID + "= :id ")
+	abstract SubjectEntity getPath(long id);    // private ideal
+
+	@Query("SELECT " + SubjectEntity._ID + " FROM " + DATABASE +
+			" WHERE " + SubjectEntity.PATH + " LIKE :path || '%'")
+	abstract List<Long> getDescendantsInternal(String path);
+
+	@Query("SELECT " + SubjectEntity._ID + " FROM " + DATABASE +
+			" WHERE :path LIKE " + SubjectEntity.PATH + " || '%'")
+	abstract List<Long> getAncestorsInternal(String path);
+
+	@Insert
+	abstract Long insertInternal(SubjectEntity entities);
+
+	@Insert
+	abstract void insertInternal(SubjectEntity... entities);
+
+//	@Insert
+//	abstract List<Long> insertInternal(PathEntity... entities);
+
+	@Update
+	public abstract void update(SubjectEntity... entities);
+
+	@Delete
+	public abstract void delete(SubjectEntity... entities);
 
 	public boolean importKeywords(Context context, Reader keywordList)
 	{

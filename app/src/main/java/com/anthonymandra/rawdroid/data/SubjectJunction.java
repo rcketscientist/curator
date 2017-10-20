@@ -18,8 +18,8 @@ public class SubjectJunction
 	public static final String SUBJECT_ID = "subject_id";
 
 	@ColumnInfo(name = META_ID)
-	public String metaId;
+	public Long metaId;
 
 	@ColumnInfo(name = SUBJECT_ID)
-	public String subjectId;
+	public Long subjectId;
 }

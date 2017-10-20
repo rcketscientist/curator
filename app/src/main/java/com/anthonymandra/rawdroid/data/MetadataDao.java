@@ -7,14 +7,11 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-import android.net.Uri;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.XmpFilter;
 
 import java.util.List;
-
-import static com.anthonymandra.content.Meta.META;
 
 @Dao
 public abstract class MetadataDao

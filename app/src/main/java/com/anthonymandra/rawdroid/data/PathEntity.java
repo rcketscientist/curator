@@ -1,9 +1,11 @@
 package com.anthonymandra.rawdroid.data;
 
 import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.provider.BaseColumns;
 
+@Entity
 public abstract class PathEntity
 {
 	public static final String _ID = BaseColumns._ID;
@@ -36,7 +38,7 @@ public abstract class PathEntity
 		if (obj instanceof FolderEntity)
 		{
 			FolderEntity compare = (FolderEntity) obj;
-			return  id == compare.id &&
+			return  id.equals(compare.id) &&
 					path.equals(compare.path) &&
 					depth == compare.depth;
 		}
