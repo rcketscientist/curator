@@ -1,20 +1,24 @@
 package com.anthonymandra.rawdroid.data;
 
 import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.Relation;
 
 import com.anthonymandra.content.Meta;
 
-import java.util.List;
+import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 
 @Entity(tableName = Meta.META,
+		foreignKeys = @ForeignKey(entity = MetadataEntity.class,
+				parentColumns = FolderEntity._ID,
+				childColumns = Meta.PARENT,
+				onDelete = CASCADE),
 		indices = { @Index(value = Meta.URI, unique = true),
-					@Index(value = Meta.DOCUMENT_ID, unique = true) })
+					@Index(value = Meta.DOCUMENT_ID, unique = true),
+					@Index(value = Meta.PARENT)})
 public class MetadataEntity
 {
 	public static MetadataEntity createMetadataEntity(SearchEntity file) {
@@ -47,16 +51,16 @@ public class MetadataEntity
 	@ColumnInfo(name = Meta.DOCUMENT_ID)
 	public String documentId;
 
-	@Relation(projection = FolderEntity.DOCUMENT_ID, parentColumn = Meta._ID, entityColumn = FolderEntity._ID)
-	public List<String> parent;
+	@ColumnInfo(name = Meta.PARENT)
+	public long parent;
 
 	@ColumnInfo(name = Meta.RATING)
 	public String rating;
 
-	@Relation(entity = SubjectJunction.class, projection = SubjectJunction.SUBJECT_ID, parentColumn = Meta._ID, entityColumn = SubjectJunction.META_ID)
-	public List<Long> subject;
+//	Subject is defined by junction table
+//	public List<String> subject;
 
-	@ColumnInfo(name = Meta.LABEL)
+	@ColumnInfo(name = Meta.LABEL)  //table
 	public String label;
 
 	@ColumnInfo(name = Meta.TIMESTAMP)
@@ -65,7 +69,7 @@ public class MetadataEntity
 	@ColumnInfo(name = Meta.MAKE)
 	public String make;
 
-	@ColumnInfo(name = Meta.MODEL)
+	@ColumnInfo(name = Meta.MODEL)  // Make and Model tables, only need model, make is implicit http://en.tekstenuitleg.net/articles/software/database-design-tutorial/second-normal-form.html
 	public String model;
 
 	@ColumnInfo(name = Meta.APERTURE)
@@ -104,16 +108,16 @@ public class MetadataEntity
 	@ColumnInfo(name = Meta.ORIENTATION)
 	public int orientation;
 
-	@ColumnInfo(name = Meta.LENS_MODEL)
+	@ColumnInfo(name = Meta.LENS_MODEL)//table
 	public String lens;
 
-	@ColumnInfo(name = Meta.DRIVE_MODE)
+	@ColumnInfo(name = Meta.DRIVE_MODE)//table
 	public String driveMode;
 
-	@ColumnInfo(name = Meta.EXPOSURE_MODE)
+	@ColumnInfo(name = Meta.EXPOSURE_MODE)//table
 	public String exposureMode;
 
-	@ColumnInfo(name = Meta.EXPOSURE_PROGRAM)
+	@ColumnInfo(name = Meta.EXPOSURE_PROGRAM)//table
 	public String exposureProgram;
 }
 

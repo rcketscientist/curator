@@ -10,9 +10,15 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 @Dao
-public abstract class FolderDao extends PathBase
+public abstract class FolderDao extends PathBase<FolderEntity>
 {
 	protected final static String DATABASE = FolderEntity.DATABASE;
+
+	@Override
+	String getDatabase()
+	{
+		return DATABASE;
+	}
 
 	@Query("SELECT COUNT(*) FROM " + DATABASE)
 	public abstract int count();
@@ -24,24 +30,18 @@ public abstract class FolderDao extends PathBase
 	public abstract LiveData<FolderEntity> get(long id);
 
 	@Query("SELECT * FROM " + DATABASE + " WHERE " + FolderEntity._ID + "= :id ")
-	abstract FolderEntity getPath(long id);    // private ideal
+	abstract FolderEntity getPath(Long id);    // private ideal
 
-	@Query("SELECT " + FolderEntity._ID + " FROM " + DATABASE +
-			" WHERE " + FolderEntity.PATH + " LIKE :path || '%'")
-	abstract List<Long> getDescendantsInternal(String path);
+	@Query("SELECT " + PathEntity._ID + " FROM " + DATABASE +
+			" WHERE " + PathEntity.PATH + " LIKE :path || '%'")
+	public abstract List<Long> getDescendants(String path);
 
-	@Query("SELECT " + FolderEntity._ID + " FROM " + DATABASE +
-			" WHERE :path LIKE " + FolderEntity.PATH + " || '%'")
-	abstract List<Long> getAncestorsInternal(String path);
+	@Query("SELECT " + PathEntity._ID + " FROM " + DATABASE +
+			" WHERE :path LIKE " + PathEntity.PATH + " || '%'")
+	public abstract List<Long> getAncestors(String path);
 
 	@Insert
 	abstract Long insertInternal(FolderEntity entities);
-
-	@Insert
-	abstract void insertInternal(FolderEntity... entities);
-
-//	@Insert
-//	abstract List<Long> insertInternal(PathEntity... entities);
 
 	@Update
 	public abstract void update(FolderEntity... entities);

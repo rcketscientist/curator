@@ -19,29 +19,29 @@ import java.io.Reader;
 import java.util.List;
 
 @Dao
-public abstract class SubjectDao extends PathBase
+public abstract class SubjectDao extends PathBase<SubjectEntity>
 {
 	protected final static String DATABASE = SubjectEntity.DATABASE;
 
+	@Override
+	String getDatabase()
+	{
+		return DATABASE;
+	}
+
 	@Query("SELECT * FROM " + DATABASE + " WHERE " + SubjectEntity._ID + "= :id ")
-	abstract SubjectEntity getPath(long id);    // private ideal
+	abstract SubjectEntity getPath(Long id);
 
 	@Query("SELECT " + SubjectEntity._ID + " FROM " + DATABASE +
 			" WHERE " + SubjectEntity.PATH + " LIKE :path || '%'")
-	abstract List<Long> getDescendantsInternal(String path);
+	public abstract List<Long> getDescendants(String path);
 
 	@Query("SELECT " + SubjectEntity._ID + " FROM " + DATABASE +
 			" WHERE :path LIKE " + SubjectEntity.PATH + " || '%'")
-	abstract List<Long> getAncestorsInternal(String path);
+	public abstract List<Long> getAncestors(String path);
 
 	@Insert
 	abstract Long insertInternal(SubjectEntity entities);
-
-	@Insert
-	abstract void insertInternal(SubjectEntity... entities);
-
-//	@Insert
-//	abstract List<Long> insertInternal(PathEntity... entities);
 
 	@Update
 	public abstract void update(SubjectEntity... entities);

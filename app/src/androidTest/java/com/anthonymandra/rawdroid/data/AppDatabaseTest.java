@@ -1,10 +1,12 @@
 package com.anthonymandra.rawdroid.data;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -12,7 +14,7 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
-
+@RunWith(AndroidJUnit4.class)
 public class AppDatabaseTest
 {
 	private AppDatabase db;
@@ -36,7 +38,7 @@ public class AppDatabaseTest
 	}
 
 	@Test
-	public void testFolders() {
+	public void folders() {
 		assertEquals(0, folderDao.count());
 		final FolderEntity first = new FolderEntity(
 				"source:folder/file", 0, "/0", 0);
@@ -75,7 +77,7 @@ public class AppDatabaseTest
 	}
 
 	@Test
-	public void testMetadata() {
+	public void metadata() {
 		assertEquals(0, metadataDao.count());
 		final MetadataEntity first = getTestData(false);
 
@@ -113,10 +115,9 @@ public class AppDatabaseTest
 		meta.timestamp = update ? "timestamp" : "timestamp2";  //TODO: long?
 		meta.model = update ? "model" : "model2";
 		meta.whiteBalance = update ? "whiteBalance" : "whiteBalance2";
-		meta.xmp = new Xmp();
-		meta.xmp.label = update ? "label" : "label2";
-		meta.xmp.rating = update ? "rating" : "rating2";
-		meta.xmp.subject = update ? "subject" : "subject2";
+		meta.label = update ? "label" : "label2";
+		meta.rating = update ? "rating" : "rating2";
+//		meta.subject = update ? "subject" : "subject2";
 		return meta;
 	}
 
@@ -155,8 +156,8 @@ public class AppDatabaseTest
 		one.timestamp.equals(two.timestamp) &&
 		one.model.equals(two.model) &&
 		one.whiteBalance.equals(two.whiteBalance) &&
-		one.xmp.label.equals(two.xmp.label) &&
-		one.xmp.rating.equals(two.xmp.rating) &&
-		one.xmp.subject.equals(two.xmp.subject));
+		one.label.equals(two.label) &&
+		one.rating.equals(two.rating)); /*&&
+		one.subject.equals(two.subject));*/
 	}
 }

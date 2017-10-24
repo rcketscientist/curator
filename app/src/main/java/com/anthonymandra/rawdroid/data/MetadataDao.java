@@ -96,8 +96,8 @@ public abstract class MetadataDao
 	@Query("SELECT * FROM " + Meta.META + " WHERE " + Meta.URI + " IN (:uris)")
 	public abstract LiveData<List<MetadataEntity>> getAll(List<String> uris);
 
-	@Query("SELECT " + XmpResult.SELECT + " FROM " + Meta.META + " WHERE " + Meta.URI + " IN (:uris)")
-	public abstract LiveData<List<XmpResult>> getXmp(List<String> uris);
+//	@Query("SELECT " + XmpResult.SELECT + " FROM " + Meta.META + " WHERE " + Meta.URI + " IN (:uris)")
+//	public abstract LiveData<List<XmpResult>> getXmp(List<String> uris);
 
 //	@Query("SELECT " + ":select" +  " WHERE " + ":where" + " ORDER BY " + " :order" + FROM " + Meta.META)
 //	public abstract LiveData<List<MetadataEntity>> get(String select, String where, String order);

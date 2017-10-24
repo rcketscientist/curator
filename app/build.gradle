@@ -48,6 +48,9 @@ android {
                 arguments = ["room.schemaLocation": schemaLocation]
             }
         }
+
+        // Specifies the fully-qualified class name of the test instrumentation runner.
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 
     sourceSets {
@@ -171,6 +174,7 @@ dependencies {
     // Required for instrumented tests
     androidTestCompile 'com.android.support:support-annotations:26.1.0'
     androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestCompile 'com.android.support.test:rules:1.0.1'
 }
 
 crashlytics {

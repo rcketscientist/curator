@@ -1,22 +1,34 @@
 package com.anthonymandra.rawdroid.data;
 
-import android.arch.persistence.room.Query;
 import android.database.SQLException;
 
 import java.util.List;
 
-public abstract class PathBase
+public abstract class PathBase<T extends PathEntity>
 {
 	private static final String PATH_DELIMITER = "/";
 
-//	abstract PathEntity getPath(Long id);
-//	abstract Long insertInternal(PathEntity row);
-//	abstract String getDatabase();
+	abstract T getPath(Long id);
+	abstract Long insertInternal(T row);
+	abstract String getDatabase();
 
-	abstract List<Long> getAncestorsInternal(String path);
-	abstract List<Long> getDescendantsInternal(String path);
+	/**
+	 * Annotate the implementation with:<p>
+	 * Query("SELECT " + PathEntity._ID + " FROM [DATABASE_NAME] WHERE :path LIKE " + PathEntity.PATH + " || '%'")
+	 * @param path path to find
+	 * @return ancestors of path
+	 */
+	public abstract List<Long> getAncestors(String path);
 
-	public long insert(PathEntity entity)
+	/**
+	 * Annotate the implementation with:<p>
+	 * Query("SELECT " + PathEntity._ID + " FROM [DATABASE_NAME] " WHERE " + PathEntity.PATH + " LIKE :path || '%'")
+	 * @param path path to find
+	 * @return ancestors of path
+	 */
+	public abstract List<Long> getDescendants(String path);
+
+	public long insert(T entity)
 		{
 		//TODO: Need to evaluate this old code
 		String parentPath = PATH_DELIMITER;  // Default path defines a root node
@@ -51,11 +63,11 @@ public abstract class PathBase
 
 	public List<Long> getDescendants(long id) {
 		PathEntity pd = getPath(id);
-		return getDescendantsInternal(pd.path);
+		return getDescendants(pd.path);
 	}
 
 	public List<Long> getAncestors(long id) {
 		PathEntity pd = getPath(id);
-		return getAncestorsInternal(pd.path);
+		return getAncestors(pd.path);
 	}
 }
