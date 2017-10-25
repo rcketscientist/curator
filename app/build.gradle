@@ -50,7 +50,7 @@ android {
         }
 
         // Specifies the fully-qualified class name of the test instrumentation runner.
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     sourceSets {

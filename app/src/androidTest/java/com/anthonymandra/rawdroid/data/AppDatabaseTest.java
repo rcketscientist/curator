@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid.data;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.filters.MediumTest;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.After;
@@ -15,6 +16,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
+@MediumTest
 public class AppDatabaseTest
 {
 	private AppDatabase db;
