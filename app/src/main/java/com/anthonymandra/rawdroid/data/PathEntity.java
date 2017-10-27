@@ -13,11 +13,12 @@ public abstract class PathEntity
 	public static final String DEPTH = "depth";
 	public static final String PARENT = "parent";
 
-	PathEntity(long id, String path, int depth)
+	PathEntity(long id, String path, int depth, Long parent)
 	{
 		this.id = id;
 		this.path = path;
 		this.depth = depth;
+		this.parent = parent;
 	}
 
 	@PrimaryKey(autoGenerate = true)

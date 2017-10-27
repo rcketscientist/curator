@@ -4,13 +4,14 @@ import android.database.SQLException;
 
 import java.util.List;
 
-public abstract class PathBase<T extends PathEntity>
+public abstract class PathDao<T extends PathEntity>
 {
 	private static final String PATH_DELIMITER = "/";
 
 	abstract T getPath(Long id);
 	abstract Long insertInternal(T row);
 	abstract String getDatabase();
+	abstract void update(T row);
 
 	/**
 	 * Annotate the implementation with:<p>
@@ -34,7 +35,7 @@ public abstract class PathBase<T extends PathEntity>
 		String parentPath = PATH_DELIMITER;  // Default path defines a root node
 		int parentDepth = -1;
 
-		if (entity.parent > 0)
+		if (entity.parent != null)
 		{
 			PathEntity parent = getPath(entity.parent);
 			parentPath = parent.path + PATH_DELIMITER;
@@ -52,13 +53,11 @@ public abstract class PathBase<T extends PathEntity>
 		// Add the child id to the parent's path
 		String childPath = parentPath + childId;
 		// Update the child entry with its full path
-		entity.path = childPath;    // TODO: Does this update?
+		entity.path = childPath;
 		entity.depth = parentDepth + 1;
 
-//		int rowsAffected = db.update(getTableName(), initialValues, getColumnId() + " = ?",
-//				new String[] {Long.toString(childId)});
-
-		throw new SQLException("Failed to insert row into " + getDatabase() + ": " + entity.path);
+		update(entity);
+		return childId;
 	}
 
 	public List<Long> getDescendants(long id) {

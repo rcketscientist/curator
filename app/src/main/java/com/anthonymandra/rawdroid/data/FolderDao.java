@@ -10,7 +10,7 @@ import android.arch.persistence.room.Update;
 import java.util.List;
 
 @Dao
-public abstract class FolderDao extends PathBase<FolderEntity>
+public abstract class FolderDao extends PathDao<FolderEntity>
 {
 	protected final static String DATABASE = FolderEntity.DATABASE;
 
@@ -24,10 +24,10 @@ public abstract class FolderDao extends PathBase<FolderEntity>
 	public abstract int count();
 
 	@Query("SELECT * FROM " + DATABASE)
-	public abstract LiveData<List<FolderEntity>> getAll();
+	public abstract List<FolderEntity> getAll();    //FIXME: LiveData doesn't work...
 
 	@Query("SELECT * FROM " + DATABASE + " WHERE " + FolderEntity._ID + " = :id")
-	public abstract LiveData<FolderEntity> get(long id);
+	public abstract FolderEntity get(long id);
 
 	@Query("SELECT * FROM " + DATABASE + " WHERE " + FolderEntity._ID + "= :id ")
 	abstract FolderEntity getPath(Long id);    // private ideal
@@ -42,6 +42,9 @@ public abstract class FolderDao extends PathBase<FolderEntity>
 
 	@Insert
 	abstract Long insertInternal(FolderEntity entities);
+
+	@Update
+	public abstract void update(FolderEntity entities);
 
 	@Update
 	public abstract void update(FolderEntity... entities);

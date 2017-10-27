@@ -19,7 +19,7 @@ import java.io.Reader;
 import java.util.List;
 
 @Dao
-public abstract class SubjectDao extends PathBase<SubjectEntity>
+public abstract class SubjectDao extends PathDao<SubjectEntity>
 {
 	protected final static String DATABASE = SubjectEntity.DATABASE;
 

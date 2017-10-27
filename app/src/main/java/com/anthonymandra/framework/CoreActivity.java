@@ -55,6 +55,7 @@ import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
+import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.XmpEditFragment;
@@ -177,6 +178,8 @@ public abstract class CoreActivity extends DocumentActivity
 				toggleEditXmpFragment();
 			}
 		});
+
+		int i = GalleryActivity.TEST;
 	}
 
 	@Override

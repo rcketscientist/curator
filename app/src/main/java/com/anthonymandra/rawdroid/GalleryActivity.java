@@ -66,8 +66,6 @@ import java.util.Set;
 
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-import static com.anthonymandra.rawdroid.TutorialActivity.RESULT_ERROR;
-
 public class GalleryActivity extends CoreActivity implements
 		GalleryRecyclerAdapter.OnItemClickListener,
 		GalleryRecyclerAdapter.OnItemLongClickListener,
@@ -83,6 +81,8 @@ public class GalleryActivity extends CoreActivity implements
 	}
 
 	private final IntentFilter mResponseIntentFilter = new IntentFilter();
+
+	public static final int TEST = 1;
 
 	public static final String LICENSE_RESULT = "license_result";
 	public static final int LICENSE_ALLOW = 1;
@@ -100,6 +100,8 @@ public class GalleryActivity extends CoreActivity implements
     private static final int REQUEST_UPDATE_PHOTO = 16;
 	private static final int REQUEST_ACCESS_USB = 17;
 	private static final int REQUEST_TUTORIAL = 18;
+
+	public static final int RESULT_ERROR = -111;
 
 	public static final String GALLERY_INDEX_EXTRA = "gallery_index";
 

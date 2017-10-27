@@ -24,6 +24,8 @@ public class AppDatabaseTest
 	private MetadataDao metadataDao;
 	private SubjectDao subjectDao;
 
+	final long folderId = 16;
+
 	@Before
 	public void setUp() throws Exception
 	{
@@ -42,10 +44,17 @@ public class AppDatabaseTest
 	@Test
 	public void folders() {
 		assertEquals(0, folderDao.count());
-		final FolderEntity first = new FolderEntity(
-				"source:folder/file", 0, "/0", 0);
 
-		folderDao.insert(first);
+		final FolderEntity first = new FolderEntity(
+				"source:folder/file",
+				folderId,
+				"/16",
+				0,
+				null);
+
+		long id = folderDao.insert(first);
+
+		assertEquals(folderId, id);	// Can we override the autoGenerate?
 
 		assertFolder(first);
 
@@ -53,26 +62,34 @@ public class AppDatabaseTest
 				first.documentId,
 				first.id,
 				first.path,
-				first.depth);
+				first.depth,
+				null);
 
-		updated.documentId = "source:/folder2/file2";
-		updated.depth = 1;
-
+		updated.documentId = "source:/folder/updated_file";
 		folderDao.update(updated);
 		assertFolder(updated);
 
-		folderDao.delete(updated);
+		final FolderEntity child = new FolderEntity(
+				first.documentId,
+				first.id+1,
+				"/16/17",
+				first.depth,
+				first.id);
+
+		long childId = folderDao.insert(child);
+
+		folderDao.delete(updated, child);
 		assertEquals(0, folderDao.count());
 	}
 
 	private void assertFolder(FolderEntity entity) {
-		List<FolderEntity> results = folderDao.getAll().getValue();
+		List<FolderEntity> results = folderDao.getAll();
 
 		assertNotNull(results);
 		assertEquals(1, results.size());
 		assertTrue(entity.equals(results.get(0)));
 
-		FolderEntity result = folderDao.get(entity.id).getValue();
+		FolderEntity result = folderDao.get(entity.id);
 
 		assertNotNull(result);
 		assertTrue(result.equals(entity));
@@ -119,6 +136,7 @@ public class AppDatabaseTest
 		meta.whiteBalance = update ? "whiteBalance" : "whiteBalance2";
 		meta.label = update ? "label" : "label2";
 		meta.rating = update ? "rating" : "rating2";
+		meta.parent = folderId;
 //		meta.subject = update ? "subject" : "subject2";
 		return meta;
 	}
