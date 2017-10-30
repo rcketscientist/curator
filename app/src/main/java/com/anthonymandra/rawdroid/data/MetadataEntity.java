@@ -12,7 +12,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 
 @Entity(tableName = Meta.META,
-		foreignKeys = @ForeignKey(entity = MetadataEntity.class,
+		foreignKeys = @ForeignKey(entity = FolderEntity.class,
 				parentColumns = FolderEntity._ID,
 				childColumns = Meta.PARENT,
 				onDelete = CASCADE),
@@ -34,7 +34,7 @@ public class MetadataEntity
 
 	@PrimaryKey(autoGenerate = true)
 	@ColumnInfo(name = Meta._ID)
-	public Integer id;
+	public Long id;
 
 	@ColumnInfo(name = Meta.NAME)
 	public String name;
@@ -52,7 +52,7 @@ public class MetadataEntity
 	public String documentId;
 
 	@ColumnInfo(name = Meta.PARENT)
-	public long parent;
+	public Long parent;
 
 	@ColumnInfo(name = Meta.RATING)
 	public String rating;

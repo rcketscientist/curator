@@ -44,6 +44,9 @@ public abstract class SubjectDao extends PathDao<SubjectEntity>
 	abstract Long insertInternal(SubjectEntity entities);
 
 	@Update
+	public abstract void update(SubjectEntity entities);
+
+	@Update
 	public abstract void update(SubjectEntity... entities);
 
 	@Delete
@@ -58,7 +61,6 @@ public abstract class SubjectDao extends PathDao<SubjectEntity>
 		//		Grand Teton
 		//		Haesindang Park
 		//			{Penis Park}
-		//			{test}
 
 		// Clear the existing database
 		delete();       //TODO: This might not be defined as delete table yet.

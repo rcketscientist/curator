@@ -10,7 +10,7 @@ public class FolderEntity extends PathEntity
 	public static final String DOCUMENT_ID = "document_id";
 	public static final String NAME = "name";
 
-	FolderEntity(String documentId, long id, String path, int depth, Long parent)
+	FolderEntity(String documentId, Long id, String path, int depth, Long parent)
 	{
 		super(id, path, depth, parent);
 		this.documentId = documentId;

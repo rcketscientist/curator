@@ -17,7 +17,7 @@ public class SubjectEntity extends PathEntity
 	public static final String NAME = "name";
 	public static final String RECENT = "recent";
 
-	SubjectEntity(long id, String path, int depth, String name, String recent, long parent)
+	SubjectEntity(Long id, String path, int depth, String name, String recent, long parent)
 	{
 		super(id, path, depth, parent);
 		this.name = name;

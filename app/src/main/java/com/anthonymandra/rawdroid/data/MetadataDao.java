@@ -103,10 +103,10 @@ public abstract class MetadataDao
 //	public abstract LiveData<List<MetadataEntity>> get(String select, String where, String order);
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public abstract long insert(MetadataEntity datum);
+	public abstract Long insert(MetadataEntity datum);
 
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	public abstract long[] insert(MetadataEntity... datums);
+	public abstract Long[] insert(MetadataEntity... datums);
 
 	@Update
 	public abstract void update(MetadataEntity... datums);
