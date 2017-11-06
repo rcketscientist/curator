@@ -1,7 +1,5 @@
 package com.anthonymandra.rawdroid.data;
 
-import android.database.SQLException;
-
 import java.util.List;
 
 public abstract class PathDao<T extends PathEntity>

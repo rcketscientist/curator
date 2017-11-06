@@ -138,8 +138,8 @@ dependencies {
     implementation project(':metadata-extractor')
     implementation project(':rawprocessor')
     implementation project(':documentActivity')
-    implementation project(':toggleButtons')
-    // implementation 'com.anthonymandra:ToggleButtons:2.0.0'
+//    implementation project(':toggleButtons')
+    implementation 'com.anthonymandra:ToggleButtons:2.0.0'
     implementation 'com.afollestad:material-cab:0.1.12'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
@@ -147,8 +147,8 @@ dependencies {
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
     implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
         transitive = true
@@ -159,6 +159,7 @@ dependencies {
 
     //includes support-v4 and appcompat-v7
     implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"   // included to override ToggleButtons version
     implementation "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "android.arch.lifecycle:extensions:" + rootProject.archLifecycleVersion
@@ -170,13 +171,13 @@ dependencies {
     testImplementation "android.arch.persistence.room:testing:" + rootProject.archRoomVersion
 
     // Required for local unit tests (JUnit 4 framework)
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 
     // Required for instrumented tests
-    androidTestCompile 'com.android.support:support-annotations:26.1.0'
-    androidTestCompile 'com.android.support.test:runner:1.0.1'
-    androidTestCompile 'com.android.support.test:rules:1.0.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    androidTestImplementation 'com.android.support:support-annotations:26.1.0'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 crashlytics {
