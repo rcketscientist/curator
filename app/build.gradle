@@ -18,7 +18,6 @@ repositories {
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'io.fabric'
-//apply plugin: 'maven'
 
 def versionMajor = 5
 def versionMinor = 6
@@ -138,7 +137,7 @@ dependencies {
     implementation project(':metadata-extractor')
     implementation project(':rawprocessor')
     implementation project(':documentActivity')
-//    implementation project(':toggleButtons')
+
     implementation 'com.anthonymandra:ToggleButtons:2.0.0'
     implementation 'com.afollestad:material-cab:0.1.12'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
@@ -162,19 +161,21 @@ dependencies {
     implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"   // included to override ToggleButtons version
     implementation "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation "android.arch.lifecycle:extensions:" + rootProject.archLifecycleVersion
-    implementation "android.arch.lifecycle:common-java8:" + rootProject.archLifecycleVersion
-    implementation "android.arch.lifecycle:reactivestreams:" + rootProject.archLifecycleVersion
-    implementation "android.arch.persistence.room:runtime:" + rootProject.archRoomVersion
-    implementation "android.arch.persistence.room:rxjava2:" + rootProject.archRoomVersion
-    annotationProcessor "android.arch.persistence.room:compiler:" + rootProject.archRoomVersion
-    testImplementation "android.arch.persistence.room:testing:" + rootProject.archRoomVersion
+
+    implementation "android.arch.lifecycle:extensions:" + rootProject.archVersion
+    implementation "android.arch.lifecycle:common-java8:" + rootProject.archVersion
+//    implementation "android.arch.lifecycle:reactivestreams:" + rootProject.archLifecycleVersion
+    implementation "android.arch.persistence.room:runtime:" + rootProject.archVersion
+//    implementation "android.arch.persistence.room:rxjava2:" + rootProject.archRoomVersion
+    annotationProcessor "android.arch.persistence.room:compiler:" + rootProject.archVersion
+    testImplementation "android.arch.persistence.room:testing:" + rootProject.archVersion
+    implementation "android.arch.paging:runtime:" + rootProject.archVersion + rootProject.archPagingVersion
 
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
 
     // Required for instrumented tests
-    androidTestImplementation 'com.android.support:support-annotations:26.1.0'
+    androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"

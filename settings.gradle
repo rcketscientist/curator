@@ -11,6 +11,3 @@ project(':showcaseView').projectDir = new File('showcaseView/library')
 
 include ':rawprocessor'
 project(':rawprocessor').projectDir = new File('rawprocessor/library')
-
-//include ':toggleButtons'
-//project(':toggleButtons').projectDir = new File('ToggleButtons/library')

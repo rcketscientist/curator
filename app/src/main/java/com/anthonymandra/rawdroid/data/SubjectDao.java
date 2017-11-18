@@ -40,6 +40,12 @@ public abstract class SubjectDao extends PathDao<SubjectEntity>
 			" WHERE :path LIKE " + SubjectEntity.PATH + " || '%'")
 	public abstract List<Long> getAncestors(String path);
 
+	@Query("SELECT * FROM " + DATABASE +
+			" INNER JOIN " + SubjectJunction.DATABASE + " AS sj" +
+			" ON sj." + SubjectEntity._ID + "=sj." + SubjectJunction.SUBJECT_ID +
+			" WHERE " + "sj." + SubjectJunction.META_ID + "=:metaId")
+	public abstract List<SubjectEntity> subjectsForImage(Long metaId);
+
 	@Insert
 	abstract Long insertInternal(SubjectEntity entities);
 

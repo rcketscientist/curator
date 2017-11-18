@@ -12,7 +12,9 @@ import com.anthonymandra.content.Meta;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity(primaryKeys = {SubjectJunction.META_ID, SubjectJunction.SUBJECT_ID},
+@Entity(
+	tableName = SubjectJunction.DATABASE,
+	primaryKeys = {SubjectJunction.META_ID, SubjectJunction.SUBJECT_ID},
 	indices = {
 		@Index(value = SubjectJunction.SUBJECT_ID),
 		@Index(value = SubjectJunction.META_ID)},
@@ -29,9 +31,9 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 			onDelete = CASCADE)})
 public class SubjectJunction
 {
+	public static final String DATABASE = "meta_subject_junction";
 	public static final String META_ID = "meta_id";
 	public static final String SUBJECT_ID = "subject_id";
-	public static final String _ID = BaseColumns._ID;
 
 	@ColumnInfo(name = META_ID)
 	@NonNull
