@@ -29,19 +29,19 @@ public abstract class MetadataDao
 	public abstract LiveData<List<MetadataEntity>> getAll();
 
 	@Query(	"SELECT * FROM meta " +
-//			"INNER JOIN image_parent " +
-//			"ON meta.parent=image_parent._id " +
+			"INNER JOIN image_parent " +
+			"ON meta.parent=image_parent._id " +
 			"INNER JOIN meta_subject_junction " +
-			"ON meta.meta_id=meta_subject_junciton.meta_id " +
+			"ON meta.meta_id = meta_subject_junciton.meta_id " +
 			"WHERE meta.label IN (:labels) " +
-			"AND meta.parent IN (:parentIds)" +
 			"AND meta.rating IN (:ratings) " +
 			"AND meta_subject_junciton.subject_id IN (:subjectIds)" +
+			"AND meta.parent NOT IN (:hiddenFolderIds)" +
 			"ORDER BY :orderClause")
-	abstract LiveData<List<GalleryResult>> getImages(
+	abstract LiveData<List<GalleryResult>> getImagesAND(
 			List<String> labels,
 			List<Long> subjectIds,
-			List<Long> parentIds,
+			List<Long> hiddenFolderIds,
 			List<Integer> ratings,
 			String orderClause);
 
@@ -49,29 +49,46 @@ public abstract class MetadataDao
 			"INNER JOIN image_parent " +
 			"ON meta.parent=image_parent._id " +
 			"INNER JOIN meta_subject_junction " +
-			"ON meta_subject_junciton.subject_id IN(SELECT subjects) " +
+			"ON meta.meta_id = meta_subject_junciton.meta_id " +
 			"WHERE meta.label IN (:labels) " +
-			"AND meta.rating IN (:ratings) " +
+			"OR meta.rating IN (:ratings) " +
+			"OR meta_subject_junciton.subject_id IN (:subjectIds)" +
+			"AND meta.parent NOT IN (:hiddenFolderIds)" +	// Always exclude folders
 			"ORDER BY :orderClause")
-	abstract LiveData<List<GalleryResult>> getGalleryImagesAND(
+	abstract LiveData<List<GalleryResult>> getImagesOR(
 			List<String> labels,
 			List<Long> subjectIds,
-			String foldersLikeClause,
+			List<Long> hiddenFolderIds,
 			List<Integer> ratings,
 			String orderClause);
 
-	@Query("SELECT " + GalleryResult.SELECT +
-			" WHERE " + Meta.LABEL + " IN (:labels) " +
-			"OR :subjectsLikeClause " +
-			"OR " + Meta.RATING + " IN (:ratings) " +
-			"AND :foldersLikeClause " +
-			"ORDER BY :orderClause" + FROM " + Meta.META)
-	public abstract LiveData<List<GalleryResult>> getGalleryImagesOR(
-			List<String> labels,
-			String subjectsLikeClause,
-			String foldersLikeClause,
-			List<Integer> ratings,
-			String orderClause);
+//	@Query(	"SELECT * FROM meta " +
+//			"INNER JOIN image_parent " +
+//			"ON meta.parent = image_parent._id " +
+//			"INNER JOIN meta_subject_junction " +
+//			"ON meta_subject_junciton.subject_id IN(SELECT subjects) " +
+//			"WHERE meta.label IN (:labels) " +
+//			"AND meta.rating IN (:ratings) " +
+//			"ORDER BY :orderClause")
+//	abstract LiveData<List<GalleryResult>> getGalleryImagesAND(
+//			List<String> labels,
+//			List<Long> subjectIds,
+//			String foldersLikeClause,
+//			List<Integer> ratings,
+//			String orderClause);
+//
+//	@Query("SELECT " + GalleryResult.SELECT +
+//			" WHERE " + Meta.LABEL + " IN (:labels) " +
+//			"OR :subjectsLikeClause " +
+//			"OR " + Meta.RATING + " IN (:ratings) " +
+//			"AND :foldersLikeClause " +
+//			"ORDER BY :orderClause" + FROM " + Meta.META)
+//	public abstract LiveData<List<GalleryResult>> getGalleryImagesOR(
+//			List<String> labels,
+//			String subjectsLikeClause,
+//			String foldersLikeClause,
+//			List<Integer> ratings,
+//			String orderClause);
 
 //	public LiveData<List<GalleryResult>> getGalleryImages(
 //		List<String> labels,
