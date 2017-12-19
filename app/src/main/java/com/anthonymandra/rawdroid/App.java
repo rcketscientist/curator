@@ -3,6 +3,9 @@ package com.anthonymandra.rawdroid;
 import android.app.Application;
 import android.os.StrictMode;
 
+import com.anthonymandra.rawdroid.data.AppDatabase;
+import com.anthonymandra.rawdroid.data.DataRepository;
+import com.anthonymandra.util.AppExecutors;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.core.CrashlyticsCore;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
@@ -12,10 +15,14 @@ import io.fabric.sdk.android.Fabric;
 
 public class App extends Application
 {
+	private AppExecutors mAppExecutors;
+
 	@Override
 	public void onCreate()
 	{
 		super.onCreate();
+
+		mAppExecutors = new AppExecutors();
 
 		if (LeakCanary.isInAnalyzerProcess(this)) {
 			// This process is dedicated to LeakCanary for heap analysis.
@@ -45,5 +52,13 @@ public class App extends Application
 					.penaltyDeath()
 					.build());
 		}
+	}
+
+	public AppDatabase getDatabase() {
+		return AppDatabase.getInstance(this);
+	}
+
+	public DataRepository getRepository() {
+		return DataRepository.getInstance(getDatabase());
 	}
 }

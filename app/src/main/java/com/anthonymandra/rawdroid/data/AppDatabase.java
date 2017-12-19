@@ -8,19 +8,23 @@ import android.content.Context;
 @Database(entities = {
 		FolderEntity.class,
 		MetadataEntity.class,
-		SubjectEntity.class},
+		SubjectEntity.class,
+		SubjectJunction.class,
+		SynonymEntity.class},
 		version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 	private static final String DB_NAME = "curator.db";
-	private static volatile AppDatabase INSTANCE = null;
+	private static AppDatabase sInstance;
 
-	synchronized static AppDatabase get(Context c)
-	{
-		if (INSTANCE == null)
-		{
-			INSTANCE = create(c, false);
+	public static AppDatabase getInstance(final Context context) {
+		if (sInstance == null) {
+			synchronized (AppDatabase.class) {
+				if (sInstance == null) {
+					sInstance = create(context.getApplicationContext(), false);
+				}
+			}
 		}
-		return(INSTANCE);
+		return sInstance;
 	}
 
 	static AppDatabase create(Context ctxt, boolean memoryOnly) {
@@ -32,7 +36,7 @@ public abstract class AppDatabase extends RoomDatabase {
 		}
 		else
 		{
-			b=Room.databaseBuilder(ctxt.getApplicationContext(), AppDatabase.class, DB_NAME);
+			b = Room.databaseBuilder(ctxt.getApplicationContext(), AppDatabase.class, DB_NAME);
 		}
 		return(b.build());
 	}

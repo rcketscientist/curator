@@ -319,6 +319,19 @@ public class GalleryActivity extends CoreActivity implements
 		}
 	}
 
+	protected void updateQuery(XmpFilter filter) {
+		((App)getApplication()).getDatabase().metadataDao().getImages(
+				filter.andTrueOrFalse,
+				filter.sortColumn == XmpFilter.SortColumns.Name,
+				filter.segregateByType,
+				filter.sortAscending,
+				Arrays.asList(filter.xmp.label),
+				Arrays.asList(filter.xmp.subject),
+				filter.hiddenFolders,
+				Arrays.asList(filter.xmp.rating)
+		)
+	}
+
 	protected void updateMetaLoaderXmp(XmpFilter filter)
 	{
 		StringBuilder selection = new StringBuilder();
