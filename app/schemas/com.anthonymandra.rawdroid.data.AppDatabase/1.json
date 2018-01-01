@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "46c739a000d24556ae8a8148a534fb98",
+    "identityHash": "c13a8a13dfeea3e6f81dbb6fbaceeb0a",
     "entities": [
       {
         "tableName": "image_parent",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT, `parent` INTEGER, `depth` INTEGER NOT NULL, `document_id` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT, `parent` INTEGER, `depth` INTEGER NOT NULL, `documentUri` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "_id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -33,15 +33,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "documentId",
-            "columnName": "document_id",
+            "fieldPath": "documentUri",
+            "columnName": "documentUri",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
           "autoGenerate": true
         },
@@ -50,11 +50,11 @@
       },
       {
         "tableName": "meta",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `type` INTEGER NOT NULL, `processed` INTEGER, `uri` TEXT, `document_id` TEXT, `parent` INTEGER, `rating` TEXT, `label` TEXT, `timestamp` TEXT, `make` TEXT, `model` TEXT, `aperture` TEXT, `exposure` TEXT, `flash` TEXT, `focal_length` TEXT, `iso` TEXT, `white_balance` TEXT, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `latitude` TEXT, `longitude` TEXT, `altitude` TEXT, `orientation` INTEGER NOT NULL, `lens_model` TEXT, `drive_mode` TEXT, `exposure_mode` TEXT, `exposure_program` TEXT, FOREIGN KEY(`parent`) REFERENCES `image_parent`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `type` INTEGER NOT NULL, `processed` INTEGER, `uri` TEXT, `documentId` TEXT, `parentId` INTEGER, `rating` TEXT, `label` TEXT, `timestamp` TEXT, `make` TEXT, `model` TEXT, `aperture` TEXT, `exposure` TEXT, `flash` TEXT, `focalLength` TEXT, `iso` TEXT, `whiteBalance` TEXT, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `latitude` TEXT, `longitude` TEXT, `altitude` TEXT, `orientation` INTEGER NOT NULL, `lens` TEXT, `driveMode` TEXT, `exposureMode` TEXT, `exposureProgram` TEXT, FOREIGN KEY(`parentId`) REFERENCES `image_parent`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "_id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -84,13 +84,13 @@
           },
           {
             "fieldPath": "documentId",
-            "columnName": "document_id",
+            "columnName": "documentId",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "parent",
-            "columnName": "parent",
+            "fieldPath": "parentId",
+            "columnName": "parentId",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -144,7 +144,7 @@
           },
           {
             "fieldPath": "focalLength",
-            "columnName": "focal_length",
+            "columnName": "focalLength",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -156,7 +156,7 @@
           },
           {
             "fieldPath": "whiteBalance",
-            "columnName": "white_balance",
+            "columnName": "whiteBalance",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -198,32 +198,32 @@
           },
           {
             "fieldPath": "lens",
-            "columnName": "lens_model",
+            "columnName": "lens",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "driveMode",
-            "columnName": "drive_mode",
+            "columnName": "driveMode",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "exposureMode",
-            "columnName": "exposure_mode",
+            "columnName": "exposureMode",
             "affinity": "TEXT",
             "notNull": false
           },
           {
             "fieldPath": "exposureProgram",
-            "columnName": "exposure_program",
+            "columnName": "exposureProgram",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
           "autoGenerate": true
         },
@@ -237,20 +237,20 @@
             "createSql": "CREATE UNIQUE INDEX `index_meta_uri` ON `${TABLE_NAME}` (`uri`)"
           },
           {
-            "name": "index_meta_document_id",
+            "name": "index_meta_documentId",
             "unique": true,
             "columnNames": [
-              "document_id"
+              "documentId"
             ],
-            "createSql": "CREATE UNIQUE INDEX `index_meta_document_id` ON `${TABLE_NAME}` (`document_id`)"
+            "createSql": "CREATE UNIQUE INDEX `index_meta_documentId` ON `${TABLE_NAME}` (`documentId`)"
           },
           {
-            "name": "index_meta_parent",
+            "name": "index_meta_parentId",
             "unique": false,
             "columnNames": [
-              "parent"
+              "parentId"
             ],
-            "createSql": "CREATE  INDEX `index_meta_parent` ON `${TABLE_NAME}` (`parent`)"
+            "createSql": "CREATE  INDEX `index_meta_parentId` ON `${TABLE_NAME}` (`parentId`)"
           }
         ],
         "foreignKeys": [
@@ -259,21 +259,21 @@
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "parent"
+              "parentId"
             ],
             "referencedColumns": [
-              "_id"
+              "id"
             ]
           }
         ]
       },
       {
         "tableName": "xmp_subject",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT, `parent` INTEGER, `depth` INTEGER NOT NULL, `name` TEXT, `recent` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT, `parent` INTEGER, `depth` INTEGER NOT NULL, `name` TEXT, `recent` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "_id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -304,32 +304,160 @@
           {
             "fieldPath": "recent",
             "columnName": "recent",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_xmp_subject_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "createSql": "CREATE  INDEX `index_xmp_subject_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "meta_subject_junction",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`metaId` INTEGER NOT NULL, `subjectId` INTEGER NOT NULL, PRIMARY KEY(`metaId`, `subjectId`), FOREIGN KEY(`metaId`) REFERENCES `meta`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`subjectId`) REFERENCES `xmp_subject`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "metaId",
+            "columnName": "metaId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subjectId",
+            "columnName": "subjectId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "metaId",
+            "subjectId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_meta_subject_junction_subjectId",
+            "unique": false,
+            "columnNames": [
+              "subjectId"
+            ],
+            "createSql": "CREATE  INDEX `index_meta_subject_junction_subjectId` ON `${TABLE_NAME}` (`subjectId`)"
+          },
+          {
+            "name": "index_meta_subject_junction_metaId",
+            "unique": false,
+            "columnNames": [
+              "metaId"
+            ],
+            "createSql": "CREATE  INDEX `index_meta_subject_junction_metaId` ON `${TABLE_NAME}` (`metaId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "meta",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "metaId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "xmp_subject",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "subjectId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SynonymEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `subjectId` INTEGER NOT NULL, `synonym` TEXT, FOREIGN KEY(`subjectId`) REFERENCES `xmp_subject`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subjectId",
+            "columnName": "subjectId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "synonym",
+            "columnName": "synonym",
             "affinity": "TEXT",
             "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "_id"
+            "id"
           ],
           "autoGenerate": true
         },
         "indices": [
           {
-            "name": "index_xmp_subject__id",
+            "name": "index_SynonymEntity_id",
             "unique": false,
             "columnNames": [
-              "_id"
+              "id"
             ],
-            "createSql": "CREATE  INDEX `index_xmp_subject__id` ON `${TABLE_NAME}` (`_id`)"
+            "createSql": "CREATE  INDEX `index_SynonymEntity_id` ON `${TABLE_NAME}` (`id`)"
+          },
+          {
+            "name": "index_SynonymEntity_subjectId",
+            "unique": false,
+            "columnNames": [
+              "subjectId"
+            ],
+            "createSql": "CREATE  INDEX `index_SynonymEntity_subjectId` ON `${TABLE_NAME}` (`subjectId`)"
           }
         ],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "xmp_subject",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "subjectId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"46c739a000d24556ae8a8148a534fb98\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c13a8a13dfeea3e6f81dbb6fbaceeb0a\")"
     ]
   }
 }

@@ -27,7 +27,10 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.UsefulDocumentFile;
+import com.anthonymandra.rawdroid.data.SubjectEntity;
 import com.anthonymandra.widget.XmpLabelGroup;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +48,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     private static final String TAG = XmpBaseFragment.class.getSimpleName();
 
     private MetaFilterChangedListener mFilterListener;
+
     interface MetaFilterChangedListener
     {
         void onMetaFilterChanged(XmpFilter xmpFilter);
@@ -80,7 +84,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     }
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
+	public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
 		setExclusive(false);
@@ -348,8 +352,7 @@ public class XmpFilterFragment extends XmpBaseFragment
     }
 
     @Override
-    public void onKeywordsSelected(Collection<String> selectedKeywords)
-    {
+    public void onKeywordsSelected(@NotNull Collection<? extends SubjectEntity> selectedKeywords) {
         onFilterUpdated();
     }
 
@@ -426,15 +429,10 @@ public class XmpFilterFragment extends XmpBaseFragment
             listView.setAdapter(mAdapter);
             updateListEntries(paths, visible, excluded);
 
-            v.findViewById(R.id.buttonAddSearchRoot).setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    if (mSearchListener != null)
-                        mSearchListener.onSearchRootRequested();
-                    dismiss();
-                }
+            v.findViewById(R.id.buttonAddSearchRoot).setOnClickListener(v1 -> {
+                if (mSearchListener != null)
+                    mSearchListener.onSearchRootRequested();
+                dismiss();
             });
 
             return v;
@@ -597,30 +595,20 @@ public class XmpFilterFragment extends XmpBaseFragment
                 viewHolder.path.setEnabled(true);
             }
 
-            viewHolder.exclude.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    FolderVisibility item = getItem(position);
-                    item.excluded = !item.excluded;
-                    viewHolder.path.setChecked(!item.excluded);
+            viewHolder.exclude.setOnClickListener(v -> {
+                FolderVisibility item1 = getItem(position);
+                item1.excluded = !item1.excluded;
+                viewHolder.path.setChecked(!item1.excluded);
 
-                    if (mListener != null)
-                        mListener.onVisibilityChanged(item);
-                    notifyDataSetChanged();
-                }
+                if (mListener != null)
+                    mListener.onVisibilityChanged(item1);
+                notifyDataSetChanged();
             });
-            viewHolder.path.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    item.visible = isChecked;
+            viewHolder.path.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                item.visible = isChecked;
 
-                    if (mListener != null)
-                        mListener.onVisibilityChanged(item);
-                }
+                if (mListener != null)
+                    mListener.onVisibilityChanged(item);
             });
 
             return convertView;

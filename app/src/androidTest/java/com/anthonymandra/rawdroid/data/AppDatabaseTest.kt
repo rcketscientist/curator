@@ -1,7 +1,9 @@
 package com.anthonymandra.rawdroid.data
 
+import android.arch.core.executor.testing.InstantTaskExecutorRule
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
+import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
@@ -13,20 +15,36 @@ import org.junit.runner.RunWith
 
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
+import org.hamcrest.CoreMatchers.*
 import org.junit.Assert.assertEquals
+import java.io.StringReader
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.greaterThan
+import org.hamcrest.Matchers.hasSize
+import org.junit.Rule
+
 
 @RunWith(AndroidJUnit4::class)
 @MediumTest
 class AppDatabaseTest {
+
+    @Rule @JvmField
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
+
     private lateinit var db: AppDatabase
     private lateinit var folderDao: FolderDao
     private lateinit var metadataDao: MetadataDao
     private lateinit var subjectDao: SubjectDao
+    private lateinit var subjectJunctionDao: SubjectJunctionDao
 
     private val folderId = 16L
-
+    private val host = "content://com.android.externalstorage.documents"
+    private val tree = "tree"
+    private val document = "document"
+    private val treeId = "00000-00000:images"
     private val testFolder: FolderEntity
         get() = FolderEntity(
                 "source:folder/file",
@@ -35,13 +53,36 @@ class AppDatabaseTest {
                 0,
                 null)
 
+    private val testSubjectsCount = 11  // Don't count synonyms
+    private val testSubjects =
+            "Cathedral\n" +
+            "National Park\n" +
+                "\tBadlands\n" +
+                "\tBryce Canyon\n" +
+                "\tGrand Teton\n" +
+                "\tHaesindang Park\n" +
+                    "\t\t{Penis Park}\n" +
+            "Europe\n" +
+                "\tGermany\n" +
+                    "\t\tTrier\n" +
+                "\tFrance\n" +
+            "Roman ruins"
+
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        db = AppDatabase.create(InstrumentationRegistry.getTargetContext(), true)
+        // using an in-memory database because the information stored here disappears when the
+        // process is killed
+        db = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
+                AppDatabase::class.java)
+                // allowing main thread queries, just for testing
+                .allowMainThreadQueries()
+                .build()
+
         folderDao = db.folderDao()
         metadataDao = db.metadataDao()
         subjectDao = db.subjectDao()
+        subjectJunctionDao = db.subjectJunctionDao()
     }
 
     @After
@@ -62,17 +103,17 @@ class AppDatabaseTest {
         assertFolder(first)
 
         val updated = FolderEntity(
-                first.documentId,
+                first.documentUri,
                 first.id,
                 first.path,
                 first.depth, null)
 
-        updated.documentId = "source:/folder/updated_file"
+        updated.documentUri = "source:/folder/updated_file"
         folderDao.update(updated)
         assertFolder(updated)
 
         val child = FolderEntity(
-                first.documentId,
+                first.documentUri,
                 first.id + 1,
                 "/16/17",
                 first.depth,
@@ -90,13 +131,13 @@ class AppDatabaseTest {
         assertEquals(1, folderDao.count().toLong())
 
         assertEquals(0, metadataDao.count().toLong())
-        val first = getTestData(false)
+        val first = getTestData(1)
 
         val imageId = metadataDao.insert(first)
 
         assertMetadata(first)
 
-        val updated = getTestData(true)
+        val updated = getTestData(2)
         updated.id = imageId
 
         metadataDao.update(updated)
@@ -106,39 +147,139 @@ class AppDatabaseTest {
         assertEquals(0, metadataDao.count().toLong())
     }
 
-    private fun getTestData(update: Boolean): MetadataEntity {
+    @Test
+    fun subjects() {
+        assertThat(subjectDao.count(), equalTo(0))
+
+        val reader = StringReader(testSubjects)
+        subjectDao.importKeywords(InstrumentationRegistry.getTargetContext(), reader)
+        assertThat(subjectDao.count(), equalTo(testSubjectsCount))
+
+        val europe = subjectDao.get(7)
+        assertThat(europe.name, equalTo("Europe"))
+
+        val europeanEntities = subjectDao.getDescendants(7)
+        assertThat(europeanEntities, hasSize(4))
+        val europeanNames = europeanEntities.map { it.name }
+        assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
+
+        val trier = subjectDao.get(9)
+        assertThat(trier.name, equalTo("Trier"))
+
+        val trierTree = subjectDao.getAncestors(9)
+        assertThat(trierTree, hasSize(3))
+        val trierTreeNames = trierTree.map { it.name }
+        assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
+
+        val time = System.currentTimeMillis()
+        europeanEntities.forEach( {it.recent = time})
+
+        subjectDao.update(europeanEntities)
+
+        val updateEuropeanEntities = subjectDao.getDescendants(7)
+        updateEuropeanEntities.forEach { europeanEntity ->
+            assertThat(europeanEntity.recent, equalTo(time))
+        }
+        subjectDao.deleteAll()
+        assertThat(subjectDao.count(), equalTo(0))
+    }
+
+    @Test
+    fun subjectJunction() {
+        // Prep parents
+        val folderId = folderDao.insert(testFolder)
+        assertEquals(1, folderDao.count().toLong())
+
+        // Prep images
+        val image1 = getTestData(1)
+        val image2 = getTestData(2)
+
+        val imageId1 = metadataDao.insert(image1)
+        val imageId2 = metadataDao.insert(image2)
+
+        // Prep subjects
+        val reader = StringReader(testSubjects)
+        subjectDao.importKeywords(InstrumentationRegistry.getTargetContext(), reader)
+        assertThat(subjectDao.count(), equalTo(testSubjectsCount))
+
+        /**
+         *          / Subject 1 (Cathedral)
+         *  Image 1
+         *         \ Subject 2 (National Park)
+         *
+         *                       / Image 1
+         *  Subject 1 (Cathedral)
+         *                      \ Image 2
+         */
+        val subjectRelation1 = SubjectJunction(imageId1, 1)
+        val subjectRelation2 = SubjectJunction(imageId1, 2)
+        val subjectRelation3 = SubjectJunction(imageId2, 1)
+
+        subjectJunctionDao.insert(subjectRelation1)
+        subjectJunctionDao.insert(subjectRelation2)
+        subjectJunctionDao.insert(subjectRelation3)
+
+        val imagesWith1 = subjectJunctionDao.getImagesWith(1)
+        val imagesWith2 = subjectJunctionDao.getImagesWith(2)
+
+        val subjectsFor1 = subjectJunctionDao.getSubjectsFor(imageId1)
+        val subjectsFor2 = subjectJunctionDao.getSubjectsFor(imageId2)
+
+        assertThat(imagesWith1, hasItems(imageId1,imageId2))
+        assertThat(imagesWith2, hasItems(imageId1))
+        assertThat(subjectsFor1, hasItems(1L,2L))
+        assertThat(subjectsFor2, hasItems(1L))
+
+        val liveAll = metadataDao.all
+        val all = liveAll.blockingObserve()
+        val liveJoin = metadataDao.images
+        val joinResult = liveJoin.blockingObserve()
+
+        val liveJoin2 = metadataDao.images2
+        val joinResult2 = liveJoin2.blockingObserve()
+
+        // Ensure we don't have separate entities per junction match
+        assertThat(joinResult!!.size, equalTo(2))
+
+        assertThat(joinResult[0].keywords, hasItems("Cathedral", "National Park"))
+        assertThat(joinResult[1].keywords, hasItems("Cathedral"))
+    }
+
+    private fun getTestData(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
-        meta.altitude = if (update) "altitude" else "altitude2"
-        meta.aperture = if (update) "aperture" else "aperture2"
-        meta.driveMode = if (update) "driveMode" else "driveMode2"
-        meta.exposure = if (update) "exposure" else "exposure2"
-        meta.exposureMode = if (update) "exposureMode" else "exposureMode2"
-        meta.exposureProgram = if (update) "exposureProgram" else "exposureProgram2"
-        meta.flash = if (update) "flash" else "flash2"
-        meta.focalLength = if (update) "focalLength" else "focalLength2"
-        meta.height = if (update) 1080 else 2160
-        meta.width = if (update) 1920 else 3840
-        meta.iso = if (update) "iso" else "iso2"
-        meta.latitude = if (update) "latitude" else "latitude2"
-        meta.lens = if (update) "lens" else "lens2"
-        meta.longitude = if (update) "longitude" else "longitude2"
-        meta.make = if (update) "make" else "make2"
-        meta.orientation = if (update) 12 else 24
-        meta.timestamp = if (update) "timestamp" else "timestamp2"  //TODO: long?
-        meta.model = if (update) "model" else "model2"
-        meta.whiteBalance = if (update) "whiteBalance" else "whiteBalance2"
-        meta.label = if (update) "label" else "label2"
-        meta.rating = if (update) "rating" else "rating2"
-        meta.parent = folderId
-        //		meta.subject = update ? "subject" : "subject2";
+        meta.altitude = "altitude" + suffix
+        meta.aperture = "aperture" + suffix
+        meta.driveMode = "driveMode" + suffix
+        meta.exposure = "exposure" + suffix
+        meta.exposureMode = "exposureMode" + suffix
+        meta.exposureProgram = "exposureProgram" + suffix
+        meta.flash = "flash" + suffix
+        meta.focalLength = "focalLength" + suffix
+        meta.height = suffix
+        meta.width = suffix
+        meta.iso = "iso" + suffix
+        meta.latitude = "latitude" + suffix
+        meta.lens = "lens" + suffix
+        meta.longitude = "longitude" + suffix
+        meta.make = "make" + suffix
+        meta.orientation = suffix
+        meta.timestamp = "timestamp" + suffix
+        meta.model = "model" + suffix
+        meta.whiteBalance = "whiteBalance" + suffix
+        meta.label = "label" + suffix
+        meta.rating = "rating" + suffix
+        meta.parentId = folderId
+        meta.name = "image$suffix.cr2"
+        meta.documentId = "$treeId/${meta.name}"
+        meta.uri = "$host/$tree/$treeId/$document/${meta.documentId}"
         return meta
     }
 
     private fun assertFolder(entity: FolderEntity) {
-        val results = folderDao.all
+        val results = folderDao.all.blockingObserve()
 
         assertNotNull(results)
-        assertEquals(1, results.size.toLong())
+        assertEquals(1, results!!.size.toLong())
         assertTrue(entity == results[0])
 
         val result = folderDao.get(entity.id)

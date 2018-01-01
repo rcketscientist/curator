@@ -57,6 +57,7 @@ public class App extends Application
 	public AppDatabase getDatabase() {
 		return AppDatabase.getInstance(this);
 	}
+	public AppExecutors getAppExecutors() { return mAppExecutors; }
 
 	public DataRepository getRepository() {
 		return DataRepository.getInstance(getDatabase());

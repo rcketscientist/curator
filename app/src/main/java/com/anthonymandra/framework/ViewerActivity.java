@@ -606,7 +606,7 @@ public abstract class ViewerActivity extends CoreActivity implements
         String rating = values.getAsString(Meta.RATING);  //Use string since double returns 0 for null
         mXmpFragment.initXmp(
                 rating == null ? null : (int) Double.parseDouble(rating),
-                DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)),
+                null/*DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT))*/,
                 values.getAsString(Meta.LABEL));
 
         autoHide = new Timer();

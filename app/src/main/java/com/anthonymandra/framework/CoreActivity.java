@@ -28,7 +28,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -64,12 +63,7 @@ import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.util.MetaUtil;
 import com.crashlytics.android.Crashlytics;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.xmp.XmpDirectory;
-import com.drew.metadata.xmp.XmpWriter;
 import com.inscription.ChangeLogDialog;
-
-import org.reactivestreams.Subscription;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,7 +78,6 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -135,7 +128,7 @@ public abstract class CoreActivity extends DocumentActivity
 	public static final String META_SORT_ORDER_KEY = "sort_order";
 	public static final String META_DEFAULT_SORT = Meta.NAME + " ASC";
 
-	private static final long EXPIRATION = 4629746000L; //~60 days
+	private static final long EXPIRATION = 5184000000L; //~60 days
 
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -442,52 +435,31 @@ public abstract class CoreActivity extends DocumentActivity
 	{
 		super.onPostCreate(savedInstanceState);
 		mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
-		mXmpFragment.setListener(new XmpEditFragment.MetaChangedListener()
-		{
-			@Override
-			public void onMetaChanged(Integer rating, String label, String[] subject)
-			{
-				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-				values.Label = label;
-				values.Subject = subject;
-				values.Rating = rating;
-				writeXmpModifications(values);
-			}
-		});
-		mXmpFragment.setLabelListener(new XmpEditFragment.LabelChangedListener()
-		{
-			@Override
-			public void onLabelChanged(String label)
-			{
-				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-				values.Label = label;
+		mXmpFragment.setListener((rating, label, subject) -> {
+            XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+            values.Label = label;
+            values.Subject = subject;
+            values.Rating = rating;
+            writeXmpModifications(values);
+        });
+		mXmpFragment.setLabelListener(label -> {
+            XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+            values.Label = label;
 
-				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Label)).start();
-			}
-		});
-		mXmpFragment.setRatingListener(new XmpEditFragment.RatingChangedListener()
-		{
-			@Override
-			public void onRatingChanged(Integer rating)
-			{
-				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-				values.Rating = rating;
+            new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Label)).start();
+        });
+		mXmpFragment.setRatingListener(rating -> {
+            XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+            values.Rating = rating;
 
-				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Rating)).start();
-			}
-		});
-		mXmpFragment.setSubjectListener(new XmpEditFragment.SubjectChangedListener()
-		{
+            new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Rating)).start();
+        });
+		mXmpFragment.setSubjectListener(subject -> {
+            XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
+            values.Subject = subject;
 
-			@Override
-			public void onSubjectChanged(String[] subject)
-			{
-				XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-				values.Subject = subject;
-
-				new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Subject)).start();
-			}
-		});
+            new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Subject)).start();
+        });
 		hideEditXmpFragment();
 	}
 
@@ -527,7 +499,8 @@ public abstract class CoreActivity extends DocumentActivity
 			ContentValues cv = new ContentValues();
 			cv.put(Meta.LABEL, values.Label);
 			cv.put(Meta.RATING, values.Rating);
-			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.Subject));
+			//FIXME: This should update the subject junction!
+//			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.Subject));
 
 			Map<Uri, ContentValues> xmpPairing = new HashMap<>();
 			for (Uri uri : selection)
@@ -1857,9 +1830,10 @@ public abstract class CoreActivity extends DocumentActivity
 					case Rating:
 						xmpPair.getValue().put(Meta.RATING, update.Rating);
 						break;
-					case Subject:
-						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.Subject));
-						break;
+						// FIXME: This should prepare a subject junction update
+//					case Subject:
+//						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.Subject));
+//						break;
 				}
 			}
 			writeXmp(xmpPairs);

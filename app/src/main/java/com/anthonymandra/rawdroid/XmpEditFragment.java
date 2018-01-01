@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -9,7 +10,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.anthonymandra.rawdroid.data.SubjectEntity;
 import com.anthonymandra.widget.XmpLabelGroup;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -35,7 +39,7 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	public interface SubjectChangedListener
 	{
-		void onSubjectChanged(String[] subject);
+		void onSubjectChanged(SubjectEntity[] subject);
 	}
 
 	private RatingChangedListener mRatingListener;
@@ -60,7 +64,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	private MetaChangedListener mXmpChangedListener;
 	public interface MetaChangedListener
 	{
-		void onMetaChanged(Integer rating, String label, String[] subject);
+		void onMetaChanged(Integer rating, String label, SubjectEntity[] subject);
 	}
 
 	public void setListener(MetaChangedListener listener)
@@ -93,7 +97,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
+	public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
 		setExclusive(true);
@@ -154,7 +158,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	/**
 	 * Silently set xmp without firing listeners
 	 */
-	public void initXmp(Integer rating, String[] subject, String label)
+	public void initXmp(Integer rating, SubjectEntity[] subject, String label)
 	{
 		super.initXmp(formatRating(rating),
 				formatLabel(label),
@@ -163,39 +167,16 @@ public class XmpEditFragment extends XmpBaseFragment
 
 	private void attachButtons(View parent)
 	{
-		parent.findViewById(R.id.clearMetaButton).setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				clear();
-			}
-		});
-		parent.findViewById(R.id.recentMetaButton).setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				fireMetaUpdate();
-			}
-		});
+		parent.findViewById(R.id.clearMetaButton).setOnClickListener(v -> clear());
+		parent.findViewById(R.id.recentMetaButton).setOnClickListener(v -> fireMetaUpdate());
+		parent.findViewById(R.id.helpButton).setOnClickListener(v -> startTutorial());
 
-		parent.findViewById(R.id.helpButton).setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				startTutorial();
-			}
-		});
-
-		recentLabel = (ImageView)parent.findViewById(R.id.recentLabel);
-		recentRating = (ImageView)parent.findViewById(R.id.recentRating);
+		recentLabel = parent.findViewById(R.id.recentLabel);
+		recentRating = parent.findViewById(R.id.recentRating);
 	}
 
 	@Override
-	public void onKeywordsSelected(Collection<String> selectedKeywords)
-	{
+	public void onKeywordsSelected(@NotNull Collection<? extends SubjectEntity> selectedKeywords) {
 		recentXmp.Subject = getSubject();
 		if (mSubjectListener != null)
 			mSubjectListener.onSubjectChanged(recentXmp.Subject);
@@ -276,7 +257,7 @@ public class XmpEditFragment extends XmpBaseFragment
 	public static class XmpEditValues
 	{
 		public Integer Rating = null;
-		public String[] Subject = null;
+		public SubjectEntity[] Subject = null;
 		public String Label = null;
 	}
 

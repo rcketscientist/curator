@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -11,33 +12,23 @@ import java.util.List;
 @Dao
 public abstract class FolderDao extends PathDao<FolderEntity>
 {
-	protected final static String DATABASE = FolderEntity.DATABASE;
-
-	@Override
-	String getDatabase()
-	{
-		return DATABASE;
-	}
-
-	@Query("SELECT COUNT(*) FROM " + DATABASE)
+	@Query("SELECT COUNT(*) FROM image_parent")
 	public abstract int count();
 
-	@Query("SELECT * FROM " + DATABASE)
-	public abstract List<FolderEntity> getAll();    //FIXME: LiveData doesn't work...
+	@Query("SELECT * FROM image_parent")
+	public abstract LiveData<List<FolderEntity>> getAll();
 
-	@Query("SELECT * FROM " + DATABASE + " WHERE " + FolderEntity._ID + " = :id")
+	@Query("SELECT * FROM image_parent WHERE id = :id")
 	public abstract FolderEntity get(long id);
 
-	@Query("SELECT * FROM " + DATABASE + " WHERE " + FolderEntity._ID + "= :id ")
-	abstract FolderEntity getPath(Long id);    // private ideal
+	@Query("SELECT * FROM image_parent WHERE id = :id")
+	abstract FolderEntity get(Long id);    // private ideal
 
-	@Query("SELECT " + PathEntity._ID + " FROM " + DATABASE +
-			" WHERE " + PathEntity.PATH + " LIKE :path || '%'")
-	public abstract List<Long> getDescendants(String path);
+	@Query("SELECT id FROM image_parent WHERE path LIKE :path || '%'")
+	public abstract List<Long> getDescendantIds(String path);
 
-	@Query("SELECT " + PathEntity._ID + " FROM " + DATABASE +
-			" WHERE :path LIKE " + PathEntity.PATH + " || '%'")
-	public abstract List<Long> getAncestors(String path);
+	@Query("SELECT id FROM image_parent WHERE :path LIKE path || '%'")
+	public abstract List<Long> getAncestorIds(String path);
 
 	@Insert
 	abstract Long insertInternal(FolderEntity entities);

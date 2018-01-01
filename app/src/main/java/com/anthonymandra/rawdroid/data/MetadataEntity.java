@@ -1,24 +1,22 @@
 package com.anthonymandra.rawdroid.data;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
-
-import com.anthonymandra.content.Meta;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 
-@Entity(tableName = Meta.META,
+@Entity(tableName = "meta",
 		foreignKeys = @ForeignKey(entity = FolderEntity.class,
-				parentColumns = FolderEntity._ID,
-				childColumns = Meta.PARENT,
+				parentColumns = "id",
+				childColumns = "parentId",
 				onDelete = CASCADE),
-		indices = { @Index(value = Meta.URI, unique = true),
-					@Index(value = Meta.DOCUMENT_ID, unique = true),
-					@Index(value = Meta.PARENT)})
+		indices = { @Index(value = "uri", unique = true),
+					@Index(value = "documentId", unique = true),
+					@Index(value = "parentId")})
 public class MetadataEntity
 {
 	public static MetadataEntity createMetadataEntity(SearchEntity file) {
@@ -33,91 +31,62 @@ public class MetadataEntity
 	}
 
 	@PrimaryKey(autoGenerate = true)
-	@ColumnInfo(name = Meta._ID)
 	public Long id;
 
-	@ColumnInfo(name = Meta.NAME)
 	public String name;
 
-	@ColumnInfo(name = Meta.TYPE)
 	public int type;
 
-	@ColumnInfo(name = Meta.PROCESSED)
 	public Boolean processed;
 
-	@ColumnInfo(name = Meta.URI)
 	public String uri;
 
-	@ColumnInfo(name = Meta.DOCUMENT_ID)
+	// Unique documentId, we don't want duplicates from different root permissions
 	public String documentId;
 
-	@ColumnInfo(name = Meta.PARENT)
-	public Long parent;
+	public Long parentId;
 
-	@ColumnInfo(name = Meta.RATING)
 	public String rating;
 
-//	Subject is defined by junction table
-//	public List<String> subject;
-
-	@ColumnInfo(name = Meta.LABEL)  //table
 	public String label;
 
-	@ColumnInfo(name = Meta.TIMESTAMP)
 	public String timestamp;
 
-	@ColumnInfo(name = Meta.MAKE)
 	public String make;
 
-	@ColumnInfo(name = Meta.MODEL)  // Make and Model tables, only need model, make is implicit http://en.tekstenuitleg.net/articles/software/database-design-tutorial/second-normal-form.html
+	// Make and Model tables, only need model, make is implicit http://en.tekstenuitleg.net/articles/software/database-design-tutorial/second-normal-form.html
 	public String model;
 
-	@ColumnInfo(name = Meta.APERTURE)
 	public String aperture;
 
-	@ColumnInfo(name = Meta.EXPOSURE)
 	public String exposure;
 
-	@ColumnInfo(name = Meta.FLASH)
 	public String flash;
 
-	@ColumnInfo(name = Meta.FOCAL_LENGTH)
 	public String focalLength;
 
-	@ColumnInfo(name = Meta.ISO)
 	public String iso;
 
-	@ColumnInfo(name = Meta.WHITE_BALANCE)
 	public String whiteBalance;
 
-	@ColumnInfo(name = Meta.HEIGHT)
 	public int height;
 
-	@ColumnInfo(name = Meta.WIDTH)
 	public int width;
 
-	@ColumnInfo(name = Meta.LATITUDE)
 	public String latitude;
 
-	@ColumnInfo(name = Meta.LONGITUDE)
 	public String longitude;
 
-	@ColumnInfo(name = Meta.ALTITUDE)
 	public String altitude;
 
-	@ColumnInfo(name = Meta.ORIENTATION)
 	public int orientation;
 
-	@ColumnInfo(name = Meta.LENS_MODEL)//table
-	public String lens;
+	public String lens;//todo: table
 
-	@ColumnInfo(name = Meta.DRIVE_MODE)//table
-	public String driveMode;
+	public String driveMode;//todo: table
 
-	@ColumnInfo(name = Meta.EXPOSURE_MODE)//table
-	public String exposureMode;
+	public String exposureMode;//todo: table
 
-	@ColumnInfo(name = Meta.EXPOSURE_PROGRAM)//table
-	public String exposureProgram;
+	public String exposureProgram;//todo: table
 }
 

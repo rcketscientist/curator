@@ -1,17 +1,18 @@
 package com.anthonymandra.rawdroid.data;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.provider.BaseColumns;
 
 @Entity
 public abstract class PathEntity
 {
-	public static final String _ID = BaseColumns._ID;
-	public static final String PATH = "path";
-	public static final String DEPTH = "depth";
-	public static final String PARENT = "parent";
+	PathEntity() {}
+	PathEntity(String path, int depth, Long parent)
+	{
+		this.path = path;
+		this.depth = depth;
+		this.parent = parent;
+	}
 
 	PathEntity(Long id, String path, int depth, Long parent)
 	{
@@ -21,24 +22,33 @@ public abstract class PathEntity
 		this.parent = parent;
 	}
 
+	/**
+	 * Primary key
+	 */
 	@PrimaryKey(autoGenerate = true)
-	@ColumnInfo(name = _ID)
 	public Long id;
 
-	@ColumnInfo(name = PATH)
-	public String path;
+	/**
+	 * Path identifying the hierarchy of data
+	 */
+	public String path = "";
 
+	/**
+	 * This item's parent id or null if it is a root
+	 */
 	public Long parent = null;
 
-	@ColumnInfo(name = DEPTH)
+	/**
+	 * The depth at which this item resides (number of parents)
+	 */
 	public int depth;
 
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof FolderEntity)
+		if (obj instanceof PathEntity)
 		{
-			FolderEntity compare = (FolderEntity) obj;
+			PathEntity compare = (PathEntity) obj;
 			return  id.equals(compare.id) &&
 					path.equals(compare.path) &&
 					depth == compare.depth;

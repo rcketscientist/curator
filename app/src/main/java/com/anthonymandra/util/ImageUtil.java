@@ -39,6 +39,7 @@ import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
+import com.anthonymandra.imageprocessor.Executor;
 import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.imageprocessor.Margins;
@@ -47,6 +48,7 @@ import com.anthonymandra.rawdroid.Constants;
 import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawdroid.data.AppDatabase;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -61,6 +63,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.schedulers.Schedulers;
 
 @SuppressLint("AndroidLintSimpleDateFormat") // These are for specific library formats
 public class ImageUtil
@@ -245,25 +252,22 @@ public class ImageUtil
         return ImageConstants.TIFF_MIME.equals(mimeType);
     }
 
-    public static boolean importKeywords(Context c, Uri keywordUri)
+    public static void importKeywords(Context c, Uri keywordUri)
     {
-        boolean success = false;
-        try (InputStream is = c.getContentResolver().openInputStream(keywordUri);
-             InputStreamReader reader = new InputStreamReader(is))
-        {
-            // Attempt to import keywords
-            success = KeywordProvider.importKeywords(c, reader);
-            if (success)
-                Toast.makeText(c, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(c, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        return success;
+        Completable.fromAction(() -> {
+            InputStream is = c.getContentResolver().openInputStream(keywordUri);
+            InputStreamReader reader = new InputStreamReader(is);
+            AppDatabase.getInstance(c).subjectDao().importKeywords(c, reader);
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(
+                () -> Toast.makeText(c, R.string.resultImportSuccessful, Toast.LENGTH_LONG).show(),
+                (e) -> {
+                    Toast.makeText(c, R.string.resultImportFailed, Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Import failed: ", e);
+                }
+        );
     }
 
 	/**

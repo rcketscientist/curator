@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Toast;
 
+import com.anthonymandra.rawdroid.data.SubjectEntity;
 import com.anthonymandra.widget.RatingBar;
 import com.anthonymandra.widget.XmpLabelGroup;
 
@@ -27,33 +29,31 @@ public abstract class XmpBaseFragment extends Fragment implements
 	private boolean mPauseListener = false;
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState)
+	public void onViewCreated(@NonNull View view, Bundle savedInstanceState)
 	{
 		super.onViewCreated(view, savedInstanceState);
-		mRatingBar = (RatingBar) view.findViewById(R.id.ratingBar);
-		colorKey = (XmpLabelGroup) view.findViewById(R.id.colorKey);
+		mRatingBar = view.findViewById(R.id.ratingBar);
+		colorKey = view.findViewById(R.id.colorKey);
 		mKeywordFragment = (KeywordBaseFragment) getChildFragmentManager().findFragmentById(R.id.keywordFragment);
 		attachButtons();
 	}
 
 	protected void clear()
 	{
-//		mPauseListener = true;
 		mKeywordFragment.clearSelectedKeywords();
 		if (colorKey != null)
 			colorKey.clearChecked();
 		if (mRatingBar != null)
 			mRatingBar.clearChecked();
-//		mPauseListener = false;
 		onXmpChanged(getXmp());
 	}
 
-	protected String[] getSubject()
+	protected SubjectEntity[] getSubject()
 	{
-		Collection<String> selectedKeywords = mKeywordFragment.getSelectedKeywords();
+		Collection<SubjectEntity> selectedKeywords = mKeywordFragment.getSelectedKeywords();
 		if (selectedKeywords.size() == 0)
 			return null;
-		return selectedKeywords.toArray(new String[selectedKeywords.size()]);
+		return selectedKeywords.toArray(new SubjectEntity[selectedKeywords.size()]);
 	}
 
 	protected Integer[] getRatings()
@@ -160,7 +160,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 		setXmp(xmp.rating, xmp.label, xmp.subject);
 	}
 
-	protected void setXmp(Integer[] rating, String[] label, String[] subject)
+	protected void setXmp(Integer[] rating, String[] label, SubjectEntity[] subject)
 	{
 		mPauseListener = true;
 		setColorLabel(label);
@@ -188,7 +188,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 	 * @param label label
 	 * @param subject keywords
 	 */
-	protected void initXmp(Integer[] rating, String[] label, String[] subject)
+	protected void initXmp(Integer[] rating, String[] label, SubjectEntity[] subject)
 	{
 		mPauseListener = true;
 		setColorLabel(label);
@@ -219,7 +219,7 @@ public abstract class XmpBaseFragment extends Fragment implements
 		mRatingBar.setAllowUnselected(allow);
 	}
 
-	protected void setSubject(String[] subject)
+	protected void setSubject(SubjectEntity[] subject)
 	{
 		if (subject != null)
 		{
@@ -234,32 +234,17 @@ public abstract class XmpBaseFragment extends Fragment implements
 	private void attachButtons()
 	{
 		// Ratings
-		mRatingBar.setOnRatingSelectionChangedListener(new RatingBar.OnRatingSelectionChangedListener()
-		{
-			@Override
-			public void onRatingSelectionChanged(List<Integer> checked)
-			{
-				if (!mPauseListener)
-					XmpBaseFragment.this.onRatingSelectionChanged(checked);
-			}
-		});
-		colorKey.setOnLabelSelectionChangedListener(new XmpLabelGroup.OnLabelSelectionChangedListener()
-		{
-			@Override
-			public void onLabelSelectionChanged(List<XmpLabelGroup.Labels> checked)
-			{
-				if (!mPauseListener)
-					XmpBaseFragment.this.onLabelSelectionChanged(checked);
-			}
-		});
-		mKeywordFragment.setOnKeywordsSelectedListener(new KeywordEditFragment.OnKeywordsSelectedListener()
-		{
-			@Override
-			public void onKeywordsSelected(Collection<String> selectedKeywords)
-			{
-				if (!mPauseListener)
-					XmpBaseFragment.this.onKeywordsSelected(selectedKeywords);
-			}
-		});
+		mRatingBar.setOnRatingSelectionChangedListener(checked -> {
+            if (!mPauseListener)
+                XmpBaseFragment.this.onRatingSelectionChanged(checked);
+        });
+		colorKey.setOnLabelSelectionChangedListener(checked -> {
+            if (!mPauseListener)
+                XmpBaseFragment.this.onLabelSelectionChanged(checked);
+        });
+		mKeywordFragment.setOnKeywordsSelectedListener(selectedKeywords -> {
+            if (!mPauseListener)
+                XmpBaseFragment.this.onKeywordsSelected(selectedKeywords);
+        });
 	}
 }

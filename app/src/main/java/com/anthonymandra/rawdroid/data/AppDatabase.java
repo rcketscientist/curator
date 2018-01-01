@@ -30,7 +30,7 @@ public abstract class AppDatabase extends RoomDatabase {
 	static AppDatabase create(Context ctxt, boolean memoryOnly) {
 		RoomDatabase.Builder<AppDatabase> b;
 
-		if (memoryOnly)
+		if (memoryOnly)	//FIXME: Remove this test-only code
 		{
 			b = Room.inMemoryDatabaseBuilder(ctxt.getApplicationContext(), AppDatabase.class);
 		}
@@ -44,4 +44,5 @@ public abstract class AppDatabase extends RoomDatabase {
 	public abstract FolderDao folderDao();
 	public abstract MetadataDao metadataDao();
 	public abstract SubjectDao subjectDao();
+	public abstract SubjectJunctionDao subjectJunctionDao();
 }

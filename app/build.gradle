@@ -17,6 +17,7 @@ repositories {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 
 def versionMajor = 5
@@ -26,7 +27,6 @@ def versionPatch = 4
 //noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     lintOptions {
         checkReleaseBuilds false
@@ -145,7 +145,9 @@ dependencies {
     implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0'
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.5'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 
@@ -157,19 +159,19 @@ dependencies {
     }
 
     //includes support-v4 and appcompat-v7
-    implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
-    implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"   // included to override ToggleButtons version
-    implementation "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"   // included to override ToggleButtons version
+    implementation "com.android.support:support-annotations:$supportLibVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
-    implementation "android.arch.lifecycle:extensions:" + rootProject.archVersion
-    implementation "android.arch.lifecycle:common-java8:" + rootProject.archVersion
-//    implementation "android.arch.lifecycle:reactivestreams:" + rootProject.archLifecycleVersion
-    implementation "android.arch.persistence.room:runtime:" + rootProject.archVersion
-//    implementation "android.arch.persistence.room:rxjava2:" + rootProject.archRoomVersion
-    annotationProcessor "android.arch.persistence.room:compiler:" + rootProject.archVersion
-    testImplementation "android.arch.persistence.room:testing:" + rootProject.archVersion
-    implementation "android.arch.paging:runtime:" + rootProject.archVersion + rootProject.archPagingVersion
+    implementation "android.arch.lifecycle:extensions:$archVersion"
+    implementation "android.arch.lifecycle:common-java8:$archVersion"
+    implementation "android.arch.persistence.room:runtime:$archVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$archVersion"
+    kapt "android.arch.persistence.room:compiler:$archVersion"
+    testImplementation "android.arch.persistence.room:testing:$archVersion"
+    androidTestImplementation "android.arch.core:core-testing:$archVersion"
+    implementation "android.arch.paging:runtime:$archVersion$archPagingVersion"
 
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
@@ -178,7 +180,9 @@ dependencies {
     androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
 crashlytics {

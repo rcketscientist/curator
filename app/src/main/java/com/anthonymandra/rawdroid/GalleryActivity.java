@@ -319,18 +319,18 @@ public class GalleryActivity extends CoreActivity implements
 		}
 	}
 
-	protected void updateQuery(XmpFilter filter) {
-		((App)getApplication()).getDatabase().metadataDao().getImages(
-				filter.andTrueOrFalse,
-				filter.sortColumn == XmpFilter.SortColumns.Name,
-				filter.segregateByType,
-				filter.sortAscending,
-				Arrays.asList(filter.xmp.label),
-				Arrays.asList(filter.xmp.subject),
-				filter.hiddenFolders,
-				Arrays.asList(filter.xmp.rating)
-		)
-	}
+//	protected void updateQuery(XmpFilter filter) {
+//		((App)getApplication()).getDatabase().metadataDao().getImages(
+//				filter.andTrueOrFalse,
+//				filter.sortColumn == XmpFilter.SortColumns.Name,
+//				filter.segregateByType,
+//				filter.sortAscending,
+//				Arrays.asList(filter.xmp.label),
+//				Arrays.asList(filter.xmp.subject),
+//				filter.hiddenFolders,
+//				Arrays.asList(filter.xmp.rating)
+//		)
+//	}
 
 	protected void updateMetaLoaderXmp(XmpFilter filter)
 	{
@@ -351,17 +351,17 @@ public class GalleryActivity extends CoreActivity implements
 				selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.length));
 				Collections.addAll(selectionArgs, filter.xmp.label);
 			}
-			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
-			{
-				if (requiresJoiner)
-					selection.append(joiner);
-				requiresJoiner = true;
-
-				selection.append(DbUtil.createLike(Meta.SUBJECT, filter.xmp.subject,
-						selectionArgs, joiner, false,
-						"%", "%",   // openended wildcards, match subject anywhere
-						null));
-			}
+//			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
+//			{
+//				if (requiresJoiner)
+//					selection.append(joiner);
+//				requiresJoiner = true;
+//
+//				selection.append(DbUtil.createLike(Meta.SUBJECT, filter.xmp.subject,
+//						selectionArgs, joiner, false,
+//						"%", "%",   // openended wildcards, match subject anywhere
+//						null));
+//			}
 			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
 			{
 				if (requiresJoiner)

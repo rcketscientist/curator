@@ -1,17 +1,13 @@
 package com.anthonymandra.rawdroid.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
-import android.net.Uri;
 import android.util.SparseArray;
-
-import com.anthonymandra.content.KeywordProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,30 +17,32 @@ import java.util.List;
 @Dao
 public abstract class SubjectDao extends PathDao<SubjectEntity>
 {
-	protected final static String DATABASE = SubjectEntity.DATABASE;
+	@Query("SELECT COUNT(*) FROM xmp_subject")
+	public abstract int count();
 
-	@Override
-	String getDatabase()
-	{
-		return DATABASE;
-	}
+	@Query("SELECT * FROM xmp_subject WHERE id= :id ")
+	abstract SubjectEntity get(Long id);
 
-	@Query("SELECT * FROM " + DATABASE + " WHERE " + SubjectEntity._ID + "= :id ")
-	abstract SubjectEntity getPath(Long id);
+	@Query("SELECT id FROM xmp_subject WHERE path LIKE :path || '%'")
+	public abstract List<Long> getDescendantIds(String path);
 
-	@Query("SELECT " + SubjectEntity._ID + " FROM " + DATABASE +
-			" WHERE " + SubjectEntity.PATH + " LIKE :path || '%'")
-	public abstract List<Long> getDescendants(String path);
+	@Query("SELECT id FROM xmp_subject WHERE :path LIKE path || '%'")
+	public abstract List<Long> getAncestorIds(String path);
 
-	@Query("SELECT " + SubjectEntity._ID + " FROM " + DATABASE +
-			" WHERE :path LIKE " + SubjectEntity.PATH + " || '%'")
-	public abstract List<Long> getAncestors(String path);
+	@Query("SELECT * FROM xmp_subject WHERE path LIKE :path || '%'")
+	public abstract List<SubjectEntity> getDescendants(String path);
 
-	@Query("SELECT * FROM " + DATABASE +
-			" INNER JOIN " + SubjectJunction.DATABASE + " AS sj" +
-			" ON sj." + SubjectEntity._ID + "=sj." + SubjectJunction.SUBJECT_ID +
-			" WHERE " + "sj." + SubjectJunction.META_ID + "=:metaId")
+	@Query("SELECT * FROM xmp_subject WHERE :path LIKE path || '%'")
+	public abstract List<SubjectEntity> getAncestors(String path);
+
+	@Query("SELECT * FROM xmp_subject " +
+			"INNER JOIN meta_subject_junction " +
+			"ON meta_subject_junction.subjectId = xmp_subject.id " +
+			"WHERE id = :metaId")
 	public abstract List<SubjectEntity> subjectsForImage(Long metaId);
+
+	@Query("SELECT * FROM xmp_subject ORDER BY recent DESC, name ASC")
+	public abstract LiveData<List<SubjectEntity>> getAll();
 
 	@Insert
 	abstract Long insertInternal(SubjectEntity entities);
@@ -53,13 +51,29 @@ public abstract class SubjectDao extends PathDao<SubjectEntity>
 	public abstract void update(SubjectEntity entities);
 
 	@Update
+	public abstract void update(List<SubjectEntity> entities);
+
+	@Update
 	public abstract void update(SubjectEntity... entities);
 
 	@Delete
 	public abstract void delete(SubjectEntity... entities);
 
-	public boolean importKeywords(Context context, Reader keywordList)
-	{
+	@Query("DELETE FROM xmp_subject")
+	public abstract void deleteAll();
+
+	public List<SubjectEntity> getDescendants(long id) {
+		PathEntity pd = get(id);
+		return getDescendants(pd.path);
+	}
+
+	public List<SubjectEntity> getAncestors(long id) {
+		PathEntity pd = get(id);
+		return getAncestors(pd.path);
+	}
+
+	//TODO: This belongs in a data repository
+	public void importKeywords(Context context, Reader keywordList) throws IOException {
 		//Ex:
 		//National Park
 		//		Badlands
@@ -69,52 +83,40 @@ public abstract class SubjectDao extends PathDao<SubjectEntity>
 		//			{Penis Park}
 
 		// Clear the existing database
-		delete();       //TODO: This might not be defined as delete table yet.
+		deleteAll();
 
-		try
+		BufferedReader readbuffer = new BufferedReader(keywordList);
+
+		String line;
+		SparseArray<Long> parents = new SparseArray<>();
+		while ((line = readbuffer.readLine()) != null)
 		{
-			BufferedReader readbuffer = new BufferedReader(keywordList);
+			String tokens[] = line.split("\t");
+			int depth = tokens.length - 1;
+			String name = tokens[depth];
 
-			String line;
-			SparseArray<Long> parents = new SparseArray<>();
-			while ((line = readbuffer.readLine()) != null)
+			// If the entry is a synonym ex: {bread} then trim and add to parent
+			if (name.startsWith("{") && name.endsWith("}"))
 			{
-				String tokens[] = line.split("\t");
-				int depth = tokens.length - 1;
-				String name = tokens[depth];
+				name = name.substring(1, name.length()-1);
+				SynonymEntity synonym = new SynonymEntity();
+				synonym.subjectId = parents.get(depth - 1);
 
-				// If the entry is a synonym ex: {bread} then trim and add to parent
-				if (name.startsWith("{") && name.endsWith("}"))
-				{
-					name = name.substring(1, name.length()-1);
-					SynonymEntity synonym = new SynonymEntity();
-					synonym.subjectId = parents.get(depth - 1);
-
-					// FIXME: insert synonym
-					continue;
-				}
-
-				ContentValues cv = new ContentValues();
-				cv.put(KeywordProvider.Data.KEYWORD_NAME, name);
-				Long id = parents.get(depth - 1);
-				if (id != null)
-				{
-					cv.put(KeywordProvider.Data.KEYWORD_PARENT, id);
-				}
-
-				Uri uri = context.getContentResolver().insert(
-						KeywordProvider.Data.CONTENT_URI,
-						cv);
-
-				long childId = uri != null ? ContentUris.parseId(uri) : -1;
-				parents.put(depth, childId);
+				// FIXME: insert synonym
+				continue;
 			}
-		} catch (IOException e)
-		{
-			return false;
+
+			final SubjectEntity keyword = new SubjectEntity();
+			keyword.name = name;
+
+			Long id = parents.get(depth - 1);
+			if (id != null) {
+				keyword.parent = id;
+			}
+
+			long childId = insert(keyword);
+
+			parents.put(depth, childId);
 		}
-		return true;
-
 	}
-
 }

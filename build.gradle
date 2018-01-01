@@ -4,7 +4,13 @@ buildscript {
         jcenter()
         google()
     }
-    ext.kotlin_version = '1.1.51'
+    ext {
+        kotlin_version = '1.2.10'
+        compileSdkVersion = 26
+        supportLibVersion = "27.0.2"
+        archVersion = "1.0.0"
+        archPagingVersion = "-alpha4-1"
+    }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -16,14 +22,6 @@ allprojects {
         jcenter()
         maven { url 'https://maven.google.com' }
     }
-}
-
-ext {
-    compileSdkVersion = 26
-    buildToolsVersion = "26.0.2"
-    supportLibVersion = "27.0.1"
-    archVersion = "1.0.0"
-    archPagingVersion = "-alpha3"
 }
 
 task clean(type: Delete) {

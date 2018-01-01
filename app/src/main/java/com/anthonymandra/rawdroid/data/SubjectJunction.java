@@ -1,45 +1,38 @@
 package com.anthonymandra.rawdroid.data;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
-import android.provider.BaseColumns;
 import android.support.annotation.NonNull;
-
-import com.anthonymandra.content.Meta;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(
-	tableName = SubjectJunction.DATABASE,
-	primaryKeys = {SubjectJunction.META_ID, SubjectJunction.SUBJECT_ID},
+	tableName = "meta_subject_junction",
+	primaryKeys = {"metaId", "subjectId"},
 	indices = {
-		@Index(value = SubjectJunction.SUBJECT_ID),
-		@Index(value = SubjectJunction.META_ID)},
+		@Index(value = "subjectId"),
+		@Index(value = "metaId")},
 	foreignKeys = {
 		@ForeignKey(
 			entity = MetadataEntity.class,
-			parentColumns = Meta._ID,
-			childColumns = SubjectJunction.META_ID,
+			parentColumns = "id",
+			childColumns = "metaId",
 			onDelete = CASCADE),
 		@ForeignKey(
 			entity = SubjectEntity.class,
-			parentColumns = SubjectEntity._ID,
-			childColumns = SubjectJunction.SUBJECT_ID,
+			parentColumns = "id",
+			childColumns = "subjectId",
 			onDelete = CASCADE)})
-public class SubjectJunction
-{
-	public static final String DATABASE = "meta_subject_junction";
-	public static final String META_ID = "meta_id";
-	public static final String SUBJECT_ID = "subject_id";
+public class SubjectJunction {
+	public SubjectJunction(@NonNull Long metaId, @NonNull Long subjectId) {
+		this.metaId = metaId;
+		this.subjectId = subjectId;
+	}
 
-	@ColumnInfo(name = META_ID)
 	@NonNull
 	public Long metaId;
 
-	@ColumnInfo(name = SUBJECT_ID)
 	@NonNull
 	public Long subjectId;
 }
