@@ -1,6 +1,5 @@
 package com.anthonymandra.rawdroid.data;
 
-import android.arch.persistence.room.Relation;
 import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
 

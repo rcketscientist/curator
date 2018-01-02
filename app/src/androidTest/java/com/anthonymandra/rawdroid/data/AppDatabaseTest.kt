@@ -235,7 +235,7 @@ class AppDatabaseTest {
         val liveJoin = metadataDao.images
         val joinResult = liveJoin.blockingObserve()
 
-        val liveJoin2 = metadataDao.images2
+        val liveJoin2 = metadataDao.imagesTest
         val joinResult2 = liveJoin2.blockingObserve()
 
         // Ensure we don't have separate entities per junction match

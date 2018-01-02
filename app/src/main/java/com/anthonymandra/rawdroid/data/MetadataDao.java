@@ -13,36 +13,21 @@ import java.util.List;
 @Dao
 public abstract class MetadataDao {
 	// Core query logic, write this in the query initially for annotation error-checking
-	private static final String coreQuery =
-			"SELECT * FROM meta " +
-			"INNER JOIN (SELECT id AS image_parent_id, documentUri AS parentDocument FROM image_parent) image_parent " +
-			"ON meta.parentId = image_parent_id " +
-			"LEFT JOIN meta_subject_junction " +
-			"ON meta.id = meta_subject_junction.metaId " +
-			"LEFT JOIN (SELECT id AS xmp_subject_id, name AS keyword FROM xmp_subject) xmp_subject " +
-			"ON xmp_subject_id = meta_subject_junction.subjectId ";
-
-	// Core query logic, write this in the query initially for annotation error-checking
-	private static final String coreQuery2 =
-			"SELECT * FROM meta " +
-					"INNER JOIN (SELECT id AS image_parent_id, documentUri AS parentDocument FROM image_parent) image_parent " +
-					"ON meta.parentId = image_parent_id " +
-					"(SELECT GROUP_CONCAT(name) FROM meta_subject_junction " +
+	private static final String mergeQuery =
+			"SELECT *,  " +
+				"(SELECT GROUP_CONCAT(name) " +
+					"FROM meta_subject_junction " +
 					"JOIN xmp_subject " +
 					"ON xmp_subject.id = meta_subject_junction.subjectId " +
-					"WHERE meta_subject_junction.metaId = metaId) AS keywords ";
-
-	private static final String mergeQuery =
-			"SELECT id, name, type, height, width, orientation,  " +
-				"(SELECT GROUP_CONCAT(name) " +
-				  "FROM meta_subject_junction " +
-				  "JOIN xmp_subject " +
-				  "ON xmp_subject.id = meta_subject_junction.subjectId " +
-				  "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+					"WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
 				"(SELECT documentUri " +
 					"FROM image_parent " +
 					"WHERE meta.parentId = image_parent.id ) AS parentUri " +
-			"FROM meta";
+			"FROM meta ";
+
+	private static final String SEGREGATE = "type COLLATE NOCASE ASC";
+	private static final String NAME_ASC = "meta.name COLLATE NOCASE ASC";
+	private static final String OrderTypeNameAsc = "ORDER BY type COLLATE NOCASE ASC, meta.name COLLATE NOCASE ASC";
 
 	@Query("SELECT COUNT(*) FROM meta")
 	public abstract int count();
@@ -56,54 +41,24 @@ public abstract class MetadataDao {
 // --- AND ----
 // --- NAME ---
 
-//	@Query(	"SELECT * FROM meta " +
-//			"INNER JOIN (SELECT id, documentUri AS parentDocument FROM image_parent) image_parent " +
-//			"ON meta.parentId = image_parent.id " +
-//			"INNER JOIN meta_subject_junction " +
-//			"ON meta.id = meta_subject_junction.metaId " +
-//            "LEFT JOIN (SELECT id, name AS keyword FROM xmp_subject) xmp_subject " +
-//            "ON xmp_subject.id = meta_subject_junction.subjectId " +
-//			"WHERE meta.label IN (:labels) " +
-//			"AND meta.rating IN (:ratings) " +
-//			"AND meta_subject_junction.subjectId IN (:subjects)" +
-//			"AND meta.parentId NOT IN (:hiddenFolderIds)" +
-//			"ORDER BY type COLLATE NOCASE ASC, meta.name COLLATE NOCASE ASC")
-//	abstract LiveData<List<MetadataWithRelations>> getImages_AND_SEG_NAME_ASC(
-//			List<String> labels,
-//			List<String> subjects,
-//			List<Long> hiddenFolderIds,
-//			List<Integer> ratings);
-
-	@Query("SELECT id, name, type, height, width, orientation,  " +
-				"(SELECT GROUP_CONCAT(name) " +
-					"FROM meta_subject_junction " +
-					"JOIN xmp_subject " +
-					"ON xmp_subject.id = meta_subject_junction.subjectId " +
-					"WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
-				"(SELECT documentUri " +
-					"FROM image_parent " +
-					"WHERE meta.parentId = image_parent.id ) AS parentUri " +
-			"FROM meta")
+	@Query(mergeQuery)
 	abstract LiveData<List<MetadataResult>> getImages();
 
-	@Query("SELECT *,  " +
-			"(SELECT GROUP_CONCAT(name) " +
-			"FROM meta_subject_junction " +
-			"JOIN xmp_subject " +
-			"ON xmp_subject.id = meta_subject_junction.subjectId " +
-			"WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
-			"(SELECT documentUri " +
-			"FROM image_parent " +
-			"WHERE meta.parentId = image_parent.id ) AS parentUri " +
-			"FROM meta")
-	abstract LiveData<List<MetadataResult>> getImages2();
+	@Query(mergeQuery + "WHERE label IN (\"label1\")")
+	abstract LiveData<List<MetadataResult>> getImagesTest();
 
-	@Query(	coreQuery +
+	@Query(	"SELECT * FROM meta " +
+			"INNER JOIN image_parent " +
+			"ON meta.parentId = image_parent.id " +
+			"INNER JOIN meta_subject_junction " +
+			"ON meta.id = meta_subject_junction.metaId " +
+			"LEFT JOIN xmp_subject " +
+			"ON xmp_subject.id = meta_subject_junction.subjectId " +
 			"WHERE meta.label IN (:labels) " +
 			"AND meta.rating IN (:ratings) " +
 			"AND meta_subject_junction.subjectId IN (:subjects)" +
 			"AND meta.parentId NOT IN (:hiddenFolderIds)" +
-			"ORDER BY type COLLATE NOCASE ASC, meta.name COLLATE NOCASE ASC")
+			OrderTypeNameAsc)
 	abstract LiveData<List<MetadataEntity>> getImages_AND_SEG_NAME_ASC(
 			List<String> labels,
 			List<String> subjects,
