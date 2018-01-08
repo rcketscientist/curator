@@ -60,7 +60,8 @@ object RoomCodeGenerator {
 
     val fullParameters = "boolean andOr, boolean nameTime, boolean segregate, boolean ascDesc, " +
             "List<String> labels, List<String> subjects, List<Long> hiddenFolderIds, List<Integer> ratings"
-    val passParameters = "andOr, nameTime, segregate, ascDesc, labels, subjects, hiddenFolderIds, ratings"
+    val passCollections = "labels, subjects, hiddenFolderIds, ratings"
+    val passParameters = "andOr, nameTime, segregate, ascDesc, $passCollections"
 
     val queryIdMethod =
             "private int getQueryId($fullParameters) {\n" +
@@ -76,7 +77,7 @@ object RoomCodeGenerator {
 
     var queryMapMethod =
             "private $result getImages($fullParameters) {\n" +
-                    "\tint id = getQueryId(andOr, nameTime, segregate, ascDesc, labels, subjects, hiddenFolderIds, ratings);\n" +
+                    "\tint id = getQueryId($passParameters);\n" +
                     "\tswitch(id) {\n"
 
     fun GenerateDao() {
