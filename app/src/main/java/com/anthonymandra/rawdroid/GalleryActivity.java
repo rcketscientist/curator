@@ -340,16 +340,16 @@ public class GalleryActivity extends CoreActivity implements
 
 		final String AND = " AND ";
 		final String OR = " OR ";
-		String joiner = filter.andTrueOrFalse ? AND : OR;
+		String joiner = filter.getAndTrueOrFalse() ? AND : OR;
 
-		if (filter.xmp != null)
+		if (filter.getXmp() != null)
 		{
-			if (filter.xmp.label != null && filter.xmp.label.length > 0)
+			if (filter.getXmp().label != null && filter.getXmp().label.length > 0)
 			{
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.length));
-				Collections.addAll(selectionArgs, filter.xmp.label);
+				selection.append(DbUtil.createIN(Meta.LABEL, filter.getXmp().label.length));
+				Collections.addAll(selectionArgs, filter.getXmp().label);
 			}
 //			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
 //			{
@@ -362,26 +362,26 @@ public class GalleryActivity extends CoreActivity implements
 //						"%", "%",   // openended wildcards, match subject anywhere
 //						null));
 //			}
-			if (filter.xmp.rating != null && filter.xmp.rating.length > 0)
+			if (filter.getXmp().rating != null && filter.getXmp().rating.length > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createIN(Meta.RATING, filter.xmp.rating.length));
-				for (int rating : filter.xmp.rating)
+				selection.append(DbUtil.createIN(Meta.RATING, filter.getXmp().rating.length));
+				for (int rating : filter.getXmp().rating)
 				{
 					selectionArgs.add(Double.toString((double)rating));
 				}
 			}
 		}
-		if (filter.hiddenFolders != null && filter.hiddenFolders.size() > 0)
+		if (filter.getHiddenFolders() != null && filter.getHiddenFolders().size() > 0)
 		{
 			if (requiresJoiner)
 				selection.append(AND);  // Always exclude the folders, don't OR
 
 			selection.append(DbUtil.createLike(Meta.PARENT,
-					filter.hiddenFolders.toArray(new String[filter.hiddenFolders.size()]),
+					filter.getHiddenFolders().toArray(new String[filter.getHiddenFolders().size()]),
 					selectionArgs,
 					AND,    // Requires AND so multiple hides don't negate each other
 					true,   // NOT
@@ -390,14 +390,14 @@ public class GalleryActivity extends CoreActivity implements
 					"%"));  // Uri contain '%' which means match any so escape them
 		}
 
-		String order = filter.sortAscending ? " ASC" : " DESC";
+		String order = filter.getSortAscending() ? " ASC" : " DESC";
 		StringBuilder sort = new StringBuilder();
 
-		if (filter.segregateByType)
+		if (filter.getSegregateByType())
 		{
 			sort.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ");
 		}
-		switch (filter.sortColumn)
+		switch (filter.getSortColumn())
 		{
 			case Date: sort.append(Meta.TIMESTAMP).append(order); break;
 			case Name: sort.append(Meta.NAME).append(" COLLATE NOCASE").append(order); break;

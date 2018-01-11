@@ -90,14 +90,8 @@ abstract class KeywordBaseFragment : Fragment() {
         (keywordGrid.adapter as SelectArrayAdapter).notifyDataSetChanged()
     }
 
-    fun setSelectedKeywords(selected: Collection<SubjectEntity>?) {
-        if (selected == null) {
-            clearSelectedKeywords()
-            return
-        }
-
+    fun setSelectedKeywords(selected: Collection<SubjectEntity>) {
         mSelectedKeywords.clear()
-
         mSelectedKeywords.addAll(selected)
     }
 

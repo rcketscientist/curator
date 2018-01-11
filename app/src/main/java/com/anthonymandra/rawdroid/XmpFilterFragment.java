@@ -288,14 +288,13 @@ public class XmpFilterFragment extends XmpBaseFragment
 
     public XmpFilter getXmpFilter()
     {
-        XmpFilter filter = new XmpFilter();
-        filter.andTrueOrFalse = mAndTrueOrFalse;
-        filter.hiddenFolders = mHiddenFolders;
-        filter.segregateByType = mSegregateByType;
-        filter.sortAscending = mSortAscending;
-        filter.sortColumn = mSortColumn;
-        filter.xmp = getXmpValues();
-        return filter;
+        return new XmpFilter(
+            getXmpValues(),
+            mAndTrueOrFalse,
+            mSortAscending,
+            mSegregateByType,
+            mSortColumn,
+            mHiddenFolders);
     }
 
     public void registerXmpFilterChangedListener(MetaFilterChangedListener listener)
