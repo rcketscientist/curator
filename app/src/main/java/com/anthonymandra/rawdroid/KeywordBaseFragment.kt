@@ -17,18 +17,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
 
+typealias KeywordSelectedListener = (Collection<SubjectEntity>) -> Unit
 abstract class KeywordBaseFragment : Fragment() {
 
-    lateinit var mListener: OnKeywordsSelectedListener
+    // Kotlin interfaces don't support SAM, so just store a callback
+    private var onKeywordsSelected: KeywordSelectedListener? = null
     private val mSelectedKeywords = HashSet<SubjectEntity>()
     protected var mCascadeSelection = false
     abstract val keywordGridLayout: Int
     private lateinit var keywordGrid: GridView
     private lateinit var viewModel: KeywordViewModel
-
-    interface OnKeywordsSelectedListener {
-        fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(keywordGridLayout, container, false)
@@ -59,8 +57,8 @@ abstract class KeywordBaseFragment : Fragment() {
         })
     }
 
-    fun setOnKeywordsSelectedListener(listener: OnKeywordsSelectedListener) {
-        mListener = listener
+    fun setOnKeywordsSelectedListener(callback: KeywordSelectedListener) {
+        onKeywordsSelected = callback
     }
 
     fun onKeywordClicked(keyword: SubjectEntity) {
@@ -84,8 +82,7 @@ abstract class KeywordBaseFragment : Fragment() {
             mSelectedKeywords.add(keyword)
         }
 
-        if (mListener != null)
-            mListener.onKeywordsSelected(mSelectedKeywords)
+        onKeywordsSelected?.invoke(mSelectedKeywords)
 
         (keywordGrid.adapter as SelectArrayAdapter).notifyDataSetChanged()
     }

@@ -57,10 +57,6 @@ android {
         androidTest.assets.srcDirs += files(schemaLocation)
     }
 
-    dataBinding {
-        enabled = true
-    }
-
     signingConfigs {
         release {
             storeFile file("../key/my-release-key.keystore")
@@ -142,7 +138,7 @@ dependencies {
     implementation 'com.afollestad:material-cab:0.1.12'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
-    implementation 'com.github.deano2390:MaterialShowcaseView:1.1.0'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
 
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
@@ -164,13 +160,15 @@ dependencies {
     implementation "com.android.support:support-annotations:$supportLibVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
+    // Life-cycle
     implementation "android.arch.lifecycle:extensions:$archVersion"
     implementation "android.arch.lifecycle:common-java8:$archVersion"
+    // Room
     implementation "android.arch.persistence.room:runtime:$archVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$archVersion"
     kapt "android.arch.persistence.room:compiler:$archVersion"
     testImplementation "android.arch.persistence.room:testing:$archVersion"
-    androidTestImplementation "android.arch.core:core-testing:$archVersion"
+    // Paging
     implementation "android.arch.paging:runtime:$archVersion$archPagingVersion"
 
     // Required for local unit tests (JUnit 4 framework)
@@ -180,9 +178,12 @@ dependencies {
     androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
+    // Espresso UI mocking
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    // Hamcrest matching
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
-//    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    // Arch testing
+    androidTestImplementation "android.arch.core:core-testing:$archVersion"
 }
 
 crashlytics {

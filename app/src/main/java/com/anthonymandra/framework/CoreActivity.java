@@ -437,26 +437,26 @@ public abstract class CoreActivity extends DocumentActivity
 		mXmpFragment = (XmpEditFragment) getSupportFragmentManager().findFragmentById(R.id.editFragment);
 		mXmpFragment.setListener((rating, label, subject) -> {
             XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-            values.Label = label;
-            values.Subject = subject;
-            values.Rating = rating;
+            values.setLabel(label);
+            values.setSubject(subject);
+            values.setRating(rating);
             writeXmpModifications(values);
         });
 		mXmpFragment.setLabelListener(label -> {
             XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-            values.Label = label;
+            values.setLabel(label);
 
             new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Label)).start();
         });
 		mXmpFragment.setRatingListener(rating -> {
             XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-            values.Rating = rating;
+            values.setRating(rating);
 
             new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Rating)).start();
         });
 		mXmpFragment.setSubjectListener(subject -> {
             XmpEditFragment.XmpEditValues values = new XmpEditFragment.XmpEditValues();
-            values.Subject = subject;
+            values.setSubject(subject);
 
             new Thread(new PrepareXmpRunnable(values, XmpUpdateField.Subject)).start();
         });
@@ -497,8 +497,8 @@ public abstract class CoreActivity extends DocumentActivity
 		if (selection != null)
 		{
 			ContentValues cv = new ContentValues();
-			cv.put(Meta.LABEL, values.Label);
-			cv.put(Meta.RATING, values.Rating);
+			cv.put(Meta.LABEL, values.getLabel());
+			cv.put(Meta.RATING, values.getRating());
 			//FIXME: This should update the subject junction!
 //			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.Subject));
 
@@ -1825,10 +1825,10 @@ public abstract class CoreActivity extends DocumentActivity
 				switch(updateType)
 				{
 					case Label:
-						xmpPair.getValue().put(Meta.LABEL, update.Label);
+						xmpPair.getValue().put(Meta.LABEL, update.getLabel());
 						break;
 					case Rating:
-						xmpPair.getValue().put(Meta.RATING, update.Rating);
+						xmpPair.getValue().put(Meta.RATING, update.getRating());
 						break;
 						// FIXME: This should prepare a subject junction update
 //					case Subject:

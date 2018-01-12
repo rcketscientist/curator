@@ -12,8 +12,7 @@ import java.util.*
 
 abstract class XmpBaseFragment : Fragment(),
         RatingBar.OnRatingSelectionChangedListener,
-        XmpLabelGroup.OnLabelSelectionChangedListener,
-        KeywordBaseFragment.OnKeywordsSelectedListener {
+        XmpLabelGroup.OnLabelSelectionChangedListener {
 
     lateinit var mRatingBar: RatingBar
     lateinit var colorKey: XmpLabelGroup
@@ -47,7 +46,7 @@ abstract class XmpBaseFragment : Fragment(),
                 return Collections.emptyList()
 
             val labels = ArrayList<String>()
-            for (check in checked) {
+            checked.forEach { check ->
                 when (check) {
                     XmpLabelGroup.Labels.blue -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpBlue, "Blue"))
                     XmpLabelGroup.Labels.red -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpRed, "Red"))
@@ -156,6 +155,8 @@ abstract class XmpBaseFragment : Fragment(),
         mRatingBar.setAllowUnselected(allow)
     }
 
+    abstract fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)
+
     private fun attachButtons() {
         // Ratings
         mRatingBar.setOnRatingSelectionChangedListener { checked ->
@@ -166,9 +167,9 @@ abstract class XmpBaseFragment : Fragment(),
             if (!mPauseListener)
                 this@XmpBaseFragment.onLabelSelectionChanged(checked)
         }
-        mKeywordFragment.setOnKeywordsSelectedListener({ selectedKeywords ->
+        mKeywordFragment.setOnKeywordsSelectedListener { selectedKeywords ->
             if (!mPauseListener)
                 this@XmpBaseFragment.onKeywordsSelected(selectedKeywords)
-        })
+        }
     }
 }
