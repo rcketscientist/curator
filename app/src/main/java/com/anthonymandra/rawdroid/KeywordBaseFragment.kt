@@ -61,7 +61,7 @@ abstract class KeywordBaseFragment : Fragment() {
         onKeywordsSelected = callback
     }
 
-    fun onKeywordClicked(keyword: SubjectEntity) {
+    open fun onKeywordClicked(keyword: SubjectEntity) {
         setSelectedKeyword(keyword)
     }
 
@@ -69,17 +69,13 @@ abstract class KeywordBaseFragment : Fragment() {
         return mSelectedKeywords
     }
 
-    fun setSelectedKeyword(keyword: SubjectEntity) {
+    private fun setSelectedKeyword(keyword: SubjectEntity) {
         val selected = isSelected(keyword)
 
-        if (mCascadeSelection) {
-            cascadeKeywordSelection(keyword, selected)
-        }
-        else if (selected) {
-            mSelectedKeywords.remove(keyword)
-        }
-        else {
-            mSelectedKeywords.add(keyword)
+        when {
+            mCascadeSelection -> cascadeKeywordSelection(keyword, selected)
+            selected -> mSelectedKeywords.remove(keyword)
+            else -> mSelectedKeywords.add(keyword)
         }
 
         onKeywordsSelected?.invoke(mSelectedKeywords)
@@ -108,7 +104,7 @@ abstract class KeywordBaseFragment : Fragment() {
     /**
      * This will use the Path aspects of Keywords to cascade selection up ancestors or down descendants
      */
-    protected fun cascadeKeywordSelection(keyword: SubjectEntity, selected: Boolean) {
+    private fun cascadeKeywordSelection(keyword: SubjectEntity, selected: Boolean) {
         if (selected) { // Un-select all descendants
             viewModel.getDescendants(keyword.path)
                 .observeOn(AndroidSchedulers.mainThread())

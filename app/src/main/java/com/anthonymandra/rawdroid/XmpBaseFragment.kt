@@ -14,9 +14,9 @@ abstract class XmpBaseFragment : Fragment(),
         RatingBar.OnRatingSelectionChangedListener,
         XmpLabelGroup.OnLabelSelectionChangedListener {
 
-    lateinit var mRatingBar: RatingBar
-    lateinit var colorKey: XmpLabelGroup
-    lateinit var mKeywordFragment: KeywordBaseFragment
+    private lateinit var mRatingBar: RatingBar
+    private lateinit var colorKey: XmpLabelGroup
+    private lateinit var mKeywordFragment: KeywordBaseFragment
     private var mPauseListener = false
 
     protected var subject: Collection<SubjectEntity>
@@ -81,11 +81,7 @@ abstract class XmpBaseFragment : Fragment(),
 
     protected var xmp: XmpValues
         get() {
-            val xmp = XmpValues()
-            xmp.label = colorLabels
-            xmp.rating = ratings
-            xmp.subject = subject
-            return xmp
+            return XmpValues(ratings, colorLabels, subject)
         }
         set(xmp) = setXmp(xmp.rating, xmp.label, xmp.subject)
 
@@ -106,7 +102,7 @@ abstract class XmpBaseFragment : Fragment(),
 
     protected abstract fun onXmpChanged(xmp: XmpValues)
 
-    protected fun setXmp(rating: Collection<Int>, label: Collection<String>, subject: Collection<SubjectEntity>) {
+    private fun setXmp(rating: Collection<Int>, label: Collection<String>, subject: Collection<SubjectEntity>) {
         mPauseListener = true
         this.colorLabels = label
         this.subject = subject

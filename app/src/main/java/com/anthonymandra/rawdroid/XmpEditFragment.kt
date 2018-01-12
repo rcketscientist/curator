@@ -96,7 +96,13 @@ class XmpEditFragment : XmpBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setExclusive(true)
         setAllowUnselected(true)
-        attachButtons(view)
+
+        view.findViewById<View>(R.id.clearMetaButton).setOnClickListener { clear() }
+        view.findViewById<View>(R.id.recentMetaButton).setOnClickListener { fireMetaUpdate() }
+        view.findViewById<View>(R.id.helpButton).setOnClickListener { startTutorial() }
+
+        recentLabel = view.findViewById(R.id.recentLabel)
+        recentRating = view.findViewById(R.id.recentRating)
     }
 
     private fun formatRating(ratings: Collection<Int>?): Int? {
@@ -122,15 +128,6 @@ class XmpEditFragment : XmpBaseFragment() {
         super.initXmp(formatRating(rating),
                 formatLabel(label),
                 subject)
-    }
-
-    private fun attachButtons(parent: View) {
-        parent.findViewById<View>(R.id.clearMetaButton).setOnClickListener { clear() }
-        parent.findViewById<View>(R.id.recentMetaButton).setOnClickListener { fireMetaUpdate() }
-        parent.findViewById<View>(R.id.helpButton).setOnClickListener { startTutorial() }
-
-        recentLabel = parent.findViewById(R.id.recentLabel)
-        recentRating = parent.findViewById(R.id.recentRating)
     }
 
     override fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>) {

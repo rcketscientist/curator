@@ -344,12 +344,12 @@ public class GalleryActivity extends CoreActivity implements
 
 		if (filter.getXmp() != null)
 		{
-			if (filter.getXmp().label != null && filter.getXmp().label.length > 0)
+			if (filter.getXmp().getLabel() != null && filter.getXmp().getLabel().length > 0)
 			{
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createIN(Meta.LABEL, filter.getXmp().label.length));
-				Collections.addAll(selectionArgs, filter.getXmp().label);
+				selection.append(DbUtil.createIN(Meta.LABEL, filter.getXmp().getLabel().length));
+				Collections.addAll(selectionArgs, filter.getXmp().getLabel());
 			}
 //			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
 //			{
@@ -362,14 +362,14 @@ public class GalleryActivity extends CoreActivity implements
 //						"%", "%",   // openended wildcards, match subject anywhere
 //						null));
 //			}
-			if (filter.getXmp().rating != null && filter.getXmp().rating.length > 0)
+			if (filter.getXmp().getRating() != null && filter.getXmp().getRating().length > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createIN(Meta.RATING, filter.getXmp().rating.length));
-				for (int rating : filter.getXmp().rating)
+				selection.append(DbUtil.createIN(Meta.RATING, filter.getXmp().getRating().length));
+				for (int rating : filter.getXmp().getRating())
 				{
 					selectionArgs.add(Double.toString((double)rating));
 				}
