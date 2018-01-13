@@ -8,28 +8,18 @@ import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
 import android.support.v7.widget.ToggleGroup
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import android.widget.ArrayAdapter
-import android.widget.CheckBox
-import android.widget.CompoundButton
-import android.widget.ImageButton
-import android.widget.ListView
-
+import android.view.*
+import android.widget.*
 import com.anthonymandra.content.Meta
-import com.anthonymandra.framework.AsyncTask
 import com.anthonymandra.framework.DocumentUtil
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.widget.XmpLabelGroup
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
@@ -126,6 +116,11 @@ class XmpFilterFragment : XmpBaseFragment() {
         attachButtons(view)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        disposables.clear()
+    }
+
     private fun attachButtons(root: View) {
         root.findViewById<View>(R.id.clearFilterButton).setOnClickListener { clear() }
 
@@ -190,13 +185,8 @@ class XmpFilterFragment : XmpBaseFragment() {
         helpButton.setOnClickListener { startTutorial() }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        disposables.clear()
-    }
-
     private fun updatePaths() {
-        disposables.add(Observable.fromCallable {
+        val updateTask = Completable.fromAction {
             val directParents = TreeSet<String>()
 
             context!!.contentResolver.query(Meta.CONTENT_URI,
@@ -229,8 +219,17 @@ class XmpFilterFragment : XmpBaseFragment() {
             // Place exclusions at the end
             mPaths += mExcludedFolders
         }
-        .subscribeOn(Schedulers.io())
-        .o
+        .subscribeOn(Schedulers.newThread())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribeBy (
+            onComplete = {
+                mFolderDialog.updateListEntries(
+                        ArrayList(mPaths),
+                        ArrayList(mHiddenFolders),
+                        ArrayList(mExcludedFolders))
+            }
+        )
+        disposables.add(updateTask)
     }
 
     private fun setSort(checkedId: Int) {
@@ -395,49 +394,6 @@ class XmpFilterFragment : XmpBaseFragment() {
                 f.arguments = args
                 return f
             }
-        }
-    }
-
-    private inner class UpdateFolderTask : AsyncTask<Void, Void, Void>() {
-        override fun doInBackground(vararg params: Void): Void? {
-            val directParents = TreeSet<String>()
-            context!!.contentResolver.query(Meta.CONTENT_URI,
-                    arrayOf("DISTINCT " + Meta.PARENT), null, null,
-                    Meta.PARENT + " ASC")!!.use { c ->
-                while (c.moveToNext()) {
-                    val parent = c.getString(c.getColumnIndex(Meta.PARENT))
-                    if (parent != null)
-                        directParents.add(parent)
-                }
-            }
-
-            val allParents = TreeSet(directParents)
-            // Now we want to check for shell parents as well
-            for (path in directParents) {
-                val folder = UsefulDocumentFile.fromUri(context!!, Uri.parse(path))
-                var parent = folder.parentFile
-                while (parent != null) {
-                    allParents.add(parent.uri.toString())
-                    parent = parent.parentFile
-                }
-            }
-
-            mPaths.clear()
-            allParents.filterNotTo(mPaths) {
-                // We place the excluded folders at the end
-                mExcludedFolders.contains(it)
-            }
-
-            // Place exclusions at the end
-            mPaths += mExcludedFolders
-            return null
-        }
-
-        override fun onPostExecute(result: Void) {
-            mFolderDialog.updateListEntries(
-                    ArrayList(mPaths),
-                    ArrayList(mHiddenFolders),
-                    ArrayList(mExcludedFolders))
         }
     }
 

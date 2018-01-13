@@ -13,6 +13,7 @@ import android.widget.CheckedTextView
 import android.widget.GridView
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.ui.KeywordViewModel
+import com.jakewharton.rxbinding2.widget.itemSelections
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
@@ -38,6 +39,9 @@ abstract class KeywordBaseFragment : Fragment() {
         val adapter = SelectArrayAdapter(activity!!)
         keywordGrid = view.findViewById(R.id.keywordGridView)
         keywordGrid.adapter = adapter
+        keywordGrid
+            .itemSelections()
+            .subscribe()
         keywordGrid.setOnItemClickListener { _, _, position, _ ->
             onKeywordClicked(adapter.getItem(position))
         }
