@@ -118,12 +118,6 @@ object RoomCodeGenerator {
         }
     }
 
-    data class Parameters(val linker: Linker, val labels: Boolean, val ratings: Boolean,
-                          val hiddenFolders: Boolean, val subjects: Boolean,
-                          val segregate: Boolean, val order: OrderBy, val sort: SortBy)
-
-    val methodMap = HashMap<Parameters, Method>()
-
     fun getDynamicQuery(linker: Linker, labels: Boolean, ratings: Boolean,
                         hiddenFolders: Boolean, subjects: Boolean,
                         segregate: Boolean, order: OrderBy, sort: SortBy, method: String): String {

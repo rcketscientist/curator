@@ -140,8 +140,6 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         val foldersButton = root.findViewById<ImageButton>(R.id.buttonFolders)
         foldersButton.setOnClickListener {
-            updatePaths()
-
             val position = IntArray(2)
             foldersButton.getLocationOnScreen(position)
             mFolderDialog = FolderDialog.newInstance(
@@ -150,6 +148,9 @@ class XmpFilterFragment : XmpBaseFragment() {
                     ArrayList(mExcludedFolders),
                     position[0],
                     position[1])
+
+            updatePaths()
+
             mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog)
             mFolderDialog.setOnVisibilityChangedListener({ visibility ->
                 if (visibility.visible) {

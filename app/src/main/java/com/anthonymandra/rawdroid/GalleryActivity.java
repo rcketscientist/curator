@@ -64,6 +64,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import kotlin.Unit;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class GalleryActivity extends CoreActivity implements
@@ -154,34 +155,19 @@ public class GalleryActivity extends CoreActivity implements
         setSupportActionBar(mToolbar);
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		findViewById(R.id.filterSidebarButton).setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				mDrawerLayout.openDrawer(GravityCompat.START);
-			}
-		});
+		findViewById(R.id.filterSidebarButton).setOnClickListener(v -> mDrawerLayout.openDrawer(GravityCompat.START));
 
 
 		mXmpFilterFragment = (XmpFilterFragment) getSupportFragmentManager().findFragmentById(R.id.filterFragment);
-		mXmpFilterFragment.registerXmpFilterChangedListener(new XmpFilterFragment.MetaFilterChangedListener()
-		{
-			@Override
-			public void onMetaFilterChanged(XmpFilter filter)
-			{
-				updateMetaLoaderXmp(filter);
-			}
+		mXmpFilterFragment.registerXmpFilterChangedListener( (XmpFilter filter) -> {
+			updateMetaLoaderXmp(filter);
+			return Unit.INSTANCE;
 		});
-		mXmpFilterFragment.registerSearchRootRequestedListener(new XmpFilterFragment.SearchRootRequestedListener()
-		{
-			@Override
-			public void onSearchRootRequested()
-			{
-				setWriteResume(WriteResume.Search, null);
-				requestWritePermission();
-				mDrawerLayout.closeDrawer(GravityCompat.START);
-			}
+		mXmpFilterFragment.registerSearchRootRequestedListener( () -> {
+			setWriteResume(WriteResume.Search, null);
+			requestWritePermission();
+			mDrawerLayout.closeDrawer(GravityCompat.START);
+			return Unit.INSTANCE;
 		});
 
 		doFirstRun();
@@ -344,12 +330,12 @@ public class GalleryActivity extends CoreActivity implements
 
 		if (filter.getXmp() != null)
 		{
-			if (filter.getXmp().getLabel() != null && filter.getXmp().getLabel().length > 0)
+			if (filter.getXmp().getLabel().size() > 0)
 			{
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createIN(Meta.LABEL, filter.getXmp().getLabel().length));
-				Collections.addAll(selectionArgs, filter.getXmp().getLabel());
+				selection.append(DbUtil.createIN(Meta.LABEL, filter.getXmp().getLabel().size()));
+				selectionArgs.addAll(filter.getXmp().getLabel());
 			}
 //			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
 //			{
@@ -362,20 +348,20 @@ public class GalleryActivity extends CoreActivity implements
 //						"%", "%",   // openended wildcards, match subject anywhere
 //						null));
 //			}
-			if (filter.getXmp().getRating() != null && filter.getXmp().getRating().length > 0)
+			if (filter.getXmp().getRating().size() > 0)
 			{
 				if (requiresJoiner)
 					selection.append(joiner);
 				requiresJoiner = true;
 
-				selection.append(DbUtil.createIN(Meta.RATING, filter.getXmp().getRating().length));
+				selection.append(DbUtil.createIN(Meta.RATING, filter.getXmp().getRating().size()));
 				for (int rating : filter.getXmp().getRating())
 				{
 					selectionArgs.add(Double.toString((double)rating));
 				}
 			}
 		}
-		if (filter.getHiddenFolders() != null && filter.getHiddenFolders().size() > 0)
+		if (filter.getHiddenFolders().size() > 0)
 		{
 			if (requiresJoiner)
 				selection.append(AND);  // Always exclude the folders, don't OR

@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
@@ -32,15 +31,11 @@ import com.android.gallery3d.common.Utils;
 import com.android.gallery3d.data.DecodeUtils;
 import com.android.gallery3d.data.ImageCacheRequest;
 import com.android.gallery3d.util.ThreadPool;
-import com.anthonymandra.content.KeywordProvider;
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.CoreActivity;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
-import com.anthonymandra.imageprocessor.Executor;
-import com.anthonymandra.imageprocessor.Exif;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.imageprocessor.Margins;
 import com.anthonymandra.imageprocessor.Watermark;
@@ -66,7 +61,6 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
 @SuppressLint("AndroidLintSimpleDateFormat") // These are for specific library formats
@@ -257,7 +251,7 @@ public class ImageUtil
         Completable.fromAction(() -> {
             InputStream is = c.getContentResolver().openInputStream(keywordUri);
             InputStreamReader reader = new InputStreamReader(is);
-            AppDatabase.getInstance(c).subjectDao().importKeywords(c, reader);
+            AppDatabase.Companion.getInstance(c).subjectDao().importKeywords(reader);
         })
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

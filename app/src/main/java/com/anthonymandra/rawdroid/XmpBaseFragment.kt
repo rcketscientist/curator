@@ -1,8 +1,10 @@
 package com.anthonymandra.rawdroid
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v4.app.Fragment
+import android.util.ArrayMap
 import android.view.View
 import android.widget.Toast
 import com.anthonymandra.rawdroid.data.SubjectEntity
@@ -10,71 +12,47 @@ import com.anthonymandra.widget.RatingBar
 import com.anthonymandra.widget.XmpLabelGroup
 import java.util.*
 
-abstract class XmpBaseFragment : Fragment(),
-        RatingBar.OnRatingSelectionChangedListener,
-        XmpLabelGroup.OnLabelSelectionChangedListener {
+private const val DEFAULT_BLUE = "Blue"
+private const val DEFAULT_RED = "Red"
+private const val DEFAULT_GREEN = "Green"
+private const val DEFAULT_YELLOW = "Yellow"
+private const val DEFAULT_PURPLE = "Purple"
 
-    private lateinit var mRatingBar: RatingBar
+abstract class XmpBaseFragment : Fragment(),
+        RatingBar.OnRatingSelectionChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private lateinit var ratingBar: RatingBar
     private lateinit var colorKey: XmpLabelGroup
-    private lateinit var mKeywordFragment: KeywordBaseFragment
+    private lateinit var keywordFragment: KeywordBaseFragment
     private var mPauseListener = false
 
+    private val colorKeys = ArrayMap<XmpLabelGroup.Labels, String>(5)
+
     protected var subject: Collection<SubjectEntity>
-        get() {
-            return mKeywordFragment.getSelectedKeywords()
-        }
-        set(subject) {
-            mKeywordFragment.setSelectedKeywords(subject)
-        }
+        get() { return keywordFragment.selectedKeywords }
+        set(value) { keywordFragment.setSelectedKeywords(value) }
 
     protected var ratings: Collection<Int>
-        get() {
-            return mRatingBar.checkedRatings
-        }
-        set(ratings) {
-            mRatingBar.setRating(ratings)
-        }
+        get() { return ratingBar.checkedRatings }
+        set(value) { ratingBar.setRating(value) }
 
     protected var colorLabels: Collection<String>
         get() {
-            val c = context ?: return Collections.emptyList()
-
-            val sp = PreferenceManager.getDefaultSharedPreferences(c)
-            val checked = colorKey.checkedLabels
-
-            if (checked.size == 0)
-                return Collections.emptyList()
+            val checked = colorKey.checked
 
             val labels = ArrayList<String>()
-            checked.forEach { check ->
-                when (check) {
-                    XmpLabelGroup.Labels.blue -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpBlue, "Blue"))
-                    XmpLabelGroup.Labels.red -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpRed, "Red"))
-                    XmpLabelGroup.Labels.green -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpGreen, "Green"))
-                    XmpLabelGroup.Labels.yellow -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpYellow, "Yellow"))
-                    XmpLabelGroup.Labels.purple -> labels.add(sp.getString(FullSettingsActivity.KEY_XmpPurple, "Purple"))
-                }
-            }
+            checked.forEach { label -> labels.add(colorKeys[label]!!) } // TODO: This can't be null; this is the point of !!, but can I convince the compiler?
             return labels
         }
         set(labels) {
-            val c = context ?: return
-
-            val sp = PreferenceManager.getDefaultSharedPreferences(c)
-            val red = sp.getString(FullSettingsActivity.KEY_XmpRed, "Red")
-            val blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, "Blue")
-            val green = sp.getString(FullSettingsActivity.KEY_XmpGreen, "Green")
-            val yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, "Yellow")
-            val purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, "Purple")
-
             for (label in labels) {
                 when (label) {
-                    blue -> colorKey.setChecked(XmpLabelGroup.Labels.blue, true)
-                    red -> colorKey.setChecked(XmpLabelGroup.Labels.red, true)
-                    yellow -> colorKey.setChecked(XmpLabelGroup.Labels.yellow, true)
-                    green -> colorKey.setChecked(XmpLabelGroup.Labels.green, true)
-                    purple -> colorKey.setChecked(XmpLabelGroup.Labels.purple, true)
-                    else -> Toast.makeText(c, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show()
+                    colorKeys[XmpLabelGroup.Labels.Blue] -> colorKey.setChecked(XmpLabelGroup.Labels.Blue, true)
+                    colorKeys[XmpLabelGroup.Labels.Red] -> colorKey.setChecked(XmpLabelGroup.Labels.Red, true)
+                    colorKeys[XmpLabelGroup.Labels.Green] -> colorKey.setChecked(XmpLabelGroup.Labels.Yellow, true)
+                    colorKeys[XmpLabelGroup.Labels.Yellow] -> colorKey.setChecked(XmpLabelGroup.Labels.Green, true)
+                    colorKeys[XmpLabelGroup.Labels.Purple] -> colorKey.setChecked(XmpLabelGroup.Labels.Purple, true)
+                    else -> Toast.makeText(context, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -85,22 +63,68 @@ abstract class XmpBaseFragment : Fragment(),
         }
         set(xmp) = setXmp(xmp.rating, xmp.label, xmp.subject)
 
+    private fun updateColorKeys(sp: SharedPreferences) {
+        colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
+        colorKeys[XmpLabelGroup.Labels.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
+        colorKeys[XmpLabelGroup.Labels.Green] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
+        colorKeys[XmpLabelGroup.Labels.Yellow] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
+        colorKeys[XmpLabelGroup.Labels.Purple] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
+    }
+
+    private fun updateColorKey(sp: SharedPreferences, key: String) {
+        when (key) {
+            FullSettingsActivity.KEY_XmpBlue ->
+                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
+            FullSettingsActivity.KEY_XmpRed ->
+                colorKeys[XmpLabelGroup.Labels.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
+            FullSettingsActivity.KEY_XmpGreen ->
+                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
+            FullSettingsActivity.KEY_XmpYellow ->
+                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
+            FullSettingsActivity.KEY_XmpPurple ->
+                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)  // Note: This says to store a strong reference
+        sp.registerOnSharedPreferenceChangeListener(this)
+        updateColorKeys(sp)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .unregisterOnSharedPreferenceChangeListener(this)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mRatingBar = view.findViewById(R.id.ratingBar)
+        ratingBar = view.findViewById(R.id.ratingBar)
         colorKey = view.findViewById(R.id.colorKey)
-        mKeywordFragment = childFragmentManager.findFragmentById(R.id.keywordFragment) as KeywordBaseFragment
-        attachButtons()
+        keywordFragment = childFragmentManager.findFragmentById(R.id.keywordFragment) as KeywordBaseFragment
+
+        ratingBar.setOnRatingSelectionChangedListener { checked ->
+            if (!mPauseListener)
+                this@XmpBaseFragment.onRatingSelectionChanged(checked)
+        }
+        colorKey.setOnLabelSelectionChangedListener { checked ->
+            if (!mPauseListener)
+                this@XmpBaseFragment.onLabelSelectionChanged(checked)
+        }
+        keywordFragment.setOnKeywordsSelectedListener { selectedKeywords ->
+            if (!mPauseListener)
+                this@XmpBaseFragment.onKeywordsSelected(selectedKeywords)
+        }
     }
 
     protected fun clear() {
-        mKeywordFragment.clearSelectedKeywords()
+        keywordFragment.clearSelectedKeywords()
         colorKey.clearChecked()
-        mRatingBar.clearChecked()
+        ratingBar.clearChecked()
         onXmpChanged(xmp)
     }
-
-    protected abstract fun onXmpChanged(xmp: XmpValues)
 
     private fun setXmp(rating: Collection<Int>, label: Collection<String>, subject: Collection<SubjectEntity>) {
         mPauseListener = true
@@ -143,29 +167,19 @@ abstract class XmpBaseFragment : Fragment(),
 
     protected fun setExclusive(enable: Boolean) {
         colorKey.isExclusive = enable
-        mRatingBar.isExclusive = enable
+        ratingBar.isExclusive = enable
     }
 
     protected fun setAllowUnselected(allow: Boolean) {
         colorKey.setAllowUnselected(allow)
-        mRatingBar.setAllowUnselected(allow)
+        ratingBar.setAllowUnselected(allow)
     }
 
+    protected abstract fun onXmpChanged(xmp: XmpValues)
     abstract fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)
+    abstract fun onLabelSelectionChanged(checked: List<XmpLabelGroup.Labels>)
 
-    private fun attachButtons() {
-        // Ratings
-        mRatingBar.setOnRatingSelectionChangedListener { checked ->
-            if (!mPauseListener)
-                this@XmpBaseFragment.onRatingSelectionChanged(checked)
-        }
-        colorKey.setOnLabelSelectionChangedListener { checked ->
-            if (!mPauseListener)
-                this@XmpBaseFragment.onLabelSelectionChanged(checked)
-        }
-        mKeywordFragment.setOnKeywordsSelectedListener { selectedKeywords ->
-            if (!mPauseListener)
-                this@XmpBaseFragment.onKeywordsSelected(selectedKeywords)
-        }
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        updateColorKey(sharedPreferences, key)
     }
 }

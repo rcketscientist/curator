@@ -140,11 +140,11 @@ class XmpEditFragment : XmpBaseFragment() {
         if (c != null) {
             if (checked.isNotEmpty()) {
                 when (checked[0]) {
-                    XmpLabelGroup.Labels.blue -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyBlue)
-                    XmpLabelGroup.Labels.red -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyRed)
-                    XmpLabelGroup.Labels.green -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyGreen)
-                    XmpLabelGroup.Labels.yellow -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyYellow)
-                    XmpLabelGroup.Labels.purple -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyPurple)
+                    XmpLabelGroup.Labels.Blue -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyBlue)
+                    XmpLabelGroup.Labels.Red -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyRed)
+                    XmpLabelGroup.Labels.Green -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyGreen)
+                    XmpLabelGroup.Labels.Yellow -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyYellow)
+                    XmpLabelGroup.Labels.Purple -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyPurple)
                 }
             } else {
                 recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.white)

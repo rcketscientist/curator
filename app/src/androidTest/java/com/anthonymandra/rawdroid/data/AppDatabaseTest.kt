@@ -22,7 +22,6 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.hasSize
 import org.junit.Rule
 
@@ -152,7 +151,7 @@ class AppDatabaseTest {
         assertThat(subjectDao.count(), equalTo(0))
 
         val reader = StringReader(testSubjects)
-        subjectDao.importKeywords(InstrumentationRegistry.getTargetContext(), reader)
+        subjectDao.importKeywords(reader)
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
         val europe = subjectDao.get(7)
@@ -199,7 +198,7 @@ class AppDatabaseTest {
 
         // Prep subjects
         val reader = StringReader(testSubjects)
-        subjectDao.importKeywords(InstrumentationRegistry.getTargetContext(), reader)
+        subjectDao.importKeywords(reader)
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
         /**
