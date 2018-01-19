@@ -28,6 +28,7 @@ class GalleryViewHolder(view: View, private val glide: RequestManager) : Recycle
 
         image?.rating?.let { itemView.galleryRatingBar.rating = it }
         itemView.xmp.visibility = if (image?.keywords != null) View.VISIBLE else View.GONE
+
         if (image?.label != null) {
             itemView.label.visibility = View.VISIBLE
             when (image.label?.toLowerCase()) {
@@ -41,7 +42,7 @@ class GalleryViewHolder(view: View, private val glide: RequestManager) : Recycle
         } else {
             itemView.label.visibility = View.GONE
         }
-        image?.keywords.let { itemView.xmp.visibility }
+
         itemView.filenameView.text = image?.name
 
         // FIXME: Pretty sure this is deprecated
