@@ -23,11 +23,11 @@ abstract class MetadataEntity {
     var name: String? = null
     var type: Int = 0
     var processed: Boolean = false
-    var uri: String? = null
+    var uri: String = ""
     // Unique documentId we don't want duplicates from different root permissions
     var documentId: String = ""
     var parentId: Long = -1
-    var rating: String? = null
+    var rating: Float? = null
     var label: String? = null
     var timestamp: String? = null
     var make: String? = null
