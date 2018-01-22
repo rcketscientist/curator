@@ -10,39 +10,40 @@ import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataResult
 import com.anthonymandra.util.MetaUtil
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.fileview.view.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.fileview.*
 
 @Suppress("DEPRECATION")
-class GalleryViewHolder(view: View/*, private val glide: RequestManager*/) : RecyclerView.ViewHolder(view) {
+class GalleryViewHolder(override val containerView: View/*, private val glide: RequestManager*/)
+    : RecyclerView.ViewHolder(containerView), LayoutContainer {
     private var image: MetadataResult? = null
 
-    private val purple: Int = view.resources.getColor(R.color.startPurple)
-    private val blue: Int = view.resources.getColor(R.color.startBlue)
-    private val yellow: Int = view.resources.getColor(R.color.startYellow)
-    private val green: Int = view.resources.getColor(R.color.startGreen)
-    private val red: Int = view.resources.getColor(R.color.startRed)
+    private val purple: Int = containerView.resources.getColor(R.color.startPurple)
+    private val blue: Int = containerView.resources.getColor(R.color.startBlue)
+    private val yellow: Int = containerView.resources.getColor(R.color.startYellow)
+    private val green: Int = containerView.resources.getColor(R.color.startGreen)
+    private val red: Int = containerView.resources.getColor(R.color.startRed)
 
     fun bind(image: MetadataResult?) {
         this.image = image
-
-        image?.rating?.let { itemView.galleryRatingBar.rating = it }
-        itemView.xmp.visibility = if (image?.keywords != null) View.VISIBLE else View.GONE
+        image?.rating?.let { galleryRatingBar.rating = it }
+        xmp.visibility = if (image?.keywords != null) View.VISIBLE else View.GONE
 
         if (image?.label != null) {
-            itemView.label.visibility = View.VISIBLE
+            label.visibility = View.VISIBLE
             when (image.label?.toLowerCase()) {
-                "purple" -> itemView.label.setBackgroundColor(purple)
-                "blue" -> itemView.label.setBackgroundColor(blue)
-                "yellow" -> itemView.label.setBackgroundColor(yellow)
-                "green" -> itemView.label.setBackgroundColor(green)
-                "red" -> itemView.label.setBackgroundColor(red)
-                else -> itemView.label.visibility = View.GONE
+                "purple" -> label.setBackgroundColor(purple)
+                "blue" -> label.setBackgroundColor(blue)
+                "yellow" -> label.setBackgroundColor(yellow)
+                "green" -> label.setBackgroundColor(green)
+                "red" -> label.setBackgroundColor(red)
+                else -> label.visibility = View.GONE
             }
         } else {
-            itemView.label.visibility = View.GONE
+            label.visibility = View.GONE
         }
 
-        itemView.filenameView.text = image?.name
+        filenameView.text = image?.name
 
         // FIXME: Pretty sure this is deprecated
         Glide.with(itemView.context)
@@ -50,10 +51,10 @@ class GalleryViewHolder(view: View/*, private val glide: RequestManager*/) : Rec
             .load(RawModelLoader.ImageInfo(Uri.parse(image?.uri),
                 image?.let { Meta.ImageType.fromInt(image.type) }))
             .centerCrop()
-            .into(itemView.webImageView)
+            .into(webImageView)
 
         image?.let {
-            itemView.webImageView.rotation = MetaUtil.getRotation(image.orientation).toFloat()
+            webImageView.rotation = MetaUtil.getRotation(image.orientation).toFloat()
         }
     }
 

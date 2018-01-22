@@ -7,60 +7,41 @@ import android.support.v7.recyclerview.extensions.DiffCallback
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Checkable
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataResult
 import java.util.*
+import kotlin.collections.HashSet
 
-class GalleryAdapter() : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>(POST_COMPARATOR)
+class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>(POST_COMPARATOR)
 {
-    private val mSelectedPositions = TreeSet<Int>()
+    init { setHasStableIds(true) }
 
-    private var mSelectionListener: OnSelectionUpdatedListener? = null
+    private val mSelectedItems = HashSet<Uri>()
+    private val mSelectedPositions = TreeSet<Int>()
+    var multiSelectMode = false
+
+    var mSelectionListener: OnSelectionUpdatedListener? = null
+
     /**
-     * @return The callback to be invoked with an item in this AdapterView has
-     * been clicked, or null id no callback has been set.
-     */
-    /**
-     * Register a callback to be invoked when an item in this AdapterView has
-     * been clicked.
-     *
-     * @param listener The callback that will be invoked.
+     * Callback to be invoked when an item in this AdapterView has been clicked.
      */
     var onItemClickListener: OnItemClickListener? = null
     /**
      * @return The callback to be invoked with an item in this AdapterView has
      * been clicked and held, or null id no callback as been set.
      */
+
     /**
-     * Register a callback to be invoked when an item in this AdapterView has
-     * been clicked and held
-     *
-     * @param listener The callback that will run
+     * Callback to be invoked when an item in this AdapterView has been clicked and held
      */
     var onItemLongClickListener: OnItemLongClickListener? = null
 
-    val selectedItems: Collection<Uri>
-        get() = mSelectedPositions
-            .map { getUri(it) }
-            .filterNotNull()
+    private val selectedItems: Collection<Uri>
+        get() = mSelectedItems
 
     val selectedItemCount: Int
-        get() = mSelectedPositions.size
-
-    //	@Override
-    //	public String getSectionTitle(int position)
-    //	{
-    //		Cursor c = (Cursor)getItem(position);   // This is the adapter cursor, don't close
-    //		if (c == null)
-    //			return null;
-    //		int index = c.getColumnIndex(Meta.NAME);
-    //		final String name = c.getString(index);
-    //		if (name == null)
-    //			return null;
-    //		return name.substring(0,1);
-    //	}
+        get() = mSelectedItems.size
 
     /**
      * Interface definition for a callback to be invoked when an item in this
@@ -107,6 +88,10 @@ class GalleryAdapter() : PagedListAdapter<MetadataResult, RecyclerView.ViewHolde
         fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long): Boolean
     }
 
+    override fun getItemId(position: Int): Long {
+        return getItem(position)?.id ?: RecyclerView.NO_ID
+    }
+
     interface OnSelectionUpdatedListener {
         fun onSelectionUpdated(selectedUris: Collection<Uri>)
     }
@@ -120,12 +105,29 @@ class GalleryAdapter() : PagedListAdapter<MetadataResult, RecyclerView.ViewHolde
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position)
         when (getItemViewType(position)) {
-            R.layout.fileview -> (holder as GalleryViewHolder).bind(getItem(position))
+            R.layout.fileview -> (holder as GalleryViewHolder).bind(item)
 //            R.layout.network_state_item -> (holder as NetworkStateItemViewHolder).bindTo(networkState)
         }
 
-        holder.itemView.isSelected = mSelectedPositions.contains(position)
+        holder.itemView.setOnClickListener {
+            val clickPosition = holder.adapterPosition
+            if (clickPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+            toggleSelection(clickPosition)
+            onItemClickListener?.onItemClick(this, it, clickPosition, getItemId(clickPosition))
+        }
+
+        holder.itemView.setOnLongClickListener {
+            val clickPosition = holder.adapterPosition
+            if (clickPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+            toggleSelection(clickPosition)
+            return@setOnLongClickListener onItemLongClickListener?.onItemLongClick(
+                this, it, clickPosition, getItemId(clickPosition)) ?: false
+        }
+
+        // TODO: was: vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
+        holder.itemView.isSelected = mSelectedItems.contains(Uri.parse(item?.uri))
     }
 
     fun getUri(position: Int): Uri? {
@@ -148,21 +150,28 @@ class GalleryAdapter() : PagedListAdapter<MetadataResult, RecyclerView.ViewHolde
 
     private fun addGroupSelection(start: Int, end: Int) {
         for (i in start..end) {
-            addSelection(i)
+            addSelection(getUri(i), i)
         }
         updateSelection()
         notifyItemRangeChanged(start, end - start)
     }
 
-    private fun addSelection(position: Int) {
+    private fun addSelection(uri: Uri?, position: Int) {
+        if (uri == null)
+            return
+
+        mSelectedItems.add(uri)
         mSelectedPositions.add(position)
     }
 
-    private fun removeSelection(position: Int) {
+    private fun removeSelection(uri: Uri, position: Int) {
+        mSelectedItems.remove(uri)
         mSelectedPositions.remove(position)
     }
 
+    @SuppressWarnings("unused")
     fun clearSelection() {
+        mSelectedItems.clear()
         mSelectedPositions.clear()
         updateSelection()
         // Lazy update to all, but avoid notifyDatasetChanged since there's no structural changes
@@ -176,11 +185,12 @@ class GalleryAdapter() : PagedListAdapter<MetadataResult, RecyclerView.ViewHolde
         val uri = getUri(position) ?: return
 
         if (mSelectedItems.contains(uri)) {
-            removeSelection(v, uri, position)
+            removeSelection(uri, position)
         } else {
-            addSelection(v, uri, position)
+            addSelection(uri, position)
         }
         updateSelection()
+        notifyItemChanged(position)
     }
 
     private fun updateSelection() {
@@ -188,36 +198,20 @@ class GalleryAdapter() : PagedListAdapter<MetadataResult, RecyclerView.ViewHolde
     }
 
     fun selectAll() {
-        val c = getCursor()
-        if (c != null && c!!.moveToFirst()) {
-            do {
-                mSelectedItems.add(getUri(c!!.getPosition()))
-            } while (c!!.moveToNext())
-
-            updateSelection()
-            notifyItemRangeChanged(0, itemCount)
-        }
-    }
-
-    fun setOnSelectionListener(listener: OnSelectionUpdatedListener) {
-        mSelectionListener = listener
+        val list = currentList ?: return
+        mSelectedItems.addAll( list.mapNotNull { Uri.parse(it.uri) } )
+        updateSelection()
+        notifyItemRangeChanged(0, itemCount)
     }
 
     companion object {
-        val POST_COMPARATOR = object : DiffCallback<RedditPost>() {
-            override fun areContentsTheSame(oldItem: RedditPost, newItem: RedditPost): Boolean =
+        val POST_COMPARATOR = object : DiffCallback<MetadataResult>() {
+            override fun areContentsTheSame(oldItem: MetadataResult, newItem: MetadataResult): Boolean =
                 oldItem == newItem
 
-            override fun areItemsTheSame(oldItem: RedditPost, newItem: RedditPost): Boolean =
-                oldItem.name == newItem.name
-
-            override fun getChangePayload(oldItem: RedditPost, newItem: RedditPost): Any? {
-                return if (sameExceptScore(oldItem, newItem)) {
-                    PAYLOAD_SCORE
-                } else {
-                    null
-                }
-            }
+            override fun areItemsTheSame(oldItem: MetadataResult, newItem: MetadataResult): Boolean =
+                oldItem.uri == newItem.uri
+        }
         // TODO: This could be an entity, although I think the paging will allow full meta queries
         val REQUIRED_COLUMNS = arrayOf(BaseColumns._ID, Meta.LABEL, Meta.NAME, Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI, Meta.TYPE)
     }

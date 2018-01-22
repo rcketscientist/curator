@@ -19,4 +19,16 @@ class MetadataResult : MetadataEntity() {
 
     @TypeConverter
     fun fromGroupConcat(keywords: String): List<String> = keywords.split(",")
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as MetadataResult
+
+        if (keywords != other.keywords) return false
+
+        return true
+    }
 }

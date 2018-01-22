@@ -49,6 +49,23 @@ abstract class MetadataEntity {
     var driveMode: String? = null//todo: table
     var exposureMode: String? = null//todo: table
     var exposureProgram: String? = null//todo: table
+
+    // Simple equals regarding only gallery items
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MetadataEntity
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (uri != other.uri) return false
+        if (rating != other.rating) return false
+        if (label != other.label) return false
+        if (timestamp != other.timestamp) return false
+
+        return true
+    }
 }
 
 

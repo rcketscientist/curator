@@ -126,6 +126,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    androidExtensions {
+        experimental = true // For ViewHolder binding https://blog.jetbrains.com/kotlin/2017/08/kotlin-1-1-4-is-out/
+    }
 }
 
 dependencies {
