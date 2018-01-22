@@ -71,6 +71,7 @@ import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -114,7 +115,7 @@ public abstract class CoreActivity extends DocumentActivity
 	/**
 	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
 	 */
-	protected List<Uri> mItemsForIntent = new ArrayList<>();
+	protected Collection<Uri> mItemsForIntent;
 
 	private static final int REQUEST_SAVE_AS_DIR = 15;
 
@@ -493,7 +494,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected void writeXmpModifications(XmpEditFragment.XmpEditValues values)
 	{
-		List<Uri> selection = getSelectedImages();
+		Collection<Uri> selection = getSelectedImages();
 		if (selection != null)
 		{
 			ContentValues cv = new ContentValues();
@@ -641,7 +642,7 @@ public abstract class CoreActivity extends DocumentActivity
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void deleteImages(@NonNull final List<Uri> itemsToDelete)
+	protected void deleteImages(@NonNull final Collection<Uri> itemsToDelete)
 	{
 		if (itemsToDelete.size() == 0)
 		{
@@ -765,7 +766,7 @@ public abstract class CoreActivity extends DocumentActivity
 		startActivityForResult(intent, REQUEST_SAVE_AS_DIR);
 	}
 
-	protected void showRenameDialog(final List<Uri> itemsToRename)
+	protected void showRenameDialog(final Collection<Uri> itemsToRename)
 	{
 		@SuppressLint("InflateParams")
 		final View dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null);
@@ -856,7 +857,7 @@ public abstract class CoreActivity extends DocumentActivity
 	/**
 	 * Returns any selected images
 	 */
-	protected abstract ArrayList<Uri> getSelectedImages();
+	protected abstract Collection<Uri> getSelectedImages();
 
 	protected void requestShare()
 	{
@@ -886,7 +887,7 @@ public abstract class CoreActivity extends DocumentActivity
 			convert = false;
 		}
 
-		ArrayList<Uri> selectedItems = getSelectedImages();
+		List<Uri> selectedItems = new ArrayList<>(getSelectedImages());
 		if (selectedItems.size() > 1)
 		{
 			intent.setAction(Intent.ACTION_SEND_MULTIPLE);
@@ -979,7 +980,7 @@ public abstract class CoreActivity extends DocumentActivity
 		return copyFile(fromImage, toImage);
 	}
 
-	public void copyImages(final List<Uri> images, final Uri destination) {
+	public void copyImages(final Collection<Uri> images, final Uri destination) {
 		setMaxProgress(images.size());
 		updateMessage("Copying...");
 		Observable.fromIterable(images)
@@ -1121,13 +1122,14 @@ public abstract class CoreActivity extends DocumentActivity
 		}
 	}
 
-	protected void saveImage(List<Uri> images, Uri destination, ImageConfiguration config)
+	protected void saveImage(Collection<Uri> images, Uri destination, ImageConfiguration config)
 	{
 		if (images.size() < 0)
 			return;
 
 		// Just grab the first width and assume that will be sufficient for all images
-		new SaveImageTask().execute(images, destination, ImageUtil.getWatermark(this, images.get(0)), config);
+		new SaveImageTask().execute(images, destination,
+				ImageUtil.getWatermark(this, images.iterator().next()), config);
 	}
 
 	public class SaveImageTask extends AsyncTask<Object, String, Boolean> implements OnCancelListener
@@ -1773,7 +1775,7 @@ public abstract class CoreActivity extends DocumentActivity
 
 	protected class PrepareXmpRunnable implements Runnable
 	{
-		private final List<Uri> selectedImages;
+		private final Collection<Uri> selectedImages;
 		private final XmpEditFragment.XmpEditValues update;
 		private final XmpUpdateField updateType;
 		private final String[] projection = new String[] { Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT };
@@ -1788,55 +1790,55 @@ public abstract class CoreActivity extends DocumentActivity
 		@Override
 		public void run()
 		{
-			if (selectedImages.size() == 0)
-				return;
-
-			// TODO: This can be done without cursor lookups, use position and lookup from cursor
-			String[] selectionArgs = new String[selectedImages.size()];
-			for (int i = 0; i < selectedImages.size(); i++)
-			{
-				selectionArgs[i] = selectedImages.get(i).toString();
-			}
-
-
-			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
-			// Grab existing metadata
-			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
-					projection,
-					DbUtil.createIN(Meta.URI, selectedImages.size()),
-					selectionArgs,
-					null))
-			{
-
-				if (c == null)
-					return;
-
-				// Create mappings with existing values
-				while (c.moveToNext()) {
-					ContentValues cv = new ContentValues(projection.length);
-					DatabaseUtils.cursorRowToContentValues(c, cv);
-					xmpPairs.put(Uri.parse(cv.getAsString(Meta.URI)), cv);
-				}
-			}
-
-			// Update singular fields in the existing values
-			for (Map.Entry<Uri, ContentValues> xmpPair : xmpPairs.entrySet())
-			{
-				switch(updateType)
-				{
-					case Label:
-						xmpPair.getValue().put(Meta.LABEL, update.getLabel());
-						break;
-					case Rating:
-						xmpPair.getValue().put(Meta.RATING, update.getRating());
-						break;
-						// FIXME: This should prepare a subject junction update
-//					case Subject:
-//						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.Subject));
+//			if (selectedImages.size() == 0)
+//				return;
+//
+//			// TODO: This can be done without cursor lookups, use position and lookup from cursor
+//			String[] selectionArgs = new String[selectedImages.size()];
+//			for (int i = 0; i < selectedImages.size(); i++)
+//			{
+//				selectionArgs[i] = selectedImages.get(i).toString();
+//			}
+//
+//
+//			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
+//			// Grab existing metadata
+//			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
+//					projection,
+//					DbUtil.createIN(Meta.URI, selectedImages.size()),
+//					selectionArgs,
+//					null))
+//			{
+//
+//				if (c == null)
+//					return;
+//
+//				// Create mappings with existing values
+//				while (c.moveToNext()) {
+//					ContentValues cv = new ContentValues(projection.length);
+//					DatabaseUtils.cursorRowToContentValues(c, cv);
+//					xmpPairs.put(Uri.parse(cv.getAsString(Meta.URI)), cv);
+//				}
+//			}
+//
+//			// Update singular fields in the existing values
+//			for (Map.Entry<Uri, ContentValues> xmpPair : xmpPairs.entrySet())
+//			{
+//				switch(updateType)
+//				{
+//					case Label:
+//						xmpPair.getValue().put(Meta.LABEL, update.getLabel());
 //						break;
-				}
-			}
-			writeXmp(xmpPairs);
+//					case Rating:
+//						xmpPair.getValue().put(Meta.RATING, update.getRating());
+//						break;
+//						// FIXME: This should prepare a subject junction update
+////					case Subject:
+////						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.Subject));
+////						break;
+//				}
+//			}
+//			writeXmp(xmpPairs);
 		}
 	}
 }

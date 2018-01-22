@@ -20,81 +20,30 @@ class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>
     private val mSelectedItems = HashSet<Uri>()
     private val mSelectedPositions = TreeSet<Int>()
     var multiSelectMode = false
+        set(value)  {
+            clearSelection()
+            multiSelectMode = value
+        }
 
-    var mSelectionListener: OnSelectionUpdatedListener? = null
 
+    var onSelectionChangedListener: OnSelectionUpdatedListener? = null
     /**
      * Callback to be invoked when an item in this AdapterView has been clicked.
      */
     var onItemClickListener: OnItemClickListener? = null
     /**
-     * @return The callback to be invoked with an item in this AdapterView has
-     * been clicked and held, or null id no callback as been set.
-     */
-
-    /**
      * Callback to be invoked when an item in this AdapterView has been clicked and held
      */
     var onItemLongClickListener: OnItemLongClickListener? = null
 
-    private val selectedItems: Collection<Uri>
+    val selectedItems: Collection<Uri>
         get() = mSelectedItems
 
     val selectedItemCount: Int
         get() = mSelectedItems.size
 
-    /**
-     * Interface definition for a callback to be invoked when an item in this
-     * AdapterView has been clicked.
-     */
-    interface OnItemClickListener {
-
-        /**
-         * Callback method to be invoked when an item in this AdapterView has
-         * been clicked.
-         *
-         *
-         * Implementers can call getItemAtPosition(position) if they need
-         * to access the data associated with the selected item.
-         *
-         * @param parent The RecyclerView adapter where the click happened.
-         * @param view The view within the AdapterView that was clicked (this
-         * will be a view provided by the adapter)
-         * @param position The position of the view in the adapter.
-         * @param id The row id of the item that was clicked.
-         */
-        fun onItemClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long)
-    }
-
-    /**
-     * Interface definition for a callback to be invoked when an item in this
-     * view has been clicked and held.
-     */
-    interface OnItemLongClickListener {
-        /**
-         * Callback method to be invoked when an item in this view has been
-         * clicked and held.
-         *
-         * Implementers can call getItemAtPosition(position) if they need to access
-         * the data associated with the selected item.
-         *
-         * @param parent The RecyclerView adapter where the click happened
-         * @param view The view within the AbsListView that was clicked
-         * @param position The position of the view in the list
-         * @param id The row id of the item that was clicked
-         *
-         * @return true if the callback consumed the long click, false otherwise
-         */
-        fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long): Boolean
-    }
-
-    override fun getItemId(position: Int): Long {
-        return getItem(position)?.id ?: RecyclerView.NO_ID
-    }
-
-    interface OnSelectionUpdatedListener {
-        fun onSelectionUpdated(selectedUris: Collection<Uri>)
-    }
+    fun getUri(position: Int): Uri? = getItem(position)?.uri?.let { Uri.parse(it) }
+    override fun getItemId(position: Int): Long = getItem(position)?.id ?: RecyclerView.NO_ID
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -121,17 +70,20 @@ class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>
         holder.itemView.setOnLongClickListener {
             val clickPosition = holder.adapterPosition
             if (clickPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
-            toggleSelection(clickPosition)
+
+            if (multiSelectMode) {
+                addGroupSelection(clickPosition)
+            } else {
+                multiSelectMode = true
+                toggleSelection(clickPosition)
+            }
+
             return@setOnLongClickListener onItemLongClickListener?.onItemLongClick(
                 this, it, clickPosition, getItemId(clickPosition)) ?: false
         }
 
         // TODO: was: vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
         holder.itemView.isSelected = mSelectedItems.contains(Uri.parse(item?.uri))
-    }
-
-    fun getUri(position: Int): Uri? {
-        return getItem(position)?.uri?.let { Uri.parse(it) }
     }
 
     fun addGroupSelection(position: Int) {
@@ -193,15 +145,63 @@ class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>
         notifyItemChanged(position)
     }
 
-    private fun updateSelection() {
-        mSelectionListener?.onSelectionUpdated(selectedItems)
-    }
+    private fun updateSelection() = onSelectionChangedListener?.onSelectionUpdated(selectedItems)
 
     fun selectAll() {
+        multiSelectMode = true
         val list = currentList ?: return
         mSelectedItems.addAll( list.mapNotNull { Uri.parse(it.uri) } )
         updateSelection()
         notifyItemRangeChanged(0, itemCount)
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when an item in this
+     * AdapterView has been clicked.
+     */
+    interface OnItemClickListener {
+
+        /**
+         * Callback method to be invoked when an item in this AdapterView has
+         * been clicked.
+         *
+         *
+         * Implementers can call getItemAtPosition(position) if they need
+         * to access the data associated with the selected item.
+         *
+         * @param parent The RecyclerView adapter where the click happened.
+         * @param view The view within the AdapterView that was clicked (this
+         * will be a view provided by the adapter)
+         * @param position The position of the view in the adapter.
+         * @param id The row id of the item that was clicked.
+         */
+        fun onItemClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long)
+    }
+
+    /**
+     * Interface definition for a callback to be invoked when an item in this
+     * view has been clicked and held.
+     */
+    interface OnItemLongClickListener {
+        /**
+         * Callback method to be invoked when an item in this view has been
+         * clicked and held.
+         *
+         * Implementers can call getItemAtPosition(position) if they need to access
+         * the data associated with the selected item.
+         *
+         * @param parent The RecyclerView adapter where the click happened
+         * @param view The view within the AbsListView that was clicked
+         * @param position The position of the view in the list
+         * @param id The row id of the item that was clicked
+         *
+         * @return true if the callback consumed the long click, false otherwise
+         */
+        fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long): Boolean
+    }
+
+    interface OnSelectionUpdatedListener {
+        fun onSelectionUpdated(selectedUris: Collection<Uri>)
     }
 
     companion object {

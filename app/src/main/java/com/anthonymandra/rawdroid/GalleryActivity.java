@@ -3,7 +3,6 @@ package com.anthonymandra.rawdroid;
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -36,7 +35,6 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -50,6 +48,7 @@ import com.anthonymandra.framework.MetaWakefulReceiver;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.framework.ViewerActivity;
+import com.anthonymandra.rawdroid.ui.GalleryAdapter;
 import com.anthonymandra.util.DbUtil;
 import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.widget.GalleryRecyclerAdapter;
@@ -57,9 +56,11 @@ import com.anthonymandra.widget.ItemOffsetDecoration;
 import com.bumptech.glide.Glide;
 import com.inscription.WhatsNewDialog;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,10 +69,9 @@ import kotlin.Unit;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class GalleryActivity extends CoreActivity implements
-		GalleryRecyclerAdapter.OnItemClickListener,
-		GalleryRecyclerAdapter.OnItemLongClickListener,
-		LoaderManager.LoaderCallbacks<Cursor>,
-		GalleryRecyclerAdapter.OnSelectionUpdatedListener
+		GalleryAdapter.OnItemClickListener,
+		GalleryAdapter.OnItemLongClickListener,
+		GalleryAdapter.OnSelectionUpdatedListener
 {
 	@SuppressWarnings("unused")
 	private static final String TAG = GalleryActivity.class.getSimpleName();
@@ -108,14 +108,11 @@ public class GalleryActivity extends CoreActivity implements
 
 	// Widget handles
 	private RecyclerView mImageGrid;
-	private GalleryRecyclerAdapter mGalleryAdapter;
+	private GalleryAdapter mGalleryAdapter;
 	/**
 	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
 	 */
-	protected List<Uri> mItemsForIntent = new ArrayList<>();
-
-	// Selection support
-	private boolean multiSelectMode;
+	protected Collection<Uri> mItemsForIntent = new ArrayList<>();
 
 	private Toolbar mToolbar;
 	private MaterialCab mMaterialCab;
@@ -189,8 +186,8 @@ public class GalleryActivity extends CoreActivity implements
 		GridLayoutManager mGridLayout = new GridLayoutManager(this, numColumns);
 		mGridLayout.setSmoothScrollbarEnabled(true);
 
-		mGalleryAdapter = new GalleryRecyclerAdapter(this, null);
-		mGalleryAdapter.setOnSelectionListener(this);
+		mGalleryAdapter = new GalleryAdapter();
+		mGalleryAdapter.setOnSelectionChangedListener(this);
 		mGalleryAdapter.setOnItemClickListener(this);
 		mGalleryAdapter.setOnItemLongClickListener(this);
 
@@ -256,9 +253,6 @@ public class GalleryActivity extends CoreActivity implements
 		{
 			ImageUtil.importKeywords(this, getIntent().getData());
 		}
-
-//		checkWriteAccess();
-		getLoaderManager().initLoader(META_LOADER_ID, getIntent().getBundleExtra(EXTRA_META_BUNDLE), this);
 	}
 
 	@TargetApi(Build.VERSION_CODES.M)
@@ -407,7 +401,7 @@ public class GalleryActivity extends CoreActivity implements
 			metaLoader.putStringArray(META_SELECTION_ARGS_KEY, selectionArgs);
 		if (sortOrder != null)
 			metaLoader.putString(META_SORT_ORDER_KEY, sortOrder);
-		getLoaderManager().restartLoader(CoreActivity.META_LOADER_ID, metaLoader, this);
+//		getLoaderManager().restartLoader(CoreActivity.META_LOADER_ID, metaLoader, this);
 	}
 
 	/**
@@ -492,63 +486,6 @@ public class GalleryActivity extends CoreActivity implements
 
             builder.show();
         }
-	}
-
-	/*
-	* Callback that's invoked when the system has initialized the Loader and
-	* is ready to start the query. This usually happens when initLoader() is
-	* called. The loaderID argument contains the ID value passed to the
-	* initLoader() call.
-	*/
-	@Override
-	public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
-	{
-		/*
-		 * Takes action based on the ID of the Loader that's being created
-		 */
-		switch (loaderID) {
-			case META_LOADER_ID:
-
-				String[] projection = PROJECTION;
-				String selection = null;
-				String[] selectionArgs = null;
-				String sort = META_DEFAULT_SORT;
-
-				// Populate the database with filter (selection) from the previous app
-				if (bundle != null)
-				{
-					projection = bundle.getStringArray(META_PROJECTION_KEY);
-					selection = bundle.getString(META_SELECTION_KEY);
-					selectionArgs = bundle.getStringArray(META_SELECTION_ARGS_KEY);
-					sort = bundle.getString(META_SORT_ORDER_KEY);
-				}
-
-				// Returns a new CursorLoader
-				return new CursorLoader(
-						this,   				// Parent activity context
-						Meta.CONTENT_URI,       // Table to query
-						projection,				// Projection to return
-						selection,       		// No selection clause
-						selectionArgs, 			// No selection arguments
-						sort         			// Default sort order
-				);
-			default:
-				// An invalid id was passed in
-				return null;
-		}
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
-	{
-		mGalleryAdapter.swapCursor(cursor);
-		setImageCountTitle();
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> loader)
-	{
-		mGalleryAdapter.swapCursor(null);
 	}
 
 	@Override
@@ -860,7 +797,7 @@ public class GalleryActivity extends CoreActivity implements
 	}
 
 	@Override
-	protected ArrayList<Uri> getSelectedImages()
+	protected Collection<Uri> getSelectedImages()
 	{
 		return mGalleryAdapter.getSelectedItems();
 	}
@@ -891,12 +828,12 @@ public class GalleryActivity extends CoreActivity implements
 	}
 
 	@Override
-	public void onSelectionUpdated(final Set<Uri> selectedUris)
-	{
+	public void onSelectionUpdated(@NotNull Collection<? extends Uri> selectedUris) {
 		if (mMaterialCab != null)
 		{
 			mMaterialCab.setTitle(selectedUris.size() + " " + getString(R.string.selected));
 		}
+		mXmpFragment.reset();   // reset the panel to ensure it's clear it's not tied to existing values
 	}
 
 	private final class GalleryActionMode implements MaterialCab.Callback
@@ -919,7 +856,7 @@ public class GalleryActivity extends CoreActivity implements
 		@Override
 		public boolean onCabFinished(MaterialCab cab)
 		{
-			endMultiSelectMode();
+			mGalleryAdapter.setMultiSelectMode(false);
 			mMaterialCab = null;
 			return true;
 		}
@@ -931,25 +868,12 @@ public class GalleryActivity extends CoreActivity implements
 		mGalleryAdapter.selectAll();
 	}
 
-	public void startMultiSelectMode()
-	{
-		mGalleryAdapter.clearSelection(); // Ensure we don't have any stragglers
-		multiSelectMode = true;
-	}
-
-	public void endMultiSelectMode()
-	{
-		multiSelectMode = false;
-		mGalleryAdapter.clearSelection();
-	}
-
 	protected void startContextMode()
 	{
 		mMaterialCab = new MaterialCab(this, R.id.cab_stub)
 				.setTitle(getString(R.string.selectItems))
 				.setMenu(R.menu.gallery_contextual)
 				.start(new GalleryActionMode());
-		startMultiSelectMode();
 	}
 
 	protected void endContextMode()
@@ -961,18 +885,7 @@ public class GalleryActivity extends CoreActivity implements
 	@Override
 	public boolean onItemLongClick(RecyclerView.Adapter<?> parent, View view, int position, long id)
 	{
-		// If we're in multi-select select all items between
-		if (multiSelectMode)
-		{
-			mGalleryAdapter.addBetweenSelection(position);
-		}
-		// Enter multi-select
-		else
-		{
-			startContextMode();
-			mGalleryAdapter.toggleSelection(view, position);
-		}
-
+		startContextMode();
 		return true;
 	}
 
@@ -995,12 +908,8 @@ public class GalleryActivity extends CoreActivity implements
 	public void onItemClick(RecyclerView.Adapter<?> parent, View v, int position, long id)
 	{
 		Uri uri = mGalleryAdapter.getUri(position);
-		if (multiSelectMode)
-		{
-			mGalleryAdapter.toggleSelection(v, position);
-			mXmpFragment.reset();   // reset the panel to ensure it's clear it's not tied to existing values
-			return;
-		}
+		// Don't start an intent while in context mode
+		if (mGalleryAdapter.getMultiSelectMode()) return;
 
 		Intent viewer = new Intent(this, ViewerChooser.class);
 		viewer.setData(uri);
@@ -1027,7 +936,7 @@ public class GalleryActivity extends CoreActivity implements
 		return mImageGrid;
 	}
 
-	protected GalleryRecyclerAdapter getGalleryAdapter()
+	protected GalleryAdapter getGalleryAdapter()
 	{
 		return mGalleryAdapter;
 	}
