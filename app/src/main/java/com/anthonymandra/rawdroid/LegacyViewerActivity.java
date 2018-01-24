@@ -153,10 +153,10 @@ public class LegacyViewerActivity extends ViewerActivity
     @Override
 	public Uri getCurrentItem()
 	{
-		if (mImageIndex < 0 || mImageIndex >= mModel.getCount())
+		if (getMImageIndex() < 0 || getMImageIndex() >= mModel.getCount())
 		{
 			Crashlytics.setInt("mModel.getCount", mModel.getCount());
-			Crashlytics.setInt("mImageIndex", mImageIndex);
+			Crashlytics.setInt("mImageIndex", getMImageIndex());
 			Crashlytics.logException(new Exception("Error 2x01: Failed to load requested image."));
 			if (mModel.getCount() == 0)
 			{
@@ -164,7 +164,7 @@ public class LegacyViewerActivity extends ViewerActivity
 			}
 			else
 			{
-				mImageIndex = 0;
+				setMImageIndex(0);
 			}
 		}
 		Cursor c = mModel.getCursor();
@@ -191,12 +191,12 @@ public class LegacyViewerActivity extends ViewerActivity
 
 	public void decrementImageIndex()
 	{
-		--mImageIndex;
+		setMImageIndex(getMImageIndex() - 1);
 	}
 
 	public void incrementImageIndex()
 	{
-		++mImageIndex;
+		setMImageIndex(getMImageIndex() + 1);
 	}
 
 	@Override
@@ -296,8 +296,8 @@ public class LegacyViewerActivity extends ViewerActivity
 				// full-size image. In the future, we should add the data to
 				// database or get it from the header in runtime. Now, we
 				// just use the thumb-nail image to estimate the size
-				float scaleW = (float) displayWidth / screennail.getWidth();
-				float scaleH = (float) displayHeight / screennail.getHeight();
+				float scaleW = (float) Companion.getDisplayWidth() / screennail.getWidth();
+				float scaleH = (float) Companion.getDisplayHeight() / screennail.getHeight();
 				float scale = Math.min(scaleW, scaleH);
 				// float scale = (float) TARGET_LENGTH / Math.max(screennail.getWidth(), screennail.getHeight());
 				width = Math.round(screennail.getWidth() * scale);
@@ -308,7 +308,7 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void next()
 		{
-			if (mImageIndex >= mCursor.getCount() - 1)
+			if (getMImageIndex() >= mCursor.getCount() - 1)
 			{
 				runOnUiThread(new Runnable()
 				{
@@ -344,7 +344,7 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void previous()
 		{
-			if (mImageIndex == 0)
+			if (getMImageIndex() == 0)
 			{
 				runOnUiThread(new Runnable()
 				{
@@ -402,7 +402,7 @@ public class LegacyViewerActivity extends ViewerActivity
 		{
 			Bitmap[] screenNails = mScreenNails;
 
-			if (mImageIndex >= mCursor.getCount())
+			if (getMImageIndex() >= mCursor.getCount())
 			{
 				// swap out the deleted image
 				previous();
@@ -419,7 +419,7 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void updateScreenNail(int index, Bitmap screenNail)
 		{
-			int offset = (index - mImageIndex) + 1; // Zero-based -1,0,1 (0,1,2)
+			int offset = (index - getMImageIndex()) + 1; // Zero-based -1,0,1 (0,1,2)
 
 			if (screenNail != null)
 			{
@@ -435,7 +435,7 @@ public class LegacyViewerActivity extends ViewerActivity
 
 		public void updateLargeImage(int index, BitmapRegionDecoder largeBitmap)
 		{
-			int offset = (index - mImageIndex) + 1;
+			int offset = (index - getMImageIndex()) + 1;
 
 			if (largeBitmap != null)
 			{
@@ -463,7 +463,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				if (current != null)
 				{
 					CurrentImageLoader cml = new CurrentImageLoader();
-					cml.executeOnExecutor(Executor.EXECUTOR, mImageIndex, current);
+					cml.executeOnExecutor(Executor.EXECUTOR, getMImageIndex(), current);
 				}
 			}
 			else
@@ -472,26 +472,26 @@ public class LegacyViewerActivity extends ViewerActivity
 			}
 
 			// Next, the next screen nail if not last image
-			if (mScreenNails[INDEX_NEXT] == null && !(mImageIndex >= mCursor.getCount() - 1))
+			if (mScreenNails[INDEX_NEXT] == null && !(getMImageIndex() >= mCursor.getCount() - 1))
 			{
-				mCursor.moveToPosition(mImageIndex + 1);
+				mCursor.moveToPosition(getMImageIndex() + 1);
                 MediaItem next = new LocalImage(LegacyViewerActivity.this, mCursor);
 				if (next != null)
 				{
 					SmallImageLoader sml = new SmallImageLoader();
-					sml.executeOnExecutor(Executor.EXECUTOR, mImageIndex + 1, next);
+					sml.executeOnExecutor(Executor.EXECUTOR, getMImageIndex() + 1, next);
 				}
 			}
 
 			// Next, the previous screen nail if not the first image
-			if (mScreenNails[INDEX_PREVIOUS] == null && mImageIndex > 0)
+			if (mScreenNails[INDEX_PREVIOUS] == null && getMImageIndex() > 0)
 			{
-				mCursor.moveToPosition(mImageIndex - 1);
+				mCursor.moveToPosition(getMImageIndex() - 1);
                 MediaItem previous = new LocalImage(LegacyViewerActivity.this, mCursor);
 				if (previous != null)
 				{
 					SmallImageLoader sml = new SmallImageLoader();
-					sml.executeOnExecutor(Executor.EXECUTOR, mImageIndex - 1, previous);
+					sml.executeOnExecutor(Executor.EXECUTOR, getMImageIndex() - 1, previous);
 				}
 			}
 
@@ -502,7 +502,7 @@ public class LegacyViewerActivity extends ViewerActivity
 				if (current != null)
 				{
 					LargeImageLoader lml = new LargeImageLoader();
-					lml.executeOnExecutor(Executor.EXECUTOR, mImageIndex, current);
+					lml.executeOnExecutor(Executor.EXECUTOR, getMImageIndex(), current);
 				}
 			}
 		}
@@ -554,8 +554,8 @@ public class LegacyViewerActivity extends ViewerActivity
 				return null;
 
             return  ImageUtil.createBitmapLarge(imageData,
-                    LegacyViewerActivity.displayWidth,
-                    LegacyViewerActivity.displayHeight,
+                LegacyViewerActivity.Companion.getDisplayWidth(),
+                LegacyViewerActivity.Companion.getDisplayHeight(),
                     true);
         }
 

@@ -18,7 +18,7 @@
         android:adjustViewBounds="false" />
 
     <LinearLayout
-        android:id="@+id/leftNavigation"
+        android:id="@+id/layoutNavButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -28,14 +28,14 @@
         android:alpha=".75">
 
         <ImageButton
-            android:id="@+id/imageButtonLeftBack"
+            android:id="@+id/imageButtonPrevious"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chevron_left"
             android:background="@android:color/transparent"/>
 
         <ImageButton
-            android:id="@+id/imageButtonLeftFwd"
+            android:id="@+id/imageButtonNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chevron_right"

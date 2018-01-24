@@ -74,7 +74,7 @@ public class ImageViewActivity extends PhotoPage
 	public void onCurrentImageUpdated()
 	{
         super.onCurrentImageUpdated();
-        if (mRequiresHistogramUpdate)
+        if (getMRequiresHistogramUpdate())
             updateHistogram(getCurrentBitmap());
 	}
 

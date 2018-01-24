@@ -7,7 +7,7 @@
                 tools:ignore="RtlHardcoded">
 
     <com.anthonymandra.widget.HistogramView
-        android:id="@+id/histogramView1"
+        android:id="@+id/histogramView"
         android:alpha=".75"
         android:layout_alignLeft="@+id/tableLayoutMeta"
         android:layout_above="@+id/tableLayoutMeta"
@@ -205,7 +205,7 @@
                 android:text="@string/whiteBalance"/>
 
             <TextView
-                android:id="@+id/textViewWhite"
+                android:id="@+id/textViewWhiteBalance"
                 style="@style/MetaValue"/>
             
         </TableRow>

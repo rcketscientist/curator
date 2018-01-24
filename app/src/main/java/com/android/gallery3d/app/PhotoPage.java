@@ -111,7 +111,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
             }
         };
 
-        mModel = new PhotoDataAdapter(this, mPhotoView, mMediaItems, mImageIndex);
+        mModel = new PhotoDataAdapter(this, mPhotoView, getMMediaItems(), getMImageIndex());
         mModel.setDataListener(this);
         mPhotoView.setModel(mModel);
     }
@@ -120,7 +120,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     public void onPhotoChanged(int index, Uri item)
     {
         super.onPhotoChanged(index, item);
-        mImageIndex = index;
+        setMImageIndex(index);
 
         if (item != null) {
             Uri photo = mModel.getMediaItem(0);

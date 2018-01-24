@@ -81,7 +81,7 @@ public class SwapProvider extends ContentProvider  {
         String jpg = uri.getPath();
 
         File swapFile = new File(FileUtil.getDiskCacheDir(getContext(),
-                CoreActivity.SWAP_BIN_DIR),
+            CoreActivity.Companion.getSWAP_BIN_DIR()),
                 jpg);
 
         Log.d(TAG, "Swap.exists(" + swapFile.exists() + "): " + swapFile.getPath());
