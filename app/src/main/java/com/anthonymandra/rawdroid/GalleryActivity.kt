@@ -44,7 +44,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     override val licenseHandler = CoreActivity.LicenseHandler(this) //FIXME:!!
     override val selectedImages = galleryAdapter.selectedItems
 
-
     private val mResponseIntentFilter = IntentFilter()
     
     protected lateinit var galleryAdapter: GalleryAdapter   //TODO: Attach to lifecycle?

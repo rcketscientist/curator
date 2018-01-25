@@ -2,9 +2,7 @@ package com.anthonymandra.framework
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.AlertDialog
-import android.app.Dialog
-import android.app.ProgressDialog
+import android.app.*
 import android.content.*
 import android.content.DialogInterface.OnCancelListener
 import android.net.Uri
@@ -14,6 +12,7 @@ import android.os.Handler
 import android.os.Message
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
+import android.support.v4.app.NotificationCompat
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
@@ -31,7 +30,6 @@ import com.anthonymandra.imageprocessor.Watermark
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.util.*
 import com.anthonymandra.util.FileUtil
 import com.crashlytics.android.Crashlytics
@@ -39,9 +37,9 @@ import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Observer
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.IOException
@@ -49,6 +47,7 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 abstract class CoreActivity : DocumentActivity() {
+
 
     protected lateinit var recycleBin: DocumentRecycleBin
     private lateinit var mSwapDir: File
@@ -65,6 +64,9 @@ abstract class CoreActivity : DocumentActivity() {
     protected abstract val licenseHandler: LicenseHandler
     protected abstract val progressBar: ProgressBar
     protected abstract val selectedImages: Collection<Uri>
+
+    protected val notificationManager: NotificationManager? =
+        this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     /**
      * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
@@ -626,7 +628,7 @@ abstract class CoreActivity : DocumentActivity() {
     protected abstract fun onImageSetChanged()
 
     protected fun requestShare() {
-        if (selectedImages.size < 1) {
+        if (selectedImages.isEmpty()) {
             Snackbar.make(rootView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
             return
         }
@@ -659,7 +661,7 @@ abstract class CoreActivity : DocumentActivity() {
                 shareLimit.show()
             }
 
-            val share = ArrayList<Uri>()
+            val share = ArrayList<Uri?>()
             // We need to limit the number of shares to avoid TransactionTooLargeException
             for (selection in if (tooManyShares) selectedItems.subList(0, 10) else selectedItems) {
                 if (convert)
@@ -766,38 +768,20 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    fun getDescendants(toCopy: Collection<Uri>): Completable {
-        return Completable.create { emitter ->
-            progressBar.max =
-            val descendants = dataSource.getDescendants(path)
-            emitter.onSuccess(descendants)
-        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
-    }
+    fun copyTask(images: Collection<Uri>, destinationFolder: Uri) {
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+        builder.setContentTitle(getString(R.string.importingImages))
+            .setContentText("placeholder")
+            .setSmallIcon(R.mipmap.ic_launcher)
 
-    inner class CopyTask : AsyncTask<Any, String, Boolean>(), OnCancelListener {
-        override fun onPreExecute() {
-            progressBar.max =
-            mProgressDialog = ProgressDialog(this@CoreActivity)
-            mProgressDialog!!.setTitle(R.string.importingImages)
-            mProgressDialog!!.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-            mProgressDialog!!.setCanceledOnTouchOutside(true)
-            mProgressDialog!!.setOnCancelListener(this)
-            mProgressDialog!!.show()
-        }
-
-        override fun doInBackground(vararg params: Any): Boolean? {
-            if (params[0] !is List<*> || (params[0] as List<*>)[0] !is Uri)
-                throw IllegalArgumentException()
-
-            val totalImages = params[0] as List<Uri>
-            val remainingImages = ArrayList(totalImages)
-
-            val destinationFolder = params[1] as Uri
-
-            mProgressDialog!!.max = totalImages.size
+        Completable.create {
+            val remainingImages = ArrayList(images)
 
             val dbInserts = ArrayList<ContentProviderOperation>()
-            for (toCopy in totalImages) {
+            val progress = 0
+            builder.setProgress(images.size, progress, false)
+            notificationManager?.notify(0, builder.build())
+            for (toCopy in images) {
                 try {
                     setWriteResume(WriteActions.COPY, arrayOf<Any>(remainingImages))
 
@@ -807,8 +791,7 @@ abstract class CoreActivity : DocumentActivity() {
                     dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile))
                 } catch (e: DocumentActivity.WritePermissionException) {
                     e.printStackTrace()
-                    // We'll be automatically requesting write permission so kill this process
-                    return false
+                    return@create // exit condition: requesting write permission the restart
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } catch (e: RuntimeException) {
@@ -819,33 +802,25 @@ abstract class CoreActivity : DocumentActivity() {
 
                 remainingImages.remove(toCopy)
                 onImageAdded(toCopy)
-                publishProgress()
+                builder.setProgress(images.size, progress, false)
+                notificationManager?.notify(0, builder.build())
             }
-            MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts)
-            return true
+            // When the loop is finished, updates the notification
+            builder.setContentText("Complete")
+                .setProgress(0,0,false) // Removes the progress bar
+            notificationManager?.notify(0, builder.build())
+
         }
-
-        override fun onPostExecute(result: Boolean?) {
-            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
-                mProgressDialog!!.dismiss()
-
-            if (result!!)
-                clearWriteResume()
-
-            onImageSetChanged()
-        }
-
-        override fun onProgressUpdate(vararg values: String) {
-            if (values.size > 0) {
-                mProgressDialog!!.setMessage(values[0])
-            } else {
-                mProgressDialog!!.incrementProgressBy(1)
-            }
-        }
-
-        override fun onCancel(dialog: DialogInterface) {
-            this.cancel(true)
-        }
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .subscribeBy (
+                onComplete = {
+                    clearWriteResume()
+                    onImageSetChanged()
+                },
+                onError = {
+                    builder.setContentText("Some images did not transfer")
+                }
+            )
     }
 
     protected fun saveImage(images: Collection<Uri>?, destination: Uri?, config: ImageConfiguration) {
@@ -988,10 +963,10 @@ abstract class CoreActivity : DocumentActivity() {
 
     protected inner class DeleteTask : AsyncTask<Any, Int, Boolean>(), OnCancelListener {
         override fun onPreExecute() {
-            mProgressDialog = ProgressDialog(this@CoreActivity)
-            mProgressDialog!!.setTitle(R.string.deletingFiles)
-            mProgressDialog!!.setOnCancelListener(this)
-            mProgressDialog!!.show()
+//            mProgressDialog = ProgressDialog(this@CoreActivity)
+//            mProgressDialog!!.setTitle(R.string.deletingFiles)
+//            mProgressDialog!!.setOnCancelListener(this)
+//            mProgressDialog!!.show()
         }
 
         override fun doInBackground(vararg params: Any): Boolean? {
@@ -1003,7 +978,7 @@ abstract class CoreActivity : DocumentActivity() {
             val totalDeletes = params[0] as List<Uri>
             val remainingDeletes = ArrayList(totalDeletes)
 
-            mProgressDialog!!.max = totalDeletes.size
+//            mProgressDialog!!.max = totalDeletes.size
 
             val dbDeletes = ArrayList<ContentProviderOperation>()
             var totalSuccess = true
@@ -1033,13 +1008,13 @@ abstract class CoreActivity : DocumentActivity() {
             else
                 Snackbar.make(rootView, R.string.deleteFail, Snackbar.LENGTH_LONG).show()
 
-            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
-                mProgressDialog!!.dismiss()
+//            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
+//                mProgressDialog!!.dismiss()
             onImageSetChanged()
         }
 
-        protected override fun onProgressUpdate(vararg values: Int) {
-            mProgressDialog!!.progress = values[0]
+        protected fun onProgressUpdate(vararg values: Int) {
+//            mProgressDialog!!.progress = values[0]
             // setSupportProgress(values[0]);
         }
 
@@ -1054,8 +1029,8 @@ abstract class CoreActivity : DocumentActivity() {
 
     protected inner class RecycleTask : AsyncTask<Any, Int, Void>(), OnCancelListener {
         override fun onPreExecute() {
-            mProgressDialog!!.setTitle(R.string.recyclingFiles)
-            mProgressDialog!!.show()
+//            mProgressDialog!!.setTitle(R.string.recyclingFiles)
+//            mProgressDialog!!.show()
         }
 
         override fun doInBackground(vararg params: Any): Void? {
@@ -1067,7 +1042,7 @@ abstract class CoreActivity : DocumentActivity() {
             val totalImages = params[0] as List<Uri>
             val remainingImages = ArrayList(totalImages)
 
-            mProgressDialog!!.max = remainingImages.size
+//            mProgressDialog!!.max = remainingImages.size
 
             val dbDeletes = ArrayList<ContentProviderOperation>()
             for (toRecycle in totalImages) {
@@ -1094,13 +1069,13 @@ abstract class CoreActivity : DocumentActivity() {
         }
 
         override fun onPostExecute(result: Void) {
-            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
-                mProgressDialog!!.dismiss()
+//            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
+//                mProgressDialog!!.dismiss()
             onImageSetChanged()
         }
 
-        protected override fun onProgressUpdate(vararg values: Int) {
-            mProgressDialog!!.progress = values[0]
+        protected fun onProgressUpdate(vararg values: Int) {
+//            mProgressDialog!!.progress = values[0]
             // setSupportProgress(values[0]);
         }
 
@@ -1278,7 +1253,7 @@ abstract class CoreActivity : DocumentActivity() {
             while (uris.hasNext()) {
                 setWriteResume(WriteActions.WRITE_XMP, arrayOf<Any>(xmpPairing))
 
-                val pair = uris.next() as Entry<*, *>
+                val pair = uris.next()// as Entry<*, *>
                 if (pair.key == null)
                 //AJM: Not sure how this can be null, #167
                     continue
@@ -1337,12 +1312,12 @@ abstract class CoreActivity : DocumentActivity() {
         Subject
     }
 
-    protected inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, private val updateType: XmpUpdateField) : Runnable {
-        private val selectedImages: Collection<Uri>?
+    protected inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, val updateType: XmpUpdateField) : Runnable {
+//        private val selectedImages: Collection<Uri>?
         private val projection = arrayOf(Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT)
 
         init {
-            this.selectedImages = selectedImages
+//            this.selectedImages = selectedImages
         }
 
         override fun run() {
@@ -1401,6 +1376,7 @@ abstract class CoreActivity : DocumentActivity() {
     companion object {
 
         private val TAG = CoreActivity::class.java.simpleName
+        private const val NOTIFICATION_CHANNEL = "notifications"
 
         val SWAP_BIN_DIR = "swap"
         val RECYCLE_BIN_DIR = "recycle"
