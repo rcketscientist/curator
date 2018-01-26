@@ -171,14 +171,14 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 
     // Life-cycle
-    implementation "android.arch.lifecycle:extensions:$archVersion"
-    implementation "android.arch.lifecycle:common-java8:$archVersion"
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    implementation "android.arch.lifecycle:common-java8:$lifecycleVersion"
     // Room
-    implementation "android.arch.persistence.room:runtime:$archVersion"
-    kapt "android.arch.persistence.room:compiler:$archVersion"
-    testImplementation "android.arch.persistence.room:testing:$archVersion"
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    kapt "android.arch.persistence.room:compiler:$roomVersion"
+    testImplementation "android.arch.persistence.room:testing:$roomVersion"
     // Paging
-    implementation "android.arch.paging:runtime:$archVersion$archPagingVersion"
+    implementation "android.arch.paging:runtime:$pagingVersion"
 
     // Required for local unit tests (JUnit 4 framework)
     testImplementation 'junit:junit:4.12'
@@ -192,7 +192,7 @@ dependencies {
     // Hamcrest matching
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     // Arch testing
-    androidTestImplementation "android.arch.core:core-testing:$archVersion"
+    androidTestImplementation "android.arch.core:core-testing:$coreTestingVersion"
 }
 
 crashlytics {

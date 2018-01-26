@@ -8,8 +8,11 @@ buildscript {
         kotlinVersion = '1.2.20'
         compileSdkVersion = 26
         supportLibVersion = "27.0.2"
-        archVersion = "1.0.0"
-        archPagingVersion = "-alpha4-1"
+        // Architecture
+        lifecycleVersion = "1.1.0"
+        roomVersion = "1.1.0-alpha1"
+        pagingVersion = "1.0.0-alpha5"
+        coreTestingVersion = "1.1.0"
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
