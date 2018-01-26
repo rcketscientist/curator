@@ -823,43 +823,25 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
-    protected fun saveImage(images: Collection<Uri>?, destination: Uri?, config: ImageConfiguration) {
-        if (images!!.size < 0)
-            return
+    fun saveTask(images: Collection<Uri>, destinationFolder: Uri, config: ImageConfiguration) {
+        if (images.isEmpty()) return
 
-        // Just grab the first width and assume that will be sufficient for all images
-        SaveImageTask().execute(images, destination,
-            ImageUtil.getWatermark(this, images.iterator().next()), config)
-    }
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+        builder.setContentTitle(getString(R.string.importingImages))
+            .setContentText("placeholder")
+            .setSmallIcon(R.mipmap.ic_launcher)
 
-    inner class SaveImageTask : AsyncTask<Any, String, Boolean>(), OnCancelListener {
-        internal val progressDialog = ProgressDialog(this@CoreActivity)
-        internal val dbInserts = ArrayList<ContentProviderOperation>()
+        Completable.create {
+            val remainingImages = ArrayList(images)
 
-        override fun onPreExecute() {
-            progressDialog.setTitle(getString(R.string.extractingImage))
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-            progressDialog.setCanceledOnTouchOutside(true)
-            progressDialog.setOnCancelListener(this)
-            progressDialog.show()
-        }
+            val dbInserts = ArrayList<ContentProviderOperation>()
+            val progress = 0
+            builder.setProgress(images.size, progress, false)
+            notificationManager?.notify(0, builder.build())
 
-        override fun doInBackground(vararg params: Any): Boolean? {
-            if (params[0] !is List<*> || (params[0] as List<*>)[0] !is Uri)
-                throw IllegalArgumentException()
-
-            val totalImages = params[0] as List<Uri>
-            val remainingImages = ArrayList(totalImages)
-            val destinationFolder = params[1] as Uri
-            val wm = params[2] as Watermark
-            val config = params[3] as ImageConfiguration
-
-            progressDialog.max = totalImages.size
-
-            var success = true
-            for (toThumb in totalImages) {
-                setWriteResume(WriteActions.SAVE_IMAGE, arrayOf(remainingImages, destinationFolder, wm, config))
-                val source = UsefulDocumentFile.fromUri(this@CoreActivity, toThumb)
+            images.forEach { toSave ->
+                setWriteResume(WriteActions.SAVE_IMAGE, arrayOf(remainingImages, destinationFolder, config))
+                val source = UsefulDocumentFile.fromUri(this@CoreActivity, toSave)
                 var destinationTree: UsefulDocumentFile? = null
                 try {
                     destinationTree = getDocumentFile(destinationFolder, true, true)
@@ -868,89 +850,78 @@ abstract class CoreActivity : DocumentActivity() {
                 }
 
                 if (destinationTree == null) {
-                    success = false
-                    continue
+                    return@forEach
                 }
 
                 val desiredName = FileUtil.swapExtention(source.name, config.extension)
-                publishProgress(desiredName)
                 val desiredUri = DocumentUtil.getChildUri(destinationFolder, desiredName)
                 var destinationFile = UsefulDocumentFile.fromUri(this@CoreActivity, desiredUri)
 
                 if (!destinationFile.exists())
                     destinationFile = destinationTree.createFile(null, desiredName)
 
-                try {
-                    FileUtil.getParcelFileDescriptor(this@CoreActivity, source.uri, "r").use { inputPfd ->
-                        FileUtil.getParcelFileDescriptor(this@CoreActivity, destinationFile.uri, "w").use { outputPfd ->
-                            if (outputPfd == null) {
-                                success = false
-                                continue
-                            }
+                FileUtil.getParcelFileDescriptor(this@CoreActivity, source.uri, "r").use { inputPfd ->
+                FileUtil.getParcelFileDescriptor(this@CoreActivity, destinationFile.uri, "w").use { outputPfd ->
+                    if (outputPfd == null) return@forEach
 
-                            when (config.type) {
-                                ImageConfiguration.ImageType.jpeg -> {
-                                    val quality = (config as JpegConfiguration).quality
-                                    if (wm != null) {
-                                        success = ImageProcessor.writeThumb(inputPfd.fd, quality,
-                                            outputPfd.fd, wm.watermark, wm.margins.array,
-                                            wm.waterWidth, wm.waterHeight) && success
-                                    } else {
-                                        success = ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd) && success
-                                    }
-                                }
-                                ImageConfiguration.ImageType.tiff -> {
-                                    val compress = (config as TiffConfiguration).compress
-                                    if (wm != null) {
-                                        success = ImageProcessor.writeTiff(desiredName, inputPfd.fd,
-                                            outputPfd.fd, compress, wm.watermark, wm.margins.array,
-                                            wm.waterWidth, wm.waterHeight) && success
-                                    } else {
-                                        success = ImageProcessor.writeTiff(desiredName, inputPfd.fd,
-                                            outputPfd.fd, compress)
-                                    }
-                                }
-                                else -> throw UnsupportedOperationException("unimplemented save type.")
-                            }
-
-                            onImageAdded(destinationFile.uri)
-                            dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile.uri))
-                            remainingImages.remove(toThumb)
+                    when (config.type) {
+                        ImageConfiguration.ImageType.jpeg -> {
+                            val quality = (config as JpegConfiguration).quality
+    //                                    if (wm != null) {
+    //                                        ImageProcessor.writeThumb(inputPfd.fd, quality,
+    //                                            outputPfd.fd, wm.watermark, wm.margins.array,
+    //                                            wm.waterWidth, wm.waterHeight) && success
+    //                                    } else {
+                            ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+    //                                    }
                         }
+                        ImageConfiguration.ImageType.tiff -> {
+                            val compress = (config as TiffConfiguration).compress
+    //                                    if (wm != null) {
+    //                                        success = ImageProcessor.writeTiff(desiredName, inputPfd.fd,
+    //                                            outputPfd.fd, compress, wm.watermark, wm.margins.array,
+    //                                            wm.waterWidth, wm.waterHeight) && success
+    //                                    } else {
+                            ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
+    //                                    }
+                        }
+                        else -> throw UnsupportedOperationException("unimplemented save type.")
                     }
-                } catch (e: Exception) {
-                    success = false
+
+                    builder.setProgress(images.size, progress, false)
+                    notificationManager?.notify(0, builder.build())
+
+                    onImageAdded(destinationFile.uri)
+                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile.uri))
+                    remainingImages.remove(toSave)
+                }}
+            }
+
+            // When the loop is finished, updates the notification
+            builder.setContentText("Complete")
+                .setProgress(0,0,false) // Removes the progress bar
+            notificationManager?.notify(0, builder.build())
+        }
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .subscribeBy(
+//                AlertDialog.Builder(this@CoreActivity)
+//                    .setMessage("Add converted images to the library?")
+//                    .setPositiveButton(R.string.positive) { _, _ -> MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts) }
+//                    .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+                onComplete = {
+                    clearWriteResume()
+                    onImageSetChanged()
+                },
+                onError = {
+                    builder.setContentText("Some images did not transfer")
                 }
+            )
+    }
 
-                publishProgress()
-            }
-
-            return success //not used.
-        }
-
-        override fun onPostExecute(result: Boolean?) {
-            AlertDialog.Builder(this@CoreActivity)
-                .setMessage("Add converted images to the library?")
-                .setPositiveButton(R.string.positive) { dialog, which -> MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts) }
-                .setNegativeButton(R.string.negative) { dialog, which -> /*dismiss*/ }.show()
-
-            onImageSetChanged()
-
-            if (!this@CoreActivity.isDestroyed && progressDialog != null)
-                progressDialog.dismiss()
-        }
-
-        override fun onProgressUpdate(vararg values: String) {
-            if (values.size > 0) {
-                progressDialog.setMessage(values[0])
-            } else {
-                progressDialog.incrementProgressBy(1)
-            }
-        }
-
-        override fun onCancel(dialog: DialogInterface) {
-            this.cancel(true)
-        }
+    protected fun saveImage(images: Collection<Uri>?, destination: Uri?, config: ImageConfiguration) {
+        if (images!!.size < 0)
+            return
+        saveImage(images, destination, config)
     }
 
     @Throws(DocumentActivity.WritePermissionException::class)
@@ -1396,31 +1367,18 @@ abstract class CoreActivity : DocumentActivity() {
         private val EXPIRATION = 5184000000L //~60 days
 
         private fun numDigits(x: Int): Int {
-            return if (x < 10)
-                1
-            else
-                if (x < 100)
-                    2
-                else
-                    if (x < 1000)
-                        3
-                    else
-                        if (x < 10000)
-                            4
-                        else
-                            if (x < 100000)
-                                5
-                            else
-                                if (x < 1000000)
-                                    6
-                                else
-                                    if (x < 10000000)
-                                        7
-                                    else
-                                        if (x < 100000000)
-                                            8
-                                        else
-                                            if (x < 1000000000) 9 else 10
+            return when {
+                x < 10 -> 1
+                x < 100 -> 2
+                x < 1000 -> 3
+                x < 10000 -> 4
+                x < 100000 -> 5
+                x < 1000000 -> 6
+                x < 10000000 -> 7
+                x < 100000000 -> 8
+                x < 1000000000 -> 9
+                else -> 10
+            }
         }
 
         private fun formatRename(format: Int, baseName: String, index: Int, total: Int): String? {
