@@ -1,8 +1,9 @@
 package com.anthonymandra.framework
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
-import android.app.*
+import android.app.AlertDialog
+import android.app.Dialog
+import android.app.NotificationManager
 import android.content.*
 import android.content.DialogInterface.OnCancelListener
 import android.net.Uri
@@ -26,7 +27,6 @@ import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
 import com.anthonymandra.image.TiffConfiguration
 import com.anthonymandra.imageprocessor.ImageProcessor
-import com.anthonymandra.imageprocessor.Watermark
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
@@ -62,10 +62,9 @@ abstract class CoreActivity : DocumentActivity() {
     protected var mItemsForIntent: Collection<Uri> = Collections.emptyList()
 
     protected abstract val licenseHandler: LicenseHandler
-    protected abstract val progressBar: ProgressBar
     protected abstract val selectedImages: Collection<Uri>
 
-    protected val notificationManager: NotificationManager? =
+    private val notificationManager: NotificationManager? =
         this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     /**
@@ -102,16 +101,6 @@ abstract class CoreActivity : DocumentActivity() {
             Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
             //TODO: Add link to Curator store page
             finish()
-        }
-
-        //TODO: Temporarily convert pref from string to int
-        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        try {
-            // This will throw if it's not a string.
-            val binSize = prefs.getString(FullSettingsActivity.KEY_RecycleBinSize, "n/a")
-
-            prefs.edit().putInt(FullSettingsActivity.KEY_RecycleBinSize, Integer.parseInt(binSize)).commit()
-        } catch (ignored: Exception) {
         }
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
@@ -245,7 +234,7 @@ abstract class CoreActivity : DocumentActivity() {
         val compressSwitch = dialog.findViewById<View>(R.id.switchCompress) as Switch
 
         val setDefault = dialog.findViewById<View>(R.id.checkBoxSetDefault) as CheckBox
-        setDefault.setOnCheckedChangeListener { buttonView, isChecked ->
+        setDefault.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 Snackbar.make(dialog.currentFocus!!,
                     Html.fromHtml(
@@ -302,8 +291,8 @@ abstract class CoreActivity : DocumentActivity() {
 
         if (callingMethod is WriteActions) {
             when (callingMethod) {
-                CoreActivity.WriteActions.COPY -> CopyTask().execute(*callingParameters)
-                CoreActivity.WriteActions.DELETE -> DeleteTask().execute(*callingParameters)
+                CoreActivity.WriteActions.COPY -> copyTask(callingParameters[0] as Collection<Uri>, callingParameters[1] as Uri) //TODO
+                CoreActivity.WriteActions.DELETE -> deleteTask(callingParameters[0] as Collection<Uri>)
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RENAME -> RenameTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RESTORE -> RestoreTask().execute(*callingParameters)
@@ -316,35 +305,30 @@ abstract class CoreActivity : DocumentActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
-        xmpEditFragment.setListener({ rating, label, subject ->
-            val values = XmpEditFragment.XmpEditValues()
-            values.Label = label
-            values.Subject = subject
-            values.Rating = rating
-            writeXmpModifications(values)
-        })
-        xmpEditFragment.setLabelListener({ label ->
-            val values = XmpEditFragment.XmpEditValues()
-            values.Label = label
+        xmpEditFragment.setListener { rating, label, subject ->
+            writeXmpModifications(XmpEditFragment.XmpEditValues(rating, subject, label))
+        }
 
-            Thread(PrepareXmpRunnable(values, XmpUpdateField.Label)).start()
-        })
-        xmpEditFragment.setRatingListener({ rating ->
-            val values = XmpEditFragment.XmpEditValues()
-            values.Rating = rating
+        xmpEditFragment.setLabelListener { label ->
+            Thread(PrepareXmpRunnable(
+                XmpEditFragment.XmpEditValues(label = label),
+                XmpUpdateField.Label)).start()
+        }
 
-            Thread(PrepareXmpRunnable(values, XmpUpdateField.Rating)).start()
-        })
-        xmpEditFragment.setSubjectListener({ subject ->
-            val values = XmpEditFragment.XmpEditValues()
-            values.Subject = subject
-
-            Thread(PrepareXmpRunnable(values, XmpUpdateField.Subject)).start()
-        })
+        xmpEditFragment.setRatingListener { rating ->
+            Thread(PrepareXmpRunnable(
+                XmpEditFragment.XmpEditValues(rating = rating),
+                XmpUpdateField.Rating)).start()
+        }
+        xmpEditFragment.setSubjectListener { subject ->
+            Thread(PrepareXmpRunnable(
+                XmpEditFragment.XmpEditValues(subject = subject),
+                XmpUpdateField.Subject)).start()
+        }
         hideEditXmpFragment()
     }
 
-    protected fun toggleEditXmpFragment() {
+    private fun toggleEditXmpFragment() {
         if (xmpEditFragment.isHidden) {
             showEditXmpFragment()
         } else {
@@ -352,28 +336,28 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    protected fun hideEditXmpFragment() {
+    private fun hideEditXmpFragment() {
         val ft = supportFragmentManager.beginTransaction()
         ft.hide(xmpEditFragment)
         ft.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         ft.commit()
     }
 
-    protected fun showEditXmpFragment() {
+    private fun showEditXmpFragment() {
         val ft = supportFragmentManager.beginTransaction()
         ft.show(xmpEditFragment)
         ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left)
         ft.commit()
     }
 
-    protected fun writeXmpModifications(values: XmpEditFragment.XmpEditValues) {
+    private fun writeXmpModifications(values: XmpEditFragment.XmpEditValues) {
         val selection = selectedImages
-        if (selection != null) {
+        if (selection.isNotEmpty()) {
             val cv = ContentValues()
-            cv.put(Meta.LABEL, values.Label)
-            cv.put(Meta.RATING, values.Rating)
+            cv.put(Meta.LABEL, values.label)
+            cv.put(Meta.RATING, values.rating)
             //FIXME: This should update the subject junction!
-            //			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.Subject));
+            //			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.subject));
 
             val xmpPairing = HashMap<Uri, ContentValues>()
             for (uri in selection) {
@@ -384,24 +368,21 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    protected fun writeXmp(xmpPairing: Map<Uri, ContentValues>) {
+    private fun writeXmp(xmpPairing: Map<Uri, ContentValues>) {
         WriteXmpTask().execute(xmpPairing)
     }
 
     /**
      * Create swap directory or clear the contents
      */
-    protected fun createSwapDir() {
+    private fun createSwapDir() {
         mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR)
         if (!mSwapDir.exists()) {
             mSwapDir.mkdirs()
         }
     }
 
-    protected fun clearSwapDir() {
-        if (mSwapDir == null)
-            return
-
+    private fun clearSwapDir() {
         Thread(Runnable {
             val swapFiles = mSwapDir.listFiles()
             if (swapFiles != null) {
@@ -412,7 +393,7 @@ abstract class CoreActivity : DocumentActivity() {
         }).start()
     }
 
-    protected fun createRecycleBin() {
+    private fun createRecycleBin() {
         val settings = PreferenceManager.getDefaultSharedPreferences(this)
 
         val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true)
@@ -429,7 +410,7 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    protected fun showRecycleBin() {
+    private fun showRecycleBin() {
         val settings = PreferenceManager.getDefaultSharedPreferences(this)
         val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true)
 
@@ -438,9 +419,9 @@ abstract class CoreActivity : DocumentActivity() {
         val keys = recycleBin.keys
         val filesToRestore = ArrayList<String>()
         val shortNames = ArrayList<String>(keys.size)
-        for (key in keys) {
-            shortNames.add(Uri.parse(key).lastPathSegment)
-        }
+
+        keys.mapTo(shortNames) { Uri.parse(it).lastPathSegment }
+
         AlertDialog.Builder(this).setTitle(R.string.recycleBin)
             .setNegativeButton(R.string.emptyRecycleBin) { _, _ -> recycleBin.clearCache() }
             .setNeutralButton(R.string.neutral) { _, _ ->  } // cancel, do nothing
@@ -448,7 +429,7 @@ abstract class CoreActivity : DocumentActivity() {
                 if (!filesToRestore.isEmpty())
                     restoreFiles(filesToRestore)
             }
-            .setMultiChoiceItems(shortNames.toTypedArray(), null, DialogInterface.OnMultiChoiceClickListener { dialog, which, isChecked ->
+            .setMultiChoiceItems(shortNames.toTypedArray(), null, { _, which, isChecked ->
                 if (isChecked)
                     filesToRestore.add(keys[which])
                 else
@@ -468,8 +449,8 @@ abstract class CoreActivity : DocumentActivity() {
         deleteImages(itemsToDelete)
     }
 
-    protected fun deleteImages(itemsToDelete: Collection<Uri>) {
-        if (itemsToDelete.size == 0) {
+    private fun deleteImages(itemsToDelete: Collection<Uri>) {
+        if (itemsToDelete.isEmpty()) {
             Toast.makeText(baseContext, R.string.warningNoItemsSelected, Toast.LENGTH_SHORT).show()
             return
         }
@@ -479,15 +460,13 @@ abstract class CoreActivity : DocumentActivity() {
         val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true)
         val justDelete: Boolean?
         val message: String
-        var spaceRequired: Long = 0
-        for (toDelete in itemsToDelete) {
-            if (toDelete == null)
-                continue
-
-            val f = File(toDelete.path)
-            if (f.exists())
-                spaceRequired += f.length()
-        }
+        val spaceRequired: Long = itemsToDelete
+            .asSequence()
+            .filterNotNull()
+            .map { File(it.path) }
+            .filter { it.exists() }
+            .map { it.length() }
+            .sum()
 
         // Go straight to delete if
         // 1. MTP (unsupported)
@@ -502,9 +481,6 @@ abstract class CoreActivity : DocumentActivity() {
         if (!useRecycle) {
             justDelete = true
             message = getString(R.string.warningDeleteDirect)
-        } else if (recycleBin == null) {
-            justDelete = true
-            message = getString(R.string.warningNoRecycleBin)
         } else {
             justDelete = false
             message = getString(R.string.warningDeleteExceedsRecycle) // This message applies to deletes exceeding bin size
@@ -514,21 +490,20 @@ abstract class CoreActivity : DocumentActivity() {
             if (deleteConfirm) {
                 AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
                     .setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
-                    .setPositiveButton(R.string.delete) { _, _ -> DeleteTask().execute(itemsToDelete) }
+                    .setPositiveButton(R.string.delete) { _, _ -> deleteTask(itemsToDelete) }
                     .show()
             } else {
-                DeleteTask().execute(itemsToDelete)
+                deleteTask(itemsToDelete)
             }
         } else {
             RecycleTask().execute(itemsToDelete)
         }
     }
 
-    protected fun requestEmailIntent() {
+    private fun requestEmailIntent() {
         requestEmailIntent(null)
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     protected fun requestEmailIntent(subject: String?) {
         val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts(
             "mailto", "rawdroid@anthonymandra.com", null))
@@ -560,6 +535,7 @@ abstract class CoreActivity : DocumentActivity() {
         startActivityForResult(intent, REQUEST_SAVE_AS_DIR)
     }
 
+    @SuppressLint("InflateParams")  // AlertDialog takes null rootView
     protected fun showRenameDialog(itemsToRename: Collection<Uri>) {
         @SuppressLint("InflateParams")
         val dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null)
@@ -596,12 +572,12 @@ abstract class CoreActivity : DocumentActivity() {
         val renameDialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.renameImages))
             .setView(dialogView)
-            .setPositiveButton(R.string.rename) { dialog, which ->
+            .setPositiveButton(R.string.rename) { _, _ ->
                 val customName = nameText.text.toString()
                 val selected = format.selectedItemPosition
                 RenameTask().execute(itemsToRename, selected, customName)
             }
-            .setNegativeButton(R.string.neutral) { dialog, which -> }.create()
+            .setNegativeButton(R.string.neutral) { _, _ -> }.create()
 
         //		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
         //		final EditText nameText = (EditText) dialogView.findViewById(R.id.editTextFormat);
@@ -627,7 +603,7 @@ abstract class CoreActivity : DocumentActivity() {
      */
     protected abstract fun onImageSetChanged()
 
-    protected fun requestShare() {
+    private fun requestShare() {
         if (selectedImages.isEmpty()) {
             Snackbar.make(rootView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
             return
@@ -681,15 +657,11 @@ abstract class CoreActivity : DocumentActivity() {
         startActivity(Intent.createChooser(intent, getString(R.string.share)))
     }
 
-    class LicenseHandler(context: Context) : Handler() {
-        private val mContext: WeakReference<Context>
-
-        init {
-            mContext = WeakReference(context)
-        }
+    open class LicenseHandler(context: Context) : Handler() {
+        private val mContext: WeakReference<Context> = WeakReference(context)
 
         override fun handleMessage(msg: Message) {
-            val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE) as License.LicenseState
+            val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE)
             if (state == null || state.toString().startsWith("modified")) {
                 for (i in 0..2)
                     Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show()
@@ -768,7 +740,7 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    fun copyTask(images: Collection<Uri>, destinationFolder: Uri) {
+    private fun copyTask(images: Collection<Uri>, destinationFolder: Uri) {
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
         builder.setContentTitle(getString(R.string.importingImages))
             .setContentText("placeholder")
@@ -918,7 +890,7 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
-    protected fun saveImage(images: Collection<Uri>?, destination: Uri?, config: ImageConfiguration) {
+    private fun saveImage(images: Collection<Uri>?, destination: Uri?, config: ImageConfiguration) {
         if (images!!.size < 0)
             return
         saveImage(images, destination, config)
@@ -932,29 +904,24 @@ abstract class CoreActivity : DocumentActivity() {
         return deleteFile(image)
     }
 
-    protected inner class DeleteTask : AsyncTask<Any, Int, Boolean>(), OnCancelListener {
-        override fun onPreExecute() {
-//            mProgressDialog = ProgressDialog(this@CoreActivity)
-//            mProgressDialog!!.setTitle(R.string.deletingFiles)
-//            mProgressDialog!!.setOnCancelListener(this)
-//            mProgressDialog!!.show()
-        }
+    private fun deleteTask(images: Collection<Uri>) {
+        if (images.isEmpty()) return
 
-        override fun doInBackground(vararg params: Any): Boolean? {
-            if (params[0] !is List<*> || (params[0] as List<*>)[0] !is Uri)
-                throw IllegalArgumentException()
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+        builder.setContentTitle(getString(R.string.importingImages))
+            .setContentText("placeholder")
+            .setSmallIcon(R.mipmap.ic_launcher)
 
-            // Create a copy to keep track of completed deletions in case this needs to be restarted
-            // to request write permission
-            val totalDeletes = params[0] as List<Uri>
-            val remainingDeletes = ArrayList(totalDeletes)
-
-//            mProgressDialog!!.max = totalDeletes.size
+        Completable.create {
+            val remainingImages = ArrayList(images)
 
             val dbDeletes = ArrayList<ContentProviderOperation>()
-            var totalSuccess = true
-            for (toDelete in totalDeletes) {
-                setWriteResume(WriteActions.DELETE, arrayOf<Any>(remainingDeletes))
+            val progress = 0
+            builder.setProgress(images.size, progress, false)
+            notificationManager?.notify(0, builder.build())
+
+            images.forEach { toDelete ->
+                setWriteResume(WriteActions.DELETE, arrayOf<Any>(remainingImages))
                 try {
                     if (deleteAssociatedFiles(toDelete)) {
                         onImageRemoved(toDelete)
@@ -962,40 +929,32 @@ abstract class CoreActivity : DocumentActivity() {
                     }
                 } catch (e: DocumentActivity.WritePermissionException) {
                     e.printStackTrace()
-                    // We'll be automatically requesting write permission so kill this process
-                    totalSuccess = false
                 }
 
-                remainingDeletes.remove(toDelete)
+                remainingImages.remove(toDelete)
             }
 
-            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
-            return totalSuccess
-        }
+            // When the loop is finished, updates the notification
+            builder.setContentText("Complete")
+                .setProgress(0,0,false) // Removes the progress bar
+            notificationManager?.notify(0, builder.build())
 
-        override fun onPostExecute(result: Boolean?) {
-            if (result!!)
-                clearWriteResume()
-            else
-                Snackbar.make(rootView, R.string.deleteFail, Snackbar.LENGTH_LONG).show()
-
-//            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
-//                mProgressDialog!!.dismiss()
-            onImageSetChanged()
+//            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
         }
-
-        protected fun onProgressUpdate(vararg values: Int) {
-//            mProgressDialog!!.progress = values[0]
-            // setSupportProgress(values[0]);
-        }
-
-        override fun onCancelled() {
-            onImageSetChanged()
-        }
-
-        override fun onCancel(dialog: DialogInterface) {
-            this.cancel(true)
-        }
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .subscribeBy(
+//                AlertDialog.Builder(this@CoreActivity)
+//                    .setMessage("Add converted images to the library?")
+//                    .setPositiveButton(R.string.positive) { _, _ -> MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts) }
+//                    .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+                onComplete = {
+                    clearWriteResume()
+                    onImageSetChanged()
+                },
+                onError = {
+                    builder.setContentText("Some images did not transfer")
+                }
+            )
     }
 
     protected inner class RecycleTask : AsyncTask<Any, Int, Void>(), OnCancelListener {
@@ -1045,11 +1004,6 @@ abstract class CoreActivity : DocumentActivity() {
             onImageSetChanged()
         }
 
-        protected fun onProgressUpdate(vararg values: Int) {
-//            mProgressDialog!!.progress = values[0]
-            // setSupportProgress(values[0]);
-        }
-
         override fun onCancelled() {
             onImageSetChanged()
         }
@@ -1059,13 +1013,13 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    protected fun restoreFiles(toRestore: List<String>) {
+    private fun restoreFiles(toRestore: List<String>) {
         RestoreTask().execute(toRestore)
     }
 
     protected inner class RestoreTask : AsyncTask<Any, Int, Boolean>() {
         override fun doInBackground(vararg params: Any): Boolean? {
-            if (params.size == 0)
+            if (params.isEmpty())
                 return false
             if (params[0] !is List<*>)
                 throw IllegalArgumentException()
@@ -1217,7 +1171,7 @@ abstract class CoreActivity : DocumentActivity() {
 
     protected inner class WriteXmpTask : AsyncTask<Any, Int, Boolean>() {
         override fun doInBackground(vararg params: Any): Boolean? {
-            val xmpPairing = params[0] as Map<Uri, ContentValues>
+            val xmpPairing = params[0] as MutableMap<Uri, ContentValues>
             val databaseUpdates = ArrayList<ContentProviderOperation>()
 
             val uris = xmpPairing.entries.iterator()
@@ -1277,13 +1231,14 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    internal enum class XmpUpdateField {
+    private enum class XmpUpdateField {
         Rating,
         Label,
         Subject
     }
 
-    protected inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, val updateType: XmpUpdateField) : Runnable {
+    //TODO:
+    private inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, val updateType: XmpUpdateField) : Runnable {
 //        private val selectedImages: Collection<Uri>?
         private val projection = arrayOf(Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT)
 
@@ -1328,15 +1283,15 @@ abstract class CoreActivity : DocumentActivity() {
             //			{
             //				switch(updateType)
             //				{
-            //					case Label:
+            //					case label:
             //						xmpPair.getValue().put(Meta.LABEL, update.getLabel());
             //						break;
-            //					case Rating:
+            //					case rating:
             //						xmpPair.getValue().put(Meta.RATING, update.getRating());
             //						break;
             //						// FIXME: This should prepare a subject junction update
-            ////					case Subject:
-            ////						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.Subject));
+            ////					case subject:
+            ////						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.subject));
             ////						break;
             //				}
             //			}
@@ -1345,26 +1300,25 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     companion object {
-
         private val TAG = CoreActivity::class.java.simpleName
         private const val NOTIFICATION_CHANNEL = "notifications"
 
-        val SWAP_BIN_DIR = "swap"
-        val RECYCLE_BIN_DIR = "recycle"
+        const val SWAP_BIN_DIR = "swap"
+        const val RECYCLE_BIN_DIR = "recycle"
 
-        private val REQUEST_SAVE_AS_DIR = 15
+        private const val REQUEST_SAVE_AS_DIR = 15
 
         // Identifies a particular Loader being used in this component
-        val META_LOADER_ID = 0
+//        const val META_LOADER_ID = 0
 
-        val EXTRA_META_BUNDLE = "meta_bundle"
-        val META_PROJECTION_KEY = "projection"
-        val META_SELECTION_KEY = "selection"
-        val META_SELECTION_ARGS_KEY = "selection_args"
-        val META_SORT_ORDER_KEY = "sort_order"
-        val META_DEFAULT_SORT = Meta.NAME + " ASC"
+//        const val EXTRA_META_BUNDLE = "meta_bundle"
+//        const val META_PROJECTION_KEY = "projection"
+//        const val META_SELECTION_KEY = "selection"
+//        const val META_SELECTION_ARGS_KEY = "selection_args"
+//        const val META_SORT_ORDER_KEY = "sort_order"
+//        const val META_DEFAULT_SORT = Meta.NAME + " ASC"
 
-        private val EXPIRATION = 5184000000L //~60 days
+        private const val EXPIRATION = 5184000000L //~60 days
 
         private fun numDigits(x: Int): Int {
             return when {

@@ -13,6 +13,10 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
 
+typealias RatingChangedListener = (rating: Int?) -> Unit
+typealias LabelChangedListener = (label: String?) -> Unit
+typealias SubjectChangedListener = (subject: Collection<SubjectEntity>?) -> Unit
+typealias MetaChangedListener = (rating: Int?, label: String?, subject: Collection<SubjectEntity>?) -> Unit
 class XmpEditFragment : XmpBaseFragment() {
     private lateinit var recentRating: ImageView
     private lateinit var recentLabel: ImageView
@@ -41,18 +45,6 @@ class XmpEditFragment : XmpBaseFragment() {
             return if (ratings.isEmpty()) null else ratings.iterator().next()
         }
 
-    interface RatingChangedListener {
-        fun onRatingChanged(rating: Int?)
-    }
-
-    interface LabelChangedListener {
-        fun onLabelChanged(label: String?)
-    }
-
-    interface SubjectChangedListener {
-        fun onSubjectChanged(subject: Collection<SubjectEntity>?)
-    }
-
     fun setRatingListener(listener: RatingChangedListener) {
         mRatingListener = listener
     }
@@ -65,27 +57,23 @@ class XmpEditFragment : XmpBaseFragment() {
         mSubjectListener = listener
     }
 
-    interface MetaChangedListener {
-        fun onMetaChanged(rating: Int?, label: String?, subject: Collection<SubjectEntity>?)
-    }
-
     fun setListener(listener: MetaChangedListener) {
         mXmpChangedListener = listener
     }
 
     override fun onXmpChanged(xmp: XmpValues) {
-        recentXmp.Subject = xmp.subject
-        recentXmp.Rating = formatRating(xmp.rating)
-        recentXmp.Label = formatLabel(xmp.label)
+        recentXmp.subject = xmp.subject
+        recentXmp.rating = formatRating(xmp.rating)
+        recentXmp.label = formatLabel(xmp.label)
 
         fireMetaUpdate()
     }
 
     private fun fireMetaUpdate() {
-        mXmpChangedListener?.onMetaChanged(
-                recentXmp.Rating,
-                recentXmp.Label,
-                recentXmp.Subject)
+        mXmpChangedListener?.invoke(
+                recentXmp.rating,
+                recentXmp.label,
+                recentXmp.subject)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -131,8 +119,8 @@ class XmpEditFragment : XmpBaseFragment() {
     }
 
     override fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>) {
-        recentXmp.Subject = subject
-        mSubjectListener?.onSubjectChanged(recentXmp.Subject)
+        recentXmp.subject = subject
+        mSubjectListener?.invoke(recentXmp.subject)
     }
 
     override fun onLabelSelectionChanged(checked: List<XmpLabelGroup.Labels>) {
@@ -151,20 +139,20 @@ class XmpEditFragment : XmpBaseFragment() {
             }
         }
 
-        recentXmp.Label = label
-        mLabelListener?.onLabelChanged(recentXmp.Label)
+        recentXmp.label = label
+        mLabelListener?.invoke(recentXmp.label)
     }
 
     override fun onRatingSelectionChanged(checked: List<Int>) {
-        recentXmp.Rating = rating
-        mRatingListener?.onRatingChanged(recentXmp.Rating)
+        recentXmp.rating = rating
+        mRatingListener?.invoke(recentXmp.rating)
 
-        if (recentXmp.Rating == null) {
+        if (recentXmp.rating == null) {
             recentRating.setImageResource(R.drawable.ic_star_border)
             return
         }
 
-        when (recentXmp.Rating) {
+        when (recentXmp.rating) {
             5 -> recentRating.setImageResource(R.drawable.ic_star5)
             4 -> recentRating.setImageResource(R.drawable.ic_star4)
             3 -> recentRating.setImageResource(R.drawable.ic_star3)
@@ -177,11 +165,11 @@ class XmpEditFragment : XmpBaseFragment() {
     /**
      * Default values indicate no xmp
      */
-    class XmpEditValues {
-        var Rating: Int? = null
-        var Subject: Collection<SubjectEntity>? = null
-        var Label: String? = null
-    }
+    data class XmpEditValues(
+        var rating: Int? = null,
+        var subject: Collection<SubjectEntity>? = null,
+        var label: String? = null
+    )
 
     private fun startTutorial() {
         val sequence = MaterialShowcaseSequence(activity)
@@ -198,12 +186,12 @@ class XmpEditFragment : XmpBaseFragment() {
                 root.findViewById(R.id.clearMetaButton),
                 R.string.tutClearMeta))
 
-        // Rating
+        // rating
         sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.metaLabelRating),
                 R.string.tutSetRatingLabel))
 
-        // Subject
+        // subject
         sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.keywordFragment),
                 R.string.tutSetSubject))

@@ -10,6 +10,7 @@ import java.io.Reader
 
 @Dao
 abstract class SubjectDao : PathDao<SubjectEntity>() {
+    override fun getDatabase() = "xmp_subject"
 
     @get:Query("SELECT * FROM xmp_subject ORDER BY recent DESC, name ASC")
     abstract val all: LiveData<List<SubjectEntity>>
@@ -17,20 +18,20 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
     @Query("SELECT COUNT(*) FROM xmp_subject")
     abstract fun count(): Int
 
-    @Query("SELECT * FROM xmp_subject WHERE id= :id ")
-    internal abstract fun get(id: Long?): SubjectEntity
-
-    @Query("SELECT id FROM xmp_subject WHERE path LIKE :path || '%'")
-    abstract override fun getDescendantIds(path: String): List<Long>
-
-    @Query("SELECT id FROM xmp_subject WHERE :path LIKE path || '%'")
-    abstract override fun getAncestorIds(path: String): List<Long>
-
-    @Query("SELECT * FROM xmp_subject WHERE path LIKE :path || '%'")
-    abstract fun getDescendants(path: String): List<SubjectEntity>
-
-    @Query("SELECT * FROM xmp_subject WHERE :path LIKE path || '%'")
-    abstract fun getAncestors(path: String): List<SubjectEntity>
+//    @Query("SELECT * FROM xmp_subject WHERE id= :id ")
+//    internal abstract override fun internalGet(id: Long?): SubjectEntity
+//
+//    @Query("SELECT id FROM xmp_subject WHERE path LIKE :path || '%'")
+//    abstract override fun internalGetDescendantIds(path: String): List<Long>
+//
+//    @Query("SELECT id FROM xmp_subject WHERE :path LIKE path || '%'")
+//    abstract override fun internalGetAncestorIds(path: String): List<Long>
+//
+//    @Query("SELECT * FROM xmp_subject WHERE path LIKE :path || '%'")
+//    abstract fun internalGetDescendants(path: String): List<SubjectEntity>
+//
+//    @Query("SELECT * FROM xmp_subject WHERE :path LIKE path || '%'")
+//    abstract fun internalGetAncestors(path: String): List<SubjectEntity>
 
     @Query("SELECT * FROM xmp_subject " +
         "INNER JOIN meta_subject_junction " +
@@ -41,15 +42,15 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
     @Query("DELETE FROM xmp_subject")
     abstract fun deleteAll()
 
-    fun getDescendants(id: Long): List<SubjectEntity> {
-        val pd = get(id)
-        return getDescendants(pd.path)
-    }
-
-    fun getAncestors(id: Long): List<SubjectEntity> {
-        val pd = get(id)
-        return getAncestors(pd.path)
-    }
+//    fun internalGetDescendants(id: Long): List<SubjectEntity> {
+//        val pd = internalGet(id)
+//        return internalGetDescendants(pd.path)
+//    }
+//
+//    fun internalGetAncestors(id: Long): List<SubjectEntity> {
+//        val pd = internalGet(id)
+//        return internalGetAncestors(pd.path)
+//    }
 
     //TODO: This belongs in a data repository
     @Throws(IOException::class)
@@ -79,7 +80,7 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
                 val synonym = SynonymEntity()
                 synonym.subjectId = parents.get(depth - 1)
 
-                // FIXME: insert synonym
+                // FIXME: add synonym
                 return@forEachLine
             }
 

@@ -65,7 +65,7 @@
         android:layout_below="@id/sortHeader">
 
         <android.support.v7.widget.ToggleGroup
-            android:id="@+id/sortGroup"
+            android:id="@+id/sortToggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -104,7 +104,7 @@
         </android.support.v7.widget.ToggleGroup>
 
         <android.support.v7.widget.ToggleButton
-            android:id="@+id/toggleSegregate"
+            android:id="@+id/segregateToggleButton"
             style="@style/ImageActionToggleButton"
             android:button="@drawable/ic_jpeg_bottom_borderless"
             android:buttonTint="@color/white"
@@ -181,7 +181,7 @@
         android:layout_alignParentStart="true">
 
         <ImageButton
-            android:id="@+id/buttonFolders"
+            android:id="@+id/foldersButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"

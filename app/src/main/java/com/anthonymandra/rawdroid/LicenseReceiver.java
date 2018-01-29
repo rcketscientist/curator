@@ -12,17 +12,17 @@ public class LicenseReceiver extends BroadcastReceiver
 	@Override
 	public void onReceive(Context context, Intent intent)
 	{
-		int result = intent.getIntExtra(GalleryActivity.Companion.getLICENSE_RESULT(), GalleryActivity.Companion.getLICENSE_ERROR());
+		int result = intent.getIntExtra(GalleryActivity.LICENSE_RESULT, GalleryActivity.LICENSE_ERROR);
 
 		switch (result)
 		{
-			case GalleryActivity.Companion.getLICENSE_ALLOW():
+			case GalleryActivity.LICENSE_ALLOW:
 				Log.i(TAG, "License Allow");
 				break;
-			case GalleryActivity.Companion.getLICENSE_DISALLOW():
+			case GalleryActivity.LICENSE_DISALLOW:
 				Log.i(TAG, "License Disallow");
 				break;
-			case GalleryActivity.Companion.getLICENSE_ERROR():
+			case GalleryActivity.LICENSE_ERROR:
 				Log.i(TAG, "License Error");
 				break;
 		}

@@ -5,7 +5,7 @@ buildscript {
         google()
     }
     ext {
-        kotlinVersion = '1.2.20'
+        kotlinVersion = '1.2.21'
         compileSdkVersion = 26
         supportLibVersion = "27.0.2"
         // Architecture

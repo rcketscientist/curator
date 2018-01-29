@@ -18,7 +18,6 @@ import com.adobe.xmp.XMPMetaFactory;
 import com.adobe.xmp.impl.XMPMetaImpl;
 import com.adobe.xmp.options.PropertyOptions;
 import com.adobe.xmp.options.SerializeOptions;
-import com.adobe.xmp.properties.XMPProperty;
 import com.android.gallery3d.common.Utils;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.UsefulDocumentFile;
@@ -44,7 +43,6 @@ import com.drew.metadata.xmp.XmpDirectory;
 import com.drew.metadata.xmp.XmpReader;
 
 import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,21 +61,21 @@ public class MetaUtil
 	private static final int TRUE = 1;
 	private static final int FALSE = 0;
 
-	private static class XmpProperty
+	public static class XmpProperty
 	{
-		public final String Schema;
+		final String Schema;
 		public final String Name;
 
-		public XmpProperty(String schema, String name)
+		XmpProperty(String schema, String name)
 		{
 			this.Schema = schema;
 			this.Name = name;
 		}
 	}
 
-	public static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label");
-	public static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating");
-	public static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject");
+	public static final XmpProperty LABEL = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:label");
+	public static final XmpProperty RATING = new XmpProperty(Schema.XMP_PROPERTIES, "xmp:rating");
+	public static final XmpProperty SUBJECT = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:subject");
 	public static final XmpProperty CREATOR = new XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Creator");    //TODO: TEST
 
 

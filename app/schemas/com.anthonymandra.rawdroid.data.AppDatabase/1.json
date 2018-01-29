@@ -2,41 +2,41 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c13a8a13dfeea3e6f81dbb6fbaceeb0a",
+    "identityHash": "55f22fccc74f37b1a78f8705c47db81e",
     "entities": [
       {
         "tableName": "image_parent",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT, `parent` INTEGER, `depth` INTEGER NOT NULL, `documentUri` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`documentUri` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `path` TEXT NOT NULL, `parent` INTEGER NOT NULL, `depth` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "documentUri",
+            "columnName": "documentUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "path",
             "columnName": "path",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "parent",
             "columnName": "parent",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "depth",
             "columnName": "depth",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "documentUri",
-            "columnName": "documentUri",
-            "affinity": "TEXT",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -50,13 +50,13 @@
       },
       {
         "tableName": "meta",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `type` INTEGER NOT NULL, `processed` INTEGER, `uri` TEXT, `documentId` TEXT, `parentId` INTEGER, `rating` TEXT, `label` TEXT, `timestamp` TEXT, `make` TEXT, `model` TEXT, `aperture` TEXT, `exposure` TEXT, `flash` TEXT, `focalLength` TEXT, `iso` TEXT, `whiteBalance` TEXT, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `latitude` TEXT, `longitude` TEXT, `altitude` TEXT, `orientation` INTEGER NOT NULL, `lens` TEXT, `driveMode` TEXT, `exposureMode` TEXT, `exposureProgram` TEXT, FOREIGN KEY(`parentId`) REFERENCES `image_parent`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `type` INTEGER NOT NULL, `processed` INTEGER NOT NULL, `uri` TEXT NOT NULL, `documentId` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `rating` REAL, `label` TEXT, `timestamp` TEXT, `make` TEXT, `model` TEXT, `aperture` TEXT, `exposure` TEXT, `flash` TEXT, `focalLength` TEXT, `iso` TEXT, `whiteBalance` TEXT, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `latitude` TEXT, `longitude` TEXT, `altitude` TEXT, `orientation` INTEGER NOT NULL, `lens` TEXT, `driveMode` TEXT, `exposureMode` TEXT, `exposureProgram` TEXT, FOREIGN KEY(`parentId`) REFERENCES `image_parent`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "name",
@@ -74,30 +74,30 @@
             "fieldPath": "processed",
             "columnName": "processed",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "uri",
             "columnName": "uri",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "documentId",
             "columnName": "documentId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "parentId",
             "columnName": "parentId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "rating",
             "columnName": "rating",
-            "affinity": "TEXT",
+            "affinity": "REAL",
             "notNull": false
           },
           {
@@ -269,43 +269,43 @@
       },
       {
         "tableName": "xmp_subject",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `path` TEXT, `parent` INTEGER, `depth` INTEGER NOT NULL, `name` TEXT, `recent` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `recent` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `path` TEXT NOT NULL, `parent` INTEGER NOT NULL, `depth` INTEGER NOT NULL)",
         "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recent",
+            "columnName": "recent",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "path",
             "columnName": "path",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "parent",
             "columnName": "parent",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "depth",
             "columnName": "depth",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "recent",
-            "columnName": "recent",
-            "affinity": "INTEGER",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -395,7 +395,7 @@
       },
       {
         "tableName": "SynonymEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `subjectId` INTEGER NOT NULL, `synonym` TEXT, FOREIGN KEY(`subjectId`) REFERENCES `xmp_subject`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `subjectId` INTEGER NOT NULL, `synonym` TEXT NOT NULL, FOREIGN KEY(`subjectId`) REFERENCES `xmp_subject`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -413,7 +413,7 @@
             "fieldPath": "synonym",
             "columnName": "synonym",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -457,7 +457,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c13a8a13dfeea3e6f81dbb6fbaceeb0a\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"55f22fccc74f37b1a78f8705c47db81e\")"
     ]
   }
 }

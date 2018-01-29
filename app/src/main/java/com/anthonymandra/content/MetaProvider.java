@@ -245,7 +245,7 @@ public class MetaProvider extends ContentProvider
 				}
 				catch (Exception e)
 				{
-					Log.e(TAG, "Failed to insert: " + cv.getAsString(Meta.URI), e);
+					Log.e(TAG, "Failed to add: " + cv.getAsString(Meta.URI), e);
 				}
 			}
 			sqlDB.setTransactionSuccessful();
@@ -292,7 +292,7 @@ public class MetaProvider extends ContentProvider
             return metaUri;
         }
  
-        throw new SQLException("Failed to insert row into " + uri);
+        throw new SQLException("Failed to add row into " + uri);
 	}
 
 

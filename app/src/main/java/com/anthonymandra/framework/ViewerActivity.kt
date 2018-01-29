@@ -27,7 +27,6 @@ import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.GalleryActivity
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.util.ImageUtil
-import com.crashlytics.android.Crashlytics
 import kotlinx.android.synthetic.main.meta_panel.*
 import kotlinx.android.synthetic.main.nav_panel.*
 import java.lang.ref.WeakReference
@@ -64,11 +63,8 @@ abstract class ViewerActivity : CoreActivity(),
     abstract fun goToPrevPicture()
     abstract fun goToNextPicture()
 
-    override fun getLicenseHandler(): CoreActivity.LicenseHandler {
-        return ViewerLicenseHandler(this)
-    }
-
-    override fun getSelectedImages(): Collection<Uri> = listOfNotNull(mCurrentUri)
+    override val licenseHandler: LicenseHandler = ViewerLicenseHandler(this)
+    override val selectedImages: Collection<Uri> = listOfNotNull(mCurrentUri)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         theme.applyStyle(FullSettingsActivity.getMetaStyle(this), true)   //must be called before setContentView
@@ -78,7 +74,7 @@ abstract class ViewerActivity : CoreActivity(),
         supportActionBar?.setDisplayShowTitleEnabled(false)
         initialize()
 
-        if (intent.hasExtra(CoreActivity.EXTRA_META_BUNDLE)) {
+/*        if (intent.hasExtra(CoreActivity.EXTRA_META_BUNDLE)) {
             mImageIndex = intent.getIntExtra(EXTRA_START_INDEX, 0)
 
             // FIXME: Need new backing array
@@ -104,7 +100,7 @@ abstract class ViewerActivity : CoreActivity(),
                     }
                 }
             }
-        } else if (intent.hasExtra(Intent.EXTRA_STREAM))
+        } else */if (intent.hasExtra(Intent.EXTRA_STREAM))
         // Correct share intent using extras
         {
             mImageIndex = 0

@@ -1,14 +1,9 @@
 package com.anthonymandra.rawdroid.data
 
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Update
-
 abstract class PathDao<T : PathEntity> {
 
     /**
      * Annotate the implementation with:
-     *
      *
      * Query("SELECT * FROM [DATABASE_NAME] WHERE id= :id ")
      * @param id
@@ -16,11 +11,8 @@ abstract class PathDao<T : PathEntity> {
      */
     internal abstract fun get(id: Long): T
 
-    @Insert
-    internal abstract fun insertInternal(vararg entities: T): Long
-    @Update
+    internal abstract fun insertInternal(entity: T): Long
     internal abstract fun update(vararg entities: T)
-    @Delete
     abstract fun delete(vararg entities: T)
 
     /**
@@ -78,6 +70,6 @@ abstract class PathDao<T : PathEntity> {
     }
 
     companion object {
-        private val PATH_DELIMITER = "/"
+        private const val PATH_DELIMITER = "/"
     }
 }

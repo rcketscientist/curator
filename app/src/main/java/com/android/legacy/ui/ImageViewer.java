@@ -34,7 +34,6 @@ import android.view.ScaleGestureDetector;
 import com.android.legacy.ui.UploadedTexture.DeadBitmapException;
 import com.android.legacy.util.Utils;
 import com.anthonymandra.framework.ScaleChangedListener;
-import com.anthonymandra.rawdroid.LegacyViewerActivity;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1354,7 +1353,7 @@ public class ImageViewer extends GLView
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e)
 		{
-			((LegacyViewerActivity) mContext).togglePanels();
+//			((LegacyViewerActivity) mContext).togglePanels();
 			return true;
 		}
 	}

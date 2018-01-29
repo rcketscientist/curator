@@ -1,25 +1,32 @@
 package com.anthonymandra.rawdroid
 
 import android.app.Dialog
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.v4.app.DialogFragment
-import android.support.v7.widget.ToggleGroup
 import android.view.*
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.CheckBox
+import android.widget.ImageButton
+import android.widget.ListView
 import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.DocumentUtil
 import com.anthonymandra.framework.UsefulDocumentFile
+import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.widget.XmpLabelGroup
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.xmp_filter_landscape.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
@@ -43,6 +50,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     private val disposables = CompositeDisposable()
 
+    private lateinit var viewModel: FilterViewModel
     private lateinit var mFolderDialog: FolderDialog
 
     private var andOr: Boolean
@@ -95,25 +103,39 @@ class XmpFilterFragment : XmpBaseFragment() {
         mExcludedFolders = HashSet(pref.getStringSet(mPrefExcludedFolders, HashSet())!!)
 
         // Initial match setting
-        (view.findViewById<View>(R.id.toggleAnd) as CompoundButton).isChecked = mAndTrueOrFalse
+        toggleAnd.isChecked = mAndTrueOrFalse
 
         // Initial sort setting
         if (ascending) {
             if (XmpFilter.SortColumns.Name === sortColumn)
-                (view.findViewById<View>(R.id.toggleSortAfirst) as CompoundButton).isChecked = true
+                toggleSortAfirst.isChecked = true
             else
-                (view.findViewById<View>(R.id.toggleSortOldFirst) as CompoundButton).isChecked = true
+                toggleSortOldFirst.isChecked = true
         } else {
             if (XmpFilter.SortColumns.Name === sortColumn)
-                (view.findViewById<View>(R.id.toggleSortZfirst) as CompoundButton).isChecked = true
+                toggleSortZfirst.isChecked = true
             else
-                (view.findViewById<View>(R.id.toggleSortYoungFirst) as CompoundButton).isChecked = true
+                toggleSortYoungFirst.isChecked = true
         }
 
         // Initial segregate value
-        (view.findViewById<View>(R.id.toggleSegregate) as CompoundButton).isChecked = mSegregateByType
+        segregateToggleButton.isChecked = mSegregateByType
 
-        attachButtons(view)
+        clearFilterButton.setOnClickListener { clear() }
+        toggleAnd.setOnCheckedChangeListener { _, checked -> andOr = checked }
+        sortToggleGroup.setOnCheckedChangeListener { group, _ -> setSort(group.checkedId) }
+        segregateToggleButton.setOnCheckedChangeListener { _, isChecked -> segregate = isChecked }
+        helpButton.setOnClickListener { startTutorial() }
+        foldersButton.setOnClickListener { showFolderDialog() }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this).get(FilterViewModel::class.java)
+        viewModel.folders.observe(this, Observer { folders: List<FolderEntity>? ->
+            updateFolders(folders)
+        })
     }
 
     override fun onDestroy() {
@@ -121,35 +143,17 @@ class XmpFilterFragment : XmpBaseFragment() {
         disposables.clear()
     }
 
-    private fun attachButtons(root: View) {
-        root.findViewById<View>(R.id.clearFilterButton).setOnClickListener { clear() }
+    private fun showFolderDialog() {
+        val position = IntArray(2)
+        foldersButton.getLocationOnScreen(position)
+        mFolderDialog = FolderDialog.newInstance(
+            ArrayList(mPaths),
+            ArrayList(mHiddenFolders),
+            ArrayList(mExcludedFolders),
+            position[0],
+            position[1])
 
-        val andOrButton = root.findViewById<CompoundButton>(R.id.toggleAnd)
-        andOr = andOrButton.isChecked
-        andOrButton.setOnCheckedChangeListener { _, checked -> andOr = checked }
-
-        val sort = root.findViewById<ToggleGroup>(R.id.sortGroup)
-        setSort(sort.checkedId)
-        sort.setOnCheckedChangeListener { group, _ -> setSort(group.checkedId) }
-
-        val segregateButton = root.findViewById<CompoundButton>(R.id.toggleSegregate)
-        segregateButton.setOnCheckedChangeListener { _, isChecked -> segregate = isChecked }
-
-        val clearFilter = root.findViewById<ImageButton>(R.id.clearFilterButton)
-        clearFilter.setOnClickListener { clear() }
-
-        val foldersButton = root.findViewById<ImageButton>(R.id.buttonFolders)
-        foldersButton.setOnClickListener {
-            val position = IntArray(2)
-            foldersButton.getLocationOnScreen(position)
-            mFolderDialog = FolderDialog.newInstance(
-                    ArrayList(mPaths),
-                    ArrayList(mHiddenFolders),
-                    ArrayList(mExcludedFolders),
-                    position[0],
-                    position[1])
-
-            updatePaths()
+        updatePaths()
 
             mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog)
             mFolderDialog.setOnVisibilityChangedListener({ visibility ->
@@ -182,8 +186,13 @@ class XmpFilterFragment : XmpBaseFragment() {
             mFolderDialog.show(fragmentManager!!, TAG)
         }
 
-        val helpButton = root.findViewById<ImageButton>(R.id.helpButton)
-        helpButton.setOnClickListener { startTutorial() }
+    private data class FolderEntry(val folderId: Int, val shortName: String)
+
+    private fun updateFolders(folders: List<FolderEntity>?) {
+        if (folders == null) return
+        val orderedParents: List<FolderEntry>
+
+
     }
 
     private fun updatePaths() {
@@ -235,8 +244,8 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     private fun setSort(checkedId: Int) {
         when (checkedId) {
-            R.id.toggleSortAfirst // A is quantitatively lowest, ascending
-            -> {
+            // A is quantitatively lowest, ascending
+            R.id.toggleSortAfirst -> {
                 ascending = true
                 sortColumn = XmpFilter.SortColumns.Name
             }
@@ -244,8 +253,8 @@ class XmpFilterFragment : XmpBaseFragment() {
                 ascending = false
                 sortColumn = XmpFilter.SortColumns.Name
             }
-            R.id.toggleSortYoungFirst // Young is quantitatively highest, descending
-            -> {
+            // Young is quantitatively highest, descending
+            R.id.toggleSortYoungFirst -> {
                 ascending = false
                 sortColumn = XmpFilter.SortColumns.Date
             }
@@ -377,11 +386,11 @@ class XmpFilterFragment : XmpBaseFragment() {
         }
 
         companion object {
-            val ARG_PATHS = "paths"
-            val ARG_VISIBLE = "visible"
-            val ARG_EXCLUDED = "excluded"
-            val ARG_X = "x"
-            val ARG_Y = "y"
+            const val ARG_PATHS = "paths"
+            const val ARG_VISIBLE = "visible"
+            const val ARG_EXCLUDED = "excluded"
+            const val ARG_X = "x"
+            const val ARG_Y = "y"
 
             internal fun newInstance(paths: ArrayList<String>, visible: ArrayList<String>, excluded: ArrayList<String>, x: Int, y: Int): FolderDialog {
                 val f = FolderDialog()
@@ -400,7 +409,8 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     internal data class FolderVisibility(val Path: String, var visible: Boolean, var excluded: Boolean)
 
-    internal class FolderAdapter internal constructor(context: Context, objects: List<FolderVisibility>) : ArrayAdapter<FolderVisibility>(context, R.layout.folder_list_item, objects) {
+    internal class FolderAdapter internal constructor(context: Context, objects: List<FolderVisibility>)
+        : ArrayAdapter<FolderVisibility>(context, R.layout.folder_list_item, objects) {
 
         private var visibilityChangedCallback: ((FolderVisibility) -> Unit)? = null
 
@@ -467,21 +477,21 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         // Sort group
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.sortGroup),
+                root.findViewById(R.id.sortToggleGroup),
                 R.string.sortImages,
                 R.string.sortCotent
         ))
 
         // Segregate
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.toggleSegregate),
+                root.findViewById(R.id.segregateToggleButton),
                 R.string.sortImages,
                 R.string.segregateContent
         ))
 
         // Folder
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.buttonFolders),
+                root.findViewById(R.id.foldersButton),
                 R.string.filterImages,
                 R.string.folderContent
         ))
@@ -493,14 +503,14 @@ class XmpFilterFragment : XmpBaseFragment() {
                 R.string.clearFilterContent
         ))
 
-        // Rating
+        // rating
         sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.filterLabelRating),
                 R.string.filterImages,
                 R.string.ratingLabelContent
         ))
 
-        // Subject
+        // subject
         sequence.addSequenceItem(getRectangularView(
                 root.findViewById(R.id.keywordFragment),
                 R.string.filterImages,
@@ -538,12 +548,12 @@ class XmpFilterFragment : XmpBaseFragment() {
     companion object {
         private val TAG = XmpBaseFragment::class.java.simpleName
 
-        private val mPrefName = "galleryFilter"
-        private val mPrefRelational = "relational"
-        private val mPrefAscending = "ascending"
-        private val mPrefColumn = "column"
-        private val mPrefSegregate = "segregate"
-        private val mPrefHiddenFolders = "hiddenFolders"
-        private val mPrefExcludedFolders = "excludedFolders"
+        private const val mPrefName = "galleryFilter"
+        private const val mPrefRelational = "relational"
+        private const val mPrefAscending = "ascending"
+        private const val mPrefColumn = "column"
+        private const val mPrefSegregate = "segregate"
+        private const val mPrefHiddenFolders = "hiddenFolders"
+        private const val mPrefExcludedFolders = "excludedFolders"
     }
 }

@@ -23,7 +23,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
 import com.android.gallery3d.common.Utils
@@ -40,7 +39,6 @@ import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
     override val contentView = R.layout.gallery
-    override val progressBar: ProgressBar = toolbarProgress
     override val licenseHandler = CoreActivity.LicenseHandler(this) //FIXME:!!
     override val selectedImages = galleryAdapter.selectedItems
 
@@ -638,6 +636,11 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     companion object {
 //        private val TAG = GalleryActivity::class.java.simpleName
+
+        const val LICENSE_RESULT = "license_result"
+        const val LICENSE_ALLOW = 1
+        const val LICENSE_DISALLOW = 2
+        const val LICENSE_ERROR = 3
 
         // Preference fields
         const val PREFS_NAME = "RawDroidPrefs"

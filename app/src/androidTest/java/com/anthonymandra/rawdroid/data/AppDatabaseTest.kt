@@ -7,23 +7,21 @@ import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
-
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
-import org.hamcrest.CoreMatchers.*
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.hasItems
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.hasSize
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 import java.io.StringReader
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasSize
-import org.junit.Rule
 
 
 @RunWith(AndroidJUnit4::class)
@@ -45,12 +43,7 @@ class AppDatabaseTest {
     private val document = "document"
     private val treeId = "00000-00000:images"
     private val testFolder: FolderEntity
-        get() = FolderEntity(
-                "source:folder/file",
-                folderId,
-                "/16",
-                0,
-                null)
+        get() = getFolder()
 
     private val testSubjectsCount = 11  // Don't count synonyms
     private val testSubjects =
@@ -93,32 +86,26 @@ class AppDatabaseTest {
     fun folders() {
         assertEquals(0, folderDao.count().toLong())
 
-        val first = testFolder
+        val first = getFolder()
 
-        val id = folderDao.insert(first)
+        val id = folderDao.add(first)
 
         assertEquals(folderId, id)    // Can we override the autoGenerate?
 
         assertFolder(first)
 
-        val updated = FolderEntity(
-                first.documentUri,
-                first.id,
-                first.path,
-                first.depth, null)
-
+        val updated = getFolder()
         updated.documentUri = "source:/folder/updated_file"
+
         folderDao.update(updated)
         assertFolder(updated)
 
-        val child = FolderEntity(
-                first.documentUri,
-                first.id + 1,
-                "/16/17",
-                first.depth,
-                first.id)
+        val child = getFolder()
+        child.id + 1
+        child.path = first.path + "/" + child.id
+        child.depth = first.depth + 1
 
-        val childId = folderDao.insert(child)
+        val childId = folderDao.add(child)
 
         folderDao.delete(updated, child)
         assertEquals(0, folderDao.count().toLong())
@@ -126,7 +113,7 @@ class AppDatabaseTest {
 
     @Test
     fun metadata() {
-        val folderId = folderDao.insert(testFolder)
+        val folderId = folderDao.add(testFolder)
         assertEquals(1, folderDao.count().toLong())
 
         assertEquals(0, metadataDao.count().toLong())
@@ -154,18 +141,18 @@ class AppDatabaseTest {
         subjectDao.importKeywords(reader)
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
-        val europe = subjectDao.get(7)
+        val europe = subjectDao.internalGet(7)
         assertThat(europe.name, equalTo("Europe"))
 
-        val europeanEntities = subjectDao.getDescendants(7)
+        val europeanEntities = subjectDao.internalGetDescendants(7)
         assertThat(europeanEntities, hasSize(4))
         val europeanNames = europeanEntities.map { it.name }
         assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
 
-        val trier = subjectDao.get(9)
+        val trier = subjectDao.internalGet(9)
         assertThat(trier.name, equalTo("Trier"))
 
-        val trierTree = subjectDao.getAncestors(9)
+        val trierTree = subjectDao.internalGetAncestors(9)
         assertThat(trierTree, hasSize(3))
         val trierTreeNames = trierTree.map { it.name }
         assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
@@ -173,9 +160,9 @@ class AppDatabaseTest {
         val time = System.currentTimeMillis()
         europeanEntities.forEach( {it.recent = time})
 
-        subjectDao.update(europeanEntities)
+        subjectDao.update(*europeanEntities.toTypedArray())
 
-        val updateEuropeanEntities = subjectDao.getDescendants(7)
+        val updateEuropeanEntities = subjectDao.internalGetDescendants(7)
         updateEuropeanEntities.forEach { europeanEntity ->
             assertThat(europeanEntity.recent, equalTo(time))
         }
@@ -186,7 +173,7 @@ class AppDatabaseTest {
     @Test
     fun subjectJunction() {
         // Prep parents
-        val folderId = folderDao.insert(testFolder)
+        val folderId = folderDao.add(testFolder)
         assertEquals(1, folderDao.count().toLong())
 
         // Prep images
@@ -202,12 +189,12 @@ class AppDatabaseTest {
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
         /**
-         *          / Subject 1 (Cathedral)
+         *          / subject 1 (Cathedral)
          *  Image 1
-         *         \ Subject 2 (National Park)
+         *         \ subject 2 (National Park)
          *
          *                       / Image 1
-         *  Subject 1 (Cathedral)
+         *  subject 1 (Cathedral)
          *                      \ Image 2
          */
         val subjectRelation1 = SubjectJunction(imageId1, 1)
@@ -244,6 +231,15 @@ class AppDatabaseTest {
         assertThat(joinResult[1].keywords, hasItems("Cathedral"))
     }
 
+    private fun getFolder(): FolderEntity {
+        val folder = FolderEntity()
+        folder.id = folderId
+        folder.path = "/" + folderId
+        folder.documentUri = "source:folder/file"
+        folder.depth = 0
+        return folder
+    }
+
     private fun getTestData(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
         meta.altitude = "altitude" + suffix
@@ -266,7 +262,7 @@ class AppDatabaseTest {
         meta.model = "model" + suffix
         meta.whiteBalance = "whiteBalance" + suffix
         meta.label = "label" + suffix
-        meta.rating = "rating" + suffix
+        meta.rating = suffix.toFloat()
         meta.parentId = folderId
         meta.name = "image$suffix.cr2"
         meta.documentId = "$treeId/${meta.name}"
@@ -281,7 +277,7 @@ class AppDatabaseTest {
         assertEquals(1, results!!.size.toLong())
         assertTrue(entity == results[0])
 
-        val result = folderDao.get(entity.id)
+        val result = folderDao.internalGet(entity.id)
 
         assertNotNull(result)
         assertTrue(result == entity)

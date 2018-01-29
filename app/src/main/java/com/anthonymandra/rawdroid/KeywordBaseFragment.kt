@@ -52,8 +52,8 @@ abstract class KeywordBaseFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel = ViewModelProviders.of(this).get(KeywordViewModel::class.java)
-        viewModel.keywords.observe(this, Observer {
-            keywords: List<SubjectEntity>? -> updateKeywordGrid(keywords)
+        viewModel.keywords.observe(this, Observer { keywords: List<SubjectEntity>? ->
+            updateKeywordGrid(keywords)
         })
     }
 
@@ -99,7 +99,7 @@ abstract class KeywordBaseFragment : Fragment() {
     }
 
     /**
-     * This will use the Path aspects of Keywords to cascade selection up ancestors or down descendants
+     * This will use the folder aspects of Keywords to cascade selection up ancestors or down descendants
      */
     private fun cascadeKeywordSelection(keyword: SubjectEntity, selected: Boolean) {
         if (selected) { // Un-select all descendants

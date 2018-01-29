@@ -2,14 +2,13 @@ package com.anthonymandra.rawdroid.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.paging.DataSource
-import android.arch.paging.LivePagedListProvider
+import android.arch.persistence.db.SimpleSQLiteQuery
 import android.arch.persistence.db.SupportSQLiteQuery
-import android.arch.persistence.db.SupportSQLiteQueryBuilder
 import android.arch.persistence.room.*
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.util.DbUtil
-import java.util.ArrayList
+import java.util.*
 
 @Dao
 abstract class MetadataDao {
@@ -32,10 +31,7 @@ abstract class MetadataDao {
     @Query("SELECT COUNT(*) FROM meta")
     abstract fun count(): Int
 
-    @RawQuery
-    internal abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<MetadataEntity>>
-
-    @RawQuery
+    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
     internal abstract fun getImages2(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataEntity>
 
     @Query("SELECT * FROM meta " +
@@ -348,7 +344,7 @@ abstract class MetadataDao {
     abstract fun getAll(uris: List<String>): LiveData<List<MetadataEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(datum: MetadataEntity): Long?
+    abstract fun insert(datum: MetadataEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(vararg datums: MetadataEntity): Array<Long>
@@ -408,6 +404,27 @@ abstract class MetadataDao {
             "WHERE meta.parentId = image_parent.id ) AS parentUri " +
             "FROM meta "
 
+        private const val mergeTables =
+            "(SELECT GROUP_CONCAT(name) " +
+            "FROM meta_subject_junction " +
+            "JOIN xmp_subject " +
+            "ON xmp_subject.id = meta_subject_junction.subjectId " +
+            "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+            "(SELECT documentUri " +
+            "FROM image_parent " +
+            "WHERE meta.parentId = image_parent.id ) AS parentUri "
+
+        private const val coreQuery =
+            "SELECT * FROM meta " +
+            "(SELECT GROUP_CONCAT(name) " +
+                "FROM meta_subject_junction " +
+                "JOIN xmp_subject " +
+                "ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+                "(SELECT documentUri " +
+                "FROM image_parent " +
+                "WHERE meta.parentId = image_parent.id ) AS parentUri "
+
         private const val SEGREGATE = "type COLLATE NOCASE ASC"
         private const val NAME_ASC = "meta.name COLLATE NOCASE ASC"
         private const val OrderTypeNameAsc = "ORDER BY type COLLATE NOCASE ASC, meta.name COLLATE NOCASE ASC"
@@ -419,13 +436,14 @@ abstract class MetadataDao {
 
     private fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
         val selection = StringBuilder()
-        val selectionArgs = ArrayList<String>()
+        val selectionArgs = ArrayList<Any>()
         var requiresJoiner = false
 
         val and = " AND "
         val or = " OR "
         val joiner = if (filter.andTrueOrFalse) and else or
 
+        selection.append(coreQuery)
         if (filter.xmp != null) {
             if (filter.xmp.label.isNotEmpty()) {
                 requiresJoiner = true
@@ -433,17 +451,16 @@ abstract class MetadataDao {
                 selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.size))
                 selectionArgs.addAll(filter.xmp.label)
             }
-            //			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
-            //			{
-            //				if (requiresJoiner)
-            //					selection.append(joiner);
-            //				requiresJoiner = true;
-            //
-            //				selection.append(DbUtil.createLike(Meta.SUBJECT, filter.xmp.subject,
-            //						selectionArgs, joiner, false,
-            //						"%", "%",   // openended wildcards, match subject anywhere
-            //						null));
-            //			}
+
+            if (filter.xmp.subject.isNotEmpty()) {
+                if (requiresJoiner)
+                    selection.append(joiner)
+                requiresJoiner = true
+
+                selection.append(DbUtil.createIN("subjectId", filter.xmp.subject.size))
+                filter.xmp.subject.mapTo(selectionArgs) { it.id }
+            }
+
             if (filter.xmp.rating.isNotEmpty()) {
                 if (requiresJoiner)
                     selection.append(joiner)
@@ -453,18 +470,14 @@ abstract class MetadataDao {
                 filter.xmp.rating.mapTo(selectionArgs) { java.lang.Double.toString(it.toDouble()) }
             }
         }
+
         if (filter.hiddenFolders.isNotEmpty()) {
             if (requiresJoiner)
-                selection.append(and)  // Always exclude the folders, don't OR
+                selection.append(and)   // Always exclude the folders, don't OR
+            selection.append(" NOT" )   // Not in hidden folders
 
-            selection.append(DbUtil.createLike(Meta.PARENT,
-                    filter.hiddenFolders.toTypedArray(),
-                    selectionArgs,
-                    and, // Requires AND so multiple hides don't negate each other
-                    true, null, // No wild to start, matches path exactly
-                    "%", // Wildcard end to match all children
-                    "%")// NOT
-            )  // Uri contain '%' which means match any so escape them
+            selection.append(DbUtil.createIN("parentId", filter.hiddenFolders.size))
+            filter.hiddenFolders.mapTo(selectionArgs) { it }    // FIXME: Should be Long
         }
 
         val order = if (filter.sortAscending) " ASC" else " DESC"
@@ -479,9 +492,13 @@ abstract class MetadataDao {
         }
 
         //TODO: We need to set the subject selection
-        return SupportSQLiteQueryBuilder.builder("meta")
-                .selection(selection.toString(), selectionArgs.toArray())
-                .orderBy(sort.toString())
-                .create()
+
+        selection.append(" ")
+        selection.append(sort)
+        return SimpleSQLiteQuery(selection.toString(), selectionArgs.toArray())
+//        return SupportSQLiteQueryBuilder.builder("meta")
+//                .selection(selection.toString(), selectionArgs.toArray())
+//                .orderBy(sort.toString())
+//                .create()
     }
 }

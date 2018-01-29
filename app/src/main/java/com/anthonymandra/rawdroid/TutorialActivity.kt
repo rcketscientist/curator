@@ -8,13 +8,13 @@ import android.os.Bundle
 import android.text.Layout
 import android.util.TypedValue
 import android.view.View
-import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.FileUtil
 import com.github.amlcurran.showcaseview.MorphShowcaseDrawer
 import com.github.amlcurran.showcaseview.ShowcaseView
 import com.github.amlcurran.showcaseview.targets.MorphViewTarget
 import com.github.amlcurran.showcaseview.targets.PointTarget
 import com.github.amlcurran.showcaseview.targets.Target
+import kotlinx.android.synthetic.main.gallery.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -66,9 +66,10 @@ class TutorialActivity : GalleryActivity() {
             }
         }
 
-        updateMetaLoader(null,
-                Meta.URI + " LIKE ?",
-                arrayOf("%" + tutorialDirectory.name + "%"), null)
+        // FIXME: This needs a local datastore backing
+//        updateMetaLoader(null,
+//                Meta.URI + " LIKE ?",
+//                arrayOf("%" + tutorialDirectory.name + "%"), null)
 
         val tutorial = ShowcaseView.Builder(this)//, true)
                 .setShowcaseDrawer(MorphShowcaseDrawer(resources, showcaseItemMargin))
@@ -104,14 +105,14 @@ class TutorialActivity : GalleryActivity() {
         if (galleryAdapter.itemCount < position + 1)
             closeTutorialWithError()
         else
-            onItemClick(galleryAdapter, galleryView.getChildAt(position), position, position.toLong())
+            onItemClick(galleryAdapter, gridview.getChildAt(position), position, position.toLong())
     }
 
     private fun programmaticLongClick(position: Int) {
         if (galleryAdapter.itemCount < position + 1)
             closeTutorialWithError()
         else
-            onItemLongClick(galleryAdapter, galleryView.getChildAt(position), position, position.toLong())
+            onItemLongClick(galleryAdapter, gridview.getChildAt(position), position, position.toLong())
     }
 
     private fun closeTutorialWithError() {
@@ -147,7 +148,7 @@ class TutorialActivity : GalleryActivity() {
                 -> {
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle))
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText))
-                    val view = galleryView.getChildAt(0)
+                    val view = gridview.getChildAt(0)
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -160,7 +161,7 @@ class TutorialActivity : GalleryActivity() {
                         programmaticLongClick(0)
 
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText))
-                    val view = galleryView.getChildAt(2)
+                    val view = gridview.getChildAt(2)
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -198,7 +199,7 @@ class TutorialActivity : GalleryActivity() {
                     endContextMode()
 
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1))
-                    val view = galleryView.getChildAt(1)        //WTF index is backwards.
+                    val view = gridview.getChildAt(1)        //WTF index is backwards.
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -216,7 +217,7 @@ class TutorialActivity : GalleryActivity() {
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2))
 
                     setTutorialHomeView(tutorial, true)
-                    val view = galleryView.getChildAt(3)    //WTF index is backwards.
+                    val view = gridview.getChildAt(3)    //WTF index is backwards.
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -329,7 +330,7 @@ class TutorialActivity : GalleryActivity() {
         val itemView = findViewById<View>(itemId)
         target = if (itemView == null) {
             //List of all mToolbar items, assuming last is overflow
-            val views = toolbar.touchables
+            val views = galleryToolbar.touchables
             MorphViewTarget(views[views.size - 1]) //overflow
         } else {
             MorphViewTarget(itemView)
