@@ -42,12 +42,13 @@ class AppDatabaseTest {
     private val tree = "tree"
     private val document = "document"
     private val treeId = "00000-00000:images"
-    private val testFolder = FolderEntity(
-        "source:folder/file",
-        folderId,
-        "/" + folderId,
-        -1,
-        0 )
+    private val testFolder
+        get() = FolderEntity(
+            "source:folder/file",
+            folderId,
+            "/" + folderId,
+            -1,
+            0 )
 
     private val testSubjectsCount = 11  // Don't count synonyms
     private val testSubjects =
@@ -90,13 +91,13 @@ class AppDatabaseTest {
     fun folders() {
         assertEquals(0, folderDao.count().toLong())
 
-        val first = testFolder
+        val parent = testFolder
 
-        val id = folderDao.insert(first)
+        val id = folderDao.insert(parent)
 
         assertEquals(folderId, id)    // Can we override the autoGenerate?
 
-        assertFolder(first)
+        assertFolder(parent)
 
         val updated = testFolder
         updated.documentUri = "source:/folder/updated_file"
@@ -105,9 +106,10 @@ class AppDatabaseTest {
         assertFolder(updated)
 
         val child = testFolder
-        child.id + 1
-        child.path = first.path + "/" + child.id
-        child.depth = first.depth + 1
+        child.id++
+        child.path = parent.path + "/" + child.id
+        child.parent = parent.id
+        child.depth = parent.depth + 1
 
         val childId = folderDao.insert(child)
 

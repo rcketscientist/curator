@@ -1,13 +1,14 @@
 package com.anthonymandra.rawdroid.data
 
 import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Ignore
 
 @Entity(tableName = "image_parent")
-class FolderEntity @JvmOverloads constructor(
+data class FolderEntity(
     var documentUri: String = "",
     // PathEntity
-    id: Long = 0,
-    path: String = "",
-    parent: Long = -1,
-    depth: Int = 0) : PathEntity(id, path, parent, depth)
+    @Ignore override var id: Long = 0,
+    @Ignore override var path: String = "",
+    @Ignore override var parent: Long = -1,
+    @Ignore override var depth: Int = 0) : PathEntity()
 
