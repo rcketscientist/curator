@@ -18,21 +18,6 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
     @Query("SELECT COUNT(*) FROM xmp_subject")
     abstract fun count(): Int
 
-//    @Query("SELECT * FROM xmp_subject WHERE id= :id ")
-//    internal abstract override fun internalGet(id: Long?): SubjectEntity
-//
-//    @Query("SELECT id FROM xmp_subject WHERE path LIKE :path || '%'")
-//    abstract override fun internalGetDescendantIds(path: String): List<Long>
-//
-//    @Query("SELECT id FROM xmp_subject WHERE :path LIKE path || '%'")
-//    abstract override fun internalGetAncestorIds(path: String): List<Long>
-//
-//    @Query("SELECT * FROM xmp_subject WHERE path LIKE :path || '%'")
-//    abstract fun internalGetDescendants(path: String): List<SubjectEntity>
-//
-//    @Query("SELECT * FROM xmp_subject WHERE :path LIKE path || '%'")
-//    abstract fun internalGetAncestors(path: String): List<SubjectEntity>
-
     @Query("SELECT * FROM xmp_subject " +
         "INNER JOIN meta_subject_junction " +
         "ON meta_subject_junction.subjectId = xmp_subject.id " +
@@ -41,16 +26,6 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
 
     @Query("DELETE FROM xmp_subject")
     abstract fun deleteAll()
-
-//    fun internalGetDescendants(id: Long): List<SubjectEntity> {
-//        val pd = internalGet(id)
-//        return internalGetDescendants(pd.path)
-//    }
-//
-//    fun internalGetAncestors(id: Long): List<SubjectEntity> {
-//        val pd = internalGet(id)
-//        return internalGetAncestors(pd.path)
-//    }
 
     //TODO: This belongs in a data repository
     @Throws(IOException::class)

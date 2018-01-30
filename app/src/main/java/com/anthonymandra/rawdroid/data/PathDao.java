@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid.data;
 
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.RawQuery;
 import android.arch.persistence.room.Update;
@@ -13,11 +14,11 @@ public abstract class PathDao<T extends PathEntity>
     private final String SELECT_ID = "SELECT id ";
     private final String SELECT_ALL = "SELECT * ";
     private final String FROM = "FROM " + getDatabase();
-    private final String GET = "SELECT * WHERE id= %s " + FROM;
-    private final String ANCESTOR_ID = SELECT_ID + " WHERE %s LIKE path || '%' " + FROM;
-    private final String DESCENDANT_ID = SELECT_ID + " WHERE path LIKE %s || '%' " + FROM;
-    private final String ANCESTOR_ENTITY = SELECT_ALL + " WHERE %s LIKE path || '%' " + FROM;
-    private final String DESCENDANT_ENTITY = SELECT_ALL + " WHERE path LIKE %s || '%' " + FROM;
+    private final String GET =                  "SELECT * " + FROM + " WHERE id = %s ";
+    private final String ANCESTOR_ID =          SELECT_ID + FROM + " WHERE '%s' LIKE path || '%%' ";
+    private final String DESCENDANT_ID =        SELECT_ID + FROM + " WHERE path LIKE '%s' || '%%' ";
+    private final String ANCESTOR_ENTITY =      SELECT_ALL + FROM + " WHERE '%s' LIKE path || '%%' ";
+    private final String DESCENDANT_ENTITY =    SELECT_ALL + FROM + " WHERE path LIKE '%s' || '%%' ";
 
     @RawQuery
     protected abstract T internalGet(String query);
@@ -34,6 +35,10 @@ public abstract class PathDao<T extends PathEntity>
     @RawQuery
     protected abstract List<T> internalGetDescendants(String query);
 
+    public T get(Long id) {
+        return internalGet(String.format(GET, id));
+    }
+
     @Insert
     protected abstract Long insertInternal(T row);
 
@@ -42,6 +47,9 @@ public abstract class PathDao<T extends PathEntity>
 
     @Update
     public abstract int update(T... entities);
+
+    @Delete
+    public abstract int delete(T... entities);
 
     public long insert(T entity)
     {
@@ -70,23 +78,19 @@ public abstract class PathDao<T extends PathEntity>
     }
 
     public List<Long> getDescendantIds(long id) {
-        PathEntity pd = internalGet(String.format(GET, id));
-        return getDescendantIds(pd.getPath());
+        return getDescendantIds(get(id).getPath());
     }
 
     public List<Long> getAncestorIds(long id) {
-        PathEntity pd = internalGet(String.format(GET, id));
-        return getAncestorIds(pd.getPath());
+        return getAncestorIds(get(id).getPath());
     }
 
     public List<T> getDescendants(long id) {
-        PathEntity pd = internalGet(String.format(GET, id));
-        return getDescendants(pd.getPath());
+        return getDescendants(get(id).getPath());
     }
 
     public List<T> getAncestors(long id) {
-        PathEntity pd = internalGet(String.format(GET, id));
-        return getAncestors(pd.getPath());
+        return getAncestors(get(id).getPath());
     }
 
     public List<Long> getDescendantIds(String path) {

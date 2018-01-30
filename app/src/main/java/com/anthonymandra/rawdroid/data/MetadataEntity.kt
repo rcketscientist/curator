@@ -17,7 +17,7 @@ import android.arch.persistence.room.PrimaryKey
         Index(value = ["uri"], unique = true),
         Index(value = ["documentId"], unique = true),
         Index(value = ["parentId"])])
-abstract class MetadataEntity {
+open class MetadataEntity {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
     var name: String? = null

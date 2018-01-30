@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
 @MediumTest
 class AppDatabaseTest {
 
-    @Rule @JvmField
+    @get:Rule @JvmField
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var db: AppDatabase
@@ -42,8 +42,12 @@ class AppDatabaseTest {
     private val tree = "tree"
     private val document = "document"
     private val treeId = "00000-00000:images"
-    private val testFolder: FolderEntity
-        get() = getFolder()
+    private val testFolder = FolderEntity(
+        "source:folder/file",
+        folderId,
+        "/" + folderId,
+        -1,
+        0 )
 
     private val testSubjectsCount = 11  // Don't count synonyms
     private val testSubjects =
@@ -86,26 +90,26 @@ class AppDatabaseTest {
     fun folders() {
         assertEquals(0, folderDao.count().toLong())
 
-        val first = getFolder()
+        val first = testFolder
 
-        val id = folderDao.add(first)
+        val id = folderDao.insert(first)
 
         assertEquals(folderId, id)    // Can we override the autoGenerate?
 
         assertFolder(first)
 
-        val updated = getFolder()
+        val updated = testFolder
         updated.documentUri = "source:/folder/updated_file"
 
         folderDao.update(updated)
         assertFolder(updated)
 
-        val child = getFolder()
+        val child = testFolder
         child.id + 1
         child.path = first.path + "/" + child.id
         child.depth = first.depth + 1
 
-        val childId = folderDao.add(child)
+        val childId = folderDao.insert(child)
 
         folderDao.delete(updated, child)
         assertEquals(0, folderDao.count().toLong())
@@ -113,7 +117,7 @@ class AppDatabaseTest {
 
     @Test
     fun metadata() {
-        val folderId = folderDao.add(testFolder)
+        val folderId = folderDao.insert(testFolder)
         assertEquals(1, folderDao.count().toLong())
 
         assertEquals(0, metadataDao.count().toLong())
@@ -141,18 +145,18 @@ class AppDatabaseTest {
         subjectDao.importKeywords(reader)
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
-        val europe = subjectDao.internalGet(7)
+        val europe = subjectDao.get(7)
         assertThat(europe.name, equalTo("Europe"))
 
-        val europeanEntities = subjectDao.internalGetDescendants(7)
+        val europeanEntities = subjectDao.getDescendants(7)
         assertThat(europeanEntities, hasSize(4))
         val europeanNames = europeanEntities.map { it.name }
         assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
 
-        val trier = subjectDao.internalGet(9)
+        val trier = subjectDao.get(9)
         assertThat(trier.name, equalTo("Trier"))
 
-        val trierTree = subjectDao.internalGetAncestors(9)
+        val trierTree = subjectDao.getAncestors(9)
         assertThat(trierTree, hasSize(3))
         val trierTreeNames = trierTree.map { it.name }
         assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
@@ -162,7 +166,7 @@ class AppDatabaseTest {
 
         subjectDao.update(*europeanEntities.toTypedArray())
 
-        val updateEuropeanEntities = subjectDao.internalGetDescendants(7)
+        val updateEuropeanEntities = subjectDao.getDescendants(7)
         updateEuropeanEntities.forEach { europeanEntity ->
             assertThat(europeanEntity.recent, equalTo(time))
         }
@@ -173,7 +177,7 @@ class AppDatabaseTest {
     @Test
     fun subjectJunction() {
         // Prep parents
-        val folderId = folderDao.add(testFolder)
+        val folderId = folderDao.insert(testFolder)
         assertEquals(1, folderDao.count().toLong())
 
         // Prep images
@@ -231,45 +235,6 @@ class AppDatabaseTest {
         assertThat(joinResult[1].keywords, hasItems("Cathedral"))
     }
 
-    private fun getFolder(): FolderEntity {
-        val folder = FolderEntity()
-        folder.id = folderId
-        folder.path = "/" + folderId
-        folder.documentUri = "source:folder/file"
-        folder.depth = 0
-        return folder
-    }
-
-    private fun getTestData(suffix: Int): MetadataEntity {
-        val meta = MetadataEntity()
-        meta.altitude = "altitude" + suffix
-        meta.aperture = "aperture" + suffix
-        meta.driveMode = "driveMode" + suffix
-        meta.exposure = "exposure" + suffix
-        meta.exposureMode = "exposureMode" + suffix
-        meta.exposureProgram = "exposureProgram" + suffix
-        meta.flash = "flash" + suffix
-        meta.focalLength = "focalLength" + suffix
-        meta.height = suffix
-        meta.width = suffix
-        meta.iso = "iso" + suffix
-        meta.latitude = "latitude" + suffix
-        meta.lens = "lens" + suffix
-        meta.longitude = "longitude" + suffix
-        meta.make = "make" + suffix
-        meta.orientation = suffix
-        meta.timestamp = "timestamp" + suffix
-        meta.model = "model" + suffix
-        meta.whiteBalance = "whiteBalance" + suffix
-        meta.label = "label" + suffix
-        meta.rating = suffix.toFloat()
-        meta.parentId = folderId
-        meta.name = "image$suffix.cr2"
-        meta.documentId = "$treeId/${meta.name}"
-        meta.uri = "$host/$tree/$treeId/$document/${meta.documentId}"
-        return meta
-    }
-
     private fun assertFolder(entity: FolderEntity) {
         val results = folderDao.all.blockingObserve()
 
@@ -277,7 +242,7 @@ class AppDatabaseTest {
         assertEquals(1, results!!.size.toLong())
         assertTrue(entity == results[0])
 
-        val result = folderDao.internalGet(entity.id)
+        val result = folderDao.get(entity.id)
 
         assertNotNull(result)
         assertTrue(result == entity)
@@ -314,6 +279,36 @@ class AppDatabaseTest {
         assertTrue(one.label == two.label)
         assertTrue(one.rating == two.rating)
 //        assertTrue(one.subject == two.subject)
+    }
+
+    private fun getTestData(suffix: Int): MetadataEntity {
+        val meta = MetadataEntity()
+        meta.altitude = "altitude" + suffix
+        meta.aperture = "aperture" + suffix
+        meta.driveMode = "driveMode" + suffix
+        meta.exposure = "exposure" + suffix
+        meta.exposureMode = "exposureMode" + suffix
+        meta.exposureProgram = "exposureProgram" + suffix
+        meta.flash = "flash" + suffix
+        meta.focalLength = "focalLength" + suffix
+        meta.height = suffix
+        meta.width = suffix
+        meta.iso = "iso" + suffix
+        meta.latitude = "latitude" + suffix
+        meta.lens = "lens" + suffix
+        meta.longitude = "longitude" + suffix
+        meta.make = "make" + suffix
+        meta.orientation = suffix
+        meta.timestamp = "timestamp" + suffix
+        meta.model = "model" + suffix
+        meta.whiteBalance = "whiteBalance" + suffix
+        meta.label = "label" + suffix
+        meta.rating = suffix.toFloat()
+        meta.parentId = folderId
+        meta.name = "image$suffix.cr2"
+        meta.documentId = "$treeId/${meta.name}"
+        meta.uri = "$host/$tree/$treeId/$document/${meta.documentId}"
+        return meta
     }
 
     // LiveData uses a lazy observe so we must block to test it

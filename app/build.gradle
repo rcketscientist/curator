@@ -143,7 +143,7 @@ dependencies {
 
     implementation 'com.anthonymandra:ToggleButtons:2.0.0'
     implementation 'com.afollestad:material-cab:0.1.12'
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
+    implementation 'com.github.bumptech.glide:glide:3.8.0'
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
 
@@ -187,6 +187,7 @@ dependencies {
     androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
+
     // Espresso UI mocking
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     // Hamcrest matching
