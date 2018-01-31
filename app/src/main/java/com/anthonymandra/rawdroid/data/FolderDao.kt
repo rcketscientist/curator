@@ -6,8 +6,9 @@ import android.arch.persistence.room.Query
 
 @Dao
 abstract class FolderDao : PathDao<FolderEntity>() {
+    override val database: String
+        get() = "image_parent"
 
-    override fun getDatabase() = "image_parent"
     @get:Query("SELECT * FROM image_parent")
     abstract val all: LiveData<List<FolderEntity>>
 
