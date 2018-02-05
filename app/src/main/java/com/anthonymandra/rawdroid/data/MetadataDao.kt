@@ -43,16 +43,26 @@ abstract class MetadataDao {
     abstract fun getAll(uris: List<String>): LiveData<List<MetadataEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(datum: MetadataEntity): Long
+    internal abstract fun insertInternal(datum: MetadataEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(vararg datums: MetadataEntity): Array<Long>
+    internal abstract fun insertInternal(vararg datums: MetadataEntity): Array<Long>
 
     @Update
     abstract fun update(vararg datums: MetadataEntity)
 
     @Delete
     abstract fun delete(vararg datums: MetadataEntity)
+
+    fun insert(vararg inserts: MetadataEntity): List<Long> {
+        inserts.forEach {
+            if (it is MetadataResult) {
+                it.keywords.forEach {
+                    subjectJunctionDao
+                }
+            }
+        }
+    }
 
     companion object {
         // Core query logic, write this in the query initially for annotation error-checking

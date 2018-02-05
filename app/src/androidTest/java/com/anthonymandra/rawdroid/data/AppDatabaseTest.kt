@@ -123,13 +123,13 @@ class AppDatabaseTest {
         assertEquals(1, folderDao.count().toLong())
 
         assertEquals(0, metadataDao.count().toLong())
-        val first = getTestData(1)
+        val first = getPopulatedMeta(1)
 
-        val imageId = metadataDao.insert(first)
+        val imageId = metadataDao.insertInternal(first)
 
         assertMetadata(first)
 
-        val updated = getTestData(2)
+        val updated = getPopulatedMeta(2)
         updated.id = imageId
 
         metadataDao.update(updated)
@@ -183,11 +183,11 @@ class AppDatabaseTest {
         assertEquals(1, folderDao.count().toLong())
 
         // Prep images
-        val image1 = getTestData(1)
-        val image2 = getTestData(2)
+        val image1 = getPopulatedMeta(1)
+        val image2 = getPopulatedMeta(2)
 
-        val imageId1 = metadataDao.insert(image1)
-        val imageId2 = metadataDao.insert(image2)
+        val imageId1 = metadataDao.insertInternal(image1)
+        val imageId2 = metadataDao.insertInternal(image2)
 
         // Prep subjects
         val reader = StringReader(testSubjects)
@@ -283,7 +283,7 @@ class AppDatabaseTest {
 //        assertTrue(one.subject == two.subject)
     }
 
-    private fun getTestData(suffix: Int): MetadataEntity {
+    private fun getPopulatedMeta(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
         meta.altitude = "altitude" + suffix
         meta.aperture = "aperture" + suffix
@@ -311,6 +311,12 @@ class AppDatabaseTest {
         meta.documentId = "$treeId/${meta.name}"
         meta.uri = "$host/$tree/$treeId/$document/${meta.documentId}"
         return meta
+    }
+
+    private fun getXmpMeta(): MetadataEntity {
+        val meta = MetadataEntity()
+        meta.label = "red"
+        meta.key
     }
 
     // LiveData uses a lazy observe so we must block to test it
