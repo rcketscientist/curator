@@ -123,13 +123,13 @@ class AppDatabaseTest {
         assertEquals(1, folderDao.count().toLong())
 
         assertEquals(0, metadataDao.count().toLong())
-        val first = getTestData(1)
+        val first = getPopulatedMeta(1)
 
         val imageId = metadataDao.insert(first)
 
         assertMetadata(first)
 
-        val updated = getTestData(2)
+        val updated = getPopulatedMeta(2)
         updated.id = imageId
 
         metadataDao.update(updated)
@@ -183,8 +183,8 @@ class AppDatabaseTest {
         assertEquals(1, folderDao.count().toLong())
 
         // Prep images
-        val image1 = getTestData(1)
-        val image2 = getTestData(2)
+        val image1 = getPopulatedMeta(1)
+        val image2 = getPopulatedMeta(2)
 
         val imageId1 = metadataDao.insert(image1)
         val imageId2 = metadataDao.insert(image2)
@@ -291,7 +291,7 @@ class AppDatabaseTest {
         return meta
     }
 
-    private fun getTestData(suffix: Int): MetadataEntity {
+    private fun getPopulatedMeta(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
         meta.altitude = "altitude" + suffix
         meta.aperture = "aperture" + suffix
