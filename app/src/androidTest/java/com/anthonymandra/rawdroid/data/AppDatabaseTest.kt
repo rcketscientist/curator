@@ -283,6 +283,14 @@ class AppDatabaseTest {
 //        assertTrue(one.subject == two.subject)
     }
 
+    private fun getXmpMeta(): MetadataResult {
+        val meta = MetadataResult()
+        meta.label = "red"
+        meta.keywords = listOf("europe", "germany")
+        meta.rating = 1f
+        return meta
+    }
+
     private fun getTestData(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
         meta.altitude = "altitude" + suffix

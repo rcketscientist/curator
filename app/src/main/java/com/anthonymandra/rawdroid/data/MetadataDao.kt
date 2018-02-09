@@ -15,8 +15,10 @@ abstract class MetadataDao {
     @get:Query("SELECT uri, id FROM meta")
     abstract val uriId: LiveData<List<UriIdResult>>
 
-    @get:Query("SELECT * FROM meta")
-    abstract val all: LiveData<List<MetadataEntity>>
+//    @get:Query("SELECT * FROM meta")
+//    abstract val all: LiveData<List<MetadataEntity>>
+
+    val all: LiveData<MetadataResult> = getImages()
 
     // --- AND ----
     // --- NAME ---
@@ -31,10 +33,10 @@ abstract class MetadataDao {
     abstract fun count(): Int
 
     @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
-    internal abstract fun getImages2(query: SupportSQLiteQuery): LiveData<MetadataEntity>
+    internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<MetadataResult>
 
 //    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
-//    internal abstract fun getImages2(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataEntity>
+//    internal abstract fun internalGetImages(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataEntity>
 
     @Query("SELECT * FROM meta WHERE id = :id")
     abstract operator fun get(id: Long): LiveData<MetadataEntity>
@@ -43,10 +45,10 @@ abstract class MetadataDao {
     abstract fun getAll(uris: List<String>): LiveData<List<MetadataEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(datum: MetadataEntity): Long
+    internal abstract fun insert(datum: MetadataEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(vararg datums: MetadataEntity): Array<Long>
+    internal abstract fun insert(vararg datums: MetadataEntity): List<Long>
 
     @Update
     abstract fun update(vararg datums: MetadataEntity)
@@ -94,11 +96,21 @@ abstract class MetadataDao {
     }
 
 //    public fun getImages(filter: XmpFilter) : DataSource.Factory<Int, MetadataEntity> {
-//        return getImages2(createFilterQuery(filter))
+//        return internalGetImages(createFilterQuery(filter))
 //    }
 
-    public fun getImages(filter: XmpFilter) : LiveData<MetadataEntity> {
-        return getImages2(createFilterQuery(filter))
+    /**
+     * Get image set filterd and ordered by @param filter
+     */
+    fun getImages(filter: XmpFilter) : LiveData<MetadataResult> {
+        return internalGetImages(createFilterQuery(filter))
+    }
+
+    /**
+     * get with default filter will return all with default sorting
+     */
+    private fun getImages() : LiveData<MetadataResult> {
+        return getImages(XmpFilter())
     }
 
     private fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
