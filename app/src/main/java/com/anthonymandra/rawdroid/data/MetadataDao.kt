@@ -18,7 +18,7 @@ abstract class MetadataDao {
 //    @get:Query("SELECT * FROM meta")
 //    abstract val all: LiveData<List<MetadataEntity>>
 
-    val all: LiveData<MetadataResult> = getImages()
+    val all: LiveData<List<MetadataResult>> = getImages()
 
     // --- AND ----
     // --- NAME ---
@@ -33,7 +33,7 @@ abstract class MetadataDao {
     abstract fun count(): Int
 
     @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
-    internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<MetadataResult>
+    internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<List<MetadataResult>>
 
 //    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
 //    internal abstract fun internalGetImages(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataEntity>
@@ -102,14 +102,14 @@ abstract class MetadataDao {
     /**
      * Get image set filterd and ordered by @param filter
      */
-    fun getImages(filter: XmpFilter) : LiveData<MetadataResult> {
+    fun getImages(filter: XmpFilter) : LiveData<List<MetadataResult>> {
         return internalGetImages(createFilterQuery(filter))
     }
 
     /**
      * get with default filter will return all with default sorting
      */
-    private fun getImages() : LiveData<MetadataResult> {
+    private fun getImages() : LiveData<List<MetadataResult>> {
         return getImages(XmpFilter())
     }
 

@@ -28,7 +28,7 @@ open class MetadataEntity {
     var documentId: String = ""
     var parentId: Long = -1
     var rating: Float? = null
-    var label: String? = null
+    var label: String? = null   //TODO: This should be a table with nickname red: delete, etc.
     var timestamp: String? = null
     var make: String? = null
     // Make and Model tables only need model make is implicit http://en.tekstenuitleg.net/articles/software/database-design-tutorial/second-normal-form.html

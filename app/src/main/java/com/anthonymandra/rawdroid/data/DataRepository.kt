@@ -72,14 +72,16 @@ class DataRepository private constructor(private val database: AppDatabase) {
         }
     }
 
-    fun updateMeta(vararg inserts: MetadataEntity) : List<Long> {
-        inserts.forEach {
+    fun updateMeta(vararg updates: MetadataEntity) : List<Long> {
+        updates.forEach {
             if (it is MetadataResult) {
+                val subjects = List<>
                 it.keywords.forEach {
+                    database.subjectJunctionDao()
                     database.subjectJunctionDao().insert(SubjectJunction(key))
                 }
             }
-            return database.metadataDao().insert(*inserts)
+            return database.metadataDao().insert(*updates)
         }
     }
 
@@ -89,7 +91,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
         fun getInstance(database: AppDatabase): DataRepository =
                 INSTANCE ?: synchronized(this) {
-                    INSTANCE ?: INSTANCE = DataRepository(database).also { INSTANCE = it }
+                    INSTANCE ?:DataRepository(database)
+                            .also { INSTANCE = it }
                 }
     }
 }
