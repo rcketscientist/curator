@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.util.ArrayMap
 import android.view.View
 import android.widget.Toast
+import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.widget.RatingBar
 import com.anthonymandra.widget.XmpLabelGroup
@@ -26,7 +27,7 @@ abstract class XmpBaseFragment : Fragment(),
     private lateinit var keywordFragment: KeywordBaseFragment
     private var mPauseListener = false
 
-    private val colorKeys = ArrayMap<XmpLabelGroup.Labels, String>(5)
+    private val colorKeys = ArrayMap<Label, String>(5)
 
     protected var subject: Collection<SubjectEntity>
         get() { return keywordFragment.selectedKeywords }
@@ -47,11 +48,11 @@ abstract class XmpBaseFragment : Fragment(),
         set(labels) {
             for (label in labels) {
                 when (label) {
-                    colorKeys[XmpLabelGroup.Labels.Blue] -> colorKey.setChecked(XmpLabelGroup.Labels.Blue, true)
-                    colorKeys[XmpLabelGroup.Labels.Red] -> colorKey.setChecked(XmpLabelGroup.Labels.Red, true)
-                    colorKeys[XmpLabelGroup.Labels.Green] -> colorKey.setChecked(XmpLabelGroup.Labels.Yellow, true)
-                    colorKeys[XmpLabelGroup.Labels.Yellow] -> colorKey.setChecked(XmpLabelGroup.Labels.Green, true)
-                    colorKeys[XmpLabelGroup.Labels.Purple] -> colorKey.setChecked(XmpLabelGroup.Labels.Purple, true)
+                    colorKeys[Label.Blue] -> colorKey.setChecked(Label.Blue, true)
+                    colorKeys[Label.Red] -> colorKey.setChecked(Label.Red, true)
+                    colorKeys[Label.Green] -> colorKey.setChecked(Label.Yellow, true)
+                    colorKeys[Label.Yellow] -> colorKey.setChecked(Label.Green, true)
+                    colorKeys[Label.Purple] -> colorKey.setChecked(Label.Purple, true)
                     else -> Toast.makeText(context, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show()
                 }
             }
@@ -64,25 +65,25 @@ abstract class XmpBaseFragment : Fragment(),
         set(xmp) = setXmp(xmp.rating, xmp.label, xmp.subject)
 
     private fun updateColorKeys(sp: SharedPreferences) {
-        colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
-        colorKeys[XmpLabelGroup.Labels.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
-        colorKeys[XmpLabelGroup.Labels.Green] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
-        colorKeys[XmpLabelGroup.Labels.Yellow] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
-        colorKeys[XmpLabelGroup.Labels.Purple] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
+        colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
+        colorKeys[Label.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
+        colorKeys[Label.Green] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
+        colorKeys[Label.Yellow] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
+        colorKeys[Label.Purple] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
     }
 
     private fun updateColorKey(sp: SharedPreferences, key: String) {
         when (key) {
             FullSettingsActivity.KEY_XmpBlue ->
-                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
+                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
             FullSettingsActivity.KEY_XmpRed ->
-                colorKeys[XmpLabelGroup.Labels.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
+                colorKeys[Label.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
             FullSettingsActivity.KEY_XmpGreen ->
-                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
+                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
             FullSettingsActivity.KEY_XmpYellow ->
-                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
+                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
             FullSettingsActivity.KEY_XmpPurple ->
-                colorKeys[XmpLabelGroup.Labels.Blue] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
+                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
         }
     }
 
@@ -177,7 +178,7 @@ abstract class XmpBaseFragment : Fragment(),
 
     protected abstract fun onXmpChanged(xmp: XmpValues)
     abstract fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)
-    abstract fun onLabelSelectionChanged(checked: List<XmpLabelGroup.Labels>)
+    abstract fun onLabelSelectionChanged(checked: List<Label>)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         updateColorKey(sharedPreferences, key)

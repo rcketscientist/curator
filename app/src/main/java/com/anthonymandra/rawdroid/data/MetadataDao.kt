@@ -60,13 +60,13 @@ abstract class MetadataDao {
         // Core query logic, write this in the query initially for annotation error-checking
         private const val mergeQuery = "SELECT *,  " +
             "(SELECT GROUP_CONCAT(name) " +
-            "FROM meta_subject_junction " +
-            "JOIN xmp_subject " +
-            "ON xmp_subject.id = meta_subject_junction.subjectId " +
-            "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+                "FROM meta_subject_junction " +
+                "JOIN xmp_subject " +
+                "ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
             "(SELECT documentUri " +
-            "FROM image_parent " +
-            "WHERE meta.parentId = image_parent.id ) AS parentUri " +
+                "FROM image_parent " +
+                "WHERE meta.parentId = image_parent.id ) AS parentUri " +
             "FROM meta "
 
         private const val mergeTables =
@@ -86,7 +86,19 @@ abstract class MetadataDao {
                 "JOIN xmp_subject " +
                 "ON xmp_subject.id = meta_subject_junction.subjectId " +
                 "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
-                "(SELECT documentUri " +
+            "(SELECT documentUri " +
+                "FROM image_parent " +
+                "WHERE meta.parentId = image_parent.id ) AS parentUri "
+
+        // Subject ID instead of name
+        private const val coreQuery2 =
+            "SELECT * FROM meta " +
+            "(SELECT GROUP_CONCAT(name) " +
+                "FROM meta_subject_junction " +
+                "JOIN xmp_subject " +
+                "ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+            "(SELECT documentUri " +
                 "FROM image_parent " +
                 "WHERE meta.parentId = image_parent.id ) AS parentUri "
 
@@ -112,6 +124,9 @@ abstract class MetadataDao {
     private fun getImages() : LiveData<List<MetadataResult>> {
         return getImages(XmpFilter())
     }
+
+    @Query("SELECT * FROM meta")
+//    internal abstract fun getWithRelations(): LiveData<List<MetadataXmp>>
 
     private fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
         val selection = StringBuilder()

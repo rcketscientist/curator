@@ -61,29 +61,29 @@ class DataRepository private constructor(private val database: AppDatabase) {
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
     }
 
-    fun insertMeta(vararg inserts: MetadataEntity) : List<Long> {
-        inserts.forEach {
-            if (it is MetadataResult) {
-                it.keywords.forEach {
-                    database.subjectJunctionDao().insert(SubjectJunction(key))
-                }
-            }
-            return database.metadataDao().insert(*inserts)
-        }
-    }
-
-    fun updateMeta(vararg updates: MetadataEntity) : List<Long> {
-        updates.forEach {
-            if (it is MetadataResult) {
-                val subjects = List<>
-                it.keywords.forEach {
-                    database.subjectJunctionDao()
-                    database.subjectJunctionDao().insert(SubjectJunction(key))
-                }
-            }
-            return database.metadataDao().insert(*updates)
-        }
-    }
+//    fun insertMeta(vararg inserts: MetadataEntity) : List<Long> {
+//        inserts.forEach {
+//            if (it is MetadataResult) {
+//                it.keywords.forEach {
+//                    database.subjectJunctionDao().insert(SubjectJunction(key))
+//                }
+//            }
+//            return database.metadataDao().insert(*inserts)
+//        }
+//    }
+//
+//    fun updateMeta(vararg updates: MetadataEntity) : List<Long> {
+//        updates.forEach {
+//            if (it is MetadataResult) {
+//                val subjects = List<>
+//                it.keywords.forEach {
+//                    database.subjectJunctionDao()
+//                    database.subjectJunctionDao().insert(SubjectJunction(key))
+//                }
+//            }
+//            return database.metadataDao().insert(*updates)
+//        }
+//    }
 
     companion object {
 

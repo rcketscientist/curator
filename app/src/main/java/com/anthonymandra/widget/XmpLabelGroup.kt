@@ -5,51 +5,46 @@ import android.support.v7.widget.ToggleGroup
 import android.util.AttributeSet
 
 import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.data.Label
 import kotlinx.android.synthetic.main.material_color_key.view.*
 
 import java.util.ArrayList
 
-typealias OnLabelSelectionChangedListener = (List<XmpLabelGroup.Labels>) -> Unit
+typealias OnLabelSelectionChangedListener = (List<Label>) -> Unit
 class XmpLabelGroup @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnLabelSelectionChangedListener? = null
 
-    val checked: List<Labels>
+    val checked: List<Label>
         get() {
-            val checked = ArrayList<Labels>()
+            val checked = ArrayList<Label>()
             if (blueLabel.isChecked)
-                checked.add(Labels.Blue)
+                checked.add(Label.Blue)
             if (redLabel.isChecked)
-                checked.add(Labels.Red)
+                checked.add(Label.Red)
             if (greenLabel.isChecked)
-                checked.add(Labels.Green)
+                checked.add(Label.Green)
             if (yellowLabel.isChecked)
-                checked.add(Labels.Yellow)
+                checked.add(Label.Yellow)
             if (purpleLabel.isChecked)
-                checked.add(Labels.Purple)
+                checked.add(Label.Purple)
             return checked
         }
 
-    enum class Labels {
-        Blue,
-        Red,
-        Green,
-        Yellow,
-        Purple
-    }
+
 
     init {
         inflate(context, R.layout.material_color_key, this)
         setOnCheckedChangeListener { _,_ -> mListener?.invoke(checked) }
     }
 
-    fun setChecked(toCheck: Labels, checked: Boolean) {
+    fun setChecked(toCheck: Label, checked: Boolean) {
         when (toCheck) {
-            XmpLabelGroup.Labels.Blue -> blueLabel.isChecked = checked
-            XmpLabelGroup.Labels.Red -> redLabel.isChecked = checked
-            XmpLabelGroup.Labels.Green -> greenLabel.isChecked = checked
-            XmpLabelGroup.Labels.Yellow -> yellowLabel.isChecked = checked
-            XmpLabelGroup.Labels.Purple -> purpleLabel.isChecked = checked
+            Label.Blue -> blueLabel.isChecked = checked
+            Label.Red -> redLabel.isChecked = checked
+            Label.Green -> greenLabel.isChecked = checked
+            Label.Yellow -> yellowLabel.isChecked = checked
+            Label.Purple -> purpleLabel.isChecked = checked
         }
     }
 

@@ -18,6 +18,7 @@ import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.DocumentUtil
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.FolderEntity
+import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.widget.XmpLabelGroup
@@ -305,7 +306,7 @@ class XmpFilterFragment : XmpBaseFragment() {
         onFilterUpdated()
     }
 
-    override fun onLabelSelectionChanged(checked: List<XmpLabelGroup.Labels>) {
+    override fun onLabelSelectionChanged(checked: List<Label>) {
         onFilterUpdated()
     }
 

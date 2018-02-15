@@ -134,6 +134,8 @@ class AppDatabaseTest {
 
         metadataDao.update(updated)
         assertMetadata(updated)
+//
+//        val meta = metadataDao.getWithRelations().blockingObserve()
 
         metadataDao.delete(updated)
         assertEquals(0, metadataDao.count().toLong())

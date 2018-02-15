@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.widget.XmpLabelGroup
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
@@ -123,16 +124,16 @@ class XmpEditFragment : XmpBaseFragment() {
         mSubjectListener?.invoke(recentXmp.subject)
     }
 
-    override fun onLabelSelectionChanged(checked: List<XmpLabelGroup.Labels>) {
+    override fun onLabelSelectionChanged(checked: List<Label>) {
         val c = context
         if (c != null) {
             if (checked.isNotEmpty()) {
                 when (checked[0]) {
-                    XmpLabelGroup.Labels.Blue -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyBlue)
-                    XmpLabelGroup.Labels.Red -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyRed)
-                    XmpLabelGroup.Labels.Green -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyGreen)
-                    XmpLabelGroup.Labels.Yellow -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyYellow)
-                    XmpLabelGroup.Labels.Purple -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyPurple)
+                    Label.Blue -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyBlue)
+                    Label.Red -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyRed)
+                    Label.Green -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyGreen)
+                    Label.Yellow -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyYellow)
+                    Label.Purple -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyPurple)
                 }
             } else {
                 recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.white)
