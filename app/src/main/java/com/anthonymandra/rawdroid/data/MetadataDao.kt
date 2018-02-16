@@ -80,7 +80,7 @@ abstract class MetadataDao {
             "WHERE meta.parentId = image_parent.id ) AS parentUri "
 
         private const val coreQuery =
-            "SELECT * FROM meta " +
+            "SELECT *, " +
             "(SELECT GROUP_CONCAT(name) " +
                 "FROM meta_subject_junction " +
                 "JOIN xmp_subject " +
@@ -89,6 +89,8 @@ abstract class MetadataDao {
             "(SELECT documentUri " +
                 "FROM image_parent " +
                 "WHERE meta.parentId = image_parent.id ) AS parentUri "
+
+        private const val fromQuery = " FROM meta"
 
         // Subject ID instead of name
         private const val coreQuery2 =
@@ -137,7 +139,7 @@ abstract class MetadataDao {
         val or = " OR "
         val joiner = if (filter.andTrueOrFalse) and else or
 
-        selection.append(coreQuery)
+        selection.append(mergeQuery)
         if (filter.xmp != null) {
             if (filter.xmp.label.isNotEmpty()) {
                 requiresJoiner = true
@@ -187,12 +189,8 @@ abstract class MetadataDao {
 
         //TODO: We need to set the subject selection
 
-        selection.append(" ")
+        selection.append(" ORDER BY ")
         selection.append(sort)
         return SimpleSQLiteQuery(selection.toString(), selectionArgs.toArray())
-//        return SupportSQLiteQueryBuilder.builder("meta")
-//                .selection(selection.toString(), selectionArgs.toArray())
-//                .orderBy(sort.toString())
-//                .create()
     }
 }
