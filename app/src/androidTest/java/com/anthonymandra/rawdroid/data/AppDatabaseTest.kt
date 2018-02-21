@@ -7,6 +7,8 @@ import android.arch.persistence.room.Room
 import android.support.test.InstrumentationRegistry
 import android.support.test.filters.MediumTest
 import android.support.test.runner.AndroidJUnit4
+import com.anthonymandra.rawdroid.XmpFilter
+import com.anthonymandra.rawdroid.XmpValues
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
@@ -178,6 +180,41 @@ class AppDatabaseTest {
 
     @Test
     fun subjectJunction() {
+        populateFullRelations()
+
+        val imagesWith1 = subjectJunctionDao.getImagesWith(1)
+        val imagesWith2 = subjectJunctionDao.getImagesWith(2)
+
+        val subjectsFor1 = subjectJunctionDao.getSubjectsFor(1)
+        val subjectsFor2 = subjectJunctionDao.getSubjectsFor(2)
+
+        assertThat(imagesWith1, hasItems(1L,2L))
+        assertThat(imagesWith2, hasItems(1L))
+        assertThat(subjectsFor1, hasItems(1L,2L))
+        assertThat(subjectsFor2, hasItems(1L))
+
+        val joinResult = metadataDao.images.blockingObserve()
+
+        // Ensure we don't have separate entities per junction match
+        assertThat(joinResult!!.size, equalTo(2))
+
+        assertThat(joinResult[0].keywords, hasItems("Cathedral", "National Park"))
+        assertThat(joinResult[1].keywords, hasItems("Cathedral"))
+    }
+
+    @Test
+    fun filter() {
+        populateFullRelations()
+//
+//
+//        val xmp = XmpValues(
+//            subject = listOf("Cathedral")
+//        )
+//        val filterSubject = XmpFilter()
+//        metadataDao.getImages()
+    }
+
+    private fun populateFullRelations() {
         // Prep parents
         val folderId = folderDao.insert(testFolder)
         assertEquals(1, folderDao.count().toLong())
@@ -210,31 +247,6 @@ class AppDatabaseTest {
         subjectJunctionDao.insert(subjectRelation1)
         subjectJunctionDao.insert(subjectRelation2)
         subjectJunctionDao.insert(subjectRelation3)
-
-        val imagesWith1 = subjectJunctionDao.getImagesWith(1)
-        val imagesWith2 = subjectJunctionDao.getImagesWith(2)
-
-        val subjectsFor1 = subjectJunctionDao.getSubjectsFor(imageId1)
-        val subjectsFor2 = subjectJunctionDao.getSubjectsFor(imageId2)
-
-        assertThat(imagesWith1, hasItems(imageId1,imageId2))
-        assertThat(imagesWith2, hasItems(imageId1))
-        assertThat(subjectsFor1, hasItems(1L,2L))
-        assertThat(subjectsFor2, hasItems(1L))
-
-        val liveAll = metadataDao.all
-        val all = liveAll.blockingObserve()
-        val liveJoin = metadataDao.images
-        val joinResult = liveJoin.blockingObserve()
-
-        val liveJoin2 = metadataDao.imagesTest
-        val joinResult2 = liveJoin2.blockingObserve()
-
-        // Ensure we don't have separate entities per junction match
-        assertThat(joinResult!!.size, equalTo(2))
-
-        assertThat(joinResult[0].keywords, hasItems("Cathedral", "National Park"))
-        assertThat(joinResult[1].keywords, hasItems("Cathedral"))
     }
 
     private fun assertFolder(entity: FolderEntity) {
@@ -293,6 +305,7 @@ class AppDatabaseTest {
 
     private fun getPopulatedMeta(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
+        meta.id = suffix.toLong()
         meta.altitude = "altitude" + suffix
         meta.aperture = "aperture" + suffix
         meta.driveMode = "driveMode" + suffix
