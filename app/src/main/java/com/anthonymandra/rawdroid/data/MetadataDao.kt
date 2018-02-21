@@ -127,7 +127,7 @@ abstract class MetadataDao {
         return getImages(XmpFilter())
     }
 
-    @Query("SELECT * FROM meta")
+//    @Query("SELECT * FROM meta")
 //    internal abstract fun getWithRelations(): LiveData<List<MetadataXmp>>
 
     private fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
@@ -176,6 +176,9 @@ abstract class MetadataDao {
             filter.hiddenFolders.mapTo(selectionArgs) { it }    // FIXME: Should be Long
         }
 
+        //TODO: We need to set the subject selection
+
+        selection.append(" ORDER BY ")
         val order = if (filter.sortAscending) " ASC" else " DESC"
         val sort = StringBuilder()
 
@@ -187,9 +190,6 @@ abstract class MetadataDao {
             XmpFilter.SortColumns.Name -> sort.append(Meta.NAME).append(" COLLATE NOCASE").append(order)
         }
 
-        //TODO: We need to set the subject selection
-
-        selection.append(" ORDER BY ")
         selection.append(sort)
         return SimpleSQLiteQuery(selection.toString(), selectionArgs.toArray())
     }

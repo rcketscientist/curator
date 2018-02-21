@@ -28,8 +28,7 @@ import java.util.concurrent.TimeUnit
 @MediumTest
 class AppDatabaseTest {
 
-    @get:Rule @JvmField
-    val instantTaskExecutorRule = InstantTaskExecutorRule()
+    @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var db: AppDatabase
     private lateinit var folderDao: FolderDao
@@ -66,7 +65,6 @@ class AppDatabaseTest {
             "Roman ruins"
 
     @Before
-    @Throws(Exception::class)
     fun setUp() {
         // using an in-memory database because the information stored here disappears when the
         // process is killed
