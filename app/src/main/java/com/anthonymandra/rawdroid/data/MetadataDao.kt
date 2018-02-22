@@ -69,6 +69,17 @@ abstract class MetadataDao {
                 "WHERE meta.parentId = image_parent.id ) AS parentUri " +
             "FROM meta "
 
+        private const val mergeQuery2 = "SELECT *,  " +
+            "(SELECT GROUP_CONCAT(id) " +
+                "FROM meta_subject_junction " +
+                "JOIN xmp_subject " +
+                "ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "WHERE meta_subject_junction.metaId = meta.id) AS subjectIds, " +
+            "(SELECT documentUri " +
+                "FROM image_parent " +
+                "WHERE meta.parentId = image_parent.id ) AS parentUri " +
+            "FROM meta "
+
         private const val mergeTables =
             "(SELECT GROUP_CONCAT(name) " +
             "FROM meta_subject_junction " +
@@ -131,7 +142,9 @@ abstract class MetadataDao {
 //    internal abstract fun getWithRelations(): LiveData<List<MetadataXmp>>
 
     private fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
+        val query = StringBuilder()
         val selection = StringBuilder()
+        val order = StringBuilder()
         val selectionArgs = ArrayList<Any>()
         var requiresJoiner = false
 
@@ -139,7 +152,6 @@ abstract class MetadataDao {
         val or = " OR "
         val joiner = if (filter.andTrueOrFalse) and else or
 
-        selection.append(mergeQuery)
         if (filter.xmp != null) {
             if (filter.xmp.label.isNotEmpty()) {
                 requiresJoiner = true
@@ -153,7 +165,7 @@ abstract class MetadataDao {
                     selection.append(joiner)
                 requiresJoiner = true
 
-                selection.append(DbUtil.createIN("subjectId", filter.xmp.subject.size))
+                selection.append(DbUtil.createIN("subjectIds", filter.xmp.subject.size))
                 filter.xmp.subject.mapTo(selectionArgs) { it.id }
             }
 
@@ -176,21 +188,24 @@ abstract class MetadataDao {
             filter.hiddenFolders.mapTo(selectionArgs) { it }    // FIXME: Should be Long
         }
 
-        //TODO: We need to set the subject selection
-
-        selection.append(" ORDER BY ")
-        val order = if (filter.sortAscending) " ASC" else " DESC"
-        val sort = StringBuilder()
+        order.append(" ORDER BY ")
+        val direction = if (filter.sortAscending) " ASC" else " DESC"
 
         if (filter.segregateByType) {
-            sort.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ")
+            order.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ")
         }
         when (filter.sortColumn) {
-            XmpFilter.SortColumns.Date -> sort.append(Meta.TIMESTAMP).append(order)
-            XmpFilter.SortColumns.Name -> sort.append(Meta.NAME).append(" COLLATE NOCASE").append(order)
+            XmpFilter.SortColumns.Date -> order.append(Meta.TIMESTAMP).append(direction)
+            XmpFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
         }
 
-        selection.append(sort)
-        return SimpleSQLiteQuery(selection.toString(), selectionArgs.toArray())
+        query.append(mergeQuery2)
+        if (selection.isNotEmpty()) {
+            query.append(" WHERE ")
+            query.append(selection)
+        }
+        query.append(order)
+
+        return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
     }
 }

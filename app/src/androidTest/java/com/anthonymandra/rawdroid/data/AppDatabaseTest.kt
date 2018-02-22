@@ -15,6 +15,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -68,8 +69,6 @@ class AppDatabaseTest {
 
     @Before
     fun setUp() {
-        // using an in-memory database because the information stored here disappears when the
-        // process is killed
         db = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getContext(),
                 AppDatabase::class.java)
                 // allowing main thread queries, just for testing
@@ -205,13 +204,35 @@ class AppDatabaseTest {
     @Test
     fun filter() {
         populateFullRelations()
-//
-//
-//        val xmp = XmpValues(
-//            subject = listOf("Cathedral")
-//        )
-//        val filterSubject = XmpFilter()
-//        metadataDao.getImages()
+
+        val label = "label1"
+        val subject = "Cathedral"
+
+        val subjectEntity = SubjectEntity(subject)
+        subjectEntity.id = 1L
+
+        // subject: Cathedral
+        var xmp = XmpValues(subject = listOf(subjectEntity))
+        var filter = XmpFilter(xmp)
+        var result = metadataDao.getImages(filter).blockingObserve()
+        assertThat(result!!.size, equalTo(2))
+        assertThat(result[0].keywords, hasItems(subject))
+
+        // subject: Cathedral OR label:label1
+        filter.andTrueOrFalse = false
+        xmp = XmpValues(subject = listOf(subjectEntity), label = listOf(label))
+        filter = XmpFilter(xmp)
+        result = metadataDao.getImages(filter).blockingObserve()
+        assertThat(result!!.size, equalTo(2))
+        assertThat(result[0].keywords, hasItems(subject))
+        assertThat(result[1].label, not(label))
+
+        // subject: Cathedral AND label:label1
+        filter.andTrueOrFalse = true
+        result = metadataDao.getImages(filter).blockingObserve()
+        assertThat(result!!.size, equalTo(1))
+        assertThat(result[0].keywords, hasItems(subject))
+        assertThat(result[0].label, equalTo(label))
     }
 
     private fun populateFullRelations() {

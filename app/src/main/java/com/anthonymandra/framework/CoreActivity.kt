@@ -350,7 +350,7 @@ abstract class CoreActivity : DocumentActivity() {
         ft.commit()
     }
 
-    private fun writeXmpModifications(values: XmpEditFragment.XmpEditValues) {
+    private fun  writeXmpModifications(values: XmpEditFragment.XmpEditValues) {
         val selection = selectedImages
         if (selection.isNotEmpty()) {
             val cv = ContentValues()
