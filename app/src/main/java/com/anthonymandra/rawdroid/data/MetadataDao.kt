@@ -35,6 +35,9 @@ abstract class MetadataDao {
     @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
     internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<List<MetadataResult>>
 
+    @RawQuery(observedEntities = [ MetadataXmp::class, FolderEntity::class, SubjectJunction::class ])
+    internal abstract fun internalGetRelationImages(query: SupportSQLiteQuery): LiveData<List<MetadataXmp>>
+
 //    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
 //    internal abstract fun internalGetImages(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataEntity>
 
@@ -131,6 +134,10 @@ abstract class MetadataDao {
         return internalGetImages(createFilterQuery(filter))
     }
 
+    fun getRelationImages(filter: XmpFilter) : LiveData<List<MetadataXmp>> {
+        return internalGetRelationImages(createRelationQuery(filter))
+    }
+
     /**
      * get with default filter will return all with default sorting
      */
@@ -138,8 +145,73 @@ abstract class MetadataDao {
         return getImages(XmpFilter())
     }
 
-//    @Query("SELECT * FROM meta")
-//    internal abstract fun getWithRelations(): LiveData<List<MetadataXmp>>
+    private fun createRelationQuery(filter: XmpFilter): SupportSQLiteQuery {
+        val query = StringBuilder()
+        val selection = StringBuilder()
+        val order = StringBuilder()
+        val selectionArgs = ArrayList<Any>()
+        var requiresJoiner = false
+
+        val and = " AND "
+        val or = " OR "
+        val joiner = if (filter.andTrueOrFalse) and else or
+
+        if (filter.xmp != null) {
+            if (filter.xmp.label.isNotEmpty()) {
+                requiresJoiner = true
+
+                selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.size))
+                selectionArgs.addAll(filter.xmp.label)
+            }
+
+            if (filter.xmp.subject.isNotEmpty()) {
+                if (requiresJoiner)
+                    selection.append(joiner)
+                requiresJoiner = true
+
+                selection.append(DbUtil.createIN("subjectIds", filter.xmp.subject.size))
+                filter.xmp.subject.mapTo(selectionArgs) { it.id }
+            }
+
+            if (filter.xmp.rating.isNotEmpty()) {
+                if (requiresJoiner)
+                    selection.append(joiner)
+                requiresJoiner = true
+
+                selection.append(DbUtil.createIN(Meta.RATING, filter.xmp.rating.size))
+                filter.xmp.rating.mapTo(selectionArgs) { java.lang.Double.toString(it.toDouble()) }
+            }
+        }
+
+        if (filter.hiddenFolders.isNotEmpty()) {
+            if (requiresJoiner)
+                selection.append(and)   // Always exclude the folders, don't OR
+            selection.append(" NOT" )   // Not in hidden folders
+
+            selection.append(DbUtil.createIN("parentId", filter.hiddenFolders.size))
+            filter.hiddenFolders.mapTo(selectionArgs) { it }    // FIXME: Should be Long
+        }
+
+        order.append(" ORDER BY ")
+        val direction = if (filter.sortAscending) " ASC" else " DESC"
+
+        if (filter.segregateByType) {
+            order.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ")
+        }
+        when (filter.sortColumn) {
+            XmpFilter.SortColumns.Date -> order.append(Meta.TIMESTAMP).append(direction)
+            XmpFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
+        }
+
+        query.append("SELECT * FROM meta ")
+        if (selection.isNotEmpty()) {
+            query.append(" WHERE ")
+            query.append(selection)
+        }
+        query.append(order)
+
+        return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
+    }
 
     private fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
         val query = StringBuilder()
