@@ -4,7 +4,7 @@ import android.arch.persistence.room.Embedded
 import android.arch.persistence.room.Relation
 import java.util.*
 
-data class MetadataXmp(
+data class MetadataXmp @JvmOverloads constructor(
     @Embedded
     val metadata:MetadataEntity,
     @Relation(

@@ -6,7 +6,6 @@ import android.arch.persistence.room.ForeignKey.CASCADE
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 
-
 @Entity(tableName = "meta",
     foreignKeys = [ForeignKey(
         entity = FolderEntity::class,
@@ -24,7 +23,7 @@ open class MetadataEntity {
     var type: Int = 0
     var processed: Boolean = false
     var uri: String = ""
-    // Unique documentId we don't want duplicates from different root permissions
+    // TODO: Unique documentId we don't want duplicates from different root permissions, should be part of image_parent
     var documentId: String = ""
     var parentId: Long = -1
     var rating: Float? = null

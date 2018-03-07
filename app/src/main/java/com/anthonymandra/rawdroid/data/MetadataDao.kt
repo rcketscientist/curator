@@ -20,6 +20,25 @@ abstract class MetadataDao {
 
     val all: LiveData<List<MetadataResult>> = getImages()
 
+    @Query(
+            "SELECT meta.*, " +
+            "image_parent.documentUri as parentUri, " +
+            "xmp_subject.name as keywords " +
+//            "GROUP_CONCAT(xmp_subject.name) as keywords " +
+            "FROM meta " +
+            "LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id " +
+            "LEFT JOIN xmp_subject ON xmp_subject.id = meta_subject_junction.subjectId " +
+            "JOIN image_parent ON meta.parentId = image_parent.id")
+    abstract fun test(): LiveData<List<MetadataTest>>
+
+    @Query(
+            "select metaId " +
+                    "from meta_subject_junction " +
+                    "where subjectId in (1, 2) " +
+                    "group by metaId " +
+                    "having count(distinct subjectId) = 1")
+    abstract fun test2(): LiveData<List<Long>>
+
     // --- AND ----
     // --- NAME ---
 
@@ -35,7 +54,7 @@ abstract class MetadataDao {
     @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
     internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<List<MetadataResult>>
 
-    @RawQuery(observedEntities = [ MetadataXmp::class, FolderEntity::class, SubjectJunction::class ])
+    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
     internal abstract fun internalGetRelationImages(query: SupportSQLiteQuery): LiveData<List<MetadataXmp>>
 
 //    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
@@ -61,12 +80,34 @@ abstract class MetadataDao {
 
     companion object {
         // Core query logic, write this in the query initially for annotation error-checking
-        private const val mergeQuery = "SELECT *,  " +
+        private const val mergeQuery =
+            "SELECT *,  " +
             "(SELECT GROUP_CONCAT(name) " +
                 "FROM meta_subject_junction " +
                 "JOIN xmp_subject " +
                 "ON xmp_subject.id = meta_subject_junction.subjectId " +
                 "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+            "(SELECT documentUri " +
+                "FROM image_parent " +
+                "WHERE meta.parentId = image_parent.id ) AS parentUri " +
+            "FROM meta "
+
+        private const val joinQuery =
+            "SELECT * FROM meta " +
+                "JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id " +
+                "JOIN xmp_subject ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "JOIN image_parent ON meta.parentId = image_parent.id"
+        // .format(
+        // [AND WHERE xmp_subject.name IN (?)],
+        // [AND WHERE image_parent.documentUri = uri])
+
+        private const val queryWithFilter =
+            "SELECT *,  " +
+            "(SELECT GROUP_CONCAT(name) " +
+                "FROM meta_subject_junction " +
+                "JOIN xmp_subject " +
+                "ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "WHERE meta_subject_junction.metaId = meta.id %s) AS keywords, " +
             "(SELECT documentUri " +
                 "FROM image_parent " +
                 "WHERE meta.parentId = image_parent.id ) AS parentUri " +
@@ -93,31 +134,7 @@ abstract class MetadataDao {
             "FROM image_parent " +
             "WHERE meta.parentId = image_parent.id ) AS parentUri "
 
-        private const val coreQuery =
-            "SELECT *, " +
-            "(SELECT GROUP_CONCAT(name) " +
-                "FROM meta_subject_junction " +
-                "JOIN xmp_subject " +
-                "ON xmp_subject.id = meta_subject_junction.subjectId " +
-                "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
-            "(SELECT documentUri " +
-                "FROM image_parent " +
-                "WHERE meta.parentId = image_parent.id ) AS parentUri "
-
         private const val fromQuery = " FROM meta"
-
-        // Subject ID instead of name
-        private const val coreQuery2 =
-            "SELECT * FROM meta " +
-            "(SELECT GROUP_CONCAT(name) " +
-                "FROM meta_subject_junction " +
-                "JOIN xmp_subject " +
-                "ON xmp_subject.id = meta_subject_junction.subjectId " +
-                "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
-            "(SELECT documentUri " +
-                "FROM image_parent " +
-                "WHERE meta.parentId = image_parent.id ) AS parentUri "
-
         private const val SEGREGATE = "type COLLATE NOCASE ASC"
         private const val NAME_ASC = "meta.name COLLATE NOCASE ASC"
         private const val OrderTypeNameAsc = "ORDER BY type COLLATE NOCASE ASC, meta.name COLLATE NOCASE ASC"
@@ -164,12 +181,13 @@ abstract class MetadataDao {
                 selectionArgs.addAll(filter.xmp.label)
             }
 
+            // This is a special case as
             if (filter.xmp.subject.isNotEmpty()) {
                 if (requiresJoiner)
                     selection.append(joiner)
                 requiresJoiner = true
 
-                selection.append(DbUtil.createIN("subjectIds", filter.xmp.subject.size))
+                selection.append(DbUtil.createIN("subjectId", filter.xmp.subject.size))
                 filter.xmp.subject.mapTo(selectionArgs) { it.id }
             }
 
@@ -223,6 +241,7 @@ abstract class MetadataDao {
         val and = " AND "
         val or = " OR "
         val joiner = if (filter.andTrueOrFalse) and else or
+        var coreQuery = joinQuery
 
         if (filter.xmp != null) {
             if (filter.xmp.label.isNotEmpty()) {
@@ -232,12 +251,14 @@ abstract class MetadataDao {
                 selectionArgs.addAll(filter.xmp.label)
             }
 
+            // Special case, append to join query
             if (filter.xmp.subject.isNotEmpty()) {
                 if (requiresJoiner)
                     selection.append(joiner)
                 requiresJoiner = true
 
                 selection.append(DbUtil.createIN("subjectIds", filter.xmp.subject.size))
+//                coreQuery = queryWithFilter.format(" AND " + DbUtil.createIN("xmp_subject.id", filter.xmp.subject.size))
                 filter.xmp.subject.mapTo(selectionArgs) { it.id }
             }
 
@@ -271,7 +292,7 @@ abstract class MetadataDao {
             XmpFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
         }
 
-        query.append(mergeQuery2)
+        query.append(coreQuery)
         if (selection.isNotEmpty()) {
             query.append(" WHERE ")
             query.append(selection)

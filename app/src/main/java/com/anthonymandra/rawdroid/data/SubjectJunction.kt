@@ -10,8 +10,8 @@ import android.arch.persistence.room.ForeignKey.CASCADE
     tableName = "meta_subject_junction",
     primaryKeys = [ "metaId", "subjectId" ],
     indices = [
-        Index(value = "subjectId"),
-        Index(value = "metaId") ],
+        Index(value = ["subjectId"]),
+        Index(value = ["metaId"]) ],
     foreignKeys = [
         ForeignKey(
             entity = MetadataEntity::class,
@@ -23,4 +23,6 @@ import android.arch.persistence.room.ForeignKey.CASCADE
             parentColumns = [ "id" ],
             childColumns = [ "subjectId" ],
             onDelete = CASCADE)])
-class SubjectJunction(var metaId: Long, var subjectId: Long)
+data class SubjectJunction(
+        var metaId: Long,
+        var subjectId: Long)

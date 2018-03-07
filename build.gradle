@@ -5,12 +5,12 @@ buildscript {
         google()
     }
     ext {
-        kotlinVersion = '1.2.21'
+        kotlinVersion = '1.2.30'
         compileSdkVersion = 26
         supportLibVersion = "27.0.2"
         // Architecture
         lifecycleVersion = "1.1.0"
-        roomVersion = "1.1.0-alpha1"
+        roomVersion = "1.1.0-alpha3"
         pagingVersion = "1.0.0-alpha5"
         coreTestingVersion = "1.1.0"
     }
