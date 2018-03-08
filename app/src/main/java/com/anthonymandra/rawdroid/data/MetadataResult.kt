@@ -6,7 +6,6 @@ import android.arch.persistence.room.TypeConverters
 @TypeConverters(MetadataResult::class)
 class MetadataResult : MetadataEntity() {
     var keywords: List<String>? = null
-    var parentUri: String? = null
 
     @TypeConverter
     fun fromGroupConcat(keywords: String?): List<String>? = keywords?.split(",")

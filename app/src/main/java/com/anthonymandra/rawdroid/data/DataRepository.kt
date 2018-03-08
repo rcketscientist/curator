@@ -20,7 +20,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
         // Initialize
         val subjects = database.subjectDao().all
-        val meta = database.metadataDao().all
+        val meta = database.metadataDao().allMetadata
 
         // observe the changes of the products from the database and forward them
         subjectStream.addSource<List<SubjectEntity>>(subjects, { subjectStream.setValue(it) })

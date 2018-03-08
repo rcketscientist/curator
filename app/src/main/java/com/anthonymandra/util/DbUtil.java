@@ -2,6 +2,7 @@ package com.anthonymandra.util;
 
 import com.drew.lang.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 
 public class DbUtil
@@ -52,10 +53,21 @@ public class DbUtil
 
 	public static String createIN(String column, int arguments)
 	{
-		return column +
-				" IN (" +
-				makePlaceholders(arguments) +
-				")";
+		return column + " IN (" + makePlaceholders(arguments) + ")";
+	}
+
+	/**
+	 * Create an inline IN clause.  {@param arguments) must support toString()
+	 */
+	public static String createIN(String column, Collection arguments) {
+		StringBuilder clause = new StringBuilder();
+		clause.append(column).append(" IN (");
+		for (Object argument : arguments) {
+			clause.append(argument).append(",");
+		}
+		clause.deleteCharAt(clause.length() - 1);	// remove last comma
+		clause.append(")");
+		return clause.toString();
 	}
 
 	private static String makePlaceholders(int len) {
