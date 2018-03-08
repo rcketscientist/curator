@@ -39,6 +39,33 @@ abstract class MetadataDao {
                     "having count(distinct subjectId) = 1")
     abstract fun test2(): LiveData<List<Long>>
 
+    // This grabs all images but only 1 and 2 subjects
+//    @Query(
+//        "SELECT *,  " +
+//            "(SELECT GROUP_CONCAT(name) " +
+//            "FROM meta_subject_junction " +
+//            "JOIN xmp_subject " +
+//            "ON xmp_subject.id = meta_subject_junction.subjectId " +
+//            "WHERE meta_subject_junction.metaId = meta.id " +
+//            "AND meta_subject_junction.subjectId IN (1,2)) AS keywords, " +
+//            "(SELECT documentUri " +
+//            "FROM image_parent " +
+//            "WHERE meta.parentId = image_parent.id ) AS parentUri " +
+//            "FROM meta ")
+
+    @Query(
+        "SELECT *,  " +
+            "(SELECT GROUP_CONCAT(name) " +
+                "FROM meta_subject_junction " +
+                "JOIN xmp_subject " +
+                "ON xmp_subject.id = meta_subject_junction.subjectId " +
+                "WHERE meta_subject_junction.metaId = meta.id) AS keywords, " +
+            "(SELECT documentUri " +
+                "FROM image_parent " +
+                "WHERE meta.parentId = image_parent.id ) AS parentUri " +
+            "FROM meta ")
+    abstract fun test3(): LiveData<List<MetadataResult>>
+
     // --- AND ----
     // --- NAME ---
 

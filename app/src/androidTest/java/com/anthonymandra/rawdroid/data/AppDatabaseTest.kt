@@ -14,7 +14,6 @@ import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.hasSize
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -210,7 +209,7 @@ class AppDatabaseTest {
         val subjectEntity = SubjectEntity(subject)
         subjectEntity.id = 1L
 
-        val test = metadataDao.test2().blockingObserve()
+        val test = metadataDao.test3().blockingObserve()
 
         // subject: Cathedral
         var xmp = XmpValues(subject = listOf(subjectEntity))
@@ -244,9 +243,11 @@ class AppDatabaseTest {
         // Prep images
         val image1 = getPopulatedMeta(1)
         val image2 = getPopulatedMeta(2)
+        val image3 = getPopulatedMeta(3)
 
         val imageId1 = metadataDao.insert(image1)
         val imageId2 = metadataDao.insert(image2)
+        val imageId3 = metadataDao.insert(image3)
 
         // Prep subjects
         val reader = StringReader(testSubjects)
@@ -261,14 +262,18 @@ class AppDatabaseTest {
          *                       / Image 1
          *  subject 1 (Cathedral)
          *                      \ Image 2
+         *
+         *  Image3 is the outlier with just Badlands (3)
          */
         val subjectRelation1 = SubjectJunction(imageId1, 1)
         val subjectRelation2 = SubjectJunction(imageId1, 2)
         val subjectRelation3 = SubjectJunction(imageId2, 1)
+        val subjectRelation4 = SubjectJunction(imageId3, 3)
 
         subjectJunctionDao.insert(subjectRelation1)
         subjectJunctionDao.insert(subjectRelation2)
         subjectJunctionDao.insert(subjectRelation3)
+        subjectJunctionDao.insert(subjectRelation4)
     }
 
     private fun assertFolder(entity: FolderEntity) {
