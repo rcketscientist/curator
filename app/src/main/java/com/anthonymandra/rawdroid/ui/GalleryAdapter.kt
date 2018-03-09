@@ -9,11 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.MetadataResult
+import com.anthonymandra.rawdroid.data.MetadataTest
 import java.util.*
 import kotlin.collections.HashSet
 
-class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>(POST_COMPARATOR)
+class GalleryAdapter : PagedListAdapter<MetadataTest, RecyclerView.ViewHolder>(POST_COMPARATOR)
 {
     init { setHasStableIds(true) }
 
@@ -22,7 +22,7 @@ class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>
     var multiSelectMode = false
         set(value)  {
             clearSelection()
-            multiSelectMode = value
+            field = value
         }
 
 
@@ -205,11 +205,11 @@ class GalleryAdapter : PagedListAdapter<MetadataResult, RecyclerView.ViewHolder>
     }
 
     companion object {
-        val POST_COMPARATOR = object : DiffCallback<MetadataResult>() {
-            override fun areContentsTheSame(oldItem: MetadataResult, newItem: MetadataResult): Boolean =
+        val POST_COMPARATOR = object : DiffCallback<MetadataTest>() {
+            override fun areContentsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
                 oldItem == newItem
 
-            override fun areItemsTheSame(oldItem: MetadataResult, newItem: MetadataResult): Boolean =
+            override fun areItemsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
                 oldItem.uri == newItem.uri
         }
         // TODO: This could be an entity, although I think the paging will allow full meta queries

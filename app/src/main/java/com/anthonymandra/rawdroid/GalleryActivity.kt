@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityOptions
 import android.app.AlertDialog
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.*
 import android.hardware.usb.UsbManager
 import android.net.Uri
@@ -29,6 +31,7 @@ import com.android.gallery3d.common.Utils
 import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
+import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.DbUtil
 import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.widget.ItemOffsetDecoration
@@ -44,7 +47,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private val mResponseIntentFilter = IntentFilter()
     
-    protected lateinit var galleryAdapter: GalleryAdapter   //TODO: Attach to lifecycle?
+    protected lateinit var galleryAdapter: GalleryAdapter
 
     private var mMaterialCab: MaterialCab? = null
     private var mXmpFilterFragment: XmpFilterFragment? = null
@@ -105,6 +108,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryAdapter.onSelectionChangedListener = this
         galleryAdapter.onItemClickListener = this
         galleryAdapter.onItemLongClickListener = this
+
+        val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
+        viewModel.imageList.observe(this, Observer { pagedList -> galleryAdapter.setList(pagedList) })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
         gridview.layoutManager = mGridLayout

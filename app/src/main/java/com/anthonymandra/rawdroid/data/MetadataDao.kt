@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid.data
 
 import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import android.arch.persistence.db.SimpleSQLiteQuery
 import android.arch.persistence.db.SupportSQLiteQuery
 import android.arch.persistence.room.*
@@ -27,7 +28,10 @@ abstract class MetadataDao {
     internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
 
 //    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
-//    internal abstract fun internalGetImages(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataEntity>
+//    internal abstract fun internalGetImageSource(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
+
+    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
+    internal abstract fun internalGetImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
 
     @Query("SELECT * FROM meta WHERE id = :id")
     abstract operator fun get(id: Long): LiveData<MetadataEntity>
@@ -58,6 +62,20 @@ abstract class MetadataDao {
             " LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
 
         private const val groupBy = " GROUP BY meta.id"
+    }
+
+    // TODO: We could potentially use a static source in viewer to maintain order and update the
+    // appropriate meta tables when edited.
+//    fun getImageFactory(filter: XmpFilter) : PositionalDataSource<MetadataTest> {
+//        return internalGetImageFactory(this.createFilterQuery(filter)).create()
+//    }
+
+    fun getImageFactory(filter: XmpFilter) : DataSource.Factory<Int, MetadataTest> {
+        return internalGetImageFactory(this.createFilterQuery(filter))
+    }
+
+    fun getImageFactory() : DataSource.Factory<Int, MetadataTest> {
+        return getImageFactory(XmpFilter())
     }
 
     fun getImages(filter: XmpFilter) : LiveData<List<MetadataTest>> {

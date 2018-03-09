@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.MetadataResult
+import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.MetaUtil
 import com.bumptech.glide.Glide
 import kotlinx.android.extensions.LayoutContainer
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fileview.*
 @Suppress("DEPRECATION")
 class GalleryViewHolder(override val containerView: View/*, private val glide: RequestManager*/)
     : RecyclerView.ViewHolder(containerView), LayoutContainer {
-    private var image: MetadataResult? = null
+    private var image: MetadataTest? = null
 
     private val purple: Int = containerView.resources.getColor(R.color.startPurple)
     private val blue: Int = containerView.resources.getColor(R.color.startBlue)
@@ -24,10 +24,10 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
     private val green: Int = containerView.resources.getColor(R.color.startGreen)
     private val red: Int = containerView.resources.getColor(R.color.startRed)
 
-    fun bind(image: MetadataResult?) {
+    fun bind(image: MetadataTest?) {
         this.image = image
         image?.rating?.let { galleryRatingBar.rating = it }
-        xmp.visibility = if (image?.keywords != null) View.VISIBLE else View.GONE
+        xmp.visibility = if (image?.subjectIds != null) View.VISIBLE else View.GONE
 
         if (image?.label != null) {
             label.visibility = View.VISIBLE
