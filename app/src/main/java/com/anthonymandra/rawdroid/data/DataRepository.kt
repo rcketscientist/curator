@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
  * Repository handling the work with products and comments.
  */
 class DataRepository private constructor(private val database: AppDatabase) {
-    private val metaStream: MediatorLiveData<List<MetadataResult>> = MediatorLiveData()
+    private val metaStream: MediatorLiveData<List<MetadataTest>> = MediatorLiveData()
     private val subjectStream: MediatorLiveData<List<SubjectEntity>> = MediatorLiveData()
 
     init {
@@ -24,13 +24,13 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
         // observe the changes of the products from the database and forward them
         subjectStream.addSource<List<SubjectEntity>>(subjects, { subjectStream.setValue(it) })
-        metaStream.addSource<List<MetadataResult>>(meta, { metaStream.setValue(it) })
+        metaStream.addSource<List<MetadataTest>>(meta, { metaStream.setValue(it) })
     }
 
     val keywords: LiveData<List<SubjectEntity>>
         get() = subjectStream
 
-    val meta: LiveData<List<MetadataResult>>
+    val meta: LiveData<List<MetadataTest>>
         get() = metaStream
 
     fun getChildSubjects(path: String): Single<List<SubjectEntity>> {

@@ -13,6 +13,7 @@ import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.hasSize
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -83,151 +84,181 @@ class AppDatabaseTest {
         db.close()
     }
 
-//    @Test
-//    fun folders() {
-//        assertEquals(0, folderDao.count().toLong())
-//
-//        val parent = testFolder
-//
-//        val id = folderDao.insert(parent)
-//
-//        assertEquals(folderId, id)    // Can we override the autoGenerate?
-//
-//        assertFolder(parent)
-//
-//        val updated = testFolder
-//        updated.documentUri = "source:/folder/updated_file"
-//
-//        folderDao.update(updated)
-//        assertFolder(updated)
-//
-//        val child = testFolder
-//        child.id++
-//        child.path = parent.path + "/" + child.id
-//        child.parent = parent.id
-//        child.depth = parent.depth + 1
-//
-//        val childId = folderDao.insert(child)
-//
-//        folderDao.delete(updated, child)
-//        assertEquals(0, folderDao.count().toLong())
-//    }
+    @Test
+    fun folders() {
+        assertEquals(0, folderDao.count().toLong())
 
-//    @Test
-//    fun metadata() {
-//        val folderId = folderDao.insert(testFolder)
-//        assertEquals(1, folderDao.count().toLong())
-//
-//        assertEquals(0, metadataDao.count().toLong())
-//        val first = getPopulatedMeta(1)
-//
-//        val imageId = metadataDao.insert(first)
-//
-//        assertMetadata(first)
-//
-//        val updated = getPopulatedMeta(2)
-//        updated.id = imageId
-//
-//        metadataDao.update(updated)
-//        assertMetadata(updated)
-//
-//        metadataDao.delete(updated)
-//        assertEquals(0, metadataDao.count().toLong())
-//    }
+        val parent = testFolder
 
-//    @Test
-//    fun subjects() {
-//        assertThat(subjectDao.count(), equalTo(0))
-//
-//        val reader = StringReader(testSubjects)
-//        subjectDao.importKeywords(reader)
-//        assertThat(subjectDao.count(), equalTo(testSubjectsCount))
-//
-//        val europe = subjectDao.get(7)
-//        assertThat(europe.name, equalTo("Europe"))
-//
-//        val europeanEntities = subjectDao.getDescendants(7)
-//        assertThat(europeanEntities, hasSize(4))
-//        val europeanNames = europeanEntities.map { it.name }
-//        assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
-//
-//        val trier = subjectDao.get(9)
-//        assertThat(trier.name, equalTo("Trier"))
-//
-//        val trierTree = subjectDao.getAncestors(9)
-//        assertThat(trierTree, hasSize(3))
-//        val trierTreeNames = trierTree.map { it.name }
-//        assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
-//
-//        val time = System.currentTimeMillis()
-//        europeanEntities.forEach( {it.recent = time})
-//
-//        subjectDao.update(*europeanEntities.toTypedArray())
-//
-//        val updateEuropeanEntities = subjectDao.getDescendants(7)
-//        updateEuropeanEntities.forEach { europeanEntity ->
-//            assertThat(europeanEntity.recent, equalTo(time))
-//        }
-//        subjectDao.deleteAll()
-//        assertThat(subjectDao.count(), equalTo(0))
-//    }
-//
-//    @Test
-//    fun subjectJunction() {
-//        populateFullRelations()
-//
-//        val imagesWith1 = subjectJunctionDao.getImagesWith(1)
-//        val imagesWith2 = subjectJunctionDao.getImagesWith(2)
-//
-//        val subjectsFor1 = subjectJunctionDao.getSubjectsFor(1)
-//        val subjectsFor2 = subjectJunctionDao.getSubjectsFor(2)
-//
-//        assertThat(imagesWith1, hasItems(1L,2L))
-//        assertThat(imagesWith2, hasItems(1L))
-//        assertThat(subjectsFor1, hasItems(1L,2L))
-//        assertThat(subjectsFor2, hasItems(1L))
-//
-//        val joinResult = metadataDao.images.blockingObserve()
-//
-//        // Ensure we don't have separate entities per junction match
-//        assertThat(joinResult!!.size, equalTo(2))
-//
-//        assertThat(joinResult[0].keywords, hasItems("Cathedral", "National Park"))
-//        assertThat(joinResult[1].keywords, hasItems("Cathedral"))
-//    }
-//
+        val id = folderDao.insert(parent)
+
+        assertEquals(folderId, id)    // Can we override the autoGenerate?
+
+        assertFolder(parent)
+
+        val updated = testFolder
+        updated.documentUri = "source:/folder/updated_file"
+
+        folderDao.update(updated)
+        assertFolder(updated)
+
+        val child = testFolder
+        child.id++
+        child.path = parent.path + "/" + child.id
+        child.parent = parent.id
+        child.depth = parent.depth + 1
+
+        val childId = folderDao.insert(child)
+
+        folderDao.delete(updated, child)
+        assertEquals(0, folderDao.count().toLong())
+    }
+
+    @Test
+    fun metadata() {
+        val folderId = folderDao.insert(testFolder)
+        assertEquals(1, folderDao.count().toLong())
+
+        assertEquals(0, metadataDao.count().toLong())
+        val first = getPopulatedMeta(1)
+
+        val imageId = metadataDao.insert(first)
+
+        assertMetadata(first)
+
+        val updated = getPopulatedMeta(2)
+        updated.id = imageId
+
+        metadataDao.update(updated)
+        assertMetadata(updated)
+
+        metadataDao.delete(updated)
+        assertEquals(0, metadataDao.count().toLong())
+    }
+
+    @Test
+    fun subjects() {
+        assertThat(subjectDao.count(), equalTo(0))
+
+        val reader = StringReader(testSubjects)
+        subjectDao.importKeywords(reader)
+        assertThat(subjectDao.count(), equalTo(testSubjectsCount))
+
+        val europe = subjectDao.get(7)
+        assertThat(europe.name, equalTo("Europe"))
+
+        val europeanEntities = subjectDao.getDescendants(7)
+        assertThat(europeanEntities, hasSize(4))
+        val europeanNames = europeanEntities.map { it.name }
+        assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
+
+        val trier = subjectDao.get(9)
+        assertThat(trier.name, equalTo("Trier"))
+
+        val trierTree = subjectDao.getAncestors(9)
+        assertThat(trierTree, hasSize(3))
+        val trierTreeNames = trierTree.map { it.name }
+        assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
+
+        val time = System.currentTimeMillis()
+        europeanEntities.forEach( {it.recent = time})
+
+        subjectDao.update(*europeanEntities.toTypedArray())
+
+        val updateEuropeanEntities = subjectDao.getDescendants(7)
+        updateEuropeanEntities.forEach { europeanEntity ->
+            assertThat(europeanEntity.recent, equalTo(time))
+        }
+        subjectDao.deleteAll()
+        assertThat(subjectDao.count(), equalTo(0))
+    }
+
+    @Test
+    fun subjectJunction() {
+        populateFullRelations()
+
+        val imagesWith1 = subjectJunctionDao.getImagesWith(1)
+        val imagesWith2 = subjectJunctionDao.getImagesWith(2)
+        val imagesWith7 = subjectJunctionDao.getImagesWith(7)
+
+        val subjectsFor1 = subjectJunctionDao.getSubjectsFor(1)
+        val subjectsFor2 = subjectJunctionDao.getSubjectsFor(2)
+        val subjectsFor3 = subjectJunctionDao.getSubjectsFor(3)
+
+        assertThat(imagesWith1, hasItems(1L,2L))
+        assertThat(imagesWith2, hasItems(1L))
+        assertThat(imagesWith7, hasItems(3L))
+
+        assertThat(subjectsFor1, hasItems(1L,2L))
+        assertThat(subjectsFor2, hasItems(1L))
+        assertThat(subjectsFor3, hasItems(7L))
+
+
+        val joinResult = metadataDao.allMetadata.blockingObserve()
+
+        // Ensure we don't have separate entities per junction match
+        assertThat(joinResult!!.size, equalTo(3))
+
+        assertThat(joinResult[0].subjectIds, hasItems(1L, 2L))
+        assertThat(joinResult[1].subjectIds, hasItems(1L))
+        assertThat(joinResult[2].subjectIds, hasItems(7L))
+    }
+
     @Test
     fun filter() {
         populateFullRelations()
 
         val label = "label1"
-        val subject = "Cathedral"
 
-        val subjectEntity = SubjectEntity(subject)
-        subjectEntity.id = 1L
+        val cathedral = SubjectEntity(name = "Cathedral")
+        cathedral.id = 1L
+
+        val nationalPark = SubjectEntity("National Park")
+        nationalPark.id = 2L
+
+        val badlands = SubjectEntity("Badlands")
+        badlands.id = 3L
+
+        val europe = SubjectEntity("Europe")
+        europe.id = 7L
 
         // subject: Cathedral
-        var xmp = XmpValues(subject = listOf(subjectEntity))
+        var xmp = XmpValues(subject = listOf(cathedral))
         var filter = XmpFilter(xmp)
-        var result = metadataDao.getRelationImages(filter).blockingObserve()
+        var result = metadataDao.getImages(filter).blockingObserve()
         assertThat(result!!.size, equalTo(2))
-        assertThat(result[0].subjectIds, hasItems(subjectEntity.id))
+        assertThat(result[0].subjectIds, hasItems(cathedral.id))
+
+        // subject: National Park OR Europe
+        xmp = XmpValues(subject = listOf(nationalPark, europe))
+        filter = XmpFilter(xmp, false)
+        result = metadataDao.getImages(filter).blockingObserve()
+        assertThat(result!!.size, equalTo(2))
+        result.forEach {
+            assertThat(it.subjectIds, anyOf(
+                    hasItems(nationalPark.id),
+                    hasItems(europe.id)))
+        }
 
         // subject: Cathedral OR label:label1
-        filter.andTrueOrFalse = false
-        xmp = XmpValues(subject = listOf(subjectEntity), label = listOf(label))
-        filter = XmpFilter(xmp)
-        result = metadataDao.getRelationImages(filter).blockingObserve()
-        assertThat(result!!.size, equalTo(2))// image1 returns twice...
-        assertThat(result[0].subjectIds, hasItems(subjectEntity.id))
-        assertThat(result[1].label, not(label))
-//
-//        // subject: Cathedral AND label:label1
-//        filter.andTrueOrFalse = true
-//        result = metadataDao.getImages(filter).blockingObserve()
-//        assertThat(result!!.size, equalTo(1))
-//        assertThat(result[0].keywords, hasItems(subject))
-//        assertThat(result[0].label, equalTo(label))
+        xmp = XmpValues(subject = listOf(europe), label = listOf(label))
+        filter = XmpFilter(xmp, false)
+
+        result = metadataDao.getImages(filter).blockingObserve()
+        assertThat(result!!.size, equalTo(2))
+        result.forEach {
+            assert(it.subjectIds.contains(europe.id) || it.label == label)
+        }
+
+        // subject: Cathedral AND label:label1
+        xmp = XmpValues(subject = listOf(cathedral), label = listOf(label))
+        filter = XmpFilter(xmp, true)
+
+        result = metadataDao.getImages(filter).blockingObserve()
+        assertThat(result!!.size, equalTo(1))
+        result.forEach {
+            assert(it.subjectIds.contains(cathedral.id) || it.label == label)
+        }
     }
 
     private fun populateFullRelations() {
@@ -260,10 +291,10 @@ class AppDatabaseTest {
          *
          *  Image3 is the outlier with just Badlands (3)
          */
-        val subjectRelation1 = SubjectJunction(imageId1, 1)
-        val subjectRelation2 = SubjectJunction(imageId1, 2)
-        val subjectRelation3 = SubjectJunction(imageId2, 1)
-        val subjectRelation4 = SubjectJunction(imageId3, 3)
+        val subjectRelation1 = SubjectJunction(imageId1, 1) // 1: Cathedral, National Park
+        val subjectRelation2 = SubjectJunction(imageId1, 2) // ---
+        val subjectRelation3 = SubjectJunction(imageId2, 1) // 2: Cathedral
+        val subjectRelation4 = SubjectJunction(imageId3, 7) // 3: Europe
 
         subjectJunctionDao.insert(subjectRelation1)
         subjectJunctionDao.insert(subjectRelation2)
