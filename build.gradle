@@ -7,11 +7,11 @@ buildscript {
     ext {
         kotlinVersion = '1.2.30'
         compileSdkVersion = 26
-        supportLibVersion = "27.0.2"
+        supportLibVersion = "27.1.0"
         // Architecture
         lifecycleVersion = "1.1.0"
         roomVersion = "1.1.0-alpha3"
-        pagingVersion = "1.0.0-alpha5"
+        pagingVersion = "1.0.0-alpha6"
         coreTestingVersion = "1.1.0"
     }
     dependencies {

@@ -110,7 +110,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryAdapter.onItemLongClickListener = this
 
         val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
-        viewModel.imageList.observe(this, Observer { pagedList -> galleryAdapter.setList(pagedList) })
+        viewModel.imageList.observe(this, Observer { pagedList -> galleryAdapter.submitList(pagedList) })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
         gridview.layoutManager = mGridLayout
