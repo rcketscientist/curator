@@ -3,17 +3,16 @@ package com.anthonymandra.rawdroid.ui
 import android.arch.paging.PagedListAdapter
 import android.net.Uri
 import android.provider.BaseColumns
-import android.support.v7.recyclerview.extensions.DiffCallback
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.anthonymandra.content.Meta
-import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import java.util.*
 import kotlin.collections.HashSet
 
-class GalleryAdapter : PagedListAdapter<MetadataTest, RecyclerView.ViewHolder>(POST_COMPARATOR)
+class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_COMPARATOR)
 {
     init { setHasStableIds(true) }
 
@@ -45,20 +44,13 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, RecyclerView.ViewHolder>(P
     fun getUri(position: Int): Uri? = getItem(position)?.uri?.let { Uri.parse(it) }
     override fun getItemId(position: Int): Long = getItem(position)?.id ?: RecyclerView.NO_ID
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            R.layout.fileview -> GalleryViewHolder.create(parent)
-//            R.layout.network_state_item -> NetworkStateItemViewHolder.create(parent, retryCallback)
-            else -> throw IllegalArgumentException("unknown view type $viewType")
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryViewHolder {
+        return GalleryViewHolder.create(parent)
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: GalleryViewHolder, position: Int) {
         val item = getItem(position)
-        when (getItemViewType(position)) {
-            R.layout.fileview -> (holder as GalleryViewHolder).bind(item)
-//            R.layout.network_state_item -> (holder as NetworkStateItemViewHolder).bindTo(networkState)
-        }
+        holder.bind(item)
 
         holder.itemView.setOnClickListener {
             val clickPosition = holder.adapterPosition
@@ -205,7 +197,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, RecyclerView.ViewHolder>(P
     }
 
     companion object {
-        val POST_COMPARATOR = object : DiffCallback<MetadataTest>() {
+        val POST_COMPARATOR = object : DiffUtil.ItemCallback<MetadataTest>() {
             override fun areContentsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
                 oldItem == newItem
 

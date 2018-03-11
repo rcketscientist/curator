@@ -26,8 +26,16 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
 
     fun bind(image: MetadataTest?) {
         this.image = image
-        image?.rating?.let { galleryRatingBar.rating = it }
-        xmp.visibility = if (image?.subjectIds != null) View.VISIBLE else View.GONE
+
+        if (image?.rating != null) {
+            galleryRatingBar.rating = image.rating!!
+            galleryRatingBar.visibility = View.VISIBLE
+        }
+        else {
+            galleryRatingBar.visibility = View.INVISIBLE
+        }
+
+        xmp.visibility = if (image?.subjectIds.orEmpty().isEmpty()) View.INVISIBLE else View.VISIBLE
 
         if (image?.label != null) {
             label.visibility = View.VISIBLE
@@ -37,10 +45,10 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
                 "yellow" -> label.setBackgroundColor(yellow)
                 "green" -> label.setBackgroundColor(green)
                 "red" -> label.setBackgroundColor(red)
-                else -> label.visibility = View.GONE
+                else -> label.visibility = View.INVISIBLE
             }
         } else {
-            label.visibility = View.GONE
+            label.visibility = View.INVISIBLE
         }
 
         filenameView.text = image?.name

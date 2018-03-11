@@ -39,6 +39,8 @@ class TutorialActivity : GalleryActivity() {
      */
     private var showcaseItemMargin: Float = 0.toFloat()
 
+    private val databaseIds = mutableListOf<Long>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,18 +60,16 @@ class TutorialActivity : GalleryActivity() {
         }
 
         val assets = listOf(R.drawable.tutorial1, R.drawable.tutorial2, R.drawable.tutorial3, R.drawable.tutorial4, R.drawable.tutorial5)
+
         assets.forEachIndexed{ i, asset ->
             val output = File( tutorialDirectory, "$imageName$i.jpg")
             FileOutputStream(output).use {
                 BitmapFactory.decodeResource(resources, asset).compress(Bitmap.CompressFormat.JPEG, 100, it)
-                addDatabaseReference(Uri.fromFile(output))
+                databaseIds.add(addDatabaseReference(Uri.fromFile(output)))
             }
         }
 
-        // FIXME: This needs a local datastore backing
-//        updateMetaLoader(null,
-//                Meta.URI + " LIKE ?",
-//                arrayOf("%" + tutorialDirectory.name + "%"), null)
+        dataRepo.updateGalleryStream(databaseIds)
 
         val tutorial = ShowcaseView.Builder(this)//, true)
                 .setShowcaseDrawer(MorphShowcaseDrawer(resources, showcaseItemMargin))
@@ -94,10 +94,10 @@ class TutorialActivity : GalleryActivity() {
         val tutorialDirectory = FileUtil.getDiskCacheDir(this, cacheDir)
         for (i in 1..5) {
             val oldImage = File( tutorialDirectory, "$imageName$i.jpg")
-            removeDatabaseReference(Uri.fromFile(oldImage))
             oldImage.delete()
         }
 
+        databaseIds.forEach { removeDatabaseReference(it) }
         tutorialDirectory.delete()
     }
 

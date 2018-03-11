@@ -6,7 +6,10 @@ import android.app.ActivityOptions
 import android.app.AlertDialog
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.net.Uri
 import android.os.Build
@@ -17,7 +20,6 @@ import android.provider.DocumentsContract
 import android.support.design.widget.Snackbar
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
-import android.support.v4.widget.DrawerLayout
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.DisplayMetrics
@@ -30,6 +32,8 @@ import com.afollestad.materialcab.MaterialCab
 import com.android.gallery3d.common.Utils
 import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.*
+import com.anthonymandra.rawdroid.data.DataRepository
+import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.DbUtil
@@ -43,15 +47,16 @@ import java.util.*
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
     override val contentView = R.layout.gallery
     override val licenseHandler = CoreActivity.LicenseHandler(this) //FIXME:!!
-    override val selectedImages = galleryAdapter.selectedItems
+    override val selectedImages : Collection<Uri>
+        get() { return galleryAdapter.selectedItems }
 
     private val mResponseIntentFilter = IntentFilter()
-    
+
+    protected lateinit var dataRepo: DataRepository
     protected lateinit var galleryAdapter: GalleryAdapter
 
     private var mMaterialCab: MaterialCab? = null
     private var mXmpFilterFragment: XmpFilterFragment? = null
-    private var mDrawerLayout: DrawerLayout? = null
 
     protected val isContextModeActive: Boolean
         get() = mMaterialCab !=
@@ -64,11 +69,17 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        dataRepo = (application as App).dataRepo
+
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         setSupportActionBar(galleryToolbar)
+        fab.setOnClickListener {
+            setWriteResume(WriteResume.Search, emptyArray())
+            requestWritePermission()
+        }
 
         filterSidebarButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
@@ -79,9 +90,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             Unit
         }
         mXmpFilterFragment!!.registerSearchRootRequestedListener {
-            setWriteResume(WriteResume.Search, null)
+            setWriteResume(WriteResume.Search, emptyArray())
             requestWritePermission()
-            mDrawerLayout!!.closeDrawer(GravityCompat.START)
+            drawerLayout.closeDrawer(GravityCompat.START)
             Unit
         }
 
@@ -110,7 +121,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryAdapter.onItemLongClickListener = this
 
         val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
-        viewModel.imageList.observe(this, Observer { pagedList -> galleryAdapter.submitList(pagedList) })
+        viewModel.imageList.observe(this, Observer {
+            galleryAdapter.submitList(it)
+            setImageCountTitle(it?.size ?: 0)
+        })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
         gridview.layoutManager = mGridLayout
@@ -142,7 +156,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                     }
                     SearchService.BROADCAST_FOUND_IMAGES -> galleryToolbar.title = intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0).toString() + " Images"
                     SearchService.BROADCAST_SEARCH_COMPLETE -> {
-                        val images = intent.getStringArrayExtra(SearchService.EXTRA_IMAGE_URIS)
+                        val images = intent.getLongArrayExtra(SearchService.EXTRA_IMAGE_IDS)
                         if (images.isEmpty()) {
                             if (mActivityVisible)
                                 offerRequestPermission()
@@ -153,7 +167,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                 }
             }
         }, mResponseIntentFilter)
-        setImageCountTitle()
 
         if (intent.data != null) {
             ImageUtil.importKeywords(this, intent.data)
@@ -281,7 +294,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         val settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         if (settings.getBoolean(PREFS_SHOW_FILTER_HINT, true)) {
-            mDrawerLayout!!.openDrawer(GravityCompat.START)
+            drawerLayout.openDrawer(GravityCompat.START)
             val editor = settings.edit()
             editor.putBoolean(PREFS_SHOW_FILTER_HINT, false)
             editor.apply()
@@ -338,14 +351,14 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             .setTitle(R.string.offerSearchTitle)
             .setMessage(R.string.offerPermissionMessage)
             .setPositiveButton(R.string.search) { _, _ ->
-                setWriteResume(WriteResume.Search, null)
+                setWriteResume(WriteResume.Search, emptyArray())
                 requestWritePermission()
         }.setNegativeButton(R.string.neutral) { _, _ -> }   //do nothing
         builder.create().show()
     }
 
-    private fun setImageCountTitle() {
-        supportActionBar?.title = galleryAdapter.itemCount.toString() + " Images"
+    private fun setImageCountTitle(count: Int) {
+        supportActionBar?.title = count.toString() + " Images"
     }
 
     private fun scanRawFiles() {
@@ -357,16 +370,11 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             // Upon clean initiate search
             val excludedFolders = mXmpFilterFragment!!.excludedFolders
 
-            val rootPermissions = rootPermissions
-            val size = rootPermissions.size
-            val permissions = arrayOfNulls<String>(size)
-            for (i in 0 until size) {
-                permissions[i] = rootPermissions[i].uri.toString()
-            }
+            val permissionUris = rootPermissions.map { it.uri.toString() }
 
             SearchService.startActionSearch(
                 this@GalleryActivity, null, // Files unsupported on 4.4+
-                permissions,
+                permissionUris.toTypedArray(),
                 excludedFolders!!.toTypedArray())
             true
         }))
@@ -447,7 +455,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     private fun handleUsbAccessRequest(treeUri: Uri?) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
         // You must make a copy of the returned preference set or changes will not be recognized
-        val permissibleUsbDevices = HashSet(prefs.getStringSet(PREFS_PERMISSIBLE_USB, HashSet())!!)
+        val permissibleUsbDevices = HashSet(prefs.getStringSet(PREFS_PERMISSIBLE_USB, emptySet()))
 
         // The following oddity is because permission uris are not valid without SAF
         val makeUriUseful = UsefulDocumentFile.fromUri(this, treeUri!!)
@@ -474,7 +482,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             R.id.galleryClearCache -> {
                 Thread(Runnable { Glide.get(this@GalleryActivity).clearDiskCache() }).start()
                 Glide.get(this@GalleryActivity).clearMemory()
-                contentResolver.delete(Meta.CONTENT_URI, null, null)
+                dataRepo.deleteAllImages()
                 Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show()
                 return true
             }
@@ -539,20 +547,15 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         //		removeDatabaseReference(item);
     }
 
-    protected fun removeDatabaseReference(toRemove: Uri): Boolean {
-        val rowsDeleted = contentResolver.delete(
-            Meta.CONTENT_URI,
-            Meta.URI_SELECTION,
-            arrayOf(toRemove.toString()))
-        return rowsDeleted > 0
+    protected fun removeDatabaseReference(toRemove: Long) {
+        dataRepo.deleteImage(toRemove)
     }
 
-    protected fun addDatabaseReference(toAdd: Uri): Uri? {
-        val cv = ContentValues()
-        cv.put(Meta.URI, toAdd.toString())
-        //		ImageUtil.getContentValues(this, toAdd, cv);
+    protected fun addDatabaseReference(toAdd: Uri): Long {
+        val image = MetadataEntity()
+        image.uri = toAdd.toString()
 
-        return contentResolver.insert(Meta.CONTENT_URI, cv)
+        return dataRepo.insertImages(image).first()
     }
 
     override fun onSelectionUpdated(selectedUris: Collection<Uri>) {

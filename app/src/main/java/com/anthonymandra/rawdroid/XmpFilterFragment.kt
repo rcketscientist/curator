@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid
 
 import android.app.Dialog
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -21,7 +22,6 @@ import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.ui.FilterViewModel
-import com.anthonymandra.widget.XmpLabelGroup
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -48,6 +48,7 @@ class XmpFilterFragment : XmpBaseFragment() {
     private var mHiddenFolders: MutableSet<String> = Collections.emptySet()
     private var mExcludedFolders: MutableSet<String> = Collections.emptySet()
     private val mPaths = LinkedHashSet<String>()
+    private lateinit var imageRoots: LiveData<FolderEntity>
 
     private val disposables = CompositeDisposable()
 
@@ -156,36 +157,36 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         updatePaths()
 
-            mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog)
-            mFolderDialog.setOnVisibilityChangedListener({ visibility ->
-                if (visibility.visible) {
-                    mHiddenFolders.remove(visibility.Path)
-                    mPaths
-                        .filter { it.startsWith(visibility.Path) }
-                        .forEach { mHiddenFolders.remove(it) }
-                } else {
-                    mHiddenFolders.add(visibility.Path)
-                    mPaths
-                        .filter { it.startsWith(visibility.Path) }
-                        .forEach { mHiddenFolders.add(it) }
-                }
-                if (visibility.excluded) {
-                    mExcludedFolders.add(visibility.Path)
-                    mPaths
-                        .filter { it.startsWith(visibility.Path) }
-                        .forEach { mExcludedFolders.add(it) }
-                } else {
-                    mExcludedFolders.remove(visibility.Path)
-                    mPaths
-                        .filter { it.startsWith(visibility.Path) }
-                        .forEach { mExcludedFolders.remove(it) }
-                }
-                onFilterUpdated()
-            })
-            mFolderDialog.setSearchRequestedListener({ searchRequestCallback?.invoke() })
+        mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog)
+        mFolderDialog.setOnVisibilityChangedListener({ visibility ->
+            if (visibility.visible) {
+                mHiddenFolders.remove(visibility.Path)
+                mPaths
+                    .filter { it.startsWith(visibility.Path) }
+                    .forEach { mHiddenFolders.remove(it) }
+            } else {
+                mHiddenFolders.add(visibility.Path)
+                mPaths
+                    .filter { it.startsWith(visibility.Path) }
+                    .forEach { mHiddenFolders.add(it) }
+            }
+            if (visibility.excluded) {
+                mExcludedFolders.add(visibility.Path)
+                mPaths
+                    .filter { it.startsWith(visibility.Path) }
+                    .forEach { mExcludedFolders.add(it) }
+            } else {
+                mExcludedFolders.remove(visibility.Path)
+                mPaths
+                    .filter { it.startsWith(visibility.Path) }
+                    .forEach { mExcludedFolders.remove(it) }
+            }
+            onFilterUpdated()
+        })
+        mFolderDialog.setSearchRequestedListener({ searchRequestCallback?.invoke() })
 
-            mFolderDialog.show(fragmentManager!!, TAG)
-        }
+        mFolderDialog.show(fragmentManager!!, TAG)
+    }
 
     private data class FolderEntry(val folderId: Int, val shortName: String)
 

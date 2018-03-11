@@ -204,8 +204,8 @@ public class CameraImportActivity extends DocumentActivity
 								uriStrings.add(image.getAsString(Meta.URI));
 							}
 
-							Intent broadcast = new Intent(SearchService.BROADCAST_SEARCH_COMPLETE)
-									.putExtra(SearchService.EXTRA_IMAGE_URIS, uriStrings.toArray(new String[uriStrings.size()]));
+							Intent broadcast = new Intent(SearchService.Companion.getBROADCAST_SEARCH_COMPLETE())
+									.putExtra(SearchService.Companion.getEXTRA_IMAGE_IDS(), uriStrings.toArray(new String[uriStrings.size()]));
 							LocalBroadcastManager.getInstance(CameraImportActivity.this).sendBroadcast(broadcast);
 						}
 					})

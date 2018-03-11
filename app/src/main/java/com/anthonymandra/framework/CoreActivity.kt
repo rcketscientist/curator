@@ -64,8 +64,7 @@ abstract class CoreActivity : DocumentActivity() {
     protected abstract val licenseHandler: LicenseHandler
     protected abstract val selectedImages: Collection<Uri>
 
-    private val notificationManager: NotificationManager? =
-        this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private lateinit var notificationManager: NotificationManager
 
     /**
      * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
@@ -96,6 +95,8 @@ abstract class CoreActivity : DocumentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(contentView)
         setStoragePermissionRequestEnabled(true)
+
+        notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
             Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()

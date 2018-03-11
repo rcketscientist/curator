@@ -2,19 +2,20 @@ package com.anthonymandra.rawdroid
 
 import android.app.Application
 import android.os.StrictMode
-
 import com.anthonymandra.rawdroid.data.AppDatabase
-import com.anthonymandra.util.AppExecutors
+import com.anthonymandra.rawdroid.data.DataRepository
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.crashlytics.android.ndk.CrashlyticsNdk
 import com.squareup.leakcanary.LeakCanary
-
 import io.fabric.sdk.android.Fabric
 
 class App : Application() {
     val database: AppDatabase
         get() = AppDatabase.getInstance(this)
+
+    val dataRepo: DataRepository
+        get() = DataRepository.getInstance(database)
 
     override fun onCreate() {
         super.onCreate()

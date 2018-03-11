@@ -45,10 +45,10 @@ class AppDatabaseTest {
     private val testFolder
         get() = FolderEntity(
             "source:folder/file",
-            folderId,
+            folderId/*,
             "/" + folderId,
             -1,
-            0 )
+            0 */)
 
     private val testSubjectsCount = 11  // Don't count synonyms
     private val testSubjects =
@@ -64,6 +64,11 @@ class AppDatabaseTest {
                     "\t\tTrier\n" +
                 "\tFrance\n" +
             "Roman ruins"
+
+    val cathedral = SubjectEntity(name = "Cathedral", id = 1L)
+    val nationalPark = SubjectEntity("National Park", id = 2L)
+    val badlands = SubjectEntity("Badlands", id = 3L)
+    val europe = SubjectEntity("Europe", id = 7L)
 
     @Before
     fun setUp() {
@@ -104,9 +109,9 @@ class AppDatabaseTest {
 
         val child = testFolder
         child.id++
-        child.path = parent.path + "/" + child.id
-        child.parent = parent.id
-        child.depth = parent.depth + 1
+//        child.path = parent.path + "/" + child.id
+//        child.parent = parent.id
+//        child.depth = parent.depth + 1
 
         val childId = folderDao.insert(child)
 
@@ -210,18 +215,6 @@ class AppDatabaseTest {
 
         val label = "label1"
 
-        val cathedral = SubjectEntity(name = "Cathedral")
-        cathedral.id = 1L
-
-        val nationalPark = SubjectEntity("National Park")
-        nationalPark.id = 2L
-
-        val badlands = SubjectEntity("Badlands")
-        badlands.id = 3L
-
-        val europe = SubjectEntity("Europe")
-        europe.id = 7L
-
         // subject: Cathedral
         var xmp = XmpValues(subject = listOf(cathedral))
         var filter = XmpFilter(xmp)
@@ -303,7 +296,7 @@ class AppDatabaseTest {
     }
 
     private fun assertFolder(entity: FolderEntity) {
-        val results = folderDao.all.blockingObserve()
+        val results = folderDao.lifecycleParents.blockingObserve()
 
         assertNotNull(results)
         assertEquals(1, results!!.size.toLong())

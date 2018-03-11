@@ -23,7 +23,7 @@ class FilterViewModel(app: Application) : AndroidViewModel(app) {
         // set by default null, until we get data from the database.
         mObservableProducts.value = null
 
-        val folders = dataSource.all
+        val folders = dataSource.lifecycleParents
 
         // observe the changes of the products from the database and forward them
         mObservableProducts.addSource<List<FolderEntity>>(folders, { mObservableProducts.setValue(it) })

@@ -33,6 +33,9 @@ abstract class MetadataDao {
     @RawQuery(observedEntities = [ MetadataEntity::class/*, SubjectJunction::class*/ ])
     internal abstract fun internalGetImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
 
+    @Query("SELECT * FROM meta WHERE id IN (:ids)")
+    internal abstract fun getImagesById(ids: List<Long>): DataSource.Factory<Int, MetadataTest>
+
     @Query("SELECT * FROM meta WHERE id = :id")
     abstract operator fun get(id: Long): LiveData<MetadataEntity>
 
@@ -50,6 +53,15 @@ abstract class MetadataDao {
 
     @Delete
     abstract fun delete(vararg datums: MetadataEntity)
+
+    @Query("DELETE FROM meta WHERE id = :id")
+    abstract fun delete(id: Long)
+
+    @Query("DELETE FROM meta WHERE id IN (:ids)")
+    abstract fun delete(ids: List<Long>)
+
+    @Query("DELETE FROM meta")
+    abstract fun deleteAll()
 
     companion object {
         /**

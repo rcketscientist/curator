@@ -10,10 +10,11 @@ import com.anthonymandra.rawdroid.data.MetadataTest
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val dataSource = (app as App).database.metadataDao()
+    private val dataRepo = (app as App).dataRepo
+
     val imageList : LiveData<PagedList<MetadataTest>>
 
     init {  // TODO: Will need the ability to change filter.
-        imageList = LivePagedListBuilder(dataSource.getImageFactory(), 30).build()
+        imageList = LivePagedListBuilder(dataRepo.galleryStream, 30).build()
     }
 }

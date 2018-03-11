@@ -21,4 +21,7 @@ abstract class SubjectJunctionDao {
 
     @Delete
     abstract fun delete(vararg entries: SubjectJunction)
+
+    @Query("DELETE FROM meta_subject_junction WHERE metaId IN (:metaIds)")
+    abstract fun delete(metaIds: List<Long>)
 }

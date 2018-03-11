@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
-import com.anthonymandra.widget.XmpLabelGroup
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
