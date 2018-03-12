@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.anthonymandra.widget.SquareCheckableRelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fileView2"
+    android:id="@+id/galleryImageLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     app:foreground="@drawable/photogrid_list_selector">
 
+    <!-- Square constraint ratio -->
     <ImageView
-        android:id="@+id/webImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"/>
+        android:id="@+id/galleryImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1"/>
 
     <ImageView
         android:id="@+id/xmp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:alpha="0.8"
-        android:src="@drawable/ic_tag"/>
+        android:src="@drawable/ic_tag"
+        app:layout_constraintTop_toTopOf="@id/galleryImageView"
+        app:layout_constraintStart_toStartOf="@id/galleryImageView" />
 
     <RatingBar
         android:id="@+id/galleryRatingBar"
         style="@style/GalleryRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/filenameView"
-        android:rating="3"/>
+        android:rating="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/filenameView" />
 
     <View
         android:id="@+id/label"
         android:background="@color/startYellow"
         android:layout_width="14dip"
         android:layout_height="14dip"
-        android:layout_above="@+id/filenameView"
-        android:layout_alignParentEnd="true"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/filenameView" />
 
     <TextView
         android:id="@+id/filenameView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/webImageView"
-        android:layout_alignStart="@id/webImageView"
-        android:layout_alignEnd="@+id/webImageView"
         android:background="@color/Transparent_Black"
         android:gravity="center_horizontal"
         android:maxLines="1"
         tools:text="filename.ext"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="@id/galleryImageView"
+        app:layout_constraintBottom_toBottomOf="@+id/galleryImageView"
+        app:layout_constraintEnd_toEndOf="@+id/galleryImageView" />
 
-</com.anthonymandra.widget.SquareCheckableRelativeLayout>
+</android.support.constraint.ConstraintLayout>

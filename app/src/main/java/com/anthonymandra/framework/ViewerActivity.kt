@@ -7,7 +7,6 @@ import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Message
 import android.os.Parcelable
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
@@ -29,7 +28,6 @@ import com.anthonymandra.rawdroid.R
 import com.anthonymandra.util.ImageUtil
 import kotlinx.android.synthetic.main.meta_panel.*
 import kotlinx.android.synthetic.main.nav_panel.*
-import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ForkJoinPool
 
@@ -63,7 +61,7 @@ abstract class ViewerActivity : CoreActivity(),
     abstract fun goToPrevPicture()
     abstract fun goToNextPicture()
 
-    override val licenseHandler: LicenseHandler = ViewerLicenseHandler(this)
+//    override val licenseHandler: LicenseHandler = ViewerLicenseHandler(this)
     override val selectedImages: Collection<Uri> = listOfNotNull(mCurrentUri)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -537,15 +535,16 @@ abstract class ViewerActivity : CoreActivity(),
         textViewScale.post { textViewScale.text = zoom }
     }
 
-    internal class ViewerLicenseHandler(viewer: ViewerActivity) : CoreActivity.LicenseHandler(viewer) {
-        private val mViewer: WeakReference<ViewerActivity> = WeakReference(viewer)
-
-        override fun handleMessage(msg: Message) {
-            super.handleMessage(msg)
-            val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE) as License.LicenseState
-            mViewer.get()?.setLicenseState(state)
-        }
-    }
+    // TODO: Do we need this?
+//    internal class ViewerLicenseHandler(viewer: ViewerActivity) : CoreActivity.LicenseHandler(viewer) {
+//        private val mViewer: WeakReference<ViewerActivity> = WeakReference(viewer)
+//
+//        override fun handleMessage(msg: Message) {
+//            super.handleMessage(msg)
+//            val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE) as License.LicenseState
+//            mViewer.get()?.setLicenseState(state)
+//        }
+//    }
 
     protected open fun setLicenseState(state: License.LicenseState) {
         val isPro = state == License.LicenseState.pro

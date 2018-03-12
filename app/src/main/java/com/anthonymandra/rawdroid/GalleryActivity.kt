@@ -46,7 +46,6 @@ import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
     override val contentView = R.layout.gallery
-    override val licenseHandler = CoreActivity.LicenseHandler(this) //FIXME:!!
     override val selectedImages : Collection<Uri>
         get() { return galleryAdapter.selectedItems }
 
@@ -83,17 +82,14 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         filterSidebarButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
-        filterFragment
         mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
         mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
             updateMetaLoaderXmp(filter)
-            Unit
         }
         mXmpFilterFragment!!.registerSearchRootRequestedListener {
             setWriteResume(WriteResume.Search, emptyArray())
             requestWritePermission()
             drawerLayout.closeDrawer(GravityCompat.START)
-            Unit
         }
 
         doFirstRun()
@@ -103,17 +99,19 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
 
-        val mDisplayWidth = metrics.widthPixels
-        val shortSide = Math.min(mDisplayWidth, metrics.heightPixels)
+        // Use the displayWidth because the width is without toolbars, don't want to
+        // constrain after a rotation.
+        val displayWidth = metrics.widthPixels
+        val shortSide = Math.min(displayWidth, metrics.heightPixels)
 
         // we want three divisions on short side, convert that to a column value
         // This will always be 3 in portrait, x in landscape (with 3 rows)
         val thumbSize = (shortSide / 3).toFloat()
-        val numColumns = Math.round(mDisplayWidth / thumbSize)
+        val numColumns = Math.round(displayWidth / thumbSize)
         //TODO: 16:9 => 5 x 2.x or 3 x 5.3, which means rotation will call up slightly different sized thumbs, we need to ensure glide is initially creating the slightly larger variant
 
-        val mGridLayout = GridLayoutManager(this, numColumns)
-        mGridLayout.isSmoothScrollbarEnabled = true
+        val galleryLayout = GridLayoutManager(this, numColumns)
+        galleryLayout.isSmoothScrollbarEnabled = true
 
         galleryAdapter = GalleryAdapter()
         galleryAdapter.onSelectionChangedListener = this
@@ -127,10 +125,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
-        gridview.layoutManager = mGridLayout
-        gridview.addItemDecoration(spacing)
-        gridview.setHasFixedSize(true)
-        gridview.adapter = galleryAdapter
+        galleryView.layoutManager = galleryLayout
+        galleryView.addItemDecoration(spacing)
+        galleryView.setHasFixedSize(true)
+        galleryView.adapter = galleryAdapter
 
         mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED)
         mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE)
@@ -395,7 +393,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             }
             REQUEST_TUTORIAL -> {
                 if (resultCode == RESULT_ERROR) {
-                    Snackbar.make(gridview, "Tutorial error. Please contact support if this continues.", 5000)
+                    Snackbar.make(galleryView, "Tutorial error. Please contact support if this continues.", 5000)
                         .setAction(R.string.contact) { requestEmailIntent("Tutorial Error") }
                         .show()
                 }
@@ -406,7 +404,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     }
 
     private fun handlePhotoUpdate(index: Int) {
-        gridview.smoothScrollToPosition(index)
+        galleryView.smoothScrollToPosition(index)
     }
 
     private fun handleCopyDestinationResult(destination: Uri) {
@@ -524,7 +522,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     private fun requestCopyDestination() {
         storeSelectionForIntent()
         if (mItemsForIntent.isEmpty()) {
-            Snackbar.make(gridview, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(galleryView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
             return
         }
 

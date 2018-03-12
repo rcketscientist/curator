@@ -61,7 +61,7 @@ abstract class CoreActivity : DocumentActivity() {
      */
     protected var mItemsForIntent: Collection<Uri> = Collections.emptyList()
 
-    protected abstract val licenseHandler: LicenseHandler
+    private lateinit var licenseHandler: LicenseHandler
     protected abstract val selectedImages: Collection<Uri>
 
     private lateinit var notificationManager: NotificationManager
@@ -96,6 +96,8 @@ abstract class CoreActivity : DocumentActivity() {
         setContentView(contentView)
         setStoragePermissionRequestEnabled(true)
 
+        licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
+
         notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
@@ -111,8 +113,6 @@ abstract class CoreActivity : DocumentActivity() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
 
         findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }
-
-
     }
 
     override fun onResume() {
@@ -664,7 +664,7 @@ abstract class CoreActivity : DocumentActivity() {
         override fun handleMessage(msg: Message) {
             val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE)
             if (state == null || state.toString().startsWith("modified")) {
-                for (i in 0..2)
+                for (i in 0..2) //TODO: FIXME
                     Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show()
             } else if (state == License.LicenseState.error) {
                 Toast.makeText(mContext.get(), "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show()

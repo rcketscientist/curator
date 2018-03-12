@@ -74,8 +74,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
                 this, it, clickPosition, getItemId(clickPosition)) ?: false
         }
 
-        // TODO: was: vh.mBaseView.setChecked(mSelectedItems.contains(galleryItem.uri));
-        holder.itemView.isSelected = mSelectedItems.contains(Uri.parse(item?.uri))
+        holder.itemView.isActivated = mSelectedItems.contains(Uri.parse(item?.uri))
     }
 
     fun addGroupSelection(position: Int) {

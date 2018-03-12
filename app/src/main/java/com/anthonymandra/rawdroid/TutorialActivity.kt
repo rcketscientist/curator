@@ -105,14 +105,14 @@ class TutorialActivity : GalleryActivity() {
         if (galleryAdapter.itemCount < position + 1)
             closeTutorialWithError()
         else
-            onItemClick(galleryAdapter, gridview.getChildAt(position), position, position.toLong())
+            onItemClick(galleryAdapter, galleryView.getChildAt(position), position, position.toLong())
     }
 
     private fun programmaticLongClick(position: Int) {
         if (galleryAdapter.itemCount < position + 1)
             closeTutorialWithError()
         else
-            onItemLongClick(galleryAdapter, gridview.getChildAt(position), position, position.toLong())
+            onItemLongClick(galleryAdapter, galleryView.getChildAt(position), position, position.toLong())
     }
 
     private fun closeTutorialWithError() {
@@ -148,7 +148,7 @@ class TutorialActivity : GalleryActivity() {
                 -> {
                     tutorial.setContentTitle(getString(R.string.tutorialSelectTitle))
                     tutorial.setContentText(getString(R.string.tutorialSingleSelectText))
-                    val view = gridview.getChildAt(0)
+                    val view = galleryView.getChildAt(0)
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -161,7 +161,7 @@ class TutorialActivity : GalleryActivity() {
                         programmaticLongClick(0)
 
                     tutorial.setContentText(getString(R.string.tutorialMultiSelectText))
-                    val view = gridview.getChildAt(2)
+                    val view = galleryView.getChildAt(2)
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -199,7 +199,7 @@ class TutorialActivity : GalleryActivity() {
                     endContextMode()
 
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1))
-                    val view = gridview.getChildAt(1)        //WTF index is backwards.
+                    val view = galleryView.getChildAt(1)        //WTF index is backwards.
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else
@@ -217,7 +217,7 @@ class TutorialActivity : GalleryActivity() {
                     tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2))
 
                     setTutorialHomeView(tutorial, true)
-                    val view = gridview.getChildAt(3)    //WTF index is backwards.
+                    val view = galleryView.getChildAt(3)    //WTF index is backwards.
                     if (view != null)
                         tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
                     else

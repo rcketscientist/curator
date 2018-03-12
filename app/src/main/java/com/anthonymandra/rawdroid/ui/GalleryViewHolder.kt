@@ -59,10 +59,10 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
             .load(RawModelLoader.ImageInfo(Uri.parse(image?.uri),
                 image?.let { Meta.ImageType.fromInt(image.type) }))
             .centerCrop()
-            .into(webImageView)
+            .into(galleryImageView)
 
         image?.let {
-            webImageView.rotation = MetaUtil.getRotation(image.orientation).toFloat()
+            galleryImageView.rotation = MetaUtil.getRotation(image.orientation).toFloat()
         }
     }
 
