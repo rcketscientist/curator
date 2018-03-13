@@ -135,36 +135,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_STARTED)
         mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_COMPLETE)
         mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES)
-        LocalBroadcastManager.getInstance(this).registerReceiver(object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                when (intent.action) {
-                    MetaService.BROADCAST_IMAGE_PARSED -> galleryToolbar.subtitle = StringBuilder()
-                        .append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
-                        .append(" of ")
-                        .append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1))//mGalleryAdapter.getCount()));
-                    MetaService.BROADCAST_PROCESSING_COMPLETE -> galleryToolbar.subtitle = "Updating..."
-                    MetaService.BROADCAST_PARSE_COMPLETE -> {
-                        toolbarProgress.visibility = View.GONE
-                        galleryToolbar.subtitle = ""
-                    }
-                    SearchService.BROADCAST_SEARCH_STARTED -> {
-                        toolbarProgress.visibility = View.VISIBLE
-                        toolbarProgress.isIndeterminate = true
-                        galleryToolbar.subtitle = "Searching..."
-                    }
-                    SearchService.BROADCAST_FOUND_IMAGES -> galleryToolbar.title = intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0).toString() + " Images"
-                    SearchService.BROADCAST_SEARCH_COMPLETE -> {
-                        val images = intent.getLongArrayExtra(SearchService.EXTRA_IMAGE_IDS)
-                        if (images.isEmpty()) {
-                            if (mActivityVisible)
-                                offerRequestPermission()
-                        } else {
-                            MetaWakefulReceiver.startMetaService(this@GalleryActivity)
-                        }
-                    }
-                }
-            }
-        }, mResponseIntentFilter)
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, mResponseIntentFilter)
 
         if (intent.data != null) {
             ImageUtil.importKeywords(this, intent.data)
@@ -341,6 +312,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     }
 
     public override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
         super.onDestroy()
     }
 
@@ -639,6 +611,37 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options)
         view.isDrawingCacheEnabled = false
+    }
+
+    val messageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            when (intent.action) {
+                MetaService.BROADCAST_IMAGE_PARSED -> galleryToolbar.subtitle = StringBuilder()
+                    .append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
+                    .append(" of ")
+                    .append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1))//mGalleryAdapter.getCount()));
+                MetaService.BROADCAST_PROCESSING_COMPLETE -> galleryToolbar.subtitle = "Updating..."
+                MetaService.BROADCAST_PARSE_COMPLETE -> {
+                    toolbarProgress.visibility = View.GONE
+                    galleryToolbar.subtitle = ""
+                }
+                SearchService.BROADCAST_SEARCH_STARTED -> {
+                    toolbarProgress.visibility = View.VISIBLE
+                    toolbarProgress.isIndeterminate = true
+                    galleryToolbar.subtitle = "Searching..."
+                }
+                SearchService.BROADCAST_FOUND_IMAGES -> galleryToolbar.title = intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0).toString() + " Images"
+                SearchService.BROADCAST_SEARCH_COMPLETE -> {
+                    val images = intent.getLongArrayExtra(SearchService.EXTRA_IMAGE_IDS)
+                    if (images.isEmpty()) {
+                        if (mActivityVisible)
+                            offerRequestPermission()
+                    } else {
+                        MetaWakefulReceiver.startMetaService(this@GalleryActivity)
+                    }
+                }
+            }
+        }
     }
 
     companion object {
