@@ -181,8 +181,8 @@ object MetaUtil {
      * @param uri uri of image to parse
      * @return processed metadata values or null if failed
      */
-    fun readMetadata(c: Context, repo: DataRepository, uri: Uri, entity: MetadataTest) : MetadataTest{
-        val meta = readMetadata(c, uri)
+    fun readMetadata(c: Context, repo: DataRepository, entity: MetadataTest) : MetadataTest{
+        val meta = readMetadata(c, Uri.parse(entity.uri))
         return populateMetadata(repo, entity, meta)
     }
 

@@ -12,6 +12,7 @@ import android.support.v4.content.WakefulBroadcastReceiver
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
+import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.MetaUtil
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
@@ -40,30 +41,26 @@ class MetaService : PriorityIntentService("MetaService") {
     }
 
     private fun handleActionUpdate(intent: Intent) {
-        val updates = getUpdateArray(this) ?: return
-
+        val repo = DataRepository.getInstance(AppDatabase.getInstance(this.applicationContext))
+        val updates = repo.unprocessedImages()
         sJobsTotal.addAndGet(updates.size)
 
-        val repo = DataRepository.getInstance(AppDatabase.getInstance(this.applicationContext))
-
         try {
-            for (update in updates) {
-                val metadata = MetaUtil.readMetadata(
-                    this,
-                    repo,
-                    Uri.parse(update.Uri))
+            val metaUpdates = updates.map {
+                val metadata = MetaUtil.readMetadata(this, repo, it)
                 jobComplete()
 
-                if (metadata == null)   // TODO: Check processed?
-                    continue
-
-                updateProvider(update.Uri, values)
-
                 val broadcast = Intent(BROADCAST_IMAGE_PARSED)
-                    .putExtra(EXTRA_URI, update.Uri)
-                    .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
-                    .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
+                        .putExtra(EXTRA_URI, it.uri)    // TODO: Better to send id
+                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
+                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
+
+                return@map metadata
+            }.filter { it.processed }
+
+            metaUpdates.let {
+                repo.updateMeta(*it.toTypedArray())
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)

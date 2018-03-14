@@ -42,6 +42,9 @@ abstract class MetadataDao {
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun getAll(uris: List<String>): LiveData<List<MetadataEntity>>
 
+    @Query("SELECT * FROM meta WHERE processed = 0")    // 0 = true
+    abstract fun unprocessedImages() : List<MetadataTest>    // TODO: maybe page this?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     internal abstract fun insert(datum: MetadataEntity): Long
 

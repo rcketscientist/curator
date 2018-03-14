@@ -53,6 +53,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
     }
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
+    fun unprocessedImages() = database.metadataDao().unprocessedImages()
 
     fun getChildSubjects(path: String): Single<List<SubjectEntity>> {
         return Single.create<List<SubjectEntity>> { emitter ->
