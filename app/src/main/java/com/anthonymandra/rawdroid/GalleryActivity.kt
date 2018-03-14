@@ -30,13 +30,11 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
 import com.android.gallery3d.common.Utils
-import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
-import com.anthonymandra.util.DbUtil
 import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.widget.ItemOffsetDecoration
 import com.bumptech.glide.Glide
@@ -82,16 +80,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         filterSidebarButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
-        mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
-        mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
-            updateMetaLoaderXmp(filter)
-        }
-        mXmpFilterFragment!!.registerSearchRootRequestedListener {
-            setWriteResume(WriteResume.Search, emptyArray())
-            requestWritePermission()
-            drawerLayout.closeDrawer(GravityCompat.START)
-        }
-
         doFirstRun()
 
         AppRater.app_launched(this)
@@ -129,6 +117,16 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryView.addItemDecoration(spacing)
         galleryView.setHasFixedSize(true)
         galleryView.adapter = galleryAdapter
+
+        mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
+        mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
+            viewModel.updateFilter(filter)
+        }
+        mXmpFilterFragment!!.registerSearchRootRequestedListener {
+            setWriteResume(WriteResume.Search, emptyArray())
+            requestWritePermission()
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
 
         mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED)
         mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE)
@@ -192,74 +190,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     //		)
     //	}
 
-    @SuppressLint()
-    private fun updateMetaLoaderXmp(filter: XmpFilter) {
-        val selection = StringBuilder()
-        val selectionArgs = ArrayList<String>()
-        var requiresJoiner = false
-
-        val and = " AND "
-        val or = " OR "
-        val joiner = if (filter.andTrueOrFalse) and else or
-
-        if (filter.xmp != null) {
-            if (filter.xmp.label.isNotEmpty()) {
-                requiresJoiner = true
-
-                selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.size))
-                selectionArgs.addAll(filter.xmp.label)
-            }
-            //			if (filter.xmp.subject != null && filter.xmp.subject.length > 0)
-            //			{
-            //				if (requiresJoiner)
-            //					selection.append(joiner);
-            //				requiresJoiner = true;
-            //
-            //				selection.append(DbUtil.createLike(Meta.SUBJECT, filter.xmp.subject,
-            //						selectionArgs, joiner, false,
-            //						"%", "%",   // openended wildcards, match subject anywhere
-            //						null));
-            //			}
-            if (filter.xmp.rating.isNotEmpty()) {
-                if (requiresJoiner)
-                    selection.append(joiner)
-                requiresJoiner = true
-
-                selection.append(DbUtil.createIN(Meta.RATING, filter.xmp.rating.size))
-                filter.xmp.rating.mapTo(selectionArgs) { java.lang.Double.toString(it.toDouble()) }
-            }
-        }
-        if (filter.hiddenFolders.isNotEmpty()) {
-            if (requiresJoiner)
-                selection.append(and)  // Always exclude the folders, don't OR
-
-            selection.append(DbUtil.createLike(Meta.PARENT,
-                filter.hiddenFolders.toTypedArray(),
-                selectionArgs,
-                and, // Requires AND so multiple hides don't negate each other
-                true, null, // No wild to start, matches path exactly
-                "%", // Wildcard end to match all children
-                "%")// NOT
-            )  // Uri contain '%' which means match any so escape them
-        }
-
-        val order = if (filter.sortAscending) " ASC" else " DESC"
-        val sort = StringBuilder()
-
-        if (filter.segregateByType) {
-            sort.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ")
-        }
-        when (filter.sortColumn) {
-            XmpFilter.SortColumns.Date -> sort.append(Meta.TIMESTAMP).append(order)
-            XmpFilter.SortColumns.Name -> sort.append(Meta.NAME).append(" COLLATE NOCASE").append(order)
-        }
-    }
-
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
-
-        // This must be here due to the lifecycle
-        updateMetaLoaderXmp(mXmpFilterFragment!!.xmpFilter)
 
         val settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         if (settings.getBoolean(PREFS_SHOW_FILTER_HINT, true)) {
@@ -502,20 +434,11 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         startActivityForResult(intent, REQUEST_COPY_DIR)
     }
 
-    override fun onImageSetChanged() {
-        // Not needed with a cursorloader
-        //TODO: This could be used to batch adds/removes
-    }
+    override fun onImageSetChanged() { }
 
-    override fun onImageAdded(item: Uri) {
-        //not needed with cursorloader
-        //		addDatabaseReference(item);
-    }
+    override fun onImageAdded(item: Uri) { }
 
-    override fun onImageRemoved(item: Uri) {
-        //not needed with cursorloader
-        //		removeDatabaseReference(item);
-    }
+    override fun onImageRemoved(item: Uri) { }
 
     protected fun removeDatabaseReference(toRemove: Long) {
         dataRepo.deleteImage(toRemove)
@@ -605,15 +528,14 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                 view, view.drawingCache, 0, 0).toBundle())
         //TODO: If we want this to look smooth we should load the gallery thumb in viewer so there's a smooth transition
 
-        // TODO: We need to control the viewer query somehow
-//        viewer.putExtra(CoreActivity.EXTRA_META_BUNDLE, metaLoader)
+        // TODO: While this should work, this should pass the db id to be more versatile
         viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position)
 
         startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options)
         view.isDrawingCacheEnabled = false
     }
 
-    val messageReceiver = object : BroadcastReceiver() {
+    private val messageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 MetaService.BROADCAST_IMAGE_PARSED -> galleryToolbar.subtitle = StringBuilder()

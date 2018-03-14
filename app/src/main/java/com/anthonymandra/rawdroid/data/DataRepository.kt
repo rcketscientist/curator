@@ -48,6 +48,10 @@ class DataRepository private constructor(private val database: AppDatabase) {
     val streamParents = database.folderDao().streamParents
     fun insertParent(entity: FolderEntity) = database.folderDao().insert(entity)
 
+    fun convertToSubjectIds(subjects: List<String>) : List<Long> {
+        return database.subjectDao().idsForNames(subjects)
+    }
+
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
 
     fun getChildSubjects(path: String): Single<List<SubjectEntity>> {

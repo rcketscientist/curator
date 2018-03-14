@@ -575,7 +575,7 @@ public class PhotoDataAdapter implements Model {
         if (!imageData.containsKey(uri))
             return 0;
 
-        return MetaUtil.getRotation(imageData.get(uri).orientation);
+        return MetaUtil.INSTANCE.getRotation(imageData.get(uri).orientation);
     }
 
     @Override

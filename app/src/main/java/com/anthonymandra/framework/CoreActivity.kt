@@ -733,9 +733,10 @@ abstract class CoreActivity : DocumentActivity() {
             val source = UsefulDocumentFile.fromUri(this@CoreActivity, uri)
             val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
             copyAssociatedFiles(uri, destinationFile)
-            val cv = ContentValues()
-            MetaUtil.getImageFileInfo(this, uri, cv)
-            contentResolver.insert(Meta.CONTENT_URI, cv)
+            // TODO: Why didn't I just update the location?
+//            val cv = ContentValues()
+//            MetaUtil.getImageFileInfo(this, uri, cv)
+//            contentResolver.insert(Meta.CONTENT_URI, cv)
             onImageAdded(uri)
             destinationFile
         }

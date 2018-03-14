@@ -1058,7 +1058,7 @@ public class ImageUtil
             int width = -1;
             // TODO: This could be eliminated by allowing native to request image, it knows the image size already
             // TODO: It's possible this image is not processed meaning this would fail!
-            try (Cursor metaCursor = MetaUtil.getMetaCursor(c, source, projection))
+            try (Cursor metaCursor = MetaUtil.INSTANCE.getMetaCursor(c, source, projection))
                 {
                 if (c != null && metaCursor.moveToFirst())
                     width = metaCursor.getInt(metaCursor.getColumnIndex(Meta.WIDTH));

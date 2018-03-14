@@ -29,7 +29,7 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
     public static void startMetaService(Context c)
     {
         Intent intent = new Intent(c, MetaWakefulReceiver.class);
-        intent.setAction(MetaService.ACTION_UPDATE);
+        intent.setAction(MetaService.Companion.getACTION_UPDATE());
         c.sendBroadcast(intent);
     }
 
@@ -48,7 +48,7 @@ public class MetaWakefulReceiver extends WakefulBroadcastReceiver
     private static Intent getService(Context context, Uri data)
     {
         Intent intent = new Intent(context, MetaWakefulReceiver.class);
-        intent.setAction(MetaService.ACTION_PARSE);
+        intent.setAction(MetaService.Companion.getACTION_PARSE());
         intent.setData(data);
         return intent;
     }
