@@ -1,20 +1,12 @@
 package com.anthonymandra.framework
 
 import android.app.IntentService
-import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.database.DatabaseUtils
-import android.net.Uri
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.content.WakefulBroadcastReceiver
-import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.MetaUtil
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -22,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * a service on a separate handler thread.
  */
 class MetaService : PriorityIntentService("MetaService") {
-
+    private val repo = DataRepository.getInstance(AppDatabase.getInstance(this.applicationContext))
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
             val action = intent.action
@@ -34,14 +26,7 @@ class MetaService : PriorityIntentService("MetaService") {
         }
     }
 
-    internal class UpdateInfo internal constructor(internal val Uri: String, internal val Name: String) {
-        companion object {
-            private val PROJECTION = arrayOf(Meta.URI, Meta.NAME)
-        }
-    }
-
     private fun handleActionUpdate(intent: Intent) {
-        val repo = DataRepository.getInstance(AppDatabase.getInstance(this.applicationContext))
         val updates = repo.unprocessedImages()
         sJobsTotal.addAndGet(updates.size)
 
@@ -67,66 +52,48 @@ class MetaService : PriorityIntentService("MetaService") {
         }
     }
 
-    private fun getParseArray(uris: Array<String>): List<ContentValues>? {
-        MetaUtil.getMetaCursor(this, uris)!!.use { c ->
-            if (c == null)
-                return null
-
-            val rows = ArrayList<ContentValues>()
-
-            while (c.moveToNext()) {
-                val values = ContentValues()
-                DatabaseUtils.cursorRowToContentValues(c, values)
-                rows.add(values)
-            }
-            return rows
-        }
-    }
-
     /**
      * Parse given uris and add to database in a batch
      */
     private fun handleActionParse(intent: Intent) {
-        val uris: Array<String>
-        if (intent.hasExtra(EXTRA_URIS))
-            uris = intent.getStringArrayExtra(EXTRA_URIS)
+        val uris = if (intent.hasExtra(EXTRA_URIS))
+            intent.getStringArrayExtra(EXTRA_URIS)
         else
-            uris = arrayOf(intent.data!!.toString())
+            arrayOf(intent.data!!.toString())
 
-        val rows = getParseArray(uris) ?: return
+        val images = repo.images(listOf(*uris)).value ?: return
 
-        sJobsTotal.addAndGet(rows.size)
+        sJobsTotal.addAndGet(images.size)
 
         try {
-            for (values in rows) {
-                val uri = Uri.parse(values.getAsString(Meta.URI))
-                val isProcessed = MetaUtil.isProcessed(values)
+            val updates = images
+                .filter {
+                    !it.processed
+                }.map {
+                    val metadata = MetaUtil.readMetadata(this, repo, it)
+                    jobComplete()
 
-                // If the image is unprocessed process it now
-                if (!isProcessed)
-                    values = MetaUtil.getContentValues(this, uri, values)
+                    // TODO: There was a null check here but I'm doubtful it's needed
 
-                jobComplete()
+                    if (isHighPriority(intent)) {
+                        val broadcast = Intent(BROADCAST_REQUESTED_META)
+                            .putExtra(EXTRA_URI, it.uri)
+                        // TODO: Is it a problem to look up on the other end?  This used to broadcast the meta (not written here...)
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
+                        return@map null
+                    }
 
-                if (values == null)
-                    continue
-
-                if (isHighPriority(intent)) {
-                    val broadcast = Intent(BROADCAST_REQUESTED_META)
-                        .putExtra(EXTRA_URI, uri.toString())
-                        .putExtra(EXTRA_METADATA, values)
+                    val broadcast = Intent(BROADCAST_IMAGE_PARSED)
+                        .putExtra(EXTRA_URI, it.uri)
+                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
+                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
                     LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
-                }
 
-                if (!isProcessed) {
-                    updateProvider(uri.toString(), values)
-                }
+                    return@map metadata
+                }.mapNotNull { it } // TODO: This is some sloppy garbage...
 
-                val broadcast = Intent(BROADCAST_IMAGE_PARSED)
-                    .putExtra(EXTRA_URI, uri.toString())
-                    .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
-                    .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
+            updates.let {
+                repo.updateMeta(*it.toTypedArray())
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
@@ -138,13 +105,6 @@ class MetaService : PriorityIntentService("MetaService") {
 
         val broadcast = Intent(BROADCAST_PARSE_COMPLETE)
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
-    }
-
-    private fun updateProvider(uri: String, values: ContentValues) {
-        contentResolver.update(Meta.CONTENT_URI,
-            values,
-            Meta.URI_SELECTION,
-            arrayOf(uri))
     }
 
     companion object {
@@ -213,19 +173,6 @@ class MetaService : PriorityIntentService("MetaService") {
         private val sJobsComplete = AtomicInteger(0)
 
         /**
-         * Starts this service to perform action Foo with the given parameters. If
-         * the service is already performing a task this action will be queued.
-         *
-         * @see IntentService
-         */
-        fun startActionParse(context: Context, uris: Array<String>) {
-            val intent = Intent(context, MetaService::class.java)
-            intent.action = ACTION_PARSE
-            intent.putExtra(EXTRA_URIS, uris)
-            context.startService(intent)
-        }
-
-        /**
          * Increment counter and if all jobs are complete reset the counters
          */
         private fun jobComplete() {
@@ -233,30 +180,6 @@ class MetaService : PriorityIntentService("MetaService") {
             if (completed == sJobsTotal.get()) {
                 sJobsComplete.set(0)
                 sJobsTotal.set(0)
-            }
-        }
-
-        private fun getUnprocessedMetaCursor(c: Context): Cursor? {
-            return c.contentResolver.query(Meta.CONTENT_URI,
-                UpdateInfo.PROJECTION,
-                Meta.PROCESSED + " is null or " + Meta.PROCESSED + " = ?",
-                arrayOf(""), null)
-        }
-
-        private fun getUpdateArray(context: Context): List<UpdateInfo>? {
-            getUnprocessedMetaCursor(context)!!.use { c ->
-                if (c == null)
-                    return null
-
-                val uriIndex = c.getColumnIndex(Meta.URI)
-                val nameIndex = c.getColumnIndex(Meta.NAME)
-
-                val updates = ArrayList<UpdateInfo>()
-
-                while (c.moveToNext()) {
-                    updates.add(UpdateInfo(c.getString(uriIndex), c.getString(nameIndex)))
-                }
-                return updates
             }
         }
     }

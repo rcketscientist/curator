@@ -38,22 +38,35 @@ class DataRepository private constructor(private val database: AppDatabase) {
         metaStream.addSource<List<MetadataTest>>(meta, { metaStream.setValue(it) })
     }
 
-    val keywords: LiveData<List<SubjectEntity>>
-        get() = subjectStream
+    // ---- Pure meta database calls -------
+    fun images(uris: List<String>) = database.metadataDao().getAll(uris)
 
     val meta: LiveData<List<MetadataTest>>
         get() = metaStream
 
-    val lifecycleParents = database.folderDao().lifecycleParents
-    val streamParents = database.folderDao().streamParents
-    fun insertParent(entity: FolderEntity) = database.folderDao().insert(entity)
+    fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
+
+    fun unprocessedImages() = database.metadataDao().unprocessedImages()
+
+    fun deleteImage(id: Long) {
+        Completable.fromAction { database.metadataDao().delete(id) }
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .subscribe()
+    }
+
+    fun deleteAllImages() {
+        Completable.fromAction { database.metadataDao().deleteAll() }
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .subscribe()
+    }
+
+    // ---- Pure subject database calls ----
+    val keywords: LiveData<List<SubjectEntity>>
+        get() = subjectStream
 
     fun convertToSubjectIds(subjects: List<String>) : List<Long> {
         return database.subjectDao().idsForNames(subjects)
     }
-
-    fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
-    fun unprocessedImages() = database.metadataDao().unprocessedImages()
 
     fun getChildSubjects(path: String): Single<List<SubjectEntity>> {
         return Single.create<List<SubjectEntity>> { emitter ->
@@ -69,6 +82,14 @@ class DataRepository private constructor(private val database: AppDatabase) {
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
     }
 
+    // ---- Pure folder database calls -----
+    val lifecycleParents = database.folderDao().lifecycleParents
+
+    val streamParents = database.folderDao().streamParents
+
+    fun insertParent(entity: FolderEntity) = database.folderDao().insert(entity)
+
+    // Note: folders aren't even a path enumeration anymore
 //    fun getChildFolders(path: String): Single<List<FolderEntity>> {
 //        return Single.create<List<FolderEntity>> { emitter ->
 //            val descendants = database.folderDao().getDescendants(path)
@@ -83,18 +104,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
 //        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
 //    }
 
-    fun deleteImage(id: Long) {
-        Completable.fromAction { database.metadataDao().delete(id) }
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .subscribe()
-    }
-
-    fun deleteAllImages() {
-        Completable.fromAction { database.metadataDao().deleteAll() }
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .subscribe()
-    }
-
+    // ---- Hybrid database calls ----------
     fun insertMeta(vararg inserts: MetadataTest) : List<Long> {
         val subjectMapping = mutableListOf<SubjectJunction>()
          inserts.forEach { image ->
