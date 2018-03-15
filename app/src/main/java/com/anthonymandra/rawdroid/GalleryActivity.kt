@@ -49,7 +49,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private val mResponseIntentFilter = IntentFilter()
 
-    protected lateinit var dataRepo: DataRepository
     protected lateinit var galleryAdapter: GalleryAdapter
 
     private var mMaterialCab: MaterialCab? = null
@@ -65,9 +64,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        dataRepo = (application as App).dataRepo
-
+        
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN)

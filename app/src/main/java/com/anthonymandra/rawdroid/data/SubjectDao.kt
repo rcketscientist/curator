@@ -25,8 +25,7 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
         "WHERE id = :metaId")
     abstract fun subjectsForImage(metaId: Long?): List<SubjectEntity>
 
-    @Query("SELECT id FROM xmp_subject" +
-        "WHERE name IN (:subjects)")
+    @Query("SELECT id FROM xmp_subject WHERE name IN (:subjects)")
     abstract fun idsForNames(subjects: List<String>) : List<Long>
 
     @Query("DELETE FROM xmp_subject")

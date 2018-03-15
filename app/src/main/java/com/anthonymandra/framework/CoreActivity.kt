@@ -30,6 +30,8 @@ import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.data.DataRepository
+import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.*
 import com.anthonymandra.util.FileUtil
 import com.crashlytics.android.Crashlytics
@@ -72,6 +74,8 @@ abstract class CoreActivity : DocumentActivity() {
      * @return The resource id of the layout to load
      */
     protected abstract val contentView: Int
+
+    protected val dataRepo by lazy { (application as App).dataRepo }
 
     /**
      * @return The root view for this activity.
@@ -701,11 +705,38 @@ abstract class CoreActivity : DocumentActivity() {
         return copyFile(fromImage, toImage)
     }
 
-    fun copyImages(images: Collection<Uri>, destination: Uri) {
+    /**
+     * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
+     * @param fromImage source image
+     * @param toImage target image
+     * @return success
+     * @throws WritePermissionException
+     */
+    @Throws(IOException::class)
+    private fun copyAssociatedFiles(fromImage: MetadataTest, toImage: Uri): Boolean {
+        val sourceUri = Uri.parse(fromImage.uri)
+        if (ImageUtil.hasXmpFile(this, sourceUri)) {
+            copyFile(ImageUtil.getXmpFile(this, sourceUri).uri,
+                    ImageUtil.getXmpFile(this, toImage).uri)
+        }
+        if (ImageUtil.hasJpgFile(this, sourceUri)) {
+            copyFile(ImageUtil.getJpgFile(this, sourceUri).uri,
+                    ImageUtil.getJpgFile(this, toImage).uri)
+        }
+
+        fromImage.uri = toImage.toString()  // update copied uri
+        val result = copyFile(sourceUri, toImage)
+        if (result)
+            dataRepo.updateMeta()
+        return result
+    }
+
+    fun copyImages(images: Collection<MetadataTest>, destination: Uri) {
         setMaxProgress(images.size)
         updateMessage("Copying...")
         Observable.fromIterable(images)
             .flatMap({ image ->
+                copyAssociatedFiles(image, destination)
                 copyImage(image, destination)
                     .subscribeOn(Schedulers.io())
             }, 10)  // concurrency must be on inner
@@ -742,7 +773,7 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    private fun copyTask(images: Collection<Uri>, destinationFolder: Uri) {
+    private fun copyTask(images: Collection<MetadataTest>, destinationFolder: Uri) {
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
         builder.setContentTitle(getString(R.string.importingImages))
             .setContentText("placeholder")
@@ -754,7 +785,7 @@ abstract class CoreActivity : DocumentActivity() {
             val dbInserts = ArrayList<ContentProviderOperation>()
             val progress = 0
             builder.setProgress(images.size, progress, false)
-            notificationManager?.notify(0, builder.build())
+            notificationManager.notify(0, builder.build())
             for (toCopy in images) {
                 try {
                     setWriteResume(WriteActions.COPY, arrayOf<Any>(remainingImages))
@@ -777,12 +808,12 @@ abstract class CoreActivity : DocumentActivity() {
                 remainingImages.remove(toCopy)
                 onImageAdded(toCopy)
                 builder.setProgress(images.size, progress, false)
-                notificationManager?.notify(0, builder.build())
+                notificationManager.notify(0, builder.build())
             }
             // When the loop is finished, updates the notification
             builder.setContentText("Complete")
                 .setProgress(0,0,false) // Removes the progress bar
-            notificationManager?.notify(0, builder.build())
+            notificationManager.notify(0, builder.build())
 
         }
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
