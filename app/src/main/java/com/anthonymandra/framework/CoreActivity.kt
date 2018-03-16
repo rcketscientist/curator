@@ -296,7 +296,7 @@ abstract class CoreActivity : DocumentActivity() {
 
         if (callingMethod is WriteActions) {
             when (callingMethod) {
-                CoreActivity.WriteActions.COPY -> copyTask(callingParameters[0] as Collection<Uri>, callingParameters[1] as Uri) //TODO
+                CoreActivity.WriteActions.COPY -> copyImages(callingParameters[0] as Collection<Uri>, callingParameters[1] as Uri) //TODO
                 CoreActivity.WriteActions.DELETE -> deleteTask(callingParameters[0] as Collection<Uri>)
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RENAME -> RenameTask().execute(*callingParameters)
@@ -727,106 +727,120 @@ abstract class CoreActivity : DocumentActivity() {
         fromImage.uri = toImage.toString()  // update copied uri
         val result = copyFile(sourceUri, toImage)
         if (result)
-            dataRepo.updateMeta()
+            dataRepo.updateMeta(fromImage)
         return result
     }
 
-    fun copyImages(images: Collection<MetadataTest>, destination: Uri) {
+    fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
         setMaxProgress(images.size)
-        updateMessage("Copying...")
-        Observable.fromIterable(images)
-            .flatMap({ image ->
-                copyAssociatedFiles(image, destination)
-                copyImage(image, destination)
-                    .subscribeOn(Schedulers.io())
-            }, 10)  // concurrency must be on inner
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : Observer<Uri> {
-                override fun onSubscribe(d: Disposable) {}
-
-                override fun onNext(uri: Uri) {
-                    incrementProgress()
-                }
-
-                override fun onError(e: Throwable) {
-                    //TODO
-                }
-
-                override fun onComplete() {
-                    endProgress()
-                    updateMessage(null)
-                }
-            })
-    }
-
-    private fun copyImage(uri: Uri, destinationFolder: Uri): Observable<Uri> {
-        return Observable.fromCallable {
-            val source = UsefulDocumentFile.fromUri(this@CoreActivity, uri)
-            val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
-            copyAssociatedFiles(uri, destinationFile)
-            // TODO: Why didn't I just update the location?
-//            val cv = ContentValues()
-//            MetaUtil.getImageFileInfo(this, uri, cv)
-//            contentResolver.insert(Meta.CONTENT_URI, cv)
-            onImageAdded(uri)
-            destinationFile
-        }
-    }
-
-    private fun copyTask(images: Collection<MetadataTest>, destinationFolder: Uri) {
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
         builder.setContentTitle(getString(R.string.importingImages))
-            .setContentText("placeholder")
-            .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText("placeholder")
+                .setSmallIcon(R.mipmap.ic_launcher)
 
-        Completable.create {
-            val remainingImages = ArrayList(images)
+        var progress = 0
+        builder.setProgress(images.size, progress, false)
+        notificationManager.notify(0, builder.build())
 
-            val dbInserts = ArrayList<ContentProviderOperation>()
-            val progress = 0
-            builder.setProgress(images.size, progress, false)
-            notificationManager.notify(0, builder.build())
-            for (toCopy in images) {
-                try {
-                    setWriteResume(WriteActions.COPY, arrayOf<Any>(remainingImages))
-
-                    val source = UsefulDocumentFile.fromUri(this@CoreActivity, toCopy)
-                    val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
-                    copyAssociatedFiles(toCopy, destinationFile)
-                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile))
-                } catch (e: DocumentActivity.WritePermissionException) {
-                    e.printStackTrace()
-                    return@create // exit condition: requesting write permission the restart
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: RuntimeException) {
-                    e.printStackTrace()
-                    Crashlytics.setString("uri", toCopy.toString())
-                    Crashlytics.logException(e)
-                }
-
-                remainingImages.remove(toCopy)
-                onImageAdded(toCopy)
-                builder.setProgress(images.size, progress, false)
-                notificationManager.notify(0, builder.build())
-            }
-            // When the loop is finished, updates the notification
-            builder.setContentText("Complete")
-                .setProgress(0,0,false) // Removes the progress bar
-            notificationManager.notify(0, builder.build())
-
-        }
+        Observable.fromIterable(images)
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .subscribeBy (
+            .subscribeBy(
+                onNext = {
+                    val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
+                    copyAssociatedFiles(it, destinationFile)
+                    onImageAdded(Uri.parse(it.uri))
+                    builder.setProgress(images.size, ++progress, false)
+                    notificationManager.notify(0, builder.build())
+                    incrementProgress()
+                },
                 onComplete = {
-                    clearWriteResume()
+                    endProgress()
+                    updateMessage(null)
                     onImageSetChanged()
+
+                    // When the loop is finished, updates the notification
+                    builder.setContentText("Complete")
+                            .setProgress(0,0,false) // Removes the progress bar
+                    notificationManager.notify(0, builder.build())
                 },
                 onError = {
+                    it.printStackTrace()
+//                    Crashlytics.setString("uri", toCopy.toString())
+                    Crashlytics.logException(it)
                     builder.setContentText("Some images did not transfer")
                 }
             )
     }
+
+//    private fun copyImage(uri: Uri, destinationFolder: Uri): Observable<Uri> {
+//        return Observable.fromCallable {
+//            val source = UsefulDocumentFile.fromUri(this@CoreActivity, uri)
+//            val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
+//            copyAssociatedFiles(uri, destinationFile)
+//            // TODO: Why didn't I just update the location?
+////            val cv = ContentValues()
+////            MetaUtil.getImageFileInfo(this, uri, cv)
+////            contentResolver.insert(Meta.CONTENT_URI, cv)
+//            onImageAdded(uri)
+//            destinationFile
+//        }
+//    }
+
+//    private fun copyTask(images: Collection<Uri>, destinationFolder: Uri) {
+//        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+//        builder.setContentTitle(getString(R.string.importingImages))
+//            .setContentText("placeholder")
+//            .setSmallIcon(R.mipmap.ic_launcher)
+//
+//        Completable.create {
+//            val remainingImages = ArrayList(images)
+//
+//            val dbInserts = ArrayList<ContentProviderOperation>()
+//            val progress = 0
+//            builder.setProgress(images.size, progress, false)
+//            notificationManager.notify(0, builder.build())
+//            for (toCopy in images) {
+//                try {
+//                    setWriteResume(WriteActions.COPY, arrayOf<Any>(remainingImages))
+//
+//                    val source = UsefulDocumentFile.fromUri(this@CoreActivity, toCopy)
+//                    val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
+//                    copyAssociatedFiles(toCopy, destinationFile)
+//                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile))
+//                } catch (e: DocumentActivity.WritePermissionException) {
+//                    e.printStackTrace()
+//                    return@create // exit condition: requesting write permission the restart
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                } catch (e: RuntimeException) {
+//                    e.printStackTrace()
+//                    Crashlytics.setString("uri", toCopy.toString())
+//                    Crashlytics.logException(e)
+//                }
+//
+//                remainingImages.remove(toCopy)
+//                onImageAdded(toCopy)
+//                builder.setProgress(images.size, progress, false)
+//                notificationManager.notify(0, builder.build())
+//            }
+//            // When the loop is finished, updates the notification
+//            builder.setContentText("Complete")
+//                .setProgress(0,0,false) // Removes the progress bar
+//            notificationManager.notify(0, builder.build())
+//
+//        }
+//            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+//            .subscribeBy (
+//                onComplete = {
+//                    clearWriteResume()
+//                    onImageSetChanged()
+//                },
+//                onError = {
+//                    builder.setContentText("Some images did not transfer")
+//                }
+//            )
+//    }
 
     fun saveTask(images: Collection<Uri>, destinationFolder: Uri, config: ImageConfiguration) {
         if (images.isEmpty()) return
