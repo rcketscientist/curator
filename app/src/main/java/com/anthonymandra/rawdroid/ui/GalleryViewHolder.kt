@@ -27,15 +27,16 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
     fun bind(image: MetadataTest?) {
         this.image = image
 
+        filenameView.text = image?.name
+        xmp.visibility = if (image?.subjectIds.orEmpty().isEmpty()) View.INVISIBLE else View.VISIBLE
+
         if (image?.rating != null) {
-            galleryRatingBar.rating = image.rating!!
+            galleryRatingBar.rating = image.rating ?: 0f
             galleryRatingBar.visibility = View.VISIBLE
         }
         else {
             galleryRatingBar.visibility = View.INVISIBLE
         }
-
-        xmp.visibility = if (image?.subjectIds.orEmpty().isEmpty()) View.INVISIBLE else View.VISIBLE
 
         if (image?.label != null) {
             label.visibility = View.VISIBLE
@@ -51,18 +52,14 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
             label.visibility = View.INVISIBLE
         }
 
-        filenameView.text = image?.name
-
-        // FIXME: Pretty sure this is deprecated
-        Glide.with(itemView.context)
-            .using(RawModelLoader(itemView.context))
-            .load(RawModelLoader.ImageInfo(Uri.parse(image?.uri),
-                image?.let { Meta.ImageType.fromInt(image.type) }))
-            .centerCrop()
-            .into(galleryImageView)
-
+        // FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
         image?.let {
-            galleryImageView.rotation = MetaUtil.getRotation(image.orientation).toFloat()
+            Glide.with(itemView.context)
+                .using(RawModelLoader(itemView.context))
+                .load(RawModelLoader.ImageInfo(Uri.parse(it.uri), Meta.ImageType.fromInt(it.type) ))
+                .centerCrop()
+                .into(galleryImageView)
+            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
         }
     }
 

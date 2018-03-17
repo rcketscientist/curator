@@ -16,13 +16,11 @@
 
 package com.android.gallery3d.app;
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.gallery3d.common.Utils;
@@ -39,7 +37,9 @@ import com.android.gallery3d.util.FutureListener;
 import com.android.gallery3d.util.ThreadPool;
 import com.android.gallery3d.util.ThreadPool.Job;
 import com.android.gallery3d.util.ThreadPool.JobContext;
-import com.anthonymandra.content.Meta;
+import com.anthonymandra.rawdroid.data.AppDatabase;
+import com.anthonymandra.rawdroid.data.DataRepository;
+import com.anthonymandra.rawdroid.data.MetadataTest;
 import com.anthonymandra.util.ImageUtil;
 import com.anthonymandra.util.MetaUtil;
 import com.crashlytics.android.Crashlytics;
@@ -165,6 +165,9 @@ public class PhotoDataAdapter implements Model {
 
     private final GalleryApp mActivity;
 
+    private final DataRepository dataRepo;
+
+
 //    private final Target initialImage = new Target()
 //    {
 //        @Override
@@ -198,6 +201,9 @@ public class PhotoDataAdapter implements Model {
         mCurrentIndex = position;
         mThreadPool = activity.getThreadPool();
         mNeedFullImage = true;
+
+       dataRepo = DataRepository.Companion.getInstance(
+           AppDatabase.Companion.getInstance(activity.getAndroidContext()));
 
         mUploader = new TiledTexture.Uploader(activity.getGLRoot());
 
@@ -502,10 +508,8 @@ public class PhotoDataAdapter implements Model {
     @Override
     public void getImageSize(int offset, PhotoView.Size size) {
         Uri uri = getImage(mCurrentIndex + offset);
-        if (uri == null)
-            return;
-
         getImageSize(uri, size);
+        if (uri == null) return;
     }
 
     public void getImageSize(Uri uri, PhotoView.Size size)
@@ -515,8 +519,7 @@ public class PhotoDataAdapter implements Model {
             populateImageData(uri);
         }
         ImageData currentImage = imageData.get(uri);
-        if (currentImage == null)
-            return;
+        if (currentImage == null) return;
 
         size.height = currentImage.height;
         size.width = currentImage.width;
@@ -524,36 +527,14 @@ public class PhotoDataAdapter implements Model {
 
     private void populateImageData(Uri uri)
     {
-        try (Cursor c = getCursor(uri))
-        {
-            if (c == null)
-                return;
+        MetadataTest meta = dataRepo.image(uri.toString()).getValue();
+        if (meta == null) return;
 
-            ImageData data = new ImageData();
-            data.height = c.getInt(c.getColumnIndex(Meta.HEIGHT));
-            data.width = c.getInt(c.getColumnIndex(Meta.WIDTH));
-            data.orientation = c.getInt(c.getColumnIndex(Meta.ORIENTATION));
-
-            imageData.put(uri, data);
-        }
-    }
-
-    private @Nullable Cursor getCursor(Uri item)
-    {
-        if (item == null)
-            return null;
-
-        Cursor c = MetaUtil.getMetaCursor(mActivity.getAndroidContext(), item);
-
-        if (c == null)
-            return null;
-
-        if (!c.moveToFirst())
-        {
-            c.close();
-            return null;
-        }
-        return c;
+        ImageData data = new ImageData();
+        data.height = meta.getHeight();
+        data.width = meta.getWidth();
+        data.orientation = meta.getOrientation();
+        imageData.put(Uri.parse(meta.getUri()), data);
     }
 
     @Override

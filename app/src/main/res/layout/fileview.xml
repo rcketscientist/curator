@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    app:foreground="@drawable/photogrid_list_selector">
+    android:foreground="@drawable/gallery_selector">
 
     <!-- Square constraint ratio -->
     <ImageView

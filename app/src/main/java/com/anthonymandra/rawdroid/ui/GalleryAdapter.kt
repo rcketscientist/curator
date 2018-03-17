@@ -2,12 +2,10 @@ package com.anthonymandra.rawdroid.ui
 
 import android.arch.paging.PagedListAdapter
 import android.net.Uri
-import android.provider.BaseColumns
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.data.MetadataTest
 import java.util.*
 import kotlin.collections.HashSet
@@ -23,7 +21,6 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
             clearSelection()
             field = value
         }
-
 
     var onSelectionChangedListener: OnSelectionUpdatedListener? = null
     /**
@@ -55,13 +52,17 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
         holder.itemView.setOnClickListener {
             val clickPosition = holder.adapterPosition
             if (clickPosition == RecyclerView.NO_POSITION) return@setOnClickListener
-            toggleSelection(clickPosition)
+
             onItemClickListener?.onItemClick(this, it, clickPosition, getItemId(clickPosition))
+
+            toggleSelection(clickPosition)
         }
 
         holder.itemView.setOnLongClickListener {
             val clickPosition = holder.adapterPosition
             if (clickPosition == RecyclerView.NO_POSITION) return@setOnLongClickListener false
+
+            onItemLongClickListener?.onItemLongClick(this, it, clickPosition, getItemId(clickPosition))
 
             if (multiSelectMode) {
                 addGroupSelection(clickPosition)
@@ -69,15 +70,13 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
                 multiSelectMode = true
                 toggleSelection(clickPosition)
             }
-
-            return@setOnLongClickListener onItemLongClickListener?.onItemLongClick(
-                this, it, clickPosition, getItemId(clickPosition)) ?: false
+            true
         }
 
         holder.itemView.isActivated = mSelectedItems.contains(Uri.parse(item?.uri))
     }
 
-    fun addGroupSelection(position: Int) {
+    private fun addGroupSelection(position: Int) {
         if (mSelectedPositions.size > 0) {
             val first = mSelectedPositions.first()
             val last = mSelectedPositions.last()
@@ -96,7 +95,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
             addSelection(getUri(i), i)
         }
         updateSelection()
-        notifyItemRangeChanged(start, end - start)
+        notifyItemRangeChanged(start, end - start + 1)  // inclusive
     }
 
     private fun addSelection(uri: Uri?, position: Int) {
@@ -113,7 +112,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
     }
 
     @SuppressWarnings("unused")
-    fun clearSelection() {
+    private fun clearSelection() {
         mSelectedItems.clear()
         mSelectedPositions.clear()
         updateSelection()
@@ -121,7 +120,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
         notifyItemRangeChanged(0, itemCount)
     }
 
-    fun toggleSelection(position: Int) {
+    private fun toggleSelection(position: Int) {
         // We could handle this internally with an extra unnoticed toggle when entering viewer,
         // but we'd still need the selection range logic, which doesn't have access to each
         // individual view, so might as well do everything the same way
@@ -140,7 +139,8 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
 
     fun selectAll() {
         multiSelectMode = true
-        val list = currentList ?: return
+        val list = currentList ?: return    // TODO: Need to spin through and gather all ids
+        // Actually best solution is prolly to accept ids for selection externally
         mSelectedItems.addAll( list.mapNotNull { Uri.parse(it.uri) } )
         updateSelection()
         notifyItemRangeChanged(0, itemCount)
@@ -188,7 +188,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
          *
          * @return true if the callback consumed the long click, false otherwise
          */
-        fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long): Boolean
+        fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long)
     }
 
     interface OnSelectionUpdatedListener {
@@ -204,6 +204,6 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
                 oldItem.uri == newItem.uri
         }
         // TODO: This could be an entity, although I think the paging will allow full meta queries
-        val REQUIRED_COLUMNS = arrayOf(BaseColumns._ID, Meta.LABEL, Meta.NAME, Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI, Meta.TYPE)
+//        val REQUIRED_COLUMNS = arrayOf(BaseColumns._ID, Meta.LABEL, Meta.NAME, Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI, Meta.TYPE)
     }
 }

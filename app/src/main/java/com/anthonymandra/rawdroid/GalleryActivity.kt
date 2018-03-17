@@ -29,9 +29,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
-import com.android.gallery3d.common.Utils
 import com.anthonymandra.framework.*
-import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
@@ -55,8 +53,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     private var mXmpFilterFragment: XmpFilterFragment? = null
 
     protected val isContextModeActive: Boolean
-        get() = mMaterialCab !=
-            null && mMaterialCab!!.isActive
+        get() = mMaterialCab?.isActive ?: false
 
     private enum class WriteResume {
         Search
@@ -132,9 +129,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES)
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, mResponseIntentFilter)
 
-        if (intent.data != null) {
-            ImageUtil.importKeywords(this, intent.data)
-        }
+        intent.data?.let{ ImageUtil.importKeywords(this, it) }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -153,15 +148,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                 .asSequence()
                 .map { Uri.parse(it) }
                 .forEach {
-                    try {
-                        val pfd = contentResolver.openFileDescriptor(it, "r")
-                        // If pfd exists then this is a reconnected device, avoid hassling user
-                        if (pfd != null) {
-                            Utils.closeSilently(pfd)
-                            return
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    contentResolver.openFileDescriptor(it, "r").use {
+                        it ?: return
                     }
                 }
 
@@ -318,7 +306,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         //		}
 
         //		new CopyTask().execute(mItemsForIntent, destination);
-        copyImages(mItemsForIntent, destination)
+        dataRepo.images(mItemsForIntent.map { it.toString() }).value?.let {
+            copyImages(it, destination) // FIXME: GHETTO, threadlock and messy!
+        }
     }
 
     override fun updateMessage(message: String?) {
@@ -449,9 +439,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     }
 
     override fun onSelectionUpdated(selectedUris: Collection<Uri>) {
-        if (mMaterialCab != null) {
-            mMaterialCab!!.setTitle(selectedUris.size.toString() + " " + getString(R.string.selected))
-        }
+        mMaterialCab?.setTitle(selectedUris.size.toString() + " " + getString(R.string.selected))
         xmpEditFragment.reset()   // reset the panel to ensure it's clear it's not tied to existing values
     }
 
@@ -481,19 +469,17 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     protected fun startContextMode() {
         mMaterialCab = MaterialCab(this, R.id.cab_stub)
-            .setTitle(getString(R.string.selectItems))
             .setMenu(R.menu.gallery_contextual)
             .start(GalleryActionMode())
     }
 
     protected fun endContextMode() {
-        if (mMaterialCab != null)
-            mMaterialCab!!.finish()
+        mMaterialCab?.finish()
     }
 
-    override fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long): Boolean {
-        startContextMode()
-        return true
+    override fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long) {
+        if (!isContextModeActive)
+            startContextMode()
     }
 
     override fun onResumeWriteAction(callingMethod: Enum<*>?, callingParameters: Array<Any>) {
@@ -510,7 +496,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     override fun onItemClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long) {
         val uri = galleryAdapter.getUri(position)
         // Don't start an intent while in context mode
-        if (galleryAdapter.multiSelectMode) return
+        if (isContextModeActive) return
 
         val viewer = Intent(this, ViewerChooser::class.java)
         viewer.data = uri

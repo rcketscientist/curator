@@ -67,9 +67,8 @@ class MetaService : PriorityIntentService("MetaService") {
 
         try {
             val updates = images
-                .filter {
-                    !it.processed
-                }.map {
+                .filter { !it.processed }
+                .map {
                     val metadata = MetaUtil.readMetadata(this, repo, it)
                     jobComplete()
 

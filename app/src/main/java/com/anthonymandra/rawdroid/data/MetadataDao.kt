@@ -39,6 +39,9 @@ abstract class MetadataDao {
     @Query("SELECT * FROM meta WHERE id = :id")
     abstract operator fun get(id: Long): LiveData<MetadataEntity>
 
+    @Query("SELECT * FROM meta WHERE uri = :uri")
+    abstract operator fun get(uri: String): LiveData<MetadataTest>
+
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun getAll(uris: List<String>): LiveData<List<MetadataTest>>
 

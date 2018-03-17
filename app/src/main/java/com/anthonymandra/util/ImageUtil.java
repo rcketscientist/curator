@@ -44,6 +44,7 @@ import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
+import com.anthonymandra.rawdroid.data.DataRepository;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -155,16 +156,6 @@ public class ImageUtil
     /**
      * --- Content Helpers -------------------------------------------------------------------------
      */
-
-    //TODO: Perhaps this makes more sense in the meta provider itself?
-
-    public static boolean isInDatabase(Context c, Uri uri)
-    {
-        try (Cursor cursor = MetaUtil.getMetaCursor(c, uri))
-        {
-            return cursor != null && cursor.moveToFirst();
-        }
-    }
 
     /**
      * Remove db entries for files that are no longer present.  This should be threaded.
@@ -876,7 +867,7 @@ public class ImageUtil
                 int index = y * width + x;
                 // Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
                 // Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
-                float opacity = Color.alpha(mark[i]) / 510f;
+                @SuppressLint("Range") float opacity = Color.alpha(mark[i]) / 510f;
                 source[index] = Color.argb(
                         Color.alpha(source[index]),
                         Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
@@ -954,7 +945,7 @@ public class ImageUtil
                 int index = y * width + x;
                 // Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
                 // Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
-                float opacity = Color.alpha(mark[i]) / 510f;
+                @SuppressLint("Range") float opacity = Color.alpha(mark[i]) / 510f;
                 source[index] = Color.argb(
                         Color.alpha(source[index]),
                         Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
@@ -1058,11 +1049,9 @@ public class ImageUtil
             int width = -1;
             // TODO: This could be eliminated by allowing native to request image, it knows the image size already
             // TODO: It's possible this image is not processed meaning this would fail!
-            try (Cursor metaCursor = MetaUtil.INSTANCE.getMetaCursor(c, source, projection))
-                {
-                if (c != null && metaCursor.moveToFirst())
-                    width = metaCursor.getInt(metaCursor.getColumnIndex(Meta.WIDTH));
-            }
+
+            // FIXME:
+            width = DataRepository.Companion.getInstance(AppDatabase.Companion.getInstance(c)).image(source.toString()).getValue().getWidth();
             if (width == -1)
                 return null;
 

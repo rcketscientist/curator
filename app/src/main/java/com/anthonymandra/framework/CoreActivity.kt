@@ -30,7 +30,6 @@ import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.*
 import com.anthonymandra.util.FileUtil
@@ -38,9 +37,7 @@ import com.crashlytics.android.Crashlytics
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -296,7 +293,11 @@ abstract class CoreActivity : DocumentActivity() {
 
         if (callingMethod is WriteActions) {
             when (callingMethod) {
-                CoreActivity.WriteActions.COPY -> copyImages(callingParameters[0] as Collection<Uri>, callingParameters[1] as Uri) //TODO
+                CoreActivity.WriteActions.COPY ->
+                    dataRepo.images(callingParameters[0] as List<String>).value?.let {
+                        copyImages(it, callingParameters[1] as Uri) // FIXME: GHETTO, threadlock and messy!
+                    }
+
                 CoreActivity.WriteActions.DELETE -> deleteTask(callingParameters[0] as Collection<Uri>)
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RENAME -> RenameTask().execute(*callingParameters)
@@ -911,7 +912,8 @@ abstract class CoreActivity : DocumentActivity() {
                     notificationManager?.notify(0, builder.build())
 
                     onImageAdded(destinationFile.uri)
-                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile.uri))
+                    // TODO: FIXME
+//                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile.uri))
                     remainingImages.remove(toSave)
                 }}
             }
@@ -972,7 +974,8 @@ abstract class CoreActivity : DocumentActivity() {
                 try {
                     if (deleteAssociatedFiles(toDelete)) {
                         onImageRemoved(toDelete)
-                        dbDeletes.add(MetaUtil.newDelete(toDelete))
+                        // TODO: FIXME
+//                        dbDeletes.add(MetaUtil.newDelete(toDelete))
                     }
                 } catch (e: DocumentActivity.WritePermissionException) {
                     e.printStackTrace()
@@ -1027,7 +1030,8 @@ abstract class CoreActivity : DocumentActivity() {
                 try {
                     //TODO: Handle related files
                     recycleBin.addFile(toRecycle)
-                    dbDeletes.add(MetaUtil.newDelete(toRecycle))
+                    // TODO: FIXME
+//                    dbDeletes.add(MetaUtil.newDelete(toRecycle))
                 } catch (e: DocumentActivity.WritePermissionException) {
                     e.printStackTrace()
                     // We'll be automatically requesting write permission so kill this process
@@ -1041,7 +1045,8 @@ abstract class CoreActivity : DocumentActivity() {
                 onImageRemoved(toRecycle)
             }
 
-            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
+            // TODO: FIXME
+//            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
             return null
         }
 
@@ -1091,7 +1096,8 @@ abstract class CoreActivity : DocumentActivity() {
                     val uri = Uri.fromFile(recycledFile)
                     moveFile(uri, toRestore)
                     onImageAdded(toRestore)
-                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, toRestore))
+                    // TODO: FIXME
+//                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, toRestore))
                 } catch (e: DocumentActivity.WritePermissionException) {
                     e.printStackTrace()
                     totalSuccess = false
@@ -1100,8 +1106,8 @@ abstract class CoreActivity : DocumentActivity() {
                 }
 
             }
-
-            MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts)
+            // TODO: FIXME
+//            MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts)
             return totalSuccess
         }
 
@@ -1205,8 +1211,8 @@ abstract class CoreActivity : DocumentActivity() {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
-            MetaUtil.updateMetaDatabase(this@CoreActivity, operations)
+            // TODO: FIXME
+//            MetaUtil.updateMetaDatabase(this@CoreActivity, operations)
             return true
         }
 
@@ -1231,7 +1237,8 @@ abstract class CoreActivity : DocumentActivity() {
                     continue
 
                 val values = pair.value
-                databaseUpdates.add(MetaUtil.newUpdate(pair.key, values))
+                // TODO: FIXME
+//                databaseUpdates.add(MetaUtil.newUpdate(pair.key, values))
 
                 //				final Metadata meta = new Metadata(); // TODO: need to pull the existing metadata, this wipes everything
                 //				meta.addDirectory(new XmpDirectory());
@@ -1255,7 +1262,8 @@ abstract class CoreActivity : DocumentActivity() {
                     //TODO: need DocumentActivity.openOutputStream
                 } catch (e: DocumentActivity.WritePermissionException) {
                     // Write pending updates, method will resume with remaining images
-                    MetaUtil.updateMetaDatabase(this@CoreActivity, databaseUpdates)
+                    // TODO: FIXME
+//                    MetaUtil.updateMetaDatabase(this@CoreActivity, databaseUpdates)
                     return false
                 }
 
@@ -1268,7 +1276,8 @@ abstract class CoreActivity : DocumentActivity() {
                 uris.remove()  //concurrency-safe remove
             }
 
-            MetaUtil.updateMetaDatabase(this@CoreActivity, databaseUpdates)
+            // TODO: FIXME
+//            MetaUtil.updateMetaDatabase(this@CoreActivity, databaseUpdates)
             return true
         }
 
