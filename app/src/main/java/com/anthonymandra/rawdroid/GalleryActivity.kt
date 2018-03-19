@@ -304,11 +304,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         //			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
         //			return;
         //		}
-
-        //		new CopyTask().execute(mItemsForIntent, destination);
-        dataRepo.images(mItemsForIntent.map { it.toString() }).value?.let {
-            copyImages(it, destination) // FIXME: GHETTO, threadlock and messy!
-        }
+        copyImages(mItemsForIntent, destination)
     }
 
     override fun updateMessage(message: String?) {
@@ -356,10 +352,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         contentResolver.takePersistableUriPermission(treeUri,
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-    }
-
-    private fun storeSelectionForIntent() {
-        mItemsForIntent = galleryAdapter.selectedItems
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -37,6 +37,7 @@ import com.crashlytics.android.Crashlytics
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -58,7 +59,7 @@ abstract class CoreActivity : DocumentActivity() {
     /**
      * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
      */
-    protected var mItemsForIntent: Collection<Uri> = Collections.emptyList()
+    protected var mItemsForIntent = mutableListOf<Uri>()
 
     private lateinit var licenseHandler: LicenseHandler
     protected abstract val selectedImages: Collection<Uri>
@@ -181,8 +182,9 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    private fun storeSelectionForIntent() {
-        mItemsForIntent = selectedImages
+    protected fun storeSelectionForIntent() {
+        mItemsForIntent.clear()
+        mItemsForIntent.addAll(selectedImages)
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -732,6 +734,17 @@ abstract class CoreActivity : DocumentActivity() {
         return result
     }
 
+    fun copyImages(images: List<Uri>, destinationFolder: Uri) {
+        Single.create<List<MetadataTest>> {
+                it.onSuccess(dataRepo.imagesBlocking(images.map { it.toString() }))
+            }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { copyImages(it, destinationFolder)},
+                onError = {}// do nothing for now
+            )
+    }
+
     fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
         setMaxProgress(images.size)
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
@@ -744,8 +757,8 @@ abstract class CoreActivity : DocumentActivity() {
         notificationManager.notify(0, builder.build())
 
         Observable.fromIterable(images)
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = {
                     val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
@@ -1361,6 +1374,8 @@ abstract class CoreActivity : DocumentActivity() {
 
         const val SWAP_BIN_DIR = "swap"
         const val RECYCLE_BIN_DIR = "recycle"
+
+        const val SELECTION = "selection"
 
         private const val REQUEST_SAVE_AS_DIR = 15
 

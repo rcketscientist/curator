@@ -39,7 +39,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
     }
 
     // ---- Pure meta database calls -------
-    fun images(uris: List<String>) = database.metadataDao().getAll(uris)
+    fun imagesBlocking(uris: List<String>) = database.metadataDao().blocking(uris)
+    fun images(uris: List<String>) = database.metadataDao().stream(uris)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
     val meta: LiveData<List<MetadataTest>>

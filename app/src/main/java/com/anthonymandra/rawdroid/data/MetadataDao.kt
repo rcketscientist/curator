@@ -43,7 +43,10 @@ abstract class MetadataDao {
     abstract operator fun get(uri: String): LiveData<MetadataTest>
 
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun getAll(uris: List<String>): LiveData<List<MetadataTest>>
+    abstract fun blocking(uris: List<String>): List<MetadataTest>
+
+    @Query("SELECT * FROM meta WHERE uri IN (:uris)")
+    abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
 
     @Query("SELECT * FROM meta WHERE processed = 0")    // 0 = true
     abstract fun unprocessedImages() : List<MetadataTest>    // TODO: maybe page this?
