@@ -261,23 +261,24 @@ abstract class CoreActivity : DocumentActivity() {
 
         val save = dialog.findViewById<View>(R.id.buttonSave) as Button
         save.setOnClickListener {
-            var config: ImageConfiguration = JpegConfiguration()
-            when (tabs.currentTab) {
-                0 //JPG
-                -> {
-                    config = JpegConfiguration()
-                    config.quality = qualityBar.progress
+//            var config: ImageConfiguration = JpegConfiguration()
+            val formatConfig = when (tabs.currentTab) {
+                0 /*JPG */ -> {
+                    val c = JpegConfiguration()
+                    c.quality = qualityBar.progress
+                    c
                 }
-                1 //TIF
-                -> {
-                    config = TiffConfiguration()
-                    config.compress = compressSwitch.isChecked
+                1 /*TIF*/ -> {
+                    val c = TiffConfiguration()
+                    c.compress = compressSwitch.isChecked
+                    c
                 }
+                else -> JpegConfiguration()
             }
             dialog.dismiss()
 
             if (setDefault.isChecked)
-                config.savePreference(this@CoreActivity)
+                formatConfig.savePreference(this@CoreActivity)
 
             saveImage(mItemsForIntent, destination, config)
         }
@@ -693,7 +694,6 @@ abstract class CoreActivity : DocumentActivity() {
      * @param fromImage source image
      * @param toImage target image
      * @return success
-     * @throws WritePermissionException
      */
     @Throws(IOException::class)
     private fun copyAssociatedFiles(fromImage: Uri, toImage: Uri): Boolean {
@@ -713,7 +713,6 @@ abstract class CoreActivity : DocumentActivity() {
      * @param fromImage source image
      * @param toImage target image
      * @return success
-     * @throws WritePermissionException
      */
     @Throws(IOException::class)
     private fun copyAssociatedFiles(fromImage: MetadataTest, toImage: Uri): Boolean {
@@ -870,7 +869,7 @@ abstract class CoreActivity : DocumentActivity() {
             val dbInserts = ArrayList<ContentProviderOperation>()
             val progress = 0
             builder.setProgress(images.size, progress, false)
-            notificationManager?.notify(0, builder.build())
+            notificationManager.notify(0, builder.build())
 
             images.forEach { toSave ->
                 setWriteResume(WriteActions.SAVE_IMAGE, arrayOf(remainingImages, destinationFolder, config))
@@ -922,7 +921,7 @@ abstract class CoreActivity : DocumentActivity() {
                     }
 
                     builder.setProgress(images.size, progress, false)
-                    notificationManager?.notify(0, builder.build())
+                    notificationManager.notify(0, builder.build())
 
                     onImageAdded(destinationFile.uri)
                     // TODO: FIXME
@@ -934,7 +933,7 @@ abstract class CoreActivity : DocumentActivity() {
             // When the loop is finished, updates the notification
             builder.setContentText("Complete")
                 .setProgress(0,0,false) // Removes the progress bar
-            notificationManager?.notify(0, builder.build())
+            notificationManager.notify(0, builder.build())
         }
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
             .subscribeBy(
@@ -980,7 +979,7 @@ abstract class CoreActivity : DocumentActivity() {
             val dbDeletes = ArrayList<ContentProviderOperation>()
             val progress = 0
             builder.setProgress(images.size, progress, false)
-            notificationManager?.notify(0, builder.build())
+            notificationManager.notify(0, builder.build())
 
             images.forEach { toDelete ->
                 setWriteResume(WriteActions.DELETE, arrayOf<Any>(remainingImages))
@@ -1000,7 +999,7 @@ abstract class CoreActivity : DocumentActivity() {
             // When the loop is finished, updates the notification
             builder.setContentText("Complete")
                 .setProgress(0,0,false) // Removes the progress bar
-            notificationManager?.notify(0, builder.build())
+            notificationManager.notify(0, builder.build())
 
 //            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
         }
@@ -1134,7 +1133,7 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     @Throws(IOException::class)
-    fun renameImage(source: Uri, baseName: String?, updates: ArrayList<ContentProviderOperation>): Boolean {
+    fun renameImage(source: Uri, baseName: String, updates: ArrayList<ContentProviderOperation>): Boolean {
         val srcFile = UsefulDocumentFile.fromUri(this, source)
         val xmpFile = ImageUtil.getXmpFile(this, source)
         val jpgFile = ImageUtil.getJpgFile(this, source)
@@ -1142,9 +1141,9 @@ abstract class CoreActivity : DocumentActivity() {
         val filename = srcFile.name
         val sourceExt = filename.substring(filename.lastIndexOf("."), filename.length)
 
-        val srcRename = baseName!! + sourceExt
-        val xmpRename = baseName + ".xmp"
-        val jpgRename = baseName + ".jpg"
+        val srcRename = baseName + sourceExt
+        val xmpRename = "$baseName.xmp"
+        val jpgRename = "$baseName.jpg"
 
         // Do src first in case it's a jpg
         if (srcFile.renameTo(srcRename)) {
@@ -1211,6 +1210,8 @@ abstract class CoreActivity : DocumentActivity() {
                     setWriteResume(WriteActions.RENAME, arrayOf<Any>(remainingImages, format, customName))
 
                     val rename = formatRename(format, customName, counter, total)
+
+                    rename ?: return false
 
                     renameImage(image, rename, operations)
 
@@ -1309,11 +1310,11 @@ abstract class CoreActivity : DocumentActivity() {
     //TODO:
     private inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, val updateType: XmpUpdateField) : Runnable {
 //        private val selectedImages: Collection<Uri>?
-        private val projection = arrayOf(Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT)
+//        private val projection = arrayOf(Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT)
 
-        init {
+//        init {
 //            this.selectedImages = selectedImages
-        }
+//        }
 
         override fun run() {
             //			if (selectedImages.size() == 0)
@@ -1369,13 +1370,11 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     companion object {
-        private val TAG = CoreActivity::class.java.simpleName
+//        private val TAG = CoreActivity::class.java.simpleName
         private const val NOTIFICATION_CHANNEL = "notifications"
 
         const val SWAP_BIN_DIR = "swap"
         const val RECYCLE_BIN_DIR = "recycle"
-
-        const val SELECTION = "selection"
 
         private const val REQUEST_SAVE_AS_DIR = 15
 
