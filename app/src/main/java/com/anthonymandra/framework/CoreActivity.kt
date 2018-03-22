@@ -3,6 +3,7 @@ package com.anthonymandra.framework
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.app.Notification
 import android.app.NotificationManager
 import android.content.*
 import android.content.DialogInterface.OnCancelListener
@@ -47,7 +48,6 @@ import java.lang.ref.WeakReference
 import java.util.*
 
 abstract class CoreActivity : DocumentActivity() {
-
 
     protected lateinit var recycleBin: DocumentRecycleBin
     private lateinit var mSwapDir: File
@@ -727,43 +727,60 @@ abstract class CoreActivity : DocumentActivity() {
         }
 
         fromImage.uri = toImage.toString()  // update copied uri
-        val result = copyFile(sourceUri, toImage)
-        if (result)
-            dataRepo.updateMeta(fromImage)
-        return result
+
+        return copyFile(sourceUri, toImage)
     }
 
     fun copyImages(images: List<Uri>, destinationFolder: Uri) {
         Single.create<List<MetadataTest>> {
                 it.onSuccess(dataRepo.imagesBlocking(images.map { it.toString() }))
             }.subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { copyImages(it, destinationFolder)},
-                onError = {}// do nothing for now
+                onError = {}    // do nothing for now
             )
     }
 
+    private fun getHighPriorityNotification() : Int {
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            NotificationManager.IMPORTANCE_HIGH
+        } else {
+            Notification.PRIORITY_HIGH
+        }
+    }
+
     fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
-        setMaxProgress(images.size)
-        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.importingImages))
-                .setContentText("placeholder")
-                .setSmallIcon(R.mipmap.ic_launcher)
+        // Prep things on the UI thread
+        Completable.create {
+                setMaxProgress(images.size)
+            }
+            .subscribeOn(Schedulers.from(AppExecutors.MAIN))
+            .subscribe()
 
         var progress = 0
-        builder.setProgress(images.size, progress, false)
+        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
+        builder.setContentTitle(getString(R.string.importingImages))
+            .setContentText("placeholder")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setPriority(getHighPriorityNotification())
+            .setOngoing(true)
+            .setVibrate(longArrayOf(100, 100))
+            .setProgress(images.size, progress, false)
         notificationManager.notify(0, builder.build())
 
         Observable.fromIterable(images)
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .map {
+                val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
+                copyAssociatedFiles(it, destinationFile)
+                onImageAdded(Uri.parse(it.uri))
+                it.name
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onNext = {
-                    val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
-                    copyAssociatedFiles(it, destinationFile)
-                    onImageAdded(Uri.parse(it.uri))
                     builder.setProgress(images.size, ++progress, false)
+                    builder.setContentText(it)
                     notificationManager.notify(0, builder.build())
                     incrementProgress()
                 },
@@ -774,7 +791,7 @@ abstract class CoreActivity : DocumentActivity() {
 
                     // When the loop is finished, updates the notification
                     builder.setContentText("Complete")
-                            .setProgress(0,0,false) // Removes the progress bar
+                        .setProgress(0,0,false) // Removes the progress bar
                     notificationManager.notify(0, builder.build())
                 },
                 onError = {

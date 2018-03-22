@@ -19,7 +19,7 @@ import android.arch.persistence.room.PrimaryKey
 open class MetadataEntity {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
-    var name: String? = null
+    var name: String = ""
     var type: Int = 0
     var processed: Boolean = false
     var uri: String = ""

@@ -118,22 +118,25 @@ class DataRepository private constructor(private val database: AppDatabase) {
         return database.metadataDao().insert(*inserts)
     }
 
-    fun updateMeta(vararg updates: MetadataTest) {
-        val subjectMapping = mutableListOf<SubjectJunction>()
+    fun updateMeta(vararg updates: MetadataTest) : Completable {
+        return Completable.create{
+            val subjectMapping = mutableListOf<SubjectJunction>()
 
-        // We clear the existing subject map for each image
-        database.subjectJunctionDao().delete(updates.map { it.id })
+            // We clear the existing subject map for each image
+            database.subjectJunctionDao().delete(updates.map { it.id })
 
-        // Update the subject map
-        updates.forEach { image ->
-            image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it)}
-        }
-        if (!subjectMapping.isEmpty()) {
-            database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
-        }
+            // Update the subject map
+            updates.forEach { image ->
+                image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it)}
+            }
+            if (!subjectMapping.isEmpty()) {
+                database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
+            }
 
-        // Update that image table
-        database.metadataDao().update(*updates)
+            // Update that image table
+            database.metadataDao().update(*updates)
+            it.onComplete()
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
     }
 
     companion object {

@@ -315,7 +315,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         toolbarProgress.max = max
         toolbarProgress.isIndeterminate = false
         toolbarProgress.visibility = View.VISIBLE
-
     }
 
     override fun incrementProgress() {
