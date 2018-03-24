@@ -342,4 +342,8 @@
     <string name="medium">Medium</string>
     <string name="large">Large</string>
 
+    <!-- Notifications -->
+    <string name="io_channel_name">I/O</string>
+    <string name="io_channel_desc">Feedback on operations like copy and save.</string>
+
 </resources>

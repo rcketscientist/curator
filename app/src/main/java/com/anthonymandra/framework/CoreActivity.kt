@@ -1,10 +1,8 @@
 package com.anthonymandra.framework
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.app.Dialog
-import android.app.Notification
-import android.app.NotificationManager
+import android.annotation.TargetApi
+import android.app.*
 import android.content.*
 import android.content.DialogInterface.OnCancelListener
 import android.net.Uri
@@ -101,6 +99,7 @@ abstract class CoreActivity : DocumentActivity() {
         licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
 
         notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        createIoChannel()
 
         if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
             Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
@@ -179,6 +178,17 @@ abstract class CoreActivity : DocumentActivity() {
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private fun createIoChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(NOTIFICATION_CHANNEL,
+                getString(R.string.io_channel_name),
+                NotificationManager.IMPORTANCE_HIGH)
+            channel.description = getString(R.string.io_channel_desc)
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -763,7 +773,6 @@ abstract class CoreActivity : DocumentActivity() {
             .setContentText("placeholder")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(getHighPriorityNotification())
-            .setOngoing(true)
             .setVibrate(longArrayOf(100, 100))
             .setProgress(images.size, progress, false)
         notificationManager.notify(0, builder.build())
