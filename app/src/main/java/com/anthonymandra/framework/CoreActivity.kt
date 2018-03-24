@@ -188,6 +188,7 @@ abstract class CoreActivity : DocumentActivity() {
                 getString(R.string.io_channel_name),
                 NotificationManager.IMPORTANCE_HIGH)
             channel.description = getString(R.string.io_channel_desc)
+            channel.enableVibration(false)
             notificationManager.createNotificationChannel(channel)
         }
     }
@@ -769,11 +770,10 @@ abstract class CoreActivity : DocumentActivity() {
 
         var progress = 0
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.importingImages))
-            .setContentText("placeholder")
+        builder.setContentTitle(getString(R.string.copyingImages))
             .setSmallIcon(R.mipmap.ic_launcher)
             .setPriority(getHighPriorityNotification())
-            .setVibrate(longArrayOf(100, 100))
+            .setVibrate(longArrayOf(0, 0)) // We don't ask for permission, this allows peek
             .setProgress(images.size, progress, false)
         notificationManager.notify(0, builder.build())
 

@@ -313,6 +313,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     override fun setMaxProgress(max: Int) {
         toolbarProgress.max = max
+        toolbarProgress.progress = 0
         toolbarProgress.isIndeterminate = false
         toolbarProgress.visibility = View.VISIBLE
     }

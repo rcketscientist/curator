@@ -161,6 +161,7 @@
     <string name="saveJpg">Save Jpeg</string>
     <string name="share">Share</string>
     <string name="ratingRequest">If you enjoy using Curator please take a moment to rate it.\nThanks for your support!</string>
+    <string name="copyingImages">Copying Images…</string>
     <string name="importingImages">Importing Images…</string>
     <string name="exportingThumb">Exporting Thumbnails…</string>
     <string name="deletingFiles">Deleting Files…</string>
