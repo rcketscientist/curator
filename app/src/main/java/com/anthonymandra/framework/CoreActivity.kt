@@ -309,7 +309,7 @@ abstract class CoreActivity : DocumentActivity() {
             when (callingMethod) {
                 CoreActivity.WriteActions.COPY ->
                     dataRepo.images(callingParameters[0] as List<String>).value?.let {
-                        copyImages(it, callingParameters[1] as Uri) // FIXME: GHETTO, threadlock and messy!
+                        copyImages(it, callingParameters[1] as Uri)
                     }
 
                 CoreActivity.WriteActions.DELETE -> deleteTask(callingParameters[0] as Collection<Uri>)
@@ -552,6 +552,7 @@ abstract class CoreActivity : DocumentActivity() {
 
     private fun requestSaveAsDestination() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        intent.put
         startActivityForResult(intent, REQUEST_SAVE_AS_DIR)
     }
 

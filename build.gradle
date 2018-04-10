@@ -5,17 +5,17 @@ buildscript {
         google()
     }
     ext {
-        kotlinVersion = '1.2.30'
+        kotlinVersion = '1.2.31'
         compileSdkVersion = 26
         supportLibVersion = "27.1.0"
         // Architecture
-        lifecycleVersion = "1.1.0"
-        roomVersion = "1.1.0-alpha3"
-        pagingVersion = "1.0.0-alpha6"
-        coreTestingVersion = "1.1.0"
+        lifecycleVersion = "1.1.1"
+        roomVersion = "1.1.0-beta2"
+        pagingVersion = "1.0.0-beta1"
+        coreTestingVersion = "1.1.1"
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
