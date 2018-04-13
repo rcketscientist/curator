@@ -230,7 +230,7 @@ abstract class CoreActivity : DocumentActivity() {
         //        }
 
         // Load default save config if it exists and automatically apply it
-        val config = ImageConfiguration.loadPreference(this@CoreActivity)
+        val config = ImageConfiguration.loadPreference(this)
         if (config != null) {
             saveImage(mItemsForIntent, destination, config)
             return

@@ -17,16 +17,17 @@
         android:layout_alignParentTop="true"/>
 
     <TextView
+        android:id="@+id/valueQuality"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="100"
-        android:id="@+id/valueQuality"
+        android:layout_alignBottom="@+id/seekBarQuality"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/seekBarQuality"
-        android:layout_alignBottom="@+id/seekBarQuality"
+        android:gravity="center"
+        android:text="100"
         android:textAlignment="center"
-        android:gravity="center"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="14sp" />
 
     <SeekBar
         android:layout_width="match_parent"
