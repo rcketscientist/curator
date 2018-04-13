@@ -162,19 +162,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         }
     }
 
-    //	protected void updateQuery(XmpFilter filter) {
-    //		((App)getApplication()).getDatabase().metadataDao().getImages(
-    //				filter.andTrueOrFalse,
-    //				filter.sortColumn == XmpFilter.SortColumns.Name,
-    //				filter.segregateByType,
-    //				filter.sortAscending,
-    //				Arrays.asList(filter.xmp.label),
-    //				Arrays.asList(filter.xmp.subject),
-    //				filter.hiddenFolders,
-    //				Arrays.asList(filter.xmp.rating)
-    //		)
-    //	}
-
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 

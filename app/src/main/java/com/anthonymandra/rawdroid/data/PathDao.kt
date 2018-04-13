@@ -1,5 +1,7 @@
 package com.anthonymandra.rawdroid.data
 
+import android.arch.persistence.db.SimpleSQLiteQuery
+import android.arch.persistence.db.SupportSQLiteQuery
 import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.RawQuery
@@ -18,22 +20,22 @@ abstract class PathDao<T : PathEntity> {
     private val DESCENDANT_ENTITY = SELECT_ALL + FROM + " WHERE path LIKE '%s' || '%%' "
 
     @RawQuery
-    protected abstract fun internalGet(query: String): T
+    protected abstract fun internalGet(query: SupportSQLiteQuery): T
 
     @RawQuery
-    protected abstract fun internalGetAncestorIds(query: String): List<Long>
+    protected abstract fun internalGetAncestorIds(query: SupportSQLiteQuery): List<Long>
 
     @RawQuery
-    protected abstract fun internalGetDescendantIds(query: String): List<Long>
+    protected abstract fun internalGetDescendantIds(query: SupportSQLiteQuery): List<Long>
 
     @RawQuery
-    protected abstract fun internalGetAncestors(query: String): List<T>
+    protected abstract fun internalGetAncestors(query: SupportSQLiteQuery): List<T>
 
     @RawQuery
-    protected abstract fun internalGetDescendants(query: String): List<T>
+    protected abstract fun internalGetDescendants(query: SupportSQLiteQuery): List<T>
 
     operator fun get(id: Long?): T {
-        return internalGet(String.format(GET, id))
+        return internalGet(SimpleSQLiteQuery(String.format(GET, id)))
     }
 
     @Insert
@@ -53,7 +55,7 @@ abstract class PathDao<T : PathEntity> {
         var parentDepth = -1
 
         if (entity.hasParent()) {
-            val parent = internalGet(String.format(GET, entity.parent))
+            val parent = internalGet(SimpleSQLiteQuery(String.format(GET, entity.parent)))
             parentPath = parent.path + PATH_DELIMITER
             parentDepth = parent.depth
         }
@@ -89,18 +91,18 @@ abstract class PathDao<T : PathEntity> {
     }
 
     fun getDescendantIds(path: String): List<Long> {
-        return internalGetDescendantIds(String.format(DESCENDANT_ID, path))
+        return internalGetDescendantIds(SimpleSQLiteQuery(String.format(DESCENDANT_ID, path)))
     }
 
     fun getAncestorIds(path: String): List<Long> {
-        return internalGetAncestorIds(String.format(ANCESTOR_ID, path))
+        return internalGetAncestorIds(SimpleSQLiteQuery(String.format(ANCESTOR_ID, path)))
     }
 
     fun getDescendants(path: String): List<T> {
-        return internalGetDescendants(String.format(DESCENDANT_ENTITY, path))
+        return internalGetDescendants(SimpleSQLiteQuery(String.format(DESCENDANT_ENTITY, path)))
     }
 
     fun getAncestors(path: String): List<T> {
-        return internalGetAncestors(String.format(ANCESTOR_ENTITY, path))
+        return internalGetAncestors(SimpleSQLiteQuery(String.format(ANCESTOR_ENTITY, path)))
     }
 }

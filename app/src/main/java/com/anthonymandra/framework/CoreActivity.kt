@@ -2,7 +2,10 @@ package com.anthonymandra.framework
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.*
+import android.app.AlertDialog
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.*
 import android.content.DialogInterface.OnCancelListener
 import android.net.Uri
@@ -14,7 +17,6 @@ import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.NotificationCompat
 import android.text.Editable
-import android.text.Html
 import android.text.TextWatcher
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -193,6 +195,14 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
+    private fun getHighPriorityNotification() : Int {
+        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+            NotificationManager.IMPORTANCE_HIGH
+        } else {
+            Notification.PRIORITY_HIGH
+        }
+    }
+
     protected fun storeSelectionForIntent() {
         mItemsForIntent.clear()
         mItemsForIntent.addAll(selectedImages)
@@ -226,77 +236,81 @@ abstract class CoreActivity : DocumentActivity() {
             return
         }
 
-        val dialog = Dialog(this)
-        dialog.setContentView(R.layout.save_dialog)
-        dialog.setTitle(R.string.saveAs)
+        val dialog = SaveConfigDialogFragment()
+        dialog.setSaveConfigurationListener { saveImage(mItemsForIntent, destination, it) }
+        dialog.show(supportFragmentManager, "")
 
-        val tabs = dialog.findViewById<View>(R.id.tabHost) as TabHost
-        tabs.setup()
-
-        val jpg = tabs.newTabSpec("JPG")
-        val tif = tabs.newTabSpec("TIF")
-
-        jpg.setContent(R.id.JPG)
-        jpg.setIndicator("JPG")
-        tabs.addTab(jpg)
-
-        tif.setContent(R.id.TIFF)
-        tif.setIndicator("TIFF")
-        tabs.addTab(tif)
-
-        val qualityText = dialog.findViewById<View>(R.id.valueQuality) as TextView
-        val qualityBar = dialog.findViewById<View>(R.id.seekBarQuality) as SeekBar
-        val compressSwitch = dialog.findViewById<View>(R.id.switchCompress) as Switch
-
-        val setDefault = dialog.findViewById<View>(R.id.checkBoxSetDefault) as CheckBox
-        setDefault.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Snackbar.make(dialog.currentFocus!!,
-                    Html.fromHtml(
-                        resources.getString(R.string.saveDefaultConfirm) + "  "
-                            + "<i>" + resources.getString(R.string.settingsReset) + "</i>"),
-                    Snackbar.LENGTH_LONG)
-                    .show()
-            }
-        }
-
-        qualityBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                qualityText.text = progress.toString()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
-        })
-
-        val save = dialog.findViewById<View>(R.id.buttonSave) as Button
-        save.setOnClickListener {
-//            var config: ImageConfiguration = JpegConfiguration()
-            val formatConfig = when (tabs.currentTab) {
-                0 /*JPG */ -> {
-                    val c = JpegConfiguration()
-                    c.quality = qualityBar.progress
-                    c
-                }
-                1 /*TIF*/ -> {
-                    val c = TiffConfiguration()
-                    c.compress = compressSwitch.isChecked
-                    c
-                }
-                else -> JpegConfiguration()
-            }
-            dialog.dismiss()
-
-            if (setDefault.isChecked)
-                formatConfig.savePreference(this@CoreActivity)
-
-            saveImage(mItemsForIntent, destination, config)
-        }
-        val cancel = dialog.findViewById<View>(R.id.buttonCancel) as Button
-        cancel.setOnClickListener { dialog.dismiss() }
-
-        dialog.show()
+//        val dialog = Dialog(this)
+//        dialog.setContentView(R.layout.save_dialog)
+//        dialog.setTitle(R.string.saveAs)
+//
+//        val tabs = dialog.findViewById<View>(R.id.tabHost) as TabHost
+//        tabs.setup()
+//
+//        val jpg = tabs.newTabSpec("JPG")
+//        val tif = tabs.newTabSpec("TIF")
+//
+//        jpg.setContent(R.id.JPG)
+//        jpg.setIndicator("JPG")
+//        tabs.addTab(jpg)
+//
+//        tif.setContent(R.id.TIFF)
+//        tif.setIndicator("TIFF")
+//        tabs.addTab(tif)
+//
+//        val qualityText = dialog.findViewById<View>(R.id.valueQuality) as TextView
+//        val qualityBar = dialog.findViewById<View>(R.id.seekBarQuality) as SeekBar
+//        val compressSwitch = dialog.findViewById<View>(R.id.switchCompress) as Switch
+//
+//        val setDefault = dialog.findViewById<View>(R.id.checkBoxSetDefault) as CheckBox
+//        setDefault.setOnCheckedChangeListener { _, isChecked ->
+//            if (isChecked) {
+//                Snackbar.make(dialog.currentFocus!!,
+//                    Html.fromHtml(
+//                        resources.getString(R.string.saveDefaultConfirm) + "  "
+//                            + "<i>" + resources.getString(R.string.settingsReset) + "</i>"),
+//                    Snackbar.LENGTH_LONG)
+//                    .show()
+//            }
+//        }
+//
+//        qualityBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+//            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+//                qualityText.text = progress.toString()
+//            }
+//
+//            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+//
+//            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+//        })
+//
+//        val save = dialog.findViewById<View>(R.id.buttonSave) as Button
+//        save.setOnClickListener {
+////            var config: ImageConfiguration = JpegConfiguration()
+//            val formatConfig = when (tabs.currentTab) {
+//                0 /*JPG */ -> {
+//                    val c = JpegConfiguration()
+//                    c.quality = qualityBar.progress
+//                    c
+//                }
+//                1 /*TIF*/ -> {
+//                    val c = TiffConfiguration()
+//                    c.compress = compressSwitch.isChecked
+//                    c
+//                }
+//                else -> JpegConfiguration()
+//            }
+//            dialog.dismiss()
+//
+//            if (setDefault.isChecked)
+//                formatConfig.savePreference(this@CoreActivity)
+//
+//            saveImage(mItemsForIntent, destination, config)
+//        }
+//        val cancel = dialog.findViewById<View>(R.id.buttonCancel) as Button
+//        cancel.setOnClickListener { dialog.dismiss() }
+//
+//        dialog.show()
     }
 
     override fun onResumeWriteAction(callingMethod: Enum<*>?, callingParameters: Array<Any>) {
@@ -552,7 +566,6 @@ abstract class CoreActivity : DocumentActivity() {
 
     private fun requestSaveAsDestination() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-        intent.put
         startActivityForResult(intent, REQUEST_SAVE_AS_DIR)
     }
 
@@ -708,25 +721,6 @@ abstract class CoreActivity : DocumentActivity() {
      * @return success
      */
     @Throws(IOException::class)
-    private fun copyAssociatedFiles(fromImage: Uri, toImage: Uri): Boolean {
-        if (ImageUtil.hasXmpFile(this, fromImage)) {
-            copyFile(ImageUtil.getXmpFile(this, fromImage).uri,
-                ImageUtil.getXmpFile(this, toImage).uri)
-        }
-        if (ImageUtil.hasJpgFile(this, fromImage)) {
-            copyFile(ImageUtil.getJpgFile(this, fromImage).uri,
-                ImageUtil.getJpgFile(this, toImage).uri)
-        }
-        return copyFile(fromImage, toImage)
-    }
-
-    /**
-     * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
-     * @param fromImage source image
-     * @param toImage target image
-     * @return success
-     */
-    @Throws(IOException::class)
     private fun copyAssociatedFiles(fromImage: MetadataTest, toImage: Uri): Boolean {
         val sourceUri = Uri.parse(fromImage.uri)
         if (ImageUtil.hasXmpFile(this, sourceUri)) {
@@ -753,14 +747,6 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
-    private fun getHighPriorityNotification() : Int {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-            NotificationManager.IMPORTANCE_HIGH
-        } else {
-            Notification.PRIORITY_HIGH
-        }
-    }
-
     fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
         // Prep things on the UI thread
         Completable.create {
@@ -783,7 +769,6 @@ abstract class CoreActivity : DocumentActivity() {
             .map {
                 val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
                 copyAssociatedFiles(it, destinationFile)
-                onImageAdded(Uri.parse(it.uri))
                 it.name
             }
             .observeOn(AndroidSchedulers.mainThread())
@@ -812,75 +797,6 @@ abstract class CoreActivity : DocumentActivity() {
                 }
             )
     }
-
-//    private fun copyImage(uri: Uri, destinationFolder: Uri): Observable<Uri> {
-//        return Observable.fromCallable {
-//            val source = UsefulDocumentFile.fromUri(this@CoreActivity, uri)
-//            val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
-//            copyAssociatedFiles(uri, destinationFile)
-//            // TODO: Why didn't I just update the location?
-////            val cv = ContentValues()
-////            MetaUtil.getImageFileInfo(this, uri, cv)
-////            contentResolver.insert(Meta.CONTENT_URI, cv)
-//            onImageAdded(uri)
-//            destinationFile
-//        }
-//    }
-
-//    private fun copyTask(images: Collection<Uri>, destinationFolder: Uri) {
-//        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-//        builder.setContentTitle(getString(R.string.importingImages))
-//            .setContentText("placeholder")
-//            .setSmallIcon(R.mipmap.ic_launcher)
-//
-//        Completable.create {
-//            val remainingImages = ArrayList(images)
-//
-//            val dbInserts = ArrayList<ContentProviderOperation>()
-//            val progress = 0
-//            builder.setProgress(images.size, progress, false)
-//            notificationManager.notify(0, builder.build())
-//            for (toCopy in images) {
-//                try {
-//                    setWriteResume(WriteActions.COPY, arrayOf<Any>(remainingImages))
-//
-//                    val source = UsefulDocumentFile.fromUri(this@CoreActivity, toCopy)
-//                    val destinationFile = DocumentUtil.getChildUri(destinationFolder, source.name)
-//                    copyAssociatedFiles(toCopy, destinationFile)
-//                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile))
-//                } catch (e: DocumentActivity.WritePermissionException) {
-//                    e.printStackTrace()
-//                    return@create // exit condition: requesting write permission the restart
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                } catch (e: RuntimeException) {
-//                    e.printStackTrace()
-//                    Crashlytics.setString("uri", toCopy.toString())
-//                    Crashlytics.logException(e)
-//                }
-//
-//                remainingImages.remove(toCopy)
-//                onImageAdded(toCopy)
-//                builder.setProgress(images.size, progress, false)
-//                notificationManager.notify(0, builder.build())
-//            }
-//            // When the loop is finished, updates the notification
-//            builder.setContentText("Complete")
-//                .setProgress(0,0,false) // Removes the progress bar
-//            notificationManager.notify(0, builder.build())
-//
-//        }
-//            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-//            .subscribeBy (
-//                onComplete = {
-//                    clearWriteResume()
-//                    onImageSetChanged()
-//                },
-//                onError = {
-//                    builder.setContentText("Some images did not transfer")
-//                }
-//            )
-//    }
 
     fun saveTask(images: Collection<Uri>, destinationFolder: Uri, config: ImageConfiguration) {
         if (images.isEmpty()) return

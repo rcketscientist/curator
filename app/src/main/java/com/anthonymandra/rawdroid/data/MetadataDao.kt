@@ -27,9 +27,6 @@ abstract class MetadataDao {
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
     internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
 
-//    @RawQuery(observedEntities = [ MetadataEntity::class, FolderEntity::class, SubjectJunction::class ])
-//    internal abstract fun internalGetImageSource(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
-
     @RawQuery(observedEntities = [ MetadataEntity::class/*, SubjectJunction::class*/ ])
     internal abstract fun internalGetImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
 
