@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="fixed"
+        app:tabMaxWidth="0dp"
         app:tabGravity="fill">
 
         <android.support.design.widget.TabItem
@@ -41,13 +43,6 @@
             android:id="@+id/TIFF" />
 
     </android.support.v4.view.ViewPager>
-
-    <!--<fragment-->
-        <!--android:id="@+id/tabContainer"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/tabLayout"-->
-        <!--tools:layout="@layout/save_jpg"/>-->
 
     <Button
         android:layout_width="wrap_content"

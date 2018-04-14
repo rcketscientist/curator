@@ -218,7 +218,7 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    private fun handleSaveDestinationResult(destination: Uri?) {
+    private fun handleSaveDestinationResult(destination: Uri) {
         //		storeSelectionForIntent();	// dialog resets CAB, so store first
 
         // TODO: Might want to figure out a way to get free space to introduce this check again
@@ -232,85 +232,13 @@ abstract class CoreActivity : DocumentActivity() {
         // Load default save config if it exists and automatically apply it
         val config = ImageConfiguration.loadPreference(this)
         if (config != null) {
-            saveImage(mItemsForIntent, destination, config)
+            saveTask(mItemsForIntent, destination, config)
             return
         }
 
-        val dialog = SaveConfigDialogFragment()
-        dialog.setSaveConfigurationListener { saveImage(mItemsForIntent, destination, it) }
-        dialog.show(supportFragmentManager, "")
-
-//        val dialog = Dialog(this)
-//        dialog.setContentView(R.layout.save_dialog)
-//        dialog.setTitle(R.string.saveAs)
-//
-//        val tabs = dialog.findViewById<View>(R.id.tabHost) as TabHost
-//        tabs.setup()
-//
-//        val jpg = tabs.newTabSpec("JPG")
-//        val tif = tabs.newTabSpec("TIF")
-//
-//        jpg.setContent(R.id.JPG)
-//        jpg.setIndicator("JPG")
-//        tabs.addTab(jpg)
-//
-//        tif.setContent(R.id.TIFF)
-//        tif.setIndicator("TIFF")
-//        tabs.addTab(tif)
-//
-//        val qualityText = dialog.findViewById<View>(R.id.valueQuality) as TextView
-//        val qualityBar = dialog.findViewById<View>(R.id.seekBarQuality) as SeekBar
-//        val compressSwitch = dialog.findViewById<View>(R.id.switchCompress) as Switch
-//
-//        val setDefault = dialog.findViewById<View>(R.id.checkBoxSetDefault) as CheckBox
-//        setDefault.setOnCheckedChangeListener { _, isChecked ->
-//            if (isChecked) {
-//                Snackbar.make(dialog.currentFocus!!,
-//                    Html.fromHtml(
-//                        resources.getString(R.string.saveDefaultConfirm) + "  "
-//                            + "<i>" + resources.getString(R.string.settingsReset) + "</i>"),
-//                    Snackbar.LENGTH_LONG)
-//                    .show()
-//            }
-//        }
-//
-//        qualityBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-//            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-//                qualityText.text = progress.toString()
-//            }
-//
-//            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-//
-//            override fun onStopTrackingTouch(seekBar: SeekBar) {}
-//        })
-//
-//        val save = dialog.findViewById<View>(R.id.buttonSave) as Button
-//        save.setOnClickListener {
-////            var config: ImageConfiguration = JpegConfiguration()
-//            val formatConfig = when (tabs.currentTab) {
-//                0 /*JPG */ -> {
-//                    val c = JpegConfiguration()
-//                    c.quality = qualityBar.progress
-//                    c
-//                }
-//                1 /*TIF*/ -> {
-//                    val c = TiffConfiguration()
-//                    c.compress = compressSwitch.isChecked
-//                    c
-//                }
-//                else -> JpegConfiguration()
-//            }
-//            dialog.dismiss()
-//
-//            if (setDefault.isChecked)
-//                formatConfig.savePreference(this@CoreActivity)
-//
-//            saveImage(mItemsForIntent, destination, config)
-//        }
-//        val cancel = dialog.findViewById<View>(R.id.buttonCancel) as Button
-//        cancel.setOnClickListener { dialog.dismiss() }
-//
-//        dialog.show()
+        val dialog = SaveConfigDialogFragment(this)
+        dialog.setSaveConfigurationListener { saveTask(mItemsForIntent, destination, it) }
+        dialog.show()
     }
 
     override fun onResumeWriteAction(callingMethod: Enum<*>?, callingParameters: Array<Any>) {
@@ -892,12 +820,6 @@ abstract class CoreActivity : DocumentActivity() {
                     builder.setContentText("Some images did not transfer")
                 }
             )
-    }
-
-    private fun saveImage(images: Collection<Uri>?, destination: Uri?, config: ImageConfiguration) {
-        if (images!!.size < 0)
-            return
-        saveImage(images, destination, config)
     }
 
     @Throws(DocumentActivity.WritePermissionException::class)
