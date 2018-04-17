@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.save_jpg.*
 import kotlinx.android.synthetic.main.save_tiff.*
 
 typealias SaveConfigurationListener = (ImageConfiguration) -> Unit
-class SaveConfigDialogFragment(activity: Activity) : Dialog(activity) {
+class SaveConfigDialog(activity: Activity) : Dialog(activity) {
 
     private var onSaveConfiguration: SaveConfigurationListener? = null
 

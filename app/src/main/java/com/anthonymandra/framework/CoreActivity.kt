@@ -236,7 +236,7 @@ abstract class CoreActivity : DocumentActivity() {
             return
         }
 
-        val dialog = SaveConfigDialogFragment(this)
+        val dialog = SaveConfigDialog(this)
         dialog.setSaveConfigurationListener { saveTask(mItemsForIntent, destination, it) }
         dialog.show()
     }
@@ -501,9 +501,9 @@ abstract class CoreActivity : DocumentActivity() {
     protected fun showRenameDialog(itemsToRename: Collection<Uri>) {
         @SuppressLint("InflateParams")
         val dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null)
-        val format = dialogView.findViewById<View>(R.id.spinner1) as Spinner
-        val nameText = dialogView.findViewById<View>(R.id.editTextFormat) as EditText
-        val exampleText = dialogView.findViewById<View>(R.id.textViewExample) as TextView
+        val format = dialogView.findViewById<View>(R.id.formatSpinner) as Spinner
+        val nameText = dialogView.findViewById<View>(R.id.nameTextView) as EditText
+        val exampleText = dialogView.findViewById<View>(R.id.exampleTextView) as TextView
 
         nameText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}

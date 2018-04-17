@@ -7,7 +7,7 @@
     android:padding="5dp" >
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/formatSpinner"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -16,7 +16,7 @@
         android:entries="@array/format_array"/>
 
     <EditText
-        android:id="@+id/editTextFormat"
+        android:id="@+id/nameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Custom Name" >
@@ -28,6 +28,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Ex:"
-        android:id="@+id/textViewExample"/>
+        android:id="@+id/exampleTextView"/>
 
 </LinearLayout>
