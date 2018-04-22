@@ -31,6 +31,8 @@ import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.data.AppDatabase
+import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.*
 import com.anthonymandra.util.FileUtil
@@ -254,7 +256,6 @@ abstract class CoreActivity : DocumentActivity() {
                         copyImages(it, callingParameters[1] as Uri)
                     }
 
-                CoreActivity.WriteActions.DELETE -> deleteTask(callingParameters[0] as Collection<Uri>)
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RESTORE -> RestoreTask().execute(*callingParameters)
                 CoreActivity.WriteActions.WRITE_XMP -> WriteXmpTask().execute(*callingParameters)
@@ -676,7 +677,7 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
-    fun saveTask(images: Collection<Uri>, destinationFolder: Uri, config: ImageConfiguration) {
+    fun saveTask(images: Collection<MetadataTest>, destinationFolder: Uri, config: ImageConfiguration) {
         if (images.isEmpty()) return
 
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
@@ -687,14 +688,13 @@ abstract class CoreActivity : DocumentActivity() {
         Completable.create {
             val remainingImages = ArrayList(images)
 
-            val dbInserts = ArrayList<ContentProviderOperation>()
             val progress = 0
             builder.setProgress(images.size, progress, false)
             notificationManager.notify(0, builder.build())
 
             images.forEach { toSave ->
                 setWriteResume(WriteActions.SAVE_IMAGE, arrayOf(remainingImages, destinationFolder, config))
-                val source = UsefulDocumentFile.fromUri(this@CoreActivity, toSave)
+                val source = UsefulDocumentFile.fromUri(this@CoreActivity, Uri.parse(toSave.uri))
                 var destinationTree: UsefulDocumentFile? = null
                 try {
                     destinationTree = getDocumentFile(destinationFolder, true, true)
@@ -789,41 +789,24 @@ abstract class CoreActivity : DocumentActivity() {
             .setSmallIcon(R.mipmap.ic_launcher)
 
         Completable.create {
-            val remainingImages = ArrayList(images)
-
-            val dbDeletes = ArrayList<ContentProviderOperation>()
             val progress = 0
             builder.setProgress(images.size, progress, false)
             notificationManager.notify(0, builder.build())
 
             images.forEach { toDelete ->
-                setWriteResume(WriteActions.DELETE, arrayOf<Any>(remainingImages))
-                try {
-                    if (deleteAssociatedFiles(toDelete)) {
-                        onImageRemoved(toDelete)
-                        // TODO: FIXME
-//                        dbDeletes.add(MetaUtil.newDelete(toDelete))
-                    }
-                } catch (e: DocumentActivity.WritePermissionException) {
-                    e.printStackTrace()
+                if (deleteAssociatedFiles(toDelete)) {
+                    onImageRemoved(Uri.parse(toDelete.uri))
+                    DataRepository.getInstance(AppDatabase.getInstance(this)).deleteImage(toDelete)
                 }
-
-                remainingImages.remove(toDelete)
             }
 
             // When the loop is finished, updates the notification
             builder.setContentText("Complete")
                 .setProgress(0,0,false) // Removes the progress bar
             notificationManager.notify(0, builder.build())
-
-//            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
         }
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
             .subscribeBy(
-//                AlertDialog.Builder(this@CoreActivity)
-//                    .setMessage("Add converted images to the library?")
-//                    .setPositiveButton(R.string.positive) { _, _ -> MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts) }
-//                    .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
                 onComplete = {
                     clearWriteResume()
                     onImageSetChanged()

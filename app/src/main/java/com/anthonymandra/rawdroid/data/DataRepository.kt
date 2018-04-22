@@ -57,6 +57,12 @@ class DataRepository private constructor(private val database: AppDatabase) {
             .subscribe()
     }
 
+    fun deleteImage(image: MetadataTest) {
+        Completable.fromAction { database.metadataDao().delete(image) }
+                .subscribeOn(Schedulers.from(AppExecutors.DISK))
+                .subscribe()
+    }
+
     fun deleteAllImages() {
         Completable.fromAction { database.metadataDao().deleteAll() }
             .subscribeOn(Schedulers.from(AppExecutors.DISK))

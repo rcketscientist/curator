@@ -419,7 +419,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         return dataRepo.insertImages(image).first()
     }
 
-    override fun onSelectionUpdated(selectedUris: Collection<Uri>) {
+    override fun onSelectionUpdated(selectedUris: Collection<MetadataTest>) {
         mMaterialCab?.setTitle(selectedUris.size.toString() + " " + getString(R.string.selected))
         xmpEditFragment.reset()   // reset the panel to ensure it's clear it's not tied to existing values
     }

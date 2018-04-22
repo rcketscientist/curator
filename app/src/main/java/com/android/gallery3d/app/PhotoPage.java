@@ -25,6 +25,7 @@ import android.os.SystemClock;
 import com.android.gallery3d.ui.GLView;
 import com.android.gallery3d.ui.PhotoView;
 import com.android.gallery3d.ui.SynchronizedHandler;
+import com.anthonymandra.rawdroid.data.MetadataTest;
 
 public abstract class PhotoPage extends AbstractCoreActivity implements
         PhotoView.Listener, GalleryApp{
@@ -117,7 +118,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     }
 
     @Override
-    public void onPhotoChanged(int index, Uri item)
+    public void onPhotoChanged(int index, MetadataTest item)
     {
         super.onPhotoChanged(index, item);
         setMImageIndex(index);

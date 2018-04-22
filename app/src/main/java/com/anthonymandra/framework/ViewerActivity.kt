@@ -25,6 +25,7 @@ import com.anthonymandra.rawdroid.Constants
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.GalleryActivity
 import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.ImageUtil
 import kotlinx.android.synthetic.main.meta_panel.*
 import kotlinx.android.synthetic.main.nav_panel.*
@@ -42,7 +43,7 @@ abstract class ViewerActivity : CoreActivity(),
 
     protected var mImageIndex: Int = 0
 
-    private var mCurrentUri: Uri? = null
+    private var mCurrrentImage: MetadataTest? = null
 
     abstract val currentItem: Uri?
     abstract val currentBitmap: Bitmap
@@ -61,8 +62,7 @@ abstract class ViewerActivity : CoreActivity(),
     abstract fun goToPrevPicture()
     abstract fun goToNextPicture()
 
-//    override val licenseHandler: LicenseHandler = ViewerLicenseHandler(this)
-    override val selectedImages: Collection<Uri> = listOfNotNull(mCurrentUri)
+    override val selectedImages: Collection<MetadataTest> = listOfNotNull(mCurrrentImage)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         theme.applyStyle(FullSettingsActivity.getMetaStyle(this), true)   //must be called before setContentView
@@ -156,8 +156,8 @@ abstract class ViewerActivity : CoreActivity(),
         }
     }
 
-    override fun onPhotoChanged(index: Int, item: Uri) {
-        mCurrentUri = item
+    open fun onPhotoChanged(index: Int, item: MetadataTest?) {
+        mCurrrentImage = item
         updateImageDetails()
     }
 
