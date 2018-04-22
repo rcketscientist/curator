@@ -31,6 +31,7 @@ import android.widget.Toast
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.MetadataEntity
+import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
@@ -42,7 +43,7 @@ import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
     override val contentView = R.layout.gallery
-    override val selectedImages : Collection<Uri>
+    override val selectedImages : Collection<MetadataTest>
         get() { return galleryAdapter.selectedItems }
 
     private val mResponseIntentFilter = IntentFilter()
@@ -386,7 +387,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         if (galleryAdapter.selectedItemCount == 0)
             galleryAdapter.selectAll()
 
-        showRenameDialog(selectedImages)
+        val dialog = RenameDialog(this, selectedImages)
+        dialog.show()
     }
 
     private fun requestCopyDestination() {

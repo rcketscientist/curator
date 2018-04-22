@@ -14,7 +14,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
 {
     init { setHasStableIds(true) }
 
-    private val mSelectedItems = HashSet<Uri>()
+    private val mSelectedItems = HashSet<MetadataTest>()
     private val mSelectedPositions = TreeSet<Int>()
     var multiSelectMode = false
         set(value)  {
@@ -32,7 +32,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
      */
     var onItemLongClickListener: OnItemLongClickListener? = null
 
-    val selectedItems: Collection<Uri>
+    val selectedItems: Collection<MetadataTest>
         get() = mSelectedItems
 
     val selectedItemCount: Int
@@ -73,7 +73,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
             true
         }
 
-        holder.itemView.isActivated = mSelectedItems.contains(Uri.parse(item?.uri))
+        holder.itemView.isActivated = mSelectedItems.contains(item)
     }
 
     private fun addGroupSelection(position: Int) {
@@ -92,22 +92,22 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
 
     private fun addGroupSelection(start: Int, end: Int) {
         for (i in start..end) {
-            addSelection(getUri(i), i)
+            addSelection(getItem(i), i)
         }
         updateSelection()
         notifyItemRangeChanged(start, end - start + 1)  // inclusive
     }
 
-    private fun addSelection(uri: Uri?, position: Int) {
-        if (uri == null)
+    private fun addSelection(image: MetadataTest?, position: Int) {
+        if (image == null)
             return
 
-        mSelectedItems.add(uri)
+        mSelectedItems.add(image)
         mSelectedPositions.add(position)
     }
 
-    private fun removeSelection(uri: Uri, position: Int) {
-        mSelectedItems.remove(uri)
+    private fun removeSelection(image: MetadataTest, position: Int) {
+        mSelectedItems.remove(image)
         mSelectedPositions.remove(position)
     }
 
@@ -124,12 +124,12 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
         // We could handle this internally with an extra unnoticed toggle when entering viewer,
         // but we'd still need the selection range logic, which doesn't have access to each
         // individual view, so might as well do everything the same way
-        val uri = getUri(position) ?: return
+        val image = getItem(position) ?: return
 
-        if (mSelectedItems.contains(uri)) {
-            removeSelection(uri, position)
+        if (mSelectedItems.contains(image)) {
+            removeSelection(image, position)
         } else {
-            addSelection(uri, position)
+            addSelection(image, position)
         }
         updateSelection()
         notifyItemChanged(position)
@@ -141,7 +141,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
         multiSelectMode = true
         val list = currentList ?: return    // TODO: Need to spin through and gather all ids
         // Actually best solution is prolly to accept ids for selection externally
-        mSelectedItems.addAll( list.mapNotNull { Uri.parse(it.uri) } )
+        mSelectedItems.addAll( list.mapNotNull { it } )
         updateSelection()
         notifyItemRangeChanged(0, itemCount)
     }
@@ -192,7 +192,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
     }
 
     interface OnSelectionUpdatedListener {
-        fun onSelectionUpdated(selectedUris: Collection<Uri>)
+        fun onSelectionUpdated(selectedUris: Collection<MetadataTest>)
     }
 
     companion object {

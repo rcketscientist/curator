@@ -42,6 +42,9 @@ abstract class MetadataDao {
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun blocking(uris: List<String>): List<MetadataTest>
 
+    @Query("SELECT * FROM meta WHERE uri = :uri")
+    abstract fun blocking(uri: String): MetadataTest
+
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
 

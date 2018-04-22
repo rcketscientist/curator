@@ -59,10 +59,10 @@ abstract class CoreActivity : DocumentActivity() {
     /**
      * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
      */
-    protected var mItemsForIntent = mutableListOf<Uri>()
+    protected var mItemsForIntent = mutableListOf<MetadataTest>()
 
     private lateinit var licenseHandler: LicenseHandler
-    protected abstract val selectedImages: Collection<Uri>
+    protected abstract val selectedImages: Collection<MetadataTest>
 
     private lateinit var notificationManager: NotificationManager
 
@@ -256,7 +256,6 @@ abstract class CoreActivity : DocumentActivity() {
 
                 CoreActivity.WriteActions.DELETE -> deleteTask(callingParameters[0] as Collection<Uri>)
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
-                CoreActivity.WriteActions.RENAME -> RenameTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RESTORE -> RestoreTask().execute(*callingParameters)
                 CoreActivity.WriteActions.WRITE_XMP -> WriteXmpTask().execute(*callingParameters)
             }
@@ -322,8 +321,8 @@ abstract class CoreActivity : DocumentActivity() {
             //			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.subject));
 
             val xmpPairing = HashMap<Uri, ContentValues>()
-            for (uri in selection) {
-                xmpPairing[uri] = cv
+            for (image in selection) {
+                xmpPairing[Uri.parse(image.uri)] = cv
             }
 
             writeXmp(xmpPairing)
@@ -405,13 +404,13 @@ abstract class CoreActivity : DocumentActivity() {
      *
      * @param toDelete file to delete.
      */
-    protected fun deleteImage(toDelete: Uri) {
-        val itemsToDelete = ArrayList<Uri>()
+    protected fun deleteImage(toDelete: MetadataTest) {
+        val itemsToDelete = ArrayList<MetadataTest>()
         itemsToDelete.add(toDelete)
         deleteImages(itemsToDelete)
     }
 
-    private fun deleteImages(itemsToDelete: Collection<Uri>) {
+    private fun deleteImages(itemsToDelete: Collection<MetadataTest>) {
         if (itemsToDelete.isEmpty()) {
             Toast.makeText(baseContext, R.string.warningNoItemsSelected, Toast.LENGTH_SHORT).show()
             return
@@ -425,7 +424,7 @@ abstract class CoreActivity : DocumentActivity() {
         val spaceRequired: Long = itemsToDelete
             .asSequence()
             .filterNotNull()
-            .map { File(it.path) }
+            .map { File(Uri.parse(it.uri).path) }
             .filter { it.exists() }
             .map { it.length() }
             .sum()
@@ -497,57 +496,6 @@ abstract class CoreActivity : DocumentActivity() {
         startActivityForResult(intent, REQUEST_SAVE_AS_DIR)
     }
 
-    @SuppressLint("InflateParams")  // AlertDialog takes null rootView
-    protected fun showRenameDialog(itemsToRename: Collection<Uri>) {
-        @SuppressLint("InflateParams")
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.format_name, null)
-        val format = dialogView.findViewById<View>(R.id.formatSpinner) as Spinner
-        val nameText = dialogView.findViewById<View>(R.id.nameTextView) as EditText
-        val exampleText = dialogView.findViewById<View>(R.id.exampleTextView) as TextView
-
-        nameText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-
-            @SuppressLint("SetTextI18n")
-            override fun afterTextChanged(s: Editable) {
-                exampleText.text = "Ex: " + formatRename(format.selectedItemPosition,
-                    s.toString(),
-                    itemsToRename.size - 1,
-                    itemsToRename.size)!!
-            }
-        })
-
-        format.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            @SuppressLint("SetTextI18n")
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                exampleText.text = "Ex: " + formatRename(format.selectedItemPosition,
-                    nameText.text.toString(),
-                    itemsToRename.size - 1,
-                    itemsToRename.size)!!
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-
-        val renameDialog = AlertDialog.Builder(this)
-            .setTitle(getString(R.string.renameImages))
-            .setView(dialogView)
-            .setPositiveButton(R.string.rename) { _, _ ->
-                val customName = nameText.text.toString()
-                val selected = format.selectedItemPosition
-                RenameTask().execute(itemsToRename, selected, customName)
-            }
-            .setNegativeButton(R.string.neutral) { _, _ -> }.create()
-
-        //		final Spinner format = (Spinner) dialogView.findViewById(R.id.spinner1);
-        //		final EditText nameText = (EditText) dialogView.findViewById(R.id.editTextFormat);
-
-        renameDialog.setCanceledOnTouchOutside(true)
-        renameDialog.show()
-    }
-
     /**
      * Fires after individual items are successfully added.  This will fire multiple times in a batch.
      * @param item added item
@@ -602,18 +550,20 @@ abstract class CoreActivity : DocumentActivity() {
             val share = ArrayList<Uri?>()
             // We need to limit the number of shares to avoid TransactionTooLargeException
             for (selection in if (tooManyShares) selectedItems.subList(0, 10) else selectedItems) {
+                val uri = Uri.parse(selection.uri)
                 if (convert)
-                    share.add(SwapProvider.createSwapUri(this, selection))
+                    share.add(SwapProvider.createSwapUri(this, uri))
                 else
-                    share.add(selection)
+                    share.add(uri)
             }
             intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, share)
         } else {
             intent.action = Intent.ACTION_SEND
+            val uri = Uri.parse(selectedItems[0].uri)
             if (convert)
-                intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, selectedItems[0]))
+                intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, uri))
             else
-                intent.putExtra(Intent.EXTRA_STREAM, selectedItems[0])
+                intent.putExtra(Intent.EXTRA_STREAM, uri)
         }
 
         startActivity(Intent.createChooser(intent, getString(R.string.share)))
@@ -823,14 +773,14 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     @Throws(DocumentActivity.WritePermissionException::class)
-    private fun deleteAssociatedFiles(image: Uri): Boolean {
-        val associatedFiles = ImageUtil.getAssociatedFiles(this, image)
+    private fun deleteAssociatedFiles(image: MetadataTest): Boolean {
+        val associatedFiles = ImageUtil.getAssociatedFiles(this, Uri.parse(image.uri))
         for (file in associatedFiles)
             deleteFile(file)
-        return deleteFile(image)
+        return deleteFile(image.uri)
     }
 
-    private fun deleteTask(images: Collection<Uri>) {
+    private fun deleteTask(images: Collection<MetadataTest>) {
         if (images.isEmpty()) return
 
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
@@ -1150,32 +1100,5 @@ abstract class CoreActivity : DocumentActivity() {
 //        const val META_DEFAULT_SORT = Meta.NAME + " ASC"
 
         private const val EXPIRATION = 5184000000L //~60 days
-
-        private fun numDigits(x: Int): Int {
-            return when {
-                x < 10 -> 1
-                x < 100 -> 2
-                x < 1000 -> 3
-                x < 10000 -> 4
-                x < 100000 -> 5
-                x < 1000000 -> 6
-                x < 10000000 -> 7
-                x < 100000000 -> 8
-                x < 1000000000 -> 9
-                else -> 10
-            }
-        }
-
-        private fun formatRename(format: Int, baseName: String, index: Int, total: Int): String? {
-            val sequencer = "%0" + numDigits(total) + "d"
-
-            var rename: String? = null
-            when (format) {
-                0 -> rename = baseName + "-" + String.format(sequencer, index)
-                1 -> rename = baseName + " (" + String.format(sequencer, index) + " of " + total + ")"
-            }
-
-            return rename
-        }
     }
 }
