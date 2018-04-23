@@ -1,6 +1,5 @@
 package com.anthonymandra.framework
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.app.Notification
@@ -16,13 +15,10 @@ import android.os.Message
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.NotificationCompat
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.Toast
 import com.anthonymandra.content.Meta
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
@@ -234,12 +230,12 @@ abstract class CoreActivity : DocumentActivity() {
         // Load default save config if it exists and automatically apply it
         val config = ImageConfiguration.loadPreference(this)
         if (config != null) {
-            saveTask(mItemsForIntent, destination, config)
+            saveImages(mItemsForIntent, destination, config)
             return
         }
 
         val dialog = SaveConfigDialog(this)
-        dialog.setSaveConfigurationListener { saveTask(mItemsForIntent, destination, it) }
+        dialog.setSaveConfigurationListener { saveImages(mItemsForIntent, destination, it) }
         dialog.show()
     }
 
@@ -251,10 +247,10 @@ abstract class CoreActivity : DocumentActivity() {
 
         if (callingMethod is WriteActions) {
             when (callingMethod) {
-                CoreActivity.WriteActions.COPY ->
-                    dataRepo.images(callingParameters[0] as List<String>).value?.let {
-                        copyImages(it, callingParameters[1] as Uri)
-                    }
+//                CoreActivity.WriteActions.COPY ->
+//                    dataRepo.images(callingParameters[0] as List<String>).value?.let {
+//                        copyImages(it, callingParameters[1] as Uri)
+//                    }
 
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RESTORE -> RestoreTask().execute(*callingParameters)
@@ -599,7 +595,6 @@ abstract class CoreActivity : DocumentActivity() {
      * @param toImage target image
      * @return success
      */
-    @Throws(IOException::class)
     private fun copyAssociatedFiles(fromImage: MetadataTest, toImage: Uri): Boolean {
         val sourceUri = Uri.parse(fromImage.uri)
         if (ImageUtil.hasXmpFile(this, sourceUri)) {
@@ -618,8 +613,11 @@ abstract class CoreActivity : DocumentActivity() {
 
     fun copyImages(images: List<Uri>, destinationFolder: Uri) {
         Single.create<List<MetadataTest>> {
+                // TODO: We should jsut duplicate these calls with rx to do this with streams
                 it.onSuccess(dataRepo.imagesBlocking(images.map { it.toString() }))
-            }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+            }
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .observeOn(Schedulers.from(AppExecutors.MAIN))
             .subscribeBy(
                 onSuccess = { copyImages(it, destinationFolder)},
                 onError = {}    // do nothing for now
@@ -627,12 +625,7 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
-        // Prep things on the UI thread
-        Completable.create {
-                setMaxProgress(images.size)
-            }
-            .subscribeOn(Schedulers.from(AppExecutors.MAIN))
-            .subscribe()
+        setMaxProgress(images.size)
 
         var progress = 0
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
@@ -677,96 +670,98 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
-    fun saveTask(images: Collection<MetadataTest>, destinationFolder: Uri, config: ImageConfiguration) {
+    fun saveImages(images: Collection<MetadataTest>, destinationFolder: Uri, config: ImageConfiguration) {
         if (images.isEmpty()) return
 
+        var insert = false
+        val insertions = arrayListOf<MetadataTest>()
+        AlertDialog.Builder(this)
+            .setMessage("Add converted images to the library?")
+            .setPositiveButton(R.string.positive) { _, _ -> insert = true }
+            .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+
+        var progress = 0
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.importingImages))
+        builder.setContentTitle(getString(R.string.savingImages))
             .setContentText("placeholder")
             .setSmallIcon(R.mipmap.ic_launcher)
 
-        Completable.create {
-            val remainingImages = ArrayList(images)
-
-            val progress = 0
-            builder.setProgress(images.size, progress, false)
-            notificationManager.notify(0, builder.build())
-
-            images.forEach { toSave ->
-                setWriteResume(WriteActions.SAVE_IMAGE, arrayOf(remainingImages, destinationFolder, config))
-                val source = UsefulDocumentFile.fromUri(this@CoreActivity, Uri.parse(toSave.uri))
+        Observable.fromIterable(images)
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .map {
+                val source = UsefulDocumentFile.fromUri(this, Uri.parse(it.uri))
                 var destinationTree: UsefulDocumentFile? = null
-                try {
-                    destinationTree = getDocumentFile(destinationFolder, true, true)
-                } catch (e: DocumentActivity.WritePermissionException) {
-                    e.printStackTrace()
-                }
-
-                if (destinationTree == null) {
-                    return@forEach
-                }
+                destinationTree = getDocumentFile(destinationFolder, true, true)
 
                 val desiredName = FileUtil.swapExtention(source.name, config.extension)
                 val desiredUri = DocumentUtil.getChildUri(destinationFolder, desiredName)
-                var destinationFile = UsefulDocumentFile.fromUri(this@CoreActivity, desiredUri)
+                var destinationFile = UsefulDocumentFile.fromUri(this, desiredUri)
 
                 if (!destinationFile.exists())
                     destinationFile = destinationTree.createFile(null, desiredName)
 
-                FileUtil.getParcelFileDescriptor(this@CoreActivity, source.uri, "r").use { inputPfd ->
-                FileUtil.getParcelFileDescriptor(this@CoreActivity, destinationFile.uri, "w").use { outputPfd ->
-                    if (outputPfd == null) return@forEach
+                val inputPfd = FileUtil.getParcelFileDescriptor(this, source.uri, "r")
+                val outputPfd = FileUtil.getParcelFileDescriptor(this, destinationFile.uri, "w")
 
-                    when (config.type) {
-                        ImageConfiguration.ImageType.jpeg -> {
-                            val quality = (config as JpegConfiguration).quality
-    //                                    if (wm != null) {
-    //                                        ImageProcessor.writeThumb(inputPfd.fd, quality,
-    //                                            outputPfd.fd, wm.watermark, wm.margins.array,
-    //                                            wm.waterWidth, wm.waterHeight) && success
-    //                                    } else {
-                            ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
-    //                                    }
-                        }
-                        ImageConfiguration.ImageType.tiff -> {
-                            val compress = (config as TiffConfiguration).compress
-    //                                    if (wm != null) {
-    //                                        success = ImageProcessor.writeTiff(desiredName, inputPfd.fd,
-    //                                            outputPfd.fd, compress, wm.watermark, wm.margins.array,
-    //                                            wm.waterWidth, wm.waterHeight) && success
-    //                                    } else {
-                            ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
-    //                                    }
-                        }
-                        else -> throw UnsupportedOperationException("unimplemented save type.")
+                when (config.type) {
+                    ImageConfiguration.ImageType.jpeg -> {
+                        val quality = (config as JpegConfiguration).quality
+//                        if (wm != null) {
+//                            ImageProcessor.writeThumb(inputPfd.fd, quality,
+//                                outputPfd.fd, wm.watermark, wm.margins.array,
+//                                wm.waterWidth, wm.waterHeight) && success
+//                        } else {
+                        ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+//                        }
                     }
+                    ImageConfiguration.ImageType.tiff -> {
+                        val compress = (config as TiffConfiguration).compress
+//                        if (wm != null) {
+//                            success = ImageProcessor.writeTiff(desiredName, inputPfd.fd,
+//                                outputPfd.fd, compress, wm.watermark, wm.margins.array,
+//                                wm.waterWidth, wm.waterHeight) && success
+//                        } else {
+                        ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
+//                        }
+                    }
+                    else -> throw UnsupportedOperationException("unimplemented save type.")
+                }
 
-                    builder.setProgress(images.size, progress, false)
+                builder.setProgress(images.size, progress, false)
+                notificationManager.notify(0, builder.build())
+
+                onImageAdded(destinationFile.uri)
+                destinationFile.uri
+            }
+            .observeOn(Schedulers.from(AppExecutors.MAIN))
+            .subscribeBy(
+                onNext = {
+                    builder.setProgress(images.size, ++progress, false)
+                    builder.setContentText(it.toString())
+                    notificationManager.notify(0, builder.build())
+                    incrementProgress()
+
+                    val insertion = MetadataTest()
+                    insertion.uri = it.toString()
+                    insertions.add(insertion)
+                },
+                onComplete = {
+                    endProgress()
+                    updateMessage(null)
+                    onImageSetChanged()
+
+                    // When the loop is finished, updates the notification
+                    builder.setContentText("Complete")
+                        .setProgress(0,0,false) // Removes the progress bar
                     notificationManager.notify(0, builder.build())
 
-                    onImageAdded(destinationFile.uri)
-                    // TODO: FIXME
-//                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, destinationFile.uri))
-                    remainingImages.remove(toSave)
-                }}
-            }
-
-            // When the loop is finished, updates the notification
-            builder.setContentText("Complete")
-                .setProgress(0,0,false) // Removes the progress bar
-            notificationManager.notify(0, builder.build())
-        }
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .subscribeBy(
-//                AlertDialog.Builder(this@CoreActivity)
-//                    .setMessage("Add converted images to the library?")
-//                    .setPositiveButton(R.string.positive) { _, _ -> MetaUtil.updateMetaDatabase(this@CoreActivity, dbInserts) }
-//                    .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
-                onComplete = {
-                    clearWriteResume()
-                    onImageSetChanged()
+                    if (insert) {
+                        dataRepo.insertMeta(*insertions.toTypedArray())
+                    }
                 },
                 onError = {
+                    it.printStackTrace()
+                    Crashlytics.logException(it)
                     builder.setContentText("Some images did not transfer")
                 }
             )
