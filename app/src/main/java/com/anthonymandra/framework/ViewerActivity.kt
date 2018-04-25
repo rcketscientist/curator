@@ -156,7 +156,7 @@ abstract class ViewerActivity : CoreActivity(),
         }
     }
 
-    open fun onPhotoChanged(index: Int, item: MetadataTest?) {
+    override fun onPhotoChanged(index: Int, item: MetadataTest?) {
         mCurrrentImage = item
         updateImageDetails()
     }

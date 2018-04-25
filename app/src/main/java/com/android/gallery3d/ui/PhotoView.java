@@ -29,7 +29,6 @@ import android.view.animation.AccelerateInterpolator;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.MediaItem;
 import com.android.gallery3d.glrenderer.GLCanvas;
 import com.android.gallery3d.glrenderer.ResourceTexture;
 import com.android.gallery3d.glrenderer.StringTexture;
@@ -39,6 +38,7 @@ import com.android.gallery3d.util.RangeArray;
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.ScaleChangedListener;
 import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.rawdroid.data.MetadataTest;
 
 public class PhotoView extends GLView {
     @SuppressWarnings("unused")
@@ -61,7 +61,7 @@ public class PhotoView extends GLView {
         void getImageSize(int offset, Size size);
 
         // Returns the media item for the specified picture.
-        Uri getMediaItem(int offset);
+        MetadataTest getMediaItem(int offset);
 
         // Returns the rotation for the specified picture.
         int getImageRotation(int offset);
@@ -104,7 +104,7 @@ public class PhotoView extends GLView {
         void onSingleTapUp(int x, int y);
         void onCurrentImageUpdated();
         void onFilmModeChanged(boolean enabled);
-        void onCommitDeleteImage(Uri toDelete);
+        void onCommitDeleteImage(MetadataTest toDelete);
         void onSingleTapConfirmed();// int x, int y); Don't need the point at the moment don't bother converting
     }
 
@@ -269,7 +269,7 @@ public class PhotoView extends GLView {
     }
 
     private void delete() {
-        Uri item = mModel.getMediaItem(mTouchBoxIndex);
+        MetadataTest item = mModel.getMediaItem(mTouchBoxIndex);
         if (item == null) return;
         mListener.onCommitDeleteImage(item);
     }

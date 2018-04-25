@@ -7,6 +7,7 @@ import android.preference.PreferenceManager
 import com.android.gallery3d.app.PhotoPage
 import com.android.gallery3d.data.ContentListener
 import com.anthonymandra.framework.License
+import com.anthonymandra.rawdroid.data.MetadataTest
 import java.util.*
 
 class ImageViewActivity : PhotoPage() {
@@ -61,7 +62,7 @@ class ImageViewActivity : PhotoPage() {
             updateHistogram(currentBitmap)
     }
 
-    override fun onCommitDeleteImage(toDelete: Uri) {
+    override fun onCommitDeleteImage(toDelete: MetadataTest) {
         deleteImage(toDelete)
     }
 

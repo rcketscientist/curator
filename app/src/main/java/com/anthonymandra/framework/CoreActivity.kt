@@ -62,7 +62,7 @@ abstract class CoreActivity : DocumentActivity() {
     private lateinit var licenseHandler: LicenseHandler
     protected abstract val selectedImages: Collection<MetadataTest>
 
-    private lateinit var notificationManager: NotificationManager
+    lateinit var notificationManager: NotificationManager
 
     /**
      * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
@@ -190,14 +190,6 @@ abstract class CoreActivity : DocumentActivity() {
             channel.description = getString(R.string.io_channel_desc)
             channel.enableVibration(false)
             notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-    private fun getHighPriorityNotification() : Int {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-            NotificationManager.IMPORTANCE_HIGH
-        } else {
-            Notification.PRIORITY_HIGH
         }
     }
 
@@ -493,23 +485,6 @@ abstract class CoreActivity : DocumentActivity() {
         startActivityForResult(intent, REQUEST_SAVE_AS_DIR)
     }
 
-    /**
-     * Fires after individual items are successfully added.  This will fire multiple times in a batch.
-     * @param item added item
-     */
-    protected abstract fun onImageAdded(item: Uri)
-
-    /**
-     * Fires after individual items are successfully deleted.  This will fire multiple times in a batch.
-     * @param item deleted item
-     */
-    protected abstract fun onImageRemoved(item: Uri)
-
-    /**
-     * Fires after all actions of a batch (or single) change to the image set are complete.
-     */
-    protected abstract fun onImageSetChanged()
-
     private fun requestShare() {
         if (selectedImages.isEmpty()) {
             Snackbar.make(rootView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
@@ -580,11 +555,6 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    protected abstract fun setMaxProgress(max: Int)
-    protected abstract fun incrementProgress()
-    protected abstract fun endProgress()
-    protected abstract fun updateMessage(message: String?)
-
     /**
      * File operation tasks
      */
@@ -631,7 +601,7 @@ abstract class CoreActivity : DocumentActivity() {
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
         builder.setContentTitle(getString(R.string.copyingImages))
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setPriority(getHighPriorityNotification())
+            .setPriority(IMPORTANT_NOTIFICATION)
             .setVibrate(longArrayOf(0, 0)) // We don't ask for permission, this allows peek
             .setProgress(images.size, progress, false)
         notificationManager.notify(0, builder.build())
@@ -653,7 +623,6 @@ abstract class CoreActivity : DocumentActivity() {
                 },
                 onComplete = {
                     endProgress()
-                    updateMessage(null)
                     onImageSetChanged()
 
                     // When the loop is finished, updates the notification
@@ -662,10 +631,11 @@ abstract class CoreActivity : DocumentActivity() {
                     notificationManager.notify(0, builder.build())
                 },
                 onError = {
+                    incrementProgress()
+                    builder.setProgress(images.size, ++progress, false)
                     it.printStackTrace()
 //                    Crashlytics.setString("uri", toCopy.toString())
                     Crashlytics.logException(it)
-                    builder.setContentText("Some images did not transfer")
                 }
             )
     }
@@ -683,8 +653,12 @@ abstract class CoreActivity : DocumentActivity() {
         var progress = 0
         val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
         builder.setContentTitle(getString(R.string.savingImages))
-            .setContentText("placeholder")
+            .setPriority(IMPORTANT_NOTIFICATION)
+            .setVibrate(longArrayOf(0, 0)) // We don't ask for permission, this allows peek
+            .setProgress(images.size, progress, false)
             .setSmallIcon(R.mipmap.ic_launcher)
+
+        notificationManager.notify(0, builder.build())
 
         Observable.fromIterable(images)
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
@@ -747,7 +721,6 @@ abstract class CoreActivity : DocumentActivity() {
                 },
                 onComplete = {
                     endProgress()
-                    updateMessage(null)
                     onImageSetChanged()
 
                     // When the loop is finished, updates the notification
@@ -1058,9 +1031,31 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
+    abstract fun setMaxProgress(max: Int)
+    abstract fun incrementProgress()
+    abstract fun endProgress()
+    abstract fun updateMessage(message: String?)
+
+    /**
+     * Fires after individual items are successfully added.  This will fire multiple times in a batch.
+     * @param item added item
+     */
+    protected abstract fun onImageAdded(item: Uri)
+
+    /**
+     * Fires after individual items are successfully deleted.  This will fire multiple times in a batch.
+     * @param item deleted item
+     */
+    protected abstract fun onImageRemoved(item: Uri)
+
+    /**
+     * Fires after all actions of a batch (or single) change to the image set are complete.
+     */
+    protected abstract fun onImageSetChanged()
+
     companion object {
 //        private val TAG = CoreActivity::class.java.simpleName
-        private const val NOTIFICATION_CHANNEL = "notifications"
+        const val NOTIFICATION_CHANNEL = "notifications"
 
         const val SWAP_BIN_DIR = "swap"
         const val RECYCLE_BIN_DIR = "recycle"
@@ -1078,5 +1073,12 @@ abstract class CoreActivity : DocumentActivity() {
 //        const val META_DEFAULT_SORT = Meta.NAME + " ASC"
 
         private const val EXPIRATION = 5184000000L //~60 days
+
+        val IMPORTANT_NOTIFICATION =
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
+                NotificationManager.IMPORTANCE_HIGH
+            } else {
+                Notification.PRIORITY_HIGH
+            }
     }
 }

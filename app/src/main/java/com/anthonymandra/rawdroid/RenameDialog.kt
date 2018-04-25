@@ -2,9 +2,9 @@ package com.anthonymandra.rawdroid
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.NotificationCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -64,6 +64,8 @@ class RenameDialog(
 
     fun renameImages(images: Collection<MetadataTest>, format: Int, customName: String) {
         var counter = 0
+        val builder = NotificationCompat.Builder(context, CoreActivity.NOTIFICATION_CHANNEL)
+
         Observable.fromIterable(images)
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
             .map {
@@ -72,21 +74,36 @@ class RenameDialog(
                 renameImage(it, rename)
                 it
             }.observeOn(Schedulers.from(AppExecutors.MAIN))
+            .doOnSubscribe {
+                counter = 0
+                activity.setMaxProgress(images.size)
+                builder.setContentTitle(context.getString(R.string.renameImages))
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setProgress(images.size, 0, false)
+                activity.notificationManager.notify(0, builder.build())
+            }
             .subscribeBy (
                 onNext = {
-                    activity.progreincrementProgress()
+                    activity.incrementProgress()
+                    builder.setProgress(images.size, ++counter, false)
+                    builder.setContentText(it.name)
+                    activity.notificationManager.notify(0, builder.build())
                 },
                 onComplete = {
-                    endProgress()
+                    activity.endProgress()
+                    builder.setContentText("Complete").setProgress(0,0,false)
+                    activity.notificationManager.notify(0, builder.build())
                 },
                 onError = {
+                    activity.incrementProgress()
+                    activity.notificationManager.notify(0, builder.build())
                     it.printStackTrace()
                     Crashlytics.logException(it)
                 }
             )
     }
 
-    fun renameImage(image: MetadataTest, baseName: String) {
+    private fun renameImage(image: MetadataTest, baseName: String) {
         val dataRepo = DataRepository.getInstance(AppDatabase.getInstance(context))
 
         val source = Uri.parse(image.uri)

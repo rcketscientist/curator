@@ -1,7 +1,7 @@
 package com.android.gallery3d.app;
 
-import android.net.Uri;
+import com.anthonymandra.rawdroid.data.MetadataTest;
 
 public interface DataListener extends LoadingListener {
-    void onPhotoChanged(int index, Uri path);
+    void onPhotoChanged(int index, MetadataTest images);
 }
