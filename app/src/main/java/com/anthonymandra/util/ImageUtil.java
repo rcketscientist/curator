@@ -487,8 +487,7 @@ public class ImageUtil
 	}
 
 	private static final String[] TYPE_PROJECTION = new String[] {Meta.TYPE};
-    public static byte[] getThumb(final Context c, final Uri uri)
-    {
+    public static byte[] getThumb(final Context c, final Uri uri) throws Exception {
         try (Cursor metaCursor = c.getContentResolver().query(
                 Meta.CONTENT_URI, TYPE_PROJECTION,
                 Meta.URI_SELECTION,
@@ -508,43 +507,25 @@ public class ImageUtil
      * @return byte array jpeg for display
      */
     @SuppressLint("SimpleDateFormat")
-    public static byte[] getThumb(final Context c, final Uri uri, Meta.ImageType imageType)
-    {
-        try(AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r"))
-        {
-            if (fd == null)
-                return null;
+    public static byte[] getThumb(final Context c, final Uri uri, Meta.ImageType imageType) throws Exception {
+        AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r");
 
-            if (imageType == null || imageType == Meta.ImageType.UNPROCESSED)
-                imageType = getImageType(c, uri);
+        if (fd == null)
+            return null;
 
-            switch(imageType)
-            {
-                case COMMON:
-                    try(BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream()))
-                    {
-                        byte[] sourceBytes = Util.toByteArray(imageStream);
-                        return sourceBytes;
-                    }
-                    catch (Exception e)
-                    {
-                        Log.e(TAG, e.toString());
-                        return null;
-                    }
-                case TIFF:
-                    return getTiffImage(fd.getParcelFileDescriptor().getFd());
-                default:
-                    return getRawThumb(fd.getParcelFileDescriptor().getFd());
-            }
-        }
-        catch (Exception e)
+        if (imageType == null || imageType == Meta.ImageType.UNPROCESSED)
+            imageType = getImageType(c, uri);
+
+        switch(imageType)
         {
-            // Let's add the name to the message to see if there's a link to null FileDescriptors
-            Exception error = new Exception(e.getMessage() + ": " + uri);
-            error.setStackTrace(e.getStackTrace());
-            error.printStackTrace();
+            case COMMON:
+                BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream());
+                return Util.toByteArray(imageStream);
+            case TIFF:
+                return getTiffImage(fd.getParcelFileDescriptor().getFd());
+            default:
+                return getRawThumb(fd.getParcelFileDescriptor().getFd());
         }
-	    return null;
     }
 
     private static byte[] getImageBytes(Context c, Uri uri)
@@ -578,7 +559,13 @@ public class ImageUtil
 
         @Override
         public Bitmap onDecodeOriginal(ThreadPool.JobContext jc, final int type) {
-            byte[] imageData = getThumb(mApplication.getAndroidContext(), mImage);
+            byte[] imageData = null;
+            try {
+                imageData = getThumb(mApplication.getAndroidContext(), mImage);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -614,10 +601,14 @@ public class ImageUtil
         }
 
         public BitmapRegionDecoder run(ThreadPool.JobContext jc) {
-            byte[] imageData = getThumb(mContext, mImage);
-            BitmapRegionDecoder brd = DecodeUtils.createBitmapRegionDecoder(jc,
+            byte[] imageData = null;
+            try {
+                imageData = getThumb(mContext, mImage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return DecodeUtils.createBitmapRegionDecoder(jc,
                     imageData, 0, imageData.length, false);
-            return brd;
         }
     }
 

@@ -1,15 +1,12 @@
 package com.anthonymandra.rawdroid.ui
 
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.MetaUtil
-import com.bumptech.glide.Glide
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fileview.*
 
@@ -54,9 +51,8 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
 
         // FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
         image?.let {
-            Glide.with(itemView.context)
-                .using(RawModelLoader(itemView.context))
-                .load(RawModelLoader.ImageInfo(Uri.parse(it.uri), Meta.ImageType.fromInt(it.type) ))
+            GlideApp.with(itemView.context)
+                .load(image)
                 .centerCrop()
                 .into(galleryImageView)
             galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
