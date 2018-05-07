@@ -113,7 +113,7 @@ public class PhotoDataAdapter implements Model {
     // smaller than DATA_CACHE_SIZE because we only update the window and reload
     // the MediaItems when there are significant changes to the window position
     // (>= MIN_LOAD_COUNT).
-    private final Uri mData[] = new Uri[DATA_CACHE_SIZE];
+    private final MetadataTest mData[] = new MetadataTest[DATA_CACHE_SIZE];
     private int mContentStart = 0;
     private int mContentEnd = 0;
 
@@ -122,7 +122,7 @@ public class PhotoDataAdapter implements Model {
     // mActiveEnd - mActiveStart <= IMAGE_CACHE_SIZE.  Besides, the
     // [mActiveStart, mActiveEnd) range must be contained within
     // the [mContentStart, mContentEnd) range.
-    private HashMap<Uri, ImageEntry> mImageCache =
+    private HashMap<MetadataTest, ImageEntry> mImageCache =
             new HashMap<>();
     private int mActiveStart = 0;
     private int mActiveEnd = 0;
@@ -133,28 +133,17 @@ public class PhotoDataAdapter implements Model {
 
     // mPaths keeps the corresponding Path (of MediaItem) for the images. This
     // is used to determine the item movement.
-    private final Uri mPaths[] = new Uri[IMAGE_CACHE_SIZE];
+    private final MetadataTest mPaths[] = new MetadataTest[IMAGE_CACHE_SIZE];
 
     private final Handler mMainHandler;
     private final ThreadPool mThreadPool;
 
     private final PhotoView mPhotoView;
-    private final List<Uri> mSource;
+    private final List<MetadataTest> mSource;
 
-	/**
-     * Stores image data so multiple resolver calls are unneeded
-     */
-    private final HashMap<Uri, ImageData> imageData = new HashMap<>();
-
-    private class ImageData
-    {
-        public int width;
-        public int height;
-        public int orientation;
-    }
     private ReloadTask mReloadTask;
 
-    private Uri mItemPath;
+    private MetadataTest mItemPath;
     private boolean mIsActive;
     private boolean mNeedFullImage;
 
@@ -193,7 +182,7 @@ public class PhotoDataAdapter implements Model {
 //    };
 
     public PhotoDataAdapter(GalleryApp activity, PhotoView view,
-        List<Uri> mediaSet, int position)
+        List<MetadataTest> mediaSet, int position)
     {
 		mActivity = activity;
         mSource = Utils.checkNotNull(mediaSet);
@@ -241,7 +230,7 @@ public class PhotoDataAdapter implements Model {
 
     }
 
-    private Uri getItemInternal(int index) {
+    private MetadataTest getItemInternal(int index) {
         if (index < 0 || index >= getCount()) return null;
         if (index >= mContentStart && index < mContentEnd) {
             return mData[index % DATA_CACHE_SIZE];
@@ -249,7 +238,7 @@ public class PhotoDataAdapter implements Model {
         return null;
     }
 
-    private Uri getPath(int index) {
+    private MetadataTest getPath(int index) {
         return getItemInternal(index);
     }
 
@@ -261,7 +250,7 @@ public class PhotoDataAdapter implements Model {
         int fromIndex[] = new int[N];
 
         // Remember the old path array.
-        Uri oldPaths[] = new Uri[N];
+        MetadataTest oldPaths[] = new MetadataTest[N];
         System.arraycopy(mPaths, 0, oldPaths, 0, N);
 
         // Update the mPaths array.
@@ -271,7 +260,7 @@ public class PhotoDataAdapter implements Model {
 
         // Calculate the fromIndex array.
         for (int i = 0; i < N; i++) {
-            Uri p = mPaths[i];
+            MetadataTest p = mPaths[i];
             if (p == null) {
                 fromIndex[i] = Integer.MAX_VALUE;
                 continue;
@@ -295,7 +284,7 @@ public class PhotoDataAdapter implements Model {
         mDataListener = listener;
     }
 
-    private void updateScreenNail(Uri path, Future<ScreenNail> future) {
+    private void updateScreenNail(MetadataTest path, Future<ScreenNail> future) {
         ImageEntry entry = mImageCache.get(path);
         ScreenNail screenNail = future.get();
 
@@ -413,7 +402,7 @@ public class PhotoDataAdapter implements Model {
         TiledTexture.freeResources();
     }
 
-    private Uri getImage(int index) {
+    private MetadataTest getImage(int index) {
         if (index < 0 || index >= getCount() || !mIsActive) return null;
         Utils.assertTrue(index >= mActiveStart && index < mActiveEnd);
 
@@ -445,7 +434,7 @@ public class PhotoDataAdapter implements Model {
         int index = mCurrentIndex + offset;
         if (index < mActiveStart || index >= mActiveEnd) return;
 
-        Uri item = getImage(index);
+        MetadataTest item = getImage(index);
         if (item == null) return;
 
         ImageEntry e = mImageCache.get(item);
@@ -489,7 +478,7 @@ public class PhotoDataAdapter implements Model {
             return null;
         }
 
-        Uri item = getImage(index);
+        MetadataTest item = getImage(index);
         if (item == null) return null;
 
         ImageEntry entry = mImageCache.get(item);
@@ -507,56 +496,44 @@ public class PhotoDataAdapter implements Model {
 
     @Override
     public void getImageSize(int offset, PhotoView.Size size) {
-        Uri uri = getImage(mCurrentIndex + offset);
+        MetadataTest uri = getImage(mCurrentIndex + offset);
         getImageSize(uri, size);
         if (uri == null) return;
     }
 
-    public void getImageSize(Uri uri, PhotoView.Size size)
+    public void getImageSize(MetadataTest uri, PhotoView.Size size)
     {
-        if (!imageData.containsKey(uri))
-        {
+        if (!uri.getProcessed()) {
             populateImageData(uri);
         }
-        ImageData currentImage = imageData.get(uri);
-        if (currentImage == null) return;
 
-        size.height = currentImage.height;
-        size.width = currentImage.width;
+        size.height = uri.getHeight();
+        size.width = uri.getWidth();
     }
 
-    private void populateImageData(Uri uri)
+    private void populateImageData(MetadataTest uri)
     {
-        MetadataTest meta = dataRepo.image(uri.toString()).getValue();
-        if (meta == null) return;
-
-        ImageData data = new ImageData();
-        data.height = meta.getHeight();
-        data.width = meta.getWidth();
-        data.orientation = meta.getOrientation();
-        imageData.put(Uri.parse(meta.getUri()), data);
+        // TODO: This should be reactive, but prolly duping anyway
+        MetadataTest meta = dataRepo.imageBlocking(uri.getUri());
     }
 
     @Override
     public int getImageRotation(int offset)
     {
-        Uri uri = getImage(mCurrentIndex + offset);
+        MetadataTest uri = getImage(mCurrentIndex + offset);
         if (uri == null)
             return 0;
 
         return getImageRotation(uri);
     }
 
-    public int getImageRotation(Uri uri)
+    public int getImageRotation(MetadataTest uri)
     {
-        if (!imageData.containsKey(uri))
-        {
+        if (!uri.getProcessed()) {
             populateImageData(uri);
         }
-        if (!imageData.containsKey(uri))
-            return 0;
 
-        return MetaUtil.INSTANCE.getRotation(imageData.get(uri).orientation);
+        return MetaUtil.INSTANCE.getRotation(uri.getOrientation());
     }
 
     @Override
@@ -624,7 +601,7 @@ public class PhotoDataAdapter implements Model {
     }
 
     @Override
-	public Uri getMediaItem(int offset) {
+	public MetadataTest getMediaItem(int offset) {
 		int index = mCurrentIndex + offset;
 		if (index >= mContentStart && index < mContentEnd) {
 			return mData[index % DATA_CACHE_SIZE];
@@ -633,7 +610,7 @@ public class PhotoDataAdapter implements Model {
 	}
 
     @Override
-	public void setCurrentPhoto(Uri path, int position) {
+	public void setCurrentPhoto(MetadataTest path, int position) {
         if (mItemPath == path) return;
 		mItemPath = path;
 		mCurrentIndex = position;
@@ -642,14 +619,14 @@ public class PhotoDataAdapter implements Model {
 		fireDataChange();
 
 		// We need to reload content if the path doesn't match.
-		Uri item = getMediaItem(0);
+        MetadataTest item = getMediaItem(0);
 		if (item != null && !item.equals(path)) {
             if (mReloadTask != null) mReloadTask.notifyDirty();
 		}
 	}
 
     @Override
-    public Uri getCurrentItem()
+    public MetadataTest getCurrentItem()
     {
         return getMediaItem(0);
     }
@@ -713,7 +690,7 @@ public class PhotoDataAdapter implements Model {
         if (!mIsActive) return;
 
 		int currentIndex = mCurrentIndex;
-		Uri item = mData[currentIndex % DATA_CACHE_SIZE];
+        MetadataTest item = mData[currentIndex % DATA_CACHE_SIZE];
 		if (item == null || !item.equals(mItemPath)) {
 			// current item mismatch - don't request image
 			return;
@@ -746,15 +723,15 @@ public class PhotoDataAdapter implements Model {
 	}
 
     private class ScreenNailJob implements Job<ScreenNail> {
-		private Uri mItem;
+		private MetadataTest mItem;
 
-		public ScreenNailJob(Uri item) {
+		public ScreenNailJob(MetadataTest item) {
 			mItem = item;
 		}
 
 		@Override
         public ScreenNail run(JobContext jc) {
-			Bitmap bitmap = ImageUtil.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL, mItem).run(jc);
+			Bitmap bitmap = ImageUtil.requestImage(mActivity, MediaItem.TYPE_THUMBNAIL, Uri.parse(mItem.getUri())).run(jc);
             if (jc.isCancelled()) return null;
 
 //            if (bitmap != null) {
@@ -768,22 +745,22 @@ public class PhotoDataAdapter implements Model {
     }
 
     private class FullImageJob implements Job<BitmapRegionDecoder> {
-		private Uri mItem;
+		private MetadataTest mItem;
 
-		public FullImageJob(Uri item)	{
+		public FullImageJob(MetadataTest item)	{
 			mItem = item;
 		}
 
 		@Override
         public BitmapRegionDecoder run(JobContext jc) {
-            return ImageUtil.requestLargeImage(mActivity.getAndroidContext(), mItem).run(jc);
+            return ImageUtil.requestLargeImage(mActivity.getAndroidContext(), Uri.parse(mItem.getUri())).run(jc);
         }
     }
 
     // Create a default ScreenNail when a ScreenNail is needed, but we don't yet
     // have one available (because the image data is still being saved, or the
     // Bitmap is still being loaded.
-    private ScreenNail newPlaceholderScreenNail(Uri item) {
+    private ScreenNail newPlaceholderScreenNail(MetadataTest item) {
         PhotoView.Size s = new PhotoView.Size();
         getImageSize(item, s);
         int width = s.width;
@@ -797,7 +774,7 @@ public class PhotoDataAdapter implements Model {
 
         ImageEntry entry = mImageCache.get(getPath(index));
         if (entry == null) return null;
-		Uri item = mData[index % DATA_CACHE_SIZE];
+        MetadataTest item = mData[index % DATA_CACHE_SIZE];
 		Utils.assertTrue(item != null);
 
         if (which == BIT_SCREEN_NAIL && entry.screenNailTask != null
@@ -830,9 +807,9 @@ public class PhotoDataAdapter implements Model {
 	}
 
 	private void updateImageCache()	{
-        HashSet<Uri> toBeRemoved = new HashSet<>(mImageCache.keySet());
+        HashSet<MetadataTest> toBeRemoved = new HashSet<>(mImageCache.keySet());
         for (int i = mActiveStart; i < mActiveEnd; ++i) {
-            Uri path = mData[i % DATA_CACHE_SIZE];
+            MetadataTest path = mData[i % DATA_CACHE_SIZE];
             if (path == null) continue;
 
 			ImageEntry entry = mImageCache.get(path);
@@ -865,7 +842,7 @@ public class PhotoDataAdapter implements Model {
 		}
 
 		// Clear the data and requests for ImageEntries outside the new window.
-		for (Uri path : toBeRemoved) {
+		for (MetadataTest path : toBeRemoved) {
 			ImageEntry entry = mImageCache.remove(path);
             if (entry.fullImageTask != null) entry.fullImageTask.cancel();
             if (entry.screenNailTask != null) entry.screenNailTask.cancel();
@@ -876,10 +853,10 @@ public class PhotoDataAdapter implements Model {
 
     private class FullImageListener
             implements Runnable, FutureListener<BitmapRegionDecoder> {
-		private final Uri mPath;
+		private final MetadataTest mPath;
 		private Future<BitmapRegionDecoder> mFuture;
 
-		public FullImageListener(Uri item) {
+		public FullImageListener(MetadataTest item) {
 			mPath = item;
 		}
 
@@ -892,16 +869,16 @@ public class PhotoDataAdapter implements Model {
 
         @Override
         public void run() {
-            updateFullImage(mPath, mFuture);
+            updateFullImage(Uri.parse(mPath.getUri()), mFuture);
         }
     }
 
     private class ScreenNailListener
             implements Runnable, FutureListener<ScreenNail> {
-		private final Uri mPath;
+		private final MetadataTest mPath;
 		private Future<ScreenNail> mFuture;
 
-		public ScreenNailListener(Uri item) {
+		public ScreenNailListener(MetadataTest item) {
 			mPath = item;
 		}
 
@@ -951,12 +928,12 @@ public class PhotoDataAdapter implements Model {
     private static class UpdateInfo {
 //		public long version;
 		public boolean reloadContent;
-		public Uri target;
+		public MetadataTest target;
 		public int contentStart;
 		public int contentEnd;
 
 		public int size;
-		public ArrayList<Uri> items;
+		public ArrayList<MetadataTest> items;
 	}
 
     private class GetUpdateInfo implements Callable<UpdateInfo> {
@@ -965,7 +942,7 @@ public class PhotoDataAdapter implements Model {
             for (int i = mContentStart, n = mContentEnd; i < n; ++i) {
                 if (mData[i % DATA_CACHE_SIZE] == null) return true;
             }
-			Uri current = mData[mCurrentIndex % DATA_CACHE_SIZE];
+            MetadataTest current = mData[mCurrentIndex % DATA_CACHE_SIZE];
 			return current == null || !current.equals(mItemPath);
 		}
 
@@ -1025,9 +1002,9 @@ public class PhotoDataAdapter implements Model {
 		}
 	}
 
-	public ArrayList<Uri> getMediaItem(int start, int count)
+	public ArrayList<MetadataTest> getMediaItem(int start, int count)
 	{
-		ArrayList<Uri> result = new ArrayList<>();
+		ArrayList<MetadataTest> result = new ArrayList<>();
 
 		for (int i = start; i <= start + count; i++)
 		{

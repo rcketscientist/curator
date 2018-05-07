@@ -7,7 +7,6 @@ import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.preference.PreferenceManager
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.Toolbar
@@ -45,10 +44,10 @@ abstract class ViewerActivity : CoreActivity(),
 
     private var mCurrrentImage: MetadataTest? = null
 
-    abstract val currentItem: Uri?
+    abstract val currentItem: MetadataTest?
     abstract val currentBitmap: Bitmap
 
-    protected val mMediaItems: MutableList<Uri> = ArrayList()
+    protected val mMediaItems: MutableList<MetadataTest> = ArrayList()
 
     /**
      * Since initial image configuration can occur BEFORE image generation
@@ -101,22 +100,25 @@ abstract class ViewerActivity : CoreActivity(),
         } else */if (intent.hasExtra(Intent.EXTRA_STREAM))
         // Correct share intent using extras
         {
-            mImageIndex = 0
-            val action = intent.action
-            if (Intent.ACTION_SEND == action || Intent.ACTION_VIEW == action) {
-                mMediaItems.add(intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as Uri)
-            } else if (Intent.ACTION_SEND_MULTIPLE == intent.action) {
-                val images = intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
-                mMediaItems.addAll(images)
-            }
+            // TODO: Disabled due to need to convert uri to metadata
+//            mImageIndex = 0
+//            val action = intent.action
+//            if (Intent.ACTION_SEND == action || Intent.ACTION_VIEW == action) {
+//                mMediaItems.add(intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as Uri)
+//            } else if (Intent.ACTION_SEND_MULTIPLE == intent.action) {
+//                val images = intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+//                mMediaItems.addAll(images)
+//            }
         } else
         // Simple external intent, try data
         {
-            mImageIndex = 0
-            val data = intent.data
-            if (data == null)
-                finish()
-            mMediaItems.add(data)
+            // TODO: Disabled due to need to convert uri to metadata
+
+//            mImageIndex = 0
+//            val data = intent.data
+//            if (data == null)
+//                finish()
+//            mMediaItems.add(data)
         }
 
         mResponseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META)
@@ -124,8 +126,10 @@ abstract class ViewerActivity : CoreActivity(),
             override fun onReceive(context: Context, intent: Intent) {
                 when (intent.action) {
                     MetaService.BROADCAST_REQUESTED_META -> {
-                        val uri = Uri.parse(intent.getStringExtra(MetaService.EXTRA_URI))
-                        if (uri == currentItem) {
+                        val uri = intent.getStringExtra(MetaService.EXTRA_URI)
+                        val response = mMediaItems.first { it.uri == uri }
+                        if (response == currentItem) {
+                            // TODO: This is broken
                             val values = intent.getParcelableExtra<ContentValues>(MetaService.EXTRA_METADATA)
                             populateMeta(values)
                         }
@@ -180,11 +184,11 @@ abstract class ViewerActivity : CoreActivity(),
         zoomButton.setOnCheckedChangeListener { _, isChecked -> onZoomLockChanged(isChecked) }
     }
 
-    override fun onImageAdded(item: Uri) {
+    override fun onImageAdded(item: MetadataTest) {
         mMediaItems.add(item)
     }
 
-    override fun onImageRemoved(item: Uri) {
+    override fun onImageRemoved(item: MetadataTest) {
         mMediaItems.remove(item)
     }
 
@@ -320,7 +324,7 @@ abstract class ViewerActivity : CoreActivity(),
         clearMeta()    // clear panel during load to avoid confusion
 
         // Start a meta check/process on a high priority.
-        MetaWakefulReceiver.startPriorityMetaService(this@ViewerActivity, image)
+        MetaWakefulReceiver.startPriorityMetaService(this@ViewerActivity, Uri.parse(image.uri))
     }
 
     private fun updateImageDetails() {
@@ -487,9 +491,9 @@ abstract class ViewerActivity : CoreActivity(),
         intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
 
         if ("JPG" == format) {
-            intent.setDataAndType(SwapProvider.createSwapUri(this, media), "image/jpeg")
+            intent.setDataAndType(SwapProvider.createSwapUri(this, Uri.parse(media?.uri)), "image/jpeg")
         } else if ("RAW" == format) {
-            intent.setDataAndType(media, "image/*")
+            intent.setDataAndType(Uri.parse(media?.uri), "image/*")
         }
 
         val chooser = Intent.createChooser(intent, resources.getString(R.string.editWith))
@@ -499,7 +503,7 @@ abstract class ViewerActivity : CoreActivity(),
     private fun setWallpaper() {
         try {
             WallpaperManager.getInstance(this).setBitmap(ImageUtil.createBitmapToSize(
-                ImageUtil.getThumb(this, currentItem), displayWidth, displayHeight))
+                ImageUtil.getThumb(this, Uri.parse(currentItem?.uri)), displayWidth, displayHeight))
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
             Toast.makeText(this@ViewerActivity, R.string.resultWallpaperFailed, Toast.LENGTH_SHORT).show()

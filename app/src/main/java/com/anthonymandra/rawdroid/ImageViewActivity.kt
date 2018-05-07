@@ -17,7 +17,7 @@ class ImageViewActivity : PhotoPage() {
 
     private val mListeners = WeakHashMap<ContentListener, Any>()
 
-    override val currentItem: Uri?
+    override val currentItem: MetadataTest?
         get() = mModel.currentItem
 
     override val currentBitmap: Bitmap

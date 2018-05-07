@@ -158,30 +158,30 @@ class SearchService : IntentService("SearchService") {
         /**
          * Broadcast ID when parsing is complete
          */
-        val BROADCAST_SEARCH_STARTED = "com.anthonymandra.framework.action.BROADCAST_SEARCH_STARTED"
+        const val BROADCAST_SEARCH_STARTED = "com.anthonymandra.framework.action.BROADCAST_SEARCH_STARTED"
         /**
          * Broadcast ID when parsing is complete
          */
-        val BROADCAST_SEARCH_COMPLETE = "com.anthonymandra.framework.action.BROADCAST_SEARCH_COMPLETE"
+        const val BROADCAST_SEARCH_COMPLETE = "com.anthonymandra.framework.action.BROADCAST_SEARCH_COMPLETE"
         /**
          * Broadcast extra containing uris for the discovered images
          */
-        val EXTRA_IMAGE_IDS = "com.anthonymandra.framework.action.EXTRA_IMAGE_IDS"
+        const val EXTRA_IMAGE_IDS = "com.anthonymandra.framework.action.EXTRA_IMAGE_IDS"
 
         /**
          * Broadcast ID when images are found, sent after every folder with hits
          */
-        val BROADCAST_FOUND_IMAGES = "com.anthonymandra.framework.action.BROADCAST_FOUND_IMAGES"
+        const val BROADCAST_FOUND_IMAGES = "com.anthonymandra.framework.action.BROADCAST_FOUND_IMAGES"
         /**
          * Broadcast extra containing running total of images found in the current search
          */
-        val EXTRA_NUM_IMAGES = "com.anthonymandra.framework.action.EXTRA_NUM_IMAGES"
+        const val EXTRA_NUM_IMAGES = "com.anthonymandra.framework.action.EXTRA_NUM_IMAGES"
         private val mImageCount = AtomicInteger(0)
 
-        private val ACTION_SEARCH = "com.anthonymandra.framework.action.ACTION_SEARCH"
-        private val EXTRA_FILEPATH_ROOTS = "com.anthonymandra.framework.extra.EXTRA_FILEPATH_ROOTS"
-        private val EXTRA_DOCUMENT_TREE_URI_ROOTS = "com.anthonymandra.framework.extra.EXTRA_DOCUMENT_TREE_URI_ROOTS"
-        private val EXTRA_SKIP = "com.anthonymandra.framework.extra.EXTRA_SKIP"
+        private const val ACTION_SEARCH = "com.anthonymandra.framework.action.ACTION_SEARCH"
+        private const val EXTRA_FILEPATH_ROOTS = "com.anthonymandra.framework.extra.EXTRA_FILEPATH_ROOTS"
+        private const val EXTRA_DOCUMENT_TREE_URI_ROOTS = "com.anthonymandra.framework.extra.EXTRA_DOCUMENT_TREE_URI_ROOTS"
+        private const val EXTRA_SKIP = "com.anthonymandra.framework.extra.EXTRA_SKIP"
 
         fun startActionSearch(context: Context, filePathRoots: Array<String>?, documentTreeUris: Array<String>, skip: Array<String>) {
             val intent = Intent(context, SearchService::class.java)

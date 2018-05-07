@@ -20,7 +20,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.view.MotionEvent;
@@ -97,7 +96,7 @@ public class PhotoView extends GLView {
         // MediaItem, depending on the value of focus hint direction.
         int FOCUS_HINT_NEXT = 0;
         int FOCUS_HINT_PREVIOUS = 1;
-        Uri getCurrentItem();
+        MetadataTest getCurrentItem();
     }
 
     public interface Listener {

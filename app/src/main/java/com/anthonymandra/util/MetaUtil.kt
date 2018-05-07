@@ -27,6 +27,7 @@ import com.drew.metadata.exif.ExifSubIFDDirectory
 import com.drew.metadata.exif.GpsDirectory
 import com.drew.metadata.exif.PanasonicRawIFD0Directory
 import com.drew.metadata.exif.makernotes.*
+import com.drew.metadata.jpeg.JpegDirectory
 import com.drew.metadata.xmp.XmpDirectory
 import com.drew.metadata.xmp.XmpReader
 import java.io.IOException
@@ -197,8 +198,8 @@ object MetaUtil {
         entity.exposure = getExposure(meta)
         entity.flash = getFlash(meta)
         entity.focalLength = getFocalLength(meta)
-        entity.width = Integer.parseInt(getImageWidth(meta))
-        entity.height = Integer.parseInt(getImageHeight(meta))
+        entity.width = getImageWidth(meta)
+        entity.height = getImageHeight(meta)
         entity.iso = getIso(meta)
         entity.latitude = getLatitude(meta)
         entity.longitude = getLongitude(meta)
@@ -293,21 +294,25 @@ object MetaUtil {
         return getDescription(meta, ExifSubIFDDirectory.TAG_EXPOSURE_TIME)
     }
 
-    private fun getImageHeight(meta: Metadata): String? {
-        var height = getDescription(meta, ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT)
-        if (height == null)
-            height = getDescription(meta, ExifIFD0Directory.TAG_IMAGE_HEIGHT)
-        if (height == null)
-            height = getDescription(meta, PanasonicRawIFD0Directory.TagSensorHeight)
+    private fun getImageHeight(meta: Metadata): Int {
+        var height = getInt(meta, ExifSubIFDDirectory::class.java, ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT)
+        if (height == 0)
+            height = getInt(meta, ExifIFD0Directory::class.java, ExifIFD0Directory.TAG_IMAGE_HEIGHT)
+        if (height == 0)
+            height = getInt(meta, JpegDirectory::class.java, JpegDirectory.TAG_IMAGE_HEIGHT)
+        if (height == 0)
+            height = getInt(meta, PanasonicRawIFD0Directory::class.java, PanasonicRawIFD0Directory.TagSensorHeight)
         return height
     }
 
-    private fun getImageWidth(meta: Metadata): String? {
-        var width = getDescription(meta, ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH)
-        if (width == null)
-            width = getDescription(meta, ExifIFD0Directory.TAG_IMAGE_WIDTH)
-        if (width == null)
-            width = getDescription(meta, PanasonicRawIFD0Directory.TagSensorWidth)
+    private fun getImageWidth(meta: Metadata): Int {
+        var width = getInt(meta, ExifSubIFDDirectory::class.java, ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH)
+        if (width == 0)
+            width = getInt(meta, ExifIFD0Directory::class.java, ExifIFD0Directory.TAG_IMAGE_WIDTH)
+        if (width == 0)
+            width = getInt(meta, JpegDirectory::class.java, JpegDirectory.TAG_IMAGE_WIDTH)
+        if (width == 0)
+            width = getInt(meta, PanasonicRawIFD0Directory::class.java, PanasonicRawIFD0Directory.TagSensorWidth)
         return width
     }
 
@@ -324,14 +329,14 @@ object MetaUtil {
     }
 
     private fun getWhiteBalance(meta: Metadata): String? {
-        /*        if (meta.containsDirectoryOfType(CanonMakernoteDirectory.class))
-	        return meta.getFirstDirectoryOfType(CanonMakernoteDirectory.class).getDescription(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE);
-	    if (meta.containsDirectoryOfType(PanasonicMakernoteDirectory.class))
-	        return meta.getFirstDirectoryOfType(PanasonicMakernoteDirectory.class).getDescription(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE);
-	    if (meta.containsDirectoryOfType(FujifilmMakernoteDirectory.class))
-	        return meta.getFirstDirectoryOfType(FujifilmMakernoteDirectory.class).getDescription(FujifilmMakernoteDirectory.TAG_WHITE_BALANCE);
-	    if (meta.containsDirectoryOfType(LeicaMakernoteDirectory.class))
-	        return meta.getFirstDirectoryOfType(LeicaMakernoteDirectory.class).getDescription(LeicaMakernoteDirectory.TAG_WHITE_BALANCE);*/
+        if (meta.containsDirectoryOfType(CanonMakernoteDirectory::class.java))
+	        return meta.getFirstDirectoryOfType(CanonMakernoteDirectory::class.java).getDescription(CanonMakernoteDirectory.FocalLength.TAG_WHITE_BALANCE)
+	    if (meta.containsDirectoryOfType(PanasonicMakernoteDirectory::class.java))
+	        return meta.getFirstDirectoryOfType(PanasonicMakernoteDirectory::class.java).getDescription(PanasonicMakernoteDirectory.TAG_WHITE_BALANCE)
+	    if (meta.containsDirectoryOfType(FujifilmMakernoteDirectory::class.java))
+	        return meta.getFirstDirectoryOfType(FujifilmMakernoteDirectory::class.java).getDescription(FujifilmMakernoteDirectory.TAG_WHITE_BALANCE)
+	    if (meta.containsDirectoryOfType(LeicaMakernoteDirectory::class.java))
+	        return meta.getFirstDirectoryOfType(LeicaMakernoteDirectory::class.java).getDescription(LeicaMakernoteDirectory.TAG_WHITE_BALANCE)
         return getDescription(meta, ExifSubIFDDirectory.TAG_WHITE_BALANCE_MODE)
     }
 

@@ -404,9 +404,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     override fun onImageSetChanged() { }
 
-    override fun onImageAdded(item: Uri) { }
+    override fun onImageAdded(item: MetadataTest) { }
 
-    override fun onImageRemoved(item: Uri) { }
+    override fun onImageRemoved(item: MetadataTest) { }
 
     protected fun removeDatabaseReference(toRemove: Long) {
         dataRepo.deleteImage(toRemove)

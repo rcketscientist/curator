@@ -704,7 +704,7 @@ abstract class CoreActivity : DocumentActivity() {
                 builder.setProgress(images.size, progress, false)
                 notificationManager.notify(0, builder.build())
 
-                onImageAdded(destinationFile.uri)
+//                onImageAdded(destinationFile.uri)
                 destinationFile.uri
             }
             .observeOn(Schedulers.from(AppExecutors.MAIN))
@@ -763,7 +763,7 @@ abstract class CoreActivity : DocumentActivity() {
 
             images.forEach { toDelete ->
                 if (deleteAssociatedFiles(toDelete)) {
-                    onImageRemoved(Uri.parse(toDelete.uri))
+//                    onImageRemoved(Uri.parse(toDelete.uri))
                     DataRepository.getInstance(AppDatabase.getInstance(this)).deleteImage(toDelete)
                 }
             }
@@ -820,7 +820,7 @@ abstract class CoreActivity : DocumentActivity() {
                 }
 
                 remainingImages.remove(toRecycle)
-                onImageRemoved(toRecycle)
+//                onImageRemoved(toRecycle)
             }
 
             // TODO: FIXME
@@ -873,7 +873,7 @@ abstract class CoreActivity : DocumentActivity() {
 
                     val uri = Uri.fromFile(recycledFile)
                     moveFile(uri, toRestore)
-                    onImageAdded(toRestore)
+//                    onImageAdded(toRestore)
                     // TODO: FIXME
 //                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, toRestore))
                 } catch (e: DocumentActivity.WritePermissionException) {
@@ -1040,13 +1040,13 @@ abstract class CoreActivity : DocumentActivity() {
      * Fires after individual items are successfully added.  This will fire multiple times in a batch.
      * @param item added item
      */
-    protected abstract fun onImageAdded(item: Uri)
+    protected abstract fun onImageAdded(item: MetadataTest)
 
     /**
      * Fires after individual items are successfully deleted.  This will fire multiple times in a batch.
      * @param item deleted item
      */
-    protected abstract fun onImageRemoved(item: Uri)
+    protected abstract fun onImageRemoved(item: MetadataTest)
 
     /**
      * Fires after all actions of a batch (or single) change to the image set are complete.

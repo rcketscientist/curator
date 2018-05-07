@@ -16,7 +16,6 @@
 
 package com.android.gallery3d.app;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,7 +52,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     protected PhotoDataAdapter mModel;
 
     private Handler mHandler;
-    private Uri mCurrentPhoto = null;
+    private MetadataTest mCurrentPhoto = null;
     private boolean mIsActive;
 
     private static final long DEFERRED_UPDATE_MS = 250;
@@ -98,7 +97,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
                         break;
                     }
                     case MSG_REFRESH_IMAGE: {
-                        final Uri photo = mCurrentPhoto;
+                        final MetadataTest photo = mCurrentPhoto;
                         mCurrentPhoto = null;
                         updateCurrentPhoto(photo);
                         break;
@@ -124,7 +123,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
         setMImageIndex(index);
 
         if (item != null) {
-            Uri photo = mModel.getMediaItem(0);
+            MetadataTest photo = mModel.getMediaItem(0);
             if (photo != null) updateCurrentPhoto(photo);
         }
     }
@@ -132,7 +131,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
     @Override
     public void onLoadingFinished(boolean loadingFailed) {
         if (!mModel.isEmpty()) {
-            Uri photo = mModel.getMediaItem(0);
+            MetadataTest photo = mModel.getMediaItem(0);
             if (photo != null) updateCurrentPhoto(photo);
         } else if (mIsActive) {
             finish();
@@ -162,7 +161,7 @@ public abstract class PhotoPage extends AbstractCoreActivity implements
         }
     }
 
-    private void updateCurrentPhoto(Uri photo) {
+    private void updateCurrentPhoto(MetadataTest photo) {
         if (mCurrentPhoto == photo) return;
         mCurrentPhoto = photo;
         if (mPhotoView.getFilmMode()) {
