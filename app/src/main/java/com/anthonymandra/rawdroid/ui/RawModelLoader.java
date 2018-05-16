@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.data.MetadataTest;
@@ -13,7 +14,6 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.bumptech.glide.load.data.ExifOrientationStream;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.signature.ObjectKey;
 
@@ -37,7 +37,9 @@ class RawModelLoader implements ModelLoader<MetadataTest, InputStream>
 	}
 
 	@Override
-	public boolean handles(@NonNull MetadataTest metadataTest) {
+	public boolean handles(@NonNull MetadataTest image) {
+		// If processed and OS supported allow glide to handle natively.
+//		return Meta.ImageType.fromInt(image.getType()) != Meta.ImageType.COMMON;
 		return true;
 	}
 
@@ -53,10 +55,11 @@ class RawModelLoader implements ModelLoader<MetadataTest, InputStream>
 
 		@Override
 		public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> callback) {
+			Log.d("ajm", "loadData: " + source.getUri());
 			try {
 				byte[] image = ImageUtil.getThumb(
 					context, Uri.parse(source.getUri()), Meta.ImageType.fromInt(source.getType()));
-				callback.onDataReady(new ExifOrientationStream(new ByteArrayInputStream(image), 0));
+				callback.onDataReady(new ByteArrayInputStream(image));
 			} catch (Exception e) {
 				callback.onLoadFailed(e);
 				e.printStackTrace();

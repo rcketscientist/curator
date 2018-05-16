@@ -15,7 +15,7 @@ import java.io.InputStream;
 public final class CuratorGlideModule extends AppGlideModule {
 
     @Override
-    public void registerComponents(@NonNull Context context, @NonNull Glide glide, Registry registry) {
+    public void registerComponents(@NonNull Context /*application*/context, @NonNull Glide glide, Registry registry) {
         registry.append(MetadataTest.class, InputStream.class, new RawModelLoaderFactory(context));
     }
 }

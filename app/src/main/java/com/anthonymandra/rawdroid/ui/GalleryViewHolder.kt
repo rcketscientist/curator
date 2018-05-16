@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fileview.*
 
 @Suppress("DEPRECATION")
-class GalleryViewHolder(override val containerView: View/*, private val glide: RequestManager*/)
+class GalleryViewHolder(override val containerView: View)
     : RecyclerView.ViewHolder(containerView), LayoutContainer {
     private var image: MetadataTest? = null
 
@@ -51,8 +52,9 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
 
         // FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
         image?.let {
+            Log.d("ajm", "Requesting glide: " + it.uri)
             GlideApp.with(itemView.context)
-                .load(image)
+                .load(it)
                 .centerCrop()
                 .into(galleryImageView)
             galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
@@ -60,10 +62,10 @@ class GalleryViewHolder(override val containerView: View/*, private val glide: R
     }
 
     companion object {
-        fun create(parent: ViewGroup/*, glide: RequestManager*/): GalleryViewHolder {
+        fun create(parent: ViewGroup): GalleryViewHolder {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.fileview, parent, false)
-            return GalleryViewHolder(view/*, glide*/)
+            return GalleryViewHolder(view)
         }
     }
 }

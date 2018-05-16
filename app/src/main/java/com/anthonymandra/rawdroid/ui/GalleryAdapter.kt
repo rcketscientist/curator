@@ -203,7 +203,5 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
             override fun areItemsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
                 oldItem.uri == newItem.uri
         }
-        // TODO: This could be an entity, although I think the paging will allow full meta queries
-//        val REQUIRED_COLUMNS = arrayOf(BaseColumns._ID, Meta.LABEL, Meta.NAME, Meta.ORIENTATION, Meta.RATING, Meta.SUBJECT, Meta.URI, Meta.TYPE)
     }
 }

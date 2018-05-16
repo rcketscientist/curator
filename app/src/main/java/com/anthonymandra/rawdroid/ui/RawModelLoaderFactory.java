@@ -12,21 +12,19 @@ import java.io.InputStream;
 
 public class RawModelLoaderFactory implements ModelLoaderFactory<MetadataTest, InputStream> {
 
-    private Context context;    //FIXME: This should not be held!
-    RawModelLoaderFactory(Context c) {
-        context = c;
+    private Context applicationContext;
+    RawModelLoaderFactory(Context applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @NonNull
     @Override
     public ModelLoader<MetadataTest, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
-        RawModelLoader loader = new RawModelLoader(context);
-        context = null;
-        return loader;
+        return new RawModelLoader(applicationContext);
     }
 
     @Override
     public void teardown() {
-        context = null;
+        applicationContext = null;
     }
 }
