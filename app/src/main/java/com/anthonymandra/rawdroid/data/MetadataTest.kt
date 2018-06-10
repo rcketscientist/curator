@@ -2,7 +2,7 @@ package com.anthonymandra.rawdroid.data
 
 import android.arch.persistence.room.Relation
 
-data class MetadataTest (
+class MetadataTest:  MetadataEntity() {
 //    @Embedded
 //    var metadata: MetadataEntity = MetadataEntity(),
     @Relation(
@@ -11,4 +11,5 @@ data class MetadataTest (
             projection = ["subjectId"],
             entity = SubjectJunction::class)
     var subjectIds: List<Long> = emptyList()
-) : MetadataEntity()
+
+}

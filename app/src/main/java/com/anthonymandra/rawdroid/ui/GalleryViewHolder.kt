@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +51,6 @@ class GalleryViewHolder(override val containerView: View)
 
         // FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
         image?.let {
-            Log.d("ajm", "Requesting glide: " + it.uri)
             GlideApp.with(itemView.context)
                 .load(it)
                 .centerCrop()

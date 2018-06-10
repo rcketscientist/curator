@@ -64,6 +64,10 @@ open class MetadataEntity {
 
         return true
     }
+
+    override fun toString(): String {
+        return "MetadataEntity($documentId)"
+    }
 }
 
 

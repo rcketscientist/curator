@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.rawdroid.data.MetadataTest;
@@ -27,12 +26,12 @@ class RawModelLoader implements ModelLoader<MetadataTest, InputStream>
 	{
 		context = c;
 	}
+	static int counter = 0;
 
 	@Nullable
 	@Override
 	public LoadData<InputStream> buildLoadData(@NonNull MetadataTest metadataTest, int width, int height, @NonNull Options options) {
 		Key diskCacheKey = new ObjectKey(metadataTest.getUri());
-
 		return new LoadData<>(diskCacheKey, new RawFetcher(context, metadataTest));
 	}
 
@@ -55,7 +54,6 @@ class RawModelLoader implements ModelLoader<MetadataTest, InputStream>
 
 		@Override
 		public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> callback) {
-			Log.d("ajm", "loadData: " + source.getUri());
 			try {
 				byte[] image = ImageUtil.getThumb(
 					context, Uri.parse(source.getUri()), Meta.ImageType.fromInt(source.getType()));
@@ -85,9 +83,9 @@ class RawModelLoader implements ModelLoader<MetadataTest, InputStream>
 		@NonNull
 		@Override
 		public DataSource getDataSource() {
-			// TODO: Different caching for local and remote, however, due to decode overhead it's possible we should prefer remote
-			// TODO: https://bumptech.github.io/glide/tut/custom-modelloader.html#getdatasource
-
+			// REMOTE stores the original data (in this case full decoded image)
+			// LOCAL stores the downsampled transformed data
+			// https://bumptech.github.io/glide/tut/custom-modelloader.html#getdatasource
 			return DataSource.LOCAL;
 		}
 	}
