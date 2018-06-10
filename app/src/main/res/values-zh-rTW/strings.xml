@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid</string>
+<string name="positive">接受</string>
+<string name="negative">拒絕</string>
+<string name="neutral">取消</string>
+<string name="saveAs">另存新檔</string>
+<string name="export">匯出</string>
+<string name="wallpaper">設定為桌布</string>
+<string name="editWith">用...修改</string>
+<string name="selectAll">全選</string>
+<string name="help">幫助</string>
+<string name="delete">刪除</string>
+<string name="viewMeta">標籤</string>
+<string name="rename">重新命名</string>
+<string name="format_prompt">格式</string>
+<string name="save">儲存</string>
+<string name="save_success">成功儲存</string>
+<string name="no_filemanager_installed">找不到檔案管理器</string>
+
+<string name="Date">日期</string>
+<string name="Name">名稱</string>
+<string name="settings">設定</string>
+<string name="chooseDestination">選擇目的地</string>
+<string name="choosefile">選取檔案</string>
+<string name="import1">匯入</string>
+<string name="renameImages">重新命名%1$s</string>
+<string name="view">檢視</string>
+<string name="gallery">圖庫</string>
+<string name="viewer">檢視器</string>
+<string name="storage">貯存</string>
+<string name="firstImage">第一影像</string>
+<string name="lastImage">最後影像</string>
+	<string name="unlicensed">未授權</string>
+
+<!-- Meta -->
+<string name="altitude">海拔高度</string>
+<string name="aperture">光圈</string>
+<string name="dimensions">尺寸</string>
+<string name="driveMode">驅動方式</string>
+<string name="expMode">曝光模式</string>
+<string name="expProgram">曝光程式</string>
+<string name="exposure">曝光值</string>
+<string name="flash">閃光燈</string>
+<string name="focalLength">焦距</string>
+<string name="iso">ISO</string>
+<string name="latitude">緯度</string>
+<string name="lens">鏡頭</string>
+<string name="longitude">經度</string>
+<string name="model">型號</string>
+<string name="whiteBalance">白平衡</string>
+<string name="tutorial">教學</string>
+
+<!-- Results -->
+<string name="resultImportSuccessful">匯入成功</string>
+<string name="resultImportFailed">匯入失敗</string>
+
+<!-- Warnings -->
+
+<!-- Preferences -->
+
+
+
+
+
+<!-- Colors for xmp -->
+<string name="red">紅</string>
+<string name="green">綠</string>
+<string name="blue">藍</string>
+<string name="cyan">洋紅</string>
+<string name="purple">紫</string>
+<string name="yellow">黃</string>
+    <string name="Name_ascending">名稱 \u25BC</string>
+
+    <!-- Tutorials -->
+
+
+</resources>

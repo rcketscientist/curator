@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:key="prefKeyEnableWatermark"
+        android:defaultValue="false"
+        android:title="@string/prefTitleEnableWatermark"
+        android:summary="@string/prefSummaryEnableWatermark" />
+    <com.anthonymandra.widget.FriendlyEditTextPreference
+        android:key="prefKeyWatermarkText"
+        android:title="@string/prefTitleWatermarkText"
+        android:summary="@string/prefAutoSummary"/>
+    <com.anthonymandra.widget.SeekBarPreference
+        android:key="prefKeyWatermarkSize"
+        android:title="@string/prefTitleWatermarkSize"
+        android:summary="%s pixels"
+        android:defaultValue="150"
+        android:text="Pixels"
+        android:max="600" />
+    <com.anthonymandra.widget.SeekBarPreference
+        android:key="prefKeyWatermarkAlpha"
+        android:title="@string/prefTitleWatermarkAlpha"
+        android:summary="%s %%"
+        android:defaultValue="75"
+        android:text="%"
+        android:max="100" />
+    <ListPreference
+        android:defaultValue="Center"
+        android:key="prefKeyWatermarkLocation"
+        android:title="@string/prefTitleWatermarkLocation"
+        android:entries="@array/watermarkLocations"
+        android:summary="@string/prefAutoSummary"
+        android:entryValues="@array/watermarkLocationsValues" />
+    <PreferenceCategory android:title="@string/margins" />
+    <com.anthonymandra.widget.FriendlyEditTextPreference
+        android:key="prefKeyWatermarkTopMargin"
+        android:title="@string/prefTitleTopMargin"
+        android:summary="@string/prefSummaryTopMargin"
+        android:inputType="number" />
+    <com.anthonymandra.widget.FriendlyEditTextPreference
+        android:key="prefKeyWatermarkBottomMargin"
+        android:title="@string/prefTitleBottomMargin"
+        android:summary="@string/prefSummaryBottomMargin"
+        android:inputType="number" />
+    <com.anthonymandra.widget.FriendlyEditTextPreference
+        android:key="prefKeyWatermarkLeftMargin"
+        android:title="@string/prefTitleLeftMargin"
+        android:summary="@string/prefSummaryLeftMargin"
+        android:inputType="number" />
+    <com.anthonymandra.widget.FriendlyEditTextPreference
+        android:key="prefKeyWatermarkRightMargin"
+        android:title="@string/prefTitleRightMargin"
+        android:summary="@string/prefSummaryRightMargin"
+        android:inputType="number" />
+
+</PreferenceScreen>

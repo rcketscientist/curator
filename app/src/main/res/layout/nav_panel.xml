@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/leftPanel"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_alignParentLeft="true"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/watermark"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/watermark512"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="false" />
+
+    <LinearLayout
+        android:id="@+id/layoutNavButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:background="@color/background_material_dark"
+        android:alpha=".75">
+
+        <ImageButton
+            android:id="@+id/imageButtonPrevious"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_left"
+            android:background="@android:color/transparent"/>
+
+        <ImageButton
+            android:id="@+id/imageButtonNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_chevron_right"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/Transparent_Black"
+        android:alpha="0.75">
+
+        <CheckBox
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:id="@+id/zoomButton"
+            android:background="@drawable/lock_selector"
+            android:button="@null"/>
+
+        <TextView
+            android:id="@+id/textViewScale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:layout_gravity="center_vertical"
+            android:textSize="@dimen/abc_text_size_large_material"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

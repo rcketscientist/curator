@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid</string>
+<string name="positive">Επιβεβαίωση</string>
+<string name="negative">Απόρριψη</string>
+<string name="neutral">Ακύρωση</string>
+<string name="saveAs">Αποθήκευση ως...</string>
+<string name="export">Εξαγωγή</string>
+<string name="wallpaper">Ορισμός ως ταπετσαρία</string>
+<string name="editWith">Επεξεργασία με...</string>
+<string name="selectAll">Επιλογή όλων</string>
+<string name="help">Βοήθεια</string>
+<string name="delete">Διαγραφή</string>
+<string name="viewMeta">Ετικέτα</string>
+<string name="rename">Μετονομασία</string>
+<string name="format_prompt">Διαμόρφωση</string>
+<string name="save">Αποθήκευση</string>
+<string name="save_success">Επιτυχής αποθήκευση</string>
+<string name="no_filemanager_installed">Δεν υπάρχει πρόγραμμα διαχείρησης αρχείων</string>
+
+<!-- <item>Custom Name - Original Number</item> -->
+
+<string name="Date">Ημερ/νία</string>
+<string name="Name">Όνομα</string>
+<string name="settings">Ρυθμίσεις</string>
+<string name="chooseDestination">Επιλογή Προορισμού</string>
+<string name="choosefile">Επιλογή Αρχείου</string>
+<string name="import1">Εισαγωγή</string>
+<string name="renameImages">Μετονομασία εικόνων</string>
+<string name="view">Προβολή</string>
+<string name="gallery">Γκάλερι</string>
+<string name="firstImage">Πρώτη εικόνα</string>
+<string name="lastImage">Τελευταία εικόνα</string>
+<string name="unlicensed">χωρίς άδεια χρήσης</string>
+
+<!-- Meta -->
+<string name="altitude">Υψόμετρο</string>
+<string name="aperture">Διάφραγμα</string>
+<string name="dimensions">Διαστάσεις</string>
+<string name="driveMode">Drive Mode</string>
+<string name="expMode">Λειτουργία Έκθεσης</string>
+<string name="expProgram">Πρόγραμμα Έκθεσης</string>
+<string name="exposure">Έκθεση</string>
+<string name="flash">Φλας</string>
+<string name="focalLength">Εστιακή απόσταση</string>
+<string name="iso">ISO</string>
+<string name="latitude">Μήκος</string>
+<string name="lens">Φακός</string>
+<string name="longitude">Πλάτος</string>
+<string name="model">Μοντέλο</string>
+<string name="whiteBalance">Ισορροπία Λευκού</string>
+<string name="metadata">Metadata</string>
+<string name="tutorial">Γρήγορος οδηγός</string>
+
+<!-- Results -->
+<string name="resultImportSuccessful">Επιτυχής εισαγωγή</string>
+<string name="resultImportFailed">Αποτυχία εισαγωγής</string>
+<string name="resultWallpaperFailed">Αποτυχία ορισμού ταπετσαρίας.</string>
+
+<!-- Warnings -->
+<string name="warningFileWrongFormat">Λάθος τύπος αρχείου.</string>
+<string name="warningNoItemsSelected">Δεν υπάρχουν επιλεγμένα στοιχεία.</string>
+<string name="warningNotEnoughSpace">Δεν υπάρχει αρκετός διαθέσιμος χώρος για ολόκληρο το φάκελο.</string>
+<string name="warningDeleteExceedsRecycle">Το διαγραμμένο αρχείο είναι μεγαλύτερο του κάδου ανακύκλωσης. Να γίνει οριστική διαγραφή; (Σημ: Το μέγεθος του κάδου μπορεί να αλλάξει στις ρυθμίσεις)</string>
+<string name="warningDeleteDirect">Τα αρχεία θα διαγραφούν οριστικά.</string>
+<string name="warningNoRecycleBin">Δεν υπάρχει κάδος ανακύκλωσης. Τα αρχεία θα διαγραφούν οριστικά.</string>
+<string name="warningGenericImagesOff">Οι γενικές εικόνες (πχ: .jpg) είναι απενεργοποιημένες.</string>
+<string name="warningInvalidLabel">είναι μια έγκυρη ετικέτα. Μπορείτε να προσαρμόσετε τις ετικέτες από τις ρυθμίσεις.</string>
+
+<!-- Preferences -->
+<string name="prefTitleRecycleBin">Μέγεθος Κάδου Ανακύκλωσης</string>
+<string name="prefTitleFilter">Φίλτρα Exif</string>
+<string name="prefTitleDeleteConfirmation">Επιβεβαίωση Διαγραφής</string>
+<string name="prefSummaryDeleteConfirmation">Αν απενεργοποιηθεί, οι διαγραφές δεν θα χρειάζονται επιβεβαίωση ακόμα και αν ξεπερνάνε το μέγεθος του Κάδου Ανακύκλωσης.</string>
+<string name="prefTitleUseRecycleBin">Χρήση Κάδου Ανακύκλωσης</string>
+<string name="prefSummaryUseRecycleBin">Εάν είναι απενεργοποιημένος, οι διαγραφές ειναι οριστικές.</string>
+<string name="prefTitleShowXmpFiles">Προβολή αρχείων XMP</string>
+
+
+<string name="importingImages">Εισαγωγή εικόνων...</string>
+<string name="exportingThumb">Εξαγωγή Μικρογραφιών...</string>
+<string name="deletingFiles">Διαγραφή Αρχείων...</string>
+<string name="recyclingFiles">Μεταφορά αρχείων στον Κάδο Ανακύκλωσης...</string>
+<string name="clear">Καθαρισμός</string>
+<string name="reuse">Επαναχρησιμοποίηση</string>
+<string name="customKeywords">Προσαρμοσμένες λέξεις-κλειδιά</string>
+<string name="addKeyword">Προσθήκη λέξης-κλειδιού</string>
+    <string name="search">Αναζήτηση</string>
+
+<!-- Colors for xmp -->
+<string name="red">Κόκκινο</string>
+<string name="green">Πράσινο</string>
+<string name="blue">Μπλέ</string>
+<string name="cyan">Κυανό</string>
+<string name="purple">Μωβ</string>
+<string name="yellow">Κίτρινο</string>
+
+<!-- Tutorials -->
+<string name="tutorialSelect">Πατήστε παρατεταμένα οποιαδήποτε εικόνα για ενεργοποιηθεί η λειτουργία επιλογής.</string>
+<string name="tutorialSelectAll">Ειδάλως, Επιλογή Όλων.</string>
+<string name="tutorialRecycle">Από εδώ ανοίγει ο Κάδος Ανακύκλωσης, που επιτρέπει την επαναφορά διεγραμμένων αρχείων.</string>
+<string name="tutorialRecentFolder">Από εδω΄πηγαίνει στον πιο πρόσφατο αποδικωποιημένο φάκελο.</string>
+<string name="tutorialShare">Από εδώ μοιράζετε τα επιλεγμένα αρχεία σε άλλες εφαρμογές.</string>
+<string name="tutorialDelete">Με αυτό διαγράφονται όλες οι επιλεγμένες εικόνες.</string>
+<string name="tutorialSelectModeTitle">Λειτουργία Επιλογής</string>
+<string name="tutorialSelectMode">Μπήκαμε στην λειτουργία Επιλογής!</string>
+<string name="tutorialSelectBetweenTitle">Επιλογή μεταξύ</string>
+    <string name="Name_ascending">Όνομα \u25BC</string>
+
+</resources>

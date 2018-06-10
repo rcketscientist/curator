@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid</string>
+<string name="positive">接受</string>
+<string name="negative">拒绝</string>
+<string name="neutral">取消</string>
+<string name="saveAs">另存为...</string>
+<string name="export">导出</string>
+<string name="wallpaper">设为壁纸</string>
+<string name="editWith">用其他应用编辑...</string>
+<string name="selectAll">全选</string>
+<string name="help">帮助</string>
+<string name="delete">删除</string>
+<string name="viewMeta">标签</string>
+<string name="rename">重命名</string>
+<string name="format_prompt">格式</string>
+<string name="save">保存</string>
+<string name="save_success">保存成功</string>
+<string name="no_filemanager_installed">没有文件管理器</string>
+
+<string-array name="format_array">
+<item>自定义文件名或文件序列</item>
+<item></item>
+<!-- <item>Custom Name - Original Number</item> -->
+</string-array>
+
+<string name="Date">日期</string>
+<string name="Name">文件名</string>
+<string name="settings">设置</string>
+<string name="chooseDestination">选择导出文件夹</string>
+<string name="choosefile">选择文件</string>
+<string name="import1">导入</string>
+<string name="renameImages">重命名图像</string>
+<string name="view">浏览</string>
+<string name="gallery">相册</string>
+<string name="viewer">浏览器</string>
+<string name="storage">储存</string>
+<string name="firstImage">第一副图像</string>
+<string name="lastImage">最后副图像</string>
+	<string name="unlicensed">未授权的</string>
+
+<!-- Meta -->
+<string name="altitude">海拔</string>
+<string name="aperture">光圈</string>
+<string name="dimensions">尺寸</string>
+<string name="driveMode">驱动模式</string>
+<string name="expMode">曝光模式</string>
+<string name="expProgram">曝光程序</string>
+<string name="exposure">曝光值</string>
+<string name="flash">闪光</string>
+<string name="focalLength">焦距</string>
+<string name="iso">ISO</string>
+<string name="latitude">纬度</string>
+<string name="lens">镜头</string>
+<string name="longitude">经度</string>
+<string name="model">模型</string>
+<string name="whiteBalance">白平衡</string>
+<string name="metadata">元数据</string>
+<string name="tutorial">教程</string>
+
+<!-- Results -->
+<string name="resultImportSuccessful">导入成功</string>
+<string name="resultImportFailed">导入失败</string>
+<string name="resultWallpaperFailed">设置墙纸失败</string>
+
+<!-- Warnings -->
+<string name="warningFileWrongFormat">文件格式不对</string>
+<string name="warningNoItemsSelected">没有图片被选择</string>
+<string name="warningNotEnoughSpace">没有足够的空间来导入整个文件夹</string>
+<string name="warningDeleteExceedsRecycle">回收站空间已满，永久删除（注意：回收站大小可以在设置里更改）</string>
+<string name="warningDeleteDirect">直接删除文件</string>
+<string name="warningNoRecycleBin">回收站不可用，永久删除文件</string>
+<string name="warningGenericImagesOff">通用图像格式（例如，jpg）已经被禁用</string>
+<string name="warningInvalidLabel">不可用标签。标签可以在设置里更改</string>
+    <string name="Name_ascending">文件名 \u25BC</string>
+
+    <!-- Preferences -->
+
+
+
+<!-- Colors for xmp -->
+
+<!-- Tutorials -->
+
+
+</resources>

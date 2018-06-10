@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<changelog>
+    <release version="5.6.3"
+             versioncode="506003"
+             summary="Release Candidate"
+             date="30 MAY 2017">
+        <change>Fix color label refresh in viewer</change>
+        <change>Simplify keyword database access</change>
+        <change>Skip hidden folders in image search.</change>
+        <change>Greatly reduced gallery overhead; images should process very quickly now.</change>
+        <change>Nav drawer will automatically dismiss when a search is started.</change>
+    </release>
+    <release version="5.5.5"
+             versioncode="505005"
+             summary="Release Candidate"
+             date="7 MAY 2017">
+        <change>New progress bar</change>
+        <change>Universal gallery grid layout</change>
+        <change>Minor bug fixes</change>
+    </release>
+    <release version="5.5.2"
+             versioncode="505002"
+             summary="Release Candidate"
+             date="26 MAR 2017">
+        <change>Metadata size setting</change>
+        <change>Fix incompatible setting translation</change>
+        <change>Ignore empty share requests</change>
+    </release>
+    <release version="5.4.0"
+             versioncode="504000"
+             summary="Release Candidate"
+             date="19 MAR 2017">
+        <change>Fix incoming 'view' shares</change>
+        <change>New Settings:Share format [JPG|RAW]</change>
+        <change>You may now share/edit raw directly to editors (Snapseed, etc)</change>
+    </release>
+    <release version="5.3.0"
+             versioncode="503000"
+             summary="Release Candidate"
+             date="17 MAR 2017">
+        <change>New metadata parser for sigma/x3f</change>
+        <change>Revert decoder temporarily</change>
+        <change>Fix keyword import</change>
+        <change>Fix share with watermark</change>
+        <change>Many other bug fies</change>
+    </release>
+    <release version="5.2.0"
+             versioncode="502000"
+             summary="Release Candidate"
+             date="11 FEB 2017">
+        <change>Folder filter will now show all parents in a tree.  Hiding a folder will automatically hide all children.</change>
+    </release>
+    <release version="5.1.7"
+             versioncode="501007"
+             summary="Release Candidate"
+             date="7 FEB 2017">
+        <change>Possible fix for filesystem issue</change>
+    </release>
+    <release version="5.1.6"
+             versioncode="501006"
+             summary="Release Candidate"
+             date="6 FEB 2017">
+        <change>Fix restore</change>
+        <change>Fix share</change>
+        <change>Limit share to 10 images (Android transaction limit)</change>
+        <change>Fix 'processed' db column</change>
+    </release>
+    <release version="5.1.0"
+             versioncode="51000"
+             summary="Release Candidate"
+             date="28 JAN 2017">
+        <change>New branding, welcome to Curator!</change>
+        <change>Redesigned sidebars</change>
+        <change>Improved keyword handling (xmp:subject)</change>
+        <change>Add support for missing meta fields on some cameras.</change>
+        <change>Fix Google bug that caused images to be reprocessed.</change>
+        <change>Improved histogram processing.</change>
+        <change>Fix and update tutorial.</change>
+        <change>Remove search nag on empty library, only asks on first run.</change>
+    </release>
+    <release version="4.9.3.1"
+             versioncode="49301"
+             summary="Beta: Release Candidate"
+             date="23 NOV 2016">
+        <change>Fix pro share/edit permission issue.</change>
+    </release>
+    <release version="4.9.3"
+             versioncode="49300"
+             summary="Beta: Release Candidate"
+             date="19 NOV 2016">
+        <change>Fix database concurrency issues</change>
+    </release>
+    <release version="4.9.2.3"
+             versioncode="49203"
+             summary="Beta: Release Candidate"
+             date="10 NOV 2016">
+        <change>Revert to old compiler</change>
+    </release>
+    <release version="4.9.2.2"
+             versioncode="49202"
+             summary="Beta: Release Candidate"
+             date="9 NOV 2016">
+        <change>Simplify indexer to avoid sqlite limitations</change>
+        <change>Testing new Android compiler</change>
+    </release>
+    <release version="4.9.2"
+             versioncode="49200"
+             summary="Beta: Release Candidate"
+             date="5 NOV 2016">
+        <change>Feature: Scroll bar (wip)</change>
+        <change>Fix: Change unique identifier to avoid duplicate images</change>
+        <change>Fix: Reduce memory usage in indexer</change>
+        <change>Fix: Improve database interface, reduce overhead on large writes</change>
+        <change>Fix: Copy failing to write</change>
+        <change>Enhancement: Allow user to add copied images to db (not auto)</change>
+        <change>Numerous bug fixes</change>
+    </release>
+    <release version="4.9.1.3"
+             versioncode="49103"
+             summary="Beta: Release Candidate"
+             date="1 SEP 2016">
+        <change>Viewer imageset fix</change>
+    </release>
+    <release version="4.9.1"
+             versioncode="49100"
+             summary="Beta: Release Candidate"
+             date="28 AUG 2016">
+        <change>Bug bash</change>
+    </release>
+    <release version="4.9.0.5"
+             versioncode="49005"
+             summary="Beta: Release Candidate"
+             date="18 JUN 2016">
+        <change>Fixes: EXIF disabled when watermark is enabled due to a conflict</change>
+        <change>Fixes: Crashes due to empty selection (save, restore, etc)</change>
+        <change>Fixes: Rename</change>
+    </release>
+    <release version="4.9.0"
+             versioncode="49000"
+             summary="Beta: Release Candidate"
+             date="4 JUN 2016">
+        <change>Feature: Write to TIFF</change>
+        <change>Feature: Encoder EXIF, saves now have metadata</change>
+        <change>Enhancement: Fully overhauled decoder...faster!everything!</change>
+        <change>Fixes: Way too many since this build took forever :(</change>
+        <change>Notes: Legacy viewer removed.  If you need this email me!</change>
+    </release>
+    <release version="4.7.1"
+             versioncode="47100"
+             summary="Beta: Bug patch"
+             date="23 MAR 2016">
+        <change>Enhancement: Faster histogram</change>
+        <change>Fixes: Minor bug roundup</change>
+    </release>
+    <release version="4.7"
+             versioncode="47000"
+             summary="Beta: Gallery Meta"
+             date="6 MAR 2016">
+        <change>Feature: Edit metadata directly in gallery on multiple images at once.</change>
+        <change>Enhancement: New gallery (~50% faster)</change>
+        <change>Enhancement: Optimized search (~100% faster deep searches)</change>
+        <change>Enhancement: Better feedback during search</change>
+        <change>Enhancement: Material design icons</change>
+        <change>Enhancement: Localized dates</change>
+        <change>Enhancement: Removed legacy (5.0 and below) code</change>
+        <change>Fixes: Flicker on gallery updates</change>
+        <change>Fixes: Many minor bugs from beta testers, thanks!</change>
+    </release>
+    <release version="4.5.0.3"
+             versioncode="45001"
+             summary="Beta: Bug patch"
+             date="21 FEB 2016"/>
+    <release version="4.5.0.2"
+             versioncode="45001"
+             summary="Beta: Bug patch"
+             date="20 FEB 2016"/>
+    <release version="4.5.0.1"
+             versioncode="45001"
+             summary="Beta: Share patch"
+             date="20 FEB 2016">
+        <change>Patch: Alter share uris for apps that handle them improperly</change>
+    </release>
+    <release version="4.5"
+             versioncode="45000"
+             summary="Beta: Android 5.0+ storage support"
+             date="19 FEB 2016">
+        <change>Feature: Support for SD cards in 5.0+</change>
+        <change>Feature: Support for USB storage in 6.0+</change>
+        <change>Feature: Support for Android 6 runtime permissions</change>
+        <change>Fixes: Many bugs related to metadata parsing, storing, and filtering</change>
+        <change>Fixes: Search and folder exclusion for Android 5.0+</change>
+        <change>Patch: Multiple storage bugs in Android framework...Thanks Google...</change>
+    </release>
+    <release version="3.9.6.10"
+             versioncode="39610"
+             summary="Beta: Bug patch"
+             date="25 DEC 2015"/>
+    <release version="3.9.6.9"
+             versioncode="39609"
+             summary="Beta: Excluded folder readability patch"
+             date="22 DEC 2015"/>
+    <release version="3.9.6.8"
+             versioncode="39608"
+             summary="Beta: Bug patch"
+             date="19 DEC 2015"/>
+    <release version="3.9.6.7"
+             versioncode="39607"
+             summary="Beta: Bug patch"
+             date="17 DEC 2015"/>
+    <release version="3.9.6.6"
+             versioncode="39606"
+             summary="Beta: Bug patch"
+             date="15 DEC 2015"/>
+    <release version="3.9.6.5"
+             versioncode="39605"
+             summary="Beta: Bug patch"
+             date="14 DEC 2015"/>
+    <release version="3.9.6.4"
+             versioncode="39604"
+             summary="Beta: Bug patch"
+             date="11 DEC 2015"/>
+    <release version="3.9.6.2"
+             versioncode="39602"
+             summary="Beta: Bug patch"
+             date="7 DEC 2015"/>
+    <release version="3.9.6.1"
+             versioncode="39601"
+             summary="Beta: Bug patch"
+             date="5 DEC 2015"/>
+    <release version="3.9.6.0"
+             versioncode="39600"
+             summary="Beta: Exclude/Filter by folder"
+             date="2 DEC 2015">
+        <change>Feature: Filter by folder</change>
+        <change>Feature: Exclude by folder</change>
+        <change>Feature: New crash analysis tool (requires Internet Permission)</change>
+        <change>Enhancement: All write actions should now be 5.0 compatible</change>
+    </release>
+    <release version="3.9.5.1"
+             versioncode="39501"
+             summary="Beta: Memory leak patch"
+             date="16 SEPT 2015">
+        <change>Fix: Memory leak on large image sets</change>
+    </release>
+    <release version="3.9.5"
+             versioncode="39500"
+             summary="Beta: Document API and search improvements"
+             date="25 AUG 2015">
+        <change>Enhancement: Better search algorithm</change>
+        <change>Feature: Meta processing background service</change>
+        <change>Feature: Exclude folders from search</change>
+        <change>Feature: SD card write permission on 5.0</change>
+    </release>
+    <release version="3.9.1.8"
+             versioncode="39108"
+             summary="Beta: Filter/Search framework"
+             date="29 JUN 2015">
+        <change>Enhancement: Better image intent handling</change>
+        <change>Enhancement: Rawdroid will now automatically import .txt keywords from external apps</change>
+        <change>Enhancement: Viewer cleanup related to db</change>
+        <change>Enhancement: Support jpeg again</change>
+        <change>Enhancement: Segregate jpeg and raw images</change>
+        <change>Feature: Swipe to refresh</change>
+    </release>
+    <release version="3.9.0"
+             versioncode="39000"
+             summary="Beta: Filter/Search framework"
+             date="07 MAY 2015">
+        <change>Feature: New database framework</change>
+        <change>Feature: Filter gallery by xmp</change>
+        <change>Feature: Sort by name or date</change>
+        <change>Feature: Search device for images</change>
+        <change>Feature: Gallery can display label/rating</change>
+    </release>
+    <release version="2.9.2"
+             versioncode="29200"
+             summary="Patch"
+             date="16 MAR 2015">
+        <change>Fix: Jpeg 'path not found' issue</change>
+    </release>
+    <release version="2.9.0"
+        versioncode="29000"
+        summary="Major Maintenance Release"
+        date="10 MAR 2015">
+        <change>Enhancement: Port interface to new Material design</change>
+        <change>Enhancement: New minimalistic viewer toolbar</change>
+        <change>Enhancement: Viewer toolbar visibility configurable</change>
+        <change>Enhancement: Rename now handles associated files (xmp, jpg)</change>
+        <change>Fix: Rename will now refresh the view</change>
+        <change>Enhancement: Delete also removes the jpeg</change>
+        <change>Enhancement: Immersive view in 5.0, swipe up to view nav bars (configurable)</change>
+        <change>Fix: Explain to user when write fails on 4.4+</change>
+        <change>Enhancement: Convert tutorial to Material design</change>
+        <change>Enhancement: Tutorial will automate actions if user doesn't interact</change>
+    </release>
+    <release version="2.7.4"
+             versioncode="27400"
+             summary="Patch"
+             date="02 MAR 2015">
+        <change>Fix: Legacy viewer indexing to first image</change>
+        <change>Enhancement: Camera import will skip existing files</change>
+    </release>
+    <release version="2.7.3.1"
+             versioncode="27301"
+             summary="Bug Patch"
+             date="12 FEB 2015">
+        <change>Fix: Google phone state rights bug</change>
+    </release>
+    <release version="2.7.3"
+             versioncode="27300"
+             summary="Bug Patch"
+             date="11 FEB 2015">
+        <change>Fix: Save jpeg for images requiring full decode</change>
+        <change>Fix: Google licensing bug</change>
+    </release>
+    <release version="2.7.2"
+             versioncode="27200"
+             summary="Feature release: Tutorial, Raw decoder"
+             date="05 FEB 2015">
+        <change>Added: Half-res full decodes for images without embedded thumbs</change>
+        <change>Updated: Tutorial to be interactive and demonstrate most actions</change>
+    </release>
+    <release version="2.5.9"
+             versioncode="25900"
+             summary="Minor fixes"
+             date="05 MAR 2014">
+        <change>Fixed: Reduce memory footprint on delete</change>
+        <change>Fixed: Crash after orientation change while paused</change>
+        <change>Fixed: Disallow blank recycling bin size</change>
+    </release>
+    <release version="2.5.9"
+        versioncode="25900"
+        summary="Minor fixes"
+        date="05 MAR 2014">
+        <change>Fixed: Reduce memory footprint on delete</change>
+        <change>Fixed: Crash after orientation change while paused</change>
+        <change>Fixed: Disallow blank recycling bin size</change>
+    </release>
+    <release version="2.5.8"
+        versioncode="25800"
+        summary="Minor fixes"
+        date="2/28/2014">
+        <change>Added: Focal Length in meta settings</change>
+        <change>Fixed: Crash when setting blank watermark</change>
+        <change>Fixed: Tutorial crash with hardware menu button</change>
+    </release>
+    <release version="2.5.7"
+        versioncode="25700"
+        summary="Export/share patch"
+        date="2/23/2014">
+        <change>Fixed: Export/share bug</change>
+    </release>
+    <release version="2.5.6"
+        versioncode="25600"
+        summary="Unknown image patch (x86).  There were a number of device specific bugs and a fix for share/save will be out shortly."
+        date="2/23/2014">
+        <change>Fixed: Unknown images on certain architectures.</change>
+    </release>
+    <release version="2.5.5"
+        versioncode="25400"
+        summary="This is a significant overhaul of much of the infrastructure which will build the foundation for a much more versatile app.  Rawdroid Demo and Rawdroid Pro are now separate apps, if you are a Pro user please uninstall the Demo and upgrade Pro."
+        date="2/19/2014 (11/19/2013 Beta)">
+        <change>Added: Metadata database.  Faster lookups and will allow for filtering/searching in the future.</change>      
+        <change>Added: Native watermarking.  Watermarking is completely custom now with reduced memory overhead and significant speed improvements.</change>
+        <change>Added: Native JPEG read/write.  Working around Android's implementation reduces memory and greatly improves speed.</change>
+        <change>Added: Full raw decode.  The code is in place but disabled while I work on speed.  It was holding up this build for too long.</change>
+        <change>Added: TIFF read support.  You can now read TIFF images; write support in the future.</change>
+        <change>Improved: Massive speed boost, many users can expect 50-100% improved load times.</change>
+        <change>Updated: Support for additional cameras.</change>
+        <change>Fixed: Settings security flaw.</change>
+        <change>Fixed: Fix stack trace mapping.</change>
+        <change>Fixed: Large folder load delay.</change>
+        <change>Fixed: Initial crash accessing watermark settings.</change>
+        <change>Fixed: Crash with folders containing apostrophe.</change>
+        <change>Fixed: Hidden/System folders are no longer shown.</change>
+        <change>Fixed: Batch rename bug.</change>
+        <change>Fixed: Various minor bugs.</change>
+    </release>
+    <release version="1.9.4"
+        versioncode="118"
+        summary="Viewer orientation fixes and memory improvements."
+        date="09/18/2013">
+        <change>Fixed: XMP Panel orientation</change>      
+        <change>Fixed: Preprocess jpeg meta to orient image</change>
+        <change>Improved: Orientation handling</change>
+        <change>Improved: Memory management in gallery</change>
+    </release>
+    <release version="1.9.2"
+        versioncode="116"
+        summary="Viewer fixes. There are still some crashes I can't reproduce or trace. Please email me with details if you're experiencing crashes."
+        date="09/18/2013">
+        <change>Fixed: Viewer swipe animation</change>
+        <change>Fixed: Filmstrip (fully zoom out to quickly browse images)</change>
+        <change>Update: Cancel histogram on image change to reduce memory/improve browsing</change>
+        <change>Italian: Thanks gerlos!</change>
+        <change>Japanese: Thanks hiroyuki!</change>
+    </release>
+    <release version="1.9.1"
+        versioncode="115"
+        summary="Add custom watermark to export and save.  Bug fixes"
+        date="09/15/2013">
+        <change>Updated: Custom watermark for export and save (Pro)</change>
+        <change>Fixed: Viewer bugs.</change>
+    </release>
+    <release version="1.9.0"
+        versioncode="114"
+        summary="Added custom watermarks for pro users.  Integrated license server (must have Pro installed).
+        The initial license check requires an internet connection then it will be cached for a period.
+        The Google license server is something of a black box so let me know if you've purchased pro, but
+        aren't being registered."
+        date="09/13/2013">
+        <change>Added: Custom watermark (Pro)</change>
+        <change>Updated: Watermark for demo users.</change>
+        <change>Updated: Share intent permissions (email, g+, etc).</change>
+        <change>Fixed: Viewer bugs.</change>
+        <change>Chinese: Thanks Xiaoyu!</change>
+    </release>
+    <release version="1.8.4"
+        versioncode="113"
+        summary="Bug fixes."
+        date="09/08/2013">
+        <change>Fixed: Action bar auto-hide goes out of sync.</change>
+        <change>Fixed: Crash on deleting last image in new viewer.</change>
+        <change>Fixed: Crash on importing empty data into viewer.</change>
+        <change>Fixed: Import crash on orientation change.</change>
+    </release>
+    <release version="1.8.3"
+        versioncode="112"
+        summary="Improved histogram scaling by resolution."
+        date="09/07/2013">
+    <change>Fixed: Legacy viewer portrait crash.</change>
+    <change>Improve: Histogram scaling by resolution.</change>
+    </release>
+    <release version="1.8.2"
+        versioncode="111"
+        summary="Fix for viewer ghosting.  Once again let me know if you still need to switch to the
+        legacy viewer.  Please update your reviews if this fixes issues."
+        date="09/06/2013">
+        <change>Fixed: New viewer ghosting.</change>
+    </release>
+    <release version="1.8.0"
+        versioncode="108"
+        summary="Complete overhaul of the viewer, among a host of UI improvements.
+        For those with issues you can revert to the legacy viewer Settings->View->Use Legacy Viewer.
+        Since I don't receive crash reports for interface glitches if you need to revert the viewer
+        please email me so I am aware of your issue."
+        date="08/30/2013">
+    </release>
+    <release version="1.6.4"
+             versioncode="106"
+             summary="Expand compatibility to 4.0.2."
+             date="08/02/2013">
+        <change>Fixed: File manager loads</change>
+        <change>Added: New viewer support to 4.0.2.</change>
+    </release>
+    <release version="1.6.3"
+             versioncode="104"
+             summary="Navigation bug fixes"
+             date="07/31/2013">
+        <change>Fixed: Navigation bugs</change>
+    </release>
+    <release version="1.6.2"
+             versioncode="102"
+             summary="Incremental release of the new viewer as I work on compatibility."
+             date="07/31/2013">
+        <change>Fixed: minor bugs</change>
+    </release>
+    <release version="1.60" 
+        versioncode="96" 
+        summary="Complete overhaul of image viewer model.  I expect a few bugs, please email me with any issues!"
+        date="05/30/2013">
+        <change>Added: Auto-orientation</change>
+        <change>Added: Support for additional cameras</change>
+        <change>Fixed: New xmp modification model to fix accidental writes</change>
+        <change>Fixed: Decoder no longer hangs on special system files</change>
+        <change>Translations: Thanks Paschalis, Robert, Waldemar!</change>
+    </release>
+    <release version="1.36" 
+        versioncode="90" 
+        summary="Cleanup build in preparation for larger auto-orient rewrite."
+        date="05/16/2013">
+        <change>Fixed: Sharing will now properly exit context mode</change>
+        <change>Fixed: Gmail attachment bug</change>
+        <change>Fixed: Camera import crash</change>
+        <change>Polish: Thanks Marcin!</change>
+    </release>
+    <release version="1.35" 
+        versioncode="89" 
+        summary="Fixes for the compatibility build.  'Compatibility...I don't think that word means what you think it means.'"
+        date="05/13/2013">
+        <change>Fixed: Lots of bugs</change>
+        <change>Thanks to those who submitted/helped with bugs:  Hiroyuki, Cees, Giulio, Andreas!</change>
+        <change>Japanese: Thanks Hiroyuki!</change>
+        <change>Italian: Thanks Icilio!</change>
+        <change>German: Thanks Ralf!</change>
+    </release>
+   	<release version="1.34" 
+        versioncode="88" 
+        summary="This build registers RawDroid for intents and improves compatibility"
+        date="05/10/2013">
+        <change>Improve: Exif compatibility</change>
+        <change>Improve: Camera import compatibility</change>
+        <change>Added: Register RawDroid for raw image intents</change>
+        <change>Fixed: Minor bugs</change>
+    </release>
+    <release version="1.30" 
+        versioncode="86" 
+        summary="This build adds a modular interface, search, and better xmp support."
+        date="05/02/2013">
+        <change>Added: Completely modular interface (Show, Hide, Automatic in Settings)</change>
+        <change>Added: Custom XMP:label in Settings (Red = undeveloped, etc.)</change>
+        <change>Added: Custom keywords.  Add keywords outside your heirarchy.</change>
+        <change>Added: (Experimental) Search for folders containing raw imagery</change>
+        <change>Added: Reuse XMP. Quickly populate an image with the prior XMP settings.</change>
+        <change>Added: Automatic XMP save.</change>
+        <change>Fixed: Histogram bug</change>
+        <change>Fixed: Share crash with empty share set</change>
+        <change>Fixed: Image/XMP sync for delete/import/export</change>
+        <change>Fixed: Clear XMP now removes fields properly</change>
+        <change>Fixed: Crash on improper keyword load</change>
+    </release>
+   	<release version="1.20" 
+        versioncode="85" 
+        summary="This build adds a histogram."
+        date="04/27/2013">
+        <change>Added: Histogram</change>
+        <change>Fixed: Disk cache lookup on devices that don't adhere to Android standard</change>
+        <change>Fixed: Handle crash on null files during import (for USB host)</change>
+        <change>Fixed: Handle crash on null USB file info.  If your device imports nothing please email me.</change>
+        <change>Improve: Optimize the initial full view load</change>
+    </release>
+    <release version="1.13" 
+        versioncode="84" 
+        summary="This build contains minor bug fixes."
+        date="04/26/2013">
+        <change>Fixed: Additional USB Host fix</change>
+    </release>
+    <release version="1.12" 
+        versioncode="83" 
+        summary="This build contains minor bug fixes."
+        date="04/25/2013">
+        <change>Fixed: Null large image recycle</change>
+        <change>Fixed: USB host with null current path</change>
+        <change>Japanese: Thanks Hiroyuki!</change>
+        <change>Spanish: Thanks Antonio and Gustavo!</change>
+    </release>
+    <release version="1.11" 
+        versioncode="82" 
+        summary="This build contains minor bug fixes."
+        date="04/22/2013">
+        <change>Fixed: Folder long-select crash</change>
+        <change>Fixed: USB host crash</change>
+        <change>Fixed: Polish export translation</change>
+    </release>
+    <release version="1.10" 
+        versioncode="81" 
+        summary="This build adds RawDroid Pro and threaded Viewer.  RawDroid Pro is simply a license that will unlock features in the future.  Currently no features are locked, you can show support at a discounted price for a limited time." 
+        date="04/12/2013">
+        <change>Added: RawDroid Pro now available on the market</change>
+        <change>Added: Multi-threaded Viewer (Speed boost)</change>
+        <change>Fixed: Null stream fixes</change>
+        <change>Fixed: Possible memory fix for low-mem devices</change>
+        <change>German: Thanks Alex!</change>
+        <change>Polish: Thanks Marcin!</change>
+    </release>    
+   	<release version="1.09" 
+        versioncode="80" 
+        summary="This build introduces camera tether import and USB search functions." 
+        date="04/08/2013">
+        <change>Added: Camera tether import</change>
+        <change>Added: USB mount search</change>
+        <change>Fixed: Minor bug fixes</change>
+    </release>    
+    <release version="1.08" 
+        versioncode="79" 
+        summary="This build focused on a tutorial system.  Feedback is appreciated." 
+        date="04/02/2013">
+        <change>Added: A new tutorial system</change>
+        <change>Added: Long press in selection mode to select from last selection</change>
+        <change>Fixed: Minor bug fixes</change>
+    </release>    
+    <release version="1.06" 
+        versioncode="78"
+        summary="This build focused on small screen support." 
+        date="03/28/2013">>
+        <change>Added: Support for small screens</change>
+        <change>Changed: Hide status bar</change>
+        <change>Fixed: Recycling bin management</change>
+        <change>Fixed: Null images/streams after resume</change>
+        <change>Fixed: Missing location after resume</change>
+        <change>Fixed: Delete confirmation</change>
+        <change>Fixed: Better xmp:label (color) handling</change>
+    </release>
+    <release version="1.05.1" 
+        versioncode="77"
+        summary="Bug fix build." 
+        date="03/18/2013">>
+        <change>Fixed: Minor bugs</change>
+    </release>
+    <release version="1.05" 
+        versioncode="76"
+        summary="This build focused on a modular interface." 
+        date="03/17/2013">>
+        <change>Added: Gallery file type filter</change>
+        <change>Added: Viewer nav buttons can be always visible</change>
+        <change>Added: XMP sidebar (large screens)</change>
+        <change>Added: Full XMP support</change>
+        <change>Fixed: Significant speed improvements</change>
+    </release>
+</changelog>

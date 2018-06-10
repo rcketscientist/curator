@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MetaStyle"/>
+    <style name="MetaStyle.Small">
+        <item name="metaTextSize">8sp</item>
+        <item name="metaLabelLength">64sp</item> <!-- 8char -->
+        <item name="metaValueLength">96sp</item> <!-- 12char -->
+        <item name="histogramHeight">80sp</item> <!-- ~10char -->
+    </style>
+    <style name="MetaStyle.Medium">
+        <item name="metaTextSize">12sp</item>
+        <item name="metaLabelLength">96sp</item>
+        <item name="metaValueLength">144sp</item>
+        <item name="histogramHeight">120sp</item>
+    </style>
+    <style name="MetaStyle.Large">
+        <item name="metaTextSize">16sp</item>
+        <item name="metaLabelLength">128sp</item>
+        <item name="metaValueLength">192sp</item>
+        <item name="histogramHeight">160sp</item>
+    </style>
+
+    <style name="MetaRow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="MetaTextAppearance">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">?attr/metaTextSize</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+    </style>
+
+    <style name="MetaField" parent="@style/MetaTextAppearance">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">left</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textIsSelectable">false</item>
+    </style>
+
+    <!--TODO: what's with android:width, try removing it -->
+    <style name="MetaLabel" parent="@style/MetaField">
+        <item name="android:layout_width">?attr/metaLabelLength</item>
+        <item name="android:width">100sp</item>
+    </style>
+
+    <style name="MetaValue" parent="@style/MetaField">
+        <item name="android:layout_width">?attr/metaValueLength</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="ButtonText">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
+    <style name="ButtonColorKey">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="GalleryTheme" parent="@style/Theme.AppCompat.NoActionBar">
+<!--        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>-->
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
+        <item name="actionModeShareDrawable">@drawable/ic_share</item>
+        <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
+        <item name="toggleGroupStyle">@style/Widget.Material.ToggleGroup</item>
+        <item name="toggleButtonStyle">@style/Widget.Material.ToggleButton</item>
+    </style>
+
+    <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
+    <style name="Custom.Widget.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_overflow</item>
+    </style>
+
+    <style name="CustomShowcaseTheme2" parent="ShowcaseView">
+        <item name="sv_backgroundColor">#e51249d9</item>
+        <item name="sv_showcaseColor">#25467A</item>
+        <item name="sv_buttonText">Close</item>
+        <item name="sv_titleTextAppearance">@style/CustomTitle2</item>
+        <item name="sv_detailTextAppearance">@style/CustomText2</item>
+    </style>
+
+    <style name="CustomTitle2" parent="TextAppearance.ShowcaseView.Title.Light">
+        <item name="android:textColor">#deffffff</item>
+    </style>
+
+    <style name="CustomText2" parent="TextAppearance.ShowcaseView.Detail.Light">
+        <item name="android:textColor">#8affffff</item>
+    </style>
+
+    <style name="RightAlignDropDownItem" parent="Base.Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:gravity">end</item>
+    </style>
+
+    <style name="GalleryRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/gallery_rating_bar</item>
+        <item name="android:isIndicator">true</item>
+        <item name="android:minHeight">14dip</item>
+        <item name="android:maxHeight">14dip</item>
+    </style>
+
+    <style name="FolderDialog" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:editTextBackground">@color/indigo_800</item>
+        <item name="android:listChoiceIndicatorMultiple">@drawable/visible_selector</item>
+        <item name="android:backgroundDimEnabled">false</item>
+	    <item name="android:windowBackground">@android:color/transparent</item> <!--remove border-->
+    </style>
+
+    <style name="SidebarButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/sidebarButton</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RecentButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/sidebarButton</item>
+        <item name="colorAccent">@color/sidebarButton</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <!-- This is a bit of a hack, need to override recent button parent theme,
+        so we choose a theme roughly representing the items-->
+    <style name="RecentInternal" parent="@android:style/Widget.Material.ActionButton">
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="BrightButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/blue_500</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RedButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:colorButtonNormal">@color/red_700</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RecycleDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:ellipsize">start</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="ImageActionToggleButton" parent="Widget.Material.ToggleButton">
+        <item name="android:background">@drawable/toggle_bluegrey</item>
+    </style>
+
+    <style name="LabelToggleButton" parent="@style/ImageActionToggleButton">
+        <item name="android:button">@drawable/ic_square_rounded</item>
+    </style>
+
+    <style name="RatingButton" parent="@style/ImageActionToggleButton">
+        <item name="android:background">@color/blueGreyIdleButton</item>
+        <item name="android:button">@drawable/multi_select_star</item>
+    </style>
+
+</resources>

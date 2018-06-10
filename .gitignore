@@ -7,18 +7,20 @@
 /libs/armeabi-v7a
 /out
 /obj
-/.idea
-/.gradle
-local.properties
+
+#Android studio
+/.idea/workspace.xml
+/.idea/libraries
+/.idea/gradle.xml
+/.idea/vcs.xml
 /local.properties
-*.iml
-/gradle/.gradle
-/gradle/gradle
-/gradle/gradlew.bat
-/gradle/gradlew
-build
+/captures
+*.iml #constant updates for line changes were too annoying
+
+#Gradle
+/.gradle
+
 /rawDroid/src/main/obj
-/rawDroid/src/main/libs
 /rawDroid/build/outputs/apk/rawDroid-pro-debug.apk
 /rawDroid/build/outputs/apk/rawDroid-pro-debug-unaligned.apk
 /rawDroid/build/outputs/apk/rawDroid-demo-debug-unaligned.apk
@@ -27,3 +29,14 @@ build
 /rawDroid/build/outputs/apk/manifest-merger-pro-release-report.txt
 /rawDroid/build/outputs/apk/manifest-merger-proAmazon-release-report.txt
 /rawDroid/build/outputs/apk/manifest-merger-demo-release-report.txt
+
+Thumbs.db
+obj
+/rawDroid/build/tmp
+/rawDroid/build/generated
+/rawDroid/build/intermediates
+/rawDroid/build/outputs/logs
+/build
+*.iml
+build
+/.idea/misc.xml

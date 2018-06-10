@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_selectAll"
+        android:icon="@drawable/ic_select_all"
+        app:showAsAction="always"
+        android:title="@string/selectAll"/>
+    <item
+        android:id="@+id/gallerySd"
+        android:icon="@android:drawable/ic_menu_gallery"
+        app:showAsAction="always"
+        android:visible="false"/>
+    <item
+        android:id="@+id/menu_recycle"
+        android:icon="@drawable/ic_recycle"
+        android:orderInCategory="12"
+        app:showAsAction="ifRoom"
+        android:title="@string/accessRecycle"/>
+    <item
+        android:id="@+id/galleryRefresh"
+        android:icon="@drawable/ic_refresh"
+        android:orderInCategory="10"
+        app:showAsAction="ifRoom"
+        android:title="@string/search"/>
+    <item android:title="@string/help"
+        android:orderInCategory="20">
+        <menu>
+            <item
+                android:id="@+id/contact"
+                android:orderInCategory="31"
+                app:showAsAction="never"
+                android:title="@string/contact"/>
+            <item
+                android:id="@+id/galleryClearCache"
+                android:orderInCategory="32"
+                app:showAsAction="never"
+                android:title="@string/clearLibrary"/>
+            <item
+                android:id="@+id/galleryTutorial"
+                android:orderInCategory="33"
+                app:showAsAction="never"
+                android:title="@string/tutorial"/>
+            <item
+                android:id="@+id/about"
+                android:orderInCategory="34"
+                app:showAsAction="never"
+                android:title="@string/about"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/settings"
+        android:orderInCategory="21"
+        app:showAsAction="never"
+        android:title="@string/settings"/>
+
+</menu>

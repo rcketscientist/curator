@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/RelativeLayout1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <include
+        layout="@layout/legacy_viewer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@+id/editFragment"/>
+
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+        android:layout_width="@dimen/xmp_filter_width"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/viewerToolbar"
+        android:layout_gravity="end"
+        tools:layout="@layout/xmp_edit_landscape"/>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/viewerToolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+</RelativeLayout>

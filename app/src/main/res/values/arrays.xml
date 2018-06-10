@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shareFormatsValues">
+        <item>JPG</item>
+        <item>RAW</item>
+    </string-array>
+
+    <string-array name="shareFormats">
+        <item>JPG</item>
+        <item>RAW</item>
+    </string-array>
+
+    <string-array name="showOptions">
+        <item>@string/automatic</item>
+        <item>@string/always</item>
+        <item>@string/never</item>
+    </string-array>
+    
+    <string-array name="showOptionsValues">
+        <item>Automatic</item>
+        <item>Always</item>
+        <item>Never</item>
+    </string-array>
+
+    <string-array name="watermarkLocations">
+        <item>@string/center</item>
+        <item>@string/lowerLeft</item>
+        <item>@string/lowerRight</item>
+        <item>@string/upperLeft</item>
+        <item>@string/upperRight</item>
+    </string-array>
+
+    <string-array name="watermarkLocationsValues">
+        <item>Center</item>
+        <item>Lower Left</item>
+        <item>Lower Right</item>
+        <item>Upper Left</item>
+        <item>Upper Right</item>
+    </string-array>
+
+    <string-array name="metaSizeOptions">
+        <item>@string/small</item>
+        <item>@string/medium</item>
+        <item>@string/large</item>
+    </string-array>
+
+    <string-array name="metaSizeValues">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+
+</resources>

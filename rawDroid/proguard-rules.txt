@@ -1,8 +1,0 @@
--keepattributes SourceFile,LineNumberTable
-
--injar libs/xmpcore-5.1.2.jar
-
--keep class android.support.v7.widget.ShareActionProvider { *; } 
--keep class android.support.v7.widget.SearchView { *; }
-
--keep class com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragment** { *; }

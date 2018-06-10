@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid</string>
+<string name="positive">Annehmen</string>
+<string name="negative">Ablehnen</string>
+<string name="neutral">Abbrechen</string>
+<string name="saveAs">Speichern unter ...</string>
+<string name="export">Exportieren</string>
+<string name="wallpaper">Als Hintergrund wählen</string>
+<string name="editWith">Bearbeiten mit ...</string>
+<string name="selectAll">alle auswählen</string>
+<string name="help">Hilfe</string>
+<string name="delete">Löschen</string>
+<string name="viewMeta">Beschriftung</string>
+<string name="rename">Umbenennen</string>
+<string name="format_prompt">Formatieren</string>
+<string name="save">Speichern</string>
+<string name="save_success">Speichern erfolgreich</string>
+<string name="no_filemanager_installed">Kein Datei-Manager</string>
+
+<string-array name="format_array">
+<item>benutzerdefinierter Name - Fortlaufende Nummer </item>
+<item> Benutzerdefinierter Name (X von Y)</item>
+<!-- <item>Custom Name - Original Number</item> -->
+</string-array>
+
+<string name="Date">Datum</string>
+<string name="Name">Name</string>
+<string name="settings">Einstellungen</string>
+<string name="chooseDestination">Ziel auswählen</string>
+<string name="choosefile">Datei auswählen</string>
+<string name="import1">Importieren</string>
+
+<string name="renameImages">Bilder umbenannt</string>
+<string name="view">Anzeigen</string>
+<string name="gallery">Galerie</string>
+<string name="viewer">Betrachter</string>
+<string name="storage">Speicherort </string>
+<string name="firstImage">Erstes Bild</string>
+<string name="lastImage">Letztes Bild</string>
+	<string name="unlicensed">unlizenziert</string>
+
+<!-- Meta -->
+<string name="altitude">Höhe</string>
+<string name="aperture">Blende</string>
+<string name="dimensions">Maße</string>
+<string name="driveMode">Betriebsart</string>
+<string name="expMode">Aufnahmemodus</string>
+<string name="expProgram">Belichtungsprogramm</string>
+<string name="exposure">Belichtung</string>
+<string name="flash">Blitz</string>
+<string name="focalLength">Brennweite</string>
+<string name="iso">ISO</string>
+<string name="latitude">Breitengrad</string>
+<string name="lens">Objektiv</string>
+<string name="longitude">Längengrad</string>
+<string name="model">Modell</string>
+<string name="whiteBalance">Weißabgleich</string>
+<string name="metadata">Metadaten</string>
+<string name="tutorial">Kurzanleitung</string>
+
+<!-- Results -->
+<string name="resultImportSuccessful">Import erfolgreich.</string>
+<string name="resultImportFailed">Import nicht möglich.</string>
+<string name="resultWallpaperFailed">Hintergrundbild konnte nicht gesetzt werden.</string>
+
+<!-- Warnings -->
+<string name="warningFileWrongFormat">Das Dateiformat ist nicht gültig.</string>
+<string name="warningNoItemsSelected">Kein Objekt ausgewählt.</string>
+<string name="warningNotEnoughSpace">Nicht genügend Speicher um das ganze Verzeichnis zu importieren.</string>
+<string name="warningDeleteExceedsRecycle">Die zu löschenden Dateien sind zu groß für den Papierkorb. Unwiderruflich Löschen? (Tipp: Die Größe kann in den Einstellungen angepasst werden)</string>
+<string name="warningDeleteDirect">Die Dateien werden direkt gelöscht.</string>
+<string name="warningNoRecycleBin">Kein Papierkorb vorhanden. Die Dateien werden direkt gelöscht.</string>
+<string name="warningGenericImagesOff">allgemeine Bilder (.jpg) sind in den Einstellungen deaktiviert</string>
+<string name="warningInvalidLabel">ist ein ungültiger Etikett. Bezeichnungen können in den Einstellungen angepasst werden</string>
+
+<!-- Preferences -->
+<string name="prefTitleImageInterface">Interface automatisch anzeigen</string>
+<string name="prefSummaryImageInterface">beim Bildwechsel</string>
+<string name="prefTitleRecycleBin">Papierkorb Grösse</string>
+<string name="prefTitleFilter">Exif Filter</string>
+<string name="prefTitleDeleteConfirmation">Bestätigung beim Löschen</string>
+<string name="prefSummaryDeleteConfirmation">Falls deaktiviert, wird ohne Bestätigung gelöscht - selbst bei Dateien, die zu groß für den Papierkorb sind.</string>
+<string name="prefTitleUseRecycleBin">Papierkorb verwenden</string>
+<string name="prefSummaryUseRecycleBin">Falls deaktiviert, werden Bilder direkt gelöscht.</string>
+<string name="prefTitleShowXmpFiles">XMP Dateien anzeigen</string>
+<string name="prefSummaryShowXmpFiles">XMP Dateien in der Galerie anzeigen.</string>
+<string name="prefTitleShowNativeFiles">Normale Bilddateien anzeigen</string>
+<string name="prefSummaryShowNativeFiles">Zeigt jpg, gif, bmp und png Bilder an.</string>
+<string name="prefTitleShowUnknownFiles">Unbekannte Dateiformate anzeigen</string>
+<string name="prefSummaryShowUnknownFiles">Zeigt auch Dateien an, die RawDroid nicht verarbeiten kann.</string>
+<string name="prefTitleImportKeywords">Schlagwörter importieren</string>
+<string name="prefTitleShowNav">zeige Navigation</string>
+<string name="prefTitleShowMeta">zeige Metadaten</string>
+<string name="prefTitleShowHist">zeige Histogramm</string>
+
+<string-array name="showOptions">
+<item>Automatisch</item>
+<item>Immer</item>
+<item>Nie</item>
+</string-array>
+
+<string name="clearLibrary">Bibliothek löschen</string>
+<string name="cacheCleared">Der Zwischenspeicher der Galerie wurde gelöscht.</string>
+<string name="accessRecycle">Papierkorb anzeigen</string>
+<string name="recycleBin">Papierkorb</string>
+<string name="restoreFile">Datei wiederherstellen</string>
+<string name="emptyRecycleBin">Papierkorb leeren</string>
+<string name="saveJpg">Bildvorschauen exportieren</string>
+	<string name="ratingRequest">Falls dir RawDroid gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.
+\n
+\nSollte deine bisherige Wertung wegen eines Fehlers sein, der mittlerweile behoben wurde, aktualisiere doch bitte deine Bewertung.
+\n
+\nVielen Dank für deine Unterstützung!</string>
+<string name="importingImages">importiere Bilder...</string>
+<string name="exportingThumb">exportiere Minibilder...</string>
+<string name="deletingFiles">Dateien löschen</string>
+<string name="recyclingFiles">lösche Dateien...</string>
+<string name="clear">löschen</string>
+<string name="reuse">wieder benutzen</string>
+<string name="customKeywords">benutzerdefinierte Schlüsselwörter</string>
+<string name="addKeyword">Schlüsselwort hinzufügen</string>
+<string name="about">über</string>
+<string name="search">suche</string>
+
+<!-- Colors for xmp -->
+<string name="red">Rot</string>
+<string name="green">Grün</string>
+<string name="blue">Blau</string>
+<string name="cyan">Cyan</string>
+<string name="purple">Lila</string>
+<string name="yellow">Gelb</string>
+
+<!-- Tutorials -->
+<string name="tutorialDelete">alle ausgewählten Bilder werden gelöscht</string>
+<string name="tutorialSelectModeTitle">Auswahl Modus</string>
+<string name="tutorialSelectBetweenTitle">wähle zwischen</string>
+<string name="tutorialUsbTitle">Suche vorhandene USB Verbindungen</string>
+<string name="tutorialUsb">Durchsuche alle bekannten USB-Geräte. Wenn Dein Gerät nicht erkannt wird, schicke eine mail mit dem mount point, z.B. "/mnt/weird/device/usb"</string>
+
+	<string name="no_thumbnail">Keine Thumbnails (Miniaturen)</string>
+    <string name="Name_ascending">Name \u25BC</string>
+</resources>

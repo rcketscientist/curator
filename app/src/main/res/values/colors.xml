@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="Transparent_Black">#3000</color>
+    <color name="Black_Medium">#171717</color>
+    <color name="Black_Highlight">#343434</color>
+    <color name="grid_state_pressed">#BB7dbcd3</color>
+    <color name="grid_state_focused">#777dbcd3</color>
+    <color name="brightGreen">#00FF00</color>
+
+    <!-- configuration for photo page -->
+    <color name="photo_background">#1A1A1A</color>
+    <color name="photo_placeholder">#333</color>
+    <color name="default_background">#000</color>
+    <color name="bitmap_screennail_placeholder">#333</color>
+    <color name="startBlue">#449def</color>
+    <color name="endBlue">#2f6699</color>
+    <color name="startRed">#ef4444</color>
+    <color name="endRed">#992f2f</color>
+    <color name="startGreen">#70c656</color>
+    <color name="endGreen">#53933f</color>
+    <color name="startPurple">#a276eb</color>
+    <color name="endPurple">#6a3ab2</color>
+    <color name="startYellow">#fff3e100</color>
+    <color name="endYellow">#ffbb990d</color>
+    <color name="startOrange">#f3ae1b</color>
+    <color name="endOrange">#bb6008</color>
+
+    <color name="tintDarkGreen">#182b12</color>
+    <color name="translucentDarkGreen">#b9182b12</color>
+
+    <color name="xmpActionButtonColor">#050d5e</color>
+
+    <color name="sidebarBackgroundColor">@color/grayscaleBackground</color>
+    <color name="sidebarButton">@color/blueGreyIdleButton</color>
+    <color name="sidebarHeader">@color/blue_grey_600</color>
+
+    <color name="headerColor">@color/indigo_800</color>
+    <color name="colorAccent">@color/blue_500</color>
+    <color name="filterButton">@color/amber_A400</color>
+
+    <color name="grayscaleBackground">#1e2329</color>
+    <color name="grayscaleIdleButton">#3a3f45</color>
+    <color name="grayscaleActiveButton">#5a626b</color>
+
+    <color name="blueBackground">@color/indigo_800</color>
+    <color name="blueIdleButton">@color/blue_500</color>
+    <color name="blueActiveButton">@color/blue_900</color>
+
+    <color name="blueGreyBackground">#1e2329</color>
+    <color name="blueGreyIdleButton">@color/blue_grey_500</color>
+    <color name="blueGreyActiveButton">@color/blue_900</color>
+
+    <color name="colorKeyBlue">@color/blue_400</color>
+    <color name="colorKeyRed">@color/red_400</color>
+    <color name="colorKeyGreen">@color/green_400</color>
+    <color name="colorKeyYellow">@color/yellow_400</color>
+    <color name="colorKeyPurple">@color/purple_400</color>
+
+    <color name="track_bar">#64aaaaaa</color>
+
+</resources>

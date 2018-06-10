@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/xmp_filter_landscape"
+    android:layout_width="@dimen/xmp_filter_width"
+    android:layout_height="wrap_content"
+    android:padding="2dp"
+    android:clickable="true"
+    android:background="@color/sidebarBackgroundColor"
+    tools:context=".GalleryActivity"
+    tools:ignore="ContentDescription">
+    <!-- Annoyingly, the clickable is necessary here due to a bug in nav drawer allowing click-thru-->
+
+    <RelativeLayout
+        android:id="@+id/sortHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/sortIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:tint="@color/sidebarHeader"
+            app:srcCompat="@drawable/ic_sort"/>
+
+        <ImageButton
+            android:id="@+id/helpButton"
+            android:background="@null"
+            android:layout_width="@dimen/helpButtonSize"
+            android:layout_height="@dimen/helpButtonSize"
+            android:tint="@color/white"
+            app:srcCompat="@drawable/ic_help"
+            android:layout_alignParentEnd="true"/>
+
+        <View
+            android:id="@+id/leftSortDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/sortIcon"
+            android:background="@color/sidebarHeader"
+            android:layout_marginEnd="3dp"/>
+
+        <View
+            android:id="@+id/rightSortDivider"
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/helpButton"
+            android:layout_toEndOf="@id/sortIcon"
+            android:background="@color/sidebarHeader"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sortSection"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/sortHeader">
+
+        <android.support.v7.widget.ToggleGroup
+            android:id="@+id/sortToggleGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            app:exclusive="true"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleSortAfirst"
+                style="@style/ImageActionToggleButton"
+                android:button="@drawable/ic_a"
+                android:buttonTint="@color/white"
+                android:checked="true"
+                android:gravity="center"/>
+
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleSortZfirst"
+                style="@style/ImageActionToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_z"
+                android:buttonTint="@color/white"/>
+
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleSortYoungFirst"
+                style="@style/ImageActionToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_baby"
+                android:buttonTint="@color/white"/>
+
+            <android.support.v7.widget.ToggleButton
+                android:id="@+id/toggleSortOldFirst"
+                style="@style/ImageActionToggleButton"
+                android:gravity="center"
+                android:button="@drawable/ic_elder"
+                android:buttonTint="@color/white"/>
+
+        </android.support.v7.widget.ToggleGroup>
+
+        <android.support.v7.widget.ToggleButton
+            android:id="@+id/segregateToggleButton"
+            style="@style/ImageActionToggleButton"
+            android:button="@drawable/ic_jpeg_bottom_borderless"
+            android:buttonTint="@color/white"
+            android:layout_margin="4dp"
+            android:elevation="2dp"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/filterHeader"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/helpButtonSize"
+        android:layout_below="@id/sortSection">
+
+        <ImageView
+            android:id="@+id/filterIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:tint="@color/sidebarHeader"
+            app:srcCompat="@drawable/ic_filter"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/filterIcon"
+            android:background="@color/sidebarHeader"/>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="3dp"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/filterIcon"
+            android:layout_alignParentEnd="true"
+            android:background="@color/sidebarHeader"/>
+    </RelativeLayout>
+
+    <include
+        android:id="@+id/filterLabelRating"
+        layout="@layout/xmp_core"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filterButtons"/>
+
+    <!-- TODO: Without theme here the background drawable won't work...?-->
+    <android.support.v7.widget.ToggleButton
+        android:id="@+id/toggleAnd"
+        android:theme="@style/SidebarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/and_selector"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/filterLabelRating"
+        android:layout_alignBottom="@id/filterLabelRating"
+        android:layout_toEndOf="@+id/filterLabelRating"/>
+
+    <fragment
+        android:id="@+id/keywordFragment"
+        android:name="com.anthonymandra.rawdroid.KeywordFilterFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filterLabelRating"
+        android:layout_marginTop="4dp"
+        tools:layout="@layout/xmp_subject"
+        tools:listitem="@layout/keyword_entry"/>
+
+    <LinearLayout
+        android:id="@+id/filterButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filterHeader"
+        android:layout_alignParentStart="true">
+
+        <ImageButton
+            android:id="@+id/foldersButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:theme="@style/SidebarButton"
+            app:srcCompat="@drawable/ic_folder_border"/>
+
+        <ImageButton
+            android:id="@+id/clearFilterButton"
+            android:theme="@style/SidebarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:tint="@color/red_300"
+            app:srcCompat="@drawable/ic_filter_remove"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

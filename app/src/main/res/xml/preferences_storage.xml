@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="@string/recycleBin" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefKeyUseRecycleBin"
+            android:summary="@string/prefSummaryUseRecycleBin"
+            android:title="@string/prefTitleUseRecycleBin" />
+        <com.anthonymandra.widget.SeekBarPreference
+            android:key="prefKeyRecycleBinSize"
+            android:dependency="prefKeyUseRecycleBin"
+            android:title="@string/prefTitleRecycleBin"
+            android:summary="@string/prefSummaryRecycleBin"
+            android:defaultValue="50"
+            android:text="MB"
+            android:max="500" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/delete" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="prefKeyDeleteConfirmation"
+            android:summary="@string/prefSummaryDeleteConfirmation"
+            android:title="@string/prefTitleDeleteConfirmation" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/defaults">
+        <Preference
+            android:key="prefKeyResetSaveDefault"
+            android:summary="@string/prefSummaryResetSaveDefault"
+            android:title="@string/prefTitleResetSaveDefault" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

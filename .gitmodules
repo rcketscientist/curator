@@ -1,27 +1,20 @@
-[submodule "oIFileManager"]
-	path = oIFileManager
-	url = https://github.com/rcketscientist/oi-filemanager-library.git
-[submodule "metaDataExtractor"]
-	path = metaDataExtractor
-	url = https://AMandra@code.google.com/r/amandra-xmp/
 [submodule "showcaseView"]
 	path = showcaseView
 	url = https://github.com/rcketscientist/ShowcaseView.git
+	branch = master
 [submodule "inscription"]
 	path = inscription
 	url = https://github.com/rcketscientist/Inscription.git
-[submodule "treeviewlistandroid"]
-	path = treeviewlistandroid
-	url = https://github.com/rcketscientist/tree-view-list-android.git
-[submodule "rawDroid/src/main/jni/LibRaw"]
-	path = rawDroid/src/main/jni/LibRaw
-	url = https://github.com/rcketscientist/LibRaw.git
-[submodule "rawDroid/src/main/jni/LibRaw-demosaic-pack-GPL3"]
-	path = rawDroid/src/main/jni/LibRaw-demosaic-pack-GPL3
-	url = https://github.com/LibRaw/LibRaw-demosaic-pack-GPL3.git
-[submodule "rawDroid/src/main/jni/LibRaw-demosaic-pack-GPL2"]
-	path = rawDroid/src/main/jni/LibRaw-demosaic-pack-GPL2
-	url = https://github.com/LibRaw/LibRaw-demosaic-pack-GPL2.git
+	branch = master
 [submodule "metadata-extractor"]
 	path = metadata-extractor
 	url = https://github.com/rcketscientist/metadata-extractor.git
+	branch = Android
+[submodule "DocumentActivity"]
+	path = DocumentActivity
+	url = https://github.com/rcketscientist/DocumentActivity.git
+	branch = master
+[submodule "rawprocessor"]
+	path = rawprocessor
+	url = https://rcketscientist@bitbucket.org/rcketscientist/rawprocessor.git
+	branch = master

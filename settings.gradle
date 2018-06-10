@@ -1,9 +1,13 @@
-//include ':metaDataExtractor'
-include ':metadata-extractor'
-//include ':oIDistributionLibrary'
-include ':oIFileManager'
-include ':showcaseView:library'
+include ':app'
 include ':inscription'
-include ':treeviewlistandroid'
-include ':rawDroid'
-//include ':fileManager:FileManager'
+
+include ':metadata-extractor'
+
+include ':documentActivity'
+project(':documentActivity').projectDir = new File('DocumentActivity/library')
+
+include ':showcaseView'
+project(':showcaseView').projectDir = new File('showcaseView/library')
+
+include ':rawprocessor'
+project(':rawprocessor').projectDir = new File('rawprocessor/library')

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawerLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="contentDescription"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/galleryLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/filterSidebarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/galleryToolbar"
+            android:layout_alignBottom="@+id/galleryToolbar"
+            android:padding="16dp"
+            android:src="@drawable/ic_filter"
+            android:background="@color/xmpActionButtonColor"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/galleryToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/filterSidebarButton"
+            android:layout_toStartOf="@+id/xmpSidebarButton"
+            android:minHeight="?android:attr/actionBarSize"
+            android:background="?android:attr/colorPrimary">
+        </android.support.v7.widget.Toolbar>
+        <ViewStub
+            android:id="@+id/cab_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/actionBarSize"
+            android:layout_toStartOf="@+id/xmpSidebarButton" />
+        <ImageView
+            android:id="@+id/xmpSidebarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/galleryToolbar"
+            android:layout_alignBottom="@id/galleryToolbar"
+            android:layout_alignParentEnd="true"
+            android:padding="16dp"
+            android:src="@drawable/ic_tag"
+            android:background="@color/xmpActionButtonColor"/>
+
+        <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal.NoPadding"
+            android:layout_below="@id/galleryToolbar"
+            android:id="@+id/toolbarProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:mpb_progressStyle="horizontal"
+            app:mpb_useIntrinsicPadding="false"
+            app:mpb_showProgressBackground="false"/>
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbarProgress"
+            android:layout_toStartOf="@+id/editFragment"
+            android:layout_alignParentStart="true">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/galleryView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/image_thumbnail_margin"
+                app:fastScrollEnabled="true"
+                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollHorizontalTrackDrawable="@drawable/line"
+                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+                app:fastScrollVerticalTrackDrawable="@drawable/line" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_add_white_24dp"
+                app:layout_anchor="@id/galleryView"
+                app:layout_anchorGravity="bottom|right|end"
+                app:layout_behavior="com.anthonymandra.rawdroid.ui.FabBehavior" />
+        </android.support.design.widget.CoordinatorLayout>
+
+        <fragment
+            android:id="@+id/editFragment"
+            android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+            android:layout_width="@dimen/xmp_edit_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/xmpSidebarButton"
+            android:layout_gravity="end"
+            tools:layout="@layout/xmp_edit_landscape"/>
+
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.anthonymandra.rawdroid.XmpFilterFragment"
+        android:layout_width="@dimen/xmp_filter_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        tools:layout="@layout/xmp_filter_landscape"/>
+
+</android.support.v4.widget.DrawerLayout>

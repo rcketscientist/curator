@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid (Español)</string>
+<string name="positive">Aceptar</string>
+<string name="negative">Rechazar</string>
+<string name="neutral">Cancelar</string>
+<string name="saveAs">Guardar cómo...</string>
+<string name="export">Exportar</string>
+<string name="wallpaper">Poner como fondo de pantalla</string>
+<string name="editWith">Editar con...</string>
+<string name="selectAll">Seleccionar todo</string>
+<string name="help">Ayuda</string>
+<string name="delete">Borrar</string>
+<string name="viewMeta">Etiqueta</string>
+<string name="rename">Cambiar nombre</string>
+<string name="format_prompt">Formatear</string>
+<string name="save">Guardar</string>
+<string name="save_success">Guardado finalizado con éxito</string>
+<string name="no_filemanager_installed">No hay instalado ningún administrador de archivos.</string>
+
+<string-array name="format_array">
+<item>Nombre Personalizado - Secuencia </item>
+<item> Nombre Personalizado (x de y)</item>
+<!-- <item>Custom Name - Original Number</item> -->
+</string-array>
+
+<string name="Date">Fecha</string>
+<string name="Name">Nombre</string>
+<string name="settings">Configuración</string>
+<string name="chooseDestination">Elegir destino</string>
+<string name="choosefile">Elegir Archivo</string>
+<string name="import1">Importar</string>
+
+<string name="renameImages">Renombrar imágenes</string>
+<string name="view">Ver</string>
+<string name="gallery">Galería</string>
+<string name="viewer">Visor</string>
+<string name="storage">Almacenamiento</string>
+<string name="firstImage">Primera imagen</string>
+<string name="lastImage">Ultima imagen</string>
+
+<!-- Meta -->
+<string name="altitude">Altitud</string>
+<string name="aperture">Apertura</string>
+<string name="dimensions">Dimensiones</string>
+<string name="driveMode">Drive Mode</string>
+<string name="expMode">Exp. Mode</string>
+<string name="expProgram">Exp. Program</string>
+<string name="exposure">Exposición</string>
+<string name="flash">Flash</string>
+<string name="focalLength">Longitud Focal</string>
+<string name="iso">ISO</string>
+<string name="latitude">Latitud</string>
+<string name="lens">Objetivo</string>
+<string name="longitude">Lontitud</string>
+<string name="model">Modelo</string>
+<string name="whiteBalance">Balance de Blancos</string>
+<string name="metadata">Metadatos</string>
+<string name="tutorial">Tutorial</string>
+
+<!-- Results -->
+<string name="resultImportSuccessful">Importación realizada con éxito.</string>
+<string name="resultImportFailed">Fallo en la Importación.</string>
+<string name="resultWallpaperFailed">Error al establecer el fondo de pantalla.</string>
+
+<!-- Warnings -->
+\<string name="warningFileWrongFormat">El archivo no tiene el formato correcto.</string>
+<string name="warningNoItemsSelected">No hay elementos seleccionados.</string>
+<string name="warningNotEnoughSpace">No hay espacio suficiente para importar toda la carpeta.</string>
+<string name="warningDeleteExceedsRecycle">El archivo borrado excede del espacio libre en la papelera. ¿Borrar definitivamente? (Nota: El tamaño de la papelera puede ser configurado)</string>
+<string name="warningDeleteDirect">Los archivos serán borrados directamente.</string>
+<string name="warningNoRecycleBin">No existe papelera. Los archivos serán borrados directamente.</string>
+<string name="warningGenericImagesOff">Las imágenes generales (por ej. jpg) han sido deshabilitadas en la configuración.</string>
+<string name="warningInvalidLabel">es una etiqueta incorrecta. Si considera que debieran ser soportados, envie un email</string>
+
+<!-- Preferences -->
+<string name="prefTitleImageInterface">Mostrar automáticamente el display</string>
+<string name="prefSummaryImageInterface">cuando cambie la imagen</string>
+<string name="prefTitleRecycleBin">Tamaño de la Papelera</string>
+<string name="prefTitleFilter">Filtro Exif</string>
+<string name="prefTitleDeleteConfirmation">Confirmación de Borrado</string>
+<string name="prefSummaryDeleteConfirmation">Si deshabilitado, no pedirá confirmación de borrado salvo si no cabe en la papelera.</string>
+<string name="prefTitleUseRecycleBin">Usar la Papelera</string>
+<string name="prefSummaryUseRecycleBin">Si deshabilitado, las imágenes se borrarán directamente</string>
+<string name="prefTitleShowXmpFiles">Mostrar archivos XMP</string>
+<string name="prefSummaryShowXmpFiles">Esto mostrará los archivos adjuntos xmp de la galeria.</string>
+<string name="prefTitleShowNativeFiles">Mostrar Imágenes Generales</string>
+<string name="prefSummaryShowNativeFiles">Esto mostrará imágenes jpg, gif,bmp y png</string>
+<string name="prefTitleShowUnknownFiles">Mostrar Otros Archivos</string>
+<string name="prefSummaryShowUnknownFiles">Esto mostrará los atchivos que RawDroid no procesa.</string>
+<string name="prefTitleImportKeywords">Importar Palabras Clave</string>
+<string name="prefSummaryImportKeywords">Haga clic para importar un archivo de palabras clave delimitado por tabuladores, como los exportados por Lightroom.</string>
+
+<string name="clearLibrary">Borrar biblioteca</string>
+<string name="cacheCleared">Caché de las imágenes de la galería borradas</string>
+<string name="accessRecycle">Acceso a la Papelera</string>
+<string name="recycleBin">Papelera</string>
+<string name="restoreFile">Restaurar Archivo</string>
+<string name="emptyRecycleBin">Vaciar Papelera</string>
+<string name="saveJpg">Exportar Miniaturas</string>
+	<string name="ratingRequest">Si le ha gustado RawDroid, por favor dedique un momento a valorarlo.
+\nSi ya lo ha valorado basándose en un fallo que ha sido solucionado, actualice su valoración.
+\n¡Gracias por su ayuda!</string>
+<string name="importingImages">Importando Imágenes ...</string>
+<string name="exportingThumb">Exportando Miniaturas ...</string>
+<string name="deletingFiles">Borrando Archivos ...</string>
+<string name="recyclingFiles">Enviando a la papelera Archivos ...</string>
+<string name="clear">Borrar</string>
+<string name="about">Acerca de</string>
+
+<!-- Colors for xmp -->
+<string name="red">Rojo</string>
+<string name="green">Verde</string>
+<string name="blue">Azul</string>
+<string name="cyan">Cian</string>
+<string name="purple">Púrpura</string>
+<string name="yellow">Amarillo</string>
+
+<!-- Tutorials -->
+<string name="tutorialSelect">Mantener pulsación de una imagen para entrar en el modo de selección</string>
+<string name="tutorialSelectAll">Alternativamente, Seleccionar Todo</string>
+<string name="tutorialRecycle">Esto permitirá abrir la papelera, para restaurar elementos borrados</string>
+<string name="tutorialRecentFolder">Esto mostrará la carpeta de los recientemente decodificados.</string>
+<string name="tutorialShare">Esto compartirá los archivos seleccionados con la aplicación especificada.</string>
+<string name="tutorialDelete">Esto borrará todas las imágenes seleccionadas.</string>
+<string name="tutorialSelectModeTitle">Modo de Selección</string>
+<string name="tutorialSelectMode">¡Hemos entrado en el modo de selección!</string>
+<string name="tutorialSelectBetweenTitle">Seleccionar Entre</string>
+<string name="tutorialSelectBetween">En el modo de selección, una nueva pulsación larga en otra imagen, seleccionará además las imágenes intermedias.</string>
+<string name="tutorialRename">Esto renombrará todad las imágenes seleccionadas con una plantilla especificada</string>
+<string name="tutorialImport">Esto importará las imágenes seleccionadas a un destino nuevo</string>
+<string name="tutorialExport">Esto exportará las imágenes seleccionadas comprimidas como una miniatura jpg</string>
+<string name="tutorialStart">¡Bienvenido al tutorial de RawDroid!
+\nAprecio cualquier comentario, a veces dificil de explicar para los neófitos :).</string>
+<string name="tutorialConnectTitle">Cómo Conectar Imágenes</string>
+<string name="tutorialConnect1">Hay tres formas de acceder a los datos:</string>
+<string name="tutorialConnect2">1. La más rápida: Tranferir lsa imágenes a su dispositivo a través de la conexión a un PC. Evidentemente, no es lo idóneo.</string>
+<string name="tutorialConnect3">2. Rápida: Conectar la tarjeta a través de un lector USB, usando un cable OTG. Un lector de tarjetas de formato único es lo mejor.
+\n\ta. Algunos dispositivos necesitan Root, como mi nexus. Yo utilizo "StickMount" para conectar. Mas detalles en el website.</string>
+<string name="tutorialConnect3a">\ta. Algunos dispositivos necesitan Root, como mi nexus. Yo utilizo "StickMount" para conectar. Mas detalles en el website.</string>
+<string name="tutorialConnect4">3. Lento: Conectar su cámara con un cable OTG. Actualmente trabajo en la velocidad (Actualizaré pronto)</string>
+<string name="tutorialConnect5">4. Tengo idea de añadir soporte de red.</string>
+<string name="tutorialMemoryTitle">Problemas de Memoria</string>
+<string name="tutorialMemory">Si dispone de un antiguo dispositivo que se cuelga, posiblemente sea debido a limitaciones de memoria.
+\nRecomiendo rutearlo y usar "VM Heap Tool" para prmitir usar mas memoria.</string>
+<string name="tutorialPath">Esta es la ruta actual. Puede navegar rápidamente a través de las listas desplegables.</string>
+<string name="tutorialActionLongPressTitle">Barra de Ayuda</string>
+<string name="tutorialActionLongPress">Una pulsación prolongada sobre un elemento muestra una pequeña descripción</string>
+<string name="tutorialUsbTitle">Búsqueda de elementos USB montados</string>
+<string name="tutorialUsb">Esto buscará los soportes montados en dispositivos USB. Si los dispositivos conectados no los encuentra, por favor envie un email con la ruta de montaje por ej. "/mnt/weird/device/usb"</string>
+    <string name="Name_ascending">Nombre \u25BC</string>
+
+</resources>

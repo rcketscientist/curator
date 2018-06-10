@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/viewerLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+    <com.android.legacy.ui.GLRootView
+        android:id="@+id/gl_root_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentTop="true"/>
+
+    <include
+        android:id="@+id/navPanel"
+        layout="@layout/nav_panel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="false"
+        android:layout_marginLeft="0dp"
+        android:layout_alignParentStart="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentTop="true"/>
+
+    <include
+        android:id="@+id/metaPanel"
+        layout="@layout/meta_panel"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="0dp"
+        android:layout_below="@+id/viewerToolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

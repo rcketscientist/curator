@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_selectAll"
+        android:icon="@drawable/ic_select_all"
+        android:orderInCategory="0"
+        app:showAsAction="always"
+        android:title="@string/selectAll"/>
+    <item
+        android:id="@+id/menu_delete"
+        android:icon="@drawable/ic_delete"
+        android:orderInCategory="1"
+        app:showAsAction="always"
+        android:title="@string/delete"/>
+    <item
+        android:id="@+id/contextSaveAs"
+        android:orderInCategory="5"
+        app:showAsAction="never"
+        android:title="@string/saveAs"/>
+    <item
+        android:id="@+id/contextCopy"
+        android:orderInCategory="3"
+        app:showAsAction="never"
+        android:title="@string/copyImages"/>
+    <item
+        android:id="@+id/contextRename"
+        android:orderInCategory="2"
+        app:showAsAction="never"
+        android:title="@string/rename"/>
+    <item
+        android:id="@+id/menu_share"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="always"
+        android:title="@string/share"/>
+    <item
+        android:id="@+id/menu_recycle"
+        android:icon="@drawable/ic_recycle"
+        android:orderInCategory="12"
+        app:showAsAction="ifRoom"
+        android:title="@string/accessRecycle"/>
+</menu>

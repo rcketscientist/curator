@@ -1,0 +1,208 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        //noinspection GradleDynamicVersion
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
+    maven { url 'https://maven.fabric.io/public' }
+    maven { name 'glide-snapshot'; url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    mavenCentral()
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'io.fabric'
+
+def versionMajor = 5
+def versionMinor = 6
+def versionPatch = 4
+
+//noinspection GroovyMissingReturnStatement
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+//        abortOnError false
+    }
+
+    def schemaLocation = "$projectDir/schemas".toString()
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 26
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
+        buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": schemaLocation]
+            }
+        }
+
+        // Specifies the fully-qualified class name of the test instrumentation runner.
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    sourceSets {
+        androidTest.assets.srcDirs += files(schemaLocation)
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../key/my-release-key.keystore")
+            storePassword "***REMOVED***"
+            keyAlias "alias_name"
+            keyPassword "***REMOVED***"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            // Disable fabric build ID generation for debug builds
+            ext.enableCrashlytics = false
+            jniDebuggable true
+        }
+    }
+
+    flavorDimensions "market", "cycle"
+
+    productFlavors {
+        // These fields handle flavorized authorities for providers
+        final FIELD_META = "PROVIDER_AUTHORITY_META"
+        final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
+        final FIELD_KEYWORD = "PROVIDER_AUTHORITY_KEYWORD"
+        final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
+        final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
+        final PROVIDER_KEYWORD = "\"com.anthonymandra.content.KeywordProvider\""
+        final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
+        final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
+        final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
+        demo {
+            dimension "market"
+            applicationId 'com.anthonymandra.rawdroid'
+            buildConfigField "String", FIELD_META, PROVIDER_META
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD
+        }
+        pro {
+            dimension "market"
+            applicationId 'com.anthonymandra.rawdroidpro'
+            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
+        }
+//        proAmazon {
+//            dimension "market"
+//            applicationId 'com.anthonymandra.rawdroidpro'
+//            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
+//            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
+//            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
+//        }
+        production {
+            dimension "cycle"
+        }
+        beta {
+            dimension "cycle"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    androidExtensions {
+        experimental = true // For ViewHolder binding https://blog.jetbrains.com/kotlin/2017/08/kotlin-1-1-4-is-out/
+    }
+}
+
+dependencies {
+    implementation project(':showcaseView')
+    implementation project(':inscription')
+    implementation project(':metadata-extractor')
+    implementation project(':rawprocessor')
+    implementation project(':documentActivity')
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+
+    implementation 'com.anthonymandra:ToggleButtons:2.0.0'
+    implementation 'com.afollestad:material-cab:0.1.12'
+
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    kapt "com.github.bumptech.glide:compiler:4.7.1"
+
+    implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
+    implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
+
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+    implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
+
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+
+    implementation('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+        transitive = true
+    }
+    implementation('com.crashlytics.sdk.android:crashlytics-ndk:1.1.6@aar') {
+        transitive = true
+    }
+
+    //includes support-v4 and appcompat-v7
+    implementation "com.android.support:design:$supportLibVersion"
+    implementation "com.android.support:cardview-v7:$supportLibVersion"   // included to override ToggleButtons version
+    implementation "com.android.support:support-annotations:$supportLibVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
+//    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
+
+    // Life-cycle
+    implementation "android.arch.lifecycle:extensions:$lifecycleVersion"
+    implementation "android.arch.lifecycle:common-java8:$lifecycleVersion"
+    // Room
+    implementation "android.arch.persistence.room:runtime:$roomVersion"
+    implementation "android.arch.persistence.room:rxjava2:$roomVersion"
+    kapt "android.arch.persistence.room:compiler:$roomVersion"
+    testImplementation "android.arch.persistence.room:testing:$roomVersion"
+    // Paging
+    implementation "android.arch.paging:runtime:$pagingVersion"
+
+    // Required for local unit tests (JUnit 4 framework)
+    testImplementation 'junit:junit:4.12'
+
+    // Required for instrumented tests
+    androidTestImplementation "com.android.support:support-annotations:$supportLibVersion"
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
+
+    // Espresso UI mocking
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    // Hamcrest matching
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    // Arch testing
+    androidTestImplementation "android.arch.core:core-testing:$coreTestingVersion"
+}
+
+crashlytics {
+    enableNdk true
+    androidNdkOut       '../rawprocessor/library/build/intermediates/ndkBuild/debug/obj'
+    androidNdkLibsOut   '../rawprocessor/library/build/intermediates/ndkBuild/release/obj'
+}

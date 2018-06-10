@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Curator</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="positive">Accept</string>
+    <string name="negative">Decline</string>
+    <string name="neutral">Cancel</string>
+    <string name="saveAs">Save As…</string>
+    <string name="export">Export</string>
+    <string name="wallpaper">Set as wallpaper</string>
+    <string name="EDIT">EDIT</string>
+    <string name="ADD">ADD</string>
+    <string name="editWith">Edit with…</string>
+    <string name="selectAll">Select All</string>
+    <string name="help">Help</string>
+    <string name="delete">Delete</string>
+    <string name="viewMeta">Show Meta Sidebar</string>
+    <string name="lastUsedFolder">Last Used Folder</string>
+    <string name="rename">Rename</string>
+    <string name="format_prompt">Format</string>
+    <string name="save">Save</string>
+    <string name="save_success">Save successful</string>
+    <string name="no_filemanager_installed">No file manager</string>
+    <string name="contact">Contact</string>
+
+    <string-array name="format_array">
+        <item>Custom Name - Sequence</item>
+        <item>Custom Name (x of y)</item>
+        <!-- <item>Custom Name - Original Number</item> -->
+    </string-array>
+
+    <string name="Date">Date</string>
+    <string name="Name">Name</string>
+    <string name="settings">Settings</string>
+    <string name="moveImages">Move Images</string>
+    <string name="copyImages">Copy Images</string>
+    <string name="chooseDestination">Choose Destination</string>
+    <string name="choosefile">Choose File</string>
+    <string name="import1">Import</string>
+    <string name="renameImages">Rename Images</string>
+    <string name="view">View</string>
+    <string name="gallery">Gallery</string>
+    <string name="viewer">Viewer</string>
+    <string name="storage">Storage</string>
+    <string name="firstImage">First Image</string>
+    <string name="lastImage">Last Image</string>
+    <string name="unlicensed">Unlicensed</string>
+    <string name="match">Match</string>
+
+    <!-- Meta -->
+    <string name="altitude">Altitude</string>
+    <string name="aperture">Aperture</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="driveMode">Drive Mode</string>
+    <string name="expMode">Exp. Mode</string>
+    <string name="expProgram">Exp. Program</string>
+    <string name="exposure">Exposure</string>
+    <string name="flash">Flash</string>
+    <string name="focalLength">Focal Length</string>
+    <string name="iso">ISO</string>
+    <string name="latitude">Latitude</string>
+    <string name="lens">Lens</string>
+    <string name="longitude">Longitude</string>
+    <string name="model">Model</string>
+    <string name="whiteBalance">White Balance</string>
+    <string name="metadata">Metadata</string>
+    <string name="tutorial">Tutorial</string>
+
+    <string name="saveDefaultConfirm">This dialog will no longer appear.</string>
+    <string name="settingsReset">This can be reset in the settings.</string>
+
+    <!-- Results -->
+    <string name="resultImportSuccessful">Import successful.</string>
+    <string name="resultImportFailed">Import failed.</string>
+    <string name="resultWallpaperFailed">Failed to set wallpaper.</string>
+
+    <!-- Warnings -->
+    <string name="warningFileWrongFormat">File is not the correct format.</string>
+    <string name="warningNoItemsSelected">No items selected.</string>
+    <string name="warningNotEnoughSpace">Not enough space to import entire folder.</string>
+    <string name="warningDeleteExceedsRecycle">Deleted file exceeds recycle bin size.  Delete permanently?  (Note: Size can be edited in settings)</string>
+    <string name="warningDeleteDirect">Files will be deleted directly.</string>
+    <string name="warningNoRecycleBin">Recycle bin does not exist. Files will be deleted directly.</string>
+    <string name="warningGenericImagesOff">Generic images (ex: jpg) have been disabled in settings.</string>
+    <string name="warningInvalidLabel">is an invalid label.  Labels can be customized in settings.</string>
+    <string name="warningBlankWatermark">You tried to apply an empty watermark.  Please add text.</string>
+    <string name="warningKitKat">Unfortunately your device is running Android 4.4+.  Google disabled writing to sdcards in this version.  There are two options to continue using sdcards:\n1:Use an external card reader.\n2:Root your device to fix it.\n\nWithout a fix you CANNOT edit, save or create metadata on sdcards.</string>
+    <string name="warningWriteDisabled">You have selected a folder that has write access disabled.</string>
+    <string name="warningWriteDisabledKitKat">You have selected a folder that has write access disabled.  Google disabled sdcard write access in Android 4.4.</string>
+    <string name="warningAccessError">Access Error</string>
+    <string name="warningNoImages">No new images found.  Your can clear the library (Help: Clear Library) to force reset.</string>
+
+    <!-- Preferences -->
+    <string name="prefTitleImageInterface">Automatically display interface</string>
+    <string name="prefSummaryImageInterface">when image changes</string>
+    <string name="prefTitleRecycleBin">Recycle Bin Size</string>
+    <string name="prefSummaryRecycleBin">%s MB allocated to recycle bin.</string>
+    <string name="prefTitleFilter">Exif Filter</string>
+    <string name="prefTitleDeleteConfirmation">Delete Confirmation</string>
+    <string name="prefSummaryDeleteConfirmation">If disabled deletes will not require confirmation even if they exceed recycle bin size.</string>
+    <string name="prefTitleUseRecycleBin">Use Recycle Bin</string>
+    <string name="prefSummaryUseRecycleBin">When disabled images will be directly deleted.</string>
+    <string name="prefTitleShowXmpFiles">Show XMP Files</string>
+    <string name="prefSummaryShowXmpFiles">This will show xmp sidecar files in the gallery.</string>
+    <string name="prefTitleShowNativeFiles">Show Generic Images</string>
+    <string name="prefSummaryShowNativeFiles">This will show jpg, gif, bmp, and png.</string>
+    <string name="prefTitleShowUnknownFiles">Show Unhandled Files</string>
+    <string name="prefSummaryShowUnknownFiles">This will show files that Curator does not process.</string>
+    <string name="prefTitleResetSaveDefault">Clear Save Defaults</string>
+    <string name="prefSummaryResetSaveDefault">Click to reset default save configuration.</string>
+    <string name="prefTitleImportKeywords">Import Keywords</string>
+    <string name="prefSummaryImportKeywords">Click to import a tab-delimited keyword file, such as those exported from Lightroom.</string>
+    <string name="prefTitleUseLegacyViewer">Use Legacy Viewer</string>
+    <string name="prefSummaryUseLegacyViewer">Check only if you experience issues with the default viewer.\nPlease email me if this is necessary.</string>
+    <string name="prefTitleShowNav">Show Navigation</string>
+    <string name="prefTitleMetaFontSize">Metadata Font Size</string>
+    <string name="prefTitleShowMeta">Show Metadata</string>
+    <string name="prefTitleShowHist">Show Histogram</string>
+    <string name="prefTitleShowToolbar">Show Toolbar</string>
+    <string name="prefSummaryLicenseError">There was an error communicating with Google servers.  Make sure you are connected and try again later.</string>
+    <string name="prefSummaryLicenseModified">Application was modified!  Uninstall apps designed to crack licensing.  There are also reports of some ad blocking software making modifications.  You may need to reinstall afterwards.</string>
+    <string name="prefSummaryLicense">All features are available.  Thank you for your support!</string>
+    <string name="prefTitleManualLicense">Check License</string>
+    <string name="prefSummaryManualLicense">Click to manually check the license.  Requires an internet connection.</string>
+    <string name="prefTitleEnableWatermark">Enable Watermark</string>
+    <string name="prefSummaryEnableWatermark">Enable to place watermark on exported photos.</string>
+    <string name="prefTitleWatermarkText">Watermark Text</string>
+    <string name="prefTitleWatermarkSize">Watermark Height</string>
+    <string name="prefTitleWatermarkLocation">Location of Watermark</string>
+    <string name="prefTitleWatermarkAlpha">Watermark Transparency</string>
+    <string name="prefSummaryContact">Click to send me an email.</string>
+    <string name="prefTitleLeftMargin">Left</string>
+    <string name="prefTitleRightMargin">Right</string>
+    <string name="prefTitleTopMargin">Top</string>
+    <string name="prefTitleBottomMargin">Bottom</string>
+    <string name="prefSummaryLeftMargin">Distance from left edge of image to left edge of watermark: %s.</string>
+    <string name="prefSummaryRightMargin">Distance from right edge of image to right edge of watermark: %s</string>
+    <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark: %s</string>
+    <string name="prefSummaryBottomMargin">Distance from bottom edge of image to bottom edge of watermark: %s</string>
+    <string name="prefTitleUseImmersive">Use Immersive</string>
+    <string name="prefSummaryUseImmersive">(Android 4.4+) Hide nav and status bars until swiped in.</string>
+    <string name="prefTitleShareFormat">Share Format</string>
+    <string name="prefTitleEditFormat">Edit Format</string>
+    <string name="prefAutoSummary">%s</string>
+
+    <string name="buypro">Click here to upgrade to Curator Pro to unlock features and improve speed!</string>
+
+    <!-- Show options -->
+    <string name="automatic">Automatic</string>
+    <string name="always">Always</string>
+    <string name="never">Never</string>
+
+    <string name="clearLibrary">Clear Library</string>
+    <string name="cacheCleared">Gallery image cache cleared.</string>
+    <string name="accessRecycle">Access Recycle Bin</string>
+    <string name="recycleBin">Recycle Bin</string>
+    <string name="restoreFile">Restore File</string>
+    <string name="emptyRecycleBin">Empty Recycle Bin</string>
+    <string name="saveJpg">Save Jpeg</string>
+    <string name="share">Share</string>
+    <string name="ratingRequest">If you enjoy using Curator please take a moment to rate it.\nThanks for your support!</string>
+    <string name="copyingImages">Copying Images…</string>
+    <string name="importingImages">Importing Images…</string>
+    <string name="savingImages">Saving Images…</string>
+    <string name="exportingThumb">Exporting Thumbnails…</string>
+    <string name="deletingFiles">Deleting Files…</string>
+    <string name="recyclingFiles">Recycling Files…</string>
+    <string name="clear">Clear</string>
+    <string name="reuse">Reuse</string>
+    <string name="customKeywords">Custom Keywords</string>
+    <string name="addKeyword">Add Keyword</string>
+    <string name="about">About</string>
+    <string name="search">Search</string>
+    <string name="excludedFolders">Excluded Folders</string>
+    <string name="excludedSummary">Folders that are not scanned for images</string>
+    <string name="excludedMessage">Tap to remove folders from the exclusion list</string>
+
+    <!-- Dialogs -->
+    <string name="dialogWriteRequestTitle">Write Permission Guide</string>
+    <string name="dialogWriteRequestMessage">The following screen will grant Curator write permission to the external SD card.  Choose the root directory 0000–0000 for full access.</string>
+    <string name="welcomeTitle">Welcome to Curator!</string>
+    <string name="welcomeMessage">Curator will operate as a fully functional demo with watermarking until Curator Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nWould you like to run the tutorial now? (You can run it later at Help:Tutorial)</string>
+    <string name="welcomeTutorial">Would you like to run the tutorial now? (You can run it later at Help:Tutorial)</string>
+    <string name="writeAccessTitle">Write Access Disabled</string>
+    <string name="requestWriteAccess">Google disabled write access.  You may grant Curator write access in the following window.  If you decline Curator will be view images but will be unable to write metadata, delete, save thumbnails, etc.  Curator will ONLY be able to access the folder you select, so the safest bet is to choose the whole sd card restoring previous access permissions to Curator.  Write access is used ONLY for actions related to image workflow.</string>
+    <string name="kitkatWriteIssue">Google disabled write access in Android 4.4.  Without write access you cannot edit metadata, write xmp, delete, etc.  You have three options:\n
+    1) Use an external reader connected via OTG USB.\n
+    2) Upgrade to 5.0.  There is a fix in 5.0.\n
+    3) Root your device and apply a fix.\n
+    </string>
+    <string name="zeroSearchTitle">Zero Images Found</string>
+    <string name="zeroSearchSummary">No images were found.  If you know there are images on the device, please contact me to investigate why search failed.  Thank you for testing the beta!</string>
+    <string name="offerSearchTitle">Initial Search</string>
+    <string name="offerSearchMessage">Empty database detected.  Would you like to search the device for images?  You may manually search by pressing the following menu item.</string>
+    <string name="offerPermissionMessage">Android now requires that all apps explicitly request permission to use storage.  As this is your first time, you will have to give Curator permission to search where you store your images.  Please select the root of the storage as depicted in the following screen.</string>
+
+    <!-- Colors for xmp -->
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="cyan">Cyan</string>
+    <string name="purple">Purple</string>
+    <string name="yellow">Yellow</string>
+
+    <!-- Locations -->
+    <string name="margins">Margins</string>
+    <string name="center">Center</string>
+    <string name="lowerLeft">Lower Left</string>
+    <string name="lowerRight">Lower Right</string>
+    <string name="upperLeft">Upper Left</string>
+    <string name="upperRight">Upper Right</string>
+    <string name="next">Next</string>
+
+    <!-- Tutorials -->
+    <string name="tutorialWelcomeTitle">Welcome to the Curator Tutorial</string>
+    <string name="tutorialWelcomeText">The tutorial is interactive and can be advanced by clicking the next button.</string>
+    <string name="tutorialDisabled">Disabled during the tutorial</string>
+
+    <string name="tutorialConnectTitle">How to Connect Images</string>
+    <string name="tutorialConnectText1">There are three main ways to access your images in Curator.</string>
+    <string name="tutorialConnectText2">1. Insert an SD card directly into your device.</string>
+    <string name="tutorialConnectText3">2. You can connect your media card with a card reader and OTG cable.  This is the best way to use Curator, fast and convenient.  A single-format card reader is best.</string>
+    <string name="tutorialConnectText4">3. You may connect the camera directly.  Due to many limitations in Android this is slow and requires a full import of images to your device.\nYour device must have enough storage.  This is not recommended</string>
+    <string name="tutorialConnectText5">(Future addition) Eventually I will be adding network support.</string>
+
+    <string name="tutorialFindImagesText">You can quickly use \'Search\' to find any folders with images on your device.</string>
+
+    <string name="tutorialSelectTitle">How to Select Images</string>
+    <string name="tutorialSingleSelectText">You can begin selecting images at any time by LONG pressing on an image for two seconds. Try it on image 1.</string>
+    <string name="tutorialMultiSelectText">You can add images to the selection by QUICKLY pressing on them.  Try that on image 3.</string>
+    <string name="tutorialMultiSelectText2">You have now selected just images 1 and 3.</string>
+    <string name="tutorialSelectAllText">You can quickly select all with this button.  Try that now.</string>
+    <string name="tutorialExitSelectionText">You can exit the selection mode by clicking the back button.  Try that now.</string>
+    <string name="tutorialSelectBetweenText1">You can also select a range of images by long pressing on the beginning and end image.  Enter selection mode by LONG pressing on image 2.</string>
+    <string name="tutorialSelectBetweenText2">Now LONG press again on image 4.</string>
+    <string name="tutorialSelectBetweenText3">You have selected images 2 and 3 and 4.</string>
+
+    <string name="tutorialRenameTitle">Rename Images</string>
+    <string name="tutorialRenameText">Press this button to rename selected images within a few templates (more coming soon).</string>
+    <string name="tutorialMoveTitle">Move Images</string>
+    <string name="tutorialMoveText">This will move selected images to a new location.  This can be used to import, export, or simply organize images.</string>
+    <string name="tutorialExportTitle">Export Thumbnails</string>
+    <string name="tutorialExportText">This will export a compressed jpeg thumbnail of the selected images to a desired location.</string>
+    <string name="tutorialShareTitle">Share a JPEG</string>
+    <string name="tutorialShareText">This will convert the selected images to jpeg and share with another app.</string>
+
+    <string name="tutorialRecycleTitle">How to Recover Images</string>
+    <string name="tutorialRecycleText">If enabled in settings deleted images will be kept in a recycling bin.  The bin has a limited size and will permanently delete the oldest images when it is full.  You can recover images with this button.</string>
+
+    <string name="tutorialActionbarHelpTitle">Action Bar Help</string>
+    <string name="tutorialActionbarHelpText">If you forget what an icon does you can always long-press it for the title.  Press this icon for two seconds now.</string>
+
+    <string name="tutorialSelect">Long press any image to enter selection mode.</string>
+    <string name="tutorialSelectAll">You can also select all images with this button.  Try that now.</string>
+    <string name="tutorialRecycle">This will open the recycling bin allowing you to restore deleted items.</string>
+    <string name="tutorialRecentFolder">This will go to the most recently decoded folder.</string>
+    <string name="tutorialShare">This will share the selected files with the given application.</string>
+    <string name="tutorialDelete">This will delete all selected images.</string>
+    <string name="tutorialSelectModeTitle">Selection Mode</string>
+    <string name="tutorialSelectMode">We have entered selection mode!</string>
+    <string name="tutorialSelectBetweenTitle">Select Between</string>
+    <string name="tutorialSelectBetween">While in selection mode another long press on an image will select between the last selection.</string>
+    <string name="tutorialRename">This will rename all selected files with a selected template.</string>
+    <string name="tutorialImport">This will import selected images to a new destination.</string>
+    <string name="tutorialExport">This will export selected images as a compressed jpeg thumbnail.</string>
+    <string name="tutorialStart">Welcome to the Curator tutorial!\n   .</string>
+    <string name="tutorialConnect1">There are three ways to access data:</string>
+    <string name="tutorialConnect2">1. Fastest: Transfer images to your device via PC connection.  Obviously not an ideal use.</string>
+    <string name="tutorialConnect3">2. Fast: Connect your media card with a card reader and OTG cable.  A single format card reader is best.\n\ta. Some devices will require root.  My nexus did.  I use "StickMount" to connect.  More details on the website.</string>
+    <string name="tutorialConnect3a">\ta. Some devices will require root.  My nexus did.  I use "StickMount" to connect.  More details on the website.</string>
+    <string name="tutorialConnect4">3. Slow: Connect your camera with an OTG cable.  Due to limitations in Android we cannot write to cameras, this will import images to your device.\nYour device must have enough storage.  More details on the website.</string>
+    <string name="tutorialConnect5">4. Eventually I will be adding network support.</string>
+    <string name="tutorialMemoryTitle">Memory Issues</string>
+    <string name="tutorialMemory">If you have an older device that crashes, this is likely due to memory limitations.\nI recommend rooting and using "VM Heap Tool" to allow more memory.</string>
+    <string name="tutorialPath">This is the current path.  You can quickly navigate the drop-down.</string>
+    <string name="tutorialActionLongPressTitle">Action Bar Help</string>
+    <string name="tutorialActionLongPress">Long press action items to see a short description.</string>
+    <string name="tutorialUsbTitle">USB Mount Search</string>
+    <string name="tutorialUsb">This will search known mount points for any USB devices.  If your device is not found please email the mount point ex:"/mnt/weird/device/usb"</string>
+
+    <string name="no_thumbnail">No thumbnail</string>
+    <string name="license">License</string>
+    <string name="watermark">Watermark ( Pro )</string>
+    <string name="filterTitle">Filter</string>
+    <string name="editTitle">Edit</string>
+    <string name="drawer_open">filter open</string>
+    <string name="drawer_close">filter close</string>
+    <string name="sortTitle">Sort:</string>
+    <string name="Name_ascending">Name \u25BC</string>
+    <string name="Name_descending">Name \u25B2</string>
+    <string name="Date_ascending">Date \u25BC</string>
+    <string name="Date_descending">Date \u25B2</string>
+    <string name="segregate">Segregate by type</string>
+    <string name="folders">Folders</string>
+
+    <string name="tapVisibility">to toggle the folder visibility</string>
+    <string name="tap">Tap</string>
+    <string name="tapExclude">to exclude a folder from all future searches</string>
+
+    <string name="selectUsb">Select USB</string>
+    <string name="allowWrite">Allow Write Permission</string>
+    <string name="addFolder">Add Folder</string>
+
+    <string name="permissionStorageRationale">Storage permission is needed to read and write images.</string>
+    <string name="addRoot">Add Search Root</string>
+    <string name="restoreFail">Restore was not completely successful.</string>
+    <string name="deleteFail">Delete was not completely successful.</string>
+    <string name="selectItems">Select Items</string>
+    <string name="selected">" selected"</string>
+    <string name="setAsDefault">Set as default</string>
+    <string name="noSettings">No Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="extractingImage">Extracting Image…</string>
+    <string name="compress">compress</string>
+    <string name="defaults">Defaults</string>
+    <string name="licenseRequestSent">License request sent…</string>
+
+    <!-- Filter sidebar tutorial-->
+    <string name="sortImages">Sort Images</string>
+    <string name="filterImages">Filter Images</string>
+    <string name="sortCotent">Sort images by name or age (icon is which image is first).</string>
+    <string name="segregateContent">This will sort compressed image after raw images.  So if you shot raw+jpeg, the jpeg will be at the end of the gallery.</string>
+    <string name="folderContent">This allows you to show/hide folders, add folders, and exclude folders from further searches.</string>
+    <string name="clearFilterContent">This will remove current filter constraints.</string>
+    <string name="ratingLabelContent">This will filter based on XMP rating or label.</string>
+    <string name="subjectContent">This will filter based on XMP subject.</string>
+    <string name="matchContent">This will determine whether the filter matches ANY xmp field or ALL xmp fields.</string>
+
+    <!-- Edit sidebar tutorial-->
+    <string name="editMetadata">Edit Metadata</string>
+    <string name="tutSetRecent">Apply the most recent metadata settings to the current selection.</string>
+    <string name="tutClearMeta">Clear metadata for the current selection.</string>
+    <string name="tutSetRatingLabel">Set rating or label for the current selection.</string>
+    <string name="tutSetSubject">Set subject for the current selection.</string>
+    <string name="tutAddSubject">Coming soon: Add a keyword.</string>
+    <string name="tutEditSubject">Coming soon: Edit a keyword (hierarchy, etc.)</string>
+    <string name="shareSubset">Share limited to ten images!</string>
+
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="large">Large</string>
+
+    <!-- Notifications -->
+    <string name="io_channel_name">I/O</string>
+    <string name="io_channel_desc">Feedback on operations like copy and save.</string>
+
+</resources>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/RelativeLayout1"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/xmp_edit_width"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/sidebarBackgroundColor"
+    tools:context=".GalleryActivity"
+    tools:ignore="ContentDescription"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/tagHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_tag_edit"
+        android:tint="@color/sidebarHeader"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+
+    <ImageButton
+        android:id="@+id/helpButton"
+        android:background="@null"
+        android:layout_width="@dimen/helpButtonSize"
+        android:layout_height="@dimen/helpButtonSize"
+        android:tint="@color/white"
+        app:srcCompat="@drawable/ic_help"
+        android:layout_alignParentEnd="true"/>
+
+    <View
+        android:id="@+id/headerDividerLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:background="@color/sidebarHeader"
+        android:layout_alignTop="@+id/tagHeader"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@id/tagHeader"
+        android:layout_marginTop="10dp"/>
+
+    <View
+        android:id="@+id/headerDividerRight"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:background="@color/sidebarHeader"
+        android:layout_alignTop="@+id/headerDividerLeft"
+        android:layout_toStartOf="@id/helpButton"
+        android:layout_toEndOf="@id/tagHeader"/>
+
+    <LinearLayout
+        android:id="@+id/editButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tagHeader"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/recentMetaButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:theme="@style/RecentButton"
+            android:layout_weight="0.5"
+            android:clickable="true">
+
+            <ImageView
+                android:id="@+id/recentLabel"
+                android:theme="@style/RecentInternal"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_square_rounded"
+                android:tint="@color/white"/>
+            <ImageView
+                android:id="@+id/recentRating"
+                android:theme="@style/RecentInternal"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_star_border"
+                android:tint="@color/white"/>
+            <ImageView
+                android:id="@+id/recentSubject"
+                android:theme="@style/RecentInternal"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_key"
+                android:tint="@color/white"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/clearMetaButton"
+            android:theme="@style/SidebarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:tint="@color/red_700"
+            app:srcCompat="@drawable/ic_tag_slash"/>
+    </LinearLayout>
+
+    <include
+        android:id="@+id/metaLabelRating"
+        layout="@layout/xmp_core"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editButtons"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="2dp"/>
+
+    <fragment
+        android:id="@+id/keywordFragment"
+        android:name="com.anthonymandra.rawdroid.KeywordEditFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/xmp_subject_edit"
+        android:layout_below="@+id/metaLabelRating"/>
+
+</RelativeLayout>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+<string name="app_name">RawDroid</string>
+<string name="neutral">Отмена</string>
+	<string name="saveAs">сохранить как...</string>
+<string name="wallpaper">Установить как фон</string>
+<string name="editWith">Редактировать в...</string>
+<string name="help">помощь</string>
+<string name="delete">Удалить</string>
+<string name="rename">переименовать</string>
+<string name="save">сохранить</string>
+<string name="save_success">Сохранено</string>
+
+<string-array name="format_array">
+<item></item>
+<item></item>
+<!-- <item>Custom Name - Original Number</item> -->
+</string-array>
+
+<string name="settings">Настройки</string>
+
+<!-- Error Messages -->
+
+<!-- Meta -->
+
+<!-- Results -->
+
+<!-- Warnings -->
+
+<!-- Preferences -->
+
+
+<!-- Colors for xmp -->
+<string name="red">красный</string>
+<string name="green">зеленый</string>
+<string name="blue">синий</string>
+<string name="cyan">голубой</string>
+<string name="purple">фиолетовый</string>
+<string name="yellow">желтый</string>
+
+<!-- Tutorials -->
+
+</resources>
