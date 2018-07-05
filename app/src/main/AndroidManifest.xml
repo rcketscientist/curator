@@ -80,11 +80,12 @@
         <activity
             android:name=".ImageViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/GalleryTheme">
+			android:theme="@style/GalleryTheme">
         </activity>
 		<activity
             android:name=".FullSettingsActivity"
             android:theme="@style/Theme.AppCompat"/>
+        <activity android:name=".ViewerActivity" />
 
         <activity-alias
             android:name=".ImportKeywords"

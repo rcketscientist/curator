@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.arch.paging.PagedList
+import android.net.Uri
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
@@ -11,7 +12,7 @@ class ViewerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         val fragment = ViewPagerFragment()
-        fragment.setAsset(images.get(position)) // TODO: Use the livedata somehow
+        fragment.source = Uri.parse(images?.get(position)?.uri)
         return fragment
     }
 
@@ -19,7 +20,12 @@ class ViewerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
         return images?.size ?: 0
     }
 
-    fun submitList(pagedList: PagedList<T>) {
+    fun getImage(position: Int): MetadataTest? {
+        return images?.get(position)
+    }
+
+    fun submitList(pagedList: PagedList<MetadataTest>?) {
         images = pagedList
+        notifyDataSetChanged()
     }
 }

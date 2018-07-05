@@ -480,7 +480,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         // Don't start an intent while in context mode
         if (isContextModeActive) return
 
-        val viewer = Intent(this, ViewerChooser::class.java)
+        val viewer = Intent(this, ViewerActivity::class.java)
         viewer.data = uri
 
         val options = Bundle()
