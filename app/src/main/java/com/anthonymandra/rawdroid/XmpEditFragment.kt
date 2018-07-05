@@ -97,22 +97,22 @@ class XmpEditFragment : XmpBaseFragment() {
         return ratings?.iterator()?.next()
     }
 
-    private fun formatRating(rating: Int?): Collection<Int> {
+    private fun formatRating(rating: Int?): List<Int> {
         return if (rating == null) Collections.emptyList() else arrayListOf(rating)
     }
 
-    private fun formatLabel(labels: Collection<String>?): String? {
+    private fun formatLabel(labels: List<String>?): String? {
         return labels?.iterator()?.next()
     }
 
-    private fun formatLabel(label: String?): Collection<String> {
+    private fun formatLabel(label: String?): List<String> {
         return if (label == null) Collections.emptyList() else arrayListOf(label)
     }
 
     /**
      * Silently set xmp without firing listeners
      */
-    fun initXmp(rating: Int?, subject: Collection<SubjectEntity>, label: String) {
+    fun initXmp(rating: Int?, subject: List<SubjectEntity>, label: String) {
         super.initXmp(formatRating(rating),
                 formatLabel(label),
                 subject)

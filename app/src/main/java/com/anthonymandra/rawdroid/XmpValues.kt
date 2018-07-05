@@ -1,8 +1,11 @@
 package com.anthonymandra.rawdroid
 
+import android.os.Parcelable
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import kotlinx.android.parcel.Parcelize
 
-data class XmpValues(val rating: Collection<Int> = emptyList(),
-                     val label: Collection<String> = emptyList(),
-                     val subject: Collection<SubjectEntity> = emptyList())
+@Parcelize
+data class XmpValues(val rating: List<Int> = emptyList(),
+                     val label: List<String> = emptyList(),
+                     val subject: List<SubjectEntity> = emptyList()) : Parcelable
 

@@ -23,13 +23,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"/>
 
-    <include
+<!--    <include
         android:id="@+id/metaPanel"
         layout="@layout/meta_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/viewerToolbar"
-        android:layout_toStartOf="@+id/editFragment"/>
+        android:layout_toStartOf="@+id/editFragment"/>-->
 
     <fragment
         android:id="@+id/editFragment"

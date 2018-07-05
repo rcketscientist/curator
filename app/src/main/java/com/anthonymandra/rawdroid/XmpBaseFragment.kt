@@ -29,15 +29,15 @@ abstract class XmpBaseFragment : Fragment(),
 
     private val colorKeys = ArrayMap<Label, String>(5)
 
-    protected var subject: Collection<SubjectEntity>
-        get() { return keywordFragment.selectedKeywords }
+    protected var subject: List<SubjectEntity>
+        get() { return keywordFragment.selectedKeywords.toList() }
         set(value) { keywordFragment.setSelectedKeywords(value) }
 
-    protected var ratings: Collection<Int>
+    protected var ratings: List<Int>
         get() { return ratingBar.checkedRatings }
         set(value) { ratingBar.setRating(value) }
 
-    protected var colorLabels: Collection<String>
+    protected var colorLabels: List<String>
         get() {
             val checked = colorKey.checked
 
@@ -127,7 +127,7 @@ abstract class XmpBaseFragment : Fragment(),
         onXmpChanged(xmp)
     }
 
-    private fun setXmp(rating: Collection<Int>, label: Collection<String>, subject: Collection<SubjectEntity>) {
+    private fun setXmp(rating: List<Int>, label: List<String>, subject: List<SubjectEntity>) {
         mPauseListener = true
         this.colorLabels = label
         this.subject = subject
@@ -152,9 +152,9 @@ abstract class XmpBaseFragment : Fragment(),
      * @param label label
      * @param subject keywords
      */
-    protected fun initXmp(rating: Collection<Int> = Collections.emptyList(),
-                          label: Collection<String> = Collections.emptyList(),
-                          subject: Collection<SubjectEntity> = Collections.emptyList()) {
+    protected fun initXmp(rating: List<Int> = Collections.emptyList(),
+                          label: List<String> = Collections.emptyList(),
+                          subject: List<SubjectEntity> = Collections.emptyList()) {
         mPauseListener = true
         this.colorLabels = label
         this.subject = subject

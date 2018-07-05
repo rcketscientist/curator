@@ -3,7 +3,10 @@ package com.anthonymandra.rawdroid.data
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 @Entity(
     tableName = "xmp_subject",
     indices = [ Index(value = [ "id" ]) ])
@@ -14,4 +17,4 @@ data class SubjectEntity(
     @Ignore override var id: Long = 0,
     @Ignore override var path: String = "",
     @Ignore override var parent: Long = -1,
-    @Ignore override var depth: Int = 0): PathEntity()
+    @Ignore override var depth: Int = 0): PathEntity(), Parcelable
