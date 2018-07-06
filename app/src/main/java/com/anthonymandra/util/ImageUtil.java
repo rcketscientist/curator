@@ -45,6 +45,7 @@ import com.anthonymandra.rawdroid.LicenseManager;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
 import com.anthonymandra.rawdroid.data.DataRepository;
+import com.anthonymandra.rawdroid.data.MetadataTest;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -514,6 +515,50 @@ public class ImageUtil
             return null;
 
         if (imageType == null || imageType == Meta.ImageType.UNPROCESSED)
+            imageType = getImageType(c, uri);
+
+        switch(imageType)
+        {
+            case COMMON:
+                BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream());
+                return Util.toByteArray(imageStream);
+            case TIFF:
+                return getTiffImage(fd.getParcelFileDescriptor().getFd());
+            default:
+                return getRawThumb(fd.getParcelFileDescriptor().getFd());
+        }
+    }
+
+    // TODO: This is temporary to test ssiv
+    public static byte[] getThumb2(final Context c, final Uri uri) throws Exception {
+        AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r");
+
+        if (fd == null)
+            return null;
+
+        Meta.ImageType imageType = getImageType(c, uri);
+
+        switch(imageType)
+        {
+            case COMMON:
+                BufferedInputStream imageStream = new BufferedInputStream(fd.createInputStream());
+                return Util.toByteArray(imageStream);
+            case TIFF:
+                return getTiffImage(fd.getParcelFileDescriptor().getFd());
+            default:
+                return getRawThumb(fd.getParcelFileDescriptor().getFd());
+        }
+    }
+
+    public static byte[] getThumb(final Context c, MetadataTest image) throws Exception {
+        Uri uri = Uri.parse(image.getUri());
+        AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r");
+
+        if (fd == null)
+            return null;
+
+        Meta.ImageType imageType = Meta.ImageType.fromInt(image.getType());
+        if (imageType == Meta.ImageType.UNKNOWN || imageType == Meta.ImageType.UNPROCESSED)
             imageType = getImageType(c, uri);
 
         switch(imageType)

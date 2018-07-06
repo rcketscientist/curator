@@ -138,6 +138,7 @@ dependencies {
     implementation project(':metadata-extractor')
     implementation project(':rawprocessor')
     implementation project(':documentActivity')
+    implementation project(':ssiv')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
@@ -146,7 +147,7 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     kapt "com.github.bumptech.glide:compiler:4.7.1"
-    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
+//    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
     implementation 'me.zhanghai.android.materialprogressbar:library:1.4.2'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'

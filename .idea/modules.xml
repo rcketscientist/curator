@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/library/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/library/showcaseView.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ssiv/ssiv.iml" filepath="$PROJECT_DIR$/ssiv/ssiv.iml" />
     </modules>
   </component>
 </project>

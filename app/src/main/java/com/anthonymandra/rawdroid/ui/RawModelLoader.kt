@@ -32,8 +32,10 @@ internal class RawModelLoader(private val context: Context) : ModelLoader<Metada
 
         override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
             try {
-                val image = ImageUtil.getThumb(
-                        context, Uri.parse(source.uri), Meta.ImageType.fromInt(source.type))
+                val image = ImageUtil.getThumb(context, Uri.parse(source.uri), Meta.ImageType.fromInt(source.type))
+                if (image == null || image.isEmpty()) {
+                    callback.onLoadFailed(Exception("$source.uri could not be processed."))
+                }
                 callback.onDataReady(ByteArrayInputStream(image))
             } catch (e: Exception) {
                 callback.onLoadFailed(e)
