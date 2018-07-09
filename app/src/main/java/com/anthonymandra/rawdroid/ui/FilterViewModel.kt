@@ -12,12 +12,17 @@ class FilterViewModel(app: Application) : AndroidViewModel(app) {
     // MediatorLiveData can observe other LiveData objects and react on their emissions.
     private val mObservableProducts: MediatorLiveData<List<FolderEntity>> = MediatorLiveData()
     private val dataSource = (app as App).database.folderDao()
+    private val dataRepo = (app as App).dataRepo
 
     /**
      * Expose the LiveData keywords query so the UI can observe it.
      */
     val folders: LiveData<List<FolderEntity>>
         get() = mObservableProducts
+
+    fun insertFolders(vararg folders: FolderEntity) {
+        dataRepo.insertParents(*folders)
+    }
 
     init {
         // set by default null, until we get data from the database.

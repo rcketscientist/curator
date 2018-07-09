@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.content.WakefulBroadcastReceiver
-import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
 import java.util.concurrent.atomic.AtomicInteger
@@ -26,7 +25,7 @@ class MetaService : PriorityIntentService("MetaService") {
     }
 
     private fun handleActionUpdate(intent: Intent) {
-        val repo = DataRepository.getInstance(AppDatabase.getInstance(this.applicationContext))
+        val repo = DataRepository.getInstance(this.applicationContext)
 
         val updates = repo.unprocessedImages()
         sJobsTotal.addAndGet(updates.size)
@@ -57,7 +56,7 @@ class MetaService : PriorityIntentService("MetaService") {
      * Parse given uris and add to database in a batch
      */
     private fun handleActionParse(intent: Intent) {
-        val repo = DataRepository.getInstance(AppDatabase.getInstance(this.applicationContext))
+        val repo = DataRepository.getInstance(this.applicationContext)
 
         val uris = if (intent.hasExtra(EXTRA_URIS))
             intent.getStringArrayExtra(EXTRA_URIS)
