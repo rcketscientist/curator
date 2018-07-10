@@ -105,6 +105,13 @@ class DataRepository private constructor(private val database: AppDatabase) {
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
     }
 
+    fun updateParents(vararg folders: FolderEntity): Completable {
+        return Completable.create {
+            database.folderDao().update(*folders)
+            it.onComplete()
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+    }
+
     // Note: folders aren't even a path enumeration anymore
 //    fun getChildFolders(path: String): Single<List<FolderEntity>> {
 //        return Single.create<List<FolderEntity>> { emitter ->

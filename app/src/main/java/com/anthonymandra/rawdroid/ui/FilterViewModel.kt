@@ -24,6 +24,10 @@ class FilterViewModel(app: Application) : AndroidViewModel(app) {
         dataRepo.insertParents(*folders)
     }
 
+    fun updateFolders(vararg folders: FolderEntity) {
+        dataRepo.insertParents(*folders)
+    }
+
     init {
         // set by default null, until we get data from the database.
         mObservableProducts.value = null

@@ -243,6 +243,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         MetaDataCleaner.cleanDatabase(this, Handler(Handler.Callback {
             // Upon clean initiate search
+            //TODO: This should be a DB lookup!
             val excludedFolders = mXmpFilterFragment!!.excludedFolders
 
             val permissionUris = rootPermissions.map { it.uri.toString() }
