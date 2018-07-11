@@ -18,8 +18,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
     private val subjectStream: MediatorLiveData<List<SubjectEntity>> = MediatorLiveData()
 
     var galleryStream: DataSource.Factory<Int, MetadataTest> = database.metadataDao().getImageFactory()
-    fun updateGalleryStream(filter: XmpFilter) {
-        galleryStream = database.metadataDao().getImageFactory(filter)
+    fun getGalleryLiveData(filter: XmpFilter): DataSource.Factory<Int, MetadataTest> {
+        return database.metadataDao().getImageFactory(filter)
     }
     fun updateGalleryStream(ids: List<Long>) {
         galleryStream = database.metadataDao().getImagesById(ids)

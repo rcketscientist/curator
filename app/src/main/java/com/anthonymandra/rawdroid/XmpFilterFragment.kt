@@ -32,7 +32,7 @@ class XmpFilterFragment : XmpBaseFragment() {
     private var ascending: Boolean = false
     private var mSegregateByType: Boolean = false
     private var sortColumn: XmpFilter.SortColumns = XmpFilter.SortColumns.Name
-    private var mHiddenFolders: List<FolderEntity> = Collections.emptyList()
+    private var mVisibleFolders: List<FolderEntity> = Collections.emptyList()
     private var mExcludedFolders: List<FolderEntity> = Collections.emptyList()
 
     private val disposables = CompositeDisposable()
@@ -69,7 +69,7 @@ class XmpFilterFragment : XmpBaseFragment() {
                 ascending,
                 mSegregateByType,
                 sortColumn,
-                mHiddenFolders.map { it.documentUri }.toSet())
+                mVisibleFolders.map { it.documentUri }.toSet())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.xmp_filter_landscape, container, false)
@@ -120,7 +120,7 @@ class XmpFilterFragment : XmpBaseFragment() {
         viewModel = ViewModelProviders.of(this).get(FilterViewModel::class.java)
         viewModel.folders.observe(this, Observer { folders: List<FolderEntity>? ->
             mExcludedFolders = folders?.filter { it.excluded } ?: Collections.emptyList()
-            mHiddenFolders = folders?.filter { !it.visible || it.excluded } ?: Collections.emptyList()
+            mVisibleFolders = folders?.filter { it.visible } ?: Collections.emptyList()
             onFilterUpdated()
         })
     }

@@ -115,7 +115,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
         mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
-            viewModel.updateFilter(filter)
+            viewModel.setFilter(filter)
         }
         mXmpFilterFragment!!.registerSearchRootRequestedListener {
             setWriteResume(WriteResume.Search, emptyArray())

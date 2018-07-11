@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:state_checked="false"
-          android:drawable="@drawable/ic_visibility_off" />
-    <item android:state_checked="true"
           android:drawable="@drawable/ic_visibility" />
+    <item android:state_checked="true"
+          android:drawable="@drawable/ic_visibility_off" />
 </selector>

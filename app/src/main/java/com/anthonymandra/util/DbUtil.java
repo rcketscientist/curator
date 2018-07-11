@@ -63,7 +63,7 @@ public class DbUtil
 		StringBuilder clause = new StringBuilder();
 		clause.append(column).append(" IN (");
 		for (Object argument : arguments) {
-			clause.append(argument).append(",");
+			clause.append("'").append(argument).append("'").append(",");
 		}
 		clause.deleteCharAt(clause.length() - 1);	// remove last comma
 		clause.append(")");

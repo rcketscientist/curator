@@ -7,15 +7,8 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.data.FolderEntity
 
 class FilterViewModel(app: Application) : AndroidViewModel(app) {
-
-    // MediatorLiveData can observe other LiveData objects and react on their emissions.
-//    private val mObservableProducts: MediatorLiveData<List<FolderEntity>> = MediatorLiveData()
-//    private val dataSource = (app as App).database.folderDao()
     private val dataRepo = (app as App).dataRepo
 
-    /**
-     * Expose the LiveData keywords query so the UI can observe it.
-     */
     val folders: LiveData<List<FolderEntity>>
         get() = dataRepo.lifecycleParents
 
@@ -26,14 +19,4 @@ class FilterViewModel(app: Application) : AndroidViewModel(app) {
     fun updateFolders(vararg folders: FolderEntity) {
         dataRepo.updateParents(*folders).subscribe()
     }
-
-//    init {
-//        // set by default null, until we get data from the database.
-//        mObservableProducts.value = null
-//
-//        val folders = dataSource.lifecycleParents
-//
-//        // observe the changes of the products from the database and forward them
-//        mObservableProducts.addSource<List<FolderEntity>>(folders, { mObservableProducts.setValue(it) })
-//    }
 }
