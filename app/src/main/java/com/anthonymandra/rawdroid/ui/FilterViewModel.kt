@@ -21,11 +21,11 @@ class FilterViewModel(app: Application) : AndroidViewModel(app) {
         get() = mObservableProducts
 
     fun insertFolders(vararg folders: FolderEntity) {
-        dataRepo.insertParents(*folders)
+        dataRepo.insertParents(*folders).subscribe()
     }
 
     fun updateFolders(vararg folders: FolderEntity) {
-        dataRepo.insertParents(*folders)
+        dataRepo.updateParents(*folders).subscribe()
     }
 
     init {
