@@ -8,7 +8,7 @@ data class XmpFilter(
     val sortAscending: Boolean = true,
     val segregateByType: Boolean = false,
     val sortColumn: SortColumns = SortColumns.Name,
-    val visibleFolders: Set<String> = Collections.emptySet()) {
+    val hiddenFolders: Set<Long> = Collections.emptySet()) {
 
     enum class SortColumns {
         Name,

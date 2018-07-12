@@ -133,7 +133,7 @@ class FolderDialog : DialogFragment() {
                 if (folder == null) return@setOnClickListener
 
                 folder.excluded = !folder.excluded
-                checkBoxFolderPath.isChecked = folder.excluded
+                folder.visible = !folder.excluded
 
                 viewModel.updateFolders(folder)
             }

@@ -147,12 +147,11 @@ abstract class MetadataDao {
             }
         }
 
-        if (filter.visibleFolders.isNotEmpty()) {
-            if (!selection.isEmpty())
+        if (filter.hiddenFolders.isNotEmpty()) {
+            if (selection.isNotEmpty())
                 selection.append(and)       // Always exclude the folders, don't OR
 
-            //FIXME: Send the id
-            selection.append(DbUtil.createIN("parentId", filter.visibleFolders))
+            selection.append(DbUtil.createIN("parentId", filter.hiddenFolders, true))
         }
 
         order.append(" ORDER BY ")
