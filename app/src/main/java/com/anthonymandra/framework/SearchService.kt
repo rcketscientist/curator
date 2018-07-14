@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v4.content.LocalBroadcastManager
-import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.MetadataEntity
@@ -17,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class SearchService : IntentService("SearchService") {
 
-    val dataRepo = DataRepository.getInstance(AppDatabase.getInstance(this))
+    val dataRepo = DataRepository.getInstance(this)
     var parentMap = mutableMapOf<String, Long>()
 
     override fun onHandleIntent(intent: Intent?) {

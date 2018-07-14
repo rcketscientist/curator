@@ -3,6 +3,7 @@ package com.anthonymandra.rawdroid.data
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.arch.paging.DataSource
+import android.content.Context
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.util.AppExecutors
 import io.reactivex.Completable
@@ -17,8 +18,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
     private val subjectStream: MediatorLiveData<List<SubjectEntity>> = MediatorLiveData()
 
     var galleryStream: DataSource.Factory<Int, MetadataTest> = database.metadataDao().getImageFactory()
-    fun updateGalleryStream(filter: XmpFilter) {
-        galleryStream = database.metadataDao().getImageFactory(filter)
+    fun getGalleryLiveData(filter: XmpFilter): DataSource.Factory<Int, MetadataTest> {
+        return database.metadataDao().getImageFactory(filter)
     }
     fun updateGalleryStream(ids: List<Long>) {
         galleryStream = database.metadataDao().getImagesById(ids)
@@ -97,6 +98,19 @@ class DataRepository private constructor(private val database: AppDatabase) {
     val streamParents = database.folderDao().streamParents
 
     fun insertParent(entity: FolderEntity) = database.folderDao().insert(entity)
+    fun insertParents(vararg folders: FolderEntity): Completable {
+        return Completable.create {
+            database.folderDao().insert(*folders)
+            it.onComplete()
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+    }
+
+    fun updateParents(vararg folders: FolderEntity): Completable {
+        return Completable.create {
+            database.folderDao().update(*folders)
+            it.onComplete()
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+    }
 
     // Note: folders aren't even a path enumeration anymore
 //    fun getChildFolders(path: String): Single<List<FolderEntity>> {
@@ -151,9 +165,15 @@ class DataRepository private constructor(private val database: AppDatabase) {
         @Volatile private var INSTANCE: DataRepository? = null
 
         fun getInstance(database: AppDatabase): DataRepository =
-                INSTANCE ?: synchronized(this) {
-                    INSTANCE ?:DataRepository(database)
-                            .also { INSTANCE = it }
-                }
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?:DataRepository(database)
+                        .also { INSTANCE = it }
+            }
+
+        fun getInstance(context: Context): DataRepository =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?:DataRepository(AppDatabase.getInstance(context))
+                        .also { INSTANCE = it }
+            }
     }
 }

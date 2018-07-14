@@ -199,6 +199,8 @@ dependencies {
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     // Arch testing
     androidTestImplementation "android.arch.core:core-testing:$coreTestingVersion"
+
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 }
 
 crashlytics {

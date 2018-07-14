@@ -115,7 +115,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
         mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
-            viewModel.updateFilter(filter)
+            viewModel.setFilter(filter)
         }
         mXmpFilterFragment!!.registerSearchRootRequestedListener {
             setWriteResume(WriteResume.Search, emptyArray())
@@ -243,6 +243,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         MetaDataCleaner.cleanDatabase(this, Handler(Handler.Callback {
             // Upon clean initiate search
+            //TODO: This should be a DB lookup!
             val excludedFolders = mXmpFilterFragment!!.excludedFolders
 
             val permissionUris = rootPermissions.map { it.uri.toString() }

@@ -27,7 +27,6 @@ import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.*
@@ -764,7 +763,7 @@ abstract class CoreActivity : DocumentActivity() {
             images.forEach { toDelete ->
                 if (deleteAssociatedFiles(toDelete)) {
 //                    onImageRemoved(Uri.parse(toDelete.uri))
-                    DataRepository.getInstance(AppDatabase.getInstance(this)).deleteImage(toDelete)
+                    DataRepository.getInstance(this).deleteImage(toDelete)
                 }
             }
 

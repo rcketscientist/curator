@@ -21,8 +21,11 @@ abstract class FolderDao {//} : PathDao<FolderEntity>() {
     @Query("SELECT * FROM image_parent WHERE id = :id")
     abstract fun get(id: Long) : FolderEntity
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(row: FolderEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    abstract fun insert(vararg datums: FolderEntity)
 
     @Update
     abstract fun update(row: FolderEntity): Int

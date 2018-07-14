@@ -10,7 +10,7 @@ import com.anthonymandra.rawdroid.data.MetadataTest
 import java.util.*
 import kotlin.collections.HashSet
 
-class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_COMPARATOR)
+class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CALLBACK)
 {
     init { setHasStableIds(true) }
 
@@ -196,7 +196,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(POST_CO
     }
 
     companion object {
-        val POST_COMPARATOR = object : DiffUtil.ItemCallback<MetadataTest>() {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MetadataTest>() {
             override fun areContentsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
                 oldItem == newItem
 

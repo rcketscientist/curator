@@ -59,11 +59,14 @@ public class DbUtil
 	/**
 	 * Create an inline IN clause.  {@param arguments) must support toString()
 	 */
-	public static String createIN(String column, Collection arguments) {
+	public static String createIN(String column, Collection arguments, boolean not) {
 		StringBuilder clause = new StringBuilder();
-		clause.append(column).append(" IN (");
+		clause.append(column);
+		if (not)
+			clause.append(" NOT");
+		clause.append(" IN (");
 		for (Object argument : arguments) {
-			clause.append(argument).append(",");
+			clause.append("'").append(argument).append("'").append(",");
 		}
 		clause.deleteCharAt(clause.length() - 1);	// remove last comma
 		clause.append(")");

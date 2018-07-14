@@ -3,6 +3,8 @@ package com.anthonymandra.rawdroid.ui
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import com.anthonymandra.rawdroid.App
@@ -14,12 +16,14 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val dataRepo = (app as App).dataRepo
 
     val imageList : LiveData<PagedList<MetadataTest>>
+    private val filter: MutableLiveData<XmpFilter> = MutableLiveData()
 
-    init {  // TODO: Will need the ability to change filter.
-        imageList = LivePagedListBuilder(dataRepo.galleryStream, 30).build()
+    init {
+        imageList = Transformations.switchMap(filter) { filter ->
+            LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build() }
     }
 
-    fun updateFilter(filter: XmpFilter) {   // TODO: Does this update -existing- gallery?
-        dataRepo.updateGalleryStream(filter)
+    fun setFilter(filter: XmpFilter) {
+        this.filter.value = filter
     }
 }

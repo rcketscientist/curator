@@ -11,7 +11,6 @@ import android.view.View
 import android.widget.AdapterView
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.UsefulDocumentFile
-import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.AppExecutors
@@ -104,7 +103,7 @@ class RenameDialog(
     }
 
     private fun renameImage(image: MetadataTest, baseName: String) {
-        val dataRepo = DataRepository.getInstance(AppDatabase.getInstance(context))
+        val dataRepo = DataRepository.getInstance(context)
 
         val source = Uri.parse(image.uri)
         val srcFile = UsefulDocumentFile.fromUri(context, source)
