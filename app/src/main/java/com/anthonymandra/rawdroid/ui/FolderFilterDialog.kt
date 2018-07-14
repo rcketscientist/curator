@@ -108,24 +108,15 @@ class FolderDialog : DialogFragment() {
                 checkBoxFolderPath.text = ""
                 checkBoxFolderPath.isChecked = false
             }
-
-            folder?.let {
-                checkBoxFolderPath.text = DocumentUtil.getNicePath(Uri.parse(it.documentUri))
-                checkBoxFolderPath.isChecked = it.visible && !it.excluded
-                // If excluded disable visibility switch and strike-through
-                if (it.excluded) {
-                    checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                    checkBoxFolderPath.isEnabled = false
-                } else {
-                    checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG
-                    checkBoxFolderPath.isEnabled = true
-                }
+            else {
+                updateView()
             }
 
             checkBoxFolderPath.setOnCheckedChangeListener { _, isChecked ->
                 if (folder == null) return@setOnCheckedChangeListener
 
                 folder.visible = isChecked
+
                 viewModel.updateFolders(folder)
             }
 
@@ -135,7 +126,23 @@ class FolderDialog : DialogFragment() {
                 folder.excluded = !folder.excluded
                 folder.visible = !folder.excluded
 
+                updateView()
                 viewModel.updateFolders(folder)
+            }
+        }
+
+        private fun updateView() {
+            folder?.let {
+                checkBoxFolderPath.text = DocumentUtil.getNicePath(Uri.parse(it.documentUri))
+                checkBoxFolderPath.isChecked = it.visible && !it.excluded
+                // If excluded disable visibility switch and strike-through
+                if (it.excluded) {
+                    checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    checkBoxFolderPath.isEnabled = false
+                } else {
+                    checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
+                    checkBoxFolderPath.isEnabled = true
+                }
             }
         }
     }

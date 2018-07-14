@@ -5,6 +5,4 @@
           android:drawable="@drawable/ic_visibility_off" />
     <item android:state_checked="true"
           android:drawable="@drawable/ic_visibility" />
-    <item android:state_enabled="false"
-          android:
 </selector>
