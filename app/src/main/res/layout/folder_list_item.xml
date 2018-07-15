@@ -27,7 +27,7 @@
     <!--singleLine is necessary.  maxLines=1 and ellipsize=start crashes: http://stackoverflow.com/questions/14555726/app-is-crashed-when-using-custom-view-with-progressbarindeterminate-in-actionbar-->
 
     <ImageButton
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:id="@id/excludeButton"
         android:src="@drawable/ic_folder_remove"
