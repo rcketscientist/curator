@@ -135,13 +135,12 @@ class FolderDialog : DialogFragment() {
             folder?.let {
                 checkBoxFolderPath.text = DocumentUtil.getNicePath(Uri.parse(it.documentUri))
                 checkBoxFolderPath.isChecked = it.visible && !it.excluded
+                checkBoxFolderPath.isEnabled = !it.excluded
+
                 // If excluded disable visibility switch and strike-through
-                if (it.excluded) {
-                    checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                    checkBoxFolderPath.isEnabled = false
-                } else {
+                // If the flag is out of sync, toggle (xor) strike-through
+                if (it.excluded != (checkBoxFolderPath.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG == Paint.STRIKE_THRU_TEXT_FLAG)) {
                     checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
-                    checkBoxFolderPath.isEnabled = true
                 }
             }
         }
