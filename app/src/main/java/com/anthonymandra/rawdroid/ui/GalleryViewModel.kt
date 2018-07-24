@@ -16,7 +16,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val dataRepo = (app as App).dataRepo
 
     val imageList : LiveData<PagedList<MetadataTest>>
-    private val filter: MutableLiveData<XmpFilter> = MutableLiveData()
+    val filter: MutableLiveData<XmpFilter> = MutableLiveData()
 
     init {
         imageList = Transformations.switchMap(filter) { filter ->

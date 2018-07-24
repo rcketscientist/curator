@@ -8,6 +8,7 @@ import android.preference.PreferenceManager
 import android.view.View
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.ui.DepthTransformer
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import kotlinx.android.synthetic.main.meta_panel.*
@@ -35,7 +36,12 @@ class ViewerActivity : CoreActivity(),
             viewerAdapter.submitList(it)
         })
 
+        viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
+
         pager.adapter = viewerAdapter
+        val transformer = DepthTransformer()
+        pager.setPageTransformer(true, transformer)
+        pager.offscreenPageLimit = 2
         pager.setCurrentItem(intent.getIntExtra(EXTRA_START_INDEX, 0), false)
     }
 
@@ -103,5 +109,6 @@ class ViewerActivity : CoreActivity(),
 
     companion object {
         const val EXTRA_START_INDEX = "viewer_index"
+        const val EXTRA_FILTER = "viewer_filter"
     }
 }

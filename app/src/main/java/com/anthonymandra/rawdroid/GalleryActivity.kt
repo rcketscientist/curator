@@ -52,6 +52,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private var mMaterialCab: MaterialCab? = null
     private var mXmpFilterFragment: XmpFilterFragment? = null
+    private val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
 
     protected val isContextModeActive: Boolean
         get() = mMaterialCab?.isActive ?: false
@@ -101,7 +102,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryAdapter.onItemClickListener = this
         galleryAdapter.onItemLongClickListener = this
 
-        val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         viewModel.imageList.observe(this, Observer {
             galleryAdapter.submitList(it)
             setImageCountTitle(it?.size ?: 0)
@@ -494,6 +494,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         //TODO: If we want this to look smooth we should load the gallery thumb in viewer so there's a smooth transition
 
         // TODO: While this should work, this should pass the db id to be more versatile
+        viewer.putExtra(ViewerActivity.EXTRA_FILTER, viewModel.filter.value)
         viewer.putExtra(ViewerActivity.EXTRA_START_INDEX, position)
 
         startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options)
