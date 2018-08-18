@@ -124,7 +124,7 @@ public abstract class CoreActivity extends DocumentActivity
 	public static final String META_SORT_ORDER_KEY = "sort_order";
 	public static final String META_DEFAULT_SORT = Meta.NAME + " ASC";
 
-	private static final long EXPIRATION = 4629746000L; //~60 days
+	private static final long EXPIRATION = 8629746000L; //~120 days
 
 	protected void onCreate(Bundle savedInstanceState)
 	{

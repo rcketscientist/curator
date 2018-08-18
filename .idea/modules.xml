@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/inscription/inscription.iml" filepath="$PROJECT_DIR$/inscription/inscription.iml" />
       <module fileurl="file://$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" filepath="$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawDroid/rawDroid.iml" filepath="$PROJECT_DIR$/rawDroid/rawDroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rawDroid/rawDroid.iml" filepath="$PROJECT_DIR$/rawDroid/rawDroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/library/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/library/showcaseView.iml" />
