@@ -9,21 +9,21 @@
             android:name="com.anthonymandra.content.MetaProvider"
             android:authorities="com.anthonymandra.content.MetaProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="true">
+            android:exported="false">
         </provider>
 
         <provider
             android:name="com.anthonymandra.framework.SwapProvider"
             android:authorities="com.anthonymandra.rawdroid.SwapProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="true">
+            android:exported="false">
         </provider>
 
         <provider
             android:name="com.anthonymandra.content.KeywordProvider"
             android:authorities="com.anthonymandra.rawdroid.KeywordProvider.pro"
             android:grantUriPermissions="true"
-            android:exported="true">
+            android:exported="false">
         </provider>
 
     </application>

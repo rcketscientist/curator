@@ -20,12 +20,11 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 5
 def versionMinor = 6
-def versionPatch = 11
+def versionPatch = 13
 
 //noinspection GroovyMissingReturnStatement
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
 
     lintOptions {
         checkReleaseBuilds false
@@ -36,7 +35,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
 
         versionCode versionMajor * 100000 + versionMinor * 1000 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
@@ -117,6 +116,7 @@ android {
             dimension "cycle"
         }
     }
+    buildToolsVersion '27.0.3'
 }
 
 dependencies {

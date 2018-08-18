@@ -7,21 +7,21 @@
             android:name="com.anthonymandra.content.MetaProvider"
             android:authorities="com.anthonymandra.content.MetaProvider"
             android:grantUriPermissions="true"
-            android:exported="true">
+            android:exported="false">
         </provider>
 
         <provider
             android:name="com.anthonymandra.framework.SwapProvider"
             android:authorities="com.anthonymandra.rawdroid.SwapProvider"
             android:grantUriPermissions="true"
-            android:exported="true">
+            android:exported="false">
         </provider>
 
         <provider
             android:name="com.anthonymandra.content.KeywordProvider"
             android:authorities="com.anthonymandra.rawdroid.KeywordProvider"
             android:grantUriPermissions="true"
-            android:exported="true">
+            android:exported="false">
         </provider>
 
     </application>
