@@ -12,7 +12,7 @@ class ViewerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         val fragment = ViewPagerFragment()
-        fragment.source = Uri.parse(images?.get(position)?.uri)
+        fragment.source = images?.get(position)
         return fragment
     }
 

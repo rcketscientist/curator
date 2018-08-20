@@ -129,7 +129,7 @@ class RenameDialog(
 
             image.name = srcFile.name
             image.uri = srcFile.uri.toString()
-            dataRepo.updateMeta(image)
+            dataRepo.updateMeta(image).subscribe()
         }
 
         xmpFile.renameTo(xmpRename)
@@ -146,7 +146,7 @@ class RenameDialog(
             val originalJpg = dataRepo.imageBlocking(jpgFile.uri.toString())
             originalJpg.name = jpgFile.name
             originalJpg.uri = jpgFile.uri.toString()
-            dataRepo.updateMeta(originalJpg)
+            dataRepo.updateMeta(originalJpg).subscribe()
         }
     }
 

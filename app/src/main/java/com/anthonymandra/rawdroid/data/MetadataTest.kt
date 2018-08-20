@@ -1,8 +1,11 @@
 package com.anthonymandra.rawdroid.data
 
 import android.arch.persistence.room.Relation
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-class MetadataTest:  MetadataEntity() {
+@Parcelize
+class MetadataTest(
 //    @Embedded
 //    var metadata: MetadataEntity = MetadataEntity(),
     @Relation(
@@ -10,6 +13,5 @@ class MetadataTest:  MetadataEntity() {
             entityColumn = "metaId",
             projection = ["subjectId"],
             entity = SubjectJunction::class)
-    var subjectIds: List<Long> = emptyList()
+    var subjectIds: List<Long> = emptyList()) :  MetadataEntity(), Parcelable
 
-}

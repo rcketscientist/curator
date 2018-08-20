@@ -37,6 +37,7 @@ class MetaService : PriorityIntentService("MetaService") {
 
                 val broadcast = Intent(BROADCAST_IMAGE_PARSED)
                         .putExtra(EXTRA_URI, it.uri)    // TODO: Better to send id
+                        .putExtra(EXTRA_METADATA, it)
                         .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
                         .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
                 LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
@@ -45,7 +46,7 @@ class MetaService : PriorityIntentService("MetaService") {
             }.filter { it.processed }
 
             metaUpdates.let {
-                repo.updateMeta(*it.toTypedArray())
+                repo.updateMeta(*it.toTypedArray()).subscribe()
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
@@ -94,7 +95,7 @@ class MetaService : PriorityIntentService("MetaService") {
                 }.mapNotNull { it } // TODO: This is some sloppy garbage...
 
             updates.let {
-                repo.updateMeta(*it.toTypedArray())
+                repo.updateMeta(*it.toTypedArray()).subscribe()
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)

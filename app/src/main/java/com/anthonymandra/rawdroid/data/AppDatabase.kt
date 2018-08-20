@@ -11,7 +11,7 @@ import android.content.Context
     SubjectEntity::class,
     SubjectJunction::class,
     SynonymEntity::class],
-    version = 1)
+    version = 2)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun folderDao(): FolderDao

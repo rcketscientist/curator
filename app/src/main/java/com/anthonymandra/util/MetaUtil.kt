@@ -212,7 +212,7 @@ object MetaUtil {
         {
             try {
                 val date = mMetaExtractorFormat.parse(rawDate)
-                entity.timestamp = java.lang.Long.toString(date.time)
+                entity.timestamp = date.time
             } catch (e: ParseException) {
                 Crashlytics.logException(e)
             } catch (e: ArrayIndexOutOfBoundsException) {

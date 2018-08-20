@@ -45,10 +45,9 @@ class AppDatabaseTest {
     private val testFolder
         get() = FolderEntity(
             "source:folder/file",
-            folderId/*,
-            "/" + folderId,
-            -1,
-            0 */)
+            true,
+            false,
+            folderId)
 
     private val testSubjectsCount = 11  // Don't count synonyms
     private val testSubjects =

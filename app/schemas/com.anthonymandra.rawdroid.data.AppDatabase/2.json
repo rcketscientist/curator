@@ -2,16 +2,28 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "4e1ff242ec3b149e890e4f4260f7fc8e",
+    "identityHash": "6e9cd678d603b27bee42edfe056a600b",
     "entities": [
       {
         "tableName": "image_parent",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`documentUri` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`documentUri` TEXT NOT NULL, `visible` INTEGER NOT NULL, `excluded` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
         "fields": [
           {
             "fieldPath": "documentUri",
             "columnName": "documentUri",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "visible",
+            "columnName": "visible",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "excluded",
+            "columnName": "excluded",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -27,12 +39,21 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_image_parent_documentUri",
+            "unique": true,
+            "columnNames": [
+              "documentUri"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_image_parent_documentUri` ON `${TABLE_NAME}` (`documentUri`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
         "tableName": "meta",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `processed` INTEGER NOT NULL, `uri` TEXT NOT NULL, `documentId` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `rating` REAL, `label` TEXT, `timestamp` TEXT, `make` TEXT, `model` TEXT, `aperture` TEXT, `exposure` TEXT, `flash` TEXT, `focalLength` TEXT, `iso` TEXT, `whiteBalance` TEXT, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `latitude` TEXT, `longitude` TEXT, `altitude` TEXT, `orientation` INTEGER NOT NULL, `lens` TEXT, `driveMode` TEXT, `exposureMode` TEXT, `exposureProgram` TEXT, FOREIGN KEY(`parentId`) REFERENCES `image_parent`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `type` INTEGER NOT NULL, `processed` INTEGER NOT NULL, `uri` TEXT NOT NULL, `documentId` TEXT NOT NULL, `parentId` INTEGER NOT NULL, `rating` REAL, `label` TEXT, `timestamp` INTEGER, `make` TEXT, `model` TEXT, `aperture` TEXT, `exposure` TEXT, `flash` TEXT, `focalLength` TEXT, `iso` TEXT, `whiteBalance` TEXT, `height` INTEGER NOT NULL, `width` INTEGER NOT NULL, `latitude` TEXT, `longitude` TEXT, `altitude` TEXT, `orientation` INTEGER NOT NULL, `lens` TEXT, `driveMode` TEXT, `exposureMode` TEXT, `exposureProgram` TEXT, FOREIGN KEY(`parentId`) REFERENCES `image_parent`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -91,7 +112,7 @@
           {
             "fieldPath": "timestamp",
             "columnName": "timestamp",
-            "affinity": "TEXT",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -439,7 +460,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4e1ff242ec3b149e890e4f4260f7fc8e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"6e9cd678d603b27bee42edfe056a600b\")"
     ]
   }
 }

@@ -130,7 +130,7 @@ class SearchService : IntentService("SearchService") {
         if (fd != null) {
             metadata.name = fd.name
             parent = fd.parent.toString()
-            metadata.timestamp = fd.lastModified.toString()
+            metadata.timestamp = fd.lastModified
         } else {
             val docParent = file.parentFile
             if (docParent != null) {
