@@ -92,11 +92,6 @@ class ImageViewActivity : PhotoPage() {
         mPhotoView.goToNextPicture()
     }
 
-    override fun setLicenseState(state: License.LicenseState) {
-        super.setLicenseState(state)
-        mPhotoView.setLicenseState(state)
-    }
-
     companion object {
 
         private val TAG = ImageViewActivity::class.java.simpleName

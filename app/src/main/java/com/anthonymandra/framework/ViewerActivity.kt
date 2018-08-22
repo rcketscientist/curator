@@ -153,13 +153,6 @@ abstract class ViewerActivity : CoreActivity(),
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (Constants.VariantCode < 12) {
-            setWatermark(true)
-        }
-    }
-
     override fun onPhotoChanged(index: Int, item: MetadataTest?) {
         mCurrrentImage = item
         updateImageDetails()
@@ -190,14 +183,6 @@ abstract class ViewerActivity : CoreActivity(),
 
     override fun onImageRemoved(item: MetadataTest) {
         mMediaItems.remove(item)
-    }
-
-    private fun setWatermark(demo: Boolean) {
-        val watermark = findViewById<View>(R.id.watermark)
-        if (!demo)
-            watermark.visibility = View.INVISIBLE
-        else
-            watermark.visibility = View.VISIBLE
     }
 
     private fun setDisplayMetrics() {
@@ -537,23 +522,6 @@ abstract class ViewerActivity : CoreActivity(),
     override fun onScaleChanged(currentScale: Float) {
         val zoom = (currentScale * 100).toInt().toString() + "%"
         textViewScale.post { textViewScale.text = zoom }
-    }
-
-    // TODO: Do we need this?
-//    internal class ViewerLicenseHandler(viewer: ViewerActivity) : CoreActivity.LicenseHandler(viewer) {
-//        private val mViewer: WeakReference<ViewerActivity> = WeakReference(viewer)
-//
-//        override fun handleMessage(msg: Message) {
-//            super.handleMessage(msg)
-//            val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE) as License.LicenseState
-//            mViewer.get()?.setLicenseState(state)
-//        }
-//    }
-
-    protected open fun setLicenseState(state: License.LicenseState) {
-        val isPro = state == License.LicenseState.pro
-        setWatermark(!isPro)
-        zoomButton.isEnabled = isPro
     }
 
     companion object {

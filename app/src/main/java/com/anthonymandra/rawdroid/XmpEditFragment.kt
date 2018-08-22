@@ -112,7 +112,7 @@ class XmpEditFragment : XmpBaseFragment() {
     /**
      * Silently set xmp without firing listeners
      */
-    fun initXmp(rating: Int?, subject: List<SubjectEntity>, label: String) {
+    fun initXmp(rating: Int?, subject: List<SubjectEntity>, label: String?) {
         super.initXmp(formatRating(rating),
                 formatLabel(label),
                 subject)

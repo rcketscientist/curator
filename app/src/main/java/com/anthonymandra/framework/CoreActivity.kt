@@ -121,6 +121,29 @@ abstract class CoreActivity : DocumentActivity() {
         LicenseManager.getLicense(this, licenseHandler)
         createSwapDir()
         createRecycleBin()
+
+        xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
+        xmpEditFragment.setListener { rating, label, subject ->
+            writeXmpModifications(XmpEditFragment.XmpEditValues(rating, subject, label))
+        }
+
+        xmpEditFragment.setLabelListener { label ->
+            Thread(PrepareXmpRunnable(
+                    XmpEditFragment.XmpEditValues(label = label),
+                    XmpUpdateField.Label)).start()
+        }
+
+        xmpEditFragment.setRatingListener { rating ->
+            Thread(PrepareXmpRunnable(
+                    XmpEditFragment.XmpEditValues(rating = rating),
+                    XmpUpdateField.Rating)).start()
+        }
+        xmpEditFragment.setSubjectListener { subject ->
+            Thread(PrepareXmpRunnable(
+                    XmpEditFragment.XmpEditValues(subject = subject),
+                    XmpUpdateField.Subject)).start()
+        }
+//        hideEditXmpFragment()
     }
 
     override fun onPause() {

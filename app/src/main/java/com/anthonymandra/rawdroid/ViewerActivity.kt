@@ -242,7 +242,7 @@ class ViewerActivity : CoreActivity() {
         xmpEditFragment.initXmp(
                 rating?.toInt(),
                 Collections.emptyList()/*image.subjectIds*/,
-                image.label ?: "")
+                image.label)
 
         val timer = Timer()
         timer.schedule(AutoHideMetaTask(), 3000)
