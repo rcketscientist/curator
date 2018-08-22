@@ -100,6 +100,7 @@ class ViewerActivity : CoreActivity() {
             }
         })
         pager.setPageTransformer(true, DepthPageTransformer())
+        pager.offscreenPageLimit = 2
 
         responseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META)
         LocalBroadcastManager.getInstance(this).registerReceiver(object : BroadcastReceiver() {
@@ -117,9 +118,17 @@ class ViewerActivity : CoreActivity() {
                 }
             }
         }, responseIntentFilter)
+
+        imageButtonNext.setOnClickListener { pager.currentItem = pager.currentItem + 1 }
+        imageButtonPrevious.setOnClickListener { pager.currentItem = pager.currentItem - 1 }
     }
 
-
+    override fun onBackPressed() {
+        val data = Intent()
+        data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, pager.currentItem)
+        setResult(RESULT_OK, data)
+        super.onBackPressed()
+    }
 
     private fun showPanels() {
         isInterfaceHidden = false

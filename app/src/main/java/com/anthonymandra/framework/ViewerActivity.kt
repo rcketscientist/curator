@@ -174,7 +174,6 @@ abstract class ViewerActivity : CoreActivity(),
 
         imageButtonPrevious.setOnClickListener(PreviousImageClickListener())
         imageButtonNext.setOnClickListener(NextImageClickListener())
-        zoomButton.setOnCheckedChangeListener { _, isChecked -> onZoomLockChanged(isChecked) }
     }
 
     override fun onImageAdded(item: MetadataTest) {
@@ -520,8 +519,8 @@ abstract class ViewerActivity : CoreActivity(),
     }
 
     override fun onScaleChanged(currentScale: Float) {
-        val zoom = (currentScale * 100).toInt().toString() + "%"
-        textViewScale.post { textViewScale.text = zoom }
+//        val zoom = (currentScale * 100).toInt().toString() + "%"
+//        textViewScale.post { textViewScale.text = zoom }
     }
 
     companion object {
