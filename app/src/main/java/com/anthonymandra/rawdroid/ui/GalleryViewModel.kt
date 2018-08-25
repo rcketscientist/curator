@@ -15,12 +15,14 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
     private val dataRepo = (app as App).dataRepo
 
-    val imageList : LiveData<PagedList<MetadataTest>>
+    val imageList: LiveData<PagedList<MetadataTest>>
     val filter: MutableLiveData<XmpFilter> = MutableLiveData()
+    val zoom: MutableLiveData<Boolean> = MutableLiveData()
 
     init {
         imageList = Transformations.switchMap(filter) { filter ->
             LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build() }
+        zoom.value = false
     }
 
     fun setFilter(filter: XmpFilter) {

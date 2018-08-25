@@ -1,7 +1,8 @@
 package com.anthonymandra.rawdroid.ui
 
-import android.graphics.PointF
-import android.net.Uri
+import android.annotation.SuppressLint
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -9,13 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
-import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import kotlinx.android.synthetic.main.full_image.*
-import java.lang.Exception
 
 class ViewPagerFragment : Fragment() {
     var source: MetadataTest? = null
+    private val viewModel: GalleryViewModel by lazy {
+        ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.full_image, container, false)
@@ -28,41 +29,37 @@ class ViewPagerFragment : Fragment() {
         return rootView
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         if (source != null) {
             imageView.setRegionDecoderClass(RawImageRegionDecoder::class.java)
             imageView.setImage(RawImageSource(source!!))
-            imageView.setOnImageEventListener(object: SubsamplingScaleImageView.OnImageEventListener {
+            imageView.setOnImageEventListener(object: SubsamplingScaleImageView.DefaultOnImageEventListener() {
                 override fun onImageLoaded() {
-                    textViewScale.post {
+                    textViewScale?.post {
                         textViewScale.text = (imageView.scale * 100).toInt().toString() + "%"
                     }
                 }
-
-                override fun onReady() {}
-
-                override fun onTileLoadError(e: Exception?) {}
-
-                override fun onPreviewReleased() {}
-
-                override fun onImageLoadError(e: Exception?) {}
-
-                override fun onPreviewLoadError(e: Exception?) {}
             })
-            imageView.setOnStateChangedListener(object: SubsamplingScaleImageView.OnStateChangedListener {
-                override fun onCenterChanged(newCenter: PointF?, origin: Int) {}
-
+            imageView.setOnStateChangedListener(object: SubsamplingScaleImageView.DefaultOnStateChangedListener() {
                 override fun onScaleChanged(newScale: Float, origin: Int) {
-                    textViewScale.post {
+                    textViewScale?.post {
                         textViewScale.text = (newScale * 100).toInt().toString() + "%"
                     }
                 }
             })
         }
 
-        zoomButton.setOnCheckedChangeListener { _, isChecked -> /* TODO: */ }
+        val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
+        viewModel.zoom.observe(this, Observer {
+            imageView.isZoomEnabled = it!!
+        })
+
+        zoomButton.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.zoom.value = !isChecked
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
