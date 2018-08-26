@@ -17,12 +17,18 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
     val imageList: LiveData<PagedList<MetadataTest>>
     val filter: MutableLiveData<XmpFilter> = MutableLiveData()
-    val zoom: MutableLiveData<Boolean> = MutableLiveData()
+    val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
+    val isZoomLocked: LiveData<Boolean>
+        get() = _isZoomLocked
 
     init {
         imageList = Transformations.switchMap(filter) { filter ->
             LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build() }
-        zoom.value = false
+        _isZoomLocked.value = false
+    }
+
+    fun onZoomLockChanged(zoomLocked: Boolean) {
+        _isZoomLocked.value = zoomLocked
     }
 
     fun setFilter(filter: XmpFilter) {

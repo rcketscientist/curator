@@ -17,7 +17,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.MetaService
 import com.anthonymandra.framework.MetaWakefulReceiver
@@ -28,7 +27,6 @@ import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.ImageUtil
 import com.eftimoff.viewpagertransformers.DepthPageTransformer
 import kotlinx.android.synthetic.main.meta_panel.*
-import kotlinx.android.synthetic.main.nav_panel.*
 import kotlinx.android.synthetic.main.viewer_pager.*
 import java.util.*
 

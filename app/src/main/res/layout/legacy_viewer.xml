@@ -12,17 +12,17 @@
         android:layout_marginLeft="0dp"
         android:layout_alignParentTop="true"/>
 
-    <include
-        android:id="@+id/navPanel"
-        layout="@layout/nav_panel"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="false"
-        android:layout_marginLeft="0dp"
-        android:layout_alignParentStart="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentTop="true"/>
+    <!--<include-->
+        <!--android:id="@+id/navPanel"-->
+        <!--layout="@layout/nav_panel"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentRight="false"-->
+        <!--android:layout_marginLeft="0dp"-->
+        <!--android:layout_alignParentStart="false"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="false"-->
+        <!--android:layout_alignParentTop="true"/>-->
 
     <include
         android:id="@+id/metaPanel"

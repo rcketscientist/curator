@@ -20,14 +20,12 @@ import android.view.WindowManager
 import android.widget.Toast
 import com.android.gallery3d.app.DataListener
 import com.anthonymandra.content.Meta
-import com.anthonymandra.rawdroid.Constants
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.GalleryActivity
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.ImageUtil
 import kotlinx.android.synthetic.main.meta_panel.*
-import kotlinx.android.synthetic.main.nav_panel.*
 import java.util.*
 import java.util.concurrent.ForkJoinPool
 
@@ -172,8 +170,8 @@ abstract class ViewerActivity : CoreActivity(),
         setMetaVisibility()
         setDisplayMetrics()
 
-        imageButtonPrevious.setOnClickListener(PreviousImageClickListener())
-        imageButtonNext.setOnClickListener(NextImageClickListener())
+//        imageButtonPrevious.setOnClickListener(PreviousImageClickListener())
+//        imageButtonNext.setOnClickListener(NextImageClickListener())
     }
 
     override fun onImageAdded(item: MetadataTest) {
@@ -199,7 +197,7 @@ abstract class ViewerActivity : CoreActivity(),
     private fun setMetaVisibility() {
         // Initially set the interface to GONE to allow settings to implement
         tableLayoutMeta.visibility = View.GONE
-        layoutNavButtons.visibility = View.GONE
+//        layoutNavButtons.visibility = View.GONE
         histogramView.visibility = View.GONE
 
         val settings = PreferenceManager.getDefaultSharedPreferences(this)
@@ -259,7 +257,7 @@ abstract class ViewerActivity : CoreActivity(),
         val settings = PreferenceManager.getDefaultSharedPreferences(this)
         runOnUiThread {
             if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Never") {
-                layoutNavButtons.visibility = View.VISIBLE
+//                layoutNavButtons.visibility = View.VISIBLE
             }
             if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != "Never") {
                 tableLayoutMeta.visibility = View.VISIBLE
@@ -279,7 +277,7 @@ abstract class ViewerActivity : CoreActivity(),
 
         runOnUiThread {
             if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Always") {
-                layoutNavButtons.visibility = View.INVISIBLE
+//                layoutNavButtons.visibility = View.INVISIBLE
             }
             if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != "Always") {
                 tableLayoutMeta.visibility = View.INVISIBLE

@@ -50,15 +50,16 @@ class ViewPagerFragment : Fragment() {
                     }
                 }
             })
+            imageView.setOnClickListener {  }
         }
 
         val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
-        viewModel.zoom.observe(this, Observer {
-            imageView.isZoomEnabled = it!!
+        viewModel.isZoomLocked.observe(this, Observer {
+            imageView.isZoomEnabled = !it
         })
 
         zoomButton.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.zoom.value = !isChecked
+            viewModel.onZoomLockChanged(isChecked)
         }
     }
 
