@@ -1,10 +1,9 @@
 package com.anthonymandra.rawdroid.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.paging.DataSource
-import android.arch.persistence.db.SimpleSQLiteQuery
-import android.arch.persistence.db.SupportSQLiteQuery
-import android.arch.persistence.room.*
+import androidx.lifecycle.LiveData
+import androidx.paging.DataSource
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.util.DbUtil

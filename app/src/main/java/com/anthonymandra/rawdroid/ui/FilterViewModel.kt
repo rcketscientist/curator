@@ -1,8 +1,8 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.data.FolderEntity
 

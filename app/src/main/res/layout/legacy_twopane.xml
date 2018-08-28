@@ -23,7 +23,7 @@
         android:layout_gravity="end"
         tools:layout="@layout/xmp_edit_landscape"/>
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/viewerToolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

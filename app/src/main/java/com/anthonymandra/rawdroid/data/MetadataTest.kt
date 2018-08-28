@@ -1,6 +1,6 @@
 package com.anthonymandra.rawdroid.data
 
-import android.arch.persistence.room.Relation
+import androidx.room.Relation
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 

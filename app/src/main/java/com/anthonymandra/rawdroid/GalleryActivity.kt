@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityOptions
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -18,10 +18,10 @@ import android.os.Handler
 import android.preference.PreferenceManager
 import android.provider.DocumentsContract
 import android.support.design.widget.Snackbar
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.view.GravityCompat
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.core.content.LocalBroadcastManager
+import androidx.core.view.GravityCompat
+import androidx.appcompat.widget.GridLayoutManager
+import androidx.appcompat.widget.RecyclerView
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
@@ -38,7 +38,6 @@ import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.widget.ItemOffsetDecoration
 import com.bumptech.glide.Glide
 import com.inscription.WhatsNewDialog
-import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {

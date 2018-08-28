@@ -1,7 +1,7 @@
 package com.anthonymandra.rawdroid.ui;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.anthonymandra.rawdroid.data.MetadataTest;
 import com.bumptech.glide.load.model.ModelLoader;

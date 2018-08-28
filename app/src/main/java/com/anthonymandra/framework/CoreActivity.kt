@@ -14,7 +14,7 @@ import android.os.Handler
 import android.os.Message
 import android.preference.PreferenceManager
 import android.support.design.widget.Snackbar
-import android.support.v4.app.NotificationCompat
+import androidx.core.app.NotificationCompat
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View

@@ -3,25 +3,25 @@
        xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       tools:parentTag="android.support.v7.widget.ToggleGroup">
+       tools:parentTag="androidx.appcompat.widget.ToggleGroup">
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/rating1"
         style="@style/RatingButton"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/rating2"
         style="@style/RatingButton"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/rating3"
         style="@style/RatingButton"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/rating4"
         style="@style/RatingButton"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/rating5"
         style="@style/RatingButton"/>
 </merge>

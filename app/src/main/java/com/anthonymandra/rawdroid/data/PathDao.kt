@@ -1,11 +1,11 @@
 package com.anthonymandra.rawdroid.data
 
-import android.arch.persistence.db.SimpleSQLiteQuery
-import android.arch.persistence.db.SupportSQLiteQuery
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.RawQuery
-import android.arch.persistence.room.Update
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.RawQuery
+import androidx.room.Update
 
 abstract class PathDao<T : PathEntity> {
     protected abstract val database: String

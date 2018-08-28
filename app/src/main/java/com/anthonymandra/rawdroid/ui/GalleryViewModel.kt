@@ -1,12 +1,12 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.paging.LivePagedListBuilder
-import android.arch.paging.PagedList
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
@@ -17,7 +17,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
     val imageList: LiveData<PagedList<MetadataTest>>
     val filter: MutableLiveData<XmpFilter> = MutableLiveData()
-    val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
+    private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
 

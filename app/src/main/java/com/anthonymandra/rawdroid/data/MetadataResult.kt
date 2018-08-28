@@ -1,7 +1,7 @@
 package com.anthonymandra.rawdroid.data
 
-import android.arch.persistence.room.TypeConverter
-import android.arch.persistence.room.TypeConverters
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
 @TypeConverters(MetadataResult::class)
 class MetadataResult : MetadataEntity() {

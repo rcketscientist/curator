@@ -1,10 +1,9 @@
 package com.anthonymandra.rawdroid.ui
 
-import android.arch.paging.PagedList
-import android.net.Uri
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
+import androidx.paging.PagedList
+import androidx.core.app.Fragment
+import androidx.core.app.FragmentManager
+import androidx.core.app.FragmentStatePagerAdapter
 import com.anthonymandra.rawdroid.data.MetadataTest
 
 class ViewerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {

@@ -1,23 +1,21 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.app.Dialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.core.app.DialogFragment
+import androidx.appcompat.recyclerview.extensions.ListAdapter
+import androidx.appcompat.util.DiffUtil
+import androidx.appcompat.widget.LinearLayoutManager
+import androidx.appcompat.widget.RecyclerView
 import android.view.*
 import com.anthonymandra.framework.DocumentUtil
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.FolderEntity
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.folder_list_item.*
-import kotlinx.android.synthetic.main.folder_visibility.*
 
 typealias SearchRequestListener = () -> Unit
 class FolderDialog : DialogFragment() {

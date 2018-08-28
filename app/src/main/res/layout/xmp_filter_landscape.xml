@@ -64,7 +64,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/sortHeader">
 
-        <android.support.v7.widget.ToggleGroup
+        <androidx.appcompat.widget.ToggleGroup
             android:id="@+id/sortToggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -101,9 +101,9 @@
                 android:button="@drawable/ic_elder"
                 android:buttonTint="@color/white"/>
 
-        </android.support.v7.widget.ToggleGroup>
+        </androidx.appcompat.widget.ToggleGroup>
 
-        <android.support.v7.widget.ToggleButton
+        <androidx.appcompat.widget.ToggleButton
             android:id="@+id/segregateToggleButton"
             style="@style/ImageActionToggleButton"
             android:button="@drawable/ic_jpeg_bottom_borderless"
@@ -152,7 +152,7 @@
         android:layout_below="@+id/filterButtons"/>
 
     <!-- TODO: Without theme here the background drawable won't work...?-->
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/toggleAnd"
         android:theme="@style/SidebarButton"
         android:layout_width="wrap_content"

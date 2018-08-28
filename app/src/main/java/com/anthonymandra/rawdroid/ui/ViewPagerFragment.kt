@@ -1,17 +1,16 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.core.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import kotlinx.android.synthetic.main.full_image.*
 
 class ViewPagerFragment : Fragment() {
     var source: MetadataTest? = null
@@ -55,7 +54,7 @@ class ViewPagerFragment : Fragment() {
 
         val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
         viewModel.isZoomLocked.observe(this, Observer {
-            imageView.isZoomEnabled = !it
+            imageView.isZoomEnabled = !it!!
         })
 
         zoomButton.setOnCheckedChangeListener { _, isChecked ->

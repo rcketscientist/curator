@@ -2,14 +2,14 @@ package com.anthonymandra.rawdroid
 
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.view.ViewPager
+import androidx.core.content.LocalBroadcastManager
+import androidx.core.view.ViewPager
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -26,8 +26,6 @@ import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.ImageUtil
 import com.eftimoff.viewpagertransformers.DepthPageTransformer
-import kotlinx.android.synthetic.main.meta_panel.*
-import kotlinx.android.synthetic.main.viewer_pager.*
 import java.util.*
 
 class ViewerActivity : CoreActivity() {

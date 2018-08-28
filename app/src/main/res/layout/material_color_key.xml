@@ -3,28 +3,28 @@
        xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="match_parent"
-       tools:parentTag="android.support.v7.widget.ToggleGroup">
-    <android.support.v7.widget.ToggleButton
+       tools:parentTag="androidx.appcompat.widget.ToggleGroup">
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/blueLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/colorKeyBlue"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/redLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/colorKeyRed"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/greenLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/colorKeyGreen"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/yellowLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/colorKeyYellow"/>
 
-    <android.support.v7.widget.ToggleButton
+    <androidx.appcompat.widget.ToggleButton
         android:id="@+id/purpleLabel"
         style="@style/LabelToggleButton"
         android:buttonTint="@color/colorKeyPurple"/>

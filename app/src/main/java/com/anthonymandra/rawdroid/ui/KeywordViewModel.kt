@@ -1,9 +1,9 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.util.AppExecutors

@@ -1,12 +1,11 @@
 package com.anthonymandra.widget
 
 import android.content.Context
-import android.support.v7.widget.ToggleGroup
+import androidx.appcompat.widget.ToggleGroup
 import android.util.AttributeSet
 
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.Label
-import kotlinx.android.synthetic.main.material_color_key.view.*
 
 import java.util.ArrayList
 

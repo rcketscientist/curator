@@ -89,7 +89,7 @@
         android:layout_marginEnd="4dp"
         android:layout_below="@id/excludeLabel"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.appcompat.widget.RecyclerView
         android:id="@+id/folderVisibilityListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

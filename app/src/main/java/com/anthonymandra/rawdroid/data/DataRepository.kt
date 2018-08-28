@@ -1,8 +1,8 @@
 package com.anthonymandra.rawdroid.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
-import android.arch.paging.DataSource
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.paging.DataSource
 import android.content.Context
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.util.AppExecutors

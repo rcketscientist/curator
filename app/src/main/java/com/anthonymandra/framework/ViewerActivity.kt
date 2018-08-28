@@ -8,8 +8,8 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.widget.Toolbar
+import androidx.core.content.LocalBroadcastManager
+import androidx.appcompat.widget.Toolbar
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -25,7 +25,6 @@ import com.anthonymandra.rawdroid.GalleryActivity
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.ImageUtil
-import kotlinx.android.synthetic.main.meta_panel.*
 import java.util.*
 import java.util.concurrent.ForkJoinPool
 

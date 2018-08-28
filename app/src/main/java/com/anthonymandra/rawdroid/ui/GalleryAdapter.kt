@@ -1,9 +1,9 @@
 package com.anthonymandra.rawdroid.ui
 
-import android.arch.paging.PagedListAdapter
+import androidx.paging.PagedListAdapter
 import android.net.Uri
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.util.DiffUtil
+import androidx.appcompat.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.anthonymandra.rawdroid.data.MetadataTest

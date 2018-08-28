@@ -4,8 +4,8 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
+import androidx.core.view.PagerAdapter
+import androidx.core.view.ViewPager
 import android.text.Html
 import android.view.View
 import android.view.ViewGroup
