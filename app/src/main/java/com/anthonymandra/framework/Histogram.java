@@ -51,7 +51,7 @@ public class Histogram extends RecursiveTask<Histogram.ColorBins>
 		return r;
 	}
 
-	static Histogram createHistogram(final Bitmap bmp)
+	public static Histogram createHistogram(final Bitmap bmp)
 	{
 		int[] pixels = new int[bmp.getWidth() * bmp.getHeight()];
 		bmp.getPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
