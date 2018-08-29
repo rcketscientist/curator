@@ -1,13 +1,12 @@
 package com.anthonymandra.widget
 
 import android.content.Context
-import androidx.appcompat.widget.ToggleGroup
 import android.util.AttributeSet
-
+import androidx.appcompat.widget.ToggleGroup
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.Label
-
-import java.util.ArrayList
+import kotlinx.android.synthetic.main.material_color_key.view.*
+import java.util.*
 
 typealias OnLabelSelectionChangedListener = (List<Label>) -> Unit
 class XmpLabelGroup @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ToggleGroup(context, attrs, defStyleAttr) {

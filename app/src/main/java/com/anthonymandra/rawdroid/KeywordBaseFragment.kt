@@ -1,16 +1,16 @@
 package com.anthonymandra.rawdroid
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import androidx.core.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckedTextView
 import android.widget.GridView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.ui.KeywordViewModel
 import com.jakewharton.rxbinding2.widget.itemClicks
@@ -44,7 +44,11 @@ abstract class KeywordBaseFragment : Fragment() {
         keywordGrid.adapter = adapter
         val keywordListener = keywordGrid
             .itemClicks()
-            .subscribe({ onKeywordClicked(adapter.getItem(it)) })
+            .subscribe {
+                adapter.getItem(it)?.let { subject ->
+                    onKeywordClicked(subject)
+                }
+            }
         disposables.add(keywordListener)
     }
 
@@ -149,8 +153,11 @@ abstract class KeywordBaseFragment : Fragment() {
             else
                 view.background.alpha = 230
 
-            view.text = entity.name
-            view.isChecked = isSelected(entity)
+            entity?.let {
+                view.text = it.name
+                view.isChecked = isSelected(it)
+            }
+
             return view
         }
     }

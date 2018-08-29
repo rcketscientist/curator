@@ -13,12 +13,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.preference.PreferenceManager
-import android.support.design.widget.Snackbar
-import androidx.core.app.NotificationCompat
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.app.NotificationCompat
 import com.anthonymandra.content.Meta
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
@@ -32,6 +31,7 @@ import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.*
 import com.anthonymandra.util.FileUtil
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable

@@ -4,7 +4,7 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.core.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.MetadataEntity

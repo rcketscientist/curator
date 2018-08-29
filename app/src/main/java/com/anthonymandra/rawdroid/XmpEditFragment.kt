@@ -1,12 +1,12 @@
 package com.anthonymandra.rawdroid
 
 import android.os.Bundle
-import android.support.annotation.StringRes
-import androidx.core.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence

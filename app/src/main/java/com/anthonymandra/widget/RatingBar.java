@@ -1,8 +1,6 @@
 package com.anthonymandra.widget;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.ToggleGroup;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
 
@@ -11,6 +9,9 @@ import com.anthonymandra.rawdroid.R;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.ToggleGroup;
 
 public class RatingBar extends ToggleGroup
 {

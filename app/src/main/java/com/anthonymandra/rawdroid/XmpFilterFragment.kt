@@ -1,14 +1,14 @@
 package com.anthonymandra.rawdroid
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
-import android.support.annotation.StringRes
-import androidx.core.app.DialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
@@ -16,6 +16,7 @@ import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.rawdroid.ui.FolderDialog
 import com.anthonymandra.rawdroid.ui.SearchRequestListener
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.xmp_filter_landscape.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*

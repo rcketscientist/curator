@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid.data
 
 import androidx.lifecycle.LiveData
+import androidx.room.*
 import io.reactivex.Flowable
 
 @Dao

@@ -4,8 +4,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import androidx.core.content.WakefulBroadcastReceiver;
 
+import androidx.legacy.content.WakefulBroadcastReceiver;
+
+//TODO: This is deprecated and should use a JobScheduler (https://developer.android.com/reference/androidx/legacy/content/WakefulBroadcastReceiver)
 public class MetaWakefulReceiver extends WakefulBroadcastReceiver
 {
     @Override

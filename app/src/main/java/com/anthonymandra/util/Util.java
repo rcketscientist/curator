@@ -23,12 +23,12 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
-
-import com.android.gallery3d.common.Utils;
+import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -110,7 +110,7 @@ public class Util
         }
         finally
         {
-            Utils.closeSilently(readbuffer);
+            closeSilently(readbuffer);
         }
         return numberOfLevels > 0;
     }
@@ -134,7 +134,7 @@ public class Util
         }
         finally
         {
-            Utils.closeSilently(readbuffer);
+            closeSilently(readbuffer);
         }
         return numberOfLevels > 0;
     }
@@ -198,9 +198,9 @@ public class Util
         finally
         {
             if (in != null)
-                Utils.closeSilently(in);
+                closeSilently(in);
             if (out != null)
-                Utils.closeSilently(out);
+                closeSilently(out);
         }
         return true;
     }
@@ -321,5 +321,17 @@ public class Util
         T[] result = Arrays.copyOf(first, first.length + second.length);
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
+    }
+
+    public static void closeSilently(Closeable closeable)
+    {
+        try
+        {
+            closeable.close();
+        }
+        catch (Throwable t)
+        {
+            Log.w(TAG, "close fail", t);
+        }
     }
 }

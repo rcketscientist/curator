@@ -1,11 +1,11 @@
 package com.anthonymandra.rawdroid.ui
 
-import androidx.paging.PagedListAdapter
 import android.net.Uri
-import androidx.appcompat.util.DiffUtil
-import androidx.appcompat.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.anthonymandra.rawdroid.data.MetadataTest
 import java.util.*
 import kotlin.collections.HashSet

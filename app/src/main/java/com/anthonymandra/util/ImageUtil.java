@@ -13,7 +13,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,20 +20,13 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
-import com.android.gallery3d.app.GalleryApp;
-import com.android.gallery3d.common.Utils;
-import com.android.gallery3d.data.DecodeUtils;
-import com.android.gallery3d.data.ImageCacheRequest;
-import com.android.gallery3d.util.ThreadPool;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.License;
-import com.anthonymandra.framework.MetaMedia;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.imageprocessor.Margins;
@@ -61,6 +53,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -586,74 +579,7 @@ public class ImageUtil
         }
         finally
         {
-            Utils.closeSilently(is);
-        }
-    }
-
-    public static ThreadPool.Job<Bitmap> requestImage(GalleryApp app, int type, Uri image) {
-        return new ImageRequest(app, image, type);
-    }
-
-    public static class ImageRequest extends ImageCacheRequest
-    {
-        Uri mImage;
-        ImageRequest(GalleryApp application, Uri image, int type) {
-            super(application, image, type, MetaMedia.getTargetSize(type));
-            mImage = image;
-        }
-
-        @Override
-        public Bitmap onDecodeOriginal(ThreadPool.JobContext jc, final int type) {
-            byte[] imageData = null;
-            try {
-                imageData = getThumb(mApplication.getAndroidContext(), mImage);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            int targetSize = MetaMedia.getTargetSize(type);
-
-            // try to decode from JPEG EXIF
-            if (type == MetaMedia.TYPE_MICROTHUMBNAIL) {
-                Bitmap bitmap = DecodeUtils.decodeIfBigEnough(jc, imageData,
-                        options, targetSize);
-                if (bitmap != null)
-                    return bitmap;
-                // }
-            }
-
-            return DecodeUtils.decodeThumbnail(jc, imageData, options,
-                    targetSize, type);
-        }
-    }
-
-    public static ThreadPool.Job<BitmapRegionDecoder> requestLargeImage(Context c, Uri image) {
-        return new LargeImageRequest(c, image);
-    }
-
-    public static class LargeImageRequest implements
-            ThreadPool.Job<BitmapRegionDecoder>
-    {
-        Context mContext;
-        Uri mImage;
-
-        public LargeImageRequest(Context c, Uri image) {
-            mImage = image;
-            mContext = c;
-        }
-
-        public BitmapRegionDecoder run(ThreadPool.JobContext jc) {
-            byte[] imageData = null;
-            try {
-                imageData = getThumb(mContext, mImage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return DecodeUtils.createBitmapRegionDecoder(jc,
-                    imageData, 0, imageData.length, false);
+            Util.closeSilently(is);
         }
     }
 

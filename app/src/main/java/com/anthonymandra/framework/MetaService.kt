@@ -2,8 +2,8 @@ package com.anthonymandra.framework
 
 import android.app.IntentService
 import android.content.Intent
-import androidx.core.content.LocalBroadcastManager
-import androidx.core.content.WakefulBroadcastReceiver
+import androidx.legacy.content.WakefulBroadcastReceiver
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
 import java.util.concurrent.atomic.AtomicInteger

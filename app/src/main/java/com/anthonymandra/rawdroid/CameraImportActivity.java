@@ -16,8 +16,6 @@ import android.mtp.MtpObjectInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 import com.anthonymandra.content.Meta;
@@ -33,6 +31,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 public class CameraImportActivity extends DocumentActivity

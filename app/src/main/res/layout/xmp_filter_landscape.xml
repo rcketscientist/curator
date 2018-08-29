@@ -72,7 +72,7 @@
             app:exclusive="true"
             android:orientation="horizontal">
 
-            <android.support.v7.widget.ToggleButton
+            <androidx.appcompat.widget.ToggleButton
                 android:id="@+id/toggleSortAfirst"
                 style="@style/ImageActionToggleButton"
                 android:button="@drawable/ic_a"
@@ -80,21 +80,21 @@
                 android:checked="true"
                 android:gravity="center"/>
 
-            <android.support.v7.widget.ToggleButton
+            <androidx.appcompat.widget.ToggleButton
                 android:id="@+id/toggleSortZfirst"
                 style="@style/ImageActionToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_z"
                 android:buttonTint="@color/white"/>
 
-            <android.support.v7.widget.ToggleButton
+            <androidx.appcompat.widget.ToggleButton
                 android:id="@+id/toggleSortYoungFirst"
                 style="@style/ImageActionToggleButton"
                 android:gravity="center"
                 android:button="@drawable/ic_baby"
                 android:buttonTint="@color/white"/>
 
-            <android.support.v7.widget.ToggleButton
+            <androidx.appcompat.widget.ToggleButton
                 android:id="@+id/toggleSortOldFirst"
                 style="@style/ImageActionToggleButton"
                 android:gravity="center"

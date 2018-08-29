@@ -142,10 +142,10 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
-    implementation 'com.anthonymandra:ToggleButtons:2.0.0'
+    implementation 'com.anthonymandra:ToggleButtons:3.0.1'
     implementation 'com.afollestad:material-cab:0.1.12'
 
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
     kapt "com.github.bumptech.glide:compiler:4.7.1"
 //    implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
@@ -170,9 +170,12 @@ dependencies {
         transitive = true
     }
 
-    //includes support-v4 and appcompat-v7
-    implementation "com.google.android.material:material:$supportLibVersion"
-    implementation "androidx.cardview:cardview:$supportLibVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.cardview:cardview:$cardviewVersion"
+    implementation "androidx.fragment:fragment:$fragmentVersion"
+    implementation "androidx.viewpager:viewpager:$viewpagerVersion"
+
     // included to override ToggleButtons version
     implementation "androidx.annotation:annotation:$supportLibVersion"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'

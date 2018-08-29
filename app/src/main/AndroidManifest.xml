@@ -68,20 +68,10 @@
                 android:resource="@xml/usb_camera_filter"/>
         </activity>
 
-        <activity android:name=".ViewerChooser" />
         <activity
             android:name=".TutorialActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/GalleryTheme"/>
-        <activity
-            android:name=".LegacyViewerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/GalleryTheme"/>
-        <activity
-            android:name=".ImageViewActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-			android:theme="@style/GalleryTheme">
-        </activity>
 		<activity
             android:name=".FullSettingsActivity"
             android:theme="@style/Theme.AppCompat"/>
@@ -111,7 +101,7 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/view"
-            android:targetActivity=".ViewerChooser">
+            android:targetActivity=".ViewerActivity">
 	        <!-- To open official image formats (jpg, png, etc.) -->
 	        <intent-filter>
 		        <action android:name="android.intent.action.VIEW"/>

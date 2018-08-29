@@ -1,16 +1,17 @@
 package com.anthonymandra.rawdroid.ui
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.core.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import kotlinx.android.synthetic.main.full_image.*
 
 class ViewPagerFragment : Fragment() {
     var source: MetadataTest? = null

@@ -30,7 +30,6 @@ import java.util.concurrent.ForkJoinPool
 
 abstract class ViewerActivity : CoreActivity(),
     SharedPreferences.OnSharedPreferenceChangeListener,
-    ScaleChangedListener,
     DataListener {
 
     private var autoHide: Timer? = null
@@ -513,11 +512,6 @@ abstract class ViewerActivity : CoreActivity(),
         val data = Intent()
         data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, mImageIndex)
         setResult(RESULT_OK, data)
-    }
-
-    override fun onScaleChanged(currentScale: Float) {
-//        val zoom = (currentScale * 100).toInt().toString() + "%"
-//        textViewScale.post { textViewScale.text = zoom }
     }
 
     companion object {

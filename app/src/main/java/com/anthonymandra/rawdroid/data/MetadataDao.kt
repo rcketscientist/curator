@@ -1,7 +1,10 @@
 package com.anthonymandra.rawdroid.data
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
+import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.anthonymandra.content.Meta
@@ -10,7 +13,7 @@ import com.anthonymandra.util.DbUtil
 import java.util.*
 
 @Dao
-abstract class MetadataDao {
+abstract class MetadataDao() : Parcelable {
 
     @get:Query("SELECT uri, id FROM meta")
     abstract val uriId: LiveData<List<UriIdResult>>
@@ -20,33 +23,39 @@ abstract class MetadataDao {
 
     val allMetadata: LiveData<List<MetadataTest>> = getImages()
 
+    constructor(parcel: Parcel) : this() {
+    }
+
     @Query("SELECT COUNT(*) FROM meta")
     abstract fun count(): Int
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
     internal abstract fun internalGetImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
 
-    @RawQuery(observedEntities = [ MetadataEntity::class/*, SubjectJunction::class*/ ])
+    @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
     internal abstract fun internalGetImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
 
+    @Transaction
     @Query("SELECT * FROM meta WHERE id IN (:ids)")
     internal abstract fun getImagesById(ids: List<Long>): DataSource.Factory<Int, MetadataTest>
 
-    @Query("SELECT * FROM meta WHERE id = :id")
-    abstract operator fun get(id: Long): LiveData<MetadataEntity>
-
+    @Transaction
     @Query("SELECT * FROM meta WHERE uri = :uri")
     abstract operator fun get(uri: String): LiveData<MetadataTest>
 
+    @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun blocking(uris: List<String>): List<MetadataTest>
 
+    @Transaction
     @Query("SELECT * FROM meta WHERE uri = :uri")
     abstract fun blocking(uri: String): MetadataTest
 
+    @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
 
+    @Transaction
     @Query("SELECT * FROM meta WHERE processed = 0")    // 0 = true
     abstract fun unprocessedImages() : List<MetadataTest>    // TODO: maybe page this?
 
@@ -173,5 +182,23 @@ abstract class MetadataDao {
         query.append(order)
 
         return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MetadataDao> {
+        override fun createFromParcel(parcel: Parcel): MetadataDao {
+            return MetadataDao(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MetadataDao?> {
+            return arrayOfNulls(size)
+        }
     }
 }

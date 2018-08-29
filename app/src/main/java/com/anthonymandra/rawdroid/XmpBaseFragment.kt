@@ -7,6 +7,7 @@ import androidx.core.app.Fragment
 import android.util.ArrayMap
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.widget.RatingBar

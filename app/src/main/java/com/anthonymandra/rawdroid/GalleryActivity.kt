@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityOptions
 import android.app.AlertDialog
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,17 +15,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.provider.DocumentsContract
-import android.support.design.widget.Snackbar
-import androidx.core.content.LocalBroadcastManager
-import androidx.core.view.GravityCompat
-import androidx.appcompat.widget.GridLayoutManager
-import androidx.appcompat.widget.RecyclerView
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.core.view.GravityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.MetadataEntity
@@ -37,7 +36,9 @@ import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.widget.ItemOffsetDecoration
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.inscription.WhatsNewDialog
+import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {

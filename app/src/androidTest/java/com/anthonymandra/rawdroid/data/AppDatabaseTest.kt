@@ -4,9 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.room.Room
-import android.support.test.InstrumentationRegistry
-import android.support.test.filters.MediumTest
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.InstrumentationRegistry
+import androidx.test.filters.MediumTest
+import androidx.test.runner.AndroidJUnit4
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.XmpValues
 import junit.framework.Assert.assertNotNull
@@ -21,6 +21,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.StringReader
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 
 @RunWith(AndroidJUnit4::class)
@@ -338,37 +340,29 @@ class AppDatabaseTest {
 //        assertTrue(one.subject == two.subject)
     }
 
-    private fun getXmpMeta(): MetadataResult {
-        val meta = MetadataResult()
-        meta.label = "red"
-        meta.keywords = listOf("europe", "germany")
-        meta.rating = 1f
-        return meta
-    }
-
     private fun getPopulatedMeta(suffix: Int): MetadataEntity {
         val meta = MetadataEntity()
         meta.id = suffix.toLong()
-        meta.altitude = "altitude" + suffix
-        meta.aperture = "aperture" + suffix
-        meta.driveMode = "driveMode" + suffix
-        meta.exposure = "exposure" + suffix
-        meta.exposureMode = "exposureMode" + suffix
-        meta.exposureProgram = "exposureProgram" + suffix
-        meta.flash = "flash" + suffix
-        meta.focalLength = "focalLength" + suffix
+        meta.altitude = "altitude$suffix"
+        meta.aperture = "aperture$suffix"
+        meta.driveMode = "driveMode$suffix"
+        meta.exposure = "exposure$suffix"
+        meta.exposureMode = "exposureMode$suffix"
+        meta.exposureProgram = "exposureProgram$suffix"
+        meta.flash = "flash$suffix"
+        meta.focalLength = "focalLength$suffix"
         meta.height = suffix
         meta.width = suffix
-        meta.iso = "iso" + suffix
-        meta.latitude = "latitude" + suffix
-        meta.lens = "lens" + suffix
-        meta.longitude = "longitude" + suffix
-        meta.make = "make" + suffix
+        meta.iso = "iso$suffix"
+        meta.latitude = "latitude$suffix"
+        meta.lens = "lens$suffix"
+        meta.longitude = "longitude$suffix"
+        meta.make = "make$suffix"
         meta.orientation = suffix
-        meta.timestamp = "timestamp" + suffix
-        meta.model = "model" + suffix
-        meta.whiteBalance = "whiteBalance" + suffix
-        meta.label = "label" + suffix
+        meta.timestamp = 1337
+        meta.model = "model$suffix"
+        meta.whiteBalance = "whiteBalance$suffix"
+        meta.label = "label$suffix"
         meta.rating = suffix.toFloat()
         meta.parentId = folderId
         meta.name = "image$suffix.cr2"

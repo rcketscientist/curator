@@ -8,8 +8,8 @@ import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.core.content.LocalBroadcastManager
-import androidx.core.view.ViewPager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager.widget.ViewPager
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -26,6 +26,8 @@ import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.ImageUtil
 import com.eftimoff.viewpagertransformers.DepthPageTransformer
+import kotlinx.android.synthetic.main.meta_panel.*
+import kotlinx.android.synthetic.main.viewer_pager.*
 import java.util.*
 
 class ViewerActivity : CoreActivity() {
@@ -95,7 +97,8 @@ class ViewerActivity : CoreActivity() {
                 updateImageDetails()
             }
         })
-        pager.setPageTransformer(true, DepthPageTransformer())
+        // TODO: Jetifier not working on page transformer
+//        pager.setPageTransformer(true, DepthPageTransformer())
         pager.offscreenPageLimit = 2
 
         responseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META)

@@ -1,13 +1,14 @@
 package com.anthonymandra.rawdroid.ui
 
-import androidx.appcompat.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.MetaUtil
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.fileview.*
 
 @Suppress("DEPRECATION")
 class GalleryViewHolder(override val containerView: View)

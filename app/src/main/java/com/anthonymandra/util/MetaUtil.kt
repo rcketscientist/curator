@@ -11,7 +11,6 @@ import com.adobe.xmp.XMPMetaFactory
 import com.adobe.xmp.impl.XMPMetaImpl
 import com.adobe.xmp.options.PropertyOptions
 import com.adobe.xmp.options.SerializeOptions
-import com.android.gallery3d.common.Utils
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
@@ -71,7 +70,7 @@ object MetaUtil {
             Crashlytics.setString("readMetaUri", uri.toString())
             Crashlytics.logException(e)
         } finally {
-            Utils.closeSilently(image)
+            Util.closeSilently(image)
         }
         return meta
     }
@@ -97,7 +96,7 @@ object MetaUtil {
             Log.e(TAG, "Failed to open XMP.", e)
             meta
         } finally {
-            Utils.closeSilently(xmpStream)
+            Util.closeSilently(xmpStream)
         }
     }
 

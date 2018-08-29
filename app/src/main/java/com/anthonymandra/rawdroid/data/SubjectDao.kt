@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import android.util.SparseArray
+import androidx.room.RoomWarnings
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.Reader
@@ -19,6 +20,7 @@ abstract class SubjectDao : PathDao<SubjectEntity>() {
     @Query("SELECT COUNT(*) FROM xmp_subject")
     abstract fun count(): Int
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH) // We don't need metaId and subjectId
     @Query("SELECT * FROM xmp_subject " +
         "INNER JOIN meta_subject_junction " +
         "ON meta_subject_junction.subjectId = xmp_subject.id " +

@@ -17,11 +17,11 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 
 import com.anthonymandra.framework.License;
 import com.anthonymandra.framework.Util;
 import com.anthonymandra.util.ImageUtil;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 

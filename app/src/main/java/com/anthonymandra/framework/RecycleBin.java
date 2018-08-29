@@ -18,10 +18,8 @@ package com.anthonymandra.framework;
 
 import android.content.Context;
 import android.net.Uri;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
-import com.android.gallery3d.common.Utils;
 import com.anthonymandra.util.FileUtil;
 
 import java.io.BufferedInputStream;
@@ -32,6 +30,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import androidx.annotation.Nullable;
 
 /**
  * This class holds our discarded images
@@ -132,8 +132,8 @@ public class RecycleBin
 				}
 				finally
 				{
-                    Utils.closeSilently(bis);
-                    Utils.closeSilently(out);
+                    Util.closeSilently(bis);
+                    Util.closeSilently(out);
 				}
 			}
 		}
