@@ -142,7 +142,7 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 
-    implementation 'com.anthonymandra:ToggleButtons:2.0.0'
+    implementation 'com.anthonymandra:ToggleButtons:3.0.1'
     implementation 'com.afollestad:material-cab:0.1.12'
 
     implementation 'com.github.bumptech.glide:glide:4.7.1'
@@ -170,11 +170,10 @@ dependencies {
         transitive = true
     }
 
-    //includes support-v4 and appcompat-v7
-    implementation "com.google.android.material:material:$supportLibVersion"
-    implementation "androidx.cardview:cardview:$supportLibVersion"
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.cardview:cardview:$cardVersion"
     // included to override ToggleButtons version
-    implementation "androidx.annotation:annotation:$supportLibVersion"
+    implementation "androidx.annotation:annotation:$annotationVersion"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
 //    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
 
@@ -193,7 +192,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     // Required for instrumented tests
-    androidTestImplementation "androidx.annotation:annotation:$supportLibVersion"
+    androidTestImplementation "androidx.annotation:annotation:$annotationVersion"
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test:rules:1.1.0-alpha4'
 
