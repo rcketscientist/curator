@@ -3,7 +3,6 @@ package com.anthonymandra.rawdroid
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.core.app.Fragment
 import android.util.ArrayMap
 import android.view.View
 import android.widget.Toast

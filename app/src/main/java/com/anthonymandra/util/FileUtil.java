@@ -3,14 +3,10 @@ package com.anthonymandra.util;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
-import android.provider.MediaStore;
-
-import com.android.gallery3d.common.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -180,8 +176,8 @@ public class FileUtil
 		}
 		finally
 		{
-			Utils.closeSilently(bos);
-			Utils.closeSilently(is);
+			Util.closeSilently(bos);
+			Util.closeSilently(is);
 		}
 	}
 

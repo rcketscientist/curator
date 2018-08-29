@@ -2,14 +2,13 @@ package com.anthonymandra.rawdroid
 
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.viewpager.widget.ViewPager
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -17,6 +16,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.MetaService
 import com.anthonymandra.framework.MetaWakefulReceiver
@@ -191,6 +194,7 @@ class ViewerActivity : CoreActivity() {
 
     private fun updateImageDetails() {
         updateMetaData()
+
 //        updateHistogram(currentBitmap)
         if(shouldShowInterface)
             showPanels()

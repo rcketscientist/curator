@@ -1,7 +1,5 @@
 package com.anthonymandra.rawdroid.data
 
-import android.os.Parcel
-import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
@@ -13,7 +11,7 @@ import com.anthonymandra.util.DbUtil
 import java.util.*
 
 @Dao
-abstract class MetadataDao() : Parcelable {
+abstract class MetadataDao {
 
     @get:Query("SELECT uri, id FROM meta")
     abstract val uriId: LiveData<List<UriIdResult>>
@@ -22,9 +20,6 @@ abstract class MetadataDao() : Parcelable {
     abstract val allImages: LiveData<List<MetadataEntity>>
 
     val allMetadata: LiveData<List<MetadataTest>> = getImages()
-
-    constructor(parcel: Parcel) : this() {
-    }
 
     @Query("SELECT COUNT(*) FROM meta")
     abstract fun count(): Int
@@ -79,19 +74,6 @@ abstract class MetadataDao() : Parcelable {
 
     @Query("DELETE FROM meta")
     abstract fun deleteAll()
-
-    companion object {
-        /**
-         * If using a relation for subject this is a far simpler solution.
-         * Requires [groupBy]
-         */
-        private const val relationQuery =
-            "SELECT *" +
-            " FROM meta" +
-            " LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
-
-        private const val groupBy = " GROUP BY meta.id"
-    }
 
     // TODO: We could potentially use a static source in viewer to maintain order and update the
     // appropriate meta tables when edited.
@@ -184,21 +166,15 @@ abstract class MetadataDao() : Parcelable {
         return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
     }
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<MetadataDao> {
-        override fun createFromParcel(parcel: Parcel): MetadataDao {
-            return MetadataDao(parcel)
-        }
-
-        override fun newArray(size: Int): Array<MetadataDao?> {
-            return arrayOfNulls(size)
-        }
+    companion object {
+        /**
+         * If using a relation for subject this is a far simpler solution.
+         * Requires [groupBy]
+         */
+        private const val relationQuery =
+                "SELECT *" +
+                        " FROM meta" +
+                        " LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
+        private const val groupBy = " GROUP BY meta.id"
     }
 }

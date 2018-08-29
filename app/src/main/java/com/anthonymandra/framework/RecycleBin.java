@@ -18,6 +18,7 @@ package com.anthonymandra.framework;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.anthonymandra.util.FileUtil;

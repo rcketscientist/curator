@@ -14,12 +14,12 @@ import android.hardware.usb.UsbManager;
 import android.mtp.MtpDevice;
 import android.mtp.MtpObjectInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.anthonymandra.content.Meta;
-import com.anthonymandra.framework.AsyncTask;
 import com.anthonymandra.framework.DocumentActivity;
 import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.UsefulDocumentFile;

@@ -6,10 +6,9 @@ import android.app.WallpaperManager
 import android.content.*
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.preference.PreferenceManager
-import androidx.core.content.LocalBroadcastManager
-import androidx.appcompat.widget.Toolbar
 import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
@@ -18,19 +17,20 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import com.android.gallery3d.app.DataListener
+import androidx.appcompat.widget.Toolbar
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.GalleryActivity
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.ImageUtil
+import kotlinx.android.synthetic.main.meta_panel.*
 import java.util.*
 import java.util.concurrent.ForkJoinPool
 
 abstract class ViewerActivity : CoreActivity(),
-    SharedPreferences.OnSharedPreferenceChangeListener,
-    DataListener {
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     private var autoHide: Timer? = null
 
@@ -147,11 +147,6 @@ abstract class ViewerActivity : CoreActivity(),
                 this.window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
             }
         }
-    }
-
-    override fun onPhotoChanged(index: Int, item: MetadataTest?) {
-        mCurrrentImage = item
-        updateImageDetails()
     }
 
     @TargetApi(19)
