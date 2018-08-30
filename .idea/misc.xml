@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="EntryPointsManager">
-    <entry_points version="2.0">
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.widget.GalleryRecyclerAdapter com.anthonymandra.widget.GalleryRecyclerAdapter.OnItemClickListener getOnItemClickListener()" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil com.drew.metadata.Metadata readXmp(android.content.Context c, android.net.Uri uri)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void updateXmpInteger(com.drew.metadata.Metadata meta, int tag, java.lang.Integer value)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void updateRating(com.drew.metadata.Metadata meta, java.lang.Double rating)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getMake(com.drew.metadata.Metadata meta)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getFNumber(com.drew.metadata.Metadata meta)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getLensMake(com.drew.metadata.Metadata meta)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil java.lang.String getShutterSpeed(com.drew.metadata.Metadata meta)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil void setExifValues(android.net.Uri uri, android.content.Context c, java.lang.String[] exif)" />
-      <entry_point TYPE="method" FQNAME="com.anthonymandra.util.MetaUtil android.content.ContentValues getContentValues(java.io.InputStream stream, com.drew.imaging.FileType fileType)" />
-      <entry_point TYPE="implicit.constructor" FQNAME="com.anthonymandra.util.MetaUtil" />
-      <entry_point TYPE="class" FQNAME="com.anthonymandra.widget.CheckableRelativeLayout.OnCheckedChangeListener" />
-    </entry_points>
-  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
     <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />
@@ -24,9 +8,9 @@
         <list size="10">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
-          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
-          <item index="3" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
-          <item index="4" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
+          <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
+          <item index="3" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.Nullable" />
+          <item index="4" class="java.lang.String" itemvalue="android.support.annotation.Nullable" />
           <item index="5" class="java.lang.String" itemvalue="androidx.annotation.Nullable" />
           <item index="6" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
           <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
@@ -52,7 +36,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8 (1)" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8 (1)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
