@@ -6,10 +6,17 @@ buildscript {
     }
     ext {
         kotlinVersion = '1.2.61'
-        compileSdkVersion = 26
+        compileSdkVersion = 28
+
+        // Androidx
         annotationVersion = '1.0.0-rc01'
-        exifVersion = '1.0.0-rc02'
-        cardVersion = '1.0.0-rc02'
+        appcompatVersion = '1.0.0-rc01'
+        fragmentVersion = '1.0.0-rc01'
+        cardviewVersion = '1.0.0-rc01'
+        viewpagerVersion = '1.0.0-rc01'
+        ktx = '1.0.0-rc01'
+
+        exifVersion = '1.0.0-rc01'
         materialVersion = '1.0.0-rc01'
         coreVersion = '1.0.0-rc01'
 
@@ -20,7 +27,7 @@ buildscript {
         coreTestingVersion = '2.0.0-beta01'
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha07'
+        classpath 'com.android.tools.build:gradle:3.3.0-alpha08'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }

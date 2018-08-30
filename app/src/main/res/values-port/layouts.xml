@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="viewer_layout" type="layout">@layout/viewer_onepane</item>
-    <item name="legacy_layout" type="layout">@layout/legacy_onepane</item>
-    <bool name="hasTwoPanes">false</bool>
-    <bool name="hasWideXmp">true</bool>
-</resources>

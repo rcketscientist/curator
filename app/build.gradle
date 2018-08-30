@@ -176,10 +176,9 @@ dependencies {
     implementation "androidx.fragment:fragment:$fragmentVersion"
     implementation "androidx.viewpager:viewpager:$viewpagerVersion"
 
-    // included to override ToggleButtons version
     implementation "androidx.annotation:annotation:$annotationVersion"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
-//    implementation 'androidx.core:core-ktx:1.0.0-alpha3'
+//    implementation "androidx.core:core-ktx:$ktx"
 
     // Life-cycle
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
