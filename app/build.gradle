@@ -171,11 +171,7 @@ dependencies {
     }
 
     implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.cardview:cardview:$cardviewVersion"
-    implementation "androidx.fragment:fragment:$fragmentVersion"
-    implementation "androidx.viewpager:viewpager:$viewpagerVersion"
-
+    implementation "androidx.cardview:cardview:$cardVersion"
     implementation "androidx.annotation:annotation:$annotationVersion"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
 //    implementation "androidx.core:core-ktx:$ktx"
