@@ -95,6 +95,22 @@ class ViewPagerFragment : Fragment() {
             imageView.isZoomEnabled = !it!!
         })
 
+        viewModel.isInterfaceVisible.observe(this, Observer { visible ->
+            val comparator = if (visible) "Never" else "Always"
+            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
+                tableLayoutMeta.visibility = View.VISIBLE
+            }
+            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
+                histogramView.visibility = View.VISIBLE
+            }
+            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
+                tableLayoutMeta.visibility = View.INVISIBLE
+            }
+            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
+                histogramView.visibility = View.INVISIBLE
+            }
+        })
+
         zoomButton.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onZoomLockChanged(isChecked)
         }
@@ -109,8 +125,8 @@ class ViewPagerFragment : Fragment() {
 
     private fun showPanels() {
         isInterfaceHidden = false
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-        runOnUiThread {
+        val settings = PreferenceManager.getDefaultSharedPreferences(activity)
+        activity?.runOnUiThread {
             if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Never") {
                 layoutNavButtons.visibility = View.VISIBLE
             }
@@ -128,9 +144,9 @@ class ViewPagerFragment : Fragment() {
 
     private fun hidePanels() {
         isInterfaceHidden = true
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
+        val settings = PreferenceManager.getDefaultSharedPreferences(activity)
 
-        runOnUiThread {
+        activity?.runOnUiThread {
             if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Always") {
                 layoutNavButtons.visibility = View.INVISIBLE
             }
@@ -147,8 +163,6 @@ class ViewPagerFragment : Fragment() {
     }
 
     fun togglePanels() {
-//        autoHide?.cancel()    //TODO: viewmodel
-
         if (isInterfaceHidden)
             showPanels()
         else
@@ -192,8 +206,6 @@ class ViewPagerFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun populateMeta(image: MetadataTest) {
-        autoHide?.cancel()
-
         if (textViewDate == null) {
             Toast.makeText(this,
                     "Could not access metadata views, please email me!",
@@ -225,9 +237,7 @@ class ViewPagerFragment : Fragment() {
         textViewExposureMode.text = image.exposureMode
         textViewExposureProgram.text = image.exposureProgram
 
-        val timer = Timer()
-        timer.schedule(AutoHideMetaTask(), 3000)
-        autoHide = timer
+
     }
 
 

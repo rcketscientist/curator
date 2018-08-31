@@ -12,9 +12,10 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
+import java.util.*
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
-
+    //TODO: Split out viewer viewmodel
     private val dataRepo = (app as App).dataRepo
 
     val imageList: LiveData<PagedList<MetadataTest>>
@@ -23,6 +24,12 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
 
+    private val _isInterfaceVisible: MutableLiveData<Boolean> = MutableLiveData()
+    val isInterfaceVisible: LiveData<Boolean>
+        get() = _isInterfaceVisible
+
+    private var shouldShowInterface = true;
+
     init {
         imageList = Transformations.switchMap(filter) { filter ->
             LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build() }
@@ -30,12 +37,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
         val settings = PreferenceManager.getDefaultSharedPreferences(app)
         settings.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            setMetaVisibility()
-
             when (key) {
-                FullSettingsActivity.KEY_MetaSize -> {
-                    recreate()
-                }
                 FullSettingsActivity.KEY_ShowImageInterface -> {
                     shouldShowInterface = sharedPreferences?.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true) ?: true
                 }
@@ -47,7 +49,25 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         _isZoomLocked.value = zoomLocked
     }
 
+    fun onInterfaceVisibilityChanged(visible: Boolean) {
+        _isInterfaceVisible.value = visible
+    }
+
+    fun onImageChanged() {
+        if (shouldShowInterface) {
+            onInterfaceVisibilityChanged(true)
+        }
+        val timer = Timer()
+        timer.schedule(AutoHideMetaTask(), 3000)
+    }
+
     fun setFilter(filter: XmpFilter) {
         this.filter.value = filter
+    }
+
+    private inner class AutoHideMetaTask : TimerTask() {
+        override fun run() {
+            onInterfaceVisibilityChanged(false)
+        }
     }
 }

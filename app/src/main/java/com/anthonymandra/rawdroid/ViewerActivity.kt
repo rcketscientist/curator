@@ -39,12 +39,15 @@ class ViewerActivity : CoreActivity() {
     private val responseIntentFilter = IntentFilter()
     private var currentImage: MetadataTest? = null
 
-    private var autoHide: Timer? = null
+    private var autoHide = Timer()
     private var isInterfaceHidden: Boolean = false  //TODO: viewmodel
     private var shouldShowInterface = true
 
     override val selectedImages: Collection<MetadataTest>
         get() = listOfNotNull(viewerAdapter.getImage(pager.currentItem))
+
+    private val viewModel: GalleryViewModel by lazy {
+        ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
 
     private var displayWidth = 0
     private var displayHeight = 0
@@ -82,11 +85,28 @@ class ViewerActivity : CoreActivity() {
 
         viewerAdapter = ViewerAdapter(supportFragmentManager)
 
-        val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
+//        val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         viewModel.imageList.observe(this, Observer {
             viewerAdapter.submitList(it)
             // TODO: Can we get an update?  Will the entries reorder on changes?
             pager.setCurrentItem(intent.getIntExtra(EXTRA_START_INDEX, 0), false)
+        })
+
+        viewModel.isInterfaceVisible.observe(this, Observer { visible ->
+            val comparator = if (visible) "Never" else "Always"
+            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
+                layoutNavButtons.visibility = View.VISIBLE
+            }
+            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != comparator) {
+                supportActionBar?.show()
+            }
+
+            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
+                layoutNavButtons.visibility = View.INVISIBLE
+            }
+            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != comparator) {
+                supportActionBar?.hide()
+            }
         })
 
         viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
@@ -103,9 +123,10 @@ class ViewerActivity : CoreActivity() {
                             Collections.emptyList()/*it.subjectIds*/,
                             it.label)
                 }
+                autoHide.cancel()
+                autoHide = Timer()
+                autoHide.schedule(AutoHideMetaTask(), 3000)
                 updateImageDetails()
-
-
             }
         })
         // TODO: Jetifier not working on page transformer
@@ -180,7 +201,7 @@ class ViewerActivity : CoreActivity() {
     }
 
     fun togglePanels() {
-        autoHide?.cancel()
+        autoHide.cancel()
 
         if (isInterfaceHidden)
             showPanels()
@@ -210,32 +231,13 @@ class ViewerActivity : CoreActivity() {
             showPanels()
     }
 
-    // TODO: Histogram needs to be created elsewise
-//    protected fun updateHistogram(bitmap: Bitmap?) {
-//        if (bitmap == null) {
-//            mRequiresHistogramUpdate = true
-//            return
-//        }
-//        mRequiresHistogramUpdate = false
-//
-//        mHistogramTask?.cancel(true)
-//        val histogramTask = HistogramTask()
-//        histogramTask.execute(bitmap)
-//        mHistogramTask = histogramTask
-//    }
-    private inner class AutoHideMetaTask : TimerTask() {
-        override fun run() {
-            hidePanels()
-        }
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.viewer_options, menu)
         return true
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        autoHide?.cancel()
+        autoHide.cancel()
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -304,6 +306,12 @@ class ViewerActivity : CoreActivity() {
 
     override fun onImageSetChanged() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private inner class AutoHideMetaTask : TimerTask() {
+        override fun run() {
+            viewModel.onInterfaceVisibilityChanged(false)
+        }
     }
 
     companion object {
