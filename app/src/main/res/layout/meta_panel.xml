@@ -43,7 +43,7 @@
 
             <TextView
                 android:id="@+id/labelDate"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/Date" />
 
             <TextView
@@ -58,7 +58,7 @@
 
             <TextView
                 android:id="@+id/TextView06"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/model" />
 
             <TextView
@@ -72,7 +72,7 @@
 
             <TextView
                 android:id="@+id/labelLens"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/lens" />
 
             <TextView
@@ -86,7 +86,7 @@
 
             <TextView
                 android:id="@+id/labelDriveMode"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/driveMode" />
 
             <TextView
@@ -100,7 +100,7 @@
 
             <TextView
                 android:id="@+id/labelExposureMode"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/expMode" />
 
             <TextView
@@ -114,7 +114,7 @@
 
             <TextView
                 android:id="@+id/labelExposureProgram"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/expProgram" />
 
             <TextView
@@ -128,7 +128,7 @@
 
             <TextView
                 android:id="@+id/TextView08"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/aperture" />
 
             <TextView
@@ -142,7 +142,7 @@
 
             <TextView
                 android:id="@+id/TextView10"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/exposure"/>
 
             <TextView
@@ -156,13 +156,13 @@
 
             <TextView
                 android:id="@+id/TextView12"
-                style="@style/MetaLabel"                                                
+                style="@style/MetaLabel"
                 android:text="@string/flash"/>
 
             <TextView
                 android:id="@+id/textViewFlash"
                 style="@style/MetaValue"/>
-            
+
         </TableRow>
 
         <TableRow
@@ -177,7 +177,7 @@
             <TextView
                 android:id="@+id/textViewFocal"
                 style="@style/MetaValue" />
-            
+
         </TableRow>
 
         <TableRow
@@ -192,7 +192,7 @@
             <TextView
                 android:id="@+id/textViewIso"
                 style="@style/MetaValue"/>
-            
+
         </TableRow>
 
         <TableRow
@@ -207,7 +207,7 @@
             <TextView
                 android:id="@+id/textViewWhiteBalance"
                 style="@style/MetaValue"/>
-            
+
         </TableRow>
 
         <TableRow
@@ -222,7 +222,7 @@
             <TextView
                 android:id="@+id/textViewDimensions"
                 style="@style/MetaValue"/>
-            
+
         </TableRow>
 
         <TableRow
@@ -237,7 +237,7 @@
             <TextView
                 android:id="@+id/textViewLat"
                 style="@style/MetaValue" />
-            
+
         </TableRow>
 
         <TableRow
@@ -252,7 +252,7 @@
             <TextView
                 android:id="@+id/textViewLon"
                 style="@style/MetaValue"/>
-            
+
         </TableRow>
 
         <TableRow
@@ -267,7 +267,7 @@
             <TextView
                 android:id="@+id/textViewAlt"
                 style="@style/MetaValue" />
-            
+
         </TableRow>
     </TableLayout>
 

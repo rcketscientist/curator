@@ -40,6 +40,8 @@
             android:alpha=".75"/>
     </LinearLayout>
 
+
+
     <fragment
         android:id="@+id/editFragment"
         android:name="com.anthonymandra.rawdroid.XmpEditFragment"

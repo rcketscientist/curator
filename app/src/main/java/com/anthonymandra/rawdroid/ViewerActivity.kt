@@ -40,7 +40,7 @@ class ViewerActivity : CoreActivity() {
     private var currentImage: MetadataTest? = null
 
     private var autoHide: Timer? = null
-    private var isInterfaceHidden: Boolean = false
+    private var isInterfaceHidden: Boolean = false  //TODO: viewmodel
     private var shouldShowInterface = true
 
     override val selectedImages: Collection<MetadataTest>
@@ -97,7 +97,15 @@ class ViewerActivity : CoreActivity() {
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
             override fun onPageSelected(position: Int) {
                 currentImage = viewerAdapter.getImage(position)
+                currentImage?.let {
+                    xmpEditFragment.initXmp(
+                            it.rating?.toInt(),
+                            Collections.emptyList()/*it.subjectIds*/,
+                            it.label)
+                }
                 updateImageDetails()
+
+
             }
         })
         // TODO: Jetifier not working on page transformer
@@ -195,6 +203,8 @@ class ViewerActivity : CoreActivity() {
     private fun updateImageDetails() {
         updateMetaData()
 
+
+
 //        updateHistogram(currentBitmap)
         if(shouldShowInterface)
             showPanels()
@@ -213,109 +223,11 @@ class ViewerActivity : CoreActivity() {
 //        histogramTask.execute(bitmap)
 //        mHistogramTask = histogramTask
 //    }
-
-    @SuppressLint("SetTextI18n")
-    private fun populateMeta(image: MetadataTest) {
-        autoHide?.cancel()
-
-        if (textViewDate == null) {
-            Toast.makeText(this,
-                    "Could not access metadata views, please email me!",
-                    Toast.LENGTH_LONG).show()
-            return
-        }
-
-        val timestamp = image.timestamp
-        if (timestamp != null) {
-            val d = Date(timestamp)
-            val df = DateFormat.getDateFormat(this)
-            val tf = DateFormat.getTimeFormat(this)
-            textViewDate.text = df.format(d) + " " + tf.format(d)
-        }
-        textViewModel.text = image.model
-        textViewIso.text = image.iso
-        textViewExposure.text = image.exposure
-        textViewAperture.text = image.exposure
-        textViewFocal.text = image.focalLength
-        textViewDimensions.text = "$image.width x $image.height"
-        textViewAlt.text = image.altitude
-        textViewFlash.text = image.flash
-        textViewLat.text = image.latitude
-        textViewLon.text = image.longitude
-        textViewName.text = image.name
-        textViewWhiteBalance.text = image.whiteBalance
-        textViewLens.text = image.lens
-        textViewDriveMode.text = image.driveMode
-        textViewExposureMode.text = image.exposureMode
-        textViewExposureProgram.text = image.exposureProgram
-
-        val rating = image.rating
-        // TODO: Lots of hacks here
-        xmpEditFragment.initXmp(
-                rating?.toInt(),
-                Collections.emptyList()/*image.subjectIds*/,
-                image.label)
-
-        val timer = Timer()
-        timer.schedule(AutoHideMetaTask(), 3000)
-        autoHide = timer
-    }
-
-    private fun clearMeta() {
-        textViewDate.text = ""
-        textViewModel.text = ""
-        textViewIso.text = ""
-        textViewExposure.text = ""
-        textViewAperture.text = ""
-        textViewFocal.text = ""
-        textViewDimensions.text = ""
-        textViewAlt.text = ""
-        textViewFlash.text = ""
-        textViewLat.text = ""
-        textViewLon.text = ""
-        textViewName.text = ""
-        textViewWhiteBalance.text = ""
-        textViewLens.text = ""
-        textViewDriveMode.text = ""
-        textViewExposureMode.text = ""
-        textViewExposureProgram.text = ""
-    }
-
     private inner class AutoHideMetaTask : TimerTask() {
         override fun run() {
             hidePanels()
         }
     }
-
-//    protected inner class HistogramTask : AsyncTask<Bitmap, Void, Histogram.ColorBins>() {
-//        override fun onPreExecute() {
-//            super.onPreExecute()
-//            histogramView.clear()
-//        }
-//
-//        // FIXME: Use rx
-//        override fun doInBackground(vararg params: Bitmap): Histogram.ColorBins? {
-//            val input = params[0]
-//
-//            if (input.isRecycled) return null
-//
-//            val pool = ForkJoinPool()
-//            val result = Histogram.createHistogram(input)
-//            return pool.invoke<Histogram.ColorBins>(result)
-//        }
-//
-//        override fun onPostExecute(result: Histogram.ColorBins?) {
-//            if (result != null && !isCancelled)
-//                histogramView.updateHistogram(result)
-//        }
-//    }
-
-    // Pretty sure this is unneeded.
-    //    @Override
-    //    public void onConfigurationChanged(Configuration newConfig) {
-    //        super.onConfigurationChanged(newConfig);
-    //        updateImageDetails();   // For small screens this will fix the meta panel shape
-    //    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.viewer_options, menu)
@@ -372,41 +284,6 @@ class ViewerActivity : CoreActivity() {
             Toast.makeText(this@ViewerActivity, R.string.resultWallpaperFailed, Toast.LENGTH_SHORT).show()
         }
 
-    }
-
-    private fun setMetaVisibility() {
-        // Initially set the interface to GONE to allow settings to implement
-        tableLayoutMeta.visibility = View.GONE
-        layoutNavButtons.visibility = View.GONE
-        histogramView.visibility = View.GONE
-
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-
-        // Default true
-        rowAperture.visibility =
-                if (settings.getBoolean(FullSettingsActivity.KEY_ExifAperture, true))
-                    View.VISIBLE
-                else
-                    View.GONE
-
-        rowDate.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifDate, true)) View.VISIBLE else View.GONE
-        rowExposure.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifExposure, true)) View.VISIBLE else View.GONE
-        rowFocal.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifFocal, true)) View.VISIBLE else View.GONE
-        rowModel.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifModel, true)) View.VISIBLE else View.GONE
-        rowIso.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifIso, true)) View.VISIBLE else View.GONE
-        rowLens.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifLens, true)) View.VISIBLE else View.GONE
-        rowName.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifName, true)) View.VISIBLE else View.GONE
-
-        // Default false
-        rowAltitude.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifAltitude, false)) View.VISIBLE else View.GONE
-        rowDimensions.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifDimensions, false)) View.VISIBLE else View.GONE
-        rowDriveMode.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifDriveMode, false)) View.VISIBLE else View.GONE
-        rowExposureMode.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifExposureMode, false)) View.VISIBLE else View.GONE
-        rowExposureProgram.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifExposureProgram, false)) View.VISIBLE else View.GONE
-        rowFlash.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifFlash, false)) View.VISIBLE else View.GONE
-        rowLatitude.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifLatitude, false)) View.VISIBLE else View.GONE
-        rowLongitude.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifLongitude, false)) View.VISIBLE else View.GONE
-        rowWhiteBalance.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifWhiteBalance, false)) View.VISIBLE else View.GONE
     }
 
     override fun setMaxProgress(max: Int) {}    //TODO: Clearly progress no longer belongs in core activity
