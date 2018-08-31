@@ -115,7 +115,7 @@ abstract class CoreActivity : DocumentActivity() {
     override fun onResume() {
         super.onResume()
         mActivityVisible = true
-        LicenseManager.getLicense(this, licenseHandler)
+//        LicenseManager.getLicense(this, licenseHandler)
         createSwapDir()
         createRecycleBin()
 
@@ -172,7 +172,7 @@ abstract class CoreActivity : DocumentActivity() {
             }
             R.id.about -> {
                 val changeLogDialog = ChangeLogDialog(this)
-                changeLogDialog.show(Constants.VariantCode == 8)
+                changeLogDialog.show(false)
                 return true
             }
             R.id.contextSaveAs -> {
@@ -389,7 +389,7 @@ abstract class CoreActivity : DocumentActivity() {
         val filesToRestore = ArrayList<String>()
         val shortNames = ArrayList<String>(keys.size)
 
-        keys.mapTo(shortNames) { Uri.parse(it).lastPathSegment }
+        keys.mapNotNullTo(shortNames) { Uri.parse(it).lastPathSegment }
 
         AlertDialog.Builder(this).setTitle(R.string.recycleBin)
             .setNegativeButton(R.string.emptyRecycleBin) { _, _ -> recycleBin.clearCache() }
@@ -398,13 +398,13 @@ abstract class CoreActivity : DocumentActivity() {
                 if (!filesToRestore.isEmpty())
                     restoreFiles(filesToRestore)
             }
-            .setMultiChoiceItems(shortNames.toTypedArray(), null, { _, which, isChecked ->
+            .setMultiChoiceItems(shortNames.toTypedArray(), null) { _, which, isChecked ->
                 if (isChecked)
                     filesToRestore.add(keys[which])
                 else
                     filesToRestore.remove(keys[which])
-            })
-            .show()
+            }
+                .show()
     }
 
     /**

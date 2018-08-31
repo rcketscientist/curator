@@ -69,7 +69,7 @@ class TutorialActivity : GalleryActivity() {
             }
         }
 
-        dataRepo.updateGalleryStream(databaseIds)
+//        dataRepo.updateGalleryStream(databaseIds)
 
         val tutorial = ShowcaseView.Builder(this)//, true)
                 .setShowcaseDrawer(MorphShowcaseDrawer(resources, showcaseItemMargin))

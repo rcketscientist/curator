@@ -187,12 +187,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             builder.setNegativeButton(R.string.no) { _, _ -> offerRequestPermission() }
             builder.setPositiveButton(R.string.yes) { _, _ -> startActivity(Intent(this@GalleryActivity, TutorialActivity::class.java)) }
 
-            if (Constants.VariantCode > 9) {
-                builder.setMessage(R.string.welcomeTutorial)
-            } else {
-                builder.setMessage(R.string.welcomeMessage)
-            }
-
+            builder.setMessage(R.string.welcomeTutorial)
             builder.show()
         }
     }
@@ -207,7 +202,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         // Launch what's new dialog (will only be shown once)
         val whatsNewDialog = WhatsNewDialog(this)
-        whatsNewDialog.show(Constants.VariantCode == 8)
+        whatsNewDialog.show(false)
 
         galleryAdapter.notifyDataSetChanged()
     }

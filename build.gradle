@@ -10,11 +10,8 @@ buildscript {
 
         // Androidx
         annotationVersion = '1.0.0-rc01'
-        appcompatVersion = '1.0.0-rc01'
-        fragmentVersion = '1.0.0-rc01'
-        cardviewVersion = '1.0.0-rc01'
-        viewpagerVersion = '1.0.0-rc01'
-        ktx = '1.0.0-rc01'
+        cardviewVersion = '1.0.0-rc02'
+        ktx = '1.0.0-rc02'
 
         exifVersion = '1.0.0-rc01'
         materialVersion = '1.0.0-rc01'

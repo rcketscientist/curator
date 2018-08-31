@@ -100,40 +100,20 @@ public class SwapProvider extends ContentProvider  {
             }
         }
 
-	    Watermark wm = ImageUtil.getWatermark(getContext(), sourceUri);
-
         boolean success = false;
 	    try (
-			    ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(sourceUri, "r");
-			    ParcelFileDescriptor dest = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE)) {
-
-		    if (wm != null)
-		    {
-			    success = ImageProcessor.writeThumb(src.getFd(), 100,
-					    dest.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
-					    wm.getWaterWidth(), wm.getWaterHeight());
-		    }
-		    else
-		    {
-			    success = ImageProcessor.writeThumb(src.getFd(), 100, dest.getFd());
-		    }
+            ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(sourceUri, "r");
+            ParcelFileDescriptor dest = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE)) {
+            success = ImageProcessor.writeThumb(src.getFd(), 100, dest.getFd());
 	    }
-	    catch (IOException e)
-	    {
+	    catch (IOException e) {
 		    e.printStackTrace();
 	    }
 
 	    if (!success)
         {
             Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    Toast.makeText(getContext(), "Thumbnail generation failed.", Toast.LENGTH_LONG).show();
-                }
-            } );
+            handler.post(() -> Toast.makeText(getContext(), "Thumbnail generation failed.", Toast.LENGTH_LONG).show());
         }
 
         return ParcelFileDescriptor.open(swapFile, modeToMode(mode));

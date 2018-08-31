@@ -32,6 +32,7 @@ class AppDatabaseTest {
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var db: AppDatabase
+    private lateinit var dataRepo: DataRepository
     private lateinit var folderDao: FolderDao
     private lateinit var metadataDao: MetadataDao
     private lateinit var subjectDao: SubjectDao
@@ -197,15 +198,14 @@ class AppDatabaseTest {
         assertThat(subjectsFor2, hasItems(1L))
         assertThat(subjectsFor3, hasItems(7L))
 
-
-        val joinResult = metadataDao.allMetadata.blockingObserve()
+        val all = metadataDao.getImages(DataRepository.createFilterQuery(XmpFilter())).blockingObserve()
 
         // Ensure we don't have separate entities per junction match
-        assertThat(joinResult!!.size, equalTo(3))
+        assertThat(all!!.size, equalTo(3))
 
-        assertThat(joinResult[0].subjectIds, hasItems(1L, 2L))
-        assertThat(joinResult[1].subjectIds, hasItems(1L))
-        assertThat(joinResult[2].subjectIds, hasItems(7L))
+        assertThat(all[0].subjectIds, hasItems(1L, 2L))
+        assertThat(all[1].subjectIds, hasItems(1L))
+        assertThat(all[2].subjectIds, hasItems(7L))
     }
 
     @Test
@@ -217,14 +217,14 @@ class AppDatabaseTest {
         // subject: Cathedral
         var xmp = XmpValues(subject = listOf(cathedral))
         var filter = XmpFilter(xmp)
-        var result = metadataDao.getImages(filter).blockingObserve()
+        var result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         assertThat(result[0].subjectIds, hasItems(cathedral.id))
 
         // subject: National Park OR Europe
         xmp = XmpValues(subject = listOf(nationalPark, europe))
         filter = XmpFilter(xmp, false)
-        result = metadataDao.getImages(filter).blockingObserve()
+        result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         result.forEach {
             assertThat(it.subjectIds, anyOf(
@@ -236,7 +236,7 @@ class AppDatabaseTest {
         xmp = XmpValues(subject = listOf(europe), label = listOf(label))
         filter = XmpFilter(xmp, false)
 
-        result = metadataDao.getImages(filter).blockingObserve()
+        result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         result.forEach {
             assert(it.subjectIds.contains(europe.id) || it.label == label)
@@ -246,7 +246,7 @@ class AppDatabaseTest {
         xmp = XmpValues(subject = listOf(cathedral), label = listOf(label))
         filter = XmpFilter(xmp, true)
 
-        result = metadataDao.getImages(filter).blockingObserve()
+        result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(1))
         result.forEach {
             assert(it.subjectIds.contains(cathedral.id) || it.label == label)
