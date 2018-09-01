@@ -74,20 +74,6 @@ class ViewPagerFragment : Fragment() {
                 }
             })
             imageView.setOnClickListener {  }
-
-            val settings = PreferenceManager.getDefaultSharedPreferences(context)
-            settings.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-                setMetaVisibility()
-
-                when (key) {
-                    FullSettingsActivity.KEY_MetaSize -> {
-                        recreate()
-                    }
-                    FullSettingsActivity.KEY_ShowImageInterface -> {
-                        shouldShowInterface = sharedPreferences?.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true) ?: true
-                    }
-                }
-            }
         }
 
         val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
