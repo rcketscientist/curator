@@ -3,17 +3,14 @@ package com.anthonymandra.rawdroid.ui
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anthonymandra.framework.Histogram
-import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.AppExecutors
@@ -24,7 +21,6 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.full_image.*
 import kotlinx.android.synthetic.main.meta_panel.*
-import kotlinx.android.synthetic.main.viewer_pager.*
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ForkJoinPool
@@ -51,9 +47,14 @@ class ViewPagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (source != null) {
+        source?.let { source ->
+            if (!source.processed) {
+                // TODO: update meta
+            } else {
+                populateMeta()
+            }
             imageView.setRegionDecoderClass(RawImageRegionDecoder::class.java)
-            imageView.setImage(RawImageSource(source!!))
+            imageView.setImage(RawImageSource(source))
             imageView.setOnImageEventListener(object: SubsamplingScaleImageView.DefaultOnImageEventListener() {
                 override fun onImageLoaded(bitmap: WeakReference<Bitmap>) {
                     textViewScale?.post {
@@ -81,20 +82,12 @@ class ViewPagerFragment : Fragment() {
             imageView.isZoomEnabled = !it!!
         })
 
-        viewModel.isInterfaceVisible.observe(this, Observer { visible ->
-            val comparator = if (visible) "Never" else "Always"
-            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
-                tableLayoutMeta.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
-                histogramView.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
-                tableLayoutMeta.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
-                histogramView.visibility = View.INVISIBLE
-            }
+        viewModel.metadataVisibility.observe(this, Observer { visible ->
+            metaPanel.visibility = visible
+        })
+
+        viewModel.histogramVisibility.observe(this, Observer { visible ->
+            histogramView.visibility = visible
         })
 
         zoomButton.setOnCheckedChangeListener { _, isChecked ->
@@ -109,142 +102,37 @@ class ViewPagerFragment : Fragment() {
         }
     }
 
-    private fun showPanels() {
-        isInterfaceHidden = false
-        val settings = PreferenceManager.getDefaultSharedPreferences(activity)
-        activity?.runOnUiThread {
-            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Never") {
-                layoutNavButtons.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != "Never") {
-                tableLayoutMeta.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != "Never") {
-                histogramView.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != "Never") {
-                supportActionBar?.show()
-            }
-        }
-    }
-
-    private fun hidePanels() {
-        isInterfaceHidden = true
-        val settings = PreferenceManager.getDefaultSharedPreferences(activity)
-
-        activity?.runOnUiThread {
-            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Always") {
-                layoutNavButtons.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != "Always") {
-                tableLayoutMeta.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != "Always") {
-                histogramView.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != "Always") {
-                supportActionBar?.hide()
-            }
-        }
-    }
-
     fun togglePanels() {
-        if (isInterfaceHidden)
-            showPanels()
-        else
-            hidePanels()
-    }
-
-    private fun setMetaVisibility() {
-        // Initially set the interface to GONE to allow settings to implement
-        tableLayoutMeta.visibility = View.GONE
-        layoutNavButtons.visibility = View.GONE
-        histogramView.visibility = View.GONE
-
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-
-        // Default true
-        rowAperture.visibility =
-                if (settings.getBoolean(FullSettingsActivity.KEY_ExifAperture, true))
-                    View.VISIBLE
-                else
-                    View.GONE
-
-        rowDate.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifDate, true)) View.VISIBLE else View.GONE
-        rowExposure.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifExposure, true)) View.VISIBLE else View.GONE
-        rowFocal.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifFocal, true)) View.VISIBLE else View.GONE
-        rowModel.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifModel, true)) View.VISIBLE else View.GONE
-        rowIso.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifIso, true)) View.VISIBLE else View.GONE
-        rowLens.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifLens, true)) View.VISIBLE else View.GONE
-        rowName.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifName, true)) View.VISIBLE else View.GONE
-
-        // Default false
-        rowAltitude.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifAltitude, false)) View.VISIBLE else View.GONE
-        rowDimensions.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifDimensions, false)) View.VISIBLE else View.GONE
-        rowDriveMode.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifDriveMode, false)) View.VISIBLE else View.GONE
-        rowExposureMode.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifExposureMode, false)) View.VISIBLE else View.GONE
-        rowExposureProgram.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifExposureProgram, false)) View.VISIBLE else View.GONE
-        rowFlash.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifFlash, false)) View.VISIBLE else View.GONE
-        rowLatitude.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifLatitude, false)) View.VISIBLE else View.GONE
-        rowLongitude.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifLongitude, false)) View.VISIBLE else View.GONE
-        rowWhiteBalance.visibility = if (settings.getBoolean(FullSettingsActivity.KEY_ExifWhiteBalance, false)) View.VISIBLE else View.GONE
+        viewModel.toggleInterface()     // TODO: Just call this directly in ssiv.onCLick
     }
 
     @SuppressLint("SetTextI18n")
-    private fun populateMeta(image: MetadataTest) {
-        if (textViewDate == null) {
-            Toast.makeText(this,
-                    "Could not access metadata views, please email me!",
-                    Toast.LENGTH_LONG).show()
-            return
+    private fun populateMeta() {
+        source?.let { image ->
+            val timestamp = image.timestamp
+            if (timestamp != null) {
+                val d = Date(timestamp)
+                val df = DateFormat.getDateFormat(activity)
+                val tf = DateFormat.getTimeFormat(activity)
+                textViewDate.text = df.format(d) + " " + tf.format(d)
+            }
+            textViewModel.text = image.model
+            textViewIso.text = image.iso
+            textViewExposure.text = image.exposure
+            textViewAperture.text = image.exposure
+            textViewFocal.text = image.focalLength
+            textViewDimensions.text = "$image.width x $image.height"
+            textViewAlt.text = image.altitude
+            textViewFlash.text = image.flash
+            textViewLat.text = image.latitude
+            textViewLon.text = image.longitude
+            textViewName.text = image.name
+            textViewWhiteBalance.text = image.whiteBalance
+            textViewLens.text = image.lens
+            textViewDriveMode.text = image.driveMode
+            textViewExposureMode.text = image.exposureMode
+            textViewExposureProgram.text = image.exposureProgram
         }
-
-        val timestamp = image.timestamp
-        if (timestamp != null) {
-            val d = Date(timestamp)
-            val df = DateFormat.getDateFormat(this)
-            val tf = DateFormat.getTimeFormat(this)
-            textViewDate.text = df.format(d) + " " + tf.format(d)
-        }
-        textViewModel.text = image.model
-        textViewIso.text = image.iso
-        textViewExposure.text = image.exposure
-        textViewAperture.text = image.exposure
-        textViewFocal.text = image.focalLength
-        textViewDimensions.text = "$image.width x $image.height"
-        textViewAlt.text = image.altitude
-        textViewFlash.text = image.flash
-        textViewLat.text = image.latitude
-        textViewLon.text = image.longitude
-        textViewName.text = image.name
-        textViewWhiteBalance.text = image.whiteBalance
-        textViewLens.text = image.lens
-        textViewDriveMode.text = image.driveMode
-        textViewExposureMode.text = image.exposureMode
-        textViewExposureProgram.text = image.exposureProgram
-
-
-    }
-
-
-    private fun clearMeta() {
-        textViewDate.text = ""
-        textViewModel.text = ""
-        textViewIso.text = ""
-        textViewExposure.text = ""
-        textViewAperture.text = ""
-        textViewFocal.text = ""
-        textViewDimensions.text = ""
-        textViewAlt.text = ""
-        textViewFlash.text = ""
-        textViewLat.text = ""
-        textViewLon.text = ""
-        textViewName.text = ""
-        textViewWhiteBalance.text = ""
-        textViewLens.text = ""
-        textViewDriveMode.text = ""
-        textViewExposureMode.text = ""
-        textViewExposureProgram.text = ""
     }
 
     private fun updateHistogram(bitmap: Bitmap) {

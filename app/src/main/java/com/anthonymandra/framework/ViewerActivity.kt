@@ -167,14 +167,6 @@ abstract class ViewerActivity : CoreActivity(),
 //        imageButtonNext.setOnClickListener(NextImageClickListener())
     }
 
-    override fun onImageAdded(item: MetadataTest) {
-        mMediaItems.add(item)
-    }
-
-    override fun onImageRemoved(item: MetadataTest) {
-        mMediaItems.remove(item)
-    }
-
     private fun setDisplayMetrics() {
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)

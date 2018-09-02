@@ -140,7 +140,7 @@
     <string name="prefSummaryTopMargin">Distance from top edge of image to top edge of watermark: %s</string>
     <string name="prefSummaryBottomMargin">Distance from bottom edge of image to bottom edge of watermark: %s</string>
     <string name="prefTitleUseImmersive">Use Immersive</string>
-    <string name="prefSummaryUseImmersive">(Android 4.4+) Hide nav and status bars until swiped in.</string>
+    <string name="prefSummaryUseImmersive">Hide nav and status bars until swiped in.</string>
     <string name="prefTitleShareFormat">Share Format</string>
     <string name="prefTitleEditFormat">Edit Format</string>
     <string name="prefAutoSummary">%s</string>

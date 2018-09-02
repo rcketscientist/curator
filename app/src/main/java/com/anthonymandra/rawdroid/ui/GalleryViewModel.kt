@@ -14,7 +14,6 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
-import kotlinx.android.synthetic.main.meta_panel.*
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     //TODO: Split out viewer viewmodel
@@ -26,13 +25,30 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
 
-    private val _isInterfaceVisible: MutableLiveData<Boolean> = MutableLiveData()
-    val isInterfaceVisible: LiveData<Boolean>
-        get() = _isInterfaceVisible
+    /**
+     * Overall visibility state of the interface
+     */
+    private var isInterfaceVisible = true
+
+    private val _metadataVisibility: MutableLiveData<Int> = MutableLiveData()
+    val metadataVisibility: LiveData<Int>
+        get() = _metadataVisibility
+
+    private val _navigationVisibility: MutableLiveData<Int> = MutableLiveData()
+    val navigationVisibility: LiveData<Int>
+        get() = _navigationVisibility
+
+    private val _toolbarVisibility: MutableLiveData<Boolean> = MutableLiveData()
+    val toolbarVisibility: LiveData<Boolean>
+        get() = _toolbarVisibility
+
+    private val _histogramVisibility: MutableLiveData<Int> = MutableLiveData()
+    val histogramVisibility: LiveData<Int>
+        get() = _histogramVisibility
 
     val metaVisibility = MetaVisibility()
 
-    private var shouldShowInterface = true;
+    private var shouldShowInterface = true
 
     init {
         imageList = Transformations.switchMap(filter) { filter ->
@@ -49,8 +65,40 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         _isZoomLocked.value = zoomLocked
     }
 
-    fun onInterfaceVisibilityChanged(visible: Boolean) {
-        _isInterfaceVisible.value = visible
+    fun hideInterface() {
+        isInterfaceVisible = false
+        updateInterfaceVisibility()
+    }
+
+    fun showInterface() {
+        isInterfaceVisible = true
+        updateInterfaceVisibility()
+    }
+
+    fun toggleInterface() {
+        isInterfaceVisible = !isInterfaceVisible
+        updateInterfaceVisibility()
+    }
+
+    private fun updateInterfaceVisibility() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(getApplication()) // TODO: store?
+        // If visible show everything but "never
+        // If hidden hide everything but "always"
+        val comparator = if (shouldShowInterface) "Never" else "Always"
+        val visibility = if(shouldShowInterface) View.VISIBLE else View.INVISIBLE
+        // TODO: Change this to always set the value based on isInterfaceVisible && state
+        if (prefs.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
+            _histogramVisibility.value = visibility
+        }
+        if (prefs.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
+            _metadataVisibility.value = visibility
+        }
+        if (prefs.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
+            _navigationVisibility.value = visibility
+        }
+        if (prefs.getString(FullSettingsActivity.KEY_ShowToolbar, "Automatic") != comparator) {
+            _toolbarVisibility.value = isInterfaceVisible
+        }
     }
 
     fun setFilter(filter: XmpFilter) {
@@ -58,7 +106,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     }
     
     private fun updatePreferences(prefs: SharedPreferences) {
-        shouldShowInterface = prefs.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true)
+//        shouldShowInterface = prefs.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true)
         // Default true
         metaVisibility.Aperture = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifAperture, true)) View.VISIBLE else View.GONE
         metaVisibility.Date = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifDate, true)) View.VISIBLE else View.GONE
@@ -79,38 +127,28 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         metaVisibility.Latitude = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifLatitude, false)) View.VISIBLE else View.GONE
         metaVisibility.Longitude = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifLongitude, false)) View.VISIBLE else View.GONE
         metaVisibility.WhiteBalance = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifWhiteBalance, false)) View.VISIBLE else View.GONE
-
-        val comparator = if (shouldShowInterface) "Never" else "Always"
-        val visibility = if(shouldShowInterface) View.VISIBLE else View.INVISIBLE
-        if (prefs.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
-            metaVisibility.Metadata =visibility
-        }
-        if (prefs.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
-            histogramView.visibility = visibility
-        }
     }
     
     data class MetaVisibility(
-        var Histogram: Int = View.VISIBLE,
-        var Metadata: Int = View.VISIBLE,
-        var Aperture: Int = View.VISIBLE,
-        var Date: Int = View.VISIBLE,
-        var Exposure: Int = View.VISIBLE,
-        var Focal: Int = View.VISIBLE,
-        var Model: Int = View.VISIBLE,
-        var Iso: Int = View.VISIBLE,
-        var Lens: Int = View.VISIBLE,
-        var Name: Int = View.VISIBLE,
+        // Default meta
+            var Aperture: Int = View.VISIBLE,
+            var Date: Int = View.VISIBLE,
+            var Exposure: Int = View.VISIBLE,
+            var Focal: Int = View.VISIBLE,
+            var Model: Int = View.VISIBLE,
+            var Iso: Int = View.VISIBLE,
+            var Lens: Int = View.VISIBLE,
+            var Name: Int = View.VISIBLE,
 
-        // Default false
-        var Altitude: Int = View.GONE,
-        var Dimensions: Int = View.GONE,
-        var DriveMode: Int = View.GONE,
-        var ExposureMode: Int = View.GONE,
-        var ExposureProgram: Int = View.GONE,
-        var Flash: Int = View.GONE,
-        var Latitude: Int = View.GONE,
-        var Longitude: Int = View.GONE,
-        var WhiteBalance: Int = View.GONE
+        // Default hidden
+            var Altitude: Int = View.GONE,
+            var Dimensions: Int = View.GONE,
+            var DriveMode: Int = View.GONE,
+            var ExposureMode: Int = View.GONE,
+            var ExposureProgram: Int = View.GONE,
+            var Flash: Int = View.GONE,
+            var Latitude: Int = View.GONE,
+            var Longitude: Int = View.GONE,
+            var WhiteBalance: Int = View.GONE
     )
 }

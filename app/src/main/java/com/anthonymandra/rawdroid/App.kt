@@ -35,7 +35,7 @@ class App : Application() {
 
         if (BuildConfig.DEBUG) {
             StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
+//                .detectDiskReads()    // TODO: VERY tmeporary, unknown source for a read...
                 .detectDiskWrites()
                 .detectNetwork()   // or .detectAll() for all detectable problems
                 .penaltyLog()

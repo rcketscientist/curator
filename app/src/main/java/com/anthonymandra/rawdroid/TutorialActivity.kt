@@ -283,7 +283,7 @@ class TutorialActivity : GalleryActivity() {
                     tutorial.setContentText(getString(R.string.tutorialRecycleText))
                     setTutorialActionView(tutorial, R.id.menu_recycle, true)
                 }
-                19 // Actionbar help
+                19 // Toolbar help
                 -> {
                     tutorial.setContentTitle(getString(R.string.tutorialActionbarHelpTitle))
                     tutorial.setContentText(getString(R.string.tutorialActionbarHelpText))

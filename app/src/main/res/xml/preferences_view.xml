@@ -6,11 +6,11 @@
             android:key="prefKeyUseImmersive"
             android:summary="@string/prefSummaryUseImmersive"
             android:title="@string/prefTitleUseImmersive" />
-        <CheckBoxPreference
+<!--        <CheckBoxPreference
             android:defaultValue="true"
             android:key="prefKeyShowImageInterface"
             android:summary="@string/prefSummaryImageInterface"
-            android:title="@string/prefTitleImageInterface" />
+            android:title="@string/prefTitleImageInterface" />-->
         <ListPreference
             android:defaultValue="Medium"
             android:key="prefKeyMetaSize"

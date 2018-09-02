@@ -1,6 +1,5 @@
 package com.anthonymandra.rawdroid
 
-import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,7 +8,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.text.format.DateFormat
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -28,7 +26,6 @@ import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.ImageUtil
-import com.eftimoff.viewpagertransformers.DepthPageTransformer
 import kotlinx.android.synthetic.main.meta_panel.*
 import kotlinx.android.synthetic.main.viewer_pager.*
 import java.util.*
@@ -40,8 +37,6 @@ class ViewerActivity : CoreActivity() {
     private var currentImage: MetadataTest? = null
 
     private var autoHide = Timer()
-    private var isInterfaceHidden: Boolean = false  //TODO: viewmodel
-    private var shouldShowInterface = true
 
     override val selectedImages: Collection<MetadataTest>
         get() = listOfNotNull(viewerAdapter.getImage(pager.currentItem))
@@ -60,28 +55,14 @@ class ViewerActivity : CoreActivity() {
         setSupportActionBar(viewerToolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        setMetaVisibility()
         val metrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(metrics)
         displayWidth = metrics.widthPixels
         displayHeight = metrics.heightPixels
 
         val settings = PreferenceManager.getDefaultSharedPreferences(this)
-        settings.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            setMetaVisibility()
-
-            when (key) {
-                FullSettingsActivity.KEY_MetaSize -> {
-                    recreate()
-                }
-                FullSettingsActivity.KEY_ShowImageInterface -> {
-                    shouldShowInterface = sharedPreferences?.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true) ?: true
-                }
-            }
-        }
 
         isImmersive = settings.getBoolean(FullSettingsActivity.KEY_UseImmersive, true)
-        shouldShowInterface = settings.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true)
 
         viewerAdapter = ViewerAdapter(supportFragmentManager)
 
@@ -92,21 +73,15 @@ class ViewerActivity : CoreActivity() {
             pager.setCurrentItem(intent.getIntExtra(EXTRA_START_INDEX, 0), false)
         })
 
-        viewModel.isInterfaceVisible.observe(this, Observer { visible ->
-            val comparator = if (visible) "Never" else "Always"
-            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
-                layoutNavButtons.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != comparator) {
-                supportActionBar?.show()
-            }
+        viewModel.navigationVisibility.observe(this, Observer { visible ->
+            layoutNavButtons.visibility = visible
+        })
 
-            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
-                layoutNavButtons.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != comparator) {
+        viewModel.toolbarVisibility.observe(this, Observer { visible ->
+            if (visible)
+                supportActionBar?.show()
+            else
                 supportActionBar?.hide()
-            }
         })
 
         viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
@@ -126,7 +101,6 @@ class ViewerActivity : CoreActivity() {
                 autoHide.cancel()
                 autoHide = Timer()
                 autoHide.schedule(AutoHideMetaTask(), 3000)
-                updateImageDetails()
             }
         })
         // TODO: Jetifier not working on page transformer
@@ -142,7 +116,7 @@ class ViewerActivity : CoreActivity() {
                         val meta = intent.getParcelableExtra<MetadataTest>(MetaService.EXTRA_METADATA)
                         currentImage?.let {
                             if (it.uri == uri) {
-                                populateMeta(meta)
+//                                populateMeta(meta)    TODO: This needs to move to fragment, possibly auto-update via livedata
                             }
                         }
                     }
@@ -161,74 +135,9 @@ class ViewerActivity : CoreActivity() {
         super.onBackPressed()
     }
 
-    private fun showPanels() {
-        isInterfaceHidden = false
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-        runOnUiThread {
-            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Never") {
-                layoutNavButtons.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != "Never") {
-                tableLayoutMeta.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != "Never") {
-                histogramView.visibility = View.VISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != "Never") {
-                supportActionBar?.show()
-            }
-        }
-    }
-
-    private fun hidePanels() {
-        isInterfaceHidden = true
-        val settings = PreferenceManager.getDefaultSharedPreferences(this)
-
-        runOnUiThread {
-            if (settings.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != "Always") {
-                layoutNavButtons.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != "Always") {
-                tableLayoutMeta.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != "Always") {
-                histogramView.visibility = View.INVISIBLE
-            }
-            if (settings.getString(FullSettingsActivity.KEY_ShowToolbar, "Always") != "Always") {
-                supportActionBar?.hide()
-            }
-        }
-    }
-
     fun togglePanels() {
         autoHide.cancel()
-
-        if (isInterfaceHidden)
-            showPanels()
-        else
-            hidePanels()
-    }
-
-    protected fun updateMetaData() {
-        clearMeta()    // clear panel during load to avoid confusion
-
-        currentImage?.let {
-            if (!it.processed)
-                MetaWakefulReceiver.startPriorityMetaService(this@ViewerActivity, Uri.parse(it.uri))
-            else {
-                populateMeta(it)
-            }
-        }
-    }
-
-    private fun updateImageDetails() {
-        updateMetaData()
-
-
-
-//        updateHistogram(currentBitmap)
-        if(shouldShowInterface)
-            showPanels()
+        viewModel.toggleInterface()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -296,21 +205,9 @@ class ViewerActivity : CoreActivity() {
 
     override fun updateMessage(message: String?) {}
 
-    override fun onImageAdded(item: MetadataTest) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onImageRemoved(item: MetadataTest) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onImageSetChanged() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     private inner class AutoHideMetaTask : TimerTask() {
         override fun run() {
-            viewModel.onInterfaceVisibilityChanged(false)
+            viewModel.hideInterface()
         }
     }
 

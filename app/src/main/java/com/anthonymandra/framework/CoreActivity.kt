@@ -34,6 +34,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -345,21 +346,27 @@ abstract class CoreActivity : DocumentActivity() {
      * Create swap directory or clear the contents
      */
     private fun createSwapDir() {
-        mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR)
-        if (!mSwapDir.exists()) {
-            mSwapDir.mkdirs()
-        }
+        Completable.fromAction {
+            mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR)
+            if (!mSwapDir.exists()) {
+                mSwapDir.mkdirs()
+            }
+        }.subscribeBy(
+            // TODO:
+            onComplete = {},
+            onError = {}
+        )
     }
 
     private fun clearSwapDir() {
-        Thread(Runnable {
-            val swapFiles = mSwapDir.listFiles()
-            if (swapFiles != null) {
-                for (toDelete in swapFiles) {
-                    toDelete.delete()
-                }
-            }
-        }).start()
+        Observable.fromIterable(mSwapDir.listFiles().asList())
+            .subscribeOn(Schedulers.from(AppExecutors.DISK))
+            .subscribeBy(
+                //TODO:
+                onError = {},
+                onComplete = {},
+                onNext = { it.delete() }
+            )
     }
 
     private fun createRecycleBin() {
@@ -642,7 +649,6 @@ abstract class CoreActivity : DocumentActivity() {
                 },
                 onComplete = {
                     endProgress()
-                    onImageSetChanged()
 
                     // When the loop is finished, updates the notification
                     builder.setContentText("Complete")
@@ -723,7 +729,6 @@ abstract class CoreActivity : DocumentActivity() {
                 builder.setProgress(images.size, progress, false)
                 notificationManager.notify(0, builder.build())
 
-//                onImageAdded(destinationFile.uri)
                 destinationFile.uri
             }
             .observeOn(Schedulers.from(AppExecutors.MAIN))
@@ -740,7 +745,6 @@ abstract class CoreActivity : DocumentActivity() {
                 },
                 onComplete = {
                     endProgress()
-                    onImageSetChanged()
 
                     // When the loop is finished, updates the notification
                     builder.setContentText("Complete")
@@ -782,7 +786,6 @@ abstract class CoreActivity : DocumentActivity() {
 
             images.forEach { toDelete ->
                 if (deleteAssociatedFiles(toDelete)) {
-//                    onImageRemoved(Uri.parse(toDelete.uri))
                     DataRepository.getInstance(this).deleteImage(toDelete)
                 }
             }
@@ -796,7 +799,6 @@ abstract class CoreActivity : DocumentActivity() {
             .subscribeBy(
                 onComplete = {
                     clearWriteResume()
-                    onImageSetChanged()
                 },
                 onError = {
                     builder.setContentText("Some images did not transfer")
@@ -839,22 +841,16 @@ abstract class CoreActivity : DocumentActivity() {
                 }
 
                 remainingImages.remove(toRecycle)
-//                onImageRemoved(toRecycle)
             }
-
-            // TODO: FIXME
-//            MetaUtil.updateMetaDatabase(this@CoreActivity, dbDeletes)
             return null
         }
 
         override fun onPostExecute(result: Void) {
 //            if (!this@CoreActivity.isDestroyed && mProgressDialog != null)
 //                mProgressDialog!!.dismiss()
-            onImageSetChanged()
         }
 
         override fun onCancelled() {
-            onImageSetChanged()
         }
 
         override fun onCancel(dialog: DialogInterface) {
@@ -892,9 +888,6 @@ abstract class CoreActivity : DocumentActivity() {
 
                     val uri = Uri.fromFile(recycledFile)
                     moveFile(uri, toRestore)
-//                    onImageAdded(toRestore)
-                    // TODO: FIXME
-//                    dbInserts.add(MetaUtil.newInsert(this@CoreActivity, toRestore))
                 } catch (e: DocumentActivity.WritePermissionException) {
                     e.printStackTrace()
                     totalSuccess = false
@@ -913,7 +906,6 @@ abstract class CoreActivity : DocumentActivity() {
                 clearWriteResume()
             else
                 Snackbar.make(rootView, R.string.restoreFail, Snackbar.LENGTH_LONG).show()
-            onImageSetChanged()
         }
     }
 
@@ -1054,23 +1046,6 @@ abstract class CoreActivity : DocumentActivity() {
     abstract fun incrementProgress()
     abstract fun endProgress()
     abstract fun updateMessage(message: String?)
-
-    /**
-     * Fires after individual items are successfully added.  This will fire multiple times in a batch.
-     * @param item added item
-     */
-    protected abstract fun onImageAdded(item: MetadataTest)
-
-    /**
-     * Fires after individual items are successfully deleted.  This will fire multiple times in a batch.
-     * @param item deleted item
-     */
-    protected abstract fun onImageRemoved(item: MetadataTest)
-
-    /**
-     * Fires after all actions of a batch (or single) change to the image set are complete.
-     */
-    protected abstract fun onImageSetChanged()
 
     companion object {
 //        private val TAG = CoreActivity::class.java.simpleName

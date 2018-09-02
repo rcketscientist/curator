@@ -398,12 +398,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         startActivityForResult(intent, REQUEST_COPY_DIR)
     }
 
-    override fun onImageSetChanged() { }
-
-    override fun onImageAdded(item: MetadataTest) { }
-
-    override fun onImageRemoved(item: MetadataTest) { }
-
     protected fun removeDatabaseReference(toRemove: Long) {
         dataRepo.deleteImage(toRemove)
     }
