@@ -103,10 +103,6 @@ class ViewPagerFragment : Fragment() {
         }
     }
 
-    fun togglePanels() {
-        viewModel.toggleInterface()     // TODO: Just call this directly in ssiv.onCLick
-    }
-
     @SuppressLint("SetTextI18n")
     private fun populateMeta() {
         source?.let { image ->
@@ -122,7 +118,7 @@ class ViewPagerFragment : Fragment() {
             textViewExposure.text = image.exposure
             textViewAperture.text = image.exposure
             textViewFocal.text = image.focalLength
-            textViewDimensions.text = "$image.width x $image.height"
+            textViewDimensions.text = "${image.width} x ${image.height}"
             textViewAlt.text = image.altitude
             textViewFlash.text = image.flash
             textViewLat.text = image.latitude

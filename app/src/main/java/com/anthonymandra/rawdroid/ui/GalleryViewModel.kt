@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.anthonymandra.framework.MetaService
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
@@ -48,8 +49,6 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
     val metaVisibility = MetaVisibility()
 
-    private var shouldShowInterface = true
-
     init {
         imageList = Transformations.switchMap(filter) { filter ->
             LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build() }
@@ -84,8 +83,8 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(getApplication()) // TODO: store?
         // If visible show everything but "never
         // If hidden hide everything but "always"
-        val comparator = if (shouldShowInterface) "Never" else "Always"
-        val visibility = if(shouldShowInterface) View.VISIBLE else View.INVISIBLE
+        val comparator = if (isInterfaceVisible) "Never" else "Always"
+        val visibility = if(isInterfaceVisible) View.VISIBLE else View.INVISIBLE
         // TODO: Change this to always set the value based on isInterfaceVisible && state
         if (prefs.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
             _histogramVisibility.postValue(visibility)
