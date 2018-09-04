@@ -30,7 +30,6 @@ class ViewPagerFragment : Fragment() {
     private var histogramSubscription: Disposable? = null
     private val viewModel: GalleryViewModel by lazy {
         ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java) }
-    private var isInterfaceHidden: Boolean = false  //TODO: viewmodel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.full_image, container, false)
@@ -46,15 +45,15 @@ class ViewPagerFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        source?.let { source ->
-            if (!source.processed) {
+        // TODO: this let never enters...
+//        source?.let { image ->
+            if (!source!!.processed) {
                 // TODO: update meta
             } else {
                 populateMeta()
             }
             imageView.setRegionDecoderClass(RawImageRegionDecoder::class.java)
-            imageView.setImage(RawImageSource(source))
+            imageView.setImage(RawImageSource(source!!))
             imageView.setOnImageEventListener(object: SubsamplingScaleImageView.DefaultOnImageEventListener() {
                 override fun onImageLoaded(bitmap: WeakReference<Bitmap>) {
                     textViewScale?.post {
@@ -74,8 +73,10 @@ class ViewPagerFragment : Fragment() {
                     }
                 }
             })
-            imageView.setOnClickListener {  }
-        }
+            imageView.setOnClickListener {
+                viewModel.toggleInterface() //TODO: This needs to cancel the
+            }
+//        }
 
         val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
         viewModel.isZoomLocked.observe(this, Observer {

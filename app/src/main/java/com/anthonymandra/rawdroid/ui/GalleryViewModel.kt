@@ -88,16 +88,16 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         val visibility = if(shouldShowInterface) View.VISIBLE else View.INVISIBLE
         // TODO: Change this to always set the value based on isInterfaceVisible && state
         if (prefs.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
-            _histogramVisibility.value = visibility
+            _histogramVisibility.postValue(visibility)
         }
         if (prefs.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
-            _metadataVisibility.value = visibility
+            _metadataVisibility.postValue(visibility)
         }
         if (prefs.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
-            _navigationVisibility.value = visibility
+            _navigationVisibility.postValue(visibility)
         }
         if (prefs.getString(FullSettingsActivity.KEY_ShowToolbar, "Automatic") != comparator) {
-            _toolbarVisibility.value = isInterfaceVisible
+            _toolbarVisibility.postValue(isInterfaceVisible)
         }
     }
 
