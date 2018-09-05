@@ -20,13 +20,12 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val dataRepo = (app as App).dataRepo
 
     val imageList: LiveData<PagedList<MetadataTest>>
+    val filteredCount: LiveData<Int>
+    val filteredProcessedCount: LiveData<Int>
     val filter: MutableLiveData<XmpFilter> = MutableLiveData()
     private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
-
-    val count = dataRepo.getCount()
-    val processedCount = dataRepo.getProcessedCount()
 
     /**
      * Overall visibility state of the interface
@@ -53,7 +52,17 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
     init {
         imageList = Transformations.switchMap(filter) { filter ->
-            LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build() }
+            LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build()
+        }
+
+        filteredCount = Transformations.switchMap(filter) { filter ->
+            dataRepo.getImageCount(filter)
+        }
+
+        filteredProcessedCount = Transformations.switchMap(filter) { filter ->
+            dataRepo.getProcessedCount(filter)
+        }
+
         _isZoomLocked.value = false
 
         val settings = PreferenceManager.getDefaultSharedPreferences(app)

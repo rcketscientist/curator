@@ -53,6 +53,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     private var mMaterialCab: MaterialCab? = null
     private var mXmpFilterFragment: XmpFilterFragment? = null
     private val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
+    private var imageCount = 0
 
     protected val isContextModeActive: Boolean
         get() = mMaterialCab?.isActive ?: false
@@ -105,6 +106,15 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         viewModel.imageList.observe(this, Observer {
             galleryAdapter.submitList(it)
             setImageCountTitle(it?.size ?: 0)
+        })
+
+        viewModel.filteredCount.observe(this, Observer {
+            imageCount = it
+            galleryToolbar?.title = "$imageCount Images"
+        })
+
+        viewModel.filteredProcessedCount.observe(this, Observer {
+            galleryToolbar.subtitle = "$it of $imageCount"
         })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)

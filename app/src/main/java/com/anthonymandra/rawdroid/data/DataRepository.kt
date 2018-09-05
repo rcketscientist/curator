@@ -43,12 +43,29 @@ class DataRepository private constructor(private val database: AppDatabase) {
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
     fun imageBlocking(uri: String) = database.metadataDao().blocking(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
-    fun getProcessedCount() = database.metadataDao().processedCount()
-    fun getCount() = database.metadataDao().count()
+    fun unprocessedImages() = database.metadataDao().unprocessedImages(ALL_FILTER)
+    fun getUnprocessedCount() = database.metadataDao().unprocessedCount(ALL_FILTER)
+    fun getProcessedCount() = database.metadataDao().processedCount(ALL_FILTER)
+    fun getCount() = database.metadataDao().count(ALL_FILTER)
+
+    fun getImageCount(filter: XmpFilter) : LiveData<Int> {
+        return database.metadataDao().count(createFilterQuery(filter))
+    }
+
+    fun getUnprocessedCount(filter: XmpFilter) : LiveData<Int> {
+        return database.metadataDao().unprocessedCount(createFilterQuery(filter))
+    }
+
+    fun getUnprocessedImages(filter: XmpFilter) : List<MetadataTest> {  // TODO: Everything should be live
+        return database.metadataDao().unprocessedImages(createFilterQuery(filter))
+    }
+
+    fun getProcessedCount(filter: XmpFilter) : LiveData<Int> {
+        return database.metadataDao().processedCount(createFilterQuery(filter))
+    }
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
 
-    fun unprocessedImages() = database.metadataDao().unprocessedImages()
 
     fun deleteImage(id: Long) {
         Completable.fromAction { database.metadataDao().delete(id) }
@@ -197,6 +214,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
                         " LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
         private const val groupBy = " GROUP BY meta.id"
 
+        val ALL_FILTER = createFilterQuery(XmpFilter())
         fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
             val query = StringBuilder()
             val selection = StringBuilder()

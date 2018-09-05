@@ -12,7 +12,7 @@ abstract class MetadataDao {
     abstract val allImages: LiveData<List<MetadataEntity>>
 
     @Query("SELECT COUNT(*) FROM meta")
-    abstract fun count(): LiveData<Int>
+    abstract fun count(query: SupportSQLiteQuery): LiveData<Int>
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
     abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
@@ -42,13 +42,13 @@ abstract class MetadataDao {
 
     @Transaction
     @Query("SELECT * FROM meta WHERE processed = 0")    // 0 = false
-    abstract fun unprocessedImages() : List<MetadataTest>
+    abstract fun unprocessedImages(query: SupportSQLiteQuery) : List<MetadataTest>
 
     @Query("SELECT COUNT(*) FROM meta WHERE processed = 0")    // 0 = false
-    abstract fun unprocessedCount() : LiveData<Int>
+    abstract fun unprocessedCount(query: SupportSQLiteQuery) : LiveData<Int>
 
     @Query("SELECT COUNT(*) FROM meta WHERE processed = 1")    // 1 = true
-    abstract fun processedCount() : LiveData<Int>
+    abstract fun processedCount(query: SupportSQLiteQuery) : LiveData<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(datum: MetadataEntity): Long
