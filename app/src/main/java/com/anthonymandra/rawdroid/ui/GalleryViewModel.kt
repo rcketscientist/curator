@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.anthonymandra.framework.MetaService
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
@@ -25,6 +24,9 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
+
+    val count = dataRepo.getCount()
+    val processedCount = dataRepo.getProcessedCount()
 
     /**
      * Overall visibility state of the interface
@@ -103,7 +105,8 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     fun setFilter(filter: XmpFilter) {
         this.filter.value = filter
     }
-    
+
+    // TODO: Remove android framework references
     private fun updatePreferences(prefs: SharedPreferences) {
 //        shouldShowInterface = prefs.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true)
         // Default true

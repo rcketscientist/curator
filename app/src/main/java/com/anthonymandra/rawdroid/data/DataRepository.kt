@@ -43,6 +43,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
     fun imageBlocking(uri: String) = database.metadataDao().blocking(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
+    fun getProcessedCount() = database.metadataDao().processedCount()
+    fun getCount() = database.metadataDao().count()
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
 
