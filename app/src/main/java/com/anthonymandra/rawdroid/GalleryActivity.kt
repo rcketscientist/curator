@@ -105,7 +105,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         viewModel.imageList.observe(this, Observer {
             galleryAdapter.submitList(it)
-            setImageCountTitle(it?.size ?: 0)
         })
 
         viewModel.filteredCount.observe(this, Observer {
@@ -237,10 +236,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         builder.create().show()
     }
 
-    private fun setImageCountTitle(count: Int) {
-        supportActionBar?.title = count.toString() + " Images"
-    }
-
     private fun scanRawFiles() {
         toolbarProgress.visibility = View.VISIBLE
         toolbarProgress.isIndeterminate = true        //TODO: Determinate?
@@ -299,10 +294,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         //			return;
         //		}
         copyImages(mItemsForIntent, destination)
-    }
-
-    override fun updateMessage(message: String?) {
-        galleryToolbar.subtitle = message
     }
 
     override fun setMaxProgress(max: Int) {
@@ -503,10 +494,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     private val messageReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                MetaService.BROADCAST_IMAGE_PARSED -> galleryToolbar.subtitle = StringBuilder()
-                    .append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
-                    .append(" of ")
-                    .append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1))//mGalleryAdapter.getCount()));
                 MetaService.BROADCAST_PROCESSING_COMPLETE -> galleryToolbar.subtitle = "Updating..."
                 MetaService.BROADCAST_PARSE_COMPLETE -> {
                     toolbarProgress.visibility = View.GONE
@@ -517,7 +504,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                     toolbarProgress.isIndeterminate = true
                     galleryToolbar.subtitle = "Searching..."
                 }
-                SearchService.BROADCAST_FOUND_IMAGES -> galleryToolbar.title = intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0).toString() + " Images"
                 SearchService.BROADCAST_SEARCH_COMPLETE -> {
                     val images = intent.getLongArrayExtra(SearchService.EXTRA_IMAGE_IDS)
                     if (images.isEmpty()) {

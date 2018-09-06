@@ -1045,7 +1045,6 @@ abstract class CoreActivity : DocumentActivity() {
     abstract fun setMaxProgress(max: Int)
     abstract fun incrementProgress()
     abstract fun endProgress()
-    abstract fun updateMessage(message: String?)
 
     companion object {
 //        private val TAG = CoreActivity::class.java.simpleName
