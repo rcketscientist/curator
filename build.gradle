@@ -22,6 +22,7 @@ buildscript {
         roomVersion = '2.0.0-rc01'
         pagingVersion = '2.0.0-rc01'
         coreTestingVersion = '2.0.0-beta01'
+        workVersion = '1.0.0-alpha08'
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.0-alpha08'
