@@ -45,23 +45,22 @@ class DataRepository private constructor(private val database: AppDatabase) {
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
     fun getImageCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
-        return database.metadataDao().count(createFilterQuery(filter))
+        return database.metadataDao().count(createFilterQuery(countQuery(filter)))
     }
 
     fun getUnprocessedCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
-        return database.metadataDao().count(createFilterQuery(filter, countQuery, arrayOf(whereUnprocessed)))
-    }
-
-    fun getUnprocessedImages(filter: XmpFilter = XmpFilter()) : LiveData<List<MetadataTest>> {
-        return database.metadataDao().getImages(createFilterQuery(filter, imageQuery, arrayOf(whereUnprocessed)))
+        return database.metadataDao().count(createFilterQuery(countUnprocessedQuery(filter)))
     }
 
     fun getProcessedCount(filter: XmpFilter  = XmpFilter()) : LiveData<Int> {
-        return database.metadataDao().count(createFilterQuery(filter, countQuery, arrayOf(whereProcessed)))
+        return database.metadataDao().count(createFilterQuery(countProcessedQuery(filter)))
+    }
+
+    fun getUnprocessedImages(filter: XmpFilter = XmpFilter()) : LiveData<List<MetadataTest>> {
+        return database.metadataDao().getImages(createFilterQuery(imageUnprocessedQuery(filter)))
     }
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
-
 
     fun deleteImage(id: Long) {
         Completable.fromAction { database.metadataDao().delete(id) }
@@ -204,19 +203,47 @@ class DataRepository private constructor(private val database: AppDatabase) {
          * Joins meta and subject
          */
         private const val junctionJoin = "FROM meta LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
+        private const val whereUnprocessed = " AND meta.processed = 0"
+        private const val whereProcessed = " AND meta.processed = 1"
 
          // The following require [groupBy]
-        private const val imageQuery = "SELECT * $junctionJoin"
-        private const val countQuery = "SELECT COUNT(*) $junctionJoin"
-        private const val whereUnprocessed = " AND processed = 0"
-        private const val whereProcessed = " AND processed = 1"
+        private const val imageSelect = "SELECT * $junctionJoin"
+
+        // Count must not group!
+        private const val countSelect = "SELECT COUNT(*) $junctionJoin"
 
         private const val groupBy = " GROUP BY meta.id"
 
+        data class Query(
+                val filter: XmpFilter = XmpFilter(),
+                val coreQuery: String = imageSelect,
+                val where: Array<String> = emptyArray(),
+                val whereArgs: Array<String> = emptyArray(),
+                val applyGroup: Boolean = true
+        )
+
+        private fun imageQuery(filter: XmpFilter) =
+                Query(filter)
+        private fun imageProcessedQuery(filter: XmpFilter) =
+                Query(filter, where = arrayOf(whereProcessed))
+        private fun imageUnprocessedQuery(filter: XmpFilter) =
+                Query(filter, where = arrayOf(whereUnprocessed))
+
+        private fun countQuery(filter: XmpFilter) =
+                Query(filter, coreQuery = countSelect, applyGroup = false)
+        private fun countProcessedQuery(filter: XmpFilter) =
+                Query(filter, coreQuery = countSelect, where = arrayOf(whereProcessed), applyGroup = false)
+        private fun countUnprocessedQuery(filter: XmpFilter) =
+                Query(filter, coreQuery = countSelect, where = arrayOf(whereUnprocessed), applyGroup = false)
+
+        fun createFilterQuery(query: Query): SupportSQLiteQuery {
+            return createFilterQuery(query.filter, query.coreQuery, query.where, query.whereArgs, query.applyGroup)
+        }
         fun createFilterQuery(filter: XmpFilter = XmpFilter(),
-                              coreQuery: String = imageQuery,
+                              coreQuery: String = imageSelect,
                               where: Array<String> = emptyArray(),
-                              whereArgs: Array<String> = emptyArray()): SupportSQLiteQuery {
+                              whereArgs: Array<String> = emptyArray(),
+                              applyGroup: Boolean = true): SupportSQLiteQuery {
             val query = StringBuilder()
             val selection = StringBuilder()
             val order = StringBuilder()
@@ -279,12 +306,15 @@ class DataRepository private constructor(private val database: AppDatabase) {
                     query.append(" $it")
                 }
             }
-            query.append(groupBy)
+
+            // For the most part we avoid group on counts
+            if (applyGroup) {
+                query.append(groupBy)
+            }
+
             query.append(order)
 
             selectionArgs.addAll(whereArgs)
-
-            Log.d("TEST", query.toString())
 
             return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
         }
