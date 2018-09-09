@@ -51,7 +51,7 @@ class RawImageRegionDecoder(
 
     companion object {
         fun getPreferredBitmapConfig(): Bitmap.Config {
-            return SubsamplingScaleImageView.getPreferredBitmapConfig() ?: Bitmap.Config.RGB_565
+            return SubsamplingScaleImageView.getPreferredBitmapConfig() ?: Bitmap.Config.ARGB_8888
         }
     }
 }

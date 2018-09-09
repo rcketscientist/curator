@@ -204,8 +204,6 @@ class ViewerActivity : CoreActivity() {
 
     override fun endProgress() {}
 
-    override fun updateMessage(message: String?) {}
-
     private inner class AutoHideMetaTask : TimerTask() {
         override fun run() {
             viewModel.hideInterface()

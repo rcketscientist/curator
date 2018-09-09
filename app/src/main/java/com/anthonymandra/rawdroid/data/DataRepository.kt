@@ -1,9 +1,9 @@
 package com.anthonymandra.rawdroid.data
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.paging.DataSource
 import android.content.Context
+import android.util.Log
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.anthonymandra.content.Meta
@@ -43,25 +43,21 @@ class DataRepository private constructor(private val database: AppDatabase) {
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
     fun imageBlocking(uri: String) = database.metadataDao().blocking(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
-    fun unprocessedImages() = database.metadataDao().unprocessedImages(ALL_FILTER)
-    fun getUnprocessedCount() = database.metadataDao().unprocessedCount(ALL_FILTER)
-    fun getProcessedCount() = database.metadataDao().processedCount(ALL_FILTER)
-    fun getCount() = database.metadataDao().count(ALL_FILTER)
 
-    fun getImageCount(filter: XmpFilter) : LiveData<Int> {
+    fun getImageCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
         return database.metadataDao().count(createFilterQuery(filter))
     }
 
-    fun getUnprocessedCount(filter: XmpFilter) : LiveData<Int> {
-        return database.metadataDao().unprocessedCount(createFilterQuery(filter))
+    fun getUnprocessedCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
+        return database.metadataDao().count(createFilterQuery(filter, countQuery, arrayOf(whereUnprocessed)))
     }
 
-    fun getUnprocessedImages(filter: XmpFilter) : List<MetadataTest> {  // TODO: Everything should be live
-        return database.metadataDao().unprocessedImages(createFilterQuery(filter))
+    fun getUnprocessedImages(filter: XmpFilter = XmpFilter()) : LiveData<List<MetadataTest>> {
+        return database.metadataDao().getImages(createFilterQuery(filter, imageQuery, arrayOf(whereUnprocessed)))
     }
 
-    fun getProcessedCount(filter: XmpFilter) : LiveData<Int> {
-        return database.metadataDao().processedCount(createFilterQuery(filter))
+    fun getProcessedCount(filter: XmpFilter  = XmpFilter()) : LiveData<Int> {
+        return database.metadataDao().count(createFilterQuery(filter, countQuery, arrayOf(whereProcessed)))
     }
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
@@ -205,17 +201,22 @@ class DataRepository private constructor(private val database: AppDatabase) {
             }
 
         /**
-         * If using a relation for subject this is a far simpler solution.
-         * Requires [groupBy]
+         * Joins meta and subject
          */
-        private const val imageSubjectQuery =
-                "SELECT *" +
-                        " FROM meta" +
-                        " LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
+        private const val junctionJoin = "FROM meta LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
+
+         // The following require [groupBy]
+        private const val imageQuery = "SELECT * $junctionJoin"
+        private const val countQuery = "SELECT COUNT(*) $junctionJoin"
+        private const val whereUnprocessed = " AND processed = 0"
+        private const val whereProcessed = " AND processed = 1"
+
         private const val groupBy = " GROUP BY meta.id"
 
-        val ALL_FILTER = createFilterQuery(XmpFilter())
-        fun createFilterQuery(filter: XmpFilter): SupportSQLiteQuery {
+        fun createFilterQuery(filter: XmpFilter = XmpFilter(),
+                              coreQuery: String = imageQuery,
+                              where: Array<String> = emptyArray(),
+                              whereArgs: Array<String> = emptyArray()): SupportSQLiteQuery {
             val query = StringBuilder()
             val selection = StringBuilder()
             val order = StringBuilder()
@@ -270,13 +271,20 @@ class DataRepository private constructor(private val database: AppDatabase) {
                 XmpFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
             }
 
-            query.append(imageSubjectQuery)
-            if (selection.isNotEmpty()) {
+            query.append(coreQuery)
+            if (selection.isNotEmpty() || where.isNotEmpty()) {
                 query.append(" WHERE ")
                 query.append(selection)
+                where.forEach {
+                    query.append(" $it")
+                }
             }
             query.append(groupBy)
             query.append(order)
+
+            selectionArgs.addAll(whereArgs)
+
+            Log.d("TEST", query.toString())
 
             return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
         }

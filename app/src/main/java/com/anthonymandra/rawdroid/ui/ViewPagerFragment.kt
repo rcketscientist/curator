@@ -3,10 +3,12 @@ package com.anthonymandra.rawdroid.ui
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.renderscript.*
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.WorkerThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -136,19 +138,42 @@ class ViewPagerFragment : Fragment() {
         histogramView.clear()
 
         // TODO: Need some way to cancel?
-        val pool = ForkJoinPool()
         histogramSubscription = Single.create<Histogram.ColorBins> {
-            if (bitmap.isRecycled)
-                throw Exception("Histogram bitmap was recycled.")
-            val histoTask = Histogram.createHistogram(bitmap)
-            val colorBins = pool.invoke<Histogram.ColorBins>(histoTask)
-            it.onSuccess(colorBins)
+//        histogramSubscription = Single.create<IntArray> {
+            val hist = calculateHisto(bitmap)
+//            val hist = calculateHistogram(bitmap)
+            it.onSuccess(hist)
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))    // TODO: Memory based pool
          .observeOn(Schedulers.from(AppExecutors.MAIN))
          .subscribeBy (
              onSuccess = { histogramView.updateHistogram(it) },
              onError = { it.printStackTrace() }     // TODO: Handle error state in histogramView
          )
+    }
+
+    // TODO: For some reason I'm only getting green and blue from this
+    @WorkerThread
+    private fun calculateHistogram(bitmap: Bitmap): IntArray {
+        val histogram = IntArray(256)
+        val rsContext = RenderScript.create(context, RenderScript.ContextType.NORMAL)
+        val inAlloc = Allocation.createFromBitmap(rsContext, bitmap)
+//        val outType = Type.Builder(rsContext, Element.I32(rsContext)).setX(256).create()
+        val outType = Type.Builder(rsContext, Element.U32(rsContext)).setX(256).create()
+        val outAlloc = Allocation.createTyped(rsContext, outType, Allocation.USAGE_SCRIPT)
+        val histoScript = ScriptIntrinsicHistogram.create(rsContext, inAlloc.element)
+        histoScript.setOutput(outAlloc)
+        histoScript.forEach(inAlloc)
+        outAlloc.copyTo(histogram)
+        return histogram
+    }
+
+    @WorkerThread
+    private fun calculateHisto(bitmap: Bitmap): Histogram.ColorBins {
+        if (bitmap.isRecycled)
+            throw Exception("Histogram bitmap was recycled.")
+        val pool = ForkJoinPool()
+        val histoTask = Histogram.createHistogram(bitmap)
+        return pool.invoke<Histogram.ColorBins>(histoTask)
     }
 
     companion object {

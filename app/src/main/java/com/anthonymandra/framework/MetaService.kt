@@ -27,7 +27,7 @@ class MetaService : PriorityIntentService("MetaService") {
     private fun handleActionUpdate(intent: Intent) {
         val repo = DataRepository.getInstance(this.applicationContext)
 
-        val updates = repo.unprocessedImages()
+        val updates = repo.getUnprocessedImages().value ?: return
         sJobsTotal.addAndGet(updates.size)
 
         try {

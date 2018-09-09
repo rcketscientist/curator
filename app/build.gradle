@@ -173,7 +173,7 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.paging:paging-runtime:$pagingVersion"
-    implementation "android.arch.work:work-runtime:$workVersion"
+    implementation "android.arch.work:work-runtime-ktx:$workVersion"
 
     // Testing and Debug
     // Instrumented
