@@ -6,12 +6,14 @@ import java.util.*
 
 @Parcelize
 data class XmpFilter(
-    val xmp: XmpValues? = null,
+    val ratings: List<Int> = emptyList(),
+    val labels: List<String> = emptyList(),
+    val subjectIds: List<Long> = emptyList(),
     var andTrueOrFalse: Boolean = false,
     val sortAscending: Boolean = true,
     val segregateByType: Boolean = false,
     val sortColumn: SortColumns = SortColumns.Name,
-    val hiddenFolders: Set<Long> = Collections.emptySet()) : Parcelable {
+    val hiddenFolderIds: Set<Long> = Collections.emptySet()) : Parcelable {
 
     enum class SortColumns {
         Name,

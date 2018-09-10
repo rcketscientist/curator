@@ -64,7 +64,9 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     private val xmpFilter: XmpFilter
         get() = XmpFilter(
-                xmpValues,
+                xmpValues.rating,
+                xmpValues.label,
+                xmpValues.subject.map {it.id},
                 mAndTrueOrFalse,
                 ascending,
                 mSegregateByType,

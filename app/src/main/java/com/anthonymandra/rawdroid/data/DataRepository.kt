@@ -293,11 +293,11 @@ class DataRepository private constructor(private val database: AppDatabase) {
                 }
             }
 
-            if (filter.hiddenFolders.isNotEmpty()) {
+            if (filter.hiddenFolderIds.isNotEmpty()) {
                 if (selection.isNotEmpty())
                     selection.append(and)       // Always exclude the folders, don't OR
 
-                selection.append(DbUtil.createIN("parentId", filter.hiddenFolders, true))
+                selection.append(DbUtil.createIN("parentId", filter.hiddenFolderIds, true))
             }
 
             order.append(" ORDER BY ")
