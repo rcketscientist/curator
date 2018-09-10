@@ -3,9 +3,13 @@ package com.anthonymandra.framework
 import android.app.IntentService
 import android.content.Intent
 import androidx.legacy.content.WakefulBroadcastReceiver
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -27,26 +31,14 @@ class MetaService : PriorityIntentService("MetaService") {
     private fun handleActionUpdate(intent: Intent) {
         val repo = DataRepository.getInstance(this.applicationContext)
 
-        val updates = repo.getUnprocessedImages().value ?: return
-        sJobsTotal.addAndGet(updates.size)
+        val updates = repo._getUnprocessedImages()
 
         try {
-            val metaUpdates = updates.map {
+            updates.forEach {
                 val metadata = MetaUtil.readMetadata(this, repo, it)
-                jobComplete()
-
-                val broadcast = Intent(BROADCAST_IMAGE_PARSED)
-                        .putExtra(EXTRA_URI, it.uri)    // TODO: Better to send id
-                        .putExtra(EXTRA_METADATA, it)
-                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
-                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
-                LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
-
-                return@map metadata
-            }.filter { it.processed }
-
-            metaUpdates.let {
-                repo.updateMeta(*it.toTypedArray()).subscribe()
+                if (metadata.processed) {
+                    repo.updateMeta(it).subscribe()
+                }
             }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
@@ -64,39 +56,15 @@ class MetaService : PriorityIntentService("MetaService") {
         else
             arrayOf(intent.data!!.toString())
 
-        val images = repo.images(listOf(*uris)).value ?: return
-
-        sJobsTotal.addAndGet(images.size)
-
         try {
-            val updates = images
+            repo._images(listOf(*uris))
                 .filter { !it.processed }
-                .map {
+                .forEach {
                     val metadata = MetaUtil.readMetadata(this, repo, it)
-                    jobComplete()
-
-                    // TODO: There was a null check here but I'm doubtful it's needed
-
-                    if (isHighPriority(intent)) {
-                        val broadcast = Intent(BROADCAST_REQUESTED_META)
-                            .putExtra(EXTRA_URI, it.uri)
-                        // TODO: Is it a problem to look up on the other end?  This used to broadcast the meta (not written here...)
-                        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
-                        return@map null
+                    if (metadata.processed) {
+                        repo.updateMeta(it).subscribe()
                     }
-
-                    val broadcast = Intent(BROADCAST_IMAGE_PARSED)
-                        .putExtra(EXTRA_URI, it.uri)
-                        .putExtra(EXTRA_COMPLETED_JOBS, sJobsComplete.get())
-                        .putExtra(EXTRA_TOTAL_JOBS, sJobsTotal.get())
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(broadcast)
-
-                    return@map metadata
-                }.mapNotNull { it } // TODO: This is some sloppy garbage...
-
-            updates.let {
-                repo.updateMeta(*it.toTypedArray()).subscribe()
-            }
+                }
         } finally {
             WakefulBroadcastReceiver.completeWakefulIntent(intent)
         }
@@ -157,32 +125,8 @@ class MetaService : PriorityIntentService("MetaService") {
         val EXTRA_URI = "com.anthonymandra.framework.extra.EXTRA_URI"
 
         /**
-         * Intent extra containing number of completed jobs in current parse
-         */
-        val EXTRA_COMPLETED_JOBS = "com.anthonymandra.framework.extra.EXTRA_COMPLETED_JOBS"
-
-        /**
-         * Intent extra containing number of completed jobs in current parse
-         */
-        val EXTRA_TOTAL_JOBS = "com.anthonymandra.framework.extra.EXTRA_TOTAL_JOBS"
-
-        /**
          * Intent extra containing the processed meta data.
          */
         val EXTRA_METADATA = "com.anthonymandra.framework.extra.EXTRA_METADATA"
-
-        private val sJobsTotal = AtomicInteger(0)
-        private val sJobsComplete = AtomicInteger(0)
-
-        /**
-         * Increment counter and if all jobs are complete reset the counters
-         */
-        private fun jobComplete() {
-            val completed = sJobsComplete.incrementAndGet()
-            if (completed == sJobsTotal.get()) {
-                sJobsComplete.set(0)
-                sJobsTotal.set(0)
-            }
-        }
     }
 }

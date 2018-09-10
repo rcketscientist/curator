@@ -610,7 +610,7 @@ abstract class CoreActivity : DocumentActivity() {
     fun copyImages(images: List<Uri>, destinationFolder: Uri) {
         Single.create<List<MetadataTest>> {
                 // TODO: We should jsut duplicate these calls with rx to do this with streams
-                it.onSuccess(dataRepo.imagesBlocking(images.map { it.toString() }))
+                it.onSuccess(dataRepo._images(images.map { it.toString() }))
             }
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
             .observeOn(Schedulers.from(AppExecutors.MAIN))

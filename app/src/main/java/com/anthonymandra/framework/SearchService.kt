@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class SearchService : IntentService("SearchService") {
 
-    val dataRepo = DataRepository.getInstance(this)
-    var parentMap = mutableMapOf<String, Long>()
+    private val dataRepo = DataRepository.getInstance(this)
+    private var parentMap = mapOf<String, Long>()
 
     override fun onHandleIntent(intent: Intent?) {
         if (intent != null) {
@@ -31,9 +31,9 @@ class SearchService : IntentService("SearchService") {
     }
 
     private fun handleActionSearch(uriRoots: Array<String>?, alwaysExcludeDir: Array<String>?) {
-        dataRepo.streamParents.subscribe {
-            it.associateTo(parentMap) { Pair(it.documentUri,it.id) }
-        }
+        // TODO: This seems fishy...
+//        dataRepo.parents().map { it.documentUri to it.id }.toMap(parentMap)
+        parentMap = dataRepo.parents.associateBy({it.documentUri}, {it.id})
 
         mImageCount.set(0)
         var broadcast = Intent(BROADCAST_SEARCH_STARTED)
@@ -50,7 +50,6 @@ class SearchService : IntentService("SearchService") {
             }
         }
 
-        val uriStrings = HashSet<String>()
         if (foundImages.size > 0) {
             dataRepo.insertImages(*foundImages.toTypedArray())
         }
@@ -103,12 +102,7 @@ class SearchService : IntentService("SearchService") {
                     .putExtra(EXTRA_NUM_IMAGES, imageCount)
                 LocalBroadcastManager.getInstance(this@SearchService).sendBroadcast(broadcast)
 
-                for (image in imageFiles) {
-                    val uri = image.uri ?: // Somehow we can get null uris in here...
-                    continue    // https://bitbucket.org/rcketscientist/rawdroid/issues/230/coreactivityjava-line-677-crashlytics
-
-                    foundImages.add(getImageFileInfo(image))
-                }
+                foundImages = imageFiles.map { getImageFileInfo(it) }.toMutableSet()
             }
 
             for (task in forks) {

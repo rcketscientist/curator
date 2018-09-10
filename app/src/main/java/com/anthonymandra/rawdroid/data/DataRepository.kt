@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import android.content.Context
 import android.util.Log
+import androidx.annotation.WorkerThread
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.anthonymandra.content.Meta
@@ -39,9 +40,12 @@ import java.util.ArrayList
  */
 class DataRepository private constructor(private val database: AppDatabase) {
     // ---- Pure meta database calls -------
-    fun imagesBlocking(uris: List<String>) = database.metadataDao().blocking(uris)
+    @WorkerThread
+    fun _images(uris: List<String>) = database.metadataDao().blocking(uris)
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
-    fun imageBlocking(uri: String) = database.metadataDao().blocking(uri)
+
+    @WorkerThread
+    fun _image(uri: String) = database.metadataDao().blocking(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
     fun getImageCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
@@ -58,6 +62,11 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
     fun getUnprocessedImages(filter: XmpFilter = XmpFilter()) : LiveData<List<MetadataTest>> {
         return database.metadataDao().getImages(createFilterQuery(imageUnprocessedQuery(filter)))
+    }
+
+    @WorkerThread
+    fun _getUnprocessedImages(filter: XmpFilter = XmpFilter()) : List<MetadataTest> {
+        return database.metadataDao().imageBlocking(createFilterQuery(imageUnprocessedQuery(filter)))
     }
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
@@ -100,9 +109,10 @@ class DataRepository private constructor(private val database: AppDatabase) {
     }
 
     // ---- Pure folder database calls -----
-    val lifecycleParents = database.folderDao().lifecycleParents
+    val parents get() = database.folderDao().parents
+    val lifecycleParents get() = database.folderDao().lifecycleParents
 
-    val streamParents = database.folderDao().streamParents
+    val streamParents get() = database.folderDao().streamParents
 
     fun insertParent(entity: FolderEntity) = database.folderDao().insert(entity)
     fun insertParents(vararg folders: FolderEntity): Completable {
@@ -159,26 +169,29 @@ class DataRepository private constructor(private val database: AppDatabase) {
         if (!subjectMapping.isEmpty()) {
             database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
         }
-        return database.metadataDao().insert(*inserts)
+        return database.metadataDao().replace(*inserts)
     }
 
-    fun updateMeta(vararg updates: MetadataTest) : Completable {
+    fun updateMeta(vararg images: MetadataTest) : Completable {
         return Completable.create{
             val subjectMapping = mutableListOf<SubjectJunction>()
 
-            // We clear the existing subject map for each image
-            database.subjectJunctionDao().delete(updates.map { it.id })
+            // SQLite has a var limit of 999
+            images.asIterable().chunked(999).forEach { updates ->
+                // We clear the existing subject map for each image
+                database.subjectJunctionDao().delete(updates.map { it.id })
 
-            // Update the subject map
-            updates.forEach { image ->
-                image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it)}
-            }
-            if (!subjectMapping.isEmpty()) {
-                database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
-            }
+                // Update the subject map
+                updates.forEach { image ->
+                    image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it) }
+                }
+                if (!subjectMapping.isEmpty()) {
+                    database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
+                }
 
-            // Update that image table
-            database.metadataDao().update(*updates)
+                // Update that image table
+                database.metadataDao().update(*updates.toTypedArray())
+            }
             it.onComplete()
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
     }
@@ -203,8 +216,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
          * Joins meta and subject
          */
         private const val junctionJoin = "FROM meta LEFT JOIN meta_subject_junction ON meta_subject_junction.metaId = meta.id"
-        private const val whereUnprocessed = " AND meta.processed = 0"
-        private const val whereProcessed = " AND meta.processed = 1"
+        private const val whereUnprocessed = "meta.processed = 0"
+        private const val whereProcessed = "meta.processed = 1"
 
          // The following require [groupBy]
         private const val imageSelect = "SELECT * $junctionJoin"
@@ -302,8 +315,14 @@ class DataRepository private constructor(private val database: AppDatabase) {
             if (selection.isNotEmpty() || where.isNotEmpty()) {
                 query.append(" WHERE ")
                 query.append(selection)
-                where.forEach {
-                    query.append(" $it")
+
+                if (selection.isNotEmpty() && where.isNotEmpty())
+                    query.append(" AND ")
+
+                where.forEachIndexed { index, value ->
+                    if (index > 0)
+                        query.append(" AND ")
+                    query.append(value)
                 }
             }
 
@@ -315,6 +334,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
             query.append(order)
 
             selectionArgs.addAll(whereArgs)
+
+            Log.d("TEST", query.toString())
 
             return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
         }

@@ -143,7 +143,7 @@ class RenameDialog(
 //                rename = file.uri
 //            }
 
-            val originalJpg = dataRepo.imageBlocking(jpgFile.uri.toString())
+            val originalJpg = dataRepo._image(jpgFile.uri.toString())
             originalJpg.name = jpgFile.name
             originalJpg.uri = jpgFile.uri.toString()
             dataRepo.updateMeta(originalJpg).subscribe()

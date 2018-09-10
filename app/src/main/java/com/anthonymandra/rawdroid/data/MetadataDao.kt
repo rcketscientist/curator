@@ -19,6 +19,9 @@ abstract class MetadataDao {
     abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
+    abstract fun imageBlocking(query: SupportSQLiteQuery): List<MetadataTest>
+
+    @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
     abstract fun getImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
 
     @Transaction
@@ -41,11 +44,19 @@ abstract class MetadataDao {
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
     abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // If there's a conflict we'll just skip the conflicted row
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(datum: MetadataEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // If there's a conflict we'll just skip the conflicted row
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(vararg datums: MetadataEntity): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun replace(datum: MetadataEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun replace(vararg datums: MetadataEntity): List<Long>
 
     @Update
     abstract fun update(vararg datums: MetadataEntity)

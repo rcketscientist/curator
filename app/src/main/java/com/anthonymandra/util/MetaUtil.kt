@@ -5,6 +5,7 @@ package com.anthonymandra.util
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.WorkerThread
 import com.adobe.xmp.XMPException
 import com.adobe.xmp.XMPMeta
 import com.adobe.xmp.XMPMetaFactory
@@ -231,6 +232,18 @@ object MetaUtil {
         entity.processed = true
 
         return entity
+    }
+
+    @WorkerThread
+    fun parseMetadata(context: Context, images: List<MetadataTest>) {
+        val repo = DataRepository.getInstance(context)
+
+        images.forEach {
+            val metadata = MetaUtil.readMetadata(context, repo, it)
+            if (metadata.processed) {
+                repo.updateMeta(it)
+            }
+        }
     }
 
     /**
