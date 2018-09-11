@@ -96,6 +96,25 @@ class ViewPagerFragment : Fragment() {
         zoomButton.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onZoomLockChanged(isChecked)
         }
+
+        val metaRowVisibility = viewModel.metaVisibility
+        rowAltitude.visibility = metaRowVisibility.Altitude
+        rowAperture.visibility = metaRowVisibility.Aperture
+        rowDate.visibility = metaRowVisibility.Date
+        rowDimensions.visibility = metaRowVisibility.Dimensions
+        rowDriveMode.visibility = metaRowVisibility.DriveMode
+        rowExposure.visibility = metaRowVisibility.Exposure
+        rowExposureMode.visibility = metaRowVisibility.ExposureMode
+        rowExposureProgram.visibility = metaRowVisibility.ExposureProgram
+        rowFlash.visibility = metaRowVisibility.Flash
+        rowFocal.visibility = metaRowVisibility.Focal
+        rowIso.visibility = metaRowVisibility.Iso
+        rowLatitude.visibility = metaRowVisibility.Latitude
+        rowLongitude.visibility = metaRowVisibility.Longitude
+        rowLens.visibility = metaRowVisibility.Lens
+        rowModel.visibility = metaRowVisibility.Model
+        rowName.visibility = metaRowVisibility.Name
+        rowWhiteBalance.visibility = metaRowVisibility.WhiteBalance
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -146,7 +165,7 @@ class ViewPagerFragment : Fragment() {
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))    // TODO: Memory based pool
          .observeOn(Schedulers.from(AppExecutors.MAIN))
          .subscribeBy (
-             onSuccess = { histogramView.updateHistogram(it) },
+             onSuccess = { histogramView?.updateHistogram(it) },
              onError = { it.printStackTrace() }     // TODO: Handle error state in histogramView
          )
     }

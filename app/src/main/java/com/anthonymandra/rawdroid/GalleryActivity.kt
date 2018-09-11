@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkStatus
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.MetadataEntity
@@ -107,13 +108,32 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             galleryAdapter.submitList(it)
         })
 
+        // Current image total for title
         viewModel.filteredCount.observe(this, Observer {
             imageCount = it
             galleryToolbar?.title = "$imageCount Images"
         })
 
+        // Current processed image total for subtitle
         viewModel.filteredProcessedCount.observe(this, Observer {
             galleryToolbar.subtitle = "$it of $imageCount"
+        })
+
+        // Monitor the metadata parse status to display progress
+        viewModel.metadataStatus.observe(this, Observer {
+            if (it == null || it.isEmpty()) {
+                return@Observer
+            }
+
+            val workStatus = it[0]
+
+            if (workStatus.state.isFinished) {
+                galleryToolbar.subtitle = null
+                endProgress()
+            } else {
+                toolbarProgress.visibility = View.VISIBLE
+                toolbarProgress.isIndeterminate = true
+            }
         })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
@@ -510,7 +530,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                         if (mActivityVisible)
                             offerRequestPermission()
                     } else {
-                        MetaWakefulReceiver.startMetaService(this@GalleryActivity)
+                        viewModel.startMetaWorker()
                     }
                 }
             }

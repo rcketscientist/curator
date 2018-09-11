@@ -10,14 +10,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.work.WorkManager
+import androidx.work.WorkStatus
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.MetadataWorker
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     //TODO: Split out viewer viewmodel
     private val dataRepo = (app as App).dataRepo
+
+    private val workManager: WorkManager
+    private val metaWorkStatus: LiveData<List<WorkStatus>>
+    private val searchWorkStatus: LiveData<List<WorkStatus>>
 
     val imageList: LiveData<PagedList<MetadataTest>>
     val filteredCount: LiveData<Int>
@@ -69,6 +76,18 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         settings.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
             updatePreferences(sharedPreferences)
         }
+
+        workManager = WorkManager.getInstance()
+        searchWorkStatus = workManager.getStatusesByTag("TODO")
+        metaWorkStatus = workManager.getStatusesByTag(MetadataWorker.JOB_TAG)
+    }
+
+    val metadataStatus get() = metaWorkStatus
+    val searchStatus get() = searchWorkStatus
+
+    fun startMetaWorker() {
+        val input = filter.value ?: XmpFilter()
+        workManager.enqueue(MetadataWorker.buildRequest(input))
     }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {

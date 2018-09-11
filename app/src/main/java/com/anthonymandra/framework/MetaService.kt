@@ -3,14 +3,9 @@ package com.anthonymandra.framework
 import android.app.IntentService
 import android.content.Intent
 import androidx.legacy.content.WakefulBroadcastReceiver
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * An [IntentService] subclass for handling asynchronous task requests in

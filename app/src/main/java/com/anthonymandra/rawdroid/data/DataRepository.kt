@@ -266,31 +266,29 @@ class DataRepository private constructor(private val database: AppDatabase) {
             val or = " OR "
             val joiner = if (filter.andTrueOrFalse) and else or
 
-            if (filter.xmp != null) {
-                // Special case, append to join query
-                if (filter.xmp.subject.isNotEmpty()) {
-                    if (!selection.isEmpty())
-                        selection.append(joiner)
+            // Special case, append to join query
+            if (filter.subjectIds.isNotEmpty()) {
+                if (!selection.isEmpty())
+                    selection.append(joiner)
 
-                    selection.append(DbUtil.createIN("subjectId", filter.xmp.subject.size))
-                    filter.xmp.subject.mapTo(selectionArgs) { it.id }
-                }
+                selection.append(DbUtil.createIN("subjectId", filter.subjectIds.size))
+                selectionArgs.addAll(filter.subjectIds)
+            }
 
-                if (filter.xmp.label.isNotEmpty()) {
-                    if (!selection.isEmpty())
-                        selection.append(joiner)
+            if (filter.labels.isNotEmpty()) {
+                if (!selection.isEmpty())
+                    selection.append(joiner)
 
-                    selection.append(DbUtil.createIN(Meta.LABEL, filter.xmp.label.size))
-                    selectionArgs.addAll(filter.xmp.label)
-                }
+                selection.append(DbUtil.createIN(Meta.LABEL, filter.labels.size))
+                selectionArgs.addAll(filter.labels)
+            }
 
-                if (filter.xmp.rating.isNotEmpty()) {
-                    if (!selection.isEmpty())
-                        selection.append(joiner)
+            if (filter.ratings.isNotEmpty()) {
+                if (!selection.isEmpty())
+                    selection.append(joiner)
 
-                    selection.append(DbUtil.createIN(Meta.RATING, filter.xmp.rating.size))
-                    filter.xmp.rating.mapTo(selectionArgs) { java.lang.Double.toString(it.toDouble()) }
-                }
+                selection.append(DbUtil.createIN(Meta.RATING, filter.ratings.size))
+                filter.ratings.mapTo(selectionArgs) { java.lang.Double.toString(it.toDouble()) }
             }
 
             if (filter.hiddenFolderIds.isNotEmpty()) {
