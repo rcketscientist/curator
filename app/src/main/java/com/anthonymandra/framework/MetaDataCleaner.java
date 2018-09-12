@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
+// TODO: This is all wrong now
 public class MetaDataCleaner
 {
+	// TODO: Worker!S
 	private final static Semaphore threadLock = new Semaphore(1);
 
 	/**

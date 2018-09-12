@@ -47,8 +47,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
     override val selectedImages : Collection<MetadataTest>
         get() { return galleryAdapter.selectedItems }
 
-    private val mResponseIntentFilter = IntentFilter()
-
     protected lateinit var galleryAdapter: GalleryAdapter
 
     private var mMaterialCab: MaterialCab? = null
@@ -136,6 +134,29 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             }
         })
 
+        viewModel.searchStatus.observe(this, Observer {
+            if (it == null || it.isEmpty()) {
+                return@Observer
+            }
+
+            val workStatus = it[0]
+
+            if (workStatus.state.isFinished) {
+                galleryToolbar.subtitle = null
+                endProgress()
+                if (imageCount < 1) {
+                    if (mActivityVisible)
+                        offerRequestPermission()
+                } else {
+                    viewModel.startMetaWorker() // TODO: chain!
+                }
+            }else {
+                toolbarProgress.visibility = View.VISIBLE
+                toolbarProgress.isIndeterminate = true
+                galleryToolbar.subtitle = "Searching..."
+            }
+        })
+
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
         galleryView.layoutManager = galleryLayout
         galleryView.addItemDecoration(spacing)
@@ -151,13 +172,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             requestWritePermission()
             drawerLayout.closeDrawer(GravityCompat.START)
         }
-
-        mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED)
-        mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE)
-        mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_STARTED)
-        mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_COMPLETE)
-        mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES)
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, mResponseIntentFilter)
 
         intent.data?.let{ ImageUtil.importKeywords(this, it) }
     }
@@ -240,11 +254,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         super.onPause()
     }
 
-    public override fun onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
-        super.onDestroy()
-    }
-
     private fun offerRequestPermission() {
         val builder = AlertDialog.Builder(this)
             .setTitle(R.string.offerSearchTitle)
@@ -258,20 +267,11 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private fun scanRawFiles() {
         toolbarProgress.visibility = View.VISIBLE
-        toolbarProgress.isIndeterminate = true        //TODO: Determinate?
+        toolbarProgress.isIndeterminate = true        //TODO: Determinate?...use worker status!
         galleryToolbar.subtitle = "Cleaning..."
 
         MetaDataCleaner.cleanDatabase(this, Handler(Handler.Callback {
-            // Upon clean initiate search
-            //TODO: This should be a DB lookup!
-            val excludedFolders = mXmpFilterFragment!!.excludedFolders
-
-            val permissionUris = rootPermissions.map { it.uri.toString() }
-
-            SearchService.startActionSearch(
-                this@GalleryActivity, null, // Files unsupported on 4.4+
-                permissionUris.toTypedArray(),
-                excludedFolders!!.toTypedArray())
+            viewModel.startSearchWorker()
             true
         }))
     }
@@ -509,32 +509,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options)
         view.isDrawingCacheEnabled = false
-    }
-
-    private val messageReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                MetaService.BROADCAST_PROCESSING_COMPLETE -> galleryToolbar.subtitle = "Updating..."
-                MetaService.BROADCAST_PARSE_COMPLETE -> {
-                    toolbarProgress.visibility = View.GONE
-                    galleryToolbar.subtitle = ""
-                }
-                SearchService.BROADCAST_SEARCH_STARTED -> {
-                    toolbarProgress.visibility = View.VISIBLE
-                    toolbarProgress.isIndeterminate = true
-                    galleryToolbar.subtitle = "Searching..."
-                }
-                SearchService.BROADCAST_SEARCH_COMPLETE -> {
-                    val images = intent.getLongArrayExtra(SearchService.EXTRA_IMAGE_IDS)
-                    if (images.isEmpty()) {
-                        if (mActivityVisible)
-                            offerRequestPermission()
-                    } else {
-                        viewModel.startMetaWorker()
-                    }
-                }
-            }
-        }
     }
 
     companion object {

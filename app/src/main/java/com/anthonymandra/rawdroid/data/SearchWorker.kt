@@ -1,18 +1,10 @@
 package com.anthonymandra.rawdroid.data
 
-import android.content.Intent
-import android.net.Uri
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkRequest
 import androidx.work.Worker
-import androidx.work.workDataOf
-import com.anthonymandra.framework.SearchService
 import com.anthonymandra.framework.UsefulDocumentFile
-import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.util.ImageUtil
-import java.util.*
-import java.util.concurrent.ForkJoinPool
 
 class SearchWorker: Worker() {
 	override fun doWork(): Result {
@@ -23,56 +15,86 @@ class SearchWorker: Worker() {
 		val parentMap = repo.parents.associateBy({it.documentUri}, {it.id})
 
 		val uriRoots = applicationContext.contentResolver.persistedUriPermissions
-		uriRoots.map {
+		val foldersToSearch = uriRoots.map {
 			UsefulDocumentFile.fromUri(applicationContext, it.uri)
-			}.filter { root ->  // Filter out roots that start with any of the excluded folders
+			}.filter { root ->
+				// Filter out roots that start with any of the excluded folders
 				!excludedFolders.any { exclusion ->
 					root.uri.toString().startsWith(exclusion.documentUri, true)
 				}
-			}.forEach{
-				it.listFiles()?.forEach {
-					//TODO: Need recursion,eligible for tailrec?
-				}
-				val result = ArrayList<UsefulDocumentFile>(it.size)
-				for (file in it) {
-					if (file.cachedData == null)
-						continue
-					val name = file.cachedData!!.name ?: continue
-					if (".nomedia" == name)
-					// if .nomedia clear results and return
-						return null
-					if (ImageUtil.isImage(name))
-						result.add(file)
-				}
-				return result.toTypedArray()
 			}
 
-		if (foundImages.size > 0) {
-			repo.insertImages(*foundImages.toTypedArray())
+		val images = search(foldersToSearch).map {
+			getImageFileInfo(it, parentMap, repo)
+		}
+
+		if (images.isNotEmpty()) {
+			repo.insertImages(*images.toTypedArray())
 		}
 
 		return Result.SUCCESS
+	}
+
+	fun search(files: List<UsefulDocumentFile>): List<UsefulDocumentFile> {
+		//.nomedia cancels any results
+		if (files.any { ".nomedia" == it.name }) return emptyList()
+
+		val folders = files.filter {
+			it.cachedData?.let { fileInfo ->
+				fileInfo.isDirectory && fileInfo.canRead
+			} ?: false
+		}
+
+		val images = mutableListOf<UsefulDocumentFile>()
+		folders.forEach { folder ->
+			folder.listFiles()?.let{ files ->
+				images.addAll(search(files.toList()))
+			}
+		}
+
+		return images.plus(files.filter { ImageUtil.isImage(it.cachedData?.name) })
+	}
+
+	// TODO: This should be a custom DocumentProvider
+	private fun getImageFileInfo(file: UsefulDocumentFile,
+	                             parentMap: Map<String, Long>,
+	                             dataRepo: DataRepository): MetadataEntity {
+		val fd = file.cachedData
+		val metadata = MetadataEntity()
+
+		var parent: String? = null
+		if (fd != null) {
+			metadata.name = fd.name
+			parent = fd.parent.toString()
+			metadata.timestamp = fd.lastModified
+		} else {
+			val docParent = file.parentFile
+			if (docParent != null) {
+				parent = docParent.uri.toString()
+			}
+		}
+
+		if (parent != null) {
+			if (parentMap.containsKey(parent)) {
+				metadata.parentId = parentMap[parent]!!
+			} else {
+				metadata.parentId = dataRepo.insertParent(FolderEntity(parent))
+			}
+		}
+
+		metadata.documentId = file.documentId
+		metadata.uri = file.uri.toString()
+		metadata.type = ImageUtil.getImageType(applicationContext, file.uri).value
+		return metadata
 	}
 
 	companion object {
 		const val JOB_TAG = "search_job"
 
 		@JvmStatic
-		fun buildRequest(xmpFilter: XmpFilter = XmpFilter()): WorkRequest? {
-			val data = workDataOf(
-				KEY_FILTER_AND to xmpFilter.andTrueOrFalse,
-				KEY_FILTER_ASC to xmpFilter.sortAscending,
-				KEY_FILTER_SEGREGATE to xmpFilter.segregateByType,
-				KEY_FILTER_SORT to xmpFilter.sortColumn.toString(),
-				KEY_FILTER_HIDDEN to xmpFilter.hiddenFolderIds.toLongArray(),
-				KEY_FILTER_RATING to xmpFilter.ratings.toIntArray(),
-				KEY_FILTER_LABEL to xmpFilter.labels.toTypedArray(),
-				KEY_FILTER_SUBJECT to xmpFilter.subjectIds.toLongArray()
-			)
-
-			return OneTimeWorkRequestBuilder<MetadataWorker>()
+		fun buildRequest(): WorkRequest? {
+			return OneTimeWorkRequestBuilder<SearchWorker>()
 				.addTag(JOB_TAG)
-				.setInputData(data)
 				.build()
 		}
 	}

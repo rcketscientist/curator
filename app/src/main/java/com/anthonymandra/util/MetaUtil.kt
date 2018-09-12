@@ -148,7 +148,7 @@ object MetaUtil {
     }
 
 	/**
-	 * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * Read meta data and convert to database model
 	 * @param stream stream to process
 	 * @param fileType type of file to process (see
 	 * {@link com.drew.imaging.FileTypeDetector#detectFileType(BufferedInputStream)})};
@@ -166,7 +166,7 @@ object MetaUtil {
 	}
 
     /**
-     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * Read meta data and convert to database model
      * @param c context
      * @param uri uri of image to parse
      * @return processed metadata values or null if failed
@@ -177,7 +177,7 @@ object MetaUtil {
     }
 
     /**
-     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * Read meta data and convert to database model
      * @param c context
      * @param uri uri of image to parse
      * @return processed metadata values or null if failed

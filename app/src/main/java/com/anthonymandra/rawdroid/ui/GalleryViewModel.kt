@@ -17,6 +17,7 @@ import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.data.MetadataWorker
+import com.anthonymandra.rawdroid.data.SearchWorker
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     //TODO: Split out viewer viewmodel
@@ -78,7 +79,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         }
 
         workManager = WorkManager.getInstance()
-        searchWorkStatus = workManager.getStatusesByTag("TODO")
+        searchWorkStatus = workManager.getStatusesByTag(SearchWorker.JOB_TAG)
         metaWorkStatus = workManager.getStatusesByTag(MetadataWorker.JOB_TAG)
     }
 
@@ -86,9 +87,13 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     val searchStatus get() = searchWorkStatus
 
     fun startMetaWorker() {
-        val input = filter.value ?: XmpFilter()
-        workManager.enqueue(MetadataWorker.buildRequest(input))
-    }
+		val input = filter.value ?: XmpFilter()
+		workManager.enqueue(MetadataWorker.buildRequest(input))
+	}
+
+	fun startSearchWorker() {
+		workManager.enqueue(SearchWorker.buildRequest())
+	}
 
     fun onZoomLockChanged(zoomLocked: Boolean) {
         _isZoomLocked.value = zoomLocked

@@ -24,6 +24,7 @@ class MetadataWorker: Worker() {
 
         val unprocessedImages = repo._getUnprocessedImages(filter)
         unprocessedImages.forEach {
+            
             val metadata = MetaUtil.readMetadata(applicationContext, repo, it)
             if (metadata.processed) {
                 repo.updateMeta(it).subscribe()

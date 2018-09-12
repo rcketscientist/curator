@@ -33,7 +33,7 @@ public class Meta implements BaseColumns
 
 	public static final String META = "meta";
 
-	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_META;
+	public static final String AUTHORITY = "TODO REMOVE THIS FILE!!!";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + META);
 
 	public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.rawdroid.meta";
