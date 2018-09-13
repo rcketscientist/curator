@@ -145,8 +145,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                 galleryToolbar.subtitle = null
                 endProgress()
                 if (imageCount < 1) {
-                    if (mActivityVisible)
-                        offerRequestPermission()
+	                //TODO: Alert
                 } else {
                     viewModel.startMetaWorker() // TODO: chain!
                 }
@@ -227,8 +226,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle(R.string.welcomeTitle)
-            builder.setNegativeButton(R.string.no) { _, _ -> offerRequestPermission() }
-            builder.setPositiveButton(R.string.yes) { _, _ -> startActivity(Intent(this@GalleryActivity, TutorialActivity::class.java)) }
+            builder.setNegativeButton(R.string.no) { _, _ -> /*do nothing, is there a button w/o this?*/ }
+            builder.setPositiveButton(R.string.yes) { _, _ ->
+                startActivity(Intent(this@GalleryActivity, TutorialActivity::class.java))
+            }
 
             builder.setMessage(R.string.welcomeTutorial)
             builder.show()
@@ -252,17 +253,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     public override fun onPause() {
         super.onPause()
-    }
-
-    private fun offerRequestPermission() {
-        val builder = AlertDialog.Builder(this)
-            .setTitle(R.string.offerSearchTitle)
-            .setMessage(R.string.offerPermissionMessage)
-            .setPositiveButton(R.string.search) { _, _ ->
-                setWriteResume(WriteResume.Search, emptyArray())
-                requestWritePermission()
-        }.setNegativeButton(R.string.neutral) { _, _ -> }   //do nothing
-        builder.create().show()
     }
 
     private fun scanRawFiles() {
@@ -295,8 +285,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                         .setAction(R.string.contact) { requestEmailIntent("Tutorial Error") }
                         .show()
                 }
-                // We don't really care about a result, after tutorial offer to search.
-                offerRequestPermission()
             }
         }
     }
@@ -382,7 +370,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             }
             R.id.galleryRefresh -> {
                 if (rootPermissions.size == 0) {
-                    offerRequestPermission()
+	                setWriteResume(WriteResume.Search, emptyArray())
+	                requestWritePermission()
                 } else {
                     scanRawFiles()
                 }

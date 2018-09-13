@@ -1,9 +1,12 @@
-package com.anthonymandra.rawdroid.data
+package com.anthonymandra.rawdroid.workers
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkRequest
 import androidx.work.Worker
 import com.anthonymandra.framework.UsefulDocumentFile
+import com.anthonymandra.rawdroid.data.DataRepository
+import com.anthonymandra.rawdroid.data.FolderEntity
+import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.util.ImageUtil
 
 class SearchWorker: Worker() {

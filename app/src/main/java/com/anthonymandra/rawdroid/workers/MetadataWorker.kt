@@ -1,10 +1,11 @@
-package com.anthonymandra.rawdroid.data
+package com.anthonymandra.rawdroid.workers
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkRequest
 import androidx.work.Worker
 import androidx.work.workDataOf
 import com.anthonymandra.rawdroid.XmpFilter
+import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
 
 class MetadataWorker: Worker() {
@@ -24,7 +25,7 @@ class MetadataWorker: Worker() {
 
         val unprocessedImages = repo._getUnprocessedImages(filter)
         unprocessedImages.forEach {
-            
+
             val metadata = MetaUtil.readMetadata(applicationContext, repo, it)
             if (metadata.processed) {
                 repo.updateMeta(it).subscribe()

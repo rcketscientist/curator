@@ -16,8 +16,8 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
-import com.anthonymandra.rawdroid.data.MetadataWorker
-import com.anthonymandra.rawdroid.data.SearchWorker
+import com.anthonymandra.rawdroid.workers.MetadataWorker
+import com.anthonymandra.rawdroid.workers.SearchWorker
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     //TODO: Split out viewer viewmodel
