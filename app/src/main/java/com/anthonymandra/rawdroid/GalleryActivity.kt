@@ -271,7 +271,15 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         when (requestCode) {
             REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && data != null) {
-                handleCopyDestinationResult(data.data)
+                // TODO: Might want to figure out a way to get free space to introduce this check again
+                //		long importSize = getSelectedImageSize();
+                //		if (destination.getFreeSpace() < importSize)
+                //		{
+                //			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
+                //			return;
+                //		}
+                if (data.data == null) return
+                viewModel.startCopyWorker(mItemsForIntent.map { it.id }, data.data)
             }
             REQUEST_UPDATE_PHOTO -> if (resultCode == RESULT_OK && data != null) {
                 handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0))
@@ -291,17 +299,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private fun handlePhotoUpdate(index: Int) {
         galleryView.smoothScrollToPosition(index)
-    }
-
-    private fun handleCopyDestinationResult(destination: Uri) {
-        // TODO: Might want to figure out a way to get free space to introduce this check again
-        //		long importSize = getSelectedImageSize();
-        //		if (destination.getFreeSpace() < importSize)
-        //		{
-        //			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-        //			return;
-        //		}
-        copyImages(mItemsForIntent, destination)
     }
 
     override fun setMaxProgress(max: Int) {

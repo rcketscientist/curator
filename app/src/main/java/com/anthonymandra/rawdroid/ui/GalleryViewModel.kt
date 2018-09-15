@@ -2,6 +2,7 @@ package com.anthonymandra.rawdroid.ui
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.net.Uri
 import android.preference.PreferenceManager
 import android.view.View
 import androidx.lifecycle.AndroidViewModel
@@ -16,6 +17,7 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.workers.CopyWorker
 import com.anthonymandra.rawdroid.workers.MetadataWorker
 import com.anthonymandra.rawdroid.workers.SearchWorker
 
@@ -26,6 +28,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val workManager: WorkManager
     private val metaWorkStatus: LiveData<List<WorkStatus>>
     private val searchWorkStatus: LiveData<List<WorkStatus>>
+    private val copyWorkStatus: LiveData<List<WorkStatus>>
 
     val imageList: LiveData<PagedList<MetadataTest>>
     val filteredCount: LiveData<Int>
@@ -81,10 +84,12 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         workManager = WorkManager.getInstance()
         searchWorkStatus = workManager.getStatusesByTag(SearchWorker.JOB_TAG)
         metaWorkStatus = workManager.getStatusesByTag(MetadataWorker.JOB_TAG)
+        copyWorkStatus = workManager.getStatusesByTag(CopyWorker.JOB_TAG)
     }
 
     val metadataStatus get() = metaWorkStatus
     val searchStatus get() = searchWorkStatus
+    val copyStatus get() = copyWorkStatus
 
     fun startMetaWorker() {
 		val input = filter.value ?: XmpFilter()
@@ -94,6 +99,10 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 	fun startSearchWorker() {
 		workManager.enqueue(SearchWorker.buildRequest())
 	}
+
+    fun startCopyWorker(sources: List<Long>, destination: Uri) {
+        workManager.enqueue(CopyWorker.buildRequest(sources, destination))
+    }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {
         _isZoomLocked.value = zoomLocked

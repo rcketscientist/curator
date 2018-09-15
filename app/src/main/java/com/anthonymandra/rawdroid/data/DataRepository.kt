@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package com.anthonymandra.rawdroid.data
 
 import androidx.lifecycle.LiveData
@@ -16,19 +18,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.util.ArrayList
 
-
-//fun getImageFactory(filter: XmpFilter) : DataSource.Factory<Int, MetadataTest> {
-////    return internalGetImageFactory(this.createFilterQuery(filter))
-////}
-////
-////fun getImageFactory() : DataSource.Factory<Int, MetadataTest> {
-////    return getImageFactory(XmpFilter())
-////}
-////
-////fun getImages(filter: XmpFilter) : LiveData<List<MetadataTest>> {
-////    return internalGetImages(this.createFilterQuery(filter))
-////}
-
 /**
  * get with default filter will return all with default sorting
  */
@@ -41,11 +30,14 @@ import java.util.ArrayList
 class DataRepository private constructor(private val database: AppDatabase) {
     // ---- Pure meta database calls -------
     @WorkerThread
-    fun _images(uris: List<String>) = database.metadataDao().blocking(uris)
+    fun _images(uris: Array<String>) = database.metadataDao()._images(uris)
+    @WorkerThread
+    fun _images(ids: LongArray) = database.metadataDao()._images(ids)
+
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
 
     @WorkerThread
-    fun _image(uri: String) = database.metadataDao().blocking(uri)
+    fun _image(uri: String) = database.metadataDao()._images(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
     fun getImageCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {

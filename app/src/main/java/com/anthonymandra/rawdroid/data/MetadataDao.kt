@@ -32,17 +32,18 @@ abstract class MetadataDao {
     @Query("SELECT * FROM meta WHERE uri = :uri")
     abstract operator fun get(uri: String): LiveData<MetadataTest>
 
-    @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun blocking(uris: List<String>): List<MetadataTest>
+    abstract fun _images(uris: Array<String>): List<MetadataEntity>
 
-    @Transaction
+    @Query("SELECT * FROM meta WHERE id IN (:ids)")
+    abstract fun _images(ids: LongArray): List<MetadataEntity>
+
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract fun blocking(uri: String): MetadataTest
+    abstract fun _images(uri: String): MetadataEntity
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
+    abstract fun stream(uris: List<String>): LiveData<List<MetadataEntity>>
 
     // If there's a conflict we'll just skip the conflicted row
     @Insert(onConflict = OnConflictStrategy.IGNORE)
