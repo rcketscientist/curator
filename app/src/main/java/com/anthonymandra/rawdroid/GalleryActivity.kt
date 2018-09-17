@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.State
 import androidx.work.WorkStatus
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
@@ -128,7 +129,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             if (workStatus.state.isFinished) {
                 galleryToolbar.subtitle = null
                 endProgress()
-            } else {
+            } else if (workStatus.state == State.RUNNING) {
                 toolbarProgress.visibility = View.VISIBLE
                 toolbarProgress.isIndeterminate = true
             }
@@ -146,10 +147,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                 endProgress()
                 if (imageCount < 1) {
 	                //TODO: Alert
-                } else {
-                    viewModel.startMetaWorker() // TODO: chain!
                 }
-            }else {
+            } else if (State.RUNNING == workStatus.state) {
                 toolbarProgress.visibility = View.VISIBLE
                 toolbarProgress.isIndeterminate = true
                 galleryToolbar.subtitle = "Searching..."
@@ -257,13 +256,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private fun scanRawFiles() {
         toolbarProgress.visibility = View.VISIBLE
-        toolbarProgress.isIndeterminate = true        //TODO: Determinate?...use worker status!
+        toolbarProgress.isIndeterminate = true
         galleryToolbar.subtitle = "Cleaning..."
 
-        MetaDataCleaner.cleanDatabase(this, Handler(Handler.Callback {
-            viewModel.startSearchWorker()
-            true
-        }))
+        viewModel.startCleanSearchChain()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

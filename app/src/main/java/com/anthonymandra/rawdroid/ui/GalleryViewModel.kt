@@ -11,12 +11,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkStatus
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.workers.CleanWorker
 import com.anthonymandra.rawdroid.workers.CopyWorker
 import com.anthonymandra.rawdroid.workers.MetadataWorker
 import com.anthonymandra.rawdroid.workers.SearchWorker
@@ -29,6 +31,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val metaWorkStatus: LiveData<List<WorkStatus>>
     private val searchWorkStatus: LiveData<List<WorkStatus>>
     private val copyWorkStatus: LiveData<List<WorkStatus>>
+    private val cleanWorkStatus: LiveData<List<WorkStatus>>
 
     val imageList: LiveData<PagedList<MetadataTest>>
     val filteredCount: LiveData<Int>
@@ -85,11 +88,13 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         searchWorkStatus = workManager.getStatusesByTag(SearchWorker.JOB_TAG)
         metaWorkStatus = workManager.getStatusesByTag(MetadataWorker.JOB_TAG)
         copyWorkStatus = workManager.getStatusesByTag(CopyWorker.JOB_TAG)
+        cleanWorkStatus = workManager.getStatusesByTag(CleanWorker.JOB_TAG)
     }
 
     val metadataStatus get() = metaWorkStatus
     val searchStatus get() = searchWorkStatus
     val copyStatus get() = copyWorkStatus
+    val cleanStatus get() = copyWorkStatus
 
     fun startMetaWorker() {
 		val input = filter.value ?: XmpFilter()
@@ -99,6 +104,29 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 	fun startSearchWorker() {
 		workManager.enqueue(SearchWorker.buildRequest())
 	}
+
+    fun startCleanWorker() {
+        workManager.enqueue(CleanWorker.buildRequest())
+    }
+
+    fun startSearchChain() {
+        val input = filter.value ?: XmpFilter()
+
+        workManager
+            .beginWith(SearchWorker.buildRequest())
+            .then(MetadataWorker.buildRequest(input))
+            .enqueue()
+    }
+
+    fun startCleanSearchChain() {
+        val input = filter.value ?: XmpFilter()
+
+        workManager
+            .beginWith(CleanWorker.buildRequest())
+            .then(SearchWorker.buildRequest())
+            .then(MetadataWorker.buildRequest(input))
+            .enqueue()
+    }
 
     fun startCopyWorker(sources: List<Long>, destination: Uri) {
         workManager.enqueue(CopyWorker.buildRequest(sources, destination))

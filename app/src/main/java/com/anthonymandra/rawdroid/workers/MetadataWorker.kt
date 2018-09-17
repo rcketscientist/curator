@@ -1,12 +1,15 @@
 package com.anthonymandra.rawdroid.workers
 
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkRequest
-import androidx.work.Worker
-import androidx.work.workDataOf
+import android.app.Notification
+import android.app.PendingIntent
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.work.*
+import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
+import com.anthonymandra.util.Util
 
 class MetadataWorker: Worker() {
     override fun doWork(): Result {
@@ -23,15 +26,59 @@ class MetadataWorker: Worker() {
 
         val repo = DataRepository.getInstance(this.applicationContext)
 
-        val unprocessedImages = repo._getUnprocessedImages(filter)
-        unprocessedImages.forEach {
+        // TODO: resources for all of these strings
+        Util.createNotificationChannel(
+            applicationContext,
+            JOB_TAG,
+            "Parsing meta...",
+            "Notifications for metadata tasks.")
 
-            val metadata = MetaUtil.readMetadata(applicationContext, repo, it)
+        val builder = Util.createNotification(
+            applicationContext,
+            JOB_TAG,
+            applicationContext.getString(R.string.processingImages),
+            applicationContext.getString(R.string.preparing))
+//            .addAction(0, applicationContext.getString(R.string.cancel),
+//                PendingIntent.getBroadcast(applicationContext, 111, null, 0))
+
+        val notifications = NotificationManagerCompat.from(applicationContext)
+        notifications.notify(builder.build())
+
+        val unprocessedImages = repo._getUnprocessedImages(filter)
+        unprocessedImages.forEachIndexed { index, value ->
+            if (isCancelled) {
+                builder
+                    .setContentText("Cancelled")
+                    .setProgress(0,0,false)
+                    .priority = NotificationCompat.PRIORITY_HIGH
+                notifications.notify(builder.build())
+
+                return Result.SUCCESS
+            }
+
+            builder
+                .setProgress(unprocessedImages.size, index, false)
+                .setContentText(value.name)
+                .priority = NotificationCompat.PRIORITY_DEFAULT
+            notifications.notify(builder.build())
+
+            val metadata = MetaUtil.readMetadata(applicationContext, repo, value)
             if (metadata.processed) {
-                repo.updateMeta(it).subscribe()
+                repo.updateMeta(value).subscribe()
             }
         }
+
+        builder
+            .setContentText("Complete")
+            .setProgress(0,0,false)
+            .priority = NotificationCompat.PRIORITY_HIGH
+        notifications.notify(builder.build())
+
         return Result.SUCCESS
+    }
+
+    private fun NotificationManagerCompat.notify(notification: Notification) {
+        this.notify(CopyWorker.JOB_TAG, 0, notification)
     }
 
     companion object {
@@ -46,7 +93,7 @@ class MetadataWorker: Worker() {
         const val KEY_FILTER_SUBJECT = "subject"
 
         @JvmStatic
-        fun buildRequest(xmpFilter: XmpFilter = XmpFilter()): WorkRequest? {
+        fun buildRequest(xmpFilter: XmpFilter = XmpFilter()): OneTimeWorkRequest {
             val data = workDataOf(
                 KEY_FILTER_AND to xmpFilter.andTrueOrFalse,
                 KEY_FILTER_ASC to xmpFilter.sortAscending,

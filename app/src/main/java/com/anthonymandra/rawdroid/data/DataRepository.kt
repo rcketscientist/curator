@@ -30,6 +30,10 @@ import java.util.ArrayList
 class DataRepository private constructor(private val database: AppDatabase) {
     // ---- Pure meta database calls -------
     @WorkerThread
+    fun _images() = database.metadataDao().allImages
+    @WorkerThread
+    fun _uris() = database.metadataDao().uris
+    @WorkerThread
     fun _images(uris: Array<String>) = database.metadataDao()._images(uris)
     @WorkerThread
     fun _images(ids: LongArray) = database.metadataDao()._images(ids)
@@ -62,6 +66,11 @@ class DataRepository private constructor(private val database: AppDatabase) {
     }
 
     fun insertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
+
+    @WorkerThread
+    fun deleteImages(uris: Array<String>) {
+        database.metadataDao().delete(uris)
+    }
 
     fun deleteImage(id: Long) {
         Completable.fromAction { database.metadataDao().delete(id) }

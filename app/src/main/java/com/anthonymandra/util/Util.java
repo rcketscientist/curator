@@ -18,6 +18,7 @@ package com.anthonymandra.util;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.R;
 
 import java.io.BufferedOutputStream;
@@ -344,21 +346,19 @@ public class Util
 
     /**
      * Create a Notification that is shown as a heads-up notification if possible.
-     *
-     * @param message Message shown on the notification
-     * @param context Context needed to create Toast
      */
-    static void makeStatusNotification(Context context, String title, String message) {
+    public static void createNotificationChannel(
+            Context context,
+            String channelId,
+            String name,
+            String description) {
 
         // Make a channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create the NotificationChannel, but only on API 26+ because
             // the NotificationChannel class is new and not in the support library
-            CharSequence name = Constants.VERBOSE_NOTIFICATION_CHANNEL_NAME;
-            String description = Constants.VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION;
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel =
-                    new NotificationChannel(Constants.CHANNEL_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
             channel.setDescription(description);
 
             // Add the channel
@@ -369,16 +369,23 @@ public class Util
                 notificationManager.createNotificationChannel(channel);
             }
         }
+    }
+    public static NotificationCompat.Builder createNotification(
+            Context context,
+            String channelId,
+            String title,
+            String message) {
 
         // Create the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(Constants.NOTIFICATION_TITLE)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
                 .setContentText(message)
+                .setContentIntent(PendingIntent.getActivity(context, 0,
+                        new Intent(context, GalleryActivity.class),0))
+                .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(new long[0]);
-
-        // Show the notification
-        NotificationManagerCompat.from(context).notify(Constants.NOTIFICATION_ID, builder.build());
+        return builder;
     }
 }

@@ -9,7 +9,10 @@ import androidx.sqlite.db.SupportSQLiteQuery
 abstract class MetadataDao {
 
     @get:Query("SELECT * FROM meta")
-    abstract val allImages: LiveData<List<MetadataEntity>>
+    abstract val allImages: List<MetadataEntity>
+
+    @get:Query("SELECT uri FROM meta")
+    abstract val uris: List<String>
 
     // Count doesn't care if the subject changes
     @RawQuery(observedEntities = [ MetadataEntity::class ])
@@ -33,17 +36,17 @@ abstract class MetadataDao {
     abstract operator fun get(uri: String): LiveData<MetadataTest>
 
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun _images(uris: Array<String>): List<MetadataEntity>
+    abstract fun _images(uris: Array<String>): List<MetadataTest>
 
     @Query("SELECT * FROM meta WHERE id IN (:ids)")
-    abstract fun _images(ids: LongArray): List<MetadataEntity>
+    abstract fun _images(ids: LongArray): List<MetadataTest>
 
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract fun _images(uri: String): MetadataEntity
+    abstract fun _images(uri: String): MetadataTest
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun stream(uris: List<String>): LiveData<List<MetadataEntity>>
+    abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
 
     // If there's a conflict we'll just skip the conflicted row
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -66,10 +69,13 @@ abstract class MetadataDao {
     abstract fun delete(vararg datums: MetadataEntity)
 
     @Query("DELETE FROM meta WHERE id = :id")
-    abstract fun delete(id: Long)
+    abstract fun delete(id: Long): Int
 
     @Query("DELETE FROM meta WHERE id IN (:ids)")
-    abstract fun delete(ids: List<Long>)
+    abstract fun delete(ids: LongArray): Int
+
+    @Query("DELETE FROM meta WHERE uri IN (:uris)")
+    abstract fun delete(uris: Array<String>): Int
 
     @Query("DELETE FROM meta")
     abstract fun deleteAll()

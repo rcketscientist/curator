@@ -52,7 +52,7 @@ class MetaService : PriorityIntentService("MetaService") {
             arrayOf(intent.data!!.toString())
 
         try {
-            repo._images(listOf(*uris))
+            repo._images(uris)
                 .filter { !it.processed }
                 .forEach {
                     val metadata = MetaUtil.readMetadata(this, repo, it)

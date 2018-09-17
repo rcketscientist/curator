@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid.workers
 
+import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkRequest
 import androidx.work.Worker
@@ -14,7 +15,6 @@ class SearchWorker: Worker() {
 		val repo = DataRepository.getInstance(this.applicationContext)
 		val excludedFolders = repo.parents.filter { it.excluded }
 
-		// TODO: This seems fishy...
 		val parentMap = repo.parents.associateBy({it.documentUri}, {it.id})
 
 		val uriRoots = applicationContext.contentResolver.persistedUriPermissions
@@ -95,7 +95,7 @@ class SearchWorker: Worker() {
 		const val JOB_TAG = "search_job"
 
 		@JvmStatic
-		fun buildRequest(): WorkRequest? {
+		fun buildRequest(): OneTimeWorkRequest {
 			return OneTimeWorkRequestBuilder<SearchWorker>()
 				.addTag(JOB_TAG)
 				.build()

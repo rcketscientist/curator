@@ -1,26 +1,19 @@
 package com.anthonymandra.rawdroid.workers
 
+import android.app.Notification
 import android.net.Uri
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkRequest
-import androidx.work.Worker
-import androidx.work.workDataOf
-import com.anthonymandra.framework.CoreActivity
+import androidx.work.*
 import com.anthonymandra.framework.DocumentUtil
+import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataEntity
-import com.anthonymandra.rawdroid.data.MetadataTest
-import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
 import com.anthonymandra.util.ImageUtil
-import com.crashlytics.android.Crashlytics
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
+import com.anthonymandra.util.Util
 
 class CopyWorker: Worker() {
 	override fun doWork(): Result {
@@ -28,17 +21,59 @@ class CopyWorker: Worker() {
 		val images = inputData.getLongArray(KEY_COPY_URIS)
 		val destination = inputData.getString(KEY_DEST_URI)?.toUri()
 
-		if (images == null) return Result.FAILURE
+		if (images == null || destination == null) return Result.FAILURE
+
+		// TODO: resources for all of these strings
+		Util.createNotificationChannel(
+			applicationContext,
+			"copy",
+			"Copying...",
+			"Notifications for copy tasks.")
+
+		val builder = Util.createNotification(
+			applicationContext,
+			"copy",
+			applicationContext.getString(R.string.copyingImages),
+			applicationContext.getString(R.string.preparing))
+
+		val notifications = NotificationManagerCompat.from(applicationContext)
+		notifications.notify(builder.build())
 
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		val metadata = repo._images(images)
-		metadata.forEach {
-			if (isCancelled) return Result.SUCCESS
-			val destinationFile = DocumentUtil.getChildUri(destination, it.name)
-			copyAssociatedFiles(it, destinationFile)
+		metadata.forEachIndexed { index, value ->
+			if (isCancelled) {
+				builder
+					.setContentText("Cancelled")
+					.setProgress(0,0,false)
+					.priority = NotificationCompat.PRIORITY_HIGH
+				notifications.notify(builder.build())
+
+				return Result.SUCCESS
+			}
+
+			builder
+				.setProgress(images.size, index, false)
+				.setContentText(value.name)
+				.priority = NotificationCompat.PRIORITY_DEFAULT
+			notifications.notify(builder.build())
+
+			val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
+			val destinationFile = parentFile.createFile(null, value.name)
+			copyAssociatedFiles(value, destinationFile.uri)
 		}
 
+		builder
+			.setContentText("Complete")
+			.setProgress(0,0,false)
+			.priority = NotificationCompat.PRIORITY_HIGH
+		notifications.notify(builder.build())
+
 		return Result.SUCCESS
+	}
+
+	private fun NotificationManagerCompat.notify(notification: Notification) {
+		this.notify(JOB_TAG, 0, notification)
 	}
 
 	/**
@@ -65,59 +100,13 @@ class CopyWorker: Worker() {
 		return FileUtil.copy(applicationContext, sourceUri, toImage)
 	}
 
-	// TODO: Move notifications
-	fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
-		setMaxProgress(images.size)
-
-		var progress = 0
-		val builder = NotificationCompat.Builder(this, CoreActivity.NOTIFICATION_CHANNEL)
-		builder.setContentTitle(getString(R.string.copyingImages))
-				.setSmallIcon(R.mipmap.ic_launcher)
-				.setPriority(CoreActivity.IMPORTANT_NOTIFICATION)
-				.setVibrate(longArrayOf(0, 0)) // We don't ask for permission, this allows peek
-				.setProgress(images.size, progress, false)
-		notificationManager.notify(0, builder.build())
-
-		Observable.fromIterable(images)
-				.subscribeOn(Schedulers.from(AppExecutors.DISK))
-				.map {
-					val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
-					copyAssociatedFiles(it, destinationFile)
-					it.name
-				}
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeBy(
-						onNext = {
-							builder.setProgress(images.size, ++progress, false)
-							builder.setContentText(it)
-							notificationManager.notify(0, builder.build())
-							incrementProgress()
-						},
-						onComplete = {
-							endProgress()
-
-							// When the loop is finished, updates the notification
-							builder.setContentText("Complete")
-									.setProgress(0,0,false) // Removes the progress bar
-							notificationManager.notify(0, builder.build())
-						},
-						onError = {
-							incrementProgress()
-							builder.setProgress(images.size, ++progress, false)
-							it.printStackTrace()
-//                    Crashlytics.setString("uri", toCopy.toString())
-							Crashlytics.logException(it)
-						}
-				)
-	}
-
 	companion object {
 		const val JOB_TAG = "copy_job"
 		const val KEY_COPY_URIS = "copy uris"
 		const val KEY_DEST_URI = "destination"
 
 		@JvmStatic
-		fun buildRequest(imagesToCopy: List<Long>, destination: Uri): WorkRequest? {
+		fun buildRequest(imagesToCopy: List<Long>, destination: Uri): OneTimeWorkRequest {
 			val data = workDataOf(
 				KEY_COPY_URIS to imagesToCopy.toLongArray(),
 				KEY_DEST_URI to destination.toString()
