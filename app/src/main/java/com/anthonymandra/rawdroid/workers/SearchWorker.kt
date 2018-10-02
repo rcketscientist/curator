@@ -18,14 +18,14 @@ class SearchWorker: Worker() {
 		val parentMap = repo.parents.associateBy({it.documentUri}, {it.id})
 
 		val uriRoots = applicationContext.contentResolver.persistedUriPermissions
-		val foldersToSearch = uriRoots.map {
+		val foldersToSearch = uriRoots.asSequence().map {
 			UsefulDocumentFile.fromUri(applicationContext, it.uri)
-			}.filter { root ->
-				// Filter out roots that start with any of the excluded folders
-				!excludedFolders.any { exclusion ->
-					root.uri.toString().startsWith(exclusion.documentUri, true)
-				}
+		}.filter { root ->
+			// Filter out roots that start with any of the excluded folders
+			!excludedFolders.any { exclusion ->
+				root.uri.toString().startsWith(exclusion.documentUri, true)
 			}
+		}.toList()
 
 		val images = search(foldersToSearch).map {
 			getImageFileInfo(it, parentMap, repo)

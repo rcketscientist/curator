@@ -679,49 +679,6 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
-    @Throws(DocumentActivity.WritePermissionException::class)
-    private fun deleteAssociatedFiles(image: MetadataTest): Boolean {
-        val associatedFiles = ImageUtil.getAssociatedFiles(this, Uri.parse(image.uri))
-        for (file in associatedFiles)
-            deleteFile(file)
-        return deleteFile(image.uri)
-    }
-
-    private fun deleteTask(images: Collection<MetadataTest>) {
-        if (images.isEmpty()) return
-
-        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.importingImages))
-            .setContentText("placeholder")
-            .setSmallIcon(R.mipmap.ic_launcher)
-
-        Completable.create {
-            val progress = 0
-            builder.setProgress(images.size, progress, false)
-            notificationManager.notify(0, builder.build())
-
-            images.forEach { toDelete ->
-                if (deleteAssociatedFiles(toDelete)) {
-                    DataRepository.getInstance(this).deleteImage(toDelete)
-                }
-            }
-
-            // When the loop is finished, updates the notification
-            builder.setContentText("Complete")
-                .setProgress(0,0,false) // Removes the progress bar
-            notificationManager.notify(0, builder.build())
-        }
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .subscribeBy(
-                onComplete = {
-                    clearWriteResume()
-                },
-                onError = {
-                    builder.setContentText("Some images did not transfer")
-                }
-            )
-    }
-
     protected inner class RecycleTask : AsyncTask<Any, Int, Void>(), OnCancelListener {
         override fun onPreExecute() {
 //            mProgressDialog!!.setTitle(R.string.recyclingFiles)

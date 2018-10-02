@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.room.Delete
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkStatus
@@ -18,10 +19,7 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
-import com.anthonymandra.rawdroid.workers.CleanWorker
-import com.anthonymandra.rawdroid.workers.CopyWorker
-import com.anthonymandra.rawdroid.workers.MetadataWorker
-import com.anthonymandra.rawdroid.workers.SearchWorker
+import com.anthonymandra.rawdroid.workers.*
 
 class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     //TODO: Split out viewer viewmodel
@@ -31,6 +29,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     private val metaWorkStatus: LiveData<List<WorkStatus>>
     private val searchWorkStatus: LiveData<List<WorkStatus>>
     private val copyWorkStatus: LiveData<List<WorkStatus>>
+    private val deleteWorkStatus: LiveData<List<WorkStatus>>
     private val cleanWorkStatus: LiveData<List<WorkStatus>>
 
     val imageList: LiveData<PagedList<MetadataTest>>
@@ -80,7 +79,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         _isZoomLocked.value = false
 
         val settings = PreferenceManager.getDefaultSharedPreferences(app)
-        settings.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+        settings.registerOnSharedPreferenceChangeListener { sharedPreferences, _ ->
             updatePreferences(sharedPreferences)
         }
 
@@ -88,6 +87,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         searchWorkStatus = workManager.getStatusesByTag(SearchWorker.JOB_TAG)
         metaWorkStatus = workManager.getStatusesByTag(MetadataWorker.JOB_TAG)
         copyWorkStatus = workManager.getStatusesByTag(CopyWorker.JOB_TAG)
+        deleteWorkStatus = workManager.getStatusesByTag(DeleteWorker.JOB_TAG)
         cleanWorkStatus = workManager.getStatusesByTag(CleanWorker.JOB_TAG)
     }
 
@@ -95,6 +95,7 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
     val searchStatus get() = searchWorkStatus
     val copyStatus get() = copyWorkStatus
     val cleanStatus get() = copyWorkStatus
+    val deleteStatus get() = deleteWorkStatus
 
     fun startMetaWorker() {
 		val input = filter.value ?: XmpFilter()
@@ -130,6 +131,10 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
 
     fun startCopyWorker(sources: List<Long>, destination: Uri) {
         workManager.enqueue(CopyWorker.buildRequest(sources, destination))
+    }
+
+    fun startDeleteWorker(sources: List<Long>) {
+        workManager.enqueue(DeleteWorker.buildRequest(sources))
     }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {

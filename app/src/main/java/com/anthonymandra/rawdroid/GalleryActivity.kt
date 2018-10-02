@@ -274,8 +274,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                 //			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
                 //			return;
                 //		}
-                if (data.data == null) return
-                viewModel.startCopyWorker(mItemsForIntent.map { it.id }, data.data)
+                data.data?.let { uri ->
+                    viewModel.startCopyWorker(mItemsForIntent.map { it.id }, uri)
+                }
             }
             REQUEST_UPDATE_PHOTO -> if (resultCode == RESULT_OK && data != null) {
                 handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0))

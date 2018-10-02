@@ -23,7 +23,6 @@ class CopyWorker: Worker() {
 
 		if (images == null || destination == null) return Result.FAILURE
 
-		// TODO: resources for all of these strings
 		Util.createNotificationChannel(
 			applicationContext,
 			"copy",
@@ -45,7 +44,6 @@ class CopyWorker: Worker() {
 			if (isCancelled) {
 				builder
 					.setContentText("Cancelled")
-					.setProgress(0,0,false)
 					.priority = NotificationCompat.PRIORITY_HIGH
 				notifications.notify(builder.build())
 

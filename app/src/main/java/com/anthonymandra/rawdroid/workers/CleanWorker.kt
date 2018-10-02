@@ -1,16 +1,11 @@
 package com.anthonymandra.rawdroid.workers
 
-import android.app.Notification
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Worker
 import com.anthonymandra.framework.UsefulDocumentFile
-import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.util.MetaUtil
-import com.anthonymandra.util.Util
 
 class CleanWorker: Worker() {
     override fun doWork(): Result {
