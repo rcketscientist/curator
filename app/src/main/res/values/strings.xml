@@ -165,6 +165,7 @@
     <string name="preparing">Preparing…</string>
     <string name="processingImages">Processing Images…</string>
     <string name="copyingImages">Copying Images…</string>
+    <string name="writingMetadata">Writing Metadata…</string>
     <string name="importingImages">Importing Images…</string>
     <string name="savingImages">Saving Images…</string>
     <string name="exportingThumb">Exporting Thumbnails…</string>

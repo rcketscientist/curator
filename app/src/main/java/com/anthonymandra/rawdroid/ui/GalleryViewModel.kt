@@ -2,40 +2,24 @@ package com.anthonymandra.rawdroid.ui
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.net.Uri
 import android.preference.PreferenceManager
 import android.view.View
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.room.Delete
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
-import androidx.work.WorkStatus
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
-import com.anthonymandra.rawdroid.XmpFilter
 import com.anthonymandra.rawdroid.data.MetadataTest
-import com.anthonymandra.rawdroid.workers.*
 
-class GalleryViewModel(app: Application) : AndroidViewModel(app) {
+class GalleryViewModel(app: Application) : CoreViewModel(app) {
     //TODO: Split out viewer viewmodel
     private val dataRepo = (app as App).dataRepo
-
-    private val workManager: WorkManager
-    private val metaWorkStatus: LiveData<List<WorkStatus>>
-    private val searchWorkStatus: LiveData<List<WorkStatus>>
-    private val copyWorkStatus: LiveData<List<WorkStatus>>
-    private val deleteWorkStatus: LiveData<List<WorkStatus>>
-    private val cleanWorkStatus: LiveData<List<WorkStatus>>
 
     val imageList: LiveData<PagedList<MetadataTest>>
     val filteredCount: LiveData<Int>
     val filteredProcessedCount: LiveData<Int>
-    val filter: MutableLiveData<XmpFilter> = MutableLiveData()
     private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
@@ -82,59 +66,6 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         settings.registerOnSharedPreferenceChangeListener { sharedPreferences, _ ->
             updatePreferences(sharedPreferences)
         }
-
-        workManager = WorkManager.getInstance()
-        searchWorkStatus = workManager.getStatusesByTag(SearchWorker.JOB_TAG)
-        metaWorkStatus = workManager.getStatusesByTag(MetadataWorker.JOB_TAG)
-        copyWorkStatus = workManager.getStatusesByTag(CopyWorker.JOB_TAG)
-        deleteWorkStatus = workManager.getStatusesByTag(DeleteWorker.JOB_TAG)
-        cleanWorkStatus = workManager.getStatusesByTag(CleanWorker.JOB_TAG)
-    }
-
-    val metadataStatus get() = metaWorkStatus
-    val searchStatus get() = searchWorkStatus
-    val copyStatus get() = copyWorkStatus
-    val cleanStatus get() = copyWorkStatus
-    val deleteStatus get() = deleteWorkStatus
-
-    fun startMetaWorker() {
-		val input = filter.value ?: XmpFilter()
-		workManager.enqueue(MetadataWorker.buildRequest(input))
-	}
-
-	fun startSearchWorker() {
-		workManager.enqueue(SearchWorker.buildRequest())
-	}
-
-    fun startCleanWorker() {
-        workManager.enqueue(CleanWorker.buildRequest())
-    }
-
-    fun startSearchChain() {
-        val input = filter.value ?: XmpFilter()
-
-        workManager
-            .beginWith(SearchWorker.buildRequest())
-            .then(MetadataWorker.buildRequest(input))
-            .enqueue()
-    }
-
-    fun startCleanSearchChain() {
-        val input = filter.value ?: XmpFilter()
-
-        workManager
-            .beginWith(CleanWorker.buildRequest())
-            .then(SearchWorker.buildRequest())
-            .then(MetadataWorker.buildRequest(input))
-            .enqueue()
-    }
-
-    fun startCopyWorker(sources: List<Long>, destination: Uri) {
-        workManager.enqueue(CopyWorker.buildRequest(sources, destination))
-    }
-
-    fun startDeleteWorker(sources: List<Long>) {
-        workManager.enqueue(DeleteWorker.buildRequest(sources))
     }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {
@@ -175,10 +106,6 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         if (prefs.getString(FullSettingsActivity.KEY_ShowToolbar, "Automatic") != comparator) {
             _toolbarVisibility.postValue(isInterfaceVisible)
         }
-    }
-
-    fun setFilter(filter: XmpFilter) {
-        this.filter.value = filter
     }
 
     // TODO: Remove android framework references

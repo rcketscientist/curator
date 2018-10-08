@@ -84,7 +84,7 @@ android {
     flavorDimensions "market", "cycle"
 
     productFlavors {
-        // These fields handle flavorized authorities for providers
+        // These fields handle flavor authorities for providers
         final FIELD_META = "PROVIDER_AUTHORITY_META"
         final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
         final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
@@ -168,8 +168,8 @@ dependencies {
     // Instrumented
     androidTestImplementation "androidx.arch.core:core-testing:$coreTestingVersion"
     androidTestImplementation "androidx.annotation:annotation:$annotationVersion"
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test:rules:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta01'
+    androidTestImplementation 'androidx.test:rules:1.1.0-beta01'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
     androidTestImplementation "android.arch.work:work-testing:$workVersion"
 

@@ -41,7 +41,7 @@ class ViewerActivity : CoreActivity() {
     override val selectedImages: Collection<MetadataTest>
         get() = listOfNotNull(viewerAdapter.getImage(pager.currentItem))
 
-    private val viewModel: GalleryViewModel by lazy {
+    override val viewModel: GalleryViewModel by lazy {
         ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
 
     private var displayWidth = 0

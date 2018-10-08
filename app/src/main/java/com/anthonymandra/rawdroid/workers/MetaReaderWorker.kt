@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
-import android.app.PendingIntent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
@@ -11,7 +10,7 @@ import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
 import com.anthonymandra.util.Util
 
-class MetadataWorker: Worker() {
+class MetaReaderWorker: Worker() {
     override fun doWork(): Result {
         val filter = XmpFilter(
             inputData.getIntArray(KEY_FILTER_RATING)?.asList() ?: emptyList(),
@@ -82,7 +81,7 @@ class MetadataWorker: Worker() {
     }
 
     companion object {
-        const val JOB_TAG = "metadata_job"
+        const val JOB_TAG = "metareader_job"
         const val KEY_FILTER_AND = "and"
         const val KEY_FILTER_ASC = "asc"
         const val KEY_FILTER_SEGREGATE = "segregate"
@@ -105,7 +104,7 @@ class MetadataWorker: Worker() {
                 KEY_FILTER_SUBJECT to xmpFilter.subjectIds.toLongArray()
             )
 
-            return OneTimeWorkRequestBuilder<MetadataWorker>()
+            return OneTimeWorkRequestBuilder<MetaReaderWorker>()
                     .addTag(JOB_TAG)
                     .setInputData(data)
                     .build()

@@ -25,6 +25,7 @@ import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.*
 import com.anthonymandra.util.FileUtil
 import com.crashlytics.android.Crashlytics
@@ -466,10 +467,10 @@ abstract class CoreActivity : DocumentActivity() {
             if (deleteConfirm) {
                 AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
                     .setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
-                    .setPositiveButton(R.string.delete) { _, _ -> deleteTask(itemsToDelete) }
+                    .setPositiveButton(R.string.delete) { _, _ -> viewModel.startDeleteWorker(itemsToDelete.map { it.id }) }
                     .show()
             } else {
-                deleteTask(itemsToDelete)
+                viewModel.startDeleteWorker(itemsToDelete.map { it.id })
             }
         } else {
             RecycleTask().execute(itemsToDelete)
@@ -679,6 +680,7 @@ abstract class CoreActivity : DocumentActivity() {
             )
     }
 
+    // TODO: Need to look into way to make this an application singleton (ProcessLifecycleOwner?)
     protected inner class RecycleTask : AsyncTask<Any, Int, Void>(), OnCancelListener {
         override fun onPreExecute() {
 //            mProgressDialog!!.setTitle(R.string.recyclingFiles)
@@ -915,6 +917,7 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
+    protected abstract val viewModel: CoreViewModel
     abstract fun setMaxProgress(max: Int)
     abstract fun incrementProgress()
     abstract fun endProgress()

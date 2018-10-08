@@ -52,7 +52,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private var mMaterialCab: MaterialCab? = null
     private var mXmpFilterFragment: XmpFilterFragment? = null
-    private val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
+    override val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
     private var imageCount = 0
 
     protected val isContextModeActive: Boolean
