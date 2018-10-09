@@ -142,7 +142,7 @@ object MetaUtil {
      * @param meta populated metadata
      */
     @Throws(XMPException::class)
-    fun writeXmp(os: OutputStream?, meta: XMPMeta) {
+    fun writeXmp(os: OutputStream, meta: XMPMeta) {
         val so = SerializeOptions().setOmitPacketWrapper(true)
         XMPMetaFactory.serialize(meta, os, so)
     }

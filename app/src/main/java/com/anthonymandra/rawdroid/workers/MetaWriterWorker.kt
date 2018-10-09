@@ -4,17 +4,17 @@ import android.app.Notification
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Worker
 import androidx.work.workDataOf
+import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataEntity
-import com.anthonymandra.util.FileUtil
-import com.anthonymandra.util.ImageUtil
-import com.anthonymandra.util.Util
+import com.anthonymandra.util.*
 
 class MetaWriterWorker: Worker() {
 	override fun doWork(): Result {
@@ -59,11 +59,16 @@ class MetaWriterWorker: Worker() {
 				.priority = NotificationCompat.PRIORITY_DEFAULT
 			notifications.notify(builder.build())
 
+			val xmp = ImageUtil.getXmpFile(applicationContext, value.uri.toUri()) ?: return@forEachIndexed
 
+			val meta = MetaUtil.readXmp(applicationContext, xmp)
+			MetaUtil.updateXmpStringArray(meta, MetaUtil.SUBJECT, subject)
+			MetaUtil.updateXmpInteger(meta, MetaUtil.RATING, rating)
+			MetaUtil.updateXmpString(meta, MetaUtil.LABEL, label)
 
-			val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
-			val destinationFile = parentFile.createFile(null, value.name)
-			copyAssociatedFiles(value, destinationFile.uri)
+			applicationContext.contentResolver.openOutputStream(xmp.uri)?.use {
+				MetaUtil.writeXmp(it, meta)
+			}
 		}
 
 		builder
