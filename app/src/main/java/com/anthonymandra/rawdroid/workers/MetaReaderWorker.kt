@@ -5,21 +5,21 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.XmpFilter
+import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
 import com.anthonymandra.util.Util
 
 class MetaReaderWorker: Worker() {
     override fun doWork(): Result {
-        val filter = XmpFilter(
+        val filter = ImageFilter(
             inputData.getIntArray(KEY_FILTER_RATING)?.asList() ?: emptyList(),
             inputData.getStringArray(KEY_FILTER_LABEL)?.asList() ?: emptyList(),
             inputData.getLongArray(KEY_FILTER_SUBJECT)?.asList() ?: emptyList(),
             inputData.getBoolean(KEY_FILTER_AND, false),
             inputData.getBoolean(KEY_FILTER_ASC, true),
             inputData.getBoolean(KEY_FILTER_SEGREGATE, false),
-            XmpFilter.SortColumns.valueOf(inputData.getString(KEY_FILTER_SORT) ?: XmpFilter.SortColumns.Name.toString()),
+            ImageFilter.SortColumns.valueOf(inputData.getString(KEY_FILTER_SORT) ?: ImageFilter.SortColumns.Name.toString()),
             inputData.getLongArray(KEY_FILTER_HIDDEN)?.toSet() ?: emptySet()
         )
 
@@ -92,16 +92,16 @@ class MetaReaderWorker: Worker() {
         const val KEY_FILTER_SUBJECT = "subject"
 
         @JvmStatic
-        fun buildRequest(xmpFilter: XmpFilter = XmpFilter()): OneTimeWorkRequest {
+        fun buildRequest(imageFilter: ImageFilter = ImageFilter()): OneTimeWorkRequest {
             val data = workDataOf(
-                KEY_FILTER_AND to xmpFilter.andTrueOrFalse,
-                KEY_FILTER_ASC to xmpFilter.sortAscending,
-                KEY_FILTER_SEGREGATE to xmpFilter.segregateByType,
-                KEY_FILTER_SORT to xmpFilter.sortColumn.toString(),
-                KEY_FILTER_HIDDEN to xmpFilter.hiddenFolderIds.toLongArray(),
-                KEY_FILTER_RATING to xmpFilter.ratings.toIntArray(),
-                KEY_FILTER_LABEL to xmpFilter.labels.toTypedArray(),
-                KEY_FILTER_SUBJECT to xmpFilter.subjectIds.toLongArray()
+                KEY_FILTER_AND to imageFilter.andTrueOrFalse,
+                KEY_FILTER_ASC to imageFilter.sortAscending,
+                KEY_FILTER_SEGREGATE to imageFilter.segregateByType,
+                KEY_FILTER_SORT to imageFilter.sortColumn.toString(),
+                KEY_FILTER_HIDDEN to imageFilter.hiddenFolderIds.toLongArray(),
+                KEY_FILTER_RATING to imageFilter.ratings.toIntArray(),
+                KEY_FILTER_LABEL to imageFilter.labels.toTypedArray(),
+                KEY_FILTER_SUBJECT to imageFilter.subjectIds.toLongArray()
             )
 
             return OneTimeWorkRequestBuilder<MetaReaderWorker>()

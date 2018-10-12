@@ -22,7 +22,7 @@ import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
 
 
-typealias FilterChangedListener = (XmpFilter) -> Unit
+typealias FilterChangedListener = (ImageFilter) -> Unit
 class XmpFilterFragment : XmpBaseFragment() {
 
     private var filterChangedCallback: FilterChangedListener? = null
@@ -31,7 +31,7 @@ class XmpFilterFragment : XmpBaseFragment() {
     private var mAndTrueOrFalse: Boolean = false
     private var ascending: Boolean = false
     private var mSegregateByType: Boolean = false
-    private var sortColumn: XmpFilter.SortColumns = XmpFilter.SortColumns.Name
+    private var sortColumn: ImageFilter.SortColumns = ImageFilter.SortColumns.Name
     private var mHiddenFolders: List<FolderEntity> = Collections.emptyList()
     private var mExcludedFolders: List<FolderEntity> = Collections.emptyList()
 
@@ -54,19 +54,19 @@ class XmpFilterFragment : XmpBaseFragment() {
             onFilterUpdated()
         }
 
-    private val xmpValues: XmpValues
+    private val xmpFilter: XmpFilter
         get() {
-            return XmpValues(ratings, colorLabels, subject)
+            return XmpFilter(ratings, colorLabels, subject)
         }
 
     val excludedFolders: List<String>?
         get() = mExcludedFolders.map { it.documentUri }
 
-    private val xmpFilter: XmpFilter
-        get() = XmpFilter(
-                xmpValues.rating,
-                xmpValues.label,
-                xmpValues.subject.map {it.id},
+    private val imageFilter: ImageFilter
+        get() = ImageFilter(
+                xmpFilter.rating,
+                xmpFilter.label,
+                xmpFilter.subject.map {it.id},
                 mAndTrueOrFalse,
                 ascending,
                 mSegregateByType,
@@ -86,7 +86,7 @@ class XmpFilterFragment : XmpBaseFragment() {
         val pref = activity!!.getSharedPreferences(mPrefName, Context.MODE_PRIVATE)
         mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false)
         ascending = pref.getBoolean(mPrefAscending, true)
-        sortColumn = XmpFilter.SortColumns.valueOf(pref.getString(mPrefColumn, XmpFilter.SortColumns.Name.toString()))
+        sortColumn = ImageFilter.SortColumns.valueOf(pref.getString(mPrefColumn, ImageFilter.SortColumns.Name.toString()))
         mSegregateByType = pref.getBoolean(mPrefSegregate, true)
 
         // Initial match setting
@@ -94,12 +94,12 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         // Initial sort setting
         if (ascending) {
-            if (XmpFilter.SortColumns.Name === sortColumn)
+            if (ImageFilter.SortColumns.Name === sortColumn)
                 toggleSortAfirst.isChecked = true
             else
                 toggleSortOldFirst.isChecked = true
         } else {
-            if (XmpFilter.SortColumns.Name === sortColumn)
+            if (ImageFilter.SortColumns.Name === sortColumn)
                 toggleSortZfirst.isChecked = true
             else
                 toggleSortYoungFirst.isChecked = true
@@ -150,20 +150,20 @@ class XmpFilterFragment : XmpBaseFragment() {
             // A is quantitatively lowest, ascending
             R.id.toggleSortAfirst -> {
                 ascending = true
-                sortColumn = XmpFilter.SortColumns.Name
+                sortColumn = ImageFilter.SortColumns.Name
             }
             R.id.toggleSortZfirst -> {
                 ascending = false
-                sortColumn = XmpFilter.SortColumns.Name
+                sortColumn = ImageFilter.SortColumns.Name
             }
             // Young is quantitatively highest, descending
             R.id.toggleSortYoungFirst -> {
                 ascending = false
-                sortColumn = XmpFilter.SortColumns.Date
+                sortColumn = ImageFilter.SortColumns.Date
             }
             R.id.toggleSortOldFirst -> {
                 ascending = true
-                sortColumn = XmpFilter.SortColumns.Date
+                sortColumn = ImageFilter.SortColumns.Date
             }
         }
         onFilterUpdated()
@@ -177,7 +177,7 @@ class XmpFilterFragment : XmpBaseFragment() {
         searchRequestCallback = listener
     }
 
-    override fun onXmpChanged(xmp: XmpValues) {
+    override fun onXmpChanged(xmp: XmpFilter) {
         onFilterUpdated()
     }
 
@@ -196,7 +196,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
             editor.apply()
 
-            val filter = xmpFilter
+            val filter = imageFilter
 
             filterChangedCallback?.invoke(filter)
         }

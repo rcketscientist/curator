@@ -7,8 +7,8 @@ import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import androidx.test.filters.MediumTest
 import androidx.test.runner.AndroidJUnit4
+import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.XmpFilter
-import com.anthonymandra.rawdroid.XmpValues
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.*
@@ -198,7 +198,7 @@ class AppDatabaseTest {
         assertThat(subjectsFor2, hasItems(1L))
         assertThat(subjectsFor3, hasItems(7L))
 
-        val all = metadataDao.getImages(DataRepository.createFilterQuery(XmpFilter())).blockingObserve()
+        val all = metadataDao.getImages(DataRepository.createFilterQuery(ImageFilter())).blockingObserve()
 
         // Ensure we don't have separate entities per junction match
         assertThat(all!!.size, equalTo(3))
@@ -215,15 +215,15 @@ class AppDatabaseTest {
         val label = "label1"
 
         // subject: Cathedral
-        var xmp = XmpValues(subject = listOf(cathedral))
-        var filter = XmpFilter(xmp)
+        var xmp = XmpFilter(subject = listOf(cathedral))
+        var filter = ImageFilter(xmp)
         var result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         assertThat(result[0].subjectIds, hasItems(cathedral.id))
 
         // subject: National Park OR Europe
-        xmp = XmpValues(subject = listOf(nationalPark, europe))
-        filter = XmpFilter(xmp, false)
+        xmp = XmpFilter(subject = listOf(nationalPark, europe))
+        filter = ImageFilter(xmp, false)
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         result.forEach {
@@ -233,8 +233,8 @@ class AppDatabaseTest {
         }
 
         // subject: Cathedral OR label:label1
-        xmp = XmpValues(subject = listOf(europe), label = listOf(label))
-        filter = XmpFilter(xmp, false)
+        xmp = XmpFilter(subject = listOf(europe), label = listOf(label))
+        filter = ImageFilter(xmp, false)
 
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
@@ -243,8 +243,8 @@ class AppDatabaseTest {
         }
 
         // subject: Cathedral AND label:label1
-        xmp = XmpValues(subject = listOf(cathedral), label = listOf(label))
-        filter = XmpFilter(xmp, true)
+        xmp = XmpFilter(subject = listOf(cathedral), label = listOf(label))
+        filter = ImageFilter(xmp, true)
 
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(1))

@@ -23,7 +23,6 @@ import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.*
@@ -33,9 +32,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -117,32 +113,8 @@ abstract class CoreActivity : DocumentActivity() {
     override fun onResume() {
         super.onResume()
         mActivityVisible = true
-//        LicenseManager.getLicense(this, licenseHandler)
         createSwapDir()
         createRecycleBin()
-
-        xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
-        xmpEditFragment.setListener { rating, label, subject ->
-            writeXmpModifications(XmpEditFragment.XmpEditValues(rating, subject, label))
-        }
-
-        xmpEditFragment.setLabelListener { label ->
-            Thread(PrepareXmpRunnable(
-                    XmpEditFragment.XmpEditValues(label = label),
-                    XmpUpdateField.Label)).start()
-        }
-
-        xmpEditFragment.setRatingListener { rating ->
-            Thread(PrepareXmpRunnable(
-                    XmpEditFragment.XmpEditValues(rating = rating),
-                    XmpUpdateField.Rating)).start()
-        }
-        xmpEditFragment.setSubjectListener { subject ->
-            Thread(PrepareXmpRunnable(
-                    XmpEditFragment.XmpEditValues(subject = subject),
-                    XmpUpdateField.Subject)).start()
-        }
-//        hideEditXmpFragment()
     }
 
     override fun onPause() {
@@ -267,7 +239,7 @@ abstract class CoreActivity : DocumentActivity() {
 
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RESTORE -> RestoreTask().execute(*callingParameters)
-                CoreActivity.WriteActions.WRITE_XMP -> WriteXmpTask().execute(*callingParameters)
+//                CoreActivity.WriteActions.WRITE_XMP -> WriteXmpTask().execute(*callingParameters)
             }
         }
         clearWriteResume()
@@ -276,25 +248,28 @@ abstract class CoreActivity : DocumentActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
-        xmpEditFragment.setListener { rating, label, subject ->
-            writeXmpModifications(XmpEditFragment.XmpEditValues(rating, subject, label))
-        }
+        xmpEditFragment.setListener { xmp->
+					viewModel.startMetaWriterWorker(selectedImages.map { it.id }, xmp, XmpUpdateField.All)
+				}
 
         xmpEditFragment.setLabelListener { label ->
-            Thread(PrepareXmpRunnable(
-                XmpEditFragment.XmpEditValues(label = label),
-                XmpUpdateField.Label)).start()
+					viewModel.startMetaWriterWorker(
+							selectedImages.map { it.id },
+							XmpValues(label = label),
+							XmpUpdateField.Label)
         }
 
         xmpEditFragment.setRatingListener { rating ->
-            Thread(PrepareXmpRunnable(
-                XmpEditFragment.XmpEditValues(rating = rating),
-                XmpUpdateField.Rating)).start()
+					viewModel.startMetaWriterWorker(
+							selectedImages.map { it.id },
+							XmpValues(rating = rating),
+							XmpUpdateField.Rating)
         }
         xmpEditFragment.setSubjectListener { subject ->
-            Thread(PrepareXmpRunnable(
-                XmpEditFragment.XmpEditValues(subject = subject),
-                XmpUpdateField.Subject)).start()
+					viewModel.startMetaWriterWorker(
+							selectedImages.map { it.id },
+							XmpValues(subject = subject.orEmpty().toList()),
+							XmpUpdateField.Subject)
         }
         hideEditXmpFragment()
     }
@@ -319,28 +294,6 @@ abstract class CoreActivity : DocumentActivity() {
         ft.show(xmpEditFragment)
         ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left)
         ft.commit()
-    }
-
-    private fun  writeXmpModifications(values: XmpEditFragment.XmpEditValues) {
-        val selection = selectedImages
-        if (selection.isNotEmpty()) {
-            val cv = ContentValues()
-            cv.put(Meta.LABEL, values.label)
-            cv.put(Meta.RATING, values.rating)
-            //FIXME: This should update the subject junction!
-            //			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.subject));
-
-            val xmpPairing = HashMap<Uri, ContentValues>()
-            for (image in selection) {
-                xmpPairing[Uri.parse(image.uri)] = cv
-            }
-
-            writeXmp(xmpPairing)
-        }
-    }
-
-    private fun writeXmp(xmpPairing: Map<Uri, ContentValues>) {
-        WriteXmpTask().execute(xmpPairing)
     }
 
     /**
@@ -781,74 +734,6 @@ abstract class CoreActivity : DocumentActivity() {
                 clearWriteResume()
             else
                 Snackbar.make(rootView, R.string.restoreFail, Snackbar.LENGTH_LONG).show()
-        }
-    }
-
-    private enum class XmpUpdateField {
-        Rating,
-        Label,
-        Subject
-    }
-
-    //TODO:
-    private inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, val updateType: XmpUpdateField) : Runnable {
-//        private val selectedImages: Collection<Uri>?
-//        private val projection = arrayOf(Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT)
-
-//        init {
-//            this.selectedImages = selectedImages
-//        }
-
-        override fun run() {
-            //			if (selectedImages.size() == 0)
-            //				return;
-            //
-            //			// TODO: This can be done without cursor lookups, use position and lookup from cursor
-            //			String[] selectionArgs = new String[selectedImages.size()];
-            //			for (int i = 0; i < selectedImages.size(); i++)
-            //			{
-            //				selectionArgs[i] = selectedImages.get(i).toString();
-            //			}
-            //
-            //
-            //			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
-            //			// Grab existing metadata
-            //			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
-            //					projection,
-            //					DbUtil.createIN(Meta.URI, selectedImages.size()),
-            //					selectionArgs,
-            //					null))
-            //			{
-            //
-            //				if (c == null)
-            //					return;
-            //
-            //				// Create mappings with existing values
-            //				while (c.moveToNext()) {
-            //					ContentValues cv = new ContentValues(projection.length);
-            //					DatabaseUtils.cursorRowToContentValues(c, cv);
-            //					xmpPairs.put(Uri.parse(cv.getAsString(Meta.URI)), cv);
-            //				}
-            //			}
-            //
-            //			// Update singular fields in the existing values
-            //			for (Map.Entry<Uri, ContentValues> xmpPair : xmpPairs.entrySet())
-            //			{
-            //				switch(updateType)
-            //				{
-            //					case label:
-            //						xmpPair.getValue().put(Meta.LABEL, update.getLabel());
-            //						break;
-            //					case rating:
-            //						xmpPair.getValue().put(Meta.RATING, update.getRating());
-            //						break;
-            //						// FIXME: This should prepare a subject junction update
-            ////					case subject:
-            ////						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.subject));
-            ////						break;
-            //				}
-            //			}
-            //			writeXmp(xmpPairs);
         }
     }
 

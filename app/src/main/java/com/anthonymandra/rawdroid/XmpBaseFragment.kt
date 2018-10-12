@@ -58,9 +58,9 @@ abstract class XmpBaseFragment : Fragment(),
             }
         }
 
-    protected var xmp: XmpValues
+    protected var xmp: XmpFilter
         get() {
-            return XmpValues(ratings, colorLabels, subject)
+            return XmpFilter(ratings, colorLabels, subject)
         }
         set(xmp) = setXmp(xmp.rating, xmp.label, xmp.subject)
 
@@ -140,7 +140,7 @@ abstract class XmpBaseFragment : Fragment(),
      * Silently set the xmp without firing onXmpChanged
      * @param xmp xmpValues (rating, label, subject) to init
      */
-    protected fun initXmp(xmp: XmpValues) {
+    protected fun initXmp(xmp: XmpFilter) {
         mPauseListener = true
         this.xmp = xmp
         mPauseListener = false
@@ -176,7 +176,7 @@ abstract class XmpBaseFragment : Fragment(),
         ratingBar.setAllowUnselected(allow)
     }
 
-    protected abstract fun onXmpChanged(xmp: XmpValues)
+    protected abstract fun onXmpChanged(xmp: XmpFilter)
     abstract fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)
     abstract fun onLabelSelectionChanged(checked: List<Label>)
 

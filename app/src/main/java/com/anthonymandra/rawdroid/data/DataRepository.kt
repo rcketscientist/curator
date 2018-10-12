@@ -10,7 +10,7 @@ import androidx.annotation.WorkerThread
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.anthonymandra.content.Meta
-import com.anthonymandra.rawdroid.XmpFilter
+import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.DbUtil
 import io.reactivex.Completable
@@ -22,7 +22,7 @@ import java.util.ArrayList
  * get with default filter will return all with default sorting
  */
 //private fun getImages() : LiveData<List<MetadataTest>> {
-//    return getImages(XmpFilter())
+//    return getImages(ImageFilter())
 //}
 /**
  * Repository handling the work with products and comments.
@@ -44,24 +44,24 @@ class DataRepository private constructor(private val database: AppDatabase) {
     fun _image(uri: String) = database.metadataDao()._images(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
-    fun getImageCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
+    fun getImageCount(filter: ImageFilter = ImageFilter()) : LiveData<Int> {
         return database.metadataDao().count(createFilterQuery(countQuery(filter)))
     }
 
-    fun getUnprocessedCount(filter: XmpFilter = XmpFilter()) : LiveData<Int> {
+    fun getUnprocessedCount(filter: ImageFilter = ImageFilter()) : LiveData<Int> {
         return database.metadataDao().count(createFilterQuery(countUnprocessedQuery(filter)))
     }
 
-    fun getProcessedCount(filter: XmpFilter  = XmpFilter()) : LiveData<Int> {
+    fun getProcessedCount(filter: ImageFilter  = ImageFilter()) : LiveData<Int> {
         return database.metadataDao().count(createFilterQuery(countProcessedQuery(filter)))
     }
 
-    fun getUnprocessedImages(filter: XmpFilter = XmpFilter()) : LiveData<List<MetadataTest>> {
+    fun getUnprocessedImages(filter: ImageFilter = ImageFilter()) : LiveData<List<MetadataTest>> {
         return database.metadataDao().getImages(createFilterQuery(imageUnprocessedQuery(filter)))
     }
 
     @WorkerThread
-    fun _getUnprocessedImages(filter: XmpFilter = XmpFilter()) : List<MetadataTest> {
+    fun _getUnprocessedImages(filter: ImageFilter = ImageFilter()) : List<MetadataTest> {
         return database.metadataDao().imageBlocking(createFilterQuery(imageUnprocessedQuery(filter)))
     }
 
@@ -147,11 +147,11 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
     // ---- Hybrid database calls ----------
 
-    fun getGalleryLiveData(filter: XmpFilter): DataSource.Factory<Int, MetadataTest> {
+    fun getGalleryLiveData(filter: ImageFilter): DataSource.Factory<Int, MetadataTest> {
         return database.metadataDao().getImageFactory(createFilterQuery(filter))
     }
 
-    fun getImages(filter: XmpFilter) : LiveData<List<MetadataTest>> {
+    fun getImages(filter: ImageFilter) : LiveData<List<MetadataTest>> {
         return database.metadataDao().getImages(createFilterQuery(filter))
     }
 
@@ -159,7 +159,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
      * get with default filter will return all with default sorting
      */
     private fun getImages() : LiveData<List<MetadataTest>> {
-        return getImages(XmpFilter())
+        return getImages(ImageFilter())
     }
 
     fun insertMeta(vararg inserts: MetadataTest) : List<Long> {
@@ -229,35 +229,35 @@ class DataRepository private constructor(private val database: AppDatabase) {
         private const val groupBy = " GROUP BY meta.id"
 
         data class Query(
-                val filter: XmpFilter = XmpFilter(),
-                val coreQuery: String = imageSelect,
-                val where: Array<String> = emptyArray(),
-                val whereArgs: Array<String> = emptyArray(),
-                val applyGroup: Boolean = true
+						val filter: ImageFilter = ImageFilter(),
+						val coreQuery: String = imageSelect,
+						val where: Array<String> = emptyArray(),
+						val whereArgs: Array<String> = emptyArray(),
+						val applyGroup: Boolean = true
         )
 
-        private fun imageQuery(filter: XmpFilter) =
+        private fun imageQuery(filter: ImageFilter) =
                 Query(filter)
-        private fun imageProcessedQuery(filter: XmpFilter) =
+        private fun imageProcessedQuery(filter: ImageFilter) =
                 Query(filter, where = arrayOf(whereProcessed))
-        private fun imageUnprocessedQuery(filter: XmpFilter) =
+        private fun imageUnprocessedQuery(filter: ImageFilter) =
                 Query(filter, where = arrayOf(whereUnprocessed))
 
-        private fun countQuery(filter: XmpFilter) =
+        private fun countQuery(filter: ImageFilter) =
                 Query(filter, coreQuery = countSelect, applyGroup = false)
-        private fun countProcessedQuery(filter: XmpFilter) =
+        private fun countProcessedQuery(filter: ImageFilter) =
                 Query(filter, coreQuery = countSelect, where = arrayOf(whereProcessed), applyGroup = false)
-        private fun countUnprocessedQuery(filter: XmpFilter) =
+        private fun countUnprocessedQuery(filter: ImageFilter) =
                 Query(filter, coreQuery = countSelect, where = arrayOf(whereUnprocessed), applyGroup = false)
 
         fun createFilterQuery(query: Query): SupportSQLiteQuery {
             return createFilterQuery(query.filter, query.coreQuery, query.where, query.whereArgs, query.applyGroup)
         }
-        fun createFilterQuery(filter: XmpFilter = XmpFilter(),
-                              coreQuery: String = imageSelect,
-                              where: Array<String> = emptyArray(),
-                              whereArgs: Array<String> = emptyArray(),
-                              applyGroup: Boolean = true): SupportSQLiteQuery {
+        fun createFilterQuery(filter: ImageFilter = ImageFilter(),
+															coreQuery: String = imageSelect,
+															where: Array<String> = emptyArray(),
+															whereArgs: Array<String> = emptyArray(),
+															applyGroup: Boolean = true): SupportSQLiteQuery {
             val query = StringBuilder()
             val selection = StringBuilder()
             val order = StringBuilder()
@@ -306,8 +306,8 @@ class DataRepository private constructor(private val database: AppDatabase) {
                 order.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ")
             }
             when (filter.sortColumn) {
-                XmpFilter.SortColumns.Date -> order.append(Meta.TIMESTAMP).append(direction)
-                XmpFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
+                ImageFilter.SortColumns.Date -> order.append(Meta.TIMESTAMP).append(direction)
+                ImageFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
             }
 
             query.append(coreQuery)

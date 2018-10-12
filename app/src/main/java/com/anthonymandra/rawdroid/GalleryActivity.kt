@@ -4,15 +4,12 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityOptions
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.preference.PreferenceManager
 import android.provider.DocumentsContract
 import android.util.DisplayMetrics
@@ -24,11 +21,9 @@ import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.State
-import androidx.work.WorkStatus
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.MetadataEntity
@@ -119,7 +114,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         })
 
         // Monitor the metadata parse status to display progress
-        viewModel.metadataStatus.observe(this, Observer {
+        viewModel.metaReaderStatus.observe(this, Observer {
             if (it == null || it.isEmpty()) {
                 return@Observer
             }
@@ -162,7 +157,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryView.adapter = galleryAdapter
 
         mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
-        mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
+        mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: ImageFilter ->
             viewModel.setFilter(filter)
         }
         mXmpFilterFragment!!.registerSearchRootRequestedListener {

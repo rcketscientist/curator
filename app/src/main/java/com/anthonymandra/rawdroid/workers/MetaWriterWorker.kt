@@ -12,6 +12,8 @@ import androidx.work.workDataOf
 import com.anthonymandra.content.Meta
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.XmpUpdateField
+import com.anthonymandra.rawdroid.XmpValues
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.util.*
@@ -23,6 +25,9 @@ class MetaWriterWorker: Worker() {
 		val subject = inputData.getStringArray(KEY_SUBJECT)
 		val label = inputData.getString(KEY_LABEL)
 		val rating = inputData.getInt(KEY_RATING, 0)
+		val field = inputData.getString(KEY_UPDATE_FIELD)?.let {
+			XmpUpdateField.valueOf(it)
+		}
 
 		if (images == null) return Result.FAILURE
 
@@ -43,7 +48,7 @@ class MetaWriterWorker: Worker() {
 
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		val metadata = repo._images(images)
-		metadata.forEachIndexed { index, value ->
+		metadata.forEachIndexed { index, image ->
 			if (isCancelled) {
 				builder
 					.setContentText("Cancelled")
@@ -55,20 +60,41 @@ class MetaWriterWorker: Worker() {
 
 			builder
 				.setProgress(images.size, index, false)
-				.setContentText(value.name)
+				.setContentText(image.name)
 				.priority = NotificationCompat.PRIORITY_DEFAULT
 			notifications.notify(builder.build())
 
-			val xmp = ImageUtil.getXmpFile(applicationContext, value.uri.toUri()) ?: return@forEachIndexed
-
+			val xmp = ImageUtil.getXmpFile(applicationContext, image.uri.toUri()) ?: return@forEachIndexed
 			val meta = MetaUtil.readXmp(applicationContext, xmp)
-			MetaUtil.updateXmpStringArray(meta, MetaUtil.SUBJECT, subject)
-			MetaUtil.updateXmpInteger(meta, MetaUtil.RATING, rating)
-			MetaUtil.updateXmpString(meta, MetaUtil.LABEL, label)
+
+			when(field) {
+				XmpUpdateField.Rating -> {
+					image.rating = rating.toFloat()
+					MetaUtil.updateXmpInteger(meta, MetaUtil.RATING, rating)
+				}
+				XmpUpdateField.Label -> {
+					image.label = label
+					MetaUtil.updateXmpString(meta, MetaUtil.LABEL, label)
+				}
+				XmpUpdateField.Subject -> {
+//					image.subjectIds = TODO: ids
+					MetaUtil.updateXmpStringArray(meta, MetaUtil.SUBJECT, subject)
+				}
+				else -> {
+					//					image.subjectIds = TODO: ids
+					MetaUtil.updateXmpStringArray(meta, MetaUtil.SUBJECT, subject)
+					image.rating = rating.toFloat()
+					MetaUtil.updateXmpInteger(meta, MetaUtil.RATING, rating)
+					image.label = label
+					MetaUtil.updateXmpString(meta, MetaUtil.LABEL, label)
+				}
+			}
 
 			applicationContext.contentResolver.openOutputStream(xmp.uri)?.use {
 				MetaUtil.writeXmp(it, meta)
 			}
+
+			repo.updateMeta(image)
 		}
 
 		builder
@@ -114,14 +140,16 @@ class MetaWriterWorker: Worker() {
 		const val KEY_SUBJECT = "subject"
 		const val KEY_RATING = "rating"
 		const val KEY_LABEL = "label"
+		const val KEY_UPDATE_FIELD = "field"
 
 		@JvmStatic
-		fun buildRequest(imagesToCopy: List<Long>, subject: List<String>, label: String, rating: Int): OneTimeWorkRequest {
+		fun buildRequest(images: List<Long>, meta: XmpValues, field: XmpUpdateField): OneTimeWorkRequest {
 			val data = workDataOf(
-				KEY_IMAGE_IDS to imagesToCopy.toLongArray(),
-				KEY_SUBJECT to subject.toTypedArray(),
-				KEY_LABEL to label,
-				KEY_RATING to rating
+				KEY_IMAGE_IDS to images.toLongArray(),
+				KEY_SUBJECT to meta.subject.toTypedArray(),
+				KEY_LABEL to meta.label,
+				KEY_RATING to meta.rating,
+				KEY_UPDATE_FIELD to field
 			)
 
 			return OneTimeWorkRequestBuilder<MetaWriterWorker>()
