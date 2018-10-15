@@ -23,6 +23,8 @@ class CopyWorker: Worker() {
 
 		if (images == null || destination == null) return Result.FAILURE
 
+		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
+
 		Util.createNotificationChannel(
 			applicationContext,
 			"copy",
@@ -56,7 +58,6 @@ class CopyWorker: Worker() {
 				.priority = NotificationCompat.PRIORITY_DEFAULT
 			notifications.notify(builder.build())
 
-			val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
 			val destinationFile = parentFile.createFile(null, value.name)
 			copyAssociatedFiles(value, destinationFile.uri)
 		}

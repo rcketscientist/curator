@@ -1,0 +1,135 @@
+package com.anthonymandra.rawdroid.workers
+
+import android.app.Notification
+import android.media.Image
+import android.net.Uri
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
+import androidx.work.*
+import com.anthonymandra.framework.DocumentUtil
+import com.anthonymandra.framework.UsefulDocumentFile
+import com.anthonymandra.image.ImageConfiguration
+import com.anthonymandra.image.JpegConfiguration
+import com.anthonymandra.image.TiffConfiguration
+import com.anthonymandra.imageprocessor.ImageProcessor
+import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.data.DataRepository
+import com.anthonymandra.rawdroid.data.MetadataEntity
+import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.util.FileUtil
+import com.anthonymandra.util.ImageUtil
+import com.anthonymandra.util.Util
+
+class SaveWorker: Worker() {
+	override fun doWork(): Result {
+		val repo = DataRepository.getInstance(this.applicationContext)
+		val images = inputData.getLongArray(KEY_IMAGE_IDS)
+		val destination = inputData.getString(KEY_DEST_URI)?.toUri()
+		val saveType = inputData.getString(KEY_TYPE)
+		val config = inputData.getString(KEY_CONFIG)
+		val insert = inputData.getBoolean(KEY_INSERT, false)
+
+		if (images == null || destination == null || saveType == null) return Result.FAILURE
+
+		val imageConfiguration = ImageConfiguration.from(ImageConfiguration.ImageType.valueOf(saveType), config)
+		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
+
+		Util.createNotificationChannel(
+			applicationContext,
+			"save",
+			"Saving...",
+			"Notifications for save tasks.")
+
+		val builder = Util.createNotification(
+			applicationContext,
+			"copy",
+			applicationContext.getString(R.string.savingImages),
+			applicationContext.getString(R.string.preparing))
+
+		val notifications = NotificationManagerCompat.from(applicationContext)
+		notifications.notify(builder.build())
+
+		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
+		val metadata = repo._images(images)
+		metadata.forEachIndexed { index, value ->
+			if (isCancelled) {
+				builder
+						.setContentText("Cancelled")
+						.priority = NotificationCompat.PRIORITY_HIGH
+				notifications.notify(builder.build())
+
+				return Result.SUCCESS
+			}
+
+			builder
+					.setProgress(images.size, index, false)
+					.setContentText(value.name)
+					.priority = NotificationCompat.PRIORITY_DEFAULT
+			notifications.notify(builder.build())
+
+			val source = UsefulDocumentFile.fromUri(applicationContext, Uri.parse(value.uri))
+			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration!!.extension)	// Can't be null, but maybe redesign to avoid ?
+			val destinationFile = parentFile.createFile(null, desiredName)
+
+			val inputPfd = FileUtil.getParcelFileDescriptor(applicationContext, source.uri, "r")
+			val outputPfd = FileUtil.getParcelFileDescriptor(applicationContext, destinationFile.uri, "w")
+
+			when (imageConfiguration.type) {
+				ImageConfiguration.ImageType.jpeg -> {
+					val quality = (imageConfiguration as JpegConfiguration).quality
+					ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+				}
+				ImageConfiguration.ImageType.tiff -> {
+					val compress = (imageConfiguration as TiffConfiguration).compress
+					ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
+				}
+				else -> throw UnsupportedOperationException("unimplemented save type.")
+			}
+
+			if (insert) {
+				// TODO: reuse the image meta and replace uri/id...?
+				val insertion = MetadataTest()
+				insertion.uri = destinationFile.uri.toString()
+				repo.insertMeta(insertion)
+			}
+		}
+
+		builder
+			.setContentText("Complete")
+			.setProgress(0,0,false)
+			.priority = NotificationCompat.PRIORITY_HIGH
+		notifications.notify(builder.build())
+
+		return Result.SUCCESS
+	}
+
+	private fun NotificationManagerCompat.notify(notification: Notification) {
+		this.notify(JOB_TAG, 0, notification)
+	}
+
+	companion object {
+		const val JOB_TAG = "save_job"
+		const val KEY_IMAGE_IDS = "image uris"
+		const val KEY_DEST_URI = "destination"
+		const val KEY_TYPE = "type"
+		const val KEY_CONFIG = "config"
+		const val KEY_INSERT = "insert"
+
+		@JvmStatic
+		fun buildRequest(images: List<Long>, destination: Uri, config: ImageConfiguration, insert: Boolean): OneTimeWorkRequest {
+			val data = workDataOf(
+					KEY_IMAGE_IDS to images.toLongArray(),
+					KEY_DEST_URI to destination.toString(),
+					KEY_TYPE to config.type.toString(),
+					KEY_CONFIG to config.parameters,
+					KEY_INSERT to insert
+			)
+
+			return OneTimeWorkRequestBuilder<SaveWorker>()
+				.addTag(JOB_TAG)
+				.setInputData(data)
+				.build()
+		}
+	}
+}

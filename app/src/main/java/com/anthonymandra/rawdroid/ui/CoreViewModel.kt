@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkManager
 import androidx.work.WorkStatus
+import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.XmpUpdateField
 import com.anthonymandra.rawdroid.XmpValues
@@ -18,6 +19,7 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	private val metaWriterWorkStatus: LiveData<List<WorkStatus>>
 	private val searchWorkStatus: LiveData<List<WorkStatus>>
 	private val copyWorkStatus: LiveData<List<WorkStatus>>
+	private val saveWorkStatus: LiveData<List<WorkStatus>>
 	private val deleteWorkStatus: LiveData<List<WorkStatus>>
 	private val cleanWorkStatus: LiveData<List<WorkStatus>>
 
@@ -28,6 +30,7 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 		metaReaderWorkStatus = workManager.getStatusesByTag(MetaReaderWorker.JOB_TAG)
 		metaWriterWorkStatus = workManager.getStatusesByTag(MetaWriterWorker.JOB_TAG)
 		copyWorkStatus = workManager.getStatusesByTag(CopyWorker.JOB_TAG)
+		saveWorkStatus = workManager.getStatusesByTag(SaveWorker.JOB_TAG)
 		deleteWorkStatus = workManager.getStatusesByTag(DeleteWorker.JOB_TAG)
 		cleanWorkStatus = workManager.getStatusesByTag(CleanWorker.JOB_TAG)
 	}
@@ -36,6 +39,7 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	val metaWriterStatus get() = metaWriterWorkStatus
 	val searchStatus get() = searchWorkStatus
 	val copyStatus get() = copyWorkStatus
+	val saveStatus get() = saveWorkStatus
 	val cleanStatus get() = copyWorkStatus
 	val deleteStatus get() = deleteWorkStatus
 
@@ -77,6 +81,10 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 
 	fun startCopyWorker(sources: List<Long>, destination: Uri) {
 		workManager.enqueue(CopyWorker.buildRequest(sources, destination))
+	}
+
+	fun startSaveWorker(sources: List<Long>, destination: Uri, config: ImageConfiguration, insert: Boolean) {
+		workManager.enqueue(SaveWorker.buildRequest(sources, destination, config, insert))
 	}
 
 	fun startDeleteWorker(sources: List<Long>) {

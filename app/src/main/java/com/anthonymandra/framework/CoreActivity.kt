@@ -15,7 +15,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.anthonymandra.content.Meta
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
 import com.anthonymandra.image.TiffConfiguration
@@ -32,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -213,14 +213,28 @@ abstract class CoreActivity : DocumentActivity() {
         //        }
 
         // Load default save config if it exists and automatically apply it
-        val config = ImageConfiguration.loadPreference(this)
+        val config = ImageConfiguration.fromPreference(this)
+        var insert = false
+
         if (config != null) {
-            saveImages(mItemsForIntent, destination, config)
+            // TODO: This alert could be a checkbox in the save dialog
+            AlertDialog.Builder(this)
+                .setMessage("Add converted images to the library?")
+                .setPositiveButton(R.string.positive) { _, _ -> insert = true }
+                .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+            viewModel.startSaveWorker(mItemsForIntent.map { it.id }, destination, config, insert)
             return
         }
 
         val dialog = SaveConfigDialog(this)
-        dialog.setSaveConfigurationListener { saveImages(mItemsForIntent, destination, it) }
+        dialog.setSaveConfigurationListener { imageConfig ->
+            // TODO: This alert could be a checkbox in the save dialog
+            AlertDialog.Builder(this)
+                .setMessage("Add converted images to the library?")
+                .setPositiveButton(R.string.positive) { _, _ -> insert = true }
+                .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+            viewModel.startSaveWorker(mItemsForIntent.map { it.id }, destination, imageConfig, insert)
+        }
         dialog.show()
     }
 
@@ -305,7 +319,8 @@ abstract class CoreActivity : DocumentActivity() {
             if (!mSwapDir.exists()) {
                 mSwapDir.mkdirs()
             }
-        }.subscribeBy(
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+        .subscribeBy(
             // TODO:
             onComplete = {},
             onError = {}
@@ -743,24 +758,12 @@ abstract class CoreActivity : DocumentActivity() {
     abstract fun endProgress()
 
     companion object {
-//        private val TAG = CoreActivity::class.java.simpleName
         const val NOTIFICATION_CHANNEL = "notifications"
 
         const val SWAP_BIN_DIR = "swap"
         const val RECYCLE_BIN_DIR = "recycle"
 
         private const val REQUEST_SAVE_AS_DIR = 15
-
-        // Identifies a particular Loader being used in this component
-//        const val META_LOADER_ID = 0
-
-//        const val EXTRA_META_BUNDLE = "meta_bundle"
-//        const val META_PROJECTION_KEY = "projection"
-//        const val META_SELECTION_KEY = "selection"
-//        const val META_SELECTION_ARGS_KEY = "selection_args"
-//        const val META_SORT_ORDER_KEY = "sort_order"
-//        const val META_DEFAULT_SORT = Meta.NAME + " ASC"
-
         private const val EXPIRATION = 5184000000L //~60 days
 
         val IMPORTANT_NOTIFICATION =
