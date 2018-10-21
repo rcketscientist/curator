@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid.workers
 
+import android.util.Log
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkRequest
@@ -15,7 +16,7 @@ class SearchWorker: Worker() {
 		val repo = DataRepository.getInstance(this.applicationContext)
 		val excludedFolders = repo.parents.filter { it.excluded }
 
-		val parentMap = repo.parents.associateBy({it.documentUri}, {it.id})
+		val parentMap = repo.parents.associateByTo(mutableMapOf(), {it.documentUri}, {it.id})
 
 		val uriRoots = applicationContext.contentResolver.persistedUriPermissions
 		val foldersToSearch = uriRoots.asSequence().map {
@@ -60,7 +61,7 @@ class SearchWorker: Worker() {
 
 	// TODO: This should be a custom DocumentProvider
 	private fun getImageFileInfo(file: UsefulDocumentFile,
-	                             parentMap: Map<String, Long>,
+	                             parentMap: MutableMap<String, Long>,
 	                             dataRepo: DataRepository): MetadataEntity {
 		val fd = file.cachedData
 		val metadata = MetadataEntity()
@@ -82,6 +83,7 @@ class SearchWorker: Worker() {
 				metadata.parentId = parentMap[parent]!!
 			} else {
 				metadata.parentId = dataRepo.insertParent(FolderEntity(parent))
+				parentMap.put(parent, metadata.parentId)
 			}
 		}
 
