@@ -71,6 +71,7 @@ class SearchWorker: Worker() {
 			metadata.name = fd.name
 			parent = fd.parent.toString()
 			metadata.timestamp = fd.lastModified
+			metadata.size = fd.length
 		} else {
 			val docParent = file.parentFile
 			if (docParent != null) {
@@ -79,12 +80,7 @@ class SearchWorker: Worker() {
 		}
 
 		if (parent != null) {
-			if (parentMap.containsKey(parent)) {
-				metadata.parentId = parentMap[parent]!!
-			} else {
-				metadata.parentId = dataRepo.insertParent(FolderEntity(parent))
-				parentMap.put(parent, metadata.parentId)
-			}
+			metadata.parentId = parentMap.getOrPut(parent) { dataRepo.insertParent(FolderEntity(parent)) }
 		}
 
 		metadata.documentId = file.documentId

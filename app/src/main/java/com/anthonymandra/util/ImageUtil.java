@@ -733,29 +733,6 @@ public class ImageUtil
         return result;
     }
 
-    /**
-     * Get the size in bytes of a bitmap.
-     *
-     * @param bitmap
-     * @return size in bytes
-     */
-    @TargetApi(12)
-    public static int getBitmapSize(Bitmap bitmap)
-    {
-        // From KitKat onward use getAllocationByteCount() as allocated bytes can potentially be
-        // larger than bitmap byte count.
-        if (Util.hasKitkat()) {
-            return bitmap.getAllocationByteCount();
-        }
-
-        if (Util.hasHoneycombMR1()) {
-            return bitmap.getByteCount();
-        }
-
-        // Pre HC-MR1
-        return bitmap.getRowBytes() * bitmap.getHeight();
-    }
-
     public static Bitmap addWatermark2(Context context, Bitmap src)
     {
         int width = src.getWidth();
@@ -849,14 +826,6 @@ public class ImageUtil
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         return BitmapFactory.decodeResource(context.getResources(), id, o);
-    }
-
-    public static byte[] getBitmapBytes(Bitmap src)
-    {
-        ByteBuffer dst = ByteBuffer.allocate(getBitmapSize(src));
-        dst.order(ByteOrder.nativeOrder());
-        src.copyPixelsToBuffer(dst);
-        return dst.array();
     }
 
     public static Bitmap addWatermark(Context context, Bitmap src)

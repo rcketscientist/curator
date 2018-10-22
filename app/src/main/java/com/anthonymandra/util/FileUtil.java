@@ -113,7 +113,7 @@ public class FileUtil
 		// Check if media is mounted or storage is built-in, if so, try and use external cache dir
 		// otherwise use internal cache dir
 		File cache = null;
-		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) || !isExternalStorageRemovable())
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()))
 		{
 			cache = context.getExternalCacheDir();
 		}
@@ -121,21 +121,6 @@ public class FileUtil
 			cache = context.getCacheDir();
 
 		return new File(cache, uniqueName);
-	}
-
-	/**
-	 * Check if external storage is built-in or removable.
-	 *
-	 * @return True if external storage is removable (like an SD card), false otherwise.
-	 */
-	@TargetApi(9)
-	public static boolean isExternalStorageRemovable()
-	{
-		if (Util.hasGingerbread())
-		{
-			return Environment.isExternalStorageRemovable();
-		}
-		return true;
 	}
 
 	/**
@@ -147,12 +132,8 @@ public class FileUtil
 	@TargetApi(9)
 	public static long getUsableSpace(File path)
 	{
-		if (Util.hasGingerbread())
-		{
-			return path.getUsableSpace();
-		}
 		final StatFs stats = new StatFs(path.getPath());
-		return (long) stats.getBlockSize() * (long) stats.getAvailableBlocks();
+		return stats.getBlockSizeLong() * stats.getAvailableBlocksLong();
 	}
 
 	public static String swapExtention(String filename, String ext)
