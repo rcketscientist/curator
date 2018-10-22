@@ -8,12 +8,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkManager
 import androidx.work.WorkStatus
 import com.anthonymandra.image.ImageConfiguration
+import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.XmpUpdateField
 import com.anthonymandra.rawdroid.XmpValues
+import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.workers.*
+import io.reactivex.Single
 
 abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
+	protected val dataRepo = (app as App).dataRepo
+
 	private val workManager: WorkManager = WorkManager.getInstance()
 	private val metaReaderWorkStatus: LiveData<List<WorkStatus>>
 	private val metaWriterWorkStatus: LiveData<List<WorkStatus>>
@@ -35,9 +40,9 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 		cleanWorkStatus = workManager.getStatusesByTag(CleanWorker.JOB_TAG)
 	}
 
+	val searchStatus get() = searchWorkStatus
 	val metaReaderStatus get() = metaReaderWorkStatus
 	val metaWriterStatus get() = metaWriterWorkStatus
-	val searchStatus get() = searchWorkStatus
 	val copyStatus get() = copyWorkStatus
 	val saveStatus get() = saveWorkStatus
 	val cleanStatus get() = copyWorkStatus
@@ -48,7 +53,7 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 		workManager.enqueue(MetaReaderWorker.buildRequest(input))
 	}
 
-	fun startMetaWriterWorker(images: List<Long>, xmp: XmpValues, field: XmpUpdateField) {
+	fun startMetaWriterWorker(images: LongArray, xmp: XmpValues, field: XmpUpdateField) {
 		workManager.enqueue(MetaWriterWorker.buildRequest(images, xmp, field))
 	}
 
@@ -79,19 +84,23 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 				.enqueue()
 	}
 
-	fun startCopyWorker(sources: List<Long>, destination: Uri) {
+	fun startCopyWorker(sources: LongArray, destination: Uri) {
 		workManager.enqueue(CopyWorker.buildRequest(sources, destination))
 	}
 
-	fun startSaveWorker(sources: List<Long>, destination: Uri, config: ImageConfiguration, insert: Boolean) {
+	fun startSaveWorker(sources: LongArray, destination: Uri, config: ImageConfiguration, insert: Boolean) {
 		workManager.enqueue(SaveWorker.buildRequest(sources, destination, config, insert))
 	}
 
-	fun startDeleteWorker(sources: List<Long>) {
+	fun startDeleteWorker(sources: LongArray) {
 		workManager.enqueue(DeleteWorker.buildRequest(sources))
 	}
 
 	fun setFilter(filter: ImageFilter) {
 		this.filter.value = filter
+	}
+
+	fun images(ids: LongArray): Single<List<MetadataTest>> {
+		return dataRepo.images(ids)
 	}
 }

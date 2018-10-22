@@ -9,14 +9,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.data.MetadataTest
+import io.reactivex.Single
 
 class GalleryViewModel(app: Application) : CoreViewModel(app) {
     //TODO: Split out viewer viewmodel
-    private val dataRepo = (app as App).dataRepo
-
     val imageList: LiveData<PagedList<MetadataTest>>
     val filteredCount: LiveData<Int>
     val filteredProcessedCount: LiveData<Int>
@@ -66,6 +64,10 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
         settings.registerOnSharedPreferenceChangeListener { sharedPreferences, _ ->
             updatePreferences(sharedPreferences)
         }
+    }
+
+    fun selectAll(): Single<LongArray> {
+        return dataRepo.selectAll()
     }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {

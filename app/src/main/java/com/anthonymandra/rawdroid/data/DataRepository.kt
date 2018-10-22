@@ -37,12 +37,23 @@ class DataRepository private constructor(private val database: AppDatabase) {
     fun _images(uris: Array<String>) = database.metadataDao()._images(uris)
     @WorkerThread
     fun _images(ids: LongArray) = database.metadataDao()._images(ids)
+    fun images(ids: LongArray): Single<List<MetadataTest>> =
+        Single.create<List<MetadataTest>> { emitter ->
+            emitter.onSuccess(database.metadataDao()._images(ids))
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+
 
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
 
     @WorkerThread
     fun _image(uri: String) = database.metadataDao()._images(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
+
+    fun selectAll(filter: ImageFilter = ImageFilter()) : Single<LongArray> {
+        return Single.create<LongArray> { emitter ->
+            emitter.onSuccess(database.metadataDao().ids(createFilterQuery(idsQuery(filter))))
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+    }
 
     fun getImageCount(filter: ImageFilter = ImageFilter()) : LiveData<Int> {
         return database.metadataDao().count(createFilterQuery(countQuery(filter)))
@@ -223,6 +234,9 @@ class DataRepository private constructor(private val database: AppDatabase) {
          // The following require [groupBy]
         private const val imageSelect = "SELECT * $junctionJoin"
 
+        // The following require [groupBy]
+        private const val idSelect = "SELECT meta.id $junctionJoin"
+
         // Count must not group!
         private const val countSelect = "SELECT COUNT(*) $junctionJoin"
 
@@ -237,27 +251,30 @@ class DataRepository private constructor(private val database: AppDatabase) {
         )
 
         private fun imageQuery(filter: ImageFilter) =
-                Query(filter)
+            Query(filter)
         private fun imageProcessedQuery(filter: ImageFilter) =
-                Query(filter, where = arrayOf(whereProcessed))
+            Query(filter, where = arrayOf(whereProcessed))
         private fun imageUnprocessedQuery(filter: ImageFilter) =
-                Query(filter, where = arrayOf(whereUnprocessed))
+            Query(filter, where = arrayOf(whereUnprocessed))
 
+        private fun idsQuery(filter: ImageFilter) =
+            Query(filter, coreQuery = idSelect, applyGroup = true)
         private fun countQuery(filter: ImageFilter) =
-                Query(filter, coreQuery = countSelect, applyGroup = false)
+            Query(filter, coreQuery = countSelect, applyGroup = false)
         private fun countProcessedQuery(filter: ImageFilter) =
-                Query(filter, coreQuery = countSelect, where = arrayOf(whereProcessed), applyGroup = false)
+            Query(filter, coreQuery = countSelect, where = arrayOf(whereProcessed), applyGroup = false)
         private fun countUnprocessedQuery(filter: ImageFilter) =
-                Query(filter, coreQuery = countSelect, where = arrayOf(whereUnprocessed), applyGroup = false)
+            Query(filter, coreQuery = countSelect, where = arrayOf(whereUnprocessed), applyGroup = false)
 
         fun createFilterQuery(query: Query): SupportSQLiteQuery {
             return createFilterQuery(query.filter, query.coreQuery, query.where, query.whereArgs, query.applyGroup)
         }
-        fun createFilterQuery(filter: ImageFilter = ImageFilter(),
-															coreQuery: String = imageSelect,
-															where: Array<String> = emptyArray(),
-															whereArgs: Array<String> = emptyArray(),
-															applyGroup: Boolean = true): SupportSQLiteQuery {
+        fun createFilterQuery(
+            filter: ImageFilter = ImageFilter(),
+            coreQuery: String = imageSelect,
+            where: Array<String> = emptyArray(),
+            whereArgs: Array<String> = emptyArray(),
+            applyGroup: Boolean = true): SupportSQLiteQuery {
             val query = StringBuilder()
             val selection = StringBuilder()
             val order = StringBuilder()

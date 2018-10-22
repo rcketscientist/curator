@@ -18,6 +18,9 @@ abstract class MetadataDao {
     @RawQuery(observedEntities = [ MetadataEntity::class ])
     abstract fun count(query: SupportSQLiteQuery): LiveData<Int>
 
+    @RawQuery(observedEntities = [ MetadataEntity::class ])
+    abstract fun ids(query: SupportSQLiteQuery): LongArray
+
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
     abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
 

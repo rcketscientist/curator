@@ -22,6 +22,7 @@ open class MetadataEntity(
     var id: Long = 0,
     var name: String = "",
     var type: Int = 0,
+    var size: Long = 0,
     var processed: Boolean = false,
     var uri: String = "",
     var documentId: String = "",

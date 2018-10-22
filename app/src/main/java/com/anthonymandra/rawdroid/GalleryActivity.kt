@@ -27,7 +27,6 @@ import androidx.work.State
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.MetadataEntity
-import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
@@ -35,12 +34,13 @@ import com.anthonymandra.widget.ItemOffsetDecoration
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.WhatsNewDialog
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
     override val contentView = R.layout.gallery
-    override val selectedImages : Collection<MetadataTest>
+    override val selectedIds : LongArray
         get() { return galleryAdapter.selectedItems }
 
     protected lateinit var galleryAdapter: GalleryAdapter
@@ -181,14 +181,17 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
             val permissibleUsb = PreferenceManager.getDefaultSharedPreferences(this)
                 .getStringSet(PREFS_PERMISSIBLE_USB, HashSet())
-            permissibleUsb
-                .asSequence()
-                .map { Uri.parse(it) }
-                .forEach {
-                    contentResolver.openFileDescriptor(it, "r").use {
-                        it ?: return
+
+            permissibleUsb?.let { permissions ->
+                permissions
+                    .asSequence()
+                    .mapNotNull { Uri.parse(it) }
+                    .forEach {
+                        contentResolver.openFileDescriptor(it, "r").use { pfd ->
+                            pfd ?: return
+                        }
                     }
-                }
+            }
 
             // Since this appears to be a new device gather uri and request write permission
             val request = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -257,27 +260,20 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         viewModel.startCleanSearchChain()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
 
         when (requestCode) {
-            REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && data != null) {
-                // TODO: Might want to figure out a way to get free space to introduce this check again
-                //		long importSize = getSelectedImageSize();
-                //		if (destination.getFreeSpace() < importSize)
-                //		{
-                //			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-                //			return;
-                //		}
-                data.data?.let { uri ->
-                    viewModel.startCopyWorker(mItemsForIntent.map { it.id }, uri)
+            REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && intent != null) {
+                intent.data?.let { uri ->
+                    viewModel.startCopyWorker(mItemsForIntent, uri)
                 }
             }
-            REQUEST_UPDATE_PHOTO -> if (resultCode == RESULT_OK && data != null) {
-                handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0))
+            REQUEST_UPDATE_PHOTO -> if (resultCode == RESULT_OK && intent != null) {
+                handlePhotoUpdate(intent.getIntExtra(GALLERY_INDEX_EXTRA, 0))
             }
-            REQUEST_ACCESS_USB -> if (resultCode == RESULT_OK && data != null) {
-                handleUsbAccessRequest(data.data)
+            REQUEST_ACCESS_USB -> if (resultCode == RESULT_OK && intent != null) {
+                handleUsbAccessRequest(intent.data)
             }
             REQUEST_TUTORIAL -> {
                 if (resultCode == RESULT_ERROR) {
@@ -380,10 +376,12 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private fun requestRename() {
         if (galleryAdapter.selectedItemCount == 0)
-            galleryAdapter.selectAll()
+            selectAll()
 
-        val dialog = RenameDialog(this, selectedImages)
-        dialog.show()
+        viewModel.images(selectedIds).subscribeBy {
+            val dialog = RenameDialog(this, it)
+            dialog.show()
+        }
     }
 
     private fun requestCopyDestination() {
@@ -408,8 +406,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         return dataRepo.insertImages(image).first()
     }
 
-    override fun onSelectionUpdated(selectedUris: Collection<MetadataTest>) {
-        mMaterialCab?.setTitle(selectedUris.size.toString() + " " + getString(R.string.selected))
+    override fun onSelectionUpdated(selectedIds: LongArray) {
+        mMaterialCab?.setTitle(selectedIds.size.toString() + " " + getString(R.string.selected))
         xmpEditFragment.reset()   // reset the panel to ensure it's clear it's not tied to existing values
     }
 
@@ -434,7 +432,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     fun selectAll() {
         startContextMode()
-        galleryAdapter.selectAll()
+        viewModel.selectAll().subscribeBy {
+            galleryAdapter.selectedItems = it
+        }
     }
 
     protected fun startContextMode() {

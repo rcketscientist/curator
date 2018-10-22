@@ -14,7 +14,6 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
 {
     init { setHasStableIds(true) }
 
-    private val mSelectedItems = HashSet<MetadataTest>()
     private val mSelectedPositions = TreeSet<Int>()
     var multiSelectMode = false
         set(value)  {
@@ -32,8 +31,13 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
      */
     var onItemLongClickListener: OnItemLongClickListener? = null
 
-    val selectedItems: Collection<MetadataTest>
-        get() = mSelectedItems
+    private val mSelectedItems = HashSet<Long>()
+    var selectedItems: LongArray
+        get() = mSelectedItems.toLongArray()
+        set(value) {
+            mSelectedItems.clear()
+            mSelectedItems.addAll(value.asList())
+        }
 
     val selectedItemCount: Int
         get() = mSelectedItems.size
@@ -73,7 +77,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
             true
         }
 
-        holder.itemView.isActivated = mSelectedItems.contains(item)
+        holder.itemView.isActivated = mSelectedItems.contains(item?.id)
     }
 
     private fun addGroupSelection(position: Int) {
@@ -102,12 +106,12 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
         if (image == null)
             return
 
-        mSelectedItems.add(image)
+        mSelectedItems.add(image.id)
         mSelectedPositions.add(position)
     }
 
     private fun removeSelection(image: MetadataTest, position: Int) {
-        mSelectedItems.remove(image)
+        mSelectedItems.remove(image.id)
         mSelectedPositions.remove(position)
     }
 
@@ -126,7 +130,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
         // individual view, so might as well do everything the same way
         val image = getItem(position) ?: return
 
-        if (mSelectedItems.contains(image)) {
+        if (mSelectedItems.contains(image.id)) {
             removeSelection(image, position)
         } else {
             addSelection(image, position)
@@ -136,15 +140,6 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
     }
 
     private fun updateSelection() = onSelectionChangedListener?.onSelectionUpdated(selectedItems)
-
-    fun selectAll() {
-        multiSelectMode = true
-        val list = currentList ?: return    // TODO: Need to spin through and gather all ids
-        // Actually best solution is prolly to accept ids for selection externally
-        mSelectedItems.addAll( list.mapNotNull { it } )
-        updateSelection()
-        notifyItemRangeChanged(0, itemCount)
-    }
 
     /**
      * Interface definition for a callback to be invoked when an item in this
@@ -192,7 +187,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
     }
 
     interface OnSelectionUpdatedListener {
-        fun onSelectionUpdated(selectedUris: Collection<MetadataTest>)
+        fun onSelectionUpdated(selectedIds: LongArray)
     }
 
     companion object {

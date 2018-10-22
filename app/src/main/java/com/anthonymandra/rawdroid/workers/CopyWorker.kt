@@ -5,8 +5,10 @@ import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
-import com.anthonymandra.framework.DocumentUtil
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Worker
+import androidx.work.workDataOf
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
@@ -105,9 +107,9 @@ class CopyWorker: Worker() {
 		const val KEY_DEST_URI = "destination"
 
 		@JvmStatic
-		fun buildRequest(imagesToCopy: List<Long>, destination: Uri): OneTimeWorkRequest {
+		fun buildRequest(imagesToCopy: LongArray, destination: Uri): OneTimeWorkRequest {
 			val data = workDataOf(
-				KEY_COPY_URIS to imagesToCopy.toLongArray(),
+				KEY_COPY_URIS to imagesToCopy,
 				KEY_DEST_URI to destination.toString()
 			)
 

@@ -1,7 +1,6 @@
 package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
-import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
@@ -9,14 +8,13 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Worker
 import androidx.work.workDataOf
-import com.anthonymandra.content.Meta
-import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.XmpUpdateField
 import com.anthonymandra.rawdroid.XmpValues
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataEntity
-import com.anthonymandra.util.*
+import com.anthonymandra.util.ImageUtil
+import com.anthonymandra.util.MetaUtil
+import com.anthonymandra.util.Util
 
 class MetaWriterWorker: Worker() {
 	override fun doWork(): Result {
@@ -110,30 +108,6 @@ class MetaWriterWorker: Worker() {
 		this.notify(JOB_TAG, 0, notification)
 	}
 
-	/**
-	 * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
-	 * @param fromImage source image
-	 * @param toImage target image
-	 * @return success
-	 */
-	private fun copyAssociatedFiles(fromImage: MetadataEntity, toImage: Uri) {
-		val sourceUri = Uri.parse(fromImage.uri)
-		if (ImageUtil.hasXmpFile(applicationContext, sourceUri)) {
-			FileUtil.copy(applicationContext,
-				ImageUtil.getXmpFile(applicationContext, sourceUri).uri,
-				ImageUtil.getXmpFile(applicationContext, toImage).uri)
-		}
-		if (ImageUtil.hasJpgFile(applicationContext, sourceUri)) {
-			FileUtil.copy(applicationContext,
-				ImageUtil.getJpgFile(applicationContext, sourceUri).uri,
-				ImageUtil.getJpgFile(applicationContext, toImage).uri)
-		}
-
-		fromImage.uri = toImage.toString()  // update copied uri
-
-		return FileUtil.copy(applicationContext, sourceUri, toImage)
-	}
-
 	companion object {
 		const val JOB_TAG = "metawriter_job"
 		const val KEY_IMAGE_IDS = "image ids"
@@ -143,9 +117,9 @@ class MetaWriterWorker: Worker() {
 		const val KEY_UPDATE_FIELD = "field"
 
 		@JvmStatic
-		fun buildRequest(images: List<Long>, meta: XmpValues, field: XmpUpdateField): OneTimeWorkRequest {
+		fun buildRequest(images: LongArray, meta: XmpValues, field: XmpUpdateField): OneTimeWorkRequest {
 			val data = workDataOf(
-				KEY_IMAGE_IDS to images.toLongArray(),
+				KEY_IMAGE_IDS to images,
 				KEY_SUBJECT to meta.subject.toTypedArray(),
 				KEY_LABEL to meta.label,
 				KEY_RATING to meta.rating,

@@ -3,7 +3,6 @@ package com.anthonymandra.rawdroid.ui
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.renderscript.*
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
@@ -168,22 +167,6 @@ class ViewPagerFragment : Fragment() {
              onSuccess = { histogramView?.updateHistogram(it) },
              onError = { it.printStackTrace() }     // TODO: Handle error state in histogramView
          )
-    }
-
-    // TODO: For some reason I'm only getting green and blue from this
-    @WorkerThread
-    private fun calculateHistogram(bitmap: Bitmap): IntArray {
-        val histogram = IntArray(256)
-        val rsContext = RenderScript.create(context, RenderScript.ContextType.NORMAL)
-        val inAlloc = Allocation.createFromBitmap(rsContext, bitmap)
-//        val outType = Type.Builder(rsContext, Element.I32(rsContext)).setX(256).create()
-        val outType = Type.Builder(rsContext, Element.U32(rsContext)).setX(256).create()
-        val outAlloc = Allocation.createTyped(rsContext, outType, Allocation.USAGE_SCRIPT)
-        val histoScript = ScriptIntrinsicHistogram.create(rsContext, inAlloc.element)
-        histoScript.setOutput(outAlloc)
-        histoScript.forEach(inAlloc)
-        outAlloc.copyTo(histogram)
-        return histogram
     }
 
     @WorkerThread

@@ -5,8 +5,11 @@ import android.app.AlertDialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.*
+import android.content.ContentProviderOperation
+import android.content.Context
+import android.content.DialogInterface
 import android.content.DialogInterface.OnCancelListener
+import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
@@ -15,6 +18,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
 import com.anthonymandra.image.TiffConfiguration
@@ -24,14 +28,13 @@ import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.CoreViewModel
-import com.anthonymandra.util.*
+import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -46,15 +49,14 @@ abstract class CoreActivity : DocumentActivity() {
 
     protected lateinit var xmpEditFragment: XmpEditFragment
 
-    protected var mActivityVisible: Boolean = false
-
     /**
      * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
      */
-    protected var mItemsForIntent = mutableListOf<MetadataTest>()
+    //TODO: Pretty sure this isn't needed...
+    protected var mItemsForIntent = longArrayOf()
 
     private lateinit var licenseHandler: LicenseHandler
-    protected abstract val selectedImages: Collection<MetadataTest>
+    protected abstract val selectedIds: LongArray
 
     lateinit var notificationManager: NotificationManager
 
@@ -112,14 +114,12 @@ abstract class CoreActivity : DocumentActivity() {
 
     override fun onResume() {
         super.onResume()
-        mActivityVisible = true
         createSwapDir()
         createRecycleBin()
     }
 
     override fun onPause() {
         super.onPause()
-        mActivityVisible = false
         recycleBin.flushCache()
     }
 
@@ -155,7 +155,7 @@ abstract class CoreActivity : DocumentActivity() {
                 return true
             }
             R.id.menu_delete -> {
-                deleteImages(selectedImages)
+                deleteImages(selectedIds)
                 return true
             }
             R.id.menu_recycle -> {
@@ -187,31 +187,22 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     protected fun storeSelectionForIntent() {
-        mItemsForIntent.clear()
-        mItemsForIntent.addAll(selectedImages)
+        mItemsForIntent = selectedIds
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
 
         when (requestCode) {
-            REQUEST_SAVE_AS_DIR -> if (resultCode == RESULT_OK && data != null) {
-                handleSaveDestinationResult(data.data)
+            REQUEST_SAVE_AS_DIR -> if (resultCode == RESULT_OK && intent != null) {
+                intent.data?.let {
+                    handleSaveDestinationResult(it)
+                }
             }
         }
     }
 
     private fun handleSaveDestinationResult(destination: Uri) {
-        //		storeSelectionForIntent();	// dialog resets CAB, so store first
-
-        // TODO: Might want to figure out a way to get free space to introduce this check again
-        //        long importSize = getSelectedImageSize();
-        //        if (destination.getFreeSpace() < importSize)
-        //        {
-        //            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-        //            return;
-        //        }
-
         // Load default save config if it exists and automatically apply it
         val config = ImageConfiguration.fromPreference(this)
         var insert = false
@@ -222,7 +213,7 @@ abstract class CoreActivity : DocumentActivity() {
                 .setMessage("Add converted images to the library?")
                 .setPositiveButton(R.string.positive) { _, _ -> insert = true }
                 .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
-            viewModel.startSaveWorker(mItemsForIntent.map { it.id }, destination, config, insert)
+            viewModel.startSaveWorker(mItemsForIntent, destination, config, insert)
             return
         }
 
@@ -233,7 +224,7 @@ abstract class CoreActivity : DocumentActivity() {
                 .setMessage("Add converted images to the library?")
                 .setPositiveButton(R.string.positive) { _, _ -> insert = true }
                 .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
-            viewModel.startSaveWorker(mItemsForIntent.map { it.id }, destination, imageConfig, insert)
+            viewModel.startSaveWorker(mItemsForIntent, destination, imageConfig, insert)
         }
         dialog.show()
     }
@@ -262,28 +253,28 @@ abstract class CoreActivity : DocumentActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
-        xmpEditFragment.setListener { xmp->
-					viewModel.startMetaWriterWorker(selectedImages.map { it.id }, xmp, XmpUpdateField.All)
-				}
+        xmpEditFragment.setListener { xmp ->
+            viewModel.startMetaWriterWorker(selectedIds, xmp, XmpUpdateField.All)
+        }
 
         xmpEditFragment.setLabelListener { label ->
-					viewModel.startMetaWriterWorker(
-							selectedImages.map { it.id },
-							XmpValues(label = label),
-							XmpUpdateField.Label)
+            viewModel.startMetaWriterWorker(
+                selectedIds,
+                XmpValues(label = label),
+                XmpUpdateField.Label)
         }
 
         xmpEditFragment.setRatingListener { rating ->
-					viewModel.startMetaWriterWorker(
-							selectedImages.map { it.id },
-							XmpValues(rating = rating),
-							XmpUpdateField.Rating)
+            viewModel.startMetaWriterWorker(
+                selectedIds,
+                XmpValues(rating = rating),
+                XmpUpdateField.Rating)
         }
         xmpEditFragment.setSubjectListener { subject ->
-					viewModel.startMetaWriterWorker(
-							selectedImages.map { it.id },
-							XmpValues(subject = subject.orEmpty().toList()),
-							XmpUpdateField.Subject)
+            viewModel.startMetaWriterWorker(
+                selectedIds,
+                XmpValues(subject = subject.orEmpty().toList()),
+                XmpUpdateField.Subject)
         }
         hideEditXmpFragment()
     }
@@ -383,18 +374,7 @@ abstract class CoreActivity : DocumentActivity() {
                 .show()
     }
 
-    /**
-     * Deletes a file and determines if a recycle is necessary.
-     *
-     * @param toDelete file to delete.
-     */
-    protected fun deleteImage(toDelete: MetadataTest) {
-        val itemsToDelete = ArrayList<MetadataTest>()
-        itemsToDelete.add(toDelete)
-        deleteImages(itemsToDelete)
-    }
-
-    private fun deleteImages(itemsToDelete: Collection<MetadataTest>) {
+    private fun deleteImages(itemsToDelete: LongArray) {
         if (itemsToDelete.isEmpty()) {
             Toast.makeText(baseContext, R.string.warningNoItemsSelected, Toast.LENGTH_SHORT).show()
             return
@@ -405,43 +385,38 @@ abstract class CoreActivity : DocumentActivity() {
         val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true)
         val justDelete: Boolean?
         val message: String
-        val spaceRequired: Long = itemsToDelete
-            .asSequence()
-            .filterNotNull()
-            .map { File(Uri.parse(it.uri).path) }
-            .filter { it.exists() }
-            .map { it.length() }
-            .sum()
 
         // Go straight to delete if
         // 1. MTP (unsupported)
         // 2. Recycle is set to off
         // 3. For some reason the bin is null
-        //		if (itemsToDelete.get(0) instanceof MtpImage)
-        //		{
-        //			justDelete = true;
-        //			message = getString(R.string.warningRecycleMtp);
-        //		}
-        /* else */
         if (!useRecycle) {
             justDelete = true
             message = getString(R.string.warningDeleteDirect)
         } else {
             justDelete = false
-            message = getString(R.string.warningDeleteExceedsRecycle) // This message applies to deletes exceeding bin size
+            message = getString(R.string.warningDeleteExceedsRecycle)
         }
 
-        if (justDelete || recycleBin.binSize < spaceRequired) {
-            if (deleteConfirm) {
-                AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
-                    .setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
-                    .setPositiveButton(R.string.delete) { _, _ -> viewModel.startDeleteWorker(itemsToDelete.map { it.id }) }
-                    .show()
+        viewModel.images(itemsToDelete).subscribeBy { images ->
+            val spaceRequired: Long = images
+                .asSequence()
+                .filterNotNull()
+                .map { it.size }
+                .sum()
+
+            if (justDelete || recycleBin.binSize < spaceRequired) {
+                if (deleteConfirm) {
+                    AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
+                        .setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
+                        .setPositiveButton(R.string.delete) { _, _ -> viewModel.startDeleteWorker(itemsToDelete) }
+                        .show()
+                } else {
+                    viewModel.startDeleteWorker(itemsToDelete)
+                }
             } else {
-                viewModel.startDeleteWorker(itemsToDelete.map { it.id })
+                RecycleTask().execute(itemsToDelete)
             }
-        } else {
-            RecycleTask().execute(itemsToDelete)
         }
     }
 
@@ -481,7 +456,7 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     private fun requestShare() {
-        if (selectedImages.isEmpty()) {
+        if (selectedIds.isEmpty()) {
             Snackbar.make(rootView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
             return
         }
@@ -503,34 +478,36 @@ abstract class CoreActivity : DocumentActivity() {
             convert = false
         }
 
-        val selectedItems = ArrayList(selectedImages)
-        if (selectedItems.size > 1) {
-            intent.action = Intent.ACTION_SEND_MULTIPLE
-            val tooManyShares = selectedItems.size > 10
+        // We need to limit the number of shares to avoid TransactionTooLargeException
+        // TODO: If swap took IDs can we remove share limit?
+        val limitImages = selectedIds.size > 10
+        if (limitImages) {
+            val shareLimit = Toast.makeText(this, R.string.shareSubset, Toast.LENGTH_LONG)
+            shareLimit.setGravity(Gravity.CENTER, 0, 0)
+            shareLimit.show()
+        }
+        val selection = if (limitImages) selectedIds.sliceArray(0..9) else selectedIds
 
-            if (tooManyShares) {
-                val shareLimit = Toast.makeText(this, R.string.shareSubset, Toast.LENGTH_LONG)
-                shareLimit.setGravity(Gravity.CENTER, 0, 0)
-                shareLimit.show()
-            }
+        viewModel.images(selection).subscribeBy {selectedImages ->
+            if (selectedImages.size > 1) {
+                intent.action = Intent.ACTION_SEND_MULTIPLE
 
-            val share = ArrayList<Uri?>()
-            // We need to limit the number of shares to avoid TransactionTooLargeException
-            for (selection in if (tooManyShares) selectedItems.subList(0, 10) else selectedItems) {
-                val uri = Uri.parse(selection.uri)
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                    ArrayList(selectedImages.map {
+                        if (convert)
+                            SwapProvider.createSwapUri(this, it.uri.toUri())
+                        else
+                            it.uri.toUri()
+                    })
+                )
+            } else {
+                intent.action = Intent.ACTION_SEND
+                val uri = Uri.parse(selectedImages[0].uri)
                 if (convert)
-                    share.add(SwapProvider.createSwapUri(this, uri))
+                    intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, uri))
                 else
-                    share.add(uri)
+                    intent.putExtra(Intent.EXTRA_STREAM, uri)
             }
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, share)
-        } else {
-            intent.action = Intent.ACTION_SEND
-            val uri = Uri.parse(selectedItems[0].uri)
-            if (convert)
-                intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, uri))
-            else
-                intent.putExtra(Intent.EXTRA_STREAM, uri)
         }
 
         startActivity(Intent.createChooser(intent, getString(R.string.share)))
@@ -574,13 +551,11 @@ abstract class CoreActivity : DocumentActivity() {
             .subscribeOn(Schedulers.from(AppExecutors.DISK))
             .map {
                 val source = UsefulDocumentFile.fromUri(this, Uri.parse(it.uri))
-                var destinationTree: UsefulDocumentFile? = null
-                destinationTree = getDocumentFile(destinationFolder, true, true)
-
                 val desiredName = FileUtil.swapExtention(source.name, config.extension)
                 val desiredUri = DocumentUtil.getChildUri(destinationFolder, desiredName)
-                var destinationFile = UsefulDocumentFile.fromUri(this, desiredUri)
+                val destinationTree = getDocumentFile(destinationFolder, true, true)
 
+                var destinationFile = UsefulDocumentFile.fromUri(this, desiredUri)
                 if (!destinationFile.exists())
                     destinationFile = destinationTree.createFile(null, desiredName)
 

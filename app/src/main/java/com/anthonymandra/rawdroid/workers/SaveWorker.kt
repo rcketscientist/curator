@@ -1,13 +1,14 @@
 package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
-import android.media.Image
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
-import com.anthonymandra.framework.DocumentUtil
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.Worker
+import androidx.work.workDataOf
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
@@ -15,10 +16,8 @@ import com.anthonymandra.image.TiffConfiguration
 import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.FileUtil
-import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.util.Util
 
 class SaveWorker: Worker() {
@@ -50,13 +49,35 @@ class SaveWorker: Worker() {
 		val notifications = NotificationManagerCompat.from(applicationContext)
 		notifications.notify(builder.build())
 
-		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		val metadata = repo._images(images)
+
+		// TODO: Test all this!...and move to util (Copy/Save)
+		// We don't know the size beforehand anyway...
+//		val freeSpace = applicationContext.contentResolver.openFileDescriptor(destination, "r").use {
+//			if (it == null) return@use Long.MAX_VALUE   // We'll blindly start saving
+//
+//			val stats = Os.fstatvfs(it.fileDescriptor)
+//			return@use stats.f_bavail * stats.f_bsize
+//		}
+//
+//		val spaceRequired: Long = metadata
+//			.asSequence()
+//			.filterNotNull()
+//			.map { it.size }
+//			.sum()
+//
+//		if (freeSpace < spaceRequired) {
+//			builder.setContentText(applicationContext.getString(R.string.warningNotEnoughSpace))
+//			notifications.notify(builder.build())
+//			return Result.FAILURE
+//		}
+
+		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		metadata.forEachIndexed { index, value ->
 			if (isCancelled) {
 				builder
-						.setContentText("Cancelled")
-						.priority = NotificationCompat.PRIORITY_HIGH
+					.setContentText("Cancelled")
+					.priority = NotificationCompat.PRIORITY_HIGH
 				notifications.notify(builder.build())
 
 				return Result.SUCCESS
@@ -117,9 +138,9 @@ class SaveWorker: Worker() {
 		const val KEY_INSERT = "insert"
 
 		@JvmStatic
-		fun buildRequest(images: List<Long>, destination: Uri, config: ImageConfiguration, insert: Boolean): OneTimeWorkRequest {
+		fun buildRequest(images: LongArray, destination: Uri, config: ImageConfiguration, insert: Boolean): OneTimeWorkRequest {
 			val data = workDataOf(
-					KEY_IMAGE_IDS to images.toLongArray(),
+					KEY_IMAGE_IDS to images,
 					KEY_DEST_URI to destination.toString(),
 					KEY_TYPE to config.type.toString(),
 					KEY_CONFIG to config.parameters,

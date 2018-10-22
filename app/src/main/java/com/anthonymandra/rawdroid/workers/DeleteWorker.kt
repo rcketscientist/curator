@@ -92,9 +92,9 @@ class DeleteWorker: Worker() {
 	    const val KEY_DELETE_IDS = "delete uris"
 
 	    @JvmStatic
-	    fun buildRequest(imagesToDelete: List<Long>): OneTimeWorkRequest {
+	    fun buildRequest(imagesToDelete: LongArray): OneTimeWorkRequest {
 		    val data = workDataOf(
-			    DeleteWorker.KEY_DELETE_IDS to imagesToDelete.toLongArray()
+			    DeleteWorker.KEY_DELETE_IDS to imagesToDelete
 		    )
 
 		    return OneTimeWorkRequestBuilder<DeleteWorker>()
