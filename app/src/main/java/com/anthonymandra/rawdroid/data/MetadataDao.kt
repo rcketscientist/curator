@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid.data
 
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
@@ -9,10 +10,13 @@ import androidx.sqlite.db.SupportSQLiteQuery
 abstract class MetadataDao {
 
     @get:Query("SELECT * FROM meta")
-    abstract val allImages: List<MetadataEntity>
+    abstract val synchAllImages: List<MetadataEntity>
 
     @get:Query("SELECT uri FROM meta")
     abstract val uris: List<String>
+
+	@Query("SELECT COUNT(*) FROM meta")
+	abstract fun synchCount(): Int
 
     // Count doesn't care if the subject changes
     @RawQuery(observedEntities = [ MetadataEntity::class ])
@@ -38,14 +42,17 @@ abstract class MetadataDao {
     @Query("SELECT * FROM meta WHERE uri = :uri")
     abstract operator fun get(uri: String): LiveData<MetadataTest>
 
+    @WorkerThread
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun _images(uris: Array<String>): List<MetadataTest>
+    abstract fun synchImages(uris: Array<String>): List<MetadataTest>
 
+    @WorkerThread
     @Query("SELECT * FROM meta WHERE id IN (:ids)")
-    abstract fun _images(ids: LongArray): List<MetadataTest>
+    abstract fun synchImages(ids: LongArray): List<MetadataTest>
 
+    @WorkerThread
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract fun _images(uri: String): MetadataTest
+    abstract fun synchImage(uri: String): MetadataTest
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")

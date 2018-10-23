@@ -21,7 +21,6 @@ import android.widget.Toast;
 
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentActivity;
-import com.anthonymandra.framework.SearchService;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.util.ImageUtil;
 
@@ -197,7 +196,7 @@ public class CameraImportActivity extends DocumentActivity
 						@Override
 						public void onClick(DialogInterface dialog, int which)
 						{
-							getContentResolver().bulkInsert(Meta.CONTENT_URI, dbInserts.toArray(new ContentValues[dbInserts.size()]));
+							getContentResolver().bulkInsert(Meta.CONTENT_URI, dbInserts.toArray(new ContentValues[0]));
 
 							Set<String> uriStrings = new HashSet<>();
 							for (ContentValues image : dbInserts)
@@ -205,9 +204,10 @@ public class CameraImportActivity extends DocumentActivity
 								uriStrings.add(image.getAsString(Meta.URI));
 							}
 
-							Intent broadcast = new Intent(SearchService.BROADCAST_SEARCH_COMPLETE)
-									.putExtra(SearchService.EXTRA_IMAGE_IDS, uriStrings.toArray(new String[uriStrings.size()]));
-							LocalBroadcastManager.getInstance(CameraImportActivity.this).sendBroadcast(broadcast);
+							// TODO: Move to search worker!
+//							Intent broadcast = new Intent(SearchService.BROADCAST_SEARCH_COMPLETE)
+//									.putExtra(SearchService.EXTRA_IMAGE_IDS, uriStrings.toArray(new String[uriStrings.size()]));
+//							LocalBroadcastManager.getInstance(CameraImportActivity.this).sendBroadcast(broadcast);
 						}
 					})
 					.setNegativeButton(R.string.negative, new DialogInterface.OnClickListener()

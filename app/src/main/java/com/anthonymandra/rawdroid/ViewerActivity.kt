@@ -15,7 +15,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.framework.CoreActivity
-import com.anthonymandra.framework.MetaService
 import com.anthonymandra.framework.SwapProvider
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
@@ -60,7 +59,6 @@ class ViewerActivity : CoreActivity() {
 
         viewerAdapter = ViewerAdapter(supportFragmentManager)
 
-//        val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         viewModel.imageList.observe(this, Observer {
             viewerAdapter.submitList(it)
             // TODO: Can we get an update?  Will the entries reorder on changes?
@@ -102,22 +100,9 @@ class ViewerActivity : CoreActivity() {
 //        pager.setPageTransformer(true, DepthPageTransformer())
         pager.offscreenPageLimit = 2
 
-        responseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META)
-//        LocalBroadcastManager.getInstance(this).registerReceiver(object : BroadcastReceiver() {
-//            override fun onReceive(context: Context, intent: Intent) {
-//                when (intent.action) {
-//                    MetaService.BROADCAST_REQUESTED_META -> {
-//                        val uri = intent.getStringExtra(MetaService.EXTRA_URI)
-//                        val meta = intent.getParcelableExtra<MetadataTest>(MetaService.EXTRA_METADATA)
-//                        currentImage?.let {
-//                            if (it.uri == uri) {
-////                                populateMeta(meta)    TODO: This needs to move to fragment, possibly auto-update via livedata
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }, responseIntentFilter)
+        // TODO: We need some way to update meta when processed.  This is probably done automatically
+        // with the viewmodel, but that may change sorting.  This was previously done with a broadcast.
+        // We could likely use a MetaReadWorker observer to check if the current image changed.
 
         imageButtonNext.setOnClickListener { pager.currentItem = pager.currentItem + 1 }
         imageButtonPrevious.setOnClickListener { pager.currentItem = pager.currentItem - 1 }
@@ -200,7 +185,7 @@ class ViewerActivity : CoreActivity() {
     }
 
     companion object {
-        val TAG = ViewerActivity::class.java.simpleName
+        private val TAG = ViewerActivity::class.java.simpleName
         const val EXTRA_START_INDEX = "viewer_index"
         const val EXTRA_FILTER = "viewer_filter"
     }

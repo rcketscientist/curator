@@ -1,7 +1,6 @@
 package com.anthonymandra.image
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 
 import com.anthonymandra.rawdroid.FullSettingsActivity
@@ -13,9 +12,9 @@ abstract class ImageConfiguration {
 	abstract val parameters: String
 
 	enum class ImageType {
-		jpeg,
-		tiff,
-		raw
+		JPEG,
+		TIFF,
+		RAW
 	}
 
 	fun savePreference(c: Context) {
@@ -30,9 +29,9 @@ abstract class ImageConfiguration {
 
 		fun from(type:ImageType, config: String?): ImageConfiguration? {
 			return when (type) {
-				ImageConfiguration.ImageType.jpeg ->
+				ImageConfiguration.ImageType.JPEG ->
 					if (config != null) JpegConfiguration(config) else JpegConfiguration()
-				ImageConfiguration.ImageType.tiff ->
+				ImageConfiguration.ImageType.TIFF ->
 					if (config != null) TiffConfiguration(config) else TiffConfiguration()
 				else -> null
 			}

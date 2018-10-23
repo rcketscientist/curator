@@ -1,6 +1,5 @@
 package com.anthonymandra.rawdroid.ui
 
-import android.net.Uri
 import com.anthonymandra.rawdroid.data.MetadataTest
 import com.davemorrissey.labs.subscaleview.ImageSource
 

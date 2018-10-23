@@ -93,15 +93,15 @@ class SaveWorker: Worker() {
 			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration!!.extension)	// Can't be null, but maybe redesign to avoid ?
 			val destinationFile = parentFile.createFile(null, desiredName)
 
-			val inputPfd = FileUtil.getParcelFileDescriptor(applicationContext, source.uri, "r")
-			val outputPfd = FileUtil.getParcelFileDescriptor(applicationContext, destinationFile.uri, "w")
+			val inputPfd = applicationContext.contentResolver.openFileDescriptor(source.uri, "r")
+			val outputPfd = applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")
 
 			when (imageConfiguration.type) {
 				ImageConfiguration.ImageType.jpeg -> {
 					val quality = (imageConfiguration as JpegConfiguration).quality
 					ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
 				}
-				ImageConfiguration.ImageType.tiff -> {
+				ImageConfiguration.ImageType.TIFF -> {
 					val compress = (imageConfiguration as TiffConfiguration).compress
 					ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
 				}

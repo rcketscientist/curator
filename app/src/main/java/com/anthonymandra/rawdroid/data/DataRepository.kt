@@ -30,23 +30,23 @@ import java.util.ArrayList
 class DataRepository private constructor(private val database: AppDatabase) {
     // ---- Pure meta database calls -------
     @WorkerThread
-    fun _images() = database.metadataDao().allImages
+    fun _images() = database.metadataDao().synchAllImages
     @WorkerThread
     fun _uris() = database.metadataDao().uris
     @WorkerThread
-    fun _images(uris: Array<String>) = database.metadataDao()._images(uris)
+    fun _images(uris: Array<String>) = database.metadataDao().synchImages(uris)
     @WorkerThread
-    fun _images(ids: LongArray) = database.metadataDao()._images(ids)
+    fun _images(ids: LongArray) = database.metadataDao().synchImages(ids)
     fun images(ids: LongArray): Single<List<MetadataTest>> =
         Single.create<List<MetadataTest>> { emitter ->
-            emitter.onSuccess(database.metadataDao()._images(ids))
+            emitter.onSuccess(database.metadataDao().synchImages(ids))
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
 
 
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
 
     @WorkerThread
-    fun _image(uri: String) = database.metadataDao()._images(uri)
+    fun _image(uri: String) = database.metadataDao().synchImage(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
     fun selectAll(filter: ImageFilter = ImageFilter()) : Single<LongArray> {
@@ -185,7 +185,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
     }
 
     fun updateMeta(vararg images: MetadataTest) : Completable {
-        return Completable.create{
+        return Completable.create{ emitter ->
             val subjectMapping = mutableListOf<SubjectJunction>()
 
             // SQLite has a var limit of 999
@@ -204,7 +204,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
                 // Update that image table
                 database.metadataDao().update(*updates.toTypedArray())
             }
-            it.onComplete()
+            emitter.onComplete()
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
     }
 

@@ -2,10 +2,7 @@ package com.anthonymandra.rawdroid.ui
 
 import android.content.Context
 import android.graphics.*
-import android.net.Uri
-import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.util.ImageUtil
-import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.davemorrissey.labs.subscaleview.decoder.ImageRegionDecoder
 

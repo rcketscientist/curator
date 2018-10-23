@@ -10,10 +10,7 @@ import java.io.IOException
 import java.io.Reader
 
 @Dao
-abstract class SubjectDao : PathDao<SubjectEntity>() {
-    override val database: String
-        get() =  "xmp_subject"
-
+abstract class SubjectDao : PathDao<SubjectEntity>("xmp_subject") {
     @get:Query("SELECT * FROM xmp_subject ORDER BY recent DESC, name ASC")
     abstract val all: LiveData<List<SubjectEntity>>
 

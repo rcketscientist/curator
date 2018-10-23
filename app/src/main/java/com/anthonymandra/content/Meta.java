@@ -4,7 +4,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.SparseArray;
 
-import com.anthonymandra.rawdroid.BuildConfig;
 import com.drew.lang.annotations.Nullable;
 
 import java.util.EnumSet;

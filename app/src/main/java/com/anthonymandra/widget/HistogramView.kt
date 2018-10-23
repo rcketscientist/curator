@@ -143,13 +143,13 @@ class HistogramView(context: Context, attrs: AttributeSet) : View(context, attrs
         private val RED = Color.argb(200, 255, 0, 0)
         private val GREEN = Color.argb(180, 0, 255, 0)
 
-        private val BORDER_WIDTH = 1    // Put this in because it was starting before the BORDER_POINTS...seems to be a space but higher creates garble
-        private val COLOR_HEIGHT = 150
-        private val COLOR_WIDTH = 256
+        private const val BORDER_WIDTH = 1    // Put this in because it was starting before the BORDER_POINTS...seems to be a space but higher creates garble
+        private const val COLOR_HEIGHT = 150
+        private const val COLOR_WIDTH = 256
         private val HIST_WIDTH = COLOR_WIDTH + BORDER_WIDTH * 2
         private val HIST_HEIGHT = COLOR_HEIGHT + BORDER_WIDTH * 2
 
-        private val GRIDLINES = 4
+        private const val GRIDLINES = 4
         private val GRID_SPACING = COLOR_WIDTH / 5
 
         private val START = HIST_HEIGHT - BORDER_WIDTH

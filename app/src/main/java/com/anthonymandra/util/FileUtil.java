@@ -78,30 +78,6 @@ public class FileUtil
 	}
 
 	/**
-	 * Opens an InputStream to uri.  Checks if it's a local file to create a FileInputStream,
-	 * otherwise resorts to using the ContentResolver to request a stream.
-	 *
-	 * @param context The context.
-	 * @param uri The Uri to query.
-	 */
-	public static ParcelFileDescriptor getParcelFileDescriptor(final Context context, final Uri uri, String mode) throws FileNotFoundException
-	{
-		if (isFileScheme(uri))
-		{
-			int m = ParcelFileDescriptor.MODE_READ_ONLY;
-			if ("w".equalsIgnoreCase(mode) || "rw".equalsIgnoreCase(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE;
-			else if ("rwt".equalsIgnoreCase(mode)) m = ParcelFileDescriptor.MODE_READ_WRITE | ParcelFileDescriptor.MODE_TRUNCATE;
-
-			//TODO: Is this any faster?  Otherwise could just rely on resolver
-			return ParcelFileDescriptor.open(new File(uri.getPath()), m);
-		}
-		else
-		{
-			return context.getContentResolver().openFileDescriptor(uri, mode);
-		}
-	}
-
-	/**
 	 * Get a usable cache directory (external if available, internal otherwise).
 	 *
 	 * @param context    The context to use
@@ -129,7 +105,6 @@ public class FileUtil
 	 * @param path The path to check
 	 * @return The space available in bytes
 	 */
-	@TargetApi(9)
 	public static long getUsableSpace(File path)
 	{
 		final StatFs stats = new StatFs(path.getPath());
@@ -210,111 +185,5 @@ public class FileUtil
 		catch(Exception e) {
 			throw new IOException("Failed to copy " + source.getPath() + ": " + e.toString());
 		}
-	}
-
-	public static void write(File destination, InputStream is)
-	{
-		BufferedOutputStream bos = null;
-		byte[] data = null;
-		try
-		{
-			bos = new BufferedOutputStream(new FileOutputStream(destination));
-			data = new byte[is.available()];
-			is.read(data);
-			bos.write(data);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			Util.closeSilently(bos);
-			Util.closeSilently(is);
-		}
-	}
-
-	public static boolean isSymlink(File file) {
-		try
-		{
-			File canon;
-			if (file.getParent() == null)
-			{
-				canon = file;
-			} else
-			{
-				File canonDir = file.getParentFile().getCanonicalFile();
-				canon = new File(canonDir, file.getName());
-			}
-			return !canon.getCanonicalFile().equals(canon.getAbsoluteFile());
-		}
-		catch (IOException e)
-		{
-			return false;
-		}
-	}
-
-	public static File[] getStorageRoots()
-	{
-		File mnt = new File("/storage");
-		if (!mnt.exists())
-			mnt = new File("/mnt");
-
-		File[] roots = mnt.listFiles(new FileFilter() {
-
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.isDirectory() && pathname.exists()
-						&& pathname.canWrite() && !pathname.isHidden()
-						&& !isSymlink(pathname);
-			}
-		});
-		return roots;
-	}
-
-	public static List<File> getStoragePoints(File root)
-	{
-		List<File> matches = new ArrayList<>();
-
-		if (root == null)
-			return matches;
-
-		File[] contents = root.listFiles();
-		if (contents == null)
-			return matches;
-
-		for (File sub : contents)
-		{
-			if (sub.isDirectory())
-			{
-				if (isSymlink(sub))
-					continue;
-
-				if (sub.exists()
-						&& sub.canWrite()
-						&& !sub.isHidden())
-				{
-					matches.add(sub);
-				}
-				else
-				{
-					matches.addAll(getStoragePoints(sub));
-				}
-			}
-		}
-		return matches;
-	}
-
-	public static List<File> getStorageRoots(String[] roots)
-	{
-		List<File> valid = new ArrayList<>();
-		for (String root : roots)
-		{
-			File check = new File(root);
-			if (check.exists())
-			{
-				valid.addAll(getStoragePoints(check));
-			}
-		}
-		return valid;
 	}
 }

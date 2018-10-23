@@ -94,7 +94,7 @@ public class ServerManagedPolicy implements Policy {
      * </ul>
      *
      * @param response the result from validating the server response
-     * @param rawData the raw server response data
+     * @param rawData the RAW server response data
      */
     public void processServerResponse(int response, ResponseData rawData) {
 

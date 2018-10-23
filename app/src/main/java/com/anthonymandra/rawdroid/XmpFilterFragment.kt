@@ -71,7 +71,7 @@ class XmpFilterFragment : XmpBaseFragment() {
                 ascending,
                 mSegregateByType,
                 sortColumn,
-                mHiddenFolders.map { it.id }.toSet())
+                mHiddenFolders.asSequence().map { it.id }.toSet())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.xmp_filter_landscape, container, false)

@@ -116,15 +116,15 @@ class AppDatabaseTest {
         val childId = folderDao.insert(child)
 
         folderDao.delete(updated, child)
-        assertEquals(0, folderDao.count().toLong())
+        assertEquals(0, folderDao.count())
     }
 
     @Test
     fun metadata() {
         val folderId = folderDao.insert(testFolder)
-        assertEquals(1, folderDao.count().toLong())
+        assertEquals(1, folderDao.count())
 
-        assertEquals(0, metadataDao.count().toLong())
+        assertEquals(0, metadataDao.synchCount())
         val first = getPopulatedMeta(1)
 
         val imageId = metadataDao.insert(first)
@@ -138,7 +138,7 @@ class AppDatabaseTest {
         assertMetadata(updated)
 
         metadataDao.delete(updated)
-        assertEquals(0, metadataDao.count().toLong())
+        assertEquals(0, metadataDao.synchCount())
     }
 
     @Test
@@ -149,7 +149,7 @@ class AppDatabaseTest {
         subjectDao.importKeywords(reader)
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
-        val europe = subjectDao.get(7)
+        val europe = subjectDao[7]
         assertThat(europe.name, equalTo("Europe"))
 
         val europeanEntities = subjectDao.getDescendants(7)
@@ -166,7 +166,7 @@ class AppDatabaseTest {
         assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
 
         val time = System.currentTimeMillis()
-        europeanEntities.forEach( {it.recent = time})
+        europeanEntities.forEach {it.recent = time}
 
         subjectDao.update(*europeanEntities.toTypedArray())
 
@@ -308,7 +308,7 @@ class AppDatabaseTest {
     }
 
     private fun assertMetadata(entity: MetadataEntity) {
-        val results = metadataDao.allImages.blockingObserve()
+        val results = metadataDao.synchAllImages
 
         assertNotNull(results)
         assertEquals(1, results!!.size)

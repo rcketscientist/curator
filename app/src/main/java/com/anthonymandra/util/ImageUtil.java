@@ -1,7 +1,6 @@
 package com.anthonymandra.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
@@ -39,8 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +61,7 @@ public class ImageUtil
         UsefulDocumentFile jpg = getJpgFile(c, image);
         if (xmp.exists()) files.add(xmp.getUri());
         if (jpg.exists()) files.add(jpg.getUri());
-        return files.toArray(new Uri[files.size()]);
+        return files.toArray(new Uri[0]);
     }
     public static boolean hasXmpFile(Context c, Uri uri) {
         return getXmpFile(c, uri).exists();
@@ -454,7 +451,7 @@ public class ImageUtil
 //        values.put(Meta.EXPOSURE, exif[Exif.SHUTTER]);
 //        values.put(Meta.HEIGHT, exif[Exif.HEIGHT]);
 //        values.put(Meta.WIDTH, exif[Exif.WIDTH]);
-//        //TODO: Placing thumb dimensions since we aren't decoding raw atm.
+//        //TODO: Placing thumb dimensions since we aren't decoding RAW atm.
 //        values.put(Meta.HEIGHT, exif[Exif.THUMB_HEIGHT]);
 //        values.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
         // Are the thumb dimensions useful in database?

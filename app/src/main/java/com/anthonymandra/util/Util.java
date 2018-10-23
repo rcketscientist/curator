@@ -25,21 +25,18 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import com.anthonymandra.rawdroid.GalleryActivity;
 import com.anthonymandra.rawdroid.R;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,7 +45,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 /**
  * Class containing some static utility methods.
@@ -286,7 +282,7 @@ public class Util
             String message) {
 
         // Create the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
+        return new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -295,6 +291,5 @@ public class Util
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(new long[0]);
-        return builder;
     }
 }
