@@ -51,11 +51,12 @@ class GalleryViewHolder(override val containerView: View)
 
         // FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
         image?.let {
-            GlideApp.with(itemView.context)
+            val rotation = GlideApp.with(itemView.context)
                 .load(it)
                 .centerCrop()
-                .into(galleryImageView)
-            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
+                .into(galleryImageView).view.rotation
+            // TODO: Glide handles exif orientation, how do we align behavior with non-exif thumbs?
+//            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
         }
     }
 
