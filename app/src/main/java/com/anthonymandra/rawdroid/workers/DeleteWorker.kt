@@ -1,24 +1,22 @@
 package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
+import android.content.Context
 import android.net.Uri
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Worker
-import androidx.work.workDataOf
+import androidx.work.*
 import com.anthonymandra.framework.DocumentActivity
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.util.Util
 
-class DeleteWorker: Worker() {
+class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     override fun doWork(): Result {
 	    val repo = DataRepository.getInstance(this.applicationContext)
 	    val imagesIds = inputData.getLongArray(DeleteWorker.KEY_DELETE_IDS) ?: return Result.FAILURE
@@ -38,7 +36,7 @@ class DeleteWorker: Worker() {
 	    val notifications = NotificationManagerCompat.from(applicationContext)
 	    notifications.notify(builder.build())
 
-	    val images = repo._images(imagesIds)
+	    val images = repo.synchImages(imagesIds)
 
 	    images.forEachIndexed { index, value ->
 		    if (isCancelled) {
@@ -70,7 +68,7 @@ class DeleteWorker: Worker() {
     }
 
 	@Throws(DocumentActivity.WritePermissionException::class)
-	private fun deleteAssociatedFiles(image: MetadataTest): Boolean {
+	private fun deleteAssociatedFiles(image: ImageInfo): Boolean {
 		val associatedFiles = ImageUtil.getAssociatedFiles(applicationContext, Uri.parse(image.uri))
 		for (file in associatedFiles)
 			deleteFile(file)

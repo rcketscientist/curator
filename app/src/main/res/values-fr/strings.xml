@@ -5,10 +5,10 @@
 <string name="positive">Accepter</string>
 <string name="negative">Refuser</string>
 <string name="neutral">Annuler</string>
-<string name="saveAs">Enregistrer sous ...</string>
+<string name="saveAs">Enregistrer sous …</string>
 <string name="export">Exporter</string>
 <string name="wallpaper">Enregister comme fond d\\\'écran</string>
-<string name="editWith">Editer avec ...</string>
+<string name="editWith">Editer avec …</string>
 <string name="selectAll">tout sélectionner</string>
 <string name="help">Aide</string>
 <string name="delete">Effacer</string>
@@ -104,10 +104,10 @@
 <string name="restoreFile">Restaure le fichier</string>
 <string name="emptyRecycleBin">Vide la poubelle</string>
 <string name="saveJpg">Exporte les miniatures</string>
-	<string name="importingImages">Importation d\\\'images...</string>
-<string name="exportingThumb">Exportation des miniatures...</string>
-<string name="deletingFiles">Suppression des fichiers...</string>
-<string name="recyclingFiles">Recyclage des fichiers...</string>
+	<string name="importingImages">Importation d\\\'images…</string>
+<string name="exportingThumb">Exportation des miniatures…</string>
+<string name="deletingFiles">Suppression des fichiers…</string>
+<string name="recyclingFiles">Recyclage des fichiers…</string>
 <string name="clear">Supprimé</string>
 <string name="reuse">Réutilisation</string>
 <string name="customKeywords">Mot clés personnalisés</string>

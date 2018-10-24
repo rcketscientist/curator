@@ -59,9 +59,6 @@ class XmpFilterFragment : XmpBaseFragment() {
             return XmpFilter(ratings, colorLabels, subject)
         }
 
-    val excludedFolders: List<String>?
-        get() = mExcludedFolders.map { it.documentUri }
-
     private val imageFilter: ImageFilter
         get() = ImageFilter(
                 xmpFilter.rating,

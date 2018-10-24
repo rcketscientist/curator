@@ -3,7 +3,7 @@ package com.anthonymandra.rawdroid.ui
 import android.content.Context
 import android.net.Uri
 import com.anthonymandra.content.Meta
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.ImageUtil
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.DataSource
@@ -14,20 +14,20 @@ import com.bumptech.glide.signature.ObjectKey
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
-internal class RawModelLoader(private val context: Context) : ModelLoader<MetadataTest, InputStream> {
+internal class RawModelLoader(private val context: Context) : ModelLoader<ImageInfo, InputStream> {
 
-    override fun buildLoadData(metadataTest: MetadataTest, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream>? {
-        val diskCacheKey = ObjectKey(metadataTest.uri)
-        return ModelLoader.LoadData(diskCacheKey, RawFetcher(context, metadataTest))
+    override fun buildLoadData(imageInfo: ImageInfo, width: Int, height: Int, options: Options): ModelLoader.LoadData<InputStream>? {
+        val diskCacheKey = ObjectKey(imageInfo.uri)
+        return ModelLoader.LoadData(diskCacheKey, RawFetcher(context, imageInfo))
     }
 
-    override fun handles(image: MetadataTest): Boolean {
+    override fun handles(image: ImageInfo): Boolean {
         // If processed and OS supported allow glide to handle natively.
         //		return Meta.ImageType.fromInt(image.getType()) != Meta.ImageType.COMMON;
         return true
     }
 
-    private inner class RawFetcher internal constructor(context: Context, private val source: MetadataTest) : DataFetcher<InputStream> {
+    private inner class RawFetcher internal constructor(context: Context, private val source: ImageInfo) : DataFetcher<InputStream> {
         private val context: Context = context.applicationContext
 
         override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {

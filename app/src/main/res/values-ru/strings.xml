@@ -3,9 +3,9 @@
 
 <string name="app_name">RawDroid</string>
 <string name="neutral">Отмена</string>
-	<string name="saveAs">сохранить как...</string>
+	<string name="saveAs">сохранить как…</string>
 <string name="wallpaper">Установить как фон</string>
-<string name="editWith">Редактировать в...</string>
+<string name="editWith">Редактировать в…</string>
 <string name="help">помощь</string>
 <string name="delete">Удалить</string>
 <string name="rename">переименовать</string>

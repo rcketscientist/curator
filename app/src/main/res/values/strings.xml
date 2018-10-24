@@ -351,5 +351,9 @@
     <!-- Notifications -->
     <string name="io_channel_name">I/O</string>
     <string name="io_channel_desc">Feedback on operations like copy and save.</string>
+    <string name="example_abbreviated">Ex:</string>
+    <string name="custom_name">Custom Name</string>
+    <string name="quality">Quality</string>
+    <string name="got_it">Got it</string>
 
 </resources>

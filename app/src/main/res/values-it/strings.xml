@@ -109,8 +109,8 @@
 <string name="emptyRecycleBin">Svuota Cestino</string>
 <string name="saveJpg">Miniature di esportazione</string>
 	<string name="ratingRequest">Se vi piace  RawDroid si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
-<string name="importingImages">Importazione di immagini ...</string>
-<string name="exportingThumb">Esportazione Miniature...</string>
+<string name="importingImages">Importazione di immagini …</string>
+<string name="exportingThumb">Esportazione Miniature…</string>
 <string name="deletingFiles">Eliminazione dei file....</string>
 <string name="recyclingFiles">Riciclaggio dei file.....</string>
 <string name="clear">Cancella</string>

@@ -27,11 +27,15 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginStart="5dp"
-        android:hint="Custom Name"
+        android:hint="@string/custom_name"
         app:layout_constraintBottom_toTopOf="@+id/exampleTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/formatSpinner">
+        app:layout_constraintTop_toBottomOf="@+id/formatSpinner"
+        android:importantForAutofill="no"
+        android:inputType="text|textAutoComplete|textAutoCorrect"
+        tools:targetApi="o">
+        <!-- TODO: Supposedly complete works on an app list, remove if correct doesn't work-->
 
         <requestFocus
             android:layout_width="wrap_content"
@@ -46,13 +50,12 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginStart="5dp"
-        android:text="Ex:"
+        android:text="@string/example_abbreviated"
         android:textAppearance="?android:attr/textAppearanceSmall"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTextView"
-        app:layout_constraintBottom_toTopOf="@+id/renameButton"
-        />
+        app:layout_constraintBottom_toTopOf="@+id/renameButton" />
 
     <Button
         android:id="@+id/renameButton"

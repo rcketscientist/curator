@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anthonymandra.framework.Histogram
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.AppExecutors
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import io.reactivex.Single
@@ -27,7 +27,7 @@ import java.util.*
 import java.util.concurrent.ForkJoinPool
 
 class ViewPagerFragment : Fragment() {
-    var source: MetadataTest? = null
+    var source: ImageInfo? = null
     private var histogramSubscription: Disposable? = null
     private val viewModel: GalleryViewModel by lazy {
         ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java) }

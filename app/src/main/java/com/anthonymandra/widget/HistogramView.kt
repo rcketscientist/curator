@@ -19,54 +19,6 @@ class HistogramView(context: Context, attrs: AttributeSet) : View(context, attrs
 
     private val p = Paint()
 
-    fun updateHistogram(hist: IntArray) {
-        clear()
-
-        var i = 0
-        while (i < GRIDLINES * 4) {
-            val x = (i / 4 + 1) * GRID_SPACING
-            GRID_POINTS[i] = x.toFloat()
-            GRID_POINTS[++i] = 0f
-            GRID_POINTS[++i] = x.toFloat()
-            GRID_POINTS[++i] = HIST_HEIGHT.toFloat()
-            ++i
-        }
-
-        // Bottom-right corner
-        redPath.moveTo((HIST_WIDTH - BORDER_WIDTH).toFloat(), START.toFloat())
-        greenPath.moveTo((HIST_WIDTH - BORDER_WIDTH).toFloat(), START.toFloat())
-        bluePath.moveTo((HIST_WIDTH - BORDER_WIDTH).toFloat(), START.toFloat())
-
-        // Create baseline
-        redPath.lineTo(BORDER_WIDTH.toFloat(), START.toFloat())
-        greenPath.lineTo(BORDER_WIDTH.toFloat(), START.toFloat())
-        bluePath.lineTo(BORDER_WIDTH.toFloat(), START.toFloat())
-
-        var max = 0
-        for ((index, value) in hist.withIndex()) {
-            redPath.lineTo((index + BORDER_WIDTH).toFloat(), START - Color.red(value).toFloat())
-            greenPath.lineTo((index + BORDER_WIDTH).toFloat(), START - Color.green(value).toFloat())
-            bluePath.lineTo((index + BORDER_WIDTH).toFloat(), START - Color.blue(value).toFloat())
-
-            max = maxOf(max,
-                    maxOf(Color.red(value),
-                        maxOf(Color.green(value), Color.blue(value))))
-        }
-
-        val scale = COLOR_HEIGHT / max.toFloat()
-        val matrix = Matrix()
-        matrix.postScale(width.toFloat() / HIST_WIDTH,
-                height.toFloat() / HIST_HEIGHT /** scale*/)
-
-        redPath.transform(matrix)
-        greenPath.transform(matrix)
-        bluePath.transform(matrix)
-        matrix.mapPoints(GRID_POINTS)
-        matrix.mapPoints(BORDER_POINTS)
-
-        invalidate()
-    }
-
     fun updateHistogram(hist: Histogram.ColorBins) {
         clear()
 
@@ -95,7 +47,7 @@ class HistogramView(context: Context, attrs: AttributeSet) : View(context, attrs
         }
 
         var i = 0
-        while (i < GRIDLINES * 4) {
+        while (i < GRID_LINES * 4) {
             val x = (i / 4 + 1) * GRID_SPACING
             GRID_POINTS[i] = x.toFloat()
             GRID_POINTS[++i] = 0f
@@ -146,15 +98,15 @@ class HistogramView(context: Context, attrs: AttributeSet) : View(context, attrs
         private const val BORDER_WIDTH = 1    // Put this in because it was starting before the BORDER_POINTS...seems to be a space but higher creates garble
         private const val COLOR_HEIGHT = 150
         private const val COLOR_WIDTH = 256
-        private val HIST_WIDTH = COLOR_WIDTH + BORDER_WIDTH * 2
-        private val HIST_HEIGHT = COLOR_HEIGHT + BORDER_WIDTH * 2
+        private const val HIST_WIDTH = COLOR_WIDTH + BORDER_WIDTH * 2
+        private const val HIST_HEIGHT = COLOR_HEIGHT + BORDER_WIDTH * 2
 
-        private const val GRIDLINES = 4
-        private val GRID_SPACING = COLOR_WIDTH / 5
+        private const val GRID_LINES = 4
+        private const val GRID_SPACING = COLOR_WIDTH / 5
 
-        private val START = HIST_HEIGHT - BORDER_WIDTH
+        private const val START = HIST_HEIGHT - BORDER_WIDTH
 
-        private val GRID_POINTS = FloatArray(16 + GRIDLINES * 4)
+        private val GRID_POINTS = FloatArray(16 + GRID_LINES * 4)
         private val BORDER_POINTS = floatArrayOf(0f, 0f, (HIST_WIDTH - 1).toFloat(), 0f, (HIST_WIDTH - 1).toFloat(), 0f, (HIST_WIDTH - 1).toFloat(), (HIST_HEIGHT - 1).toFloat(), (HIST_WIDTH - 1).toFloat(), (HIST_HEIGHT - 1).toFloat(), 0f, (HIST_HEIGHT - 1).toFloat(), 0f, (HIST_HEIGHT - 1).toFloat(), 0f, 0f)
     }
 }

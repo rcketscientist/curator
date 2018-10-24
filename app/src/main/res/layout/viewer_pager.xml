@@ -21,14 +21,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="RtlHardcoded">
 
         <ImageButton
             android:id="@+id/imageButtonPrevious"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chevron_left"
-            android:background="@color/background_material_dark"
+            android:background="@color/grey_800"
             android:alpha=".75"/>
 
         <ImageButton
@@ -36,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_chevron_right"
-            android:background="@color/background_material_dark"
+            android:background="@color/grey_800"
             android:alpha=".75"/>
     </LinearLayout>
 
@@ -61,7 +62,8 @@
         android:layout_toLeftOf="@+id/xmpSidebarButton"
         android:layout_alignParentTop="true"
         android:background="@drawable/translucent_black_rect"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        tools:ignore="RtlHardcoded">
     </androidx.appcompat.widget.Toolbar>
 
     <ImageView
@@ -74,6 +76,7 @@
         android:padding="16dp"
         android:layout_marginLeft="1dp"
         android:src="@drawable/ic_tag"
-        android:background="@drawable/translucent_black_rect"/>
+        android:background="@drawable/translucent_black_rect"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>

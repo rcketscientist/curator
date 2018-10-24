@@ -3,14 +3,15 @@ package com.anthonymandra.rawdroid.ui
 import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.UiThread
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import java.util.*
 import kotlin.collections.HashSet
 
-class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CALLBACK)
+class GalleryAdapter : PagedListAdapter<ImageInfo, GalleryViewHolder>(DIFF_CALLBACK)
 {
     init { setHasStableIds(true) }
 
@@ -34,9 +35,12 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
     private val mSelectedItems = HashSet<Long>()
     var selectedItems: LongArray
         get() = mSelectedItems.toLongArray()
+        @UiThread
         set(value) {
             mSelectedItems.clear()
             mSelectedItems.addAll(value.asList())
+            updateSelection()
+            notifyItemRangeChanged(0, itemCount)
         }
 
     val selectedItemCount: Int
@@ -59,7 +63,9 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
 
             onItemClickListener?.onItemClick(this, it, clickPosition, getItemId(clickPosition))
 
-            toggleSelection(clickPosition)
+            if (multiSelectMode) {
+                toggleSelection(clickPosition)
+            }
         }
 
         holder.itemView.setOnLongClickListener {
@@ -102,7 +108,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
         notifyItemRangeChanged(start, end - start + 1)  // inclusive
     }
 
-    private fun addSelection(image: MetadataTest?, position: Int) {
+    private fun addSelection(image: ImageInfo?, position: Int) {
         if (image == null)
             return
 
@@ -110,7 +116,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
         mSelectedPositions.add(position)
     }
 
-    private fun removeSelection(image: MetadataTest, position: Int) {
+    private fun removeSelection(image: ImageInfo, position: Int) {
         mSelectedItems.remove(image.id)
         mSelectedPositions.remove(position)
     }
@@ -191,11 +197,11 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MetadataTest>() {
-            override fun areContentsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ImageInfo>() {
+            override fun areContentsTheSame(oldItem: ImageInfo, newItem: ImageInfo): Boolean =
                 oldItem == newItem
 
-            override fun areItemsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
+            override fun areItemsTheSame(oldItem: ImageInfo, newItem: ImageInfo): Boolean =
                 oldItem.uri == newItem.uri
         }
     }

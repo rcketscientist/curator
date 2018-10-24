@@ -26,37 +26,37 @@ abstract class MetadataDao {
     abstract fun ids(query: SupportSQLiteQuery): LongArray
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
-    abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
+    abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<ImageInfo>>
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
-    abstract fun imageBlocking(query: SupportSQLiteQuery): List<MetadataTest>
+    abstract fun imageBlocking(query: SupportSQLiteQuery): List<ImageInfo>
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
-    abstract fun getImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
+    abstract fun getImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, ImageInfo>
 
     @Transaction
     @Query("SELECT * FROM meta WHERE id IN (:ids)")
-    abstract fun getImagesById(ids: List<Long>): DataSource.Factory<Int, MetadataTest>
+    abstract fun getImagesById(ids: List<Long>): DataSource.Factory<Int, ImageInfo>
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract operator fun get(uri: String): LiveData<MetadataTest>
+    abstract operator fun get(uri: String): LiveData<ImageInfo>
 
     @WorkerThread
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun synchImages(uris: Array<String>): List<MetadataTest>
+    abstract fun synchImages(uris: Array<String>): List<ImageInfo>
 
     @WorkerThread
     @Query("SELECT * FROM meta WHERE id IN (:ids)")
-    abstract fun synchImages(ids: LongArray): List<MetadataTest>
+    abstract fun synchImages(ids: LongArray): List<ImageInfo>
 
     @WorkerThread
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract fun synchImage(uri: String): MetadataTest
+    abstract fun synchImage(uri: String): ImageInfo
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
+    abstract fun stream(uris: List<String>): LiveData<List<ImageInfo>>
 
     // If there's a conflict we'll just skip the conflicted row
     @Insert(onConflict = OnConflictStrategy.IGNORE)

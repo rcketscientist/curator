@@ -1,14 +1,12 @@
 package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
+import android.content.Context
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Worker
-import androidx.work.workDataOf
+import androidx.work.*
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
@@ -16,11 +14,11 @@ import com.anthonymandra.image.TiffConfiguration
 import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.FileUtil
 import com.anthonymandra.util.Util
 
-class SaveWorker: Worker() {
+class SaveWorker(context: Context, params: WorkerParameters): Worker(context, params) {
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)
 		val images = inputData.getLongArray(KEY_IMAGE_IDS)
@@ -49,7 +47,7 @@ class SaveWorker: Worker() {
 		val notifications = NotificationManagerCompat.from(applicationContext)
 		notifications.notify(builder.build())
 
-		val metadata = repo._images(images)
+		val metadata = repo.synchImages(images)
 
 		// TODO: Test all this!...and move to util (Copy/Save)
 		// We don't know the size beforehand anyway...
@@ -97,7 +95,7 @@ class SaveWorker: Worker() {
 			val outputPfd = applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")
 
 			when (imageConfiguration.type) {
-				ImageConfiguration.ImageType.jpeg -> {
+				ImageConfiguration.ImageType.JPEG -> {
 					val quality = (imageConfiguration as JpegConfiguration).quality
 					ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
 				}
@@ -110,7 +108,7 @@ class SaveWorker: Worker() {
 
 			if (insert) {
 				// TODO: reuse the image meta and replace uri/id...?
-				val insertion = MetadataTest()
+				val insertion = ImageInfo()
 				insertion.uri = destinationFile.uri.toString()
 				repo.insertMeta(insertion)
 			}

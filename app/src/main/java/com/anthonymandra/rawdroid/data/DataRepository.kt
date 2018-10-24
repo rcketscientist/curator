@@ -21,7 +21,7 @@ import java.util.ArrayList
 /**
  * get with default filter will return all with default sorting
  */
-//private fun getImages() : LiveData<List<MetadataTest>> {
+//private fun getImages() : LiveData<List<ImageInfo>> {
 //    return getImages(ImageFilter())
 //}
 /**
@@ -30,23 +30,24 @@ import java.util.ArrayList
 class DataRepository private constructor(private val database: AppDatabase) {
     // ---- Pure meta database calls -------
     @WorkerThread
-    fun _images() = database.metadataDao().synchAllImages
+    fun synchImage(uri: String) = database.metadataDao().synchImage(uri)
     @WorkerThread
-    fun _uris() = database.metadataDao().uris
+    fun synchImages() = database.metadataDao().synchAllImages
     @WorkerThread
-    fun _images(uris: Array<String>) = database.metadataDao().synchImages(uris)
+    fun synchImages(uris: Array<String>) = database.metadataDao().synchImages(uris)
     @WorkerThread
-    fun _images(ids: LongArray) = database.metadataDao().synchImages(ids)
-    fun images(ids: LongArray): Single<List<MetadataTest>> =
-        Single.create<List<MetadataTest>> { emitter ->
+    fun synchImages(ids: LongArray) = database.metadataDao().synchImages(ids)
+    @WorkerThread
+    fun synchImageUris() = database.metadataDao().uris
+
+    fun images(ids: LongArray): Single<List<ImageInfo>> =
+        Single.create<List<ImageInfo>> { emitter ->
             emitter.onSuccess(database.metadataDao().synchImages(ids))
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))
 
 
     fun images(uris: List<String>) = database.metadataDao().stream(uris)
 
-    @WorkerThread
-    fun _image(uri: String) = database.metadataDao().synchImage(uri)
     fun image(uri: String) = database.metadataDao()[uri]    // instead of get...weird
 
     fun selectAll(filter: ImageFilter = ImageFilter()) : Single<LongArray> {
@@ -67,12 +68,12 @@ class DataRepository private constructor(private val database: AppDatabase) {
         return database.metadataDao().count(createFilterQuery(countProcessedQuery(filter)))
     }
 
-    fun getUnprocessedImages(filter: ImageFilter = ImageFilter()) : LiveData<List<MetadataTest>> {
+    fun getUnprocessedImages(filter: ImageFilter = ImageFilter()) : LiveData<List<ImageInfo>> {
         return database.metadataDao().getImages(createFilterQuery(imageUnprocessedQuery(filter)))
     }
 
     @WorkerThread
-    fun _getUnprocessedImages(filter: ImageFilter = ImageFilter()) : List<MetadataTest> {
+    fun _getUnprocessedImages(filter: ImageFilter = ImageFilter()) : List<ImageInfo> {
         return database.metadataDao().imageBlocking(createFilterQuery(imageUnprocessedQuery(filter)))
     }
 
@@ -89,7 +90,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
             .subscribe()
     }
 
-    fun deleteImage(image: MetadataTest) {
+    fun deleteImage(image: ImageInfo) {
         Completable.fromAction { database.metadataDao().delete(image) }
                 .subscribeOn(Schedulers.from(AppExecutors.DISK))
                 .subscribe()
@@ -158,22 +159,22 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
     // ---- Hybrid database calls ----------
 
-    fun getGalleryLiveData(filter: ImageFilter): DataSource.Factory<Int, MetadataTest> {
+    fun getGalleryLiveData(filter: ImageFilter): DataSource.Factory<Int, ImageInfo> {
         return database.metadataDao().getImageFactory(createFilterQuery(filter))
     }
 
-    fun getImages(filter: ImageFilter) : LiveData<List<MetadataTest>> {
+    fun getImages(filter: ImageFilter) : LiveData<List<ImageInfo>> {
         return database.metadataDao().getImages(createFilterQuery(filter))
     }
 
     /**
      * get with default filter will return all with default sorting
      */
-    private fun getImages() : LiveData<List<MetadataTest>> {
+    private fun getImages() : LiveData<List<ImageInfo>> {
         return getImages(ImageFilter())
     }
 
-    fun insertMeta(vararg inserts: MetadataTest) : List<Long> {
+    fun insertMeta(vararg inserts: ImageInfo) : List<Long> {
         val subjectMapping = mutableListOf<SubjectJunction>()
          inserts.forEach { image ->
             image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it)}
@@ -184,7 +185,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
         return database.metadataDao().replace(*inserts)
     }
 
-    fun updateMeta(vararg images: MetadataTest) : Completable {
+    fun updateMeta(vararg images: ImageInfo) : Completable {
         return Completable.create{ emitter ->
             val subjectMapping = mutableListOf<SubjectJunction>()
 

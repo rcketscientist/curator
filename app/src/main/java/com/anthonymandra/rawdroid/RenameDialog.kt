@@ -12,7 +12,7 @@ import android.widget.AdapterView
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.ImageUtil
 import com.crashlytics.android.Crashlytics
@@ -24,7 +24,7 @@ import java.util.*
 
 class RenameDialog(
     private val activity: CoreActivity,
-    private val itemsToRename: Collection<MetadataTest>) : Dialog(activity) {
+    private val itemsToRename: Collection<ImageInfo>) : Dialog(activity) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +61,7 @@ class RenameDialog(
         cancelButton.setOnClickListener { dismiss() }
     }
 
-    fun renameImages(images: Collection<MetadataTest>, format: Int, customName: String) {
+    fun renameImages(images: Collection<ImageInfo>, format: Int, customName: String) {
         var counter = 0
         val builder = NotificationCompat.Builder(context, CoreActivity.NOTIFICATION_CHANNEL)
 
@@ -102,7 +102,7 @@ class RenameDialog(
             )
     }
 
-    private fun renameImage(image: MetadataTest, baseName: String) {
+    private fun renameImage(image: ImageInfo, baseName: String) {
         val dataRepo = DataRepository.getInstance(context)
 
         val source = Uri.parse(image.uri)
@@ -143,7 +143,7 @@ class RenameDialog(
 //                rename = file.uri
 //            }
 
-            val originalJpg = dataRepo._image(jpgFile.uri.toString())
+            val originalJpg = dataRepo.synchImage(jpgFile.uri.toString())
             originalJpg.name = jpgFile.name
             originalJpg.uri = jpgFile.uri.toString()
             dataRepo.updateMeta(originalJpg).subscribe()

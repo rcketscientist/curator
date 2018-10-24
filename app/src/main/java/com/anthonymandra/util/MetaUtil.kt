@@ -15,7 +15,7 @@ import com.adobe.xmp.options.PropertyOptions
 import com.adobe.xmp.options.SerializeOptions
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.crashlytics.android.Crashlytics
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Directory
@@ -154,17 +154,17 @@ object MetaUtil {
      * @param entity image to parse
      * @return processed metadata values or null if failed
      */
-    fun readMetadata(c: Context, repo: DataRepository, entity: MetadataTest) : MetadataTest{
+    fun readMetadata(c: Context, repo: DataRepository, entity: ImageInfo) : ImageInfo{
         val meta = readMetadata(c, entity.uri.toUri())
         return populateMetadata(repo, entity, meta)
     }
 
-    fun readMetadata(repo: DataRepository, meta: Metadata): MetadataTest {
-        val entity = MetadataTest()
+    fun readMetadata(repo: DataRepository, meta: Metadata): ImageInfo {
+        val entity = ImageInfo()
         return populateMetadata(repo, entity, meta)
     }
 
-    private fun populateMetadata(repo: DataRepository, entity: MetadataTest, meta: Metadata): MetadataTest {
+    private fun populateMetadata(repo: DataRepository, entity: ImageInfo, meta: Metadata): ImageInfo {
         entity.altitude = getAltitude(meta)
         entity.aperture = getAperture(meta)
         entity.exposure = getExposure(meta)
@@ -207,7 +207,7 @@ object MetaUtil {
     }
 
     @WorkerThread
-    fun parseMetadata(context: Context, images: List<MetadataTest>) {
+    fun parseMetadata(context: Context, images: List<ImageInfo>) {
         val repo = DataRepository.getInstance(context)
 
         images.forEach {

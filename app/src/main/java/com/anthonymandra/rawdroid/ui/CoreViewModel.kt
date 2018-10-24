@@ -12,7 +12,7 @@ import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.XmpUpdateField
 import com.anthonymandra.rawdroid.XmpValues
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.workers.*
 import io.reactivex.Single
 
@@ -31,13 +31,13 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	val filter: MutableLiveData<ImageFilter> = MutableLiveData()
 
 	init {
-		searchWorkStatus = workManager.getStatusesByTag(SearchWorker.JOB_TAG)
-		metaReaderWorkStatus = workManager.getStatusesByTag(MetaReaderWorker.JOB_TAG)
-		metaWriterWorkStatus = workManager.getStatusesByTag(MetaWriterWorker.JOB_TAG)
-		copyWorkStatus = workManager.getStatusesByTag(CopyWorker.JOB_TAG)
-		saveWorkStatus = workManager.getStatusesByTag(SaveWorker.JOB_TAG)
-		deleteWorkStatus = workManager.getStatusesByTag(DeleteWorker.JOB_TAG)
-		cleanWorkStatus = workManager.getStatusesByTag(CleanWorker.JOB_TAG)
+		searchWorkStatus = workManager.getStatusesByTagLiveData(SearchWorker.JOB_TAG)
+		metaReaderWorkStatus = workManager.getStatusesByTagLiveData(MetaReaderWorker.JOB_TAG)
+		metaWriterWorkStatus = workManager.getStatusesByTagLiveData(MetaWriterWorker.JOB_TAG)
+		copyWorkStatus = workManager.getStatusesByTagLiveData(CopyWorker.JOB_TAG)
+		saveWorkStatus = workManager.getStatusesByTagLiveData(SaveWorker.JOB_TAG)
+		deleteWorkStatus = workManager.getStatusesByTagLiveData(DeleteWorker.JOB_TAG)
+		cleanWorkStatus = workManager.getStatusesByTagLiveData(CleanWorker.JOB_TAG)
 	}
 
 	val searchStatus get() = searchWorkStatus
@@ -100,7 +100,7 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 		this.filter.value = filter
 	}
 
-	fun images(ids: LongArray): Single<List<MetadataTest>> {
+	fun images(ids: LongArray): Single<List<ImageInfo>> {
 		return dataRepo.images(ids)
 	}
 }

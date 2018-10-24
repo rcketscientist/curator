@@ -27,7 +27,7 @@ import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
-import com.anthonymandra.rawdroid.data.MetadataTest;
+import com.anthonymandra.rawdroid.data.ImageInfo;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -530,7 +530,7 @@ public class ImageUtil
         }
     }
 
-    public static byte[] getThumb(final Context c, MetadataTest image) throws Exception {
+    public static byte[] getThumb(final Context c, ImageInfo image) throws Exception {
         Uri uri = Uri.parse(image.getUri());
         AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r");
 

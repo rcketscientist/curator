@@ -10,12 +10,12 @@ import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.anthonymandra.rawdroid.FullSettingsActivity
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import io.reactivex.Single
 
 class GalleryViewModel(app: Application) : CoreViewModel(app) {
     //TODO: Split out viewer viewmodel
-    val imageList: LiveData<PagedList<MetadataTest>>
+    val imageList: LiveData<PagedList<ImageInfo>>
     val filteredCount: LiveData<Int>
     val filteredProcessedCount: LiveData<Int>
     private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()

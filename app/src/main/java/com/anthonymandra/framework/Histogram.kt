@@ -58,7 +58,6 @@ class Histogram(private val mSource: IntArray, private val mStart: Int, private 
     }
 
     companion object {
-        private val TAG = Histogram::class.java.simpleName
         private const val sThreshold = 10000
         private const val COLOR_DEPTH = 256
 

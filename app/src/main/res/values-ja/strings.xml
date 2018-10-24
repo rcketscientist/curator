@@ -131,10 +131,10 @@
 \nもし修正済みのバグを元に評価されている場合は評価の更新をお願いします。
 \n
 \nご協力に感謝します！</string>
-<string name="importingImages">画像インポート中...</string>
-<string name="exportingThumb">サムネイル出力中...</string>
-<string name="deletingFiles">ファイル削除中...</string>
-<string name="recyclingFiles">リサイクル中...</string>
+<string name="importingImages">画像インポート中…</string>
+<string name="exportingThumb">サムネイル出力中…</string>
+<string name="deletingFiles">ファイル削除中…</string>
+<string name="recyclingFiles">リサイクル中…</string>
 <string name="clear">クリア</string>
 <string name="reuse">再利用</string>
 <string name="customKeywords">キーワードの編集</string>

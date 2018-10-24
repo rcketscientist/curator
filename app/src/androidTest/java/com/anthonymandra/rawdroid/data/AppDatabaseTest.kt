@@ -8,7 +8,6 @@ import androidx.test.InstrumentationRegistry
 import androidx.test.filters.MediumTest
 import androidx.test.runner.AndroidJUnit4
 import com.anthonymandra.rawdroid.ImageFilter
-import com.anthonymandra.rawdroid.XmpFilter
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.*
@@ -32,8 +31,7 @@ class AppDatabaseTest {
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var db: AppDatabase
-    private lateinit var dataRepo: DataRepository
-    private lateinit var folderDao: FolderDao
+	private lateinit var folderDao: FolderDao
     private lateinit var metadataDao: MetadataDao
     private lateinit var subjectDao: SubjectDao
     private lateinit var subjectJunctionDao: SubjectJunctionDao
@@ -157,7 +155,7 @@ class AppDatabaseTest {
         val europeanNames = europeanEntities.map { it.name }
         assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
 
-        val trier = subjectDao.get(9)
+        val trier = subjectDao[9]
         assertThat(trier.name, equalTo("Trier"))
 
         val trierTree = subjectDao.getAncestors(9)
@@ -215,15 +213,15 @@ class AppDatabaseTest {
         val label = "label1"
 
         // subject: Cathedral
-        var xmp = XmpFilter(subject = listOf(cathedral))
-        var filter = ImageFilter(xmp)
+        var filter = ImageFilter(subjectIds = listOf(cathedral.id))
         var result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         assertThat(result[0].subjectIds, hasItems(cathedral.id))
 
         // subject: National Park OR Europe
-        xmp = XmpFilter(subject = listOf(nationalPark, europe))
-        filter = ImageFilter(xmp, false)
+        filter = ImageFilter(
+            subjectIds = listOf(nationalPark.id, europe.id),
+            andTrueOrFalse = false)
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         result.forEach {
@@ -233,8 +231,10 @@ class AppDatabaseTest {
         }
 
         // subject: Cathedral OR label:label1
-        xmp = XmpFilter(subject = listOf(europe), label = listOf(label))
-        filter = ImageFilter(xmp, false)
+        filter = ImageFilter(
+            subjectIds = listOf(europe.id),
+            labels = listOf(label),
+            andTrueOrFalse = false)
 
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
@@ -243,8 +243,9 @@ class AppDatabaseTest {
         }
 
         // subject: Cathedral AND label:label1
-        xmp = XmpFilter(subject = listOf(cathedral), label = listOf(label))
-        filter = ImageFilter(xmp, true)
+        filter = ImageFilter(
+            subjectIds = listOf(cathedral.id),
+            labels = listOf(label), andTrueOrFalse = true)
 
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(1))

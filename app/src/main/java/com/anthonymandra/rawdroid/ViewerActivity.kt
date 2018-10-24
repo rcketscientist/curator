@@ -2,7 +2,6 @@ package com.anthonymandra.rawdroid
 
 import android.app.WallpaperManager
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -16,7 +15,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.SwapProvider
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.ImageUtil
@@ -26,8 +25,7 @@ import java.util.*
 class ViewerActivity : CoreActivity() {
     override val contentView = R.layout.viewer_pager
     private lateinit var viewerAdapter: ViewerAdapter
-    private val responseIntentFilter = IntentFilter()
-    private var currentImage: MetadataTest? = null
+    private var currentImage: ImageInfo? = null
 
     private var autoHide = Timer()
 

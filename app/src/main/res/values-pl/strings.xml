@@ -5,10 +5,10 @@
 <string name="positive">Akceptuj</string>
 <string name="negative">Odrzuć</string>
 <string name="neutral">Anuluj</string>
-<string name="saveAs">Zapisz jako...</string>
+<string name="saveAs">Zapisz jako…</string>
 <string name="export">Eksportuj</string>
 <string name="wallpaper">Ustaw jako tapetę</string>
-<string name="editWith">Edytuj używając...</string>
+<string name="editWith">Edytuj używając…</string>
 <string name="selectAll">Wybierz wszystko</string>
 <string name="help">Pomoc</string>
 <string name="delete">Kasuj</string>
@@ -112,10 +112,10 @@
 	<string name="ratingRequest">Jeżeli spodobał Ci się RawDroid, proszę poświęć chwilę na jego ocenę.
 \nJeżeli na Twoją ocenę miał wpływ błąd, który został naprawiony, to proszę abyś zaktualizował swoją ocenę.
 \nDziękuję za wsparcie. </string>
-<string name="importingImages">Importuję obrazy...</string>
-<string name="exportingThumb">Eksportuję miniatury...</string>
-<string name="deletingFiles">Kasuję pliki...</string>
-<string name="recyclingFiles">Odzyskuję pliki...</string>
+<string name="importingImages">Importuję obrazy…</string>
+<string name="exportingThumb">Eksportuję miniatury…</string>
+<string name="deletingFiles">Kasuję pliki…</string>
+<string name="recyclingFiles">Odzyskuję pliki…</string>
 <string name="clear">Wyczyść</string>
 <string name="reuse">Użyj ponownie</string>
 <string name="customKeywords">Niestandardowe słowa kluczowe</string>

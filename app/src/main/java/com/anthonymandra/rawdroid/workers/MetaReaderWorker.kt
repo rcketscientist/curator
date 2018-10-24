@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
+import android.content.Context
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
@@ -10,7 +11,7 @@ import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.util.MetaUtil
 import com.anthonymandra.util.Util
 
-class MetaReaderWorker: Worker() {
+class MetaReaderWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     override fun doWork(): Result {
         val filter = ImageFilter(
             inputData.getIntArray(KEY_FILTER_RATING)?.asList() ?: emptyList(),

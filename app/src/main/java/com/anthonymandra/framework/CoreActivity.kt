@@ -17,16 +17,11 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.anthonymandra.image.ImageConfiguration
-import com.anthonymandra.image.JpegConfiguration
-import com.anthonymandra.image.TiffConfiguration
-import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
@@ -644,12 +639,5 @@ abstract class CoreActivity : DocumentActivity() {
 
         private const val REQUEST_SAVE_AS_DIR = 15
         private const val EXPIRATION = 5184000000L //~60 days
-
-        val IMPORTANT_NOTIFICATION =
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-                NotificationManager.IMPORTANCE_HIGH
-            } else {
-                Notification.PRIORITY_HIGH
-            }
     }
 }

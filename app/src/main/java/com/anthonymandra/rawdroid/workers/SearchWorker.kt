@@ -1,15 +1,17 @@
 package com.anthonymandra.rawdroid.workers
 
+import android.content.Context
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.util.ImageUtil
 
-class SearchWorker: Worker() {
+class SearchWorker(context: Context, params: WorkerParameters): Worker(context, params) {
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)
 		val excludedFolders = repo.parents.filter { it.excluded }

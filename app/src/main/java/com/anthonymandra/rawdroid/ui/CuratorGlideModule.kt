@@ -2,7 +2,7 @@ package com.anthonymandra.rawdroid.ui
 
 import android.content.Context
 
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.bumptech.glide.Glide
 import com.bumptech.glide.GlideBuilder
 import com.bumptech.glide.Registry
@@ -19,6 +19,6 @@ class CuratorGlideModule : AppGlideModule() {
     }
 
     override fun registerComponents(/*application*/context: Context, glide: Glide, registry: Registry) {
-        registry.append(MetadataTest::class.java, InputStream::class.java, RawModelLoaderFactory(context))
+        registry.append(ImageInfo::class.java, InputStream::class.java, RawModelLoaderFactory(context))
     }
 }

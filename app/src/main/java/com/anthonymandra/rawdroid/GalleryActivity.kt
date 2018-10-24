@@ -34,6 +34,7 @@ import com.anthonymandra.widget.ItemOffsetDecoration
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.WhatsNewDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
@@ -110,7 +111,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         // Current processed image total for subtitle
         viewModel.filteredProcessedCount.observe(this, Observer {
-            galleryToolbar.subtitle = "$it of $imageCount"
+            galleryToolbar.subtitle = if (imageCount == it) null else "$it of $imageCount"
         })
 
         // Monitor the metadata parse status to display progress
@@ -432,9 +433,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     fun selectAll() {
         startContextMode()
-        viewModel.selectAll().subscribeBy {
-            galleryAdapter.selectedItems = it
-        }
+        viewModel.selectAll()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { galleryAdapter.selectedItems = it }
     }
 
     protected fun startContextMode() {

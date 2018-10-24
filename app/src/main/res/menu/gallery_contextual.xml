@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
 
     <item
         android:id="@+id/menu_selectAll"
         android:icon="@drawable/ic_select_all"
         android:orderInCategory="0"
-        app:showAsAction="always"
-        android:title="@string/selectAll"/>
+        android:title="@string/selectAll"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_delete"
         android:icon="@drawable/ic_delete"
         android:orderInCategory="1"
-        app:showAsAction="always"
-        android:title="@string/delete"/>
+        android:title="@string/delete"
+        app:showAsAction="always" />
     <item
         android:id="@+id/contextSaveAs"
         android:orderInCategory="5"
-        app:showAsAction="never"
-        android:title="@string/saveAs"/>
+        android:title="@string/saveAs"
+        app:showAsAction="never" />
     <item
         android:id="@+id/contextCopy"
         android:orderInCategory="3"
-        app:showAsAction="never"
-        android:title="@string/copyImages"/>
+        android:title="@string/copyImages"
+        app:showAsAction="never" />
     <item
         android:id="@+id/contextRename"
         android:orderInCategory="2"
-        app:showAsAction="never"
-        android:title="@string/rename"/>
+        android:title="@string/rename"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_share"
         android:icon="@drawable/ic_share"
-        app:showAsAction="always"
-        android:title="@string/share"/>
+        android:title="@string/share"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_recycle"
         android:icon="@drawable/ic_recycle"
         android:orderInCategory="12"
-        app:showAsAction="ifRoom"
-        android:title="@string/accessRecycle"/>
+        android:title="@string/accessRecycle"
+        app:showAsAction="ifRoom" />
 </menu>

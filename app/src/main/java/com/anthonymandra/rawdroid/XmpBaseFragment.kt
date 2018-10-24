@@ -138,16 +138,6 @@ abstract class XmpBaseFragment : Fragment(),
 
     /**
      * Silently set the xmp without firing onXmpChanged
-     * @param xmp xmpValues (rating, label, subject) to init
-     */
-    protected fun initXmp(xmp: XmpFilter) {
-        mPauseListener = true
-        this.xmp = xmp
-        mPauseListener = false
-    }
-
-    /**
-     * Silently set the xmp without firing onXmpChanged
      * @param rating rating
      * @param label label
      * @param subject keywords

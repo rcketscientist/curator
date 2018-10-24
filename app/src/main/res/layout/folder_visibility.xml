@@ -41,7 +41,8 @@
             android:text="@string/tapVisibility"
             android:paddingStart="4dp"
             android:id="@+id/textView6"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            tools:ignore="RtlSymmetry" />
     </LinearLayout>
 
     <LinearLayout
