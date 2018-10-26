@@ -78,11 +78,8 @@ abstract class MetadataDao {
     @Delete
     abstract fun delete(vararg datums: MetadataEntity)
 
-    @Query("DELETE FROM meta WHERE id = :id")
-    abstract fun delete(id: Long): Int
-
     @Query("DELETE FROM meta WHERE id IN (:ids)")
-    abstract fun delete(ids: LongArray): Int
+    abstract fun delete(vararg ids: Long)
 
     @Query("DELETE FROM meta WHERE uri IN (:uris)")
     abstract fun delete(uris: Array<String>): Int

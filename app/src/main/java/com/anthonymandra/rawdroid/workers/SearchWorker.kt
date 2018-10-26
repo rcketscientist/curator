@@ -33,7 +33,7 @@ class SearchWorker(context: Context, params: WorkerParameters): Worker(context, 
 		}
 
 		if (images.isNotEmpty()) {
-			repo.insertImages(*images.toTypedArray())
+			repo.synchInsertImages(*images.toTypedArray())
 		}
 
 		return Result.SUCCESS

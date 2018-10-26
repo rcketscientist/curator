@@ -396,17 +396,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         startActivityForResult(intent, REQUEST_COPY_DIR)
     }
 
-    protected fun removeDatabaseReference(toRemove: Long) {
-        dataRepo.deleteImage(toRemove)
-    }
-
-    protected fun addDatabaseReference(toAdd: Uri): Long {
-        val image = MetadataEntity()
-        image.uri = toAdd.toString()
-
-        return dataRepo.insertImages(image).first()
-    }
-
     override fun onSelectionUpdated(selectedIds: LongArray) {
         mMaterialCab?.setTitle(selectedIds.size.toString() + " " + getString(R.string.selected))
         xmpEditFragment.reset()   // reset the panel to ensure it's clear it's not tied to existing values
