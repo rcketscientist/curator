@@ -37,5 +37,17 @@
         android:layout_alignParentTop="true"
         android:layout_marginEnd="5dp"/>
 
+    <ImageButton
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@id/excludeButton"
+        android:src="@drawable/ic_folder_remove"
+        android:background="@android:color/transparent"
+        android:layout_gravity="end"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="5dp"/>
+
 </RelativeLayout>
 

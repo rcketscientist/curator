@@ -78,6 +78,7 @@ class TutorialActivity : GalleryActivity() {
 			image.documentId = image.uri
 			image.parentId = -1
 			image.name = "${i + 1} ah ah ah"
+			image.processed = true
 
 			return@mapIndexed image
 		}
@@ -94,6 +95,7 @@ class TutorialActivity : GalleryActivity() {
 				.replaceEndButton(R.layout.tutorial_button)
 				.build()
 		tutorial.setOnClickListener(TutorialClickListener(tutorial))
+		tutorial.overrideButtonClick(TutorialClickListener(tutorial))
 
 		tutorial.setButtonText(getString(R.string.next))
 		tutorial.setDetailTextAlignment(Layout.Alignment.ALIGN_OPPOSITE)
