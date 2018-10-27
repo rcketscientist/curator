@@ -126,6 +126,7 @@ class RenameDialog(
 		if (srcFile.renameTo(srcRename)) {
 			image.name = srcFile.name
 			image.uri = srcFile.uri.toString()
+			image.documentId = srcFile.documentId
 			dataRepo.updateMeta(image).subscribe()
 		}
 
@@ -163,10 +164,11 @@ class RenameDialog(
 	}
 
 	private fun formatRename(format: Int, baseName: String, index: Int, total: Int): String {
-		val sequencer = "%0" + numDigits(total) + "d"
+		val sequencer = "%0${numDigits(total)}d"
+		val number = String.format(sequencer, index)
 		return when (format) {
-			0 -> baseName + "-" + String.format(sequencer, index)
-			1 -> baseName + " (" + String.format(sequencer, index) + " of " + total + ")"
+			0 -> "$baseName-$number"
+			1 -> "$baseName ($number of $total)"
 			else -> throw UnknownFormatConversionException("Format $format is unknown.")
 		}
 	}

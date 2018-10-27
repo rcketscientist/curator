@@ -364,8 +364,6 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
 			selectionArgs.addAll(whereArgs)
 
-			Log.d("TEST", query.toString())
-
 			return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
 		}
 	}
