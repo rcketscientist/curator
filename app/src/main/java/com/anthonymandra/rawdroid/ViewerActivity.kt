@@ -1,10 +1,7 @@
 package com.anthonymandra.rawdroid
 
 import android.app.WallpaperManager
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -12,36 +9,30 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.framework.CoreActivity
-import com.anthonymandra.framework.MetaService
-import com.anthonymandra.framework.MetaWakefulReceiver
 import com.anthonymandra.framework.SwapProvider
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.ImageUtil
-import kotlinx.android.synthetic.main.meta_panel.*
 import kotlinx.android.synthetic.main.viewer_pager.*
 import java.util.*
 
 class ViewerActivity : CoreActivity() {
     override val contentView = R.layout.viewer_pager
     private lateinit var viewerAdapter: ViewerAdapter
-    private val responseIntentFilter = IntentFilter()
-    private var currentImage: MetadataTest? = null
+    private var currentImage: ImageInfo? = null
 
     private var autoHide = Timer()
 
-    override val selectedImages: Collection<MetadataTest>
-        get() = listOfNotNull(viewerAdapter.getImage(pager.currentItem))
+    override val selectedIds: LongArray
+        get() = listOfNotNull(viewerAdapter.getImage(pager.currentItem)?.id).toLongArray()
 
-    private val viewModel: GalleryViewModel by lazy {
+    override val viewModel: GalleryViewModel by lazy {
         ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
 
     private var displayWidth = 0
@@ -66,7 +57,6 @@ class ViewerActivity : CoreActivity() {
 
         viewerAdapter = ViewerAdapter(supportFragmentManager)
 
-//        val viewModel = ViewModelProviders.of(this).get(GalleryViewModel::class.java)
         viewModel.imageList.observe(this, Observer {
             viewerAdapter.submitList(it)
             // TODO: Can we get an update?  Will the entries reorder on changes?
@@ -108,22 +98,9 @@ class ViewerActivity : CoreActivity() {
 //        pager.setPageTransformer(true, DepthPageTransformer())
         pager.offscreenPageLimit = 2
 
-        responseIntentFilter.addAction(MetaService.BROADCAST_REQUESTED_META)
-        LocalBroadcastManager.getInstance(this).registerReceiver(object : BroadcastReceiver() {
-            override fun onReceive(context: Context, intent: Intent) {
-                when (intent.action) {
-                    MetaService.BROADCAST_REQUESTED_META -> {
-                        val uri = intent.getStringExtra(MetaService.EXTRA_URI)
-                        val meta = intent.getParcelableExtra<MetadataTest>(MetaService.EXTRA_METADATA)
-                        currentImage?.let {
-                            if (it.uri == uri) {
-//                                populateMeta(meta)    TODO: This needs to move to fragment, possibly auto-update via livedata
-                            }
-                        }
-                    }
-                }
-            }
-        }, responseIntentFilter)
+        // TODO: We need some way to update meta when processed.  This is probably done automatically
+        // with the viewmodel, but that may change sorting.  This was previously done with a broadcast.
+        // We could likely use a MetaReadWorker observer to check if the current image changed.
 
         imageButtonNext.setOnClickListener { pager.currentItem = pager.currentItem + 1 }
         imageButtonPrevious.setOnClickListener { pager.currentItem = pager.currentItem - 1 }
@@ -134,11 +111,6 @@ class ViewerActivity : CoreActivity() {
         data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, pager.currentItem)
         setResult(RESULT_OK, data)
         super.onBackPressed()
-    }
-
-    fun togglePanels() {
-        autoHide.cancel()
-        viewModel.toggleInterface()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -204,8 +176,6 @@ class ViewerActivity : CoreActivity() {
 
     override fun endProgress() {}
 
-    override fun updateMessage(message: String?) {}
-
     private inner class AutoHideMetaTask : TimerTask() {
         override fun run() {
             viewModel.hideInterface()
@@ -213,7 +183,7 @@ class ViewerActivity : CoreActivity() {
     }
 
     companion object {
-        val TAG = ViewerActivity::class.java.simpleName
+        private val TAG = ViewerActivity::class.java.simpleName
         const val EXTRA_START_INDEX = "viewer_index"
         const val EXTRA_FILTER = "viewer_filter"
     }

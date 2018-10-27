@@ -21,10 +21,21 @@
         android:paddingStart="10dp"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/excludeButton"
-        android:maxLines="1"
         android:singleLine="true"
-        android:ellipsize="start"/>
-    <!--singleLine is necessary.  maxLines=1 and ellipsize=start crashes: http://stackoverflow.com/questions/14555726/app-is-crashed-when-using-custom-view-with-progressbarindeterminate-in-actionbar-->
+        android:ellipsize="start"
+        tools:ignore="RtlSymmetry" />
+
+    <ImageButton
+        android:layout_width="48dp"
+        android:layout_height="match_parent"
+        android:id="@id/excludeButton"
+        android:src="@drawable/ic_folder_remove"
+        android:background="@android:color/transparent"
+        android:layout_gravity="end"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="5dp"/>
 
     <ImageButton
         android:layout_width="48dp"

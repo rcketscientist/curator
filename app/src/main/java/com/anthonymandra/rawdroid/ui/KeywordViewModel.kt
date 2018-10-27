@@ -7,7 +7,6 @@ import androidx.lifecycle.MediatorLiveData
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.util.AppExecutors
-import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 
@@ -51,6 +50,6 @@ class KeywordViewModel(app: Application) : AndroidViewModel(app) {
         val keywords = dataSource.all
 
         // observe the changes of the products from the database and forward them
-        mObservableProducts.addSource<List<SubjectEntity>>(keywords, { mObservableProducts.setValue(it) })
+        mObservableProducts.addSource<List<SubjectEntity>>(keywords) { mObservableProducts.setValue(it) }
     }
 }

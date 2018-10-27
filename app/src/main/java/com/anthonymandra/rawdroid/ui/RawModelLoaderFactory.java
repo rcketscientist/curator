@@ -3,14 +3,14 @@ package com.anthonymandra.rawdroid.ui;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
-import com.anthonymandra.rawdroid.data.MetadataTest;
+import com.anthonymandra.rawdroid.data.ImageInfo;
 import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 
 import java.io.InputStream;
 
-public class RawModelLoaderFactory implements ModelLoaderFactory<MetadataTest, InputStream> {
+public class RawModelLoaderFactory implements ModelLoaderFactory<ImageInfo, InputStream> {
 
     private Context applicationContext;
     RawModelLoaderFactory(Context applicationContext) {
@@ -19,7 +19,7 @@ public class RawModelLoaderFactory implements ModelLoaderFactory<MetadataTest, I
 
     @NonNull
     @Override
-    public ModelLoader<MetadataTest, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
+    public ModelLoader<ImageInfo, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
         return new RawModelLoader(applicationContext);
     }
 

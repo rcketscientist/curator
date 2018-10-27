@@ -84,15 +84,15 @@ public class DbUtil
 	public static String convertArrayToString(String[] array){
 	    if (array == null)
 	        return null;
-	    String str = "";
+	    StringBuilder str = new StringBuilder();
 	    for (int i = 0;i<array.length; i++) {
-	        str = str+array[i];
+	        str.append(array[i]);
 	        // Do not append comma at the end of last element
 	        if(i<array.length-1){
-	            str = str+ FIELD_SEPARATOR;
+	            str.append(FIELD_SEPARATOR);
 	        }
 	    }
-	    return str;
+	    return str.toString();
 	}
 
 	public static String[] convertStringToArray(String str){

@@ -5,26 +5,27 @@ buildscript {
         google()
     }
     ext {
-        kotlinVersion = '1.2.61'
+        kotlinVersion = '1.2.71'
         compileSdkVersion = 28
 
         // Androidx
         annotationVersion = '1.0.0-rc01'
         cardviewVersion = '1.0.0-rc02'
-        ktx = '1.0.0-rc02'
+        ktx = '1.0.0'
 
         exifVersion = '1.0.0-rc01'
-        materialVersion = '1.0.0-rc01'
+        materialVersion = '1.0.0'
         coreVersion = '1.0.0-rc01'
 
         // Architecture
-        lifecycleVersion = '2.0.0-rc01'
-        roomVersion = '2.0.0-rc01'
-        pagingVersion = '2.0.0-rc01'
+        lifecycleVersion = '2.0.0'
+        roomVersion = '2.0.0'
+        pagingVersion = '2.0.0'
         coreTestingVersion = '2.0.0-beta01'
+        workVersion = '1.0.0-alpha10'
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-alpha08'
+        classpath 'com.android.tools.build:gradle:3.3.0-beta01'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }

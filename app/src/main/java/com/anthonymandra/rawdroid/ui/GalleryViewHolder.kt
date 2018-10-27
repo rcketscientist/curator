@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.MetaUtil
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fileview.*
@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fileview.*
 @Suppress("DEPRECATION")
 class GalleryViewHolder(override val containerView: View)
     : RecyclerView.ViewHolder(containerView), LayoutContainer {
-    private var image: MetadataTest? = null
+    private var image: ImageInfo? = null
 
     private val purple: Int = containerView.resources.getColor(R.color.startPurple)
     private val blue: Int = containerView.resources.getColor(R.color.startBlue)
@@ -21,7 +21,7 @@ class GalleryViewHolder(override val containerView: View)
     private val green: Int = containerView.resources.getColor(R.color.startGreen)
     private val red: Int = containerView.resources.getColor(R.color.startRed)
 
-    fun bind(image: MetadataTest?) {
+    fun bind(image: ImageInfo?) {
         this.image = image
 
         filenameView.text = image?.name
@@ -51,11 +51,12 @@ class GalleryViewHolder(override val containerView: View)
 
         // FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
         image?.let {
-            GlideApp.with(itemView.context)
+            val rotation = GlideApp.with(itemView.context)
                 .load(it)
                 .centerCrop()
-                .into(galleryImageView)
-            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
+                .into(galleryImageView).view.rotation
+            // TODO: Glide handles exif orientation, how do we align behavior with non-exif thumbs?
+//            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
         }
     }
 

@@ -37,6 +37,7 @@ import androidx.annotation.Nullable;
 /**
  * This class holds our discarded images
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class RecycleBin
 {
 	private static final String TAG = RecycleBin.class.getSimpleName();

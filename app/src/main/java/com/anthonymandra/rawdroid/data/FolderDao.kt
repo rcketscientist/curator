@@ -15,6 +15,9 @@ abstract class FolderDao {//} : PathDao<FolderEntity>() {
     @get:Query("SELECT * FROM image_parent")
     abstract val streamParents: Flowable<List<FolderEntity>>
 
+    @get:Query("SELECT * FROM image_parent")
+    abstract val parents: List<FolderEntity>
+
     @Query("SELECT COUNT(*) FROM image_parent")
     abstract fun count(): Int
 

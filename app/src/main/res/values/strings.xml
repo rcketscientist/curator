@@ -161,7 +161,11 @@
     <string name="saveJpg">Save Jpeg</string>
     <string name="share">Share</string>
     <string name="ratingRequest">If you enjoy using Curator please take a moment to rate it.\nThanks for your support!</string>
+    <string name="cancel">Cancel</string>
+    <string name="preparing">Preparing…</string>
+    <string name="processingImages">Processing Images…</string>
     <string name="copyingImages">Copying Images…</string>
+    <string name="writingMetadata">Writing Metadata…</string>
     <string name="importingImages">Importing Images…</string>
     <string name="savingImages">Saving Images…</string>
     <string name="exportingThumb">Exporting Thumbnails…</string>
@@ -295,9 +299,10 @@
     <string name="segregate">Segregate by type</string>
     <string name="folders">Folders</string>
 
-    <string name="tapVisibility">to toggle the folder visibility</string>
+    <string name="tapVisibility">Toggles the folder visibility</string>
     <string name="tap">Tap</string>
-    <string name="tapExclude">to exclude a folder from all future searches</string>
+    <string name="tapExclude">Excludes the folder from all future searches</string>
+    <string name="removeFolderData">Remove folder and child image metadata</string>
 
     <string name="selectUsb">Select USB</string>
     <string name="allowWrite">Allow Write Permission</string>
@@ -347,5 +352,9 @@
     <!-- Notifications -->
     <string name="io_channel_name">I/O</string>
     <string name="io_channel_desc">Feedback on operations like copy and save.</string>
+    <string name="example_abbreviated">Ex:</string>
+    <string name="custom_name">Custom Name</string>
+    <string name="quality">Quality</string>
+    <string name="got_it">Got it</string>
 
 </resources>

@@ -54,16 +54,8 @@ class SaveConfigDialog(activity: Activity) : Dialog(activity) {
 
         buttonSave.setOnClickListener {
             val formatConfig = when (tabLayout.selectedTabPosition) {
-                0 /*JPG */ -> {
-                    val c = JpegConfiguration()
-                    c.quality = seekBarQuality.progress
-                    c
-                }
-                1 /*TIF*/ -> {
-                    val c = TiffConfiguration()
-                    c.compress = switchCompress.isChecked
-                    c
-                }
+                0 -> JpegConfiguration(seekBarQuality.progress)
+                1 -> TiffConfiguration(switchCompress.isChecked)
                 else -> JpegConfiguration()
             }
             onSaveConfiguration?.invoke(formatConfig)

@@ -3,18 +3,18 @@ package com.anthonymandra.rawdroid.ui
 import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.UiThread
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import java.util.*
 import kotlin.collections.HashSet
 
-class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CALLBACK)
+class GalleryAdapter : PagedListAdapter<ImageInfo, GalleryViewHolder>(DIFF_CALLBACK)
 {
     init { setHasStableIds(true) }
 
-    private val mSelectedItems = HashSet<MetadataTest>()
     private val mSelectedPositions = TreeSet<Int>()
     var multiSelectMode = false
         set(value)  {
@@ -32,8 +32,16 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
      */
     var onItemLongClickListener: OnItemLongClickListener? = null
 
-    val selectedItems: Collection<MetadataTest>
-        get() = mSelectedItems
+    private val mSelectedItems = HashSet<Long>()
+    var selectedItems: LongArray
+        get() = mSelectedItems.toLongArray()
+        @UiThread
+        set(value) {
+            mSelectedItems.clear()
+            mSelectedItems.addAll(value.asList())
+            updateSelection()
+            notifyItemRangeChanged(0, itemCount)
+        }
 
     val selectedItemCount: Int
         get() = mSelectedItems.size
@@ -55,7 +63,9 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
 
             onItemClickListener?.onItemClick(this, it, clickPosition, getItemId(clickPosition))
 
-            toggleSelection(clickPosition)
+            if (multiSelectMode) {
+                toggleSelection(clickPosition)
+            }
         }
 
         holder.itemView.setOnLongClickListener {
@@ -73,7 +83,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
             true
         }
 
-        holder.itemView.isActivated = mSelectedItems.contains(item)
+        holder.itemView.isActivated = mSelectedItems.contains(item?.id)
     }
 
     private fun addGroupSelection(position: Int) {
@@ -98,16 +108,16 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
         notifyItemRangeChanged(start, end - start + 1)  // inclusive
     }
 
-    private fun addSelection(image: MetadataTest?, position: Int) {
+    private fun addSelection(image: ImageInfo?, position: Int) {
         if (image == null)
             return
 
-        mSelectedItems.add(image)
+        mSelectedItems.add(image.id)
         mSelectedPositions.add(position)
     }
 
-    private fun removeSelection(image: MetadataTest, position: Int) {
-        mSelectedItems.remove(image)
+    private fun removeSelection(image: ImageInfo, position: Int) {
+        mSelectedItems.remove(image.id)
         mSelectedPositions.remove(position)
     }
 
@@ -126,7 +136,7 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
         // individual view, so might as well do everything the same way
         val image = getItem(position) ?: return
 
-        if (mSelectedItems.contains(image)) {
+        if (mSelectedItems.contains(image.id)) {
             removeSelection(image, position)
         } else {
             addSelection(image, position)
@@ -136,15 +146,6 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
     }
 
     private fun updateSelection() = onSelectionChangedListener?.onSelectionUpdated(selectedItems)
-
-    fun selectAll() {
-        multiSelectMode = true
-        val list = currentList ?: return    // TODO: Need to spin through and gather all ids
-        // Actually best solution is prolly to accept ids for selection externally
-        mSelectedItems.addAll( list.mapNotNull { it } )
-        updateSelection()
-        notifyItemRangeChanged(0, itemCount)
-    }
 
     /**
      * Interface definition for a callback to be invoked when an item in this
@@ -192,15 +193,15 @@ class GalleryAdapter : PagedListAdapter<MetadataTest, GalleryViewHolder>(DIFF_CA
     }
 
     interface OnSelectionUpdatedListener {
-        fun onSelectionUpdated(selectedUris: Collection<MetadataTest>)
+        fun onSelectionUpdated(selectedIds: LongArray)
     }
 
     companion object {
-        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<MetadataTest>() {
-            override fun areContentsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ImageInfo>() {
+            override fun areContentsTheSame(oldItem: ImageInfo, newItem: ImageInfo): Boolean =
                 oldItem == newItem
 
-            override fun areItemsTheSame(oldItem: MetadataTest, newItem: MetadataTest): Boolean =
+            override fun areItemsTheSame(oldItem: ImageInfo, newItem: ImageInfo): Boolean =
                 oldItem.uri == newItem.uri
         }
     }

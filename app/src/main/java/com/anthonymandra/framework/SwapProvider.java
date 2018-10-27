@@ -16,7 +16,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.anthonymandra.imageprocessor.ImageProcessor;
-import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtil;
@@ -26,6 +25,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+@SuppressWarnings("ALL")
 public class SwapProvider extends ContentProvider  {
     private static final String TAG = SwapProvider.class.getSimpleName();
 
@@ -75,7 +75,7 @@ public class SwapProvider extends ContentProvider  {
         // If it's a native file, just share it directly.
         if (ImageUtil.isNative(sourceUri))
         {
-            return FileUtil.getParcelFileDescriptor(getContext(), sourceUri, mode);
+            return getContext().getContentResolver().openFileDescriptor(sourceUri, mode);
         }
 
         String jpg = uri.getPath();

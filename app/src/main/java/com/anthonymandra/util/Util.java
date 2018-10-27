@@ -16,24 +16,27 @@
 
 package com.anthonymandra.util;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import com.anthonymandra.rawdroid.GalleryActivity;
+import com.anthonymandra.rawdroid.R;
+
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,103 +44,14 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.core.app.NotificationCompat;
+
 /**
  * Class containing some static utility methods.
  */
 public class Util
 {
     private static final String TAG = Util.class.getSimpleName();
-
-    public static boolean hasFroyo()
-    {
-        // Can use static final constants like FROYO, declared in later versions
-        // of the OS since they are inlined at compile time. This is guaranteed behavior.
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
-    }
-
-    public static boolean hasGingerbread()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
-    }
-
-    public static boolean hasHoneycomb()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
-    }
-
-    public static boolean hasHoneycombMR1()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1;
-    }
-
-    public static boolean hasIceCreamSandwich()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
-    }
-
-    public static boolean hasJellyBean()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
-    }
-
-    public static boolean hasKitkat()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-    }
-
-    public static boolean hasLollipop()
-    {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-    }
-
-    public static boolean isTabDelimited(Context c, Uri uri)
-    {
-        int numberOfLevels = 0;
-        BufferedReader readbuffer = null;
-        try
-        {
-            ParcelFileDescriptor pfd = c.getContentResolver().openFileDescriptor(uri, "r");
-            readbuffer = new BufferedReader(new FileReader(pfd.getFileDescriptor()));
-            String line;
-            while ((line = readbuffer.readLine()) != null)
-            {
-                String tokens[] = line.split("\t");
-                numberOfLevels = Math.max(numberOfLevels, tokens.length);
-            }
-        } catch (IOException e)
-        {
-            return false;
-        }
-        finally
-        {
-            closeSilently(readbuffer);
-        }
-        return numberOfLevels > 0;
-    }
-
-    public static boolean isTabDelimited(String filepath)
-    {
-        int numberOfLevels = 0;
-        BufferedReader readbuffer = null;
-        try
-        {
-            readbuffer = new BufferedReader(new FileReader(filepath));
-            String line;
-            while ((line = readbuffer.readLine()) != null)
-            {
-                String tokens[] = line.split("\t");
-                numberOfLevels = Math.max(numberOfLevels, tokens.length);
-            }
-        } catch (IOException e)
-        {
-            return false;
-        }
-        finally
-        {
-            closeSilently(readbuffer);
-        }
-        return numberOfLevels > 0;
-    }
 
     /**
      * Copies a file from source to destination. If copying images see {@link #copy(File, File)}
@@ -333,5 +247,49 @@ public class Util
         {
             Log.w(TAG, "close fail", t);
         }
+    }
+
+    /**
+     * Create a Notification that is shown as a heads-up notification if possible.
+     */
+    public static void createNotificationChannel(
+            Context context,
+            String channelId,
+            String name,
+            String description) {
+
+        // Make a channel if necessary
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create the NotificationChannel, but only on API 26+ because
+            // the NotificationChannel class is new and not in the support library
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+            channel.setDescription(description);
+
+            // Add the channel
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+    public static NotificationCompat.Builder createNotification(
+            Context context,
+            String channelId,
+            String title,
+            String message) {
+
+        // Create the notification
+        return new NotificationCompat.Builder(context, channelId)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setContentIntent(PendingIntent.getActivity(context, 0,
+                        new Intent(context, GalleryActivity.class),0))
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVibrate(new long[0]);
     }
 }

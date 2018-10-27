@@ -7,17 +7,15 @@ import androidx.room.Insert
 import androidx.room.RawQuery
 import androidx.room.Update
 
-abstract class PathDao<T : PathEntity> {
-    protected abstract val database: String
-    private val PATH_DELIMITER = "/"
-    private val SELECT_ID = "SELECT id "
-    private val SELECT_ALL = "SELECT * "
-    private val FROM = "FROM " + database
-    private val GET = "SELECT * $FROM WHERE id = %s "
-    private val ANCESTOR_ID = SELECT_ID + FROM + " WHERE '%s' LIKE path || '%%' "
-    private val DESCENDANT_ID = SELECT_ID + FROM + " WHERE path LIKE '%s' || '%%' "
-    private val ANCESTOR_ENTITY = SELECT_ALL + FROM + " WHERE '%s' LIKE path || '%%' "
-    private val DESCENDANT_ENTITY = SELECT_ALL + FROM + " WHERE path LIKE '%s' || '%%' "
+private const val PATH_DELIMITER = "/"
+
+abstract class PathDao<T : PathEntity>(database: String) {
+    private val from = "from $database"
+    private val getQuery = "SELECT * $from WHERE id = %s "
+    private val ancestorIdQuery = "SELECT id $from WHERE '%s' LIKE path || '%%' "
+    private val descendantIdQuery = "SELECT id $from WHERE path LIKE '%s' || '%%' "
+    private val ancestorQuery = "SELECT * $from WHERE '%s' LIKE path || '%%' "
+    private val descendantQuery = "SELECT * $from WHERE path LIKE '%s' || '%%' "
 
     @RawQuery
     protected abstract fun internalGet(query: SupportSQLiteQuery): T
@@ -35,7 +33,7 @@ abstract class PathDao<T : PathEntity> {
     protected abstract fun internalGetDescendants(query: SupportSQLiteQuery): List<T>
 
     operator fun get(id: Long?): T {
-        return internalGet(SimpleSQLiteQuery(String.format(GET, id)))
+        return internalGet(SimpleSQLiteQuery(String.format(getQuery, id)))
     }
 
     @Insert
@@ -55,7 +53,7 @@ abstract class PathDao<T : PathEntity> {
         var parentDepth = -1
 
         if (entity.hasParent()) {
-            val parent = internalGet(SimpleSQLiteQuery(String.format(GET, entity.parent)))
+            val parent = internalGet(SimpleSQLiteQuery(String.format(getQuery, entity.parent)))
             parentPath = parent.path + PATH_DELIMITER
             parentDepth = parent.depth
         }
@@ -90,19 +88,19 @@ abstract class PathDao<T : PathEntity> {
         return getAncestors(get(id).path)
     }
 
-    fun getDescendantIds(path: String): List<Long> {
-        return internalGetDescendantIds(SimpleSQLiteQuery(String.format(DESCENDANT_ID, path)))
+    private fun getDescendantIds(path: String): List<Long> {
+        return internalGetDescendantIds(SimpleSQLiteQuery(String.format(descendantIdQuery, path)))
     }
 
-    fun getAncestorIds(path: String): List<Long> {
-        return internalGetAncestorIds(SimpleSQLiteQuery(String.format(ANCESTOR_ID, path)))
+    private fun getAncestorIds(path: String): List<Long> {
+        return internalGetAncestorIds(SimpleSQLiteQuery(String.format(ancestorIdQuery, path)))
     }
 
     fun getDescendants(path: String): List<T> {
-        return internalGetDescendants(SimpleSQLiteQuery(String.format(DESCENDANT_ENTITY, path)))
+        return internalGetDescendants(SimpleSQLiteQuery(String.format(descendantQuery, path)))
     }
 
     fun getAncestors(path: String): List<T> {
-        return internalGetAncestors(SimpleSQLiteQuery(String.format(ANCESTOR_ENTITY, path)))
+        return internalGetAncestors(SimpleSQLiteQuery(String.format(ancestorQuery, path)))
     }
 }

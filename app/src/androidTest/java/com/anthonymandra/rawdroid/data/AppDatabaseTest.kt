@@ -7,8 +7,7 @@ import androidx.room.Room
 import androidx.test.InstrumentationRegistry
 import androidx.test.filters.MediumTest
 import androidx.test.runner.AndroidJUnit4
-import com.anthonymandra.rawdroid.XmpFilter
-import com.anthonymandra.rawdroid.XmpValues
+import com.anthonymandra.rawdroid.ImageFilter
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.hamcrest.CoreMatchers.*
@@ -32,8 +31,7 @@ class AppDatabaseTest {
     @get:Rule var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var db: AppDatabase
-    private lateinit var dataRepo: DataRepository
-    private lateinit var folderDao: FolderDao
+	private lateinit var folderDao: FolderDao
     private lateinit var metadataDao: MetadataDao
     private lateinit var subjectDao: SubjectDao
     private lateinit var subjectJunctionDao: SubjectJunctionDao
@@ -116,15 +114,15 @@ class AppDatabaseTest {
         val childId = folderDao.insert(child)
 
         folderDao.delete(updated, child)
-        assertEquals(0, folderDao.count().toLong())
+        assertEquals(0, folderDao.count())
     }
 
     @Test
     fun metadata() {
         val folderId = folderDao.insert(testFolder)
-        assertEquals(1, folderDao.count().toLong())
+        assertEquals(1, folderDao.count())
 
-        assertEquals(0, metadataDao.count().toLong())
+        assertEquals(0, metadataDao.synchCount())
         val first = getPopulatedMeta(1)
 
         val imageId = metadataDao.insert(first)
@@ -138,7 +136,7 @@ class AppDatabaseTest {
         assertMetadata(updated)
 
         metadataDao.delete(updated)
-        assertEquals(0, metadataDao.count().toLong())
+        assertEquals(0, metadataDao.synchCount())
     }
 
     @Test
@@ -149,7 +147,7 @@ class AppDatabaseTest {
         subjectDao.importKeywords(reader)
         assertThat(subjectDao.count(), equalTo(testSubjectsCount))
 
-        val europe = subjectDao.get(7)
+        val europe = subjectDao[7]
         assertThat(europe.name, equalTo("Europe"))
 
         val europeanEntities = subjectDao.getDescendants(7)
@@ -157,7 +155,7 @@ class AppDatabaseTest {
         val europeanNames = europeanEntities.map { it.name }
         assertThat(europeanNames, hasItems("Europe", "Germany", "Trier", "France"))
 
-        val trier = subjectDao.get(9)
+        val trier = subjectDao[9]
         assertThat(trier.name, equalTo("Trier"))
 
         val trierTree = subjectDao.getAncestors(9)
@@ -166,7 +164,7 @@ class AppDatabaseTest {
         assertThat(trierTreeNames, hasItems("Europe", "Germany", "Trier"))
 
         val time = System.currentTimeMillis()
-        europeanEntities.forEach( {it.recent = time})
+        europeanEntities.forEach {it.recent = time}
 
         subjectDao.update(*europeanEntities.toTypedArray())
 
@@ -198,7 +196,7 @@ class AppDatabaseTest {
         assertThat(subjectsFor2, hasItems(1L))
         assertThat(subjectsFor3, hasItems(7L))
 
-        val all = metadataDao.getImages(DataRepository.createFilterQuery(XmpFilter())).blockingObserve()
+        val all = metadataDao.getImages(DataRepository.createFilterQuery(ImageFilter())).blockingObserve()
 
         // Ensure we don't have separate entities per junction match
         assertThat(all!!.size, equalTo(3))
@@ -215,15 +213,15 @@ class AppDatabaseTest {
         val label = "label1"
 
         // subject: Cathedral
-        var xmp = XmpValues(subject = listOf(cathedral))
-        var filter = XmpFilter(xmp)
+        var filter = ImageFilter(subjectIds = listOf(cathedral.id))
         var result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         assertThat(result[0].subjectIds, hasItems(cathedral.id))
 
         // subject: National Park OR Europe
-        xmp = XmpValues(subject = listOf(nationalPark, europe))
-        filter = XmpFilter(xmp, false)
+        filter = ImageFilter(
+            subjectIds = listOf(nationalPark.id, europe.id),
+            andTrueOrFalse = false)
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
         result.forEach {
@@ -233,8 +231,10 @@ class AppDatabaseTest {
         }
 
         // subject: Cathedral OR label:label1
-        xmp = XmpValues(subject = listOf(europe), label = listOf(label))
-        filter = XmpFilter(xmp, false)
+        filter = ImageFilter(
+            subjectIds = listOf(europe.id),
+            labels = listOf(label),
+            andTrueOrFalse = false)
 
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(2))
@@ -243,8 +243,9 @@ class AppDatabaseTest {
         }
 
         // subject: Cathedral AND label:label1
-        xmp = XmpValues(subject = listOf(cathedral), label = listOf(label))
-        filter = XmpFilter(xmp, true)
+        filter = ImageFilter(
+            subjectIds = listOf(cathedral.id),
+            labels = listOf(label), andTrueOrFalse = true)
 
         result = metadataDao.getImages(DataRepository.createFilterQuery(filter)).blockingObserve()
         assertThat(result!!.size, equalTo(1))
@@ -308,7 +309,7 @@ class AppDatabaseTest {
     }
 
     private fun assertMetadata(entity: MetadataEntity) {
-        val results = metadataDao.allImages.blockingObserve()
+        val results = metadataDao.synchAllImages
 
         assertNotNull(results)
         assertEquals(1, results!!.size)

@@ -1,5 +1,6 @@
 package com.anthonymandra.rawdroid.data
 
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
@@ -9,52 +10,67 @@ import androidx.sqlite.db.SupportSQLiteQuery
 abstract class MetadataDao {
 
     @get:Query("SELECT * FROM meta")
-    abstract val allImages: LiveData<List<MetadataEntity>>
+    abstract val synchAllImages: List<MetadataEntity>
 
-    @Query("SELECT COUNT(*) FROM meta")
+    @get:Query("SELECT uri FROM meta")
+    abstract val uris: List<String>
+
+	@Query("SELECT COUNT(*) FROM meta")
+	abstract fun synchCount(): Int
+
+    // Count doesn't care if the subject changes
+    @RawQuery(observedEntities = [ MetadataEntity::class ])
     abstract fun count(query: SupportSQLiteQuery): LiveData<Int>
 
-    @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
-    abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<MetadataTest>>
+    @RawQuery(observedEntities = [ MetadataEntity::class ])
+    abstract fun ids(query: SupportSQLiteQuery): LongArray
 
     @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
-    abstract fun getImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, MetadataTest>
+    abstract fun getImages(query: SupportSQLiteQuery): LiveData<List<ImageInfo>>
+
+    @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
+    abstract fun imageBlocking(query: SupportSQLiteQuery): List<ImageInfo>
+
+    @RawQuery(observedEntities = [ MetadataEntity::class, SubjectJunction::class ])
+    abstract fun getImageFactory(query: SupportSQLiteQuery): DataSource.Factory<Int, ImageInfo>
 
     @Transaction
     @Query("SELECT * FROM meta WHERE id IN (:ids)")
-    abstract fun getImagesById(ids: List<Long>): DataSource.Factory<Int, MetadataTest>
+    abstract fun getImagesById(ids: List<Long>): DataSource.Factory<Int, ImageInfo>
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract operator fun get(uri: String): LiveData<MetadataTest>
+    abstract operator fun get(uri: String): LiveData<ImageInfo>
 
-    @Transaction
+    @WorkerThread
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun blocking(uris: List<String>): List<MetadataTest>
+    abstract fun synchImages(uris: Array<String>): List<ImageInfo>
 
-    @Transaction
+    @WorkerThread
+    @Query("SELECT * FROM meta WHERE id IN (:ids)")
+    abstract fun synchImages(ids: LongArray): List<ImageInfo>
+
+    @WorkerThread
     @Query("SELECT * FROM meta WHERE uri = :uri")
-    abstract fun blocking(uri: String): MetadataTest
+    abstract fun synchImage(uri: String): ImageInfo
 
     @Transaction
     @Query("SELECT * FROM meta WHERE uri IN (:uris)")
-    abstract fun stream(uris: List<String>): LiveData<List<MetadataTest>>
+    abstract fun stream(uris: List<String>): LiveData<List<ImageInfo>>
 
-    @Transaction
-    @Query("SELECT * FROM meta WHERE processed = 0")    // 0 = false
-    abstract fun unprocessedImages(query: SupportSQLiteQuery) : List<MetadataTest>
-
-    @Query("SELECT COUNT(*) FROM meta WHERE processed = 0")    // 0 = false
-    abstract fun unprocessedCount(query: SupportSQLiteQuery) : LiveData<Int>
-
-    @Query("SELECT COUNT(*) FROM meta WHERE processed = 1")    // 1 = true
-    abstract fun processedCount(query: SupportSQLiteQuery) : LiveData<Int>
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // If there's a conflict we'll just skip the conflicted row
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(datum: MetadataEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    // If there's a conflict we'll just skip the conflicted row
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insert(vararg datums: MetadataEntity): List<Long>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun replace(datum: MetadataEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract fun replace(vararg datums: MetadataEntity): List<Long>
 
     @Update
     abstract fun update(vararg datums: MetadataEntity)
@@ -62,11 +78,11 @@ abstract class MetadataDao {
     @Delete
     abstract fun delete(vararg datums: MetadataEntity)
 
-    @Query("DELETE FROM meta WHERE id = :id")
-    abstract fun delete(id: Long)
-
     @Query("DELETE FROM meta WHERE id IN (:ids)")
-    abstract fun delete(ids: List<Long>)
+    abstract fun delete(vararg ids: Long)
+
+    @Query("DELETE FROM meta WHERE uri IN (:uris)")
+    abstract fun delete(uris: Array<String>): Int
 
     @Query("DELETE FROM meta")
     abstract fun deleteAll()

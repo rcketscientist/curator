@@ -84,36 +84,25 @@ android {
     flavorDimensions "market", "cycle"
 
     productFlavors {
-        // These fields handle flavorized authorities for providers
+        // These fields handle flavor authorities for providers
         final FIELD_META = "PROVIDER_AUTHORITY_META"
         final FIELD_SWAP = "PROVIDER_AUTHORITY_SWAP"
-        final FIELD_KEYWORD = "PROVIDER_AUTHORITY_KEYWORD"
-        final PROVIDER_META = "\"com.anthonymandra.content.MetaProvider\""
         final PROVIDER_SWAP = "\"com.anthonymandra.rawdroid.SwapProvider\""
-        final PROVIDER_KEYWORD = "\"com.anthonymandra.content.KeywordProvider\""
-        final PROVIDER_META_PRO = "\"com.anthonymandra.content.MetaProvider.pro\""
         final PROVIDER_SWAP_PRO = "\"com.anthonymandra.rawdroid.SwapProvider.pro\""
-        final PROVIDER_KEYWORD_PRO = "\"com.anthonymandra.rawdroid.KeywordProvider.pro\""
         demo {
             dimension "market"
             applicationId 'com.anthonymandra.rawdroid'
-            buildConfigField "String", FIELD_META, PROVIDER_META
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP
-            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD
         }
         pro {
             dimension "market"
             applicationId 'com.anthonymandra.rawdroidpro'
-            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
             buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
-            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
         }
 //        proAmazon {
 //            dimension "market"
 //            applicationId 'com.anthonymandra.rawdroidpro'
-//            buildConfigField "String", FIELD_META, PROVIDER_META_PRO
 //            buildConfigField "String", FIELD_SWAP, PROVIDER_SWAP_PRO
-//            buildConfigField "String", FIELD_KEYWORD, PROVIDER_KEYWORD_PRO
 //        }
         production {
             dimension "cycle"
@@ -163,7 +152,7 @@ dependencies {
     // Material extension contains many of the necessary androidx classes
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.annotation:annotation:$annotationVersion"
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     //    implementation "androidx.cardview:cardview:$cardviewVersion"
 
     // Android architecture
@@ -173,14 +162,17 @@ dependencies {
     implementation "androidx.room:room-rxjava2:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.paging:paging-runtime:$pagingVersion"
+    implementation "android.arch.work:work-runtime-ktx:$workVersion"
 
     // Testing and Debug
     // Instrumented
     androidTestImplementation "androidx.arch.core:core-testing:$coreTestingVersion"
     androidTestImplementation "androidx.annotation:annotation:$annotationVersion"
-    androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
-    androidTestImplementation 'androidx.test:rules:1.1.0-alpha4'
+    androidTestImplementation 'androidx.test:runner:1.1.0-beta02'
+    androidTestImplementation 'androidx.test:rules:1.1.0-beta02'
     androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+    androidTestImplementation "android.arch.work:work-testing:$workVersion"
+
     //    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'
 
     // Local

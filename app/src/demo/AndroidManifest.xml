@@ -3,23 +3,10 @@
 
     <application>
         <!--Separating providers allows flavorized authorities-->
-        <provider
-            android:name="com.anthonymandra.content.MetaProvider"
-            android:authorities="com.anthonymandra.content.MetaProvider"
-            android:grantUriPermissions="true"
-            android:exported="true">
-        </provider>
 
         <provider
             android:name="com.anthonymandra.framework.SwapProvider"
             android:authorities="com.anthonymandra.rawdroid.SwapProvider"
-            android:grantUriPermissions="true"
-            android:exported="true">
-        </provider>
-
-        <provider
-            android:name="com.anthonymandra.content.KeywordProvider"
-            android:authorities="com.anthonymandra.rawdroid.KeywordProvider"
             android:grantUriPermissions="true"
             android:exported="true">
         </provider>

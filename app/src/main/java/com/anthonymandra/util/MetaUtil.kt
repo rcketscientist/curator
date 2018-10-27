@@ -5,6 +5,8 @@ package com.anthonymandra.util
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.WorkerThread
+import androidx.core.net.toUri
 import com.adobe.xmp.XMPException
 import com.adobe.xmp.XMPMeta
 import com.adobe.xmp.XMPMetaFactory
@@ -13,9 +15,8 @@ import com.adobe.xmp.options.PropertyOptions
 import com.adobe.xmp.options.SerializeOptions
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.crashlytics.android.Crashlytics
-import com.drew.imaging.FileType
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Directory
 import com.drew.metadata.Metadata
@@ -141,57 +142,29 @@ object MetaUtil {
      * @param meta populated metadata
      */
     @Throws(XMPException::class)
-    fun writeXmp(os: OutputStream?, meta: XMPMeta) {
+    fun writeXmp(os: OutputStream, meta: XMPMeta) {
         val so = SerializeOptions().setOmitPacketWrapper(true)
         XMPMetaFactory.serialize(meta, os, so)
     }
 
-	/**
-	 * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-	 * @param stream stream to process
-	 * @param fileType type of file to process (see
-	 * {@link com.drew.imaging.FileTypeDetector#detectFileType(BufferedInputStream)})};
-	 * @return processed metadata values or null if failed
-	 */
-	fun readMetadata(repo: DataRepository, stream: InputStream, fileType: FileType) : MetadataTest? {
-	    var meta: Metadata? = null
-	    return try {
-	        meta = ImageMetadataReader.readMetadata(stream, -1, fileType)
-            readMetadata(repo, meta)
-	    } catch (e: Exception){
-	        e.printStackTrace()
-            null    // TODO: This could test for processed instead of null
-	    }
-	}
-
     /**
-     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
+     * Read meta data and convert to database model
      * @param c context
-     * @param uri uri of image to parse
+     * @param entity image to parse
+     * @param entity image to parse
      * @return processed metadata values or null if failed
      */
-    fun readMetadata(c: Context, repo: DataRepository, uri: Uri) : MetadataTest{
-        val meta = readMetadata(c, uri)
-        return readMetadata(repo, meta)
-    }
-
-    /**
-     * Read meta data and convert to ContentValues for {@link com.anthonymandra.content.MetaProvider}
-     * @param c context
-     * @param uri uri of image to parse
-     * @return processed metadata values or null if failed
-     */
-    fun readMetadata(c: Context, repo: DataRepository, entity: MetadataTest) : MetadataTest{
-        val meta = readMetadata(c, Uri.parse(entity.uri))
+    fun readMetadata(c: Context, repo: DataRepository, entity: ImageInfo) : ImageInfo{
+        val meta = readMetadata(c, entity.uri.toUri())
         return populateMetadata(repo, entity, meta)
     }
 
-    fun readMetadata(repo: DataRepository, meta: Metadata): MetadataTest {
-        val entity = MetadataTest()
+    fun readMetadata(repo: DataRepository, meta: Metadata): ImageInfo {
+        val entity = ImageInfo()
         return populateMetadata(repo, entity, meta)
     }
 
-    private fun populateMetadata(repo: DataRepository, entity: MetadataTest, meta: Metadata): MetadataTest {
+    private fun populateMetadata(repo: DataRepository, entity: ImageInfo, meta: Metadata): ImageInfo {
         entity.altitude = getAltitude(meta)
         entity.aperture = getAperture(meta)
         entity.exposure = getExposure(meta)
@@ -231,6 +204,18 @@ object MetaUtil {
         entity.processed = true
 
         return entity
+    }
+
+    @WorkerThread
+    fun parseMetadata(context: Context, images: List<ImageInfo>) {
+        val repo = DataRepository.getInstance(context)
+
+        images.forEach {
+            val metadata = MetaUtil.readMetadata(context, repo, it)
+            if (metadata.processed) {
+                repo.updateMeta(it)
+            }
+        }
     }
 
     /**

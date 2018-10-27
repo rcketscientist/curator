@@ -1,11 +1,13 @@
 package com.anthonymandra.rawdroid.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
+@Suppress("unused") // Used in layout
 class FabBehavior(context: Context, attrs: AttributeSet)
     : FloatingActionButton.Behavior(context, attrs) {
     override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
@@ -30,6 +32,7 @@ class FabBehavior(context: Context, attrs: AttributeSet)
             child.hide(object : FloatingActionButton.OnVisibilityChangedListener() {
                 override fun onHidden(fab: FloatingActionButton?) {
                     super.onHidden(fab)
+                    @SuppressLint("RestrictedApi") // .hide doesn't work
                     child.visibility = View.INVISIBLE
                 }
             })

@@ -5,10 +5,10 @@
 <string name="positive">Επιβεβαίωση</string>
 <string name="negative">Απόρριψη</string>
 <string name="neutral">Ακύρωση</string>
-<string name="saveAs">Αποθήκευση ως...</string>
+<string name="saveAs">Αποθήκευση ως…</string>
 <string name="export">Εξαγωγή</string>
 <string name="wallpaper">Ορισμός ως ταπετσαρία</string>
-<string name="editWith">Επεξεργασία με...</string>
+<string name="editWith">Επεξεργασία με…</string>
 <string name="selectAll">Επιλογή όλων</string>
 <string name="help">Βοήθεια</string>
 <string name="delete">Διαγραφή</string>
@@ -78,10 +78,10 @@
 <string name="prefTitleShowXmpFiles">Προβολή αρχείων XMP</string>
 
 
-<string name="importingImages">Εισαγωγή εικόνων...</string>
-<string name="exportingThumb">Εξαγωγή Μικρογραφιών...</string>
-<string name="deletingFiles">Διαγραφή Αρχείων...</string>
-<string name="recyclingFiles">Μεταφορά αρχείων στον Κάδο Ανακύκλωσης...</string>
+<string name="importingImages">Εισαγωγή εικόνων…</string>
+<string name="exportingThumb">Εξαγωγή Μικρογραφιών…</string>
+<string name="deletingFiles">Διαγραφή Αρχείων…</string>
+<string name="recyclingFiles">Μεταφορά αρχείων στον Κάδο Ανακύκλωσης…</string>
 <string name="clear">Καθαρισμός</string>
 <string name="reuse">Επαναχρησιμοποίηση</string>
 <string name="customKeywords">Προσαρμοσμένες λέξεις-κλειδιά</string>

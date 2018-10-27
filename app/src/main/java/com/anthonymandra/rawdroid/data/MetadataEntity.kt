@@ -5,7 +5,6 @@ import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
 
 @Entity(tableName = "meta",
     foreignKeys = [ForeignKey(
@@ -22,6 +21,7 @@ open class MetadataEntity(
     var id: Long = 0,
     var name: String = "",
     var type: Int = 0,
+    var size: Long = 0,
     var processed: Boolean = false,
     var uri: String = "",
     var documentId: String = "",

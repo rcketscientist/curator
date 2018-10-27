@@ -5,7 +5,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class MetadataTest(
+class ImageInfo(
 //    @Embedded
 //    var metadata: MetadataEntity = MetadataEntity(),
     @Relation(

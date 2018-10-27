@@ -9,6 +9,8 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import kotlinx.android.synthetic.main.xmp_edit_landscape.*
+import kotlinx.android.synthetic.main.xmp_subject_edit.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
@@ -16,7 +18,7 @@ import java.util.*
 typealias RatingChangedListener = (rating: Int?) -> Unit
 typealias LabelChangedListener = (label: String?) -> Unit
 typealias SubjectChangedListener = (subject: Collection<SubjectEntity>?) -> Unit
-typealias MetaChangedListener = (rating: Int?, label: String?, subject: Collection<SubjectEntity>?) -> Unit
+typealias MetaChangedListener = (xmp: XmpValues) -> Unit
 class XmpEditFragment : XmpBaseFragment() {
     private lateinit var recentRating: ImageView
     private lateinit var recentLabel: ImageView
@@ -31,19 +33,13 @@ class XmpEditFragment : XmpBaseFragment() {
      * Convenience method for single select XmpLabelGroup
      */
     private val label: String?
-        get() {
-            val label = colorLabels
-            return if (label.isEmpty()) null else label.iterator().next()
-        }
+			get() { return colorLabels.firstOrNull() }
 
     /**
      * Convenience method for single select XmpLabelGroup
      */
     private val rating: Int?
-        get() {
-            val ratings = ratings
-            return if (ratings.isEmpty()) null else ratings.iterator().next()
-        }
+			get() { return ratings.firstOrNull() }
 
     fun setRatingListener(listener: RatingChangedListener) {
         mRatingListener = listener
@@ -61,19 +57,12 @@ class XmpEditFragment : XmpBaseFragment() {
         mXmpChangedListener = listener
     }
 
-    override fun onXmpChanged(xmp: XmpValues) {
+    override fun onXmpChanged(xmp: XmpFilter) {
+        recentXmp.rating = xmp.rating.firstOrNull()
+        recentXmp.label = xmp.label.firstOrNull()
         recentXmp.subject = xmp.subject
-        recentXmp.rating = formatRating(xmp.rating)
-        recentXmp.label = formatLabel(xmp.label)
 
-        fireMetaUpdate()
-    }
-
-    private fun fireMetaUpdate() {
-        mXmpChangedListener?.invoke(
-                recentXmp.rating,
-                recentXmp.label,
-                recentXmp.subject)
+				mXmpChangedListener?.invoke(recentXmp)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -85,36 +74,18 @@ class XmpEditFragment : XmpBaseFragment() {
         setExclusive(true)
         setAllowUnselected(true)
 
-        view.findViewById<View>(R.id.clearMetaButton).setOnClickListener { clear() }
-        view.findViewById<View>(R.id.recentMetaButton).setOnClickListener { fireMetaUpdate() }
-        view.findViewById<View>(R.id.helpButton).setOnClickListener { startTutorial() }
-
-        recentLabel = view.findViewById(R.id.recentLabel)
-        recentRating = view.findViewById(R.id.recentRating)
-    }
-
-    private fun formatRating(ratings: Collection<Int>?): Int? {
-        return ratings?.iterator()?.next()
-    }
-
-    private fun formatRating(rating: Int?): List<Int> {
-        return if (rating == null) Collections.emptyList() else arrayListOf(rating)
-    }
-
-    private fun formatLabel(labels: List<String>?): String? {
-        return labels?.iterator()?.next()
-    }
-
-    private fun formatLabel(label: String?): List<String> {
-        return if (label == null) Collections.emptyList() else arrayListOf(label)
+        clearMetaButton.setOnClickListener { clear() }
+        recentMetaButton.setOnClickListener { mXmpChangedListener?.invoke(recentXmp) }
+        helpButton.setOnClickListener { startTutorial() }
     }
 
     /**
      * Silently set xmp without firing listeners
      */
     fun initXmp(rating: Int?, subject: List<SubjectEntity>, label: String?) {
-        super.initXmp(formatRating(rating),
-                formatLabel(label),
+        super.initXmp(
+						if (rating == null) Collections.emptyList() else arrayListOf(rating),
+						if (label == null) Collections.emptyList() else arrayListOf(label),
                 subject)
     }
 
@@ -162,15 +133,6 @@ class XmpEditFragment : XmpBaseFragment() {
         }
     }
 
-    /**
-     * Default values indicate no xmp
-     */
-    data class XmpEditValues(
-        var rating: Int? = null,
-        var subject: Collection<SubjectEntity>? = null,
-        var label: String? = null
-    )
-
     private fun startTutorial() {
         val sequence = MaterialShowcaseSequence(activity)
 
@@ -178,17 +140,17 @@ class XmpEditFragment : XmpBaseFragment() {
 
         // Sort group
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.recentMetaButton),
+                recentMetaButton,
                 R.string.tutSetRecent))
 
         // Segregate
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.clearMetaButton),
+                clearMetaButton,
                 R.string.tutClearMeta))
 
         // rating
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.metaLabelRating),
+                metaLabelRating,
                 R.string.tutSetRatingLabel))
 
         // subject
@@ -198,12 +160,12 @@ class XmpEditFragment : XmpBaseFragment() {
 
         // Match
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.addKeyword),
+						addKeyword,
                 R.string.tutAddSubject))
 
         // Match
         sequence.addSequenceItem(getRectangularView(
-                root.findViewById(R.id.editKeyword),
+                editKeyword,
                 R.string.tutEditSubject))
 
         sequence.start()
@@ -228,6 +190,6 @@ class XmpEditFragment : XmpBaseFragment() {
     }
 
     companion object {
-        private val recentXmp = XmpEditValues()
+        private val recentXmp = XmpValues()
     }
 }

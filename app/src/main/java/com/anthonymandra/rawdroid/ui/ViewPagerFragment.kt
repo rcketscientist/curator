@@ -7,12 +7,13 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.WorkerThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.anthonymandra.framework.Histogram
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.AppExecutors
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import io.reactivex.Single
@@ -26,7 +27,7 @@ import java.util.*
 import java.util.concurrent.ForkJoinPool
 
 class ViewPagerFragment : Fragment() {
-    var source: MetadataTest? = null
+    var source: ImageInfo? = null
     private var histogramSubscription: Disposable? = null
     private val viewModel: GalleryViewModel by lazy {
         ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java) }
@@ -94,6 +95,25 @@ class ViewPagerFragment : Fragment() {
         zoomButton.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onZoomLockChanged(isChecked)
         }
+
+        val metaRowVisibility = viewModel.metaVisibility
+        rowAltitude.visibility = metaRowVisibility.Altitude
+        rowAperture.visibility = metaRowVisibility.Aperture
+        rowDate.visibility = metaRowVisibility.Date
+        rowDimensions.visibility = metaRowVisibility.Dimensions
+        rowDriveMode.visibility = metaRowVisibility.DriveMode
+        rowExposure.visibility = metaRowVisibility.Exposure
+        rowExposureMode.visibility = metaRowVisibility.ExposureMode
+        rowExposureProgram.visibility = metaRowVisibility.ExposureProgram
+        rowFlash.visibility = metaRowVisibility.Flash
+        rowFocal.visibility = metaRowVisibility.Focal
+        rowIso.visibility = metaRowVisibility.Iso
+        rowLatitude.visibility = metaRowVisibility.Latitude
+        rowLongitude.visibility = metaRowVisibility.Longitude
+        rowLens.visibility = metaRowVisibility.Lens
+        rowModel.visibility = metaRowVisibility.Model
+        rowName.visibility = metaRowVisibility.Name
+        rowWhiteBalance.visibility = metaRowVisibility.WhiteBalance
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -136,19 +156,26 @@ class ViewPagerFragment : Fragment() {
         histogramView.clear()
 
         // TODO: Need some way to cancel?
-        val pool = ForkJoinPool()
         histogramSubscription = Single.create<Histogram.ColorBins> {
-            if (bitmap.isRecycled)
-                throw Exception("Histogram bitmap was recycled.")
-            val histoTask = Histogram.createHistogram(bitmap)
-            val colorBins = pool.invoke<Histogram.ColorBins>(histoTask)
-            it.onSuccess(colorBins)
+//        histogramSubscription = Single.create<IntArray> {
+            val hist = calculateHisto(bitmap)
+//            val hist = calculateHistogram(bitmap)
+            it.onSuccess(hist)
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))    // TODO: Memory based pool
          .observeOn(Schedulers.from(AppExecutors.MAIN))
          .subscribeBy (
-             onSuccess = { histogramView.updateHistogram(it) },
+             onSuccess = { histogramView?.updateHistogram(it) },
              onError = { it.printStackTrace() }     // TODO: Handle error state in histogramView
          )
+    }
+
+    @WorkerThread
+    private fun calculateHisto(bitmap: Bitmap): Histogram.ColorBins {
+        if (bitmap.isRecycled)
+            throw Exception("Histogram bitmap was recycled.")
+        val pool = ForkJoinPool()
+        val histoTask = Histogram.createHistogram(bitmap)
+        return pool.invoke<Histogram.ColorBins>(histoTask)
     }
 
     companion object {

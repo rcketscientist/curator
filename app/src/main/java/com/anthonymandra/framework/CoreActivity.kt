@@ -5,8 +5,11 @@ import android.app.AlertDialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.*
+import android.content.ContentProviderOperation
+import android.content.Context
+import android.content.DialogInterface
 import android.content.DialogInterface.OnCancelListener
+import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.preference.PreferenceManager
@@ -14,27 +17,19 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.NotificationCompat
-import com.anthonymandra.content.Meta
+import androidx.core.net.toUri
 import com.anthonymandra.image.ImageConfiguration
-import com.anthonymandra.image.JpegConfiguration
-import com.anthonymandra.image.TiffConfiguration
-import com.anthonymandra.imageprocessor.ImageProcessor
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.MetadataTest
-import com.anthonymandra.util.*
+import com.anthonymandra.rawdroid.ui.CoreViewModel
+import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -49,15 +44,14 @@ abstract class CoreActivity : DocumentActivity() {
 
     protected lateinit var xmpEditFragment: XmpEditFragment
 
-    protected var mActivityVisible: Boolean = false
-
     /**
      * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
      */
-    protected var mItemsForIntent = mutableListOf<MetadataTest>()
+    //TODO: Pretty sure this isn't needed...
+    protected var mItemsForIntent = longArrayOf()
 
     private lateinit var licenseHandler: LicenseHandler
-    protected abstract val selectedImages: Collection<MetadataTest>
+    protected abstract val selectedIds: LongArray
 
     lateinit var notificationManager: NotificationManager
 
@@ -115,38 +109,12 @@ abstract class CoreActivity : DocumentActivity() {
 
     override fun onResume() {
         super.onResume()
-        mActivityVisible = true
-//        LicenseManager.getLicense(this, licenseHandler)
         createSwapDir()
         createRecycleBin()
-
-        xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
-        xmpEditFragment.setListener { rating, label, subject ->
-            writeXmpModifications(XmpEditFragment.XmpEditValues(rating, subject, label))
-        }
-
-        xmpEditFragment.setLabelListener { label ->
-            Thread(PrepareXmpRunnable(
-                    XmpEditFragment.XmpEditValues(label = label),
-                    XmpUpdateField.Label)).start()
-        }
-
-        xmpEditFragment.setRatingListener { rating ->
-            Thread(PrepareXmpRunnable(
-                    XmpEditFragment.XmpEditValues(rating = rating),
-                    XmpUpdateField.Rating)).start()
-        }
-        xmpEditFragment.setSubjectListener { subject ->
-            Thread(PrepareXmpRunnable(
-                    XmpEditFragment.XmpEditValues(subject = subject),
-                    XmpUpdateField.Subject)).start()
-        }
-//        hideEditXmpFragment()
     }
 
     override fun onPause() {
         super.onPause()
-        mActivityVisible = false
         recycleBin.flushCache()
     }
 
@@ -182,7 +150,7 @@ abstract class CoreActivity : DocumentActivity() {
                 return true
             }
             R.id.menu_delete -> {
-                deleteImages(selectedImages)
+                deleteImages(selectedIds)
                 return true
             }
             R.id.menu_recycle -> {
@@ -214,40 +182,45 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     protected fun storeSelectionForIntent() {
-        mItemsForIntent.clear()
-        mItemsForIntent.addAll(selectedImages)
+        mItemsForIntent = selectedIds
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
 
         when (requestCode) {
-            REQUEST_SAVE_AS_DIR -> if (resultCode == RESULT_OK && data != null) {
-                handleSaveDestinationResult(data.data)
+            REQUEST_SAVE_AS_DIR -> if (resultCode == RESULT_OK && intent != null) {
+                intent.data?.let {
+                    handleSaveDestinationResult(it)
+                }
             }
         }
     }
 
     private fun handleSaveDestinationResult(destination: Uri) {
-        //		storeSelectionForIntent();	// dialog resets CAB, so store first
-
-        // TODO: Might want to figure out a way to get free space to introduce this check again
-        //        long importSize = getSelectedImageSize();
-        //        if (destination.getFreeSpace() < importSize)
-        //        {
-        //            Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-        //            return;
-        //        }
-
         // Load default save config if it exists and automatically apply it
-        val config = ImageConfiguration.loadPreference(this)
+        val config = ImageConfiguration.fromPreference(this)
+        var insert = false
+
         if (config != null) {
-            saveImages(mItemsForIntent, destination, config)
+            // TODO: This alert could be a checkbox in the save dialog
+            AlertDialog.Builder(this)
+                .setMessage("Add converted images to the library?")
+                .setPositiveButton(R.string.positive) { _, _ -> insert = true }
+                .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+            viewModel.startSaveWorker(mItemsForIntent, destination, config, insert)
             return
         }
 
         val dialog = SaveConfigDialog(this)
-        dialog.setSaveConfigurationListener { saveImages(mItemsForIntent, destination, it) }
+        dialog.setSaveConfigurationListener { imageConfig ->
+            // TODO: This alert could be a checkbox in the save dialog
+            AlertDialog.Builder(this)
+                .setMessage("Add converted images to the library?")
+                .setPositiveButton(R.string.positive) { _, _ -> insert = true }
+                .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
+            viewModel.startSaveWorker(mItemsForIntent, destination, imageConfig, insert)
+        }
         dialog.show()
     }
 
@@ -266,7 +239,7 @@ abstract class CoreActivity : DocumentActivity() {
 
                 CoreActivity.WriteActions.RECYCLE -> RecycleTask().execute(*callingParameters)
                 CoreActivity.WriteActions.RESTORE -> RestoreTask().execute(*callingParameters)
-                CoreActivity.WriteActions.WRITE_XMP -> WriteXmpTask().execute(*callingParameters)
+//                CoreActivity.WriteActions.WRITE_XMP -> WriteXmpTask().execute(*callingParameters)
             }
         }
         clearWriteResume()
@@ -275,25 +248,28 @@ abstract class CoreActivity : DocumentActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         xmpEditFragment = supportFragmentManager.findFragmentById(R.id.editFragment) as XmpEditFragment
-        xmpEditFragment.setListener { rating, label, subject ->
-            writeXmpModifications(XmpEditFragment.XmpEditValues(rating, subject, label))
+        xmpEditFragment.setListener { xmp ->
+            viewModel.startMetaWriterWorker(selectedIds, xmp, XmpUpdateField.All)
         }
 
         xmpEditFragment.setLabelListener { label ->
-            Thread(PrepareXmpRunnable(
-                XmpEditFragment.XmpEditValues(label = label),
-                XmpUpdateField.Label)).start()
+            viewModel.startMetaWriterWorker(
+                selectedIds,
+                XmpValues(label = label),
+                XmpUpdateField.Label)
         }
 
         xmpEditFragment.setRatingListener { rating ->
-            Thread(PrepareXmpRunnable(
-                XmpEditFragment.XmpEditValues(rating = rating),
-                XmpUpdateField.Rating)).start()
+            viewModel.startMetaWriterWorker(
+                selectedIds,
+                XmpValues(rating = rating),
+                XmpUpdateField.Rating)
         }
         xmpEditFragment.setSubjectListener { subject ->
-            Thread(PrepareXmpRunnable(
-                XmpEditFragment.XmpEditValues(subject = subject),
-                XmpUpdateField.Subject)).start()
+            viewModel.startMetaWriterWorker(
+                selectedIds,
+                XmpValues(subject = subject.orEmpty().toList()),
+                XmpUpdateField.Subject)
         }
         hideEditXmpFragment()
     }
@@ -320,28 +296,6 @@ abstract class CoreActivity : DocumentActivity() {
         ft.commit()
     }
 
-    private fun  writeXmpModifications(values: XmpEditFragment.XmpEditValues) {
-        val selection = selectedImages
-        if (selection.isNotEmpty()) {
-            val cv = ContentValues()
-            cv.put(Meta.LABEL, values.label)
-            cv.put(Meta.RATING, values.rating)
-            //FIXME: This should update the subject junction!
-            //			cv.put(Meta.SUBJECT, DbUtil.convertArrayToString(values.subject));
-
-            val xmpPairing = HashMap<Uri, ContentValues>()
-            for (image in selection) {
-                xmpPairing[Uri.parse(image.uri)] = cv
-            }
-
-            writeXmp(xmpPairing)
-        }
-    }
-
-    private fun writeXmp(xmpPairing: Map<Uri, ContentValues>) {
-        WriteXmpTask().execute(xmpPairing)
-    }
-
     /**
      * Create swap directory or clear the contents
      */
@@ -351,7 +305,8 @@ abstract class CoreActivity : DocumentActivity() {
             if (!mSwapDir.exists()) {
                 mSwapDir.mkdirs()
             }
-        }.subscribeBy(
+        }.subscribeOn(Schedulers.from(AppExecutors.DISK))
+        .subscribeBy(
             // TODO:
             onComplete = {},
             onError = {}
@@ -414,18 +369,7 @@ abstract class CoreActivity : DocumentActivity() {
                 .show()
     }
 
-    /**
-     * Deletes a file and determines if a recycle is necessary.
-     *
-     * @param toDelete file to delete.
-     */
-    protected fun deleteImage(toDelete: MetadataTest) {
-        val itemsToDelete = ArrayList<MetadataTest>()
-        itemsToDelete.add(toDelete)
-        deleteImages(itemsToDelete)
-    }
-
-    private fun deleteImages(itemsToDelete: Collection<MetadataTest>) {
+    private fun deleteImages(itemsToDelete: LongArray) {
         if (itemsToDelete.isEmpty()) {
             Toast.makeText(baseContext, R.string.warningNoItemsSelected, Toast.LENGTH_SHORT).show()
             return
@@ -436,43 +380,38 @@ abstract class CoreActivity : DocumentActivity() {
         val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true)
         val justDelete: Boolean?
         val message: String
-        val spaceRequired: Long = itemsToDelete
-            .asSequence()
-            .filterNotNull()
-            .map { File(Uri.parse(it.uri).path) }
-            .filter { it.exists() }
-            .map { it.length() }
-            .sum()
 
         // Go straight to delete if
         // 1. MTP (unsupported)
         // 2. Recycle is set to off
         // 3. For some reason the bin is null
-        //		if (itemsToDelete.get(0) instanceof MtpImage)
-        //		{
-        //			justDelete = true;
-        //			message = getString(R.string.warningRecycleMtp);
-        //		}
-        /* else */
         if (!useRecycle) {
             justDelete = true
             message = getString(R.string.warningDeleteDirect)
         } else {
             justDelete = false
-            message = getString(R.string.warningDeleteExceedsRecycle) // This message applies to deletes exceeding bin size
+            message = getString(R.string.warningDeleteExceedsRecycle)
         }
 
-        if (justDelete || recycleBin.binSize < spaceRequired) {
-            if (deleteConfirm) {
-                AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
-                    .setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
-                    .setPositiveButton(R.string.delete) { _, _ -> deleteTask(itemsToDelete) }
-                    .show()
+        viewModel.images(itemsToDelete).subscribeBy { images ->
+            val spaceRequired: Long = images
+                .asSequence()
+                .filterNotNull()
+                .map { it.size }
+                .sum()
+
+            if (justDelete || recycleBin.binSize < spaceRequired) {
+                if (deleteConfirm) {
+                    AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
+                        .setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
+                        .setPositiveButton(R.string.delete) { _, _ -> viewModel.startDeleteWorker(itemsToDelete) }
+                        .show()
+                } else {
+                    viewModel.startDeleteWorker(itemsToDelete)
+                }
             } else {
-                deleteTask(itemsToDelete)
+                RecycleTask().execute(itemsToDelete)
             }
-        } else {
-            RecycleTask().execute(itemsToDelete)
         }
     }
 
@@ -512,7 +451,7 @@ abstract class CoreActivity : DocumentActivity() {
     }
 
     private fun requestShare() {
-        if (selectedImages.isEmpty()) {
+        if (selectedIds.isEmpty()) {
             Snackbar.make(rootView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
             return
         }
@@ -534,34 +473,36 @@ abstract class CoreActivity : DocumentActivity() {
             convert = false
         }
 
-        val selectedItems = ArrayList(selectedImages)
-        if (selectedItems.size > 1) {
-            intent.action = Intent.ACTION_SEND_MULTIPLE
-            val tooManyShares = selectedItems.size > 10
+        // We need to limit the number of shares to avoid TransactionTooLargeException
+        // TODO: If swap took IDs can we remove share limit?
+        val limitImages = selectedIds.size > 10
+        if (limitImages) {
+            val shareLimit = Toast.makeText(this, R.string.shareSubset, Toast.LENGTH_LONG)
+            shareLimit.setGravity(Gravity.CENTER, 0, 0)
+            shareLimit.show()
+        }
+        val selection = if (limitImages) selectedIds.sliceArray(0..9) else selectedIds
 
-            if (tooManyShares) {
-                val shareLimit = Toast.makeText(this, R.string.shareSubset, Toast.LENGTH_LONG)
-                shareLimit.setGravity(Gravity.CENTER, 0, 0)
-                shareLimit.show()
-            }
+        viewModel.images(selection).subscribeBy {selectedImages ->
+            if (selectedImages.size > 1) {
+                intent.action = Intent.ACTION_SEND_MULTIPLE
 
-            val share = ArrayList<Uri?>()
-            // We need to limit the number of shares to avoid TransactionTooLargeException
-            for (selection in if (tooManyShares) selectedItems.subList(0, 10) else selectedItems) {
-                val uri = Uri.parse(selection.uri)
+                intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM,
+                    ArrayList(selectedImages.map {
+                        if (convert)
+                            SwapProvider.createSwapUri(this, it.uri.toUri())
+                        else
+                            it.uri.toUri()
+                    })
+                )
+            } else {
+                intent.action = Intent.ACTION_SEND
+                val uri = Uri.parse(selectedImages[0].uri)
                 if (convert)
-                    share.add(SwapProvider.createSwapUri(this, uri))
+                    intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, uri))
                 else
-                    share.add(uri)
+                    intent.putExtra(Intent.EXTRA_STREAM, uri)
             }
-            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, share)
-        } else {
-            intent.action = Intent.ACTION_SEND
-            val uri = Uri.parse(selectedItems[0].uri)
-            if (convert)
-                intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, uri))
-            else
-                intent.putExtra(Intent.EXTRA_STREAM, uri)
         }
 
         startActivity(Intent.createChooser(intent, getString(R.string.share)))
@@ -581,231 +522,7 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    /**
-     * File operation tasks
-     */
-
-    /**
-     * Copies an image and corresponding xmp and jpeg (ex: src/a.[cr2,xmp,jpg] -> dest/a.[cr2,xmp,jpg])
-     * @param fromImage source image
-     * @param toImage target image
-     * @return success
-     */
-    private fun copyAssociatedFiles(fromImage: MetadataTest, toImage: Uri): Boolean {
-        val sourceUri = Uri.parse(fromImage.uri)
-        if (ImageUtil.hasXmpFile(this, sourceUri)) {
-            copyFile(ImageUtil.getXmpFile(this, sourceUri).uri,
-                    ImageUtil.getXmpFile(this, toImage).uri)
-        }
-        if (ImageUtil.hasJpgFile(this, sourceUri)) {
-            copyFile(ImageUtil.getJpgFile(this, sourceUri).uri,
-                    ImageUtil.getJpgFile(this, toImage).uri)
-        }
-
-        fromImage.uri = toImage.toString()  // update copied uri
-
-        return copyFile(sourceUri, toImage)
-    }
-
-    fun copyImages(images: List<Uri>, destinationFolder: Uri) {
-        Single.create<List<MetadataTest>> {
-                // TODO: We should jsut duplicate these calls with rx to do this with streams
-                it.onSuccess(dataRepo.imagesBlocking(images.map { it.toString() }))
-            }
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .observeOn(Schedulers.from(AppExecutors.MAIN))
-            .subscribeBy(
-                onSuccess = { copyImages(it, destinationFolder)},
-                onError = {}    // do nothing for now
-            )
-    }
-
-    fun copyImages(images: Collection<MetadataTest>, destinationFolder: Uri) {
-        setMaxProgress(images.size)
-
-        var progress = 0
-        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.copyingImages))
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setPriority(IMPORTANT_NOTIFICATION)
-            .setVibrate(longArrayOf(0, 0)) // We don't ask for permission, this allows peek
-            .setProgress(images.size, progress, false)
-        notificationManager.notify(0, builder.build())
-
-        Observable.fromIterable(images)
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .map {
-                val destinationFile = DocumentUtil.getChildUri(destinationFolder, it.name)
-                copyAssociatedFiles(it, destinationFile)
-                it.name
-            }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onNext = {
-                    builder.setProgress(images.size, ++progress, false)
-                    builder.setContentText(it)
-                    notificationManager.notify(0, builder.build())
-                    incrementProgress()
-                },
-                onComplete = {
-                    endProgress()
-
-                    // When the loop is finished, updates the notification
-                    builder.setContentText("Complete")
-                        .setProgress(0,0,false) // Removes the progress bar
-                    notificationManager.notify(0, builder.build())
-                },
-                onError = {
-                    incrementProgress()
-                    builder.setProgress(images.size, ++progress, false)
-                    it.printStackTrace()
-//                    Crashlytics.setString("uri", toCopy.toString())
-                    Crashlytics.logException(it)
-                }
-            )
-    }
-
-    fun saveImages(images: Collection<MetadataTest>, destinationFolder: Uri, config: ImageConfiguration) {
-        if (images.isEmpty()) return
-
-        var insert = false
-        val insertions = arrayListOf<MetadataTest>()
-        AlertDialog.Builder(this)
-            .setMessage("Add converted images to the library?")
-            .setPositiveButton(R.string.positive) { _, _ -> insert = true }
-            .setNegativeButton(R.string.negative) { _, _ -> /*dismiss*/ }.show()
-
-        var progress = 0
-        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.savingImages))
-            .setPriority(IMPORTANT_NOTIFICATION)
-            .setVibrate(longArrayOf(0, 0)) // We don't ask for permission, this allows peek
-            .setProgress(images.size, progress, false)
-            .setSmallIcon(R.mipmap.ic_launcher)
-
-        notificationManager.notify(0, builder.build())
-
-        Observable.fromIterable(images)
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .map {
-                val source = UsefulDocumentFile.fromUri(this, Uri.parse(it.uri))
-                var destinationTree: UsefulDocumentFile? = null
-                destinationTree = getDocumentFile(destinationFolder, true, true)
-
-                val desiredName = FileUtil.swapExtention(source.name, config.extension)
-                val desiredUri = DocumentUtil.getChildUri(destinationFolder, desiredName)
-                var destinationFile = UsefulDocumentFile.fromUri(this, desiredUri)
-
-                if (!destinationFile.exists())
-                    destinationFile = destinationTree.createFile(null, desiredName)
-
-                val inputPfd = FileUtil.getParcelFileDescriptor(this, source.uri, "r")
-                val outputPfd = FileUtil.getParcelFileDescriptor(this, destinationFile.uri, "w")
-
-                when (config.type) {
-                    ImageConfiguration.ImageType.jpeg -> {
-                        val quality = (config as JpegConfiguration).quality
-//                        if (wm != null) {
-//                            ImageProcessor.writeThumb(inputPfd.fd, quality,
-//                                outputPfd.fd, wm.watermark, wm.margins.array,
-//                                wm.waterWidth, wm.waterHeight) && success
-//                        } else {
-                        ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
-//                        }
-                    }
-                    ImageConfiguration.ImageType.tiff -> {
-                        val compress = (config as TiffConfiguration).compress
-//                        if (wm != null) {
-//                            success = ImageProcessor.writeTiff(desiredName, inputPfd.fd,
-//                                outputPfd.fd, compress, wm.watermark, wm.margins.array,
-//                                wm.waterWidth, wm.waterHeight) && success
-//                        } else {
-                        ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
-//                        }
-                    }
-                    else -> throw UnsupportedOperationException("unimplemented save type.")
-                }
-
-                builder.setProgress(images.size, progress, false)
-                notificationManager.notify(0, builder.build())
-
-                destinationFile.uri
-            }
-            .observeOn(Schedulers.from(AppExecutors.MAIN))
-            .subscribeBy(
-                onNext = {
-                    builder.setProgress(images.size, ++progress, false)
-                    builder.setContentText(it.toString())
-                    notificationManager.notify(0, builder.build())
-                    incrementProgress()
-
-                    val insertion = MetadataTest()
-                    insertion.uri = it.toString()
-                    insertions.add(insertion)
-                },
-                onComplete = {
-                    endProgress()
-
-                    // When the loop is finished, updates the notification
-                    builder.setContentText("Complete")
-                        .setProgress(0,0,false) // Removes the progress bar
-                    notificationManager.notify(0, builder.build())
-
-                    if (insert) {
-                        dataRepo.insertMeta(*insertions.toTypedArray())
-                    }
-                },
-                onError = {
-                    it.printStackTrace()
-                    Crashlytics.logException(it)
-                    builder.setContentText("Some images did not transfer")
-                }
-            )
-    }
-
-    @Throws(DocumentActivity.WritePermissionException::class)
-    private fun deleteAssociatedFiles(image: MetadataTest): Boolean {
-        val associatedFiles = ImageUtil.getAssociatedFiles(this, Uri.parse(image.uri))
-        for (file in associatedFiles)
-            deleteFile(file)
-        return deleteFile(image.uri)
-    }
-
-    private fun deleteTask(images: Collection<MetadataTest>) {
-        if (images.isEmpty()) return
-
-        val builder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL)
-        builder.setContentTitle(getString(R.string.importingImages))
-            .setContentText("placeholder")
-            .setSmallIcon(R.mipmap.ic_launcher)
-
-        Completable.create {
-            val progress = 0
-            builder.setProgress(images.size, progress, false)
-            notificationManager.notify(0, builder.build())
-
-            images.forEach { toDelete ->
-                if (deleteAssociatedFiles(toDelete)) {
-                    DataRepository.getInstance(this).deleteImage(toDelete)
-                }
-            }
-
-            // When the loop is finished, updates the notification
-            builder.setContentText("Complete")
-                .setProgress(0,0,false) // Removes the progress bar
-            notificationManager.notify(0, builder.build())
-        }
-            .subscribeOn(Schedulers.from(AppExecutors.DISK))
-            .subscribeBy(
-                onComplete = {
-                    clearWriteResume()
-                },
-                onError = {
-                    builder.setContentText("Some images did not transfer")
-                }
-            )
-    }
-
+    // TODO: Need to look into way to make this an application singleton (ProcessLifecycleOwner?)
     protected inner class RecycleTask : AsyncTask<Any, Int, Void>(), OnCancelListener {
         override fun onPreExecute() {
 //            mProgressDialog!!.setTitle(R.string.recyclingFiles)
@@ -909,170 +626,18 @@ abstract class CoreActivity : DocumentActivity() {
         }
     }
 
-    protected inner class WriteXmpTask : AsyncTask<Any, Int, Boolean>() {
-        override fun doInBackground(vararg params: Any): Boolean? {
-            val xmpPairing = params[0] as MutableMap<Uri, ContentValues>
-            val databaseUpdates = ArrayList<ContentProviderOperation>()
-
-            val uris = xmpPairing.entries.iterator()
-            while (uris.hasNext()) {
-                setWriteResume(WriteActions.WRITE_XMP, arrayOf<Any>(xmpPairing))
-
-                val pair = uris.next()// as Entry<*, *>
-                if (pair.key == null)
-                //AJM: Not sure how this can be null, #167
-                    continue
-
-                val values = pair.value
-                // TODO: FIXME
-//                databaseUpdates.add(MetaUtil.newUpdate(pair.key, values))
-
-                //				final Metadata meta = new Metadata(); // TODO: need to pull the existing metadata, this wipes everything
-                //				meta.addDirectory(new XmpDirectory());
-                //				MetaUtil.updateSubject(meta, DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)));
-                //				MetaUtil.updateRating(meta, values.getAsInteger(Meta.RATING));
-                //				MetaUtil.updateLabel(meta, values.getAsString(Meta.LABEL));
-
-                //TODO: This logic needs cleanup
-                val xmp = ImageUtil.getXmpFile(this@CoreActivity, pair.key) ?: continue
-
-                val meta = MetaUtil.readXmp(this@CoreActivity, xmp)
-                MetaUtil.updateXmpStringArray(meta, MetaUtil.SUBJECT, DbUtil.convertStringToArray(values.getAsString(Meta.SUBJECT)))
-                MetaUtil.updateXmpInteger(meta, MetaUtil.RATING, values.getAsInteger(Meta.RATING))
-                MetaUtil.updateXmpString(meta, MetaUtil.LABEL, values.getAsString(Meta.LABEL))
-                //				MetaUtil.updateXmpString(meta, MetaUtil.CREATOR, "test");
-
-                val xmpUri = xmp.uri
-                val xmpDoc: UsefulDocumentFile?
-                try {
-                    xmpDoc = getDocumentFile(xmpUri, false, false) // For now use getDocumentFile to leverage write testing
-                    //TODO: need DocumentActivity.openOutputStream
-                } catch (e: DocumentActivity.WritePermissionException) {
-                    // Write pending updates, method will resume with remaining images
-                    // TODO: FIXME
-//                    MetaUtil.updateMetaDatabase(this@CoreActivity, databaseUpdates)
-                    return false
-                }
-
-                try {
-                    contentResolver.openOutputStream(xmpDoc!!.uri)!!.use { os -> MetaUtil.writeXmp(os, meta) }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-
-                uris.remove()  //concurrency-safe remove
-            }
-
-            // TODO: FIXME
-//            MetaUtil.updateMetaDatabase(this@CoreActivity, databaseUpdates)
-            return true
-        }
-
-        override fun onPostExecute(result: Boolean?) {
-            if (result!!)
-                clearWriteResume()
-        }
-    }
-
-    private enum class XmpUpdateField {
-        Rating,
-        Label,
-        Subject
-    }
-
-    //TODO:
-    private inner class PrepareXmpRunnable(private val update: XmpEditFragment.XmpEditValues, val updateType: XmpUpdateField) : Runnable {
-//        private val selectedImages: Collection<Uri>?
-//        private val projection = arrayOf(Meta.URI, Meta.RATING, Meta.LABEL, Meta.SUBJECT)
-
-//        init {
-//            this.selectedImages = selectedImages
-//        }
-
-        override fun run() {
-            //			if (selectedImages.size() == 0)
-            //				return;
-            //
-            //			// TODO: This can be done without cursor lookups, use position and lookup from cursor
-            //			String[] selectionArgs = new String[selectedImages.size()];
-            //			for (int i = 0; i < selectedImages.size(); i++)
-            //			{
-            //				selectionArgs[i] = selectedImages.get(i).toString();
-            //			}
-            //
-            //
-            //			Map<Uri, ContentValues> xmpPairs = new HashMap<>();
-            //			// Grab existing metadata
-            //			try(Cursor c = getContentResolver().query(Meta.CONTENT_URI,
-            //					projection,
-            //					DbUtil.createIN(Meta.URI, selectedImages.size()),
-            //					selectionArgs,
-            //					null))
-            //			{
-            //
-            //				if (c == null)
-            //					return;
-            //
-            //				// Create mappings with existing values
-            //				while (c.moveToNext()) {
-            //					ContentValues cv = new ContentValues(projection.length);
-            //					DatabaseUtils.cursorRowToContentValues(c, cv);
-            //					xmpPairs.put(Uri.parse(cv.getAsString(Meta.URI)), cv);
-            //				}
-            //			}
-            //
-            //			// Update singular fields in the existing values
-            //			for (Map.Entry<Uri, ContentValues> xmpPair : xmpPairs.entrySet())
-            //			{
-            //				switch(updateType)
-            //				{
-            //					case label:
-            //						xmpPair.getValue().put(Meta.LABEL, update.getLabel());
-            //						break;
-            //					case rating:
-            //						xmpPair.getValue().put(Meta.RATING, update.getRating());
-            //						break;
-            //						// FIXME: This should prepare a subject junction update
-            ////					case subject:
-            ////						xmpPair.getValue().put(Meta.SUBJECT, DbUtil.convertArrayToString(update.subject));
-            ////						break;
-            //				}
-            //			}
-            //			writeXmp(xmpPairs);
-        }
-    }
-
+    protected abstract val viewModel: CoreViewModel
     abstract fun setMaxProgress(max: Int)
     abstract fun incrementProgress()
     abstract fun endProgress()
-    abstract fun updateMessage(message: String?)
 
     companion object {
-//        private val TAG = CoreActivity::class.java.simpleName
         const val NOTIFICATION_CHANNEL = "notifications"
 
         const val SWAP_BIN_DIR = "swap"
         const val RECYCLE_BIN_DIR = "recycle"
 
         private const val REQUEST_SAVE_AS_DIR = 15
-
-        // Identifies a particular Loader being used in this component
-//        const val META_LOADER_ID = 0
-
-//        const val EXTRA_META_BUNDLE = "meta_bundle"
-//        const val META_PROJECTION_KEY = "projection"
-//        const val META_SELECTION_KEY = "selection"
-//        const val META_SELECTION_ARGS_KEY = "selection_args"
-//        const val META_SORT_ORDER_KEY = "sort_order"
-//        const val META_DEFAULT_SORT = Meta.NAME + " ASC"
-
         private const val EXPIRATION = 5184000000L //~60 days
-
-        val IMPORTANT_NOTIFICATION =
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-                NotificationManager.IMPORTANCE_HIGH
-            } else {
-                Notification.PRIORITY_HIGH
-            }
     }
 }

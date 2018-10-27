@@ -41,9 +41,9 @@ public class SeekBarPreference extends DialogPreference
 	protected void onBindDialogView(View view)
 	{
 		super.onBindDialogView(view);
-		final TextView valueText = (TextView) view.findViewById(R.id.textView);
+		final TextView valueText = view.findViewById(R.id.textView);
 
-		mSeekBar = (SeekBar) view.findViewById(R.id.seekBar);
+		mSeekBar = view.findViewById(R.id.seekBar);
 		mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
 		{
 			@Override

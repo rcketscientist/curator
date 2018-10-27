@@ -1,7 +1,6 @@
 package com.anthonymandra.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
@@ -28,7 +27,7 @@ import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
-import com.anthonymandra.rawdroid.data.MetadataTest;
+import com.anthonymandra.rawdroid.data.ImageInfo;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -39,8 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +61,7 @@ public class ImageUtil
         UsefulDocumentFile jpg = getJpgFile(c, image);
         if (xmp.exists()) files.add(xmp.getUri());
         if (jpg.exists()) files.add(jpg.getUri());
-        return files.toArray(new Uri[files.size()]);
+        return files.toArray(new Uri[0]);
     }
     public static boolean hasXmpFile(Context c, Uri uri) {
         return getXmpFile(c, uri).exists();
@@ -454,7 +451,7 @@ public class ImageUtil
 //        values.put(Meta.EXPOSURE, exif[Exif.SHUTTER]);
 //        values.put(Meta.HEIGHT, exif[Exif.HEIGHT]);
 //        values.put(Meta.WIDTH, exif[Exif.WIDTH]);
-//        //TODO: Placing thumb dimensions since we aren't decoding raw atm.
+//        //TODO: Placing thumb dimensions since we aren't decoding RAW atm.
 //        values.put(Meta.HEIGHT, exif[Exif.THUMB_HEIGHT]);
 //        values.put(Meta.WIDTH, exif[Exif.THUMB_WIDTH]);
         // Are the thumb dimensions useful in database?
@@ -533,7 +530,7 @@ public class ImageUtil
         }
     }
 
-    public static byte[] getThumb(final Context c, MetadataTest image) throws Exception {
+    public static byte[] getThumb(final Context c, ImageInfo image) throws Exception {
         Uri uri = Uri.parse(image.getUri());
         AssetFileDescriptor fd = c.getContentResolver().openAssetFileDescriptor(uri, "r");
 
@@ -733,29 +730,6 @@ public class ImageUtil
         return result;
     }
 
-    /**
-     * Get the size in bytes of a bitmap.
-     *
-     * @param bitmap
-     * @return size in bytes
-     */
-    @TargetApi(12)
-    public static int getBitmapSize(Bitmap bitmap)
-    {
-        // From KitKat onward use getAllocationByteCount() as allocated bytes can potentially be
-        // larger than bitmap byte count.
-        if (Util.hasKitkat()) {
-            return bitmap.getAllocationByteCount();
-        }
-
-        if (Util.hasHoneycombMR1()) {
-            return bitmap.getByteCount();
-        }
-
-        // Pre HC-MR1
-        return bitmap.getRowBytes() * bitmap.getHeight();
-    }
-
     public static Bitmap addWatermark2(Context context, Bitmap src)
     {
         int width = src.getWidth();
@@ -849,14 +823,6 @@ public class ImageUtil
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         return BitmapFactory.decodeResource(context.getResources(), id, o);
-    }
-
-    public static byte[] getBitmapBytes(Bitmap src)
-    {
-        ByteBuffer dst = ByteBuffer.allocate(getBitmapSize(src));
-        dst.order(ByteOrder.nativeOrder());
-        src.copyPixelsToBuffer(dst);
-        return dst.array();
     }
 
     public static Bitmap addWatermark(Context context, Bitmap src)

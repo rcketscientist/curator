@@ -4,15 +4,12 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityOptions
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.preference.PreferenceManager
 import android.provider.DocumentsContract
 import android.util.DisplayMetrics
@@ -24,13 +21,12 @@ import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.State
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.data.MetadataEntity
-import com.anthonymandra.rawdroid.data.MetadataTest
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
@@ -38,21 +34,21 @@ import com.anthonymandra.widget.ItemOffsetDecoration
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.WhatsNewDialog
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
     override val contentView = R.layout.gallery
-    override val selectedImages : Collection<MetadataTest>
+    override val selectedIds : LongArray
         get() { return galleryAdapter.selectedItems }
-
-    private val mResponseIntentFilter = IntentFilter()
 
     protected lateinit var galleryAdapter: GalleryAdapter
 
     private var mMaterialCab: MaterialCab? = null
     private var mXmpFilterFragment: XmpFilterFragment? = null
-    private val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
+    override val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
     private var imageCount = 0
 
     protected val isContextModeActive: Boolean
@@ -105,16 +101,54 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         viewModel.imageList.observe(this, Observer {
             galleryAdapter.submitList(it)
-            setImageCountTitle(it?.size ?: 0)
         })
 
+        // Current image total for title
         viewModel.filteredCount.observe(this, Observer {
             imageCount = it
             galleryToolbar?.title = "$imageCount Images"
         })
 
+        // Current processed image total for subtitle
         viewModel.filteredProcessedCount.observe(this, Observer {
-            galleryToolbar.subtitle = "$it of $imageCount"
+            galleryToolbar.subtitle = if (imageCount == it) null else "$it of $imageCount"
+        })
+
+        // Monitor the metadata parse status to display progress
+        viewModel.metaReaderStatus.observe(this, Observer {
+            if (it == null || it.isEmpty()) {
+                return@Observer
+            }
+
+            val workStatus = it[0]
+
+            if (workStatus.state.isFinished) {
+                galleryToolbar.subtitle = null
+                endProgress()
+            } else if (workStatus.state == State.RUNNING) {
+                toolbarProgress.visibility = View.VISIBLE
+                toolbarProgress.isIndeterminate = true
+            }
+        })
+
+        viewModel.searchStatus.observe(this, Observer {
+            if (it == null || it.isEmpty()) {
+                return@Observer
+            }
+
+            val workStatus = it[0]
+
+            if (workStatus.state.isFinished) {
+                galleryToolbar.subtitle = null
+                endProgress()
+                if (imageCount < 1) {
+	                //TODO: Alert
+                }
+            } else if (State.RUNNING == workStatus.state) {
+                toolbarProgress.visibility = View.VISIBLE
+                toolbarProgress.isIndeterminate = true
+                galleryToolbar.subtitle = "Searching..."
+            }
         })
 
         val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
@@ -124,7 +158,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         galleryView.adapter = galleryAdapter
 
         mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
-        mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: XmpFilter ->
+        mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: ImageFilter ->
             viewModel.setFilter(filter)
         }
         mXmpFilterFragment!!.registerSearchRootRequestedListener {
@@ -132,13 +166,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             requestWritePermission()
             drawerLayout.closeDrawer(GravityCompat.START)
         }
-
-        mResponseIntentFilter.addAction(MetaService.BROADCAST_IMAGE_PARSED)
-        mResponseIntentFilter.addAction(MetaService.BROADCAST_PARSE_COMPLETE)
-        mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_STARTED)
-        mResponseIntentFilter.addAction(SearchService.BROADCAST_SEARCH_COMPLETE)
-        mResponseIntentFilter.addAction(SearchService.BROADCAST_FOUND_IMAGES)
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, mResponseIntentFilter)
 
         intent.data?.let{ ImageUtil.importKeywords(this, it) }
     }
@@ -155,14 +182,17 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
             val permissibleUsb = PreferenceManager.getDefaultSharedPreferences(this)
                 .getStringSet(PREFS_PERMISSIBLE_USB, HashSet())
-            permissibleUsb
-                .asSequence()
-                .map { Uri.parse(it) }
-                .forEach {
-                    contentResolver.openFileDescriptor(it, "r").use {
-                        it ?: return
+
+            permissibleUsb?.let { permissions ->
+                permissions
+                    .asSequence()
+                    .mapNotNull { Uri.parse(it) }
+                    .forEach {
+                        contentResolver.openFileDescriptor(it, "r").use { pfd ->
+                            pfd ?: return
+                        }
                     }
-                }
+            }
 
             // Since this appears to be a new device gather uri and request write permission
             val request = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
@@ -194,8 +224,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
             val builder = AlertDialog.Builder(this)
             builder.setTitle(R.string.welcomeTitle)
-            builder.setNegativeButton(R.string.no) { _, _ -> offerRequestPermission() }
-            builder.setPositiveButton(R.string.yes) { _, _ -> startActivity(Intent(this@GalleryActivity, TutorialActivity::class.java)) }
+            builder.setNegativeButton(R.string.no) { _, _ -> /*do nothing, is there a button w/o this?*/ }
+            builder.setPositiveButton(R.string.yes) { _, _ ->
+                startActivity(Intent(this@GalleryActivity, TutorialActivity::class.java))
+            }
 
             builder.setMessage(R.string.welcomeTutorial)
             builder.show()
@@ -221,58 +253,28 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         super.onPause()
     }
 
-    public override fun onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
-        super.onDestroy()
-    }
-
-    private fun offerRequestPermission() {
-        val builder = AlertDialog.Builder(this)
-            .setTitle(R.string.offerSearchTitle)
-            .setMessage(R.string.offerPermissionMessage)
-            .setPositiveButton(R.string.search) { _, _ ->
-                setWriteResume(WriteResume.Search, emptyArray())
-                requestWritePermission()
-        }.setNegativeButton(R.string.neutral) { _, _ -> }   //do nothing
-        builder.create().show()
-    }
-
-    private fun setImageCountTitle(count: Int) {
-        supportActionBar?.title = count.toString() + " Images"
-    }
-
     private fun scanRawFiles() {
         toolbarProgress.visibility = View.VISIBLE
-        toolbarProgress.isIndeterminate = true        //TODO: Determinate?
+        toolbarProgress.isIndeterminate = true
         galleryToolbar.subtitle = "Cleaning..."
 
-        MetaDataCleaner.cleanDatabase(this, Handler(Handler.Callback {
-            // Upon clean initiate search
-            //TODO: This should be a DB lookup!
-            val excludedFolders = mXmpFilterFragment!!.excludedFolders
-
-            val permissionUris = rootPermissions.map { it.uri.toString() }
-
-            SearchService.startActionSearch(
-                this@GalleryActivity, null, // Files unsupported on 4.4+
-                permissionUris.toTypedArray(),
-                excludedFolders!!.toTypedArray())
-            true
-        }))
+        viewModel.startCleanSearchChain()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
 
         when (requestCode) {
-            REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && data != null) {
-                handleCopyDestinationResult(data.data)
+            REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && intent != null) {
+                intent.data?.let { uri ->
+                    viewModel.startCopyWorker(mItemsForIntent, uri)
+                }
             }
-            REQUEST_UPDATE_PHOTO -> if (resultCode == RESULT_OK && data != null) {
-                handlePhotoUpdate(data.getIntExtra(GALLERY_INDEX_EXTRA, 0))
+            REQUEST_UPDATE_PHOTO -> if (resultCode == RESULT_OK && intent != null) {
+                handlePhotoUpdate(intent.getIntExtra(GALLERY_INDEX_EXTRA, 0))
             }
-            REQUEST_ACCESS_USB -> if (resultCode == RESULT_OK && data != null) {
-                handleUsbAccessRequest(data.data)
+            REQUEST_ACCESS_USB -> if (resultCode == RESULT_OK && intent != null) {
+                handleUsbAccessRequest(intent.data)
             }
             REQUEST_TUTORIAL -> {
                 if (resultCode == RESULT_ERROR) {
@@ -280,29 +282,12 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
                         .setAction(R.string.contact) { requestEmailIntent("Tutorial Error") }
                         .show()
                 }
-                // We don't really care about a result, after tutorial offer to search.
-                offerRequestPermission()
             }
         }
     }
 
     private fun handlePhotoUpdate(index: Int) {
         galleryView.smoothScrollToPosition(index)
-    }
-
-    private fun handleCopyDestinationResult(destination: Uri) {
-        // TODO: Might want to figure out a way to get free space to introduce this check again
-        //		long importSize = getSelectedImageSize();
-        //		if (destination.getFreeSpace() < importSize)
-        //		{
-        //			Toast.makeText(this, R.string.warningNotEnoughSpace, Toast.LENGTH_LONG).show();
-        //			return;
-        //		}
-        copyImages(mItemsForIntent, destination)
-    }
-
-    override fun updateMessage(message: String?) {
-        galleryToolbar.subtitle = message
     }
 
     override fun setMaxProgress(max: Int) {
@@ -371,7 +356,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
             }
             R.id.galleryRefresh -> {
                 if (rootPermissions.size == 0) {
-                    offerRequestPermission()
+	                setWriteResume(WriteResume.Search, emptyArray())
+	                requestWritePermission()
                 } else {
                     scanRawFiles()
                 }
@@ -391,10 +377,12 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     private fun requestRename() {
         if (galleryAdapter.selectedItemCount == 0)
-            galleryAdapter.selectAll()
+            selectAll()
 
-        val dialog = RenameDialog(this, selectedImages)
-        dialog.show()
+        viewModel.images(selectedIds).subscribeBy {
+            val dialog = RenameDialog(this, it)
+            dialog.show()
+        }
     }
 
     private fun requestCopyDestination() {
@@ -408,19 +396,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         startActivityForResult(intent, REQUEST_COPY_DIR)
     }
 
-    protected fun removeDatabaseReference(toRemove: Long) {
-        dataRepo.deleteImage(toRemove)
-    }
-
-    protected fun addDatabaseReference(toAdd: Uri): Long {
-        val image = MetadataEntity()
-        image.uri = toAdd.toString()
-
-        return dataRepo.insertImages(image).first()
-    }
-
-    override fun onSelectionUpdated(selectedUris: Collection<MetadataTest>) {
-        mMaterialCab?.setTitle(selectedUris.size.toString() + " " + getString(R.string.selected))
+    override fun onSelectionUpdated(selectedIds: LongArray) {
+        mMaterialCab?.setTitle(selectedIds.size.toString() + " " + getString(R.string.selected))
         xmpEditFragment.reset()   // reset the panel to ensure it's clear it's not tied to existing values
     }
 
@@ -445,7 +422,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
     fun selectAll() {
         startContextMode()
-        galleryAdapter.selectAll()
+        viewModel.selectAll()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { galleryAdapter.selectedItems = it }
     }
 
     protected fun startContextMode() {
@@ -498,37 +477,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
         startActivityForResult(viewer, REQUEST_UPDATE_PHOTO, options)
         view.isDrawingCacheEnabled = false
-    }
-
-    private val messageReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            when (intent.action) {
-                MetaService.BROADCAST_IMAGE_PARSED -> galleryToolbar.subtitle = StringBuilder()
-                    .append(intent.getIntExtra(MetaService.EXTRA_COMPLETED_JOBS, -1))
-                    .append(" of ")
-                    .append(intent.getIntExtra(MetaService.EXTRA_TOTAL_JOBS, -1))//mGalleryAdapter.getCount()));
-                MetaService.BROADCAST_PROCESSING_COMPLETE -> galleryToolbar.subtitle = "Updating..."
-                MetaService.BROADCAST_PARSE_COMPLETE -> {
-                    toolbarProgress.visibility = View.GONE
-                    galleryToolbar.subtitle = ""
-                }
-                SearchService.BROADCAST_SEARCH_STARTED -> {
-                    toolbarProgress.visibility = View.VISIBLE
-                    toolbarProgress.isIndeterminate = true
-                    galleryToolbar.subtitle = "Searching..."
-                }
-                SearchService.BROADCAST_FOUND_IMAGES -> galleryToolbar.title = intent.getIntExtra(SearchService.EXTRA_NUM_IMAGES, 0).toString() + " Images"
-                SearchService.BROADCAST_SEARCH_COMPLETE -> {
-                    val images = intent.getLongArrayExtra(SearchService.EXTRA_IMAGE_IDS)
-                    if (images.isEmpty()) {
-                        if (mActivityVisible)
-                            offerRequestPermission()
-                    } else {
-                        MetaWakefulReceiver.startMetaService(this@GalleryActivity)
-                    }
-                }
-            }
-        }
     }
 
     companion object {

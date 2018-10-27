@@ -4,25 +4,20 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.view.View
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.FullSettingsActivity
-import com.anthonymandra.rawdroid.XmpFilter
-import com.anthonymandra.rawdroid.data.MetadataTest
+import com.anthonymandra.rawdroid.data.ImageInfo
+import io.reactivex.Single
 
-class GalleryViewModel(app: Application) : AndroidViewModel(app) {
+class GalleryViewModel(app: Application) : CoreViewModel(app) {
     //TODO: Split out viewer viewmodel
-    private val dataRepo = (app as App).dataRepo
-
-    val imageList: LiveData<PagedList<MetadataTest>>
+    val imageList: LiveData<PagedList<ImageInfo>>
     val filteredCount: LiveData<Int>
     val filteredProcessedCount: LiveData<Int>
-    val filter: MutableLiveData<XmpFilter> = MutableLiveData()
     private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
     val isZoomLocked: LiveData<Boolean>
         get() = _isZoomLocked
@@ -66,9 +61,13 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         _isZoomLocked.value = false
 
         val settings = PreferenceManager.getDefaultSharedPreferences(app)
-        settings.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+        settings.registerOnSharedPreferenceChangeListener { sharedPreferences, _ ->
             updatePreferences(sharedPreferences)
         }
+    }
+
+    fun selectAll(): Single<LongArray> {
+        return dataRepo.selectAll()
     }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {
@@ -109,10 +108,6 @@ class GalleryViewModel(app: Application) : AndroidViewModel(app) {
         if (prefs.getString(FullSettingsActivity.KEY_ShowToolbar, "Automatic") != comparator) {
             _toolbarVisibility.postValue(isInterfaceVisible)
         }
-    }
-
-    fun setFilter(filter: XmpFilter) {
-        this.filter.value = filter
     }
 
     // TODO: Remove android framework references
