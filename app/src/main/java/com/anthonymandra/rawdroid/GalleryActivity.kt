@@ -379,7 +379,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
         if (galleryAdapter.selectedItemCount == 0)
             selectAll()
 
-        viewModel.images(selectedIds).subscribeBy {
+        viewModel.images(selectedIds)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
             val dialog = RenameDialog(this, it)
             dialog.show()
         }
