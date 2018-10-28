@@ -3,7 +3,6 @@
 package com.anthonymandra.rawdroid.data
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource

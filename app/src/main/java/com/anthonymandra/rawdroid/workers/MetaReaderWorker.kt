@@ -62,7 +62,7 @@ class MetaReaderWorker(context: Context, params: WorkerParameters): Worker(conte
                 .priority = NotificationCompat.PRIORITY_DEFAULT
             notifications.notify(builder.build())
 
-            val metadata = MetaUtil.readMetadata(applicationContext, repo, value)
+            val metadata = MetaUtil.readMetadata(applicationContext, value)
             if (metadata.processed) {
                 repo.updateMeta(value).subscribe()
             }

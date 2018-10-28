@@ -24,6 +24,7 @@ import java.util.*
 
 class RenameDialog(
 		private val activity: CoreActivity,
+		// TODO: We should order these by capture time
 		private val itemsToRename: Collection<ImageInfo>) : Dialog(activity) {
 
 	override fun onCreate(savedInstanceState: Bundle?) {

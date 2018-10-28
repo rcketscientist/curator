@@ -75,7 +75,6 @@
 		<activity
             android:name=".FullSettingsActivity"
             android:theme="@style/Theme.AppCompat"/>
-        <activity android:name=".ViewerActivity" />
 
         <activity-alias
             android:name=".ImportKeywords"
@@ -95,13 +94,12 @@
             </intent-filter>
         </activity-alias>
 
-        <activity-alias
-            android:name=".ViewImage"
+        <activity
+            android:name=".ViewerActivity"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
-            android:label="@string/view"
-            android:targetActivity=".ViewerActivity">
+            android:label="@string/view">
 	        <!-- To open official image formats (jpg, png, etc.) -->
 	        <intent-filter>
 		        <action android:name="android.intent.action.VIEW"/>
@@ -202,7 +200,7 @@
 	            <data android:pathPattern="/.*\\.x3f"/>
 	            <data android:pathPattern="/.*\\.X3F"/>
             </intent-filter>
-        </activity-alias>
+        </activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
