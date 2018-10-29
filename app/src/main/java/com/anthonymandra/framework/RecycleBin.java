@@ -38,8 +38,7 @@ import androidx.annotation.Nullable;
  * This class holds our discarded images
  */
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class RecycleBin
-{
+public class RecycleBin {
 	private static final String TAG = RecycleBin.class.getSimpleName();
 	// TODO: Single char replacements are not sufficient
 	private static final String pathReplacement = "~";
@@ -64,14 +63,11 @@ public class RecycleBin
 
 	/**
 	 * Create new recycling bin with the default parameters.
-	 * 
-	 * @param context
-	 *            The context to use
-	 * @param uniqueName
-	 *            A unique name that will be appended to the cache directory
+	 *
+	 * @param context    The context to use
+	 * @param uniqueName A unique name that will be appended to the cache directory
 	 */
-	public RecycleBin(Context context, String uniqueName, int maxSize)
-	{
+	public RecycleBin(Context context, String uniqueName, int maxSize) {
 		mContext = context;
 		mDiskCacheSize = maxSize;
 		mDiskCacheDir = FileUtil.getDiskCacheDir(context, uniqueName);
@@ -80,12 +76,12 @@ public class RecycleBin
 
 	/**
 	 * Deletes the given file.  This should be overridden if necessary to handle file system changes.
+	 *
 	 * @param toDelete file to delete
 	 * @return success
 	 * @throws IOException the base method does not throw, but the exception is available for subclasses
 	 */
-	protected boolean deleteFile(Uri toDelete) throws IOException
-	{
+	protected boolean deleteFile(Uri toDelete) throws IOException {
 		// This will likely fail due to write permission on any device needing to use this method.
 		// Either handle write permission separately or,
 		// Overload with a call to handle requesting write permission if needed.
@@ -97,33 +93,26 @@ public class RecycleBin
 	 * Adds a file to the recycling bin synchronously.  Recommended to be called asynchronously,
 	 * such as with {@link #addFileAsync(Uri), which will automatically run m AsyncTask}
 	 */
-	public void addFile(Uri toRecycle) throws IOException
-	{
-		if (toRecycle == null)
-		{
+	public void addFile(Uri toRecycle) throws IOException {
+		if (toRecycle == null) {
 			return;
 		}
 
-		synchronized (mDiskCacheLock)
-		{
+		synchronized (mDiskCacheLock) {
 			// Add to disk cache
 			final DiskLruCache bin = getDiskCache();
-			if (bin != null)
-			{
+			if (bin != null) {
 				final String key = fileToKey(toRecycle.toString());
 				BufferedOutputStream out = null;
 				BufferedInputStream bis = null;
-				try
-				{
+				try {
 					DiskLruCache.Snapshot snapshot = bin.get(key);
-					if (snapshot != null)
-					{
+					if (snapshot != null) {
 						bin.remove(key);
 					}
 					final DiskLruCache.Editor editor = bin.edit(key);
-					if (editor != null)
-					{
-                        bis = new BufferedInputStream(FileUtil.getInputStream(mContext, toRecycle));
+					if (editor != null) {
+						bis = new BufferedInputStream(FileUtil.getInputStream(mContext, toRecycle));
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
 
 						Util.copy(bis, out);
@@ -131,11 +120,9 @@ public class RecycleBin
 
 						deleteFile(toRecycle);
 					}
-				}
-				finally
-				{
-                    Util.closeSilently(bis);
-                    Util.closeSilently(out);
+				} finally {
+					Util.closeSilently(bis);
+					Util.closeSilently(out);
 				}
 			}
 		}
@@ -143,40 +130,28 @@ public class RecycleBin
 
 	/**
 	 * Get from disk cache.
-	 * 
-	 * @param data
-	 *            Unique identifier for which item to get
+	 *
+	 * @param data Unique identifier for which item to get
 	 * @return The bitmap if found in cache, null otherwise
 	 */
-	public InputStream getInputStream(String data)
-	{
+	public InputStream getInputStream(String data) {
 		final String key = fileToKey(data);
-		synchronized (mDiskCacheLock)
-		{
-			while (mDiskCacheStarting)
-			{
-				try
-				{
+		synchronized (mDiskCacheLock) {
+			while (mDiskCacheStarting) {
+				try {
 					mDiskCacheLock.wait();
-				}
-				catch (InterruptedException e)
-				{
+				} catch (InterruptedException e) {
 				}
 			}
 
 			final DiskLruCache bin = getDiskCache();
-			if (bin != null)
-			{
-				try
-				{
+			if (bin != null) {
+				try {
 					final DiskLruCache.Snapshot snapshot = bin.get(key);
-					if (snapshot != null)
-					{
+					if (snapshot != null) {
 						return snapshot.getInputStream(DISK_CACHE_INDEX);
 					}
-				}
-				catch (final IOException e)
-				{
+				} catch (final IOException e) {
 					Log.e(TAG, "getFileFromBin - " + e);
 				}
 			}
@@ -187,36 +162,25 @@ public class RecycleBin
 	/**
 	 * Get from disk cache.
 	 *
-	 * @param data
-	 *            Unique identifier for which item to get
+	 * @param data Unique identifier for which item to get
 	 * @return The bitmap if found in cache, null otherwise
 	 */
 	@Nullable
-	public File getFile(String data)
-	{
+	public File getFile(String data) {
 		final String key = fileToKey(data);
-		synchronized (mDiskCacheLock)
-		{
-			while (mDiskCacheStarting)
-			{
-				try
-				{
+		synchronized (mDiskCacheLock) {
+			while (mDiskCacheStarting) {
+				try {
 					mDiskCacheLock.wait();
-				}
-				catch (InterruptedException e)
-				{
+				} catch (InterruptedException e) {
 				}
 			}
 
 			final DiskLruCache bin = getDiskCache();
-			if (bin != null)
-			{
-				try
-				{
+			if (bin != null) {
+				try {
 					return bin.getFile(key, DISK_CACHE_INDEX);
-				}
-				catch (final IOException e)
-				{
+				} catch (final IOException e) {
 					Log.e(TAG, "getFileFromBin - " + e);
 				}
 			}
@@ -224,30 +188,25 @@ public class RecycleBin
 		}
 	}
 
-	public static String keyToFile(String key)
-	{
+	public static String keyToFile(String key) {
 		return key.replaceAll(pathReplacement, File.separator).replaceAll(spaceReplacement, " ");
 	}
 
-	public static String fileToKey(String file)
-	{
+	public static String fileToKey(String file) {
 		return file.replaceAll(File.separator, pathReplacement).replaceAll(" ", spaceReplacement);
 	}
 
 	// AJM: Removed the retain fragment logic
 
-	public List<String> getKeys()
-	{
+	public List<String> getKeys() {
 		List<String> keys = new ArrayList<>();
 		final DiskLruCache bin = getDiskCache();
-		if (bin == null)
-		{
+		if (bin == null) {
 			return keys;
 		}
 
 		Set<String> coded = bin.getKeys();
-		for (String key : coded)
-		{
+		for (String key : coded) {
 			keys.add(keyToFile(key));
 		}
 		return keys;
@@ -255,24 +214,20 @@ public class RecycleBin
 
 	/**
 	 * Returns the maximum size of the bin in bytes
-	 * 
+	 *
 	 * @return
 	 */
-	public long getBinSize()
-	{
+	public long getBinSize() {
 		final DiskLruCache bin = getDiskCache();
 		if (bin == null)
 			return 0;
 		return bin.maxSize();
 	}
 
-	protected class CacheAsyncTask extends AsyncTask<Object, Void, Void>
-	{
+	protected class CacheAsyncTask extends AsyncTask<Object, Void, Void> {
 		@Override
-		protected Void doInBackground(Object... params)
-		{
-			switch ((Integer) params[0])
-			{
+		protected Void doInBackground(Object... params) {
+			switch ((Integer) params[0]) {
 				case MESSAGE_CLEAR:
 					clearCacheInternal();
 					break;
@@ -290,36 +245,26 @@ public class RecycleBin
 		}
 	}
 
-	private DiskLruCache getDiskCache()
-	{
+	private DiskLruCache getDiskCache() {
 		// It's not ideal to possibly call this in a UI thread, but it ensures we won't pull a null after resume
 		if (mDiskLruCache == null)
 			initDiskCacheInternal();
 		return mDiskLruCache;
 	}
 
-	protected void initDiskCacheInternal()
-	{
+	protected void initDiskCacheInternal() {
 		// Set up disk cache
-		synchronized (mDiskCacheLock)
-		{
-			if (mDiskLruCache == null || mDiskLruCache.isClosed())
-			{
+		synchronized (mDiskCacheLock) {
+			if (mDiskLruCache == null || mDiskLruCache.isClosed()) {
 				File diskCacheDir = mDiskCacheDir;
-				if (diskCacheDir != null)
-				{
-					if (!diskCacheDir.exists())
-					{
+				if (diskCacheDir != null) {
+					if (!diskCacheDir.exists()) {
 						diskCacheDir.mkdirs();
 					}
-					if (FileUtil.getUsableSpace(diskCacheDir) > mDiskCacheSize)
-					{
-						try
-						{
+					if (FileUtil.getUsableSpace(diskCacheDir) > mDiskCacheSize) {
+						try {
 							mDiskLruCache = DiskLruCache.open(diskCacheDir, 1, 1, mDiskCacheSize);
-						}
-						catch (final IOException e)
-						{
+						} catch (final IOException e) {
 							mDiskCacheDir = null;
 							Log.e(TAG, "initDiskCache - " + e);
 						}
@@ -331,21 +276,14 @@ public class RecycleBin
 		}
 	}
 
-	protected void clearCacheInternal()
-	{
-		if (mDiskLruCache != null)
-		{
-			synchronized (mDiskCacheLock)
-			{
+	protected void clearCacheInternal() {
+		if (mDiskLruCache != null) {
+			synchronized (mDiskCacheLock) {
 				mDiskCacheStarting = true;
-				if (mDiskLruCache != null && !mDiskLruCache.isClosed())
-				{
-					try
-					{
+				if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
+					try {
 						mDiskLruCache.delete();
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						Log.e(TAG, "clearCache - " + e);
 					}
 					mDiskLruCache = null;
@@ -359,20 +297,13 @@ public class RecycleBin
 	 * Flushes the disk cache associated with this ImageCache object. Note that this includes disk access so this should not be executed on the
 	 * main/UI thread.
 	 */
-	protected void flushCacheInternal()
-	{
-		if (mDiskLruCache != null)
-		{
-			synchronized (mDiskCacheLock)
-			{
-				if (mDiskLruCache != null)
-				{
-					try
-					{
+	protected void flushCacheInternal() {
+		if (mDiskLruCache != null) {
+			synchronized (mDiskCacheLock) {
+				if (mDiskLruCache != null) {
+					try {
 						mDiskLruCache.flush();
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						Log.e(TAG, "flush - " + e);
 					}
 				}
@@ -384,24 +315,16 @@ public class RecycleBin
 	 * Closes the disk cache associated with this ImageCache object. Note that this includes disk access so this should not be executed on the main/UI
 	 * thread.
 	 */
-	protected void closeCacheInternal()
-	{
-		if (mDiskLruCache != null)
-		{
-			synchronized (mDiskCacheLock)
-			{
-				if (mDiskLruCache != null)
-				{
-					try
-					{
-						if (!mDiskLruCache.isClosed())
-						{
+	protected void closeCacheInternal() {
+		if (mDiskLruCache != null) {
+			synchronized (mDiskCacheLock) {
+				if (mDiskLruCache != null) {
+					try {
+						if (!mDiskLruCache.isClosed()) {
 							mDiskLruCache.close();
 							mDiskLruCache = null;
 						}
-					}
-					catch (IOException e)
-					{
+					} catch (IOException e) {
 						Log.e(TAG, "close - " + e);
 					}
 				}
@@ -410,82 +333,65 @@ public class RecycleBin
 		}
 	}
 
-	protected void removeFileInternal(String file)
-	{
-		try
-		{
+	protected void removeFileInternal(String file) {
+		try {
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null)
 				bin.remove(file);
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 			e.printStackTrace();
 		}
 	}
 
-	public class AddFileTask extends AsyncTask<Uri, Void, Void>
-	{
+	public class AddFileTask extends AsyncTask<Uri, Void, Void> {
 		@Override
-		protected Void doInBackground(Uri... params)
-		{
-			try
-			{
+		protected Void doInBackground(Uri... params) {
+			try {
 				// FIXME: It may not be possible to do this with the new permission infrastructure
 				addFile(params[0]);
-			} catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			return null;
 		}
 	}
 
-	public class RemoveFileTask extends AsyncTask<String, Void, Void>
-	{
+	public class RemoveFileTask extends AsyncTask<String, Void, Void> {
 		@Override
-		protected Void doInBackground(String... params)
-		{
+		protected Void doInBackground(String... params) {
 			removeFileInternal(params[0]);
 			return null;
 		}
 	}
 
-	public void initDiskCache()
-	{
+	public void initDiskCache() {
 		new CacheAsyncTask().execute(MESSAGE_INIT_DISK_CACHE);
 	}
 
 	/**
 	 * Adds a file to the recycling bin, then finally deletes it. Operates on its an {@link AsyncTask} for file IO
-	 * 
-	 * @param recycledItem
-	 *            File to recycle and delete
+	 *
+	 * @param recycledItem File to recycle and delete
 	 */
 	@Deprecated // Write permission issues would be lost
-	public void addFileAsync(Uri recycledItem)
-	{
+	public void addFileAsync(Uri recycledItem) {
 		new AddFileTask().execute(recycledItem);
 	}
 
-	public void removeFile(String key)
-	{
+	public void removeFile(String key) {
 		new RemoveFileTask().execute(key);
 	}
 
-	public void clearCache()
-	{
+	public void clearCache() {
 		new CacheAsyncTask().execute(MESSAGE_CLEAR);
 	}
 
-	public void flushCache()
-	{
+	public void flushCache() {
 		new CacheAsyncTask().execute(MESSAGE_FLUSH);
 	}
 
-	public void closeCache()
-	{
+	public void closeCache() {
 		new CacheAsyncTask().execute(MESSAGE_CLOSE);
 	}
 }

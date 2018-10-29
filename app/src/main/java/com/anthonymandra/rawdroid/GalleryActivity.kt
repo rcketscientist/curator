@@ -56,10 +56,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	protected val isContextModeActive: Boolean
 		get() = mMaterialCab?.isActive ?: false
 
-	private enum class WriteResume {
-		Search
-	}
-
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
@@ -69,7 +65,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 		setSupportActionBar(galleryToolbar)
 		fab.setOnClickListener {
-			setWriteResume(WriteResume.Search, emptyArray())
 			requestWritePermission()
 		}
 
@@ -164,7 +159,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			viewModel.setFilter(filter)
 		}
 		mXmpFilterFragment!!.registerSearchRootRequestedListener {
-			setWriteResume(WriteResume.Search, emptyArray())
 			requestWritePermission()
 			drawerLayout.closeDrawer(GravityCompat.START)
 		}
@@ -358,7 +352,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			}
 			R.id.galleryRefresh -> {
 				if (rootPermissions.size == 0) {
-					setWriteResume(WriteResume.Search, emptyArray())
 					requestWritePermission()
 				} else {
 					scanRawFiles()
@@ -444,16 +437,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	override fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long) {
 		if (!isContextModeActive)
 			startContextMode()
-	}
-
-	override fun onResumeWriteAction(callingMethod: Enum<*>?, callingParameters: Array<Any>) {
-		super.onResumeWriteAction(callingMethod, callingParameters)
-		if (callingMethod == null)
-			return
-
-		when (callingMethod as WriteResume?) {
-			GalleryActivity.WriteResume.Search -> scanRawFiles()
-		}
 	}
 
 	@SuppressLint("RestrictedApi")  //startActivityForResult bug

@@ -9,6 +9,8 @@ import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.util.Log;
 
+import com.anthonymandra.framework.UsefulDocumentFile;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -174,6 +176,11 @@ public class FileUtil
 	}
 
 	public static void copy(Context context, Uri source, Uri destination) throws IOException {
+		// TODO: Clean this up and protect that NPE
+		UsefulDocumentFile destinationFile = ImageUtil.getXmpFile(context, destination);
+		if(!destinationFile.exists()) {
+			destinationFile.getParentFile().createFile(null, destinationFile.getName());
+		}
 		try (
 			InputStream inStream = context.getContentResolver().openInputStream(source);
 			OutputStream outStream = context.getContentResolver().openOutputStream(destination)) {
