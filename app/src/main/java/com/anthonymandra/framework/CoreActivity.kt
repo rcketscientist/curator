@@ -15,7 +15,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.preference.PreferenceManager
-import android.provider.DocumentsContract
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -384,9 +383,7 @@ abstract class CoreActivity : AppCompatActivity() {
 			.setNeutralButton(R.string.neutral) { _, _ -> } // cancel, do nothing
 			.setPositiveButton(R.string.restoreFile) { _, _ ->
 				if (!filesToRestore.isEmpty()) {
-					restoreImages(
-						filesToRestore.map { it.toUri() }
-					)
+					restoreImages(filesToRestore.map { it.toUri() })
 				}
 			}
 			.setMultiChoiceItems(shortNames.toTypedArray(), null) { _, which, isChecked ->
@@ -566,19 +563,25 @@ abstract class CoreActivity : AppCompatActivity() {
 	}
 
 	private fun restoreImages(images: List<Uri>) {
+		var parentMap: MutableMap<String, Long> = mutableMapOf()
+
 		Observable.fromArray(*images.toTypedArray())
+			.doOnSubscribe { _ ->
+				parentMap = dataRepo.parents.associateByTo(
+					mutableMapOf(), {it.documentUri}, {it.id})
+			}
 			.doOnNext {
 				val recycledFile = recycleBin.getFile(it.toString()) ?: throw java.lang.Exception("Failed to restore: $it")
 				val uri = Uri.fromFile(recycledFile)
-				FileUtil.move(this, uri, it)
+				FileUtil.copy(this, uri, it)
 			}
 			.subscribeOn(Schedulers.from(AppExecutors.DISK))
 			.subscribeBy(
 				onNext = {
-					val info = ImageInfo()
-					info.uri = it.toString()
-					val parsed = MetaUtil.readMetadata(this, info)
-					dataRepo.insertImages(parsed)
+					val info = MetaUtil.getImageFileInfo(this, UsefulDocumentFile.fromUri(this, it), parentMap)
+					val parsed = MetaUtil.readMetadata(this, ImageInfo.fromMetadataEntity(info))
+					dataRepo.insertMeta(parsed)
+					recycleBin.removeFile(it.toString())
 				},
 				onError = { /* TODO: Notifications */ },
 				onComplete = { /* TODO: Notifications */ }

@@ -170,7 +170,7 @@ public class FileUtil
 
 	public static boolean copy(Context context, Uri source, Uri destination) throws IOException {
 		// TODO: Clean this up and protect that NPE
-		UsefulDocumentFile destinationFile = ImageUtil.getXmpFile(context, destination);
+		UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(context, destination);
 		UsefulDocumentFile.FileData destinationData = destinationFile.getData();
 
 		if(destinationData == null || !destinationData.exists) {
@@ -180,7 +180,7 @@ public class FileUtil
 				return false;
 			}
 			parent.createFile(null,
-				destinationData != null ? destinationData.name : parent.getName());
+				destinationData != null ? destinationData.name : destinationFile.getName());
 		}
 		try (
 			InputStream inStream = context.getContentResolver().openInputStream(source);

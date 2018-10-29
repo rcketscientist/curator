@@ -375,7 +375,12 @@ public class RecycleBin {
 		new AddFileTask().execute(recycledItem);
 	}
 
-	public void removeFile(String key) {
+	public void removeKey(String key) {
+		new RemoveFileTask().execute(key);
+	}
+
+	public void removeFile(String file) {
+		final String key = fileToKey(file);
 		new RemoveFileTask().execute(key);
 	}
 

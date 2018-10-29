@@ -261,6 +261,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		super.onActivityResult(requestCode, resultCode, intent)
 
 		when (requestCode) {
+			REQUEST_SEARCH -> if (resultCode == RESULT_OK && intent != null) {
+				scanRawFiles()
+			}
 			REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && intent != null) {
 				intent.data?.let { uri ->
 					viewModel.startCopyWorker(mItemsForIntent, uri)

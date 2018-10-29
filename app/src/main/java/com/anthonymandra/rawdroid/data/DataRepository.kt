@@ -178,12 +178,13 @@ class DataRepository private constructor(private val database: AppDatabase) {
 		return getImages(ImageFilter())
 	}
 
+	@WorkerThread
 	fun insertMeta(vararg inserts: ImageInfo): List<Long> {
 		val subjectMapping = mutableListOf<SubjectJunction>()
 		inserts.forEach { image ->
 			image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it) }
 		}
-		if (!subjectMapping.isEmpty()) {
+		if (subjectMapping.isNotEmpty()) {
 			database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
 		}
 		return database.metadataDao().replace(*inserts)

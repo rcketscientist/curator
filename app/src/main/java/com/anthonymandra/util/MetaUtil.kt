@@ -200,7 +200,7 @@ object MetaUtil {
 	 */
 	fun getImageFileInfo(c: Context,
 								file: UsefulDocumentFile,
-								parentMap: MutableMap<String, Long> = mutableMapOf()): MetadataEntity {
+								parentMap: MutableMap<String, Long>): MetadataEntity {
 		return getImageFileInfo(c, file, parentMap, null)
 	}
 
@@ -208,8 +208,16 @@ object MetaUtil {
 	 * Parses file info and adds the [file] under [parentId]
 	 */
 	fun getImageFileInfo(c: Context,
+								file: UsefulDocumentFile): MetadataEntity {
+		return getImageFileInfo(c, file, mutableMapOf(), null)
+	}
+
+	/**
+	 * Parses file info and adds the [file] under [parentId]
+	 */
+	fun getImageFileInfo(c: Context,
 								file: UsefulDocumentFile,
-								parentId: Long? = null): MetadataEntity {
+								parentId: Long): MetadataEntity {
 		return getImageFileInfo(c, file, mutableMapOf(), parentId)
 	}
 
@@ -224,6 +232,7 @@ object MetaUtil {
 								parentMap: MutableMap<String, Long>,
 								parentId: Long?): MetadataEntity {
 		val repo = DataRepository.getInstance(c)
+		// FIXME: This requires a populated parentMap for existing parents, otherwise it will re-add and insert (-1)
 
 		val fd = file.cachedData
 		val metadata = MetadataEntity()
