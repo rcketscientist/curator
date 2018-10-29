@@ -65,7 +65,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 		setSupportActionBar(galleryToolbar)
 		fab.setOnClickListener {
-			requestWritePermission()
+			requestWritePermission(REQUEST_SEARCH)
 		}
 
 		filterSidebarButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
@@ -159,7 +159,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			viewModel.setFilter(filter)
 		}
 		mXmpFilterFragment!!.registerSearchRootRequestedListener {
-			requestWritePermission()
+			requestWritePermission(REQUEST_SEARCH)
 			drawerLayout.closeDrawer(GravityCompat.START)
 		}
 
@@ -351,8 +351,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 				return false
 			}
 			R.id.galleryRefresh -> {
-				if (rootPermissions.size == 0) {
-					requestWritePermission()
+				if (rootPermissions.isEmpty()) {
+					requestWritePermission(REQUEST_SEARCH)
 				} else {
 					scanRawFiles()
 				}
@@ -360,10 +360,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			}
 			R.id.galleryTutorial -> {
 				startActivityForResult(Intent(this@GalleryActivity, TutorialActivity::class.java), REQUEST_TUTORIAL)
-				return true
-			}
-			R.id.gallerySd -> {
-				requestWritePermission()
 				return true
 			}
 			else -> return super.onOptionsItemSelected(item)
@@ -441,7 +437,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 	@SuppressLint("RestrictedApi")  //startActivityForResult bug
 	override fun onItemClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long) {
-		val uri = galleryAdapter.getUri(position)
 		// Don't start an intent while in context mode
 		if (isContextModeActive) return
 
@@ -482,6 +477,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		private const val REQUEST_UPDATE_PHOTO = 16
 		private const val REQUEST_ACCESS_USB = 17
 		private const val REQUEST_TUTORIAL = 18
+		private const val REQUEST_SEARCH = 19
 
 		const val RESULT_ERROR = -111
 

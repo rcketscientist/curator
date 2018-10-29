@@ -1,27 +1,20 @@
 package com.anthonymandra.util;
 
-import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.ParcelFileDescriptor;
 import android.os.StatFs;
 import android.util.Log;
 
 import com.anthonymandra.framework.UsefulDocumentFile;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Utility class for helping parsing file systems.
@@ -175,11 +168,19 @@ public class FileUtil
 		return count;
 	}
 
-	public static void copy(Context context, Uri source, Uri destination) throws IOException {
+	public static boolean copy(Context context, Uri source, Uri destination) throws IOException {
 		// TODO: Clean this up and protect that NPE
 		UsefulDocumentFile destinationFile = ImageUtil.getXmpFile(context, destination);
-		if(!destinationFile.exists()) {
-			destinationFile.getParentFile().createFile(null, destinationFile.getName());
+		UsefulDocumentFile.FileData destinationData = destinationFile.getData();
+
+		if(destinationData == null || !destinationData.exists) {
+			UsefulDocumentFile parent = destinationData != null ?
+				UsefulDocumentFile.fromUri(context, destinationData.parent) : destinationFile.getParentFile();
+			if (parent == null) {
+				return false;
+			}
+			parent.createFile(null,
+				destinationData != null ? destinationData.name : parent.getName());
 		}
 		try (
 			InputStream inStream = context.getContentResolver().openInputStream(source);
@@ -192,5 +193,24 @@ public class FileUtil
 		catch(Exception e) {
 			throw new IOException("Failed to copy " + source.getPath() + ": " + e.toString());
 		}
+		return true;
+	}
+
+	/**
+	 * Move a file within the constraints of SAF.
+	 *
+	 * @param source The source uri
+	 * @param target The target uri
+	 * @return true if the copying was successful.
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static boolean move(final Context context, final Uri source, final Uri target) throws IOException
+	{
+		boolean success = copy(context, source, target);
+		if (success) {
+			UsefulDocumentFile sourceFile = UsefulDocumentFile.fromUri(context, source);
+			success = sourceFile.delete();
+		}
+		return success;
 	}
 }

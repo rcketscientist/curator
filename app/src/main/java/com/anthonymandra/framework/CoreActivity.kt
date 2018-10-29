@@ -1,21 +1,28 @@
 package com.anthonymandra.framework
 
+import android.Manifest
 import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.UriPermission
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.preference.PreferenceManager
+import android.provider.DocumentsContract
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
@@ -36,9 +43,9 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 
-abstract class CoreActivity : DocumentActivity() {
+abstract class CoreActivity : AppCompatActivity() {
 
-	protected lateinit var recycleBin: DocumentRecycleBin
+	private lateinit var recycleBin: RecycleBin
 	private lateinit var mSwapDir: File
 
 	protected lateinit var xmpEditFragment: XmpEditFragment
@@ -62,6 +69,7 @@ abstract class CoreActivity : DocumentActivity() {
 	protected abstract val contentView: Int
 
 	protected val dataRepo by lazy { (application as App).dataRepo }
+	protected val rootPermissions: List<UriPermission> by lazy { contentResolver.persistedUriPermissions }
 
 	/**
 	 * @return The root view for this activity.
@@ -72,7 +80,6 @@ abstract class CoreActivity : DocumentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(contentView)
-		setStoragePermissionRequestEnabled(true)
 
 		licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
 
@@ -98,6 +105,13 @@ abstract class CoreActivity : DocumentActivity() {
 		super.onResume()
 		createSwapDir()
 		createRecycleBin()
+
+		val needsRead = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+
+		val needsWrite = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+
+		if (needsRead || needsWrite)
+			requestStoragePermission()
 	}
 
 	override fun onPause() {
@@ -156,8 +170,50 @@ abstract class CoreActivity : DocumentActivity() {
 		}
 	}
 
-	override fun onResumeWriteAction(callingMethod: Enum<*>?, callingParameters: Array<Any>) {
-		// TODO: Other than restore I don't think all this nonsense is worth it.
+	/**
+	 * Requests the ability to read or write to external storage.
+	 */
+	private fun requestStoragePermission() {
+		val justifyWrite = ActivityCompat.shouldShowRequestPermissionRationale(this,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE)
+		val justifyRead = ActivityCompat.shouldShowRequestPermissionRationale(this,
+			Manifest.permission.READ_EXTERNAL_STORAGE)
+
+		// Storage permission has been requested and denied, show a Snackbar with the option to
+		// grant permission
+		if (justifyRead || justifyWrite) {
+			// Provide an additional rationale to the user if the permission was not granted
+			// and the user would benefit from additional context for the use of the permission.
+			Snackbar.make(rootView, R.string.permissionStorageRationale, Snackbar.LENGTH_INDEFINITE)
+				.setAction(com.anthonymandra.framework.R.string.ok) {
+					ActivityCompat.requestPermissions(this,
+						PERMISSIONS_STORAGE, REQUEST_STORAGE_PERMISSION)
+				}
+				.show()
+		} else {
+			// Storage permission has not been requested yet. Request for first time.
+			ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_STORAGE_PERMISSION)
+		}
+	}
+
+	protected fun requestWritePermission(requestCode: Int) {
+		if (Util.hasLollipop()) {
+			runOnUiThread {
+				val image = ImageView(this)
+				image.setImageDrawable(getDrawable(com.anthonymandra.framework.R.drawable.document_api_guide))
+				val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+					.setTitle(com.anthonymandra.framework.R.string.dialogWriteRequestTitle)
+					.setView(image)
+				val dialog = builder.create()
+				image.setOnClickListener {
+					val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+//					intent.putExtra(DocumentsContract.EXTRA_PROMPT, getString(com.anthonymandra.framework.R.string.allowWrite))
+					startActivityForResult(intent, requestCode)
+					dialog.dismiss()
+				}
+				dialog.show()
+			}
+		}
 	}
 
 	@TargetApi(Build.VERSION_CODES.O)
@@ -307,7 +363,7 @@ abstract class CoreActivity : DocumentActivity() {
 		}
 
 		if (useRecycle) {
-			recycleBin = DocumentRecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024)
+			recycleBin = RecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024)
 		}
 	}
 
@@ -514,7 +570,7 @@ abstract class CoreActivity : DocumentActivity() {
 			.doOnNext {
 				val recycledFile = recycleBin.getFile(it.toString()) ?: throw java.lang.Exception("Failed to restore: $it")
 				val uri = Uri.fromFile(recycledFile)
-				moveFile(uri, it)
+				FileUtil.move(this, uri, it)
 			}
 			.subscribeOn(Schedulers.from(AppExecutors.DISK))
 			.subscribeBy(
@@ -540,7 +596,17 @@ abstract class CoreActivity : DocumentActivity() {
 		const val SWAP_BIN_DIR = "swap"
 		const val RECYCLE_BIN_DIR = "recycle"
 
+		private const val REQUEST_STORAGE_PERMISSION = 0
 		private const val REQUEST_SAVE_AS_DIR = 15
+
 		private const val EXPIRATION = 5184000000L //~60 days
+
+		/**
+		 * Permissions required to read and write to storage.
+		 */
+		private val PERMISSIONS_STORAGE = arrayOf(
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.WRITE_EXTERNAL_STORAGE
+		)
 	}
 }

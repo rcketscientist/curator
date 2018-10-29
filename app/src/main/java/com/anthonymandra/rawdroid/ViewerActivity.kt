@@ -230,6 +230,5 @@ class ViewerActivity : CoreActivity() {
 		private val TAG = ViewerActivity::class.java.simpleName
 		const val EXTRA_START_INDEX = "viewer_index"
 		const val EXTRA_FILTER = "viewer_filter"
-		private val tempFolder = FolderEntity("tempFolder", true, true, -1)
 	}
 }

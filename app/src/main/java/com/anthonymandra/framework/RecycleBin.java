@@ -79,12 +79,8 @@ public class RecycleBin {
 	 *
 	 * @param toDelete file to delete
 	 * @return success
-	 * @throws IOException the base method does not throw, but the exception is available for subclasses
 	 */
-	protected boolean deleteFile(Uri toDelete) throws IOException {
-		// This will likely fail due to write permission on any device needing to use this method.
-		// Either handle write permission separately or,
-		// Overload with a call to handle requesting write permission if needed.
+	protected boolean deleteFile(Uri toDelete) {
 		UsefulDocumentFile df = UsefulDocumentFile.fromUri(mContext, toDelete);
 		return df.delete();
 	}
