@@ -124,6 +124,10 @@ class DataRepository private constructor(private val database: AppDatabase) {
 		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
 	}
 
+	fun synchSubjects(ids: LongArray): List<SubjectEntity> {
+		return database.subjectDao().get(ids)
+	}
+
 	// ---- Pure folder database calls -----
 	val parents get() = database.folderDao().parents
 	val lifecycleParents get() = database.folderDao().lifecycleParents

@@ -11,68 +11,71 @@ import java.io.Reader
 
 @Dao
 abstract class SubjectDao : PathDao<SubjectEntity>("xmp_subject") {
-    @get:Query("SELECT * FROM xmp_subject ORDER BY recent DESC, name ASC")
-    abstract val all: LiveData<List<SubjectEntity>>
+	@get:Query("SELECT * FROM xmp_subject ORDER BY recent DESC, name ASC")
+	abstract val all: LiveData<List<SubjectEntity>>
 
-    @Query("SELECT COUNT(*) FROM xmp_subject")
-    abstract fun count(): Int
+	@Query("SELECT COUNT(*) FROM xmp_subject")
+	abstract fun count(): Int
 
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH) // We don't need metaId and subjectId
-    @Query("SELECT * FROM xmp_subject " +
-        "INNER JOIN meta_subject_junction " +
-        "ON meta_subject_junction.subjectId = xmp_subject.id " +
-        "WHERE id = :metaId")
-    abstract fun subjectsForImage(metaId: Long?): List<SubjectEntity>
+	@Query("SELECT * FROM xmp_subject WHERE id IN (:ids)")
+	abstract fun get(ids: LongArray) : List<SubjectEntity>
 
-    @Query("SELECT id FROM xmp_subject WHERE name IN (:subjects)")
-    abstract fun idsForNames(subjects: List<String>) : List<Long>
+	@SuppressWarnings(RoomWarnings.CURSOR_MISMATCH) // We don't need metaId and subjectId
+	@Query("SELECT * FROM xmp_subject " +
+		"INNER JOIN meta_subject_junction " +
+		"ON meta_subject_junction.subjectId = xmp_subject.id " +
+		"WHERE id = :metaId")
+	abstract fun subjectsForImage(metaId: Long?): List<SubjectEntity>
 
-    @Query("DELETE FROM xmp_subject")
-    abstract fun deleteAll()
+	@Query("SELECT id FROM xmp_subject WHERE name IN (:subjects)")
+	abstract fun idsForNames(subjects: List<String>): List<Long>
 
-    //TODO: This belongs in a data repository
-    @Throws(IOException::class)
-    fun importKeywords(keywordList: Reader) {
-        //Ex:
-        //National Park
-        //		Badlands
-        //		Bryce Canyon
-        //		Grand Teton
-        //		Haesindang Park
-        //			{Penis Park}
+	@Query("DELETE FROM xmp_subject")
+	abstract fun deleteAll()
 
-        // Clear the existing database
-        deleteAll()
+	//TODO: This belongs in a data repository
+	@Throws(IOException::class)
+	fun importKeywords(keywordList: Reader) {
+		//Ex:
+		//National Park
+		//		Badlands
+		//		Bryce Canyon
+		//		Grand Teton
+		//		Haesindang Park
+		//			{Penis Park}
 
-        val readBuffer = BufferedReader(keywordList)
+		// Clear the existing database
+		deleteAll()
 
-        val parents = SparseArray<Long>()
-        readBuffer.forEachLine { line ->
-            val tokens = line.split("\t".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-            val depth = tokens.size - 1
-            var name = tokens[depth]
+		val readBuffer = BufferedReader(keywordList)
 
-            // If the entry is a synonym ex: {bread} then trim and add to parent
-            if (name.startsWith("{") && name.endsWith("}")) {
-                name = name.substring(1, name.length - 1)
-                val synonym = SynonymEntity()
-                synonym.subjectId = parents.get(depth - 1)
+		val parents = SparseArray<Long>()
+		readBuffer.forEachLine { line ->
+			val tokens = line.split("\t".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+			val depth = tokens.size - 1
+			var name = tokens[depth]
 
-                // FIXME: add synonym
-                return@forEachLine
-            }
+			// If the entry is a synonym ex: {bread} then trim and add to parent
+			if (name.startsWith("{") && name.endsWith("}")) {
+				name = name.substring(1, name.length - 1)
+				val synonym = SynonymEntity()
+				synonym.subjectId = parents.get(depth - 1)
 
-            val keyword = SubjectEntity()
-            keyword.name = name
+				// FIXME: add synonym
+				return@forEachLine
+			}
 
-            val id = parents.get(depth - 1)
-            if (id != null) {
-                keyword.parent = id
-            }
+			val keyword = SubjectEntity()
+			keyword.name = name
 
-            val childId = insert(keyword)
+			val id = parents.get(depth - 1)
+			if (id != null) {
+				keyword.parent = id
+			}
 
-            parents.put(depth, childId)
-        }
-    }
+			val childId = insert(keyword)
+
+			parents.put(depth, childId)
+		}
+	}
 }
