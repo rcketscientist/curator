@@ -21,9 +21,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
-def versionMajor = 5
-def versionMinor = 6
-def versionPatch = 4
+def versionMajor = 6
+def versionMinor = 0
+def versionPatch = 0
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -41,6 +41,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 28
+
+        versionCode versionMajor * 100000 + versionMinor * 1000 + versionPatch
         versionName "${versionMajor}.${versionMinor}.${versionPatch}"
         buildConfigField "long", "BUILD_TIME", System.currentTimeMillis() + "L"
 
