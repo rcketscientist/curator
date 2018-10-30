@@ -118,10 +118,10 @@ class MetaWriterWorker(context: Context, params: WorkerParameters): Worker(conte
 		fun buildRequest(images: LongArray, meta: XmpValues, field: XmpUpdateField): OneTimeWorkRequest {
 			val data = workDataOf(
 				KEY_IMAGE_IDS to images,
-				KEY_SUBJECT to meta.subject.toTypedArray(),
+				KEY_SUBJECT to meta.subject.map { it.name }.toTypedArray(),
 				KEY_LABEL to meta.label,
 				KEY_RATING to meta.rating,
-				KEY_UPDATE_FIELD to field
+				KEY_UPDATE_FIELD to field.toString()
 			)
 
 			return OneTimeWorkRequestBuilder<MetaWriterWorker>()

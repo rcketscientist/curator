@@ -45,9 +45,9 @@ object MetaUtil {
 	internal var mLibrawFormatter = SimpleDateFormat("EEE MMM d hh:mm:ss yyyy")
 	private val mMetaExtractorFormat = SimpleDateFormat("yyyy:MM:dd H:m:s")
 
-	val LABEL = XmpProperty(Schema.XMP_PROPERTIES, "xmp:label")
-	val RATING = XmpProperty(Schema.XMP_PROPERTIES, "xmp:rating")
-	val SUBJECT = XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:subject")
+	val LABEL = XmpProperty(Schema.XMP_PROPERTIES, "xmp:Label")
+	val RATING = XmpProperty(Schema.XMP_PROPERTIES, "xmp:Rating")
+	val SUBJECT = XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Subject")
 	val CREATOR = XmpProperty(Schema.DUBLIN_CORE_SPECIFIC_PROPERTIES, "dc:Creator")    //TODO: TEST
 
 	class XmpProperty internal constructor(internal val Schema: String, val Name: String)
