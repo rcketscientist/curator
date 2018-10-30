@@ -91,20 +91,20 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration!!.extension)	// Can't be null, but maybe redesign to avoid ?
 			val destinationFile = parentFile.createFile(null, desiredName)
 
-			val inputPfd = applicationContext.contentResolver.openFileDescriptor(source.uri, "r")
-			val outputPfd = applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")
-
-			when (imageConfiguration.type) {
-				ImageConfiguration.ImageType.JPEG -> {
-					val quality = (imageConfiguration as JpegConfiguration).quality
-					ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+			applicationContext.contentResolver.openFileDescriptor(source.uri, "r")?.use { inputPfd ->
+			applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")?.use { outputPfd ->
+				when (imageConfiguration.type) {
+					ImageConfiguration.ImageType.JPEG -> {
+						val quality = (imageConfiguration as JpegConfiguration).quality
+						ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+					}
+					ImageConfiguration.ImageType.TIFF -> {
+						val compress = (imageConfiguration as TiffConfiguration).compress
+						ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
+					}
+					else -> throw UnsupportedOperationException("unimplemented save type.")
 				}
-				ImageConfiguration.ImageType.TIFF -> {
-					val compress = (imageConfiguration as TiffConfiguration).compress
-					ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
-				}
-				else -> throw UnsupportedOperationException("unimplemented save type.")
-			}
+			}}
 
 			if (insert) {
 				// TODO: reuse the image meta and replace uri/id...?

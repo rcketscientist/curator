@@ -8,11 +8,6 @@
         app:showAsAction="always"
         android:title="@string/selectAll"/>
     <item
-        android:id="@+id/gallerySd"
-        android:icon="@android:drawable/ic_menu_gallery"
-        app:showAsAction="always"
-        android:visible="false"/>
-    <item
         android:id="@+id/menu_recycle"
         android:icon="@drawable/ic_recycle"
         android:orderInCategory="12"

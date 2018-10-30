@@ -3,7 +3,6 @@
 package com.anthonymandra.rawdroid.data
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
@@ -125,6 +124,10 @@ class DataRepository private constructor(private val database: AppDatabase) {
 		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
 	}
 
+	fun synchSubjects(ids: LongArray): List<SubjectEntity> {
+		return database.subjectDao().get(ids)
+	}
+
 	// ---- Pure folder database calls -----
 	val parents get() = database.folderDao().parents
 	val lifecycleParents get() = database.folderDao().lifecycleParents
@@ -179,12 +182,13 @@ class DataRepository private constructor(private val database: AppDatabase) {
 		return getImages(ImageFilter())
 	}
 
+	@WorkerThread
 	fun insertMeta(vararg inserts: ImageInfo): List<Long> {
 		val subjectMapping = mutableListOf<SubjectJunction>()
 		inserts.forEach { image ->
 			image.subjectIds.mapTo(subjectMapping) { SubjectJunction(image.id, it) }
 		}
-		if (!subjectMapping.isEmpty()) {
+		if (subjectMapping.isNotEmpty()) {
 			database.subjectJunctionDao().insert(*subjectMapping.toTypedArray())
 		}
 		return database.metadataDao().replace(*inserts)
@@ -363,8 +367,6 @@ class DataRepository private constructor(private val database: AppDatabase) {
 			query.append(order)
 
 			selectionArgs.addAll(whereArgs)
-
-			Log.d("TEST", query.toString())
 
 			return SimpleSQLiteQuery(query.toString(), selectionArgs.toArray())
 		}

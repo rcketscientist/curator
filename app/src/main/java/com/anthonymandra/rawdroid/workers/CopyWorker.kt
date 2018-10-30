@@ -81,7 +81,7 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 	 * @param toImage target image
 	 * @return success
 	 */
-	private fun copyAssociatedFiles(fromImage: MetadataEntity, toImage: Uri) {
+	private fun copyAssociatedFiles(fromImage: MetadataEntity, toImage: Uri): Boolean {
 		val sourceUri = Uri.parse(fromImage.uri)
 		if (ImageUtil.hasXmpFile(applicationContext, sourceUri)) {
 			FileUtil.copy(applicationContext,

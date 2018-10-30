@@ -20,9 +20,6 @@ typealias LabelChangedListener = (label: String?) -> Unit
 typealias SubjectChangedListener = (subject: Collection<SubjectEntity>?) -> Unit
 typealias MetaChangedListener = (xmp: XmpValues) -> Unit
 class XmpEditFragment : XmpBaseFragment() {
-    private lateinit var recentRating: ImageView
-    private lateinit var recentLabel: ImageView
-
     private var mRatingListener: RatingChangedListener? = null
     private var mLabelListener: LabelChangedListener? = null
     private var mSubjectListener: SubjectChangedListener? = null

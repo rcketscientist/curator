@@ -7,9 +7,8 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.FolderEntity
-import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.util.ImageUtil
+import com.anthonymandra.util.MetaUtil
 
 class SearchWorker(context: Context, params: WorkerParameters): Worker(context, params) {
 	override fun doWork(): Result {
@@ -29,7 +28,7 @@ class SearchWorker(context: Context, params: WorkerParameters): Worker(context, 
 		}.toList()
 
 		val images = search(foldersToSearch).map {
-			getImageFileInfo(it, parentMap, repo)
+			MetaUtil.getImageFileInfo(applicationContext, it, parentMap)
 		}
 
 		if (images.isNotEmpty()) {
@@ -57,36 +56,6 @@ class SearchWorker(context: Context, params: WorkerParameters): Worker(context, 
 		}
 
 		return images.plus(files.filter { ImageUtil.isImage(it.cachedData?.name) })
-	}
-
-	// TODO: This should be a custom DocumentProvider
-	private fun getImageFileInfo(file: UsefulDocumentFile,
-	                             parentMap: MutableMap<String, Long>,
-	                             dataRepo: DataRepository): MetadataEntity {
-		val fd = file.cachedData
-		val metadata = MetadataEntity()
-
-		var parent: String? = null
-		if (fd != null) {
-			metadata.name = fd.name
-			parent = fd.parent.toString()
-			metadata.timestamp = fd.lastModified
-			metadata.size = fd.length
-		} else {
-			val docParent = file.parentFile
-			if (docParent != null) {
-				parent = docParent.uri.toString()
-			}
-		}
-
-		if (parent != null) {
-			metadata.parentId = parentMap.getOrPut(parent) { dataRepo.insertParent(FolderEntity(parent)) }
-		}
-
-		metadata.documentId = file.documentId
-		metadata.uri = file.uri.toString()
-		metadata.type = ImageUtil.getImageType(applicationContext, file.uri).value
-		return metadata
 	}
 
 	companion object {
