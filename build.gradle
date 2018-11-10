@@ -25,7 +25,7 @@ buildscript {
         workVersion = '1.0.0-alpha10'
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.0-beta01'
+        classpath 'com.android.tools.build:gradle:3.3.0-beta03'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }

@@ -21,6 +21,7 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.UsefulDocumentFile;
@@ -295,70 +296,70 @@ public class ImageUtil
         }
     }
 
-    public static boolean isImage(String name)
+    public static boolean isImage(@NonNull String name)
     {
         return isRaw(name) || isNative(name) || isTiffImage(name);
     }
 
-    public static boolean isRaw(Uri uri)
+    public static boolean isRaw(@NonNull Uri uri)
     {
 	    String path = uri.getPath();
 	    // If the uri is not hierarchical
 	    return path != null && isRaw(path);
     }
 
-    public static boolean isRaw(String name)
+    public static boolean isRaw(@NonNull String name)
     {
         return endsWith(ImageConstants.RAW_EXT, name);
     }
 
-    public static boolean isJpeg(File file)
+    public static boolean isJpeg(@NonNull File file)
     {
         return isJpeg(file.getName());
     }
 
-    public static boolean isJpeg(Uri uri)
+    public static boolean isJpeg(@NonNull Uri uri)
     {
 	    String path = uri.getPath();
 	    // If the uri is not hierarchical
 	    return path != null && isJpeg(path);
     }
 
-    public static boolean isJpeg(String name)
+    public static boolean isJpeg(@NonNull String name)
     {
         return endsWith(ImageConstants.JPEG_EXT, name);
     }
 
-    public static boolean isNative(String name)
+    public static boolean isNative(@NonNull String name)
     {
         return endsWith(ImageConstants.COMMON_EXT, name);
     }
 
-	public static boolean isNative(Uri uri)
+	public static boolean isNative(@NonNull Uri uri)
     {
 	    String path = uri.getPath();
 	    // If the uri is not hierarchical
 	    return path != null && isNative(path);
     }
 
-    public static boolean isTiffImage(String name)
+    public static boolean isTiffImage(@NonNull String name)
     {
         return endsWith(ImageConstants.TIFF_EXT, name);
     }
 
-    public static boolean isTiffImage(File file)
+    public static boolean isTiffImage(@NonNull File file)
     {
         return isTiffImage(file.getName());
     }
 
-    public static boolean isTiffImage(Uri uri)
+    public static boolean isTiffImage(@NonNull Uri uri)
     {
 	    String path = uri.getPath();
 	    // If the uri is not hierarchical
 	    return path != null && isTiffImage(path);
     }
 
-    private static boolean endsWith(String[] extensions, String path)
+    private static boolean endsWith(String[] extensions, @NonNull String path)
     {
         for (String ext : extensions)
         {
