@@ -4,7 +4,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.net.Uri
 import android.provider.DocumentsContract
 import android.text.TextUtils
@@ -68,7 +67,10 @@ import java.util.Arrays
  *
  * @see DocumentsContract
  */
-class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumentFile?, private val mContext: Context, uri: Uri) {
+class UsefulDocumentFile internal constructor(
+   private val mParent: UsefulDocumentFile?,
+   private val mContext: Context,
+   uri: Uri) {
     /**
      * Return a Uri for the underlying document represented by this file. This
      * can be used with other platform APIs to manipulate or share the
@@ -80,9 +82,8 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see ContentResolver.openOutputStream
      * @see ContentResolver.openFileDescriptor
      */
-    var uri: Uri? = null
-        private set
-    private var mFileData: FileData? = null
+    var uri: Uri private set
+    private lateinit var cachedData: FileData
 
     /**
      * Return the parent file of this document. Only defined inside of the
@@ -106,43 +107,21 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
     // it may be difficult to manage all aspects gracefully.
     val documentId: String?
         get() {
-
-            try {
-                return if (DocumentsContract.isDocumentUri(mContext, uri)) {
-                    DocumentsContract.getDocumentId(uri)
-                } else {
-                    DocumentsContract.getTreeDocumentId(uri)
-                }
-            } catch (e: IllegalArgumentException) {
-                return null
-            }
-
+			  return try {
+				  if (DocumentsContract.isDocumentUri(mContext, uri)) {
+					  DocumentsContract.getDocumentId(uri)
+				  } else {
+					  DocumentsContract.getTreeDocumentId(uri)
+				  }
+			  } catch (e: IllegalArgumentException) {
+				  null
+			  }
         }
 
-    protected// Might be a root, try to get the tree uri
-            /** Removed isDocumentUri check because it involves a resolver check (slow)
-             * and the benefits of blindly creating a treeUri are doubtful, the only way I could
-             * think of this happening is trying to get parent of a SAF permission which would
-             * step above the permission and would only be useful in the case of redundant stacked permissions,
-             * ie: luckily grabbing a parent tree that does have permission.
-             *///        if (DocumentsContract.isDocumentUri(mContext, mUri)) // has tree or document segment
-    //        {
-            /**
-             * It's very important we retain tree id because tree is what defines the permission.
-             * Even if a file is under a permission root if the tree id is corrupted it will
-             * fail to gain write permission!  */// TODO: Doubtful, but can you game document uris to write where you're not allowed
-    // using a known valid tree?
-    // has tree segment
-    // has only document segment, if there are write restrictions this is useless!
-    //        }
-    //        else // attempt to build a tree...this is of dubious usefulness as a permission would have to line up
-    //        {
-    //            parentUri = DocumentsContract.buildTreeDocumentUri(mUri.getAuthority(), parentId);
-    //        }
-    val parentDocument: UsefulDocumentFile?
+    private val parentDocument: UsefulDocumentFile?
         get() {
-            if (FileUtil.isFileScheme(uri!!)) {
-                val f = File(uri!!.path)
+            if (FileUtil.isFileScheme(uri)) {
+                val f = File(uri.path)
                 val parent = f.parentFile ?: return null
                 return UsefulDocumentFile(null, mContext, Uri.fromFile(parent))
             }
@@ -150,7 +129,7 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
             val documentId = documentId
             val parts = DocumentUtil.getPathSegments(documentId!!) ?: try {
                 val treeId = DocumentsContract.getTreeDocumentId(uri)
-                return UsefulDocumentFile.fromUri(mContext, DocumentsContract.buildTreeDocumentUri(uri!!.authority, treeId))
+                return UsefulDocumentFile.fromUri(mContext, DocumentsContract.buildTreeDocumentUri(uri.authority, treeId))
             } catch (e: IllegalArgumentException) {
                 return null
             }
@@ -160,12 +139,11 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
             val root = DocumentUtil.getRoot(documentId)
             val parentId = DocumentUtil.createNewDocumentId(root!!, path)
 
-            val parentUri: Uri
-            if (DocumentUtil.hasTreeDocumentId(uri)) {
-                parentUri = DocumentsContract.buildDocumentUriUsingTree(uri, parentId)
-            } else {
-                parentUri = DocumentsContract.buildDocumentUri(uri!!.authority, parentId)
-            }
+            val parentUri = if (DocumentUtil.hasTreeDocumentId(uri)) {
+				  DocumentsContract.buildDocumentUriUsingTree(uri, parentId)
+			  } else {
+				  DocumentsContract.buildDocumentUri(uri.authority, parentId)
+			  }
             return UsefulDocumentFile.fromUri(mContext, parentUri)
         }
 
@@ -177,17 +155,12 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.Document.COLUMN_DISPLAY_NAME
      */
     val name: String?
-        get() = if (FileUtil.isFileScheme(uri!!)) nameFile else nameUri
-    private val nameFile: String
         get() {
-            val mFile = File(uri!!.path)
-            return mFile.name
-        }
-    private val nameUri: String?
-        get() {
-            val name = DocumentsContractApi19.getName(mContext, uri) ?: return getName(uri)
-            return name
-        }
+			  if (::cachedData.isInitialized && cachedData.name != null)
+				  return cachedData.name
+			  return if (FileUtil.isFileScheme(uri)) File(uri.path).name
+			  			else DocumentsContractApi19.getName(mContext, uri) ?: return parseName(uri)
+		  }
 
     /**
      * Return the MIME type of this document.
@@ -195,15 +168,12 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.Document.COLUMN_MIME_TYPE
      */
     val type: String?
-        get() = if (FileUtil.isFileScheme(uri!!)) typeFile else typeUri
-    private val typeFile: String?
         get() {
-            val mFile = File(uri!!.path)
-            return getType(mFile)
-        }
-
-    private val typeUri: String?
-        get() = DocumentsContractApi19.getType(mContext, uri)
+			  if (::cachedData.isInitialized && cachedData.type != null)
+				  return cachedData.type
+			  return if (FileUtil.isFileScheme(uri)) parseType(File(uri.path))
+			  			else DocumentsContractApi19.getType(mContext, uri)
+		  }
 
     /**
      * Indicates if this file represents a *directory*.
@@ -213,14 +183,12 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.Document.MIME_TYPE_DIR
      */
     val isDirectory: Boolean
-        get() = if (FileUtil.isFileScheme(uri!!)) isDirectoryFile else isDirectoryUri
-    private val isDirectoryFile: Boolean
         get() {
-            val mFile = File(uri!!.path)
-            return mFile.isDirectory
-        }
-    private val isDirectoryUri: Boolean
-        get() = DocumentsContractApi19.isDirectory(mContext, uri)
+			  if (::cachedData.isInitialized)
+				  return cachedData.isDirectory
+			  return if (FileUtil.isFileScheme(uri)) File(uri.path).isDirectory
+			  			else DocumentsContractApi19.isDirectory(mContext, uri)
+		  }
 
     /**
      * Indicates if this file represents a *file*.
@@ -229,56 +197,164 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.Document.COLUMN_MIME_TYPE
      */
     val isFile: Boolean
-        get() = if (FileUtil.isFileScheme(uri!!)) isFileFile else isFileUri
-    private val isFileFile: Boolean
         get() {
-            val mFile = File(uri!!.path)
-            return mFile.isFile
-        }
-    private val isFileUri: Boolean
-        get() = DocumentsContractApi19.isFile(mContext, uri)
+			  if (::cachedData.isInitialized)
+				  return cachedData.isFile
+			  return if (FileUtil.isFileScheme(uri)) File(uri.path).isFile
+			  			else DocumentsContractApi19.isFile(mContext, uri)
+		  }
 
-    /**
-     * Returns cached file data.  If cache does not exist it's populated [.getData].
-     * The cached data could be incorrect if the file system has changed since the data was populated.
-     * Therefore this is best used as a convenience method to link file data and document
-     * functionality for code that requires multiple queries for a short time.
-     * @return Cached file data, null on exception (likely !exists)
-     */
-    val cachedData: FileData?
-        get() {
-            if (mFileData == null)
-                mFileData = data
-            return mFileData
-        }
+	/**
+	 * Returns the time when this file was last modified, measured in
+	 * milliseconds since January 1st, 1970, midnight. Returns 0 if the file
+	 * does not exist, or if the modified time is unknown.
+	 *
+	 * @return the time when this file was last modified.
+	 * @see DocumentsContract.Document.COLUMN_LAST_MODIFIED
+	 */
+	val lastModified: Long
+		get() {
+			if(::cachedData.isInitialized)
+				return cachedData.length
+			return if (FileUtil.isFileScheme(uri)) File(uri.path).lastModified()
+					else DocumentsContractApi19.lastModified(mContext, uri)
+		}
 
+	/**
+	 * Returns the length of this file in bytes. Returns 0 if the file does not
+	 * exist, or if the length is unknown. The result for a directory is not
+	 * defined.
+	 *
+	 * @return the number of bytes in this file.
+	 * @see DocumentsContract.Document.COLUMN_SIZE
+	 */
+	val length: Long
+		get() {
+			if(::cachedData.isInitialized)
+				return cachedData.length
+			return if (FileUtil.isFileScheme(uri)) File(uri.path).length()
+					else DocumentsContractApi19.length(mContext, uri)
+		}
+
+	/**
+	 * Indicates whether the current context is allowed to read from this file.
+	 *
+	 * @return `true` if this file can be read, `false` otherwise.
+	 */
+	val canRead: Boolean
+		get() {
+			if(::cachedData.isInitialized)
+				return cachedData.canRead
+			return if (FileUtil.isFileScheme(uri)) File(uri.path).canRead()
+					else DocumentsContractApi19.canRead(mContext, uri)
+		}
+
+
+/**
+ * Indicates whether the current context is allowed to write to this file.
+ *
+ * @return `true` if this file can be written, `false`
+ * otherwise.
+ * @see DocumentsContract.Document.COLUMN_FLAGS
+ *
+ * @see DocumentsContract.Document.FLAG_SUPPORTS_DELETE
+ *
+ * @see DocumentsContract.Document.FLAG_SUPPORTS_WRITE
+ *
+ * @see DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
+ */
+val canWrite: Boolean
+	get() {
+		if(::cachedData.isInitialized)
+			return cachedData.canWrite
+		return if (FileUtil.isFileScheme(uri)) File(uri.path).canWrite()
+				else DocumentsContractApi19.canWrite(mContext, uri)
+	}
     /**
      * For multiple file access calls it's beneficial to cache the data first.
      * If you cache the data, do not hold the reference for long periods of time as it
      * will potentially return stale data
      */
     fun cacheFileData() {
-        if (FileUtil.isFileScheme(uri!!))
+		 if (FileUtil.isFileScheme(uri))
+			 cacheFile()
+		 else {
+			 cacheUri()
+		 }
     }
 
-    /**
-     * This will retrieve all file-related data for a uri in a single query.
-     * Every get requires a query, so if you are interested in more than one field than
-     * this method will offer a SIGNIFICANT performance improvement.
-     * @return All file data for the given document, null on exception (likely !exists)
-     */
-    val data: FileData?
-        get() {
-            if (FileUtil.isFileScheme(uri!!))
-                return FileData.fromFile(File(uri!!.path))
-            val parent = parentFile
-            var p: Uri? = null
-            if (parent != null)
-                p = parent.uri
+	private fun cacheFile() {
+		val f = File(uri.path)
+		cachedData = FileData(
+			f.canRead(),
+			f.canWrite(),
+			f.exists(),
+			UsefulDocumentFile.parseType(f),
+			Uri.fromFile(f),
+			f.isDirectory,
+			f.isFile,
+			f.lastModified(),
+			f.length(),
+			f.name,
+			Uri.fromFile(f.parentFile)
+		)
+	}
 
-            return FileData.fromUri(mContext, uri, p)
-        }
+	/**
+	 * Gather all file data in a single resolver call.  This is much faster if a code segment
+	 * requires 2 or more calls to file-related data which individually involve resolver calls
+	 */
+	 private fun cacheUri() {
+		val columns = arrayOf(
+			DocumentsContract.Document.COLUMN_MIME_TYPE,
+			DocumentsContract.Document.COLUMN_LAST_MODIFIED,
+			DocumentsContract.Document.COLUMN_SIZE,
+			DocumentsContract.Document.COLUMN_FLAGS,
+			DocumentsContract.Document.COLUMN_DISPLAY_NAME)
 
+		try {
+			mContext.contentResolver.query(uri, columns, null, null, null).use { cursor ->
+				if (cursor != null && cursor.count > 0) {
+					cachedData = FileData(uri= uri, exists = false)
+				} else {
+					cursor.moveToFirst()
+
+					// Ignore if grant doesn't allow read
+					val readPerm = mContext.checkCallingOrSelfUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
+					val writePerm = mContext.checkCallingOrSelfUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
+					val rawType = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE))
+					val flags = cursor.getInt(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS))
+					val lastModified = cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED))
+					val length = cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE))
+					val hasMime = !TextUtils.isEmpty(rawType)
+					val supportsDelete = flags and DocumentsContract.Document.FLAG_SUPPORTS_DELETE != 0
+					val supportsCreate = flags and DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE != 0
+					val supportsWrite = flags and DocumentsContract.Document.FLAG_SUPPORTS_WRITE != 0
+					val name = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME))
+					val isDirectory = DocumentsContract.Document.MIME_TYPE_DIR == rawType
+					val type = if (isDirectory) null else rawType
+					val isFile = if (isDirectory) false else hasMime
+
+					cachedData = FileData(
+						readPerm && hasMime,
+						writePerm && (supportsDelete || isDirectory && supportsCreate || hasMime && supportsWrite),
+						true,
+						type,
+						uri,
+						isDirectory,
+						isFile,
+						lastModified,
+						length,
+						name ?: UsefulDocumentFile.parseName(uri),
+						parentDocument?.uri
+					)
+				}
+			}
+		} catch (e: Exception) {
+			// This is what DocumentContract.exists does, likely means !exists
+			cachedData = FileData(uri= uri, exists = false)
+		}
+	}
     init {
         this.uri = uri
     }
@@ -309,40 +385,38 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.createDocument
      */
     fun createFile(mimeType: String, displayName: String): UsefulDocumentFile? {
-        return if (FileUtil.isFileScheme(uri!!)) createFileFile(mimeType, displayName) else createFileUri(mimeType, displayName)
-    }
+        return if (FileUtil.isFileScheme(uri)) {
+			  var name = displayName
+			  val mFile = File(uri.path)
 
-    private fun createFileFile(mimeType: String, displayName: String): UsefulDocumentFile? {
-        var displayName = displayName
-        val mFile = File(uri!!.path)
+			  // Tack on extension when valid MIME type provided
+			  val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+			  if (extension != null) {
+				  name += ".$extension"
+			  }
+			  val target = File(mFile, name)
+			  try {
+				  if (target.createNewFile())
+					  UsefulDocumentFile(this, mContext, Uri.fromFile(target))
+				  else
+					  null
+			  } catch (e: IOException) {
+				  Log.w(TAG, "Failed to createFile: $e")
+				  null
+			  }
+		  } else {
+			  if (!Util.hasLollipop())
+				  throw UnsupportedOperationException()
 
-        // Tack on extension when valid MIME type provided
-        val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
-        if (extension != null) {
-            displayName += ".$extension"
-        }
-        val target = File(mFile, displayName)
-        try {
-            return if (target.createNewFile()) UsefulDocumentFile(this, mContext, Uri.fromFile(target)) else null
-        } catch (e: IOException) {
-            Log.w(TAG, "Failed to createFile: $e")
-            return null
-        }
-
-    }
-
-    private fun createFileUri(mimeType: String, displayName: String): UsefulDocumentFile? {
-        if (!Util.hasLollipop())
-            throw UnsupportedOperationException()
-
-        val result: Uri?
-        try {
-            result = DocumentsContractApi21.createFile(mContext, uri, mimeType, displayName)
-        } catch (e: FileNotFoundException) {
-            return null
-        }
-
-        return if (result != null) UsefulDocumentFile(this, mContext, result) else null
+			  return try {
+				  UsefulDocumentFile(
+					  this,
+					  mContext,
+					  DocumentsContractApi21.createFile(mContext, uri, mimeType, displayName))
+			  } catch (e: FileNotFoundException) {
+				  null
+			  }
+		  }
     }
 
     /**
@@ -353,119 +427,28 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.createDocument
      */
     fun createDirectory(displayName: String): UsefulDocumentFile? {
-        return if (FileUtil.isFileScheme(uri!!)) createDirectoryFile(displayName) else createDirectoryUri(displayName)
-    }
+        return if (FileUtil.isFileScheme(uri)) {
+			  val mFile = File(uri.path)
 
-    private fun createDirectoryFile(displayName: String): UsefulDocumentFile? {
-        val mFile = File(uri!!.path)
+			  val target = File(mFile, displayName)
+			  if (target.isDirectory || target.mkdir()) {
+				  UsefulDocumentFile(this, mContext, Uri.fromFile(target))
+			  } else {
+				  null
+			  }
+		  } else {
+			  if (!Util.hasLollipop())
+				  throw UnsupportedOperationException()
 
-        val target = File(mFile, displayName)
-        return if (target.isDirectory || target.mkdir()) {
-            UsefulDocumentFile(this, mContext, Uri.fromFile(target))
-        } else {
-            null
-        }
-    }
-
-    private fun createDirectoryUri(displayName: String): UsefulDocumentFile? {
-        if (!Util.hasLollipop())
-            throw UnsupportedOperationException()
-
-        val result: Uri?
-        try {
-            result = DocumentsContractApi21.createDirectory(mContext, uri, displayName)
-        } catch (e: FileNotFoundException) {
-            return null
-        }
-
-        return if (result != null) UsefulDocumentFile(this, mContext, result) else null
-    }
-
-    /**
-     * Returns the time when this file was last modified, measured in
-     * milliseconds since January 1st, 1970, midnight. Returns 0 if the file
-     * does not exist, or if the modified time is unknown.
-     *
-     * @return the time when this file was last modified.
-     * @see DocumentsContract.Document.COLUMN_LAST_MODIFIED
-     */
-    fun lastModified(): Long {
-        return if (FileUtil.isFileScheme(uri!!)) lastModifiedFile() else lastModifiedUri()
-    }
-
-    private fun lastModifiedFile(): Long {
-        val mFile = File(uri!!.path)
-        return mFile.lastModified()
-    }
-
-    private fun lastModifiedUri(): Long {
-        return DocumentsContractApi19.lastModified(mContext, uri)
-    }
-
-    /**
-     * Returns the length of this file in bytes. Returns 0 if the file does not
-     * exist, or if the length is unknown. The result for a directory is not
-     * defined.
-     *
-     * @return the number of bytes in this file.
-     * @see DocumentsContract.Document.COLUMN_SIZE
-     */
-    fun length(): Long {
-        return if (FileUtil.isFileScheme(uri!!)) lengthFile() else lengthUri()
-    }
-
-    private fun lengthFile(): Long {
-        val mFile = File(uri!!.path)
-        return mFile.length()
-    }
-
-    private fun lengthUri(): Long {
-        return DocumentsContractApi19.length(mContext, uri)
-    }
-
-    /**
-     * Indicates whether the current context is allowed to read from this file.
-     *
-     * @return `true` if this file can be read, `false` otherwise.
-     */
-    fun canRead(): Boolean {
-        return mFileData?.canRead ?: if (FileUtil.isFileScheme(uri!!)) canReadFile()
-        else canReadUri()
-    }
-
-    private fun canReadFile(): Boolean {
-        val mFile = File(uri!!.path)
-        return mFile.canRead()
-    }
-
-    private fun canReadUri(): Boolean {
-        return canRead(mContext, uri)
-    }
-
-    /**
-     * Indicates whether the current context is allowed to write to this file.
-     *
-     * @return `true` if this file can be written, `false`
-     * otherwise.
-     * @see DocumentsContract.Document.COLUMN_FLAGS
-     *
-     * @see DocumentsContract.Document.FLAG_SUPPORTS_DELETE
-     *
-     * @see DocumentsContract.Document.FLAG_SUPPORTS_WRITE
-     *
-     * @see DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE
-     */
-    fun canWrite(): Boolean {
-        return if (FileUtil.isFileScheme(uri!!)) canWriteFile() else canWriteUri()
-    }
-
-    private fun canWriteFile(): Boolean {
-        val mFile = File(uri!!.path)
-        return mFile.canWrite()
-    }
-
-    private fun canWriteUri(): Boolean {
-        return canWrite(mContext, uri)
+			  try {
+				  UsefulDocumentFile(
+					  this,
+					  mContext,
+					  DocumentsContractApi21.createDirectory(mContext, uri, displayName))
+			  } catch (e: FileNotFoundException) {
+				  null
+			  }
+		  }
     }
 
     /**
@@ -479,11 +462,11 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.deleteDocument
      */
     fun delete(): Boolean {
-        return if (FileUtil.isFileScheme(uri!!)) deleteFile() else deleteUri()
+        return if (FileUtil.isFileScheme(uri)) deleteFile() else deleteUri()
     }
 
     private fun deleteFile(): Boolean {
-        val mFile = File(uri!!.path)
+        val mFile = File(uri.path)
         deleteContents(mFile)
         return mFile.delete()
     }
@@ -498,11 +481,11 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @return `true` if this file exists, `false` otherwise.
      */
     fun exists(): Boolean {
-        return if (FileUtil.isFileScheme(uri!!)) existsFile() else existsUri()
+        return if (FileUtil.isFileScheme(uri)) existsFile() else existsUri()
     }
 
     private fun existsFile(): Boolean {
-        val mFile = File(uri!!.path)
+        val mFile = File(uri.path)
         return mFile.exists()
     }
 
@@ -518,31 +501,24 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.buildChildDocumentsUriUsingTree
      */
     fun listFiles(): Array<UsefulDocumentFile> {
-        return if (FileUtil.isFileScheme(uri!!)) listFilesFile() else listFilesUri()
-    }
+        return if (FileUtil.isFileScheme(uri)) {
+			  val mFile = File(uri.path)
+			  val results = ArrayList<UsefulDocumentFile>()
+			  val files = mFile.listFiles()
+			  if (files != null) {
+				  for (file in files) {
+					  results.add(UsefulDocumentFile(this, mContext, Uri.fromFile(file)))
+				  }
+			  }
+			  results.toTypedArray()
+		  } else {
+			  if (!Util.hasLollipop())
+				  throw UnsupportedOperationException()
 
-    private fun listFilesFile(): Array<UsefulDocumentFile> {
-        val mFile = File(uri!!.path)
-        val results = ArrayList<UsefulDocumentFile>()
-        val files = mFile.listFiles()
-        if (files != null) {
-            for (file in files) {
-                results.add(UsefulDocumentFile(this, mContext, Uri.fromFile(file)))
-            }
-        }
-        return results.toTypedArray()
-    }
-
-    private fun listFilesUri(): Array<UsefulDocumentFile> {
-        if (!Util.hasLollipop())
-            throw UnsupportedOperationException()
-
-        val result = DocumentsContractApi21.listFiles(mContext, uri)
-        val resultFiles = arrayOfNulls<UsefulDocumentFile>(result.size)
-        for (i in result.indices) {
-            resultFiles[i] = UsefulDocumentFile(this, mContext, result[i])
-        }
-        return resultFiles
+			  DocumentsContractApi21.listFiles(mContext, uri).map {
+				  UsefulDocumentFile(this, mContext, it)
+			  }.toTypedArray()
+		  }
     }
 
     /**
@@ -555,7 +531,7 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      *
      * Some providers may need to create a new document to reflect the rename,
      * potentially with a different MIME type, so [.getUri] and
-     * [.getType] may change to reflect the rename.
+     * [.parseType] may change to reflect the rename.
      *
      *
      * When renaming a directory, children previously enumerated through
@@ -566,11 +542,11 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
      * @see DocumentsContract.renameDocument
      */
     fun renameTo(displayName: String): Boolean {
-        return if (FileUtil.isFileScheme(uri!!)) renameToFile(displayName) else renameToUri(displayName)
+        return if (FileUtil.isFileScheme(uri)) renameToFile(displayName) else renameToUri(displayName)
     }
 
     private fun renameToFile(displayName: String): Boolean {
-        val mFile = File(uri!!.path)
+        val mFile = File(uri.path)
         val target = File(mFile.parentFile, displayName)
         if (mFile.renameTo(target)) {
             uri = Uri.fromFile(target)
@@ -591,11 +567,11 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
             return false
         }
 
-        if (result != null) {
+        return if (result != null) {
             uri = result
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 
@@ -610,12 +586,12 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
             return UsefulDocumentFile(null, c, uri)
         }
 
-        private fun getName(uri: Uri?): String? {
+        private fun parseName(uri: Uri?): String? {
             val pathParts = DocumentUtil.getPathSegments(uri)
             return if (pathParts != null) pathParts[pathParts.size - 1] else null
         }
 
-        private fun getType(mFile: File): String? {
+        private fun parseType(mFile: File): String? {
 
             return if (mFile.isDirectory) {
                 null
@@ -635,14 +611,6 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
             }
 
             return "application/octet-stream"
-        }
-
-        private fun canRead(c: Context, uri: Uri?): Boolean {
-            return DocumentsContractApi19.canRead(c, uri)
-        }
-
-        private fun canWrite(c: Context, uri: Uri?): Boolean {
-            return DocumentsContractApi19.canWrite(c, uri)
         }
 
         private fun deleteContents(dir: File): Boolean {
@@ -668,92 +636,16 @@ class UsefulDocumentFile internal constructor(private val mParent: UsefulDocumen
  * POJO for storing all file data in one go.  If a user is interested in more than one
  * field at a time this will reduce many queries to a single query
  */
-private class FileData {
-    var canRead: Boolean = false
-    var canWrite: Boolean = false
-    var exists: Boolean = false
-    var type: String? = null
-    var uri: Uri
-    var isDirectory: Boolean = false
-    var isFile: Boolean = false
-    var lastModified: Long = 0
-    var length: Long = 0
-    var name: String? = null
-    var parent: Uri
-
-    companion object {
-        internal fun fromFile(f: File): FileData {
-            val fd = FileData()
-            fd.canRead = f.canRead()
-            fd.canWrite = f.canWrite()
-            fd.exists = f.exists()
-            fd.type = UsefulDocumentFile.getType(f)
-            fd.uri = Uri.fromFile(f)
-            fd.isDirectory = f.isDirectory
-            fd.isFile = f.isFile
-            fd.lastModified = f.lastModified()
-            fd.length = f.length()
-            fd.name = f.name
-            fd.parent = Uri.fromFile(f.parentFile)
-            return fd
-        }
-
-        /**
-         * Gather all file data in a single resolver call.  This is much faster if a code segment
-         * requires 2 or more calls to file-related data which inidividually involve resolver calls
-         * @param c host context
-         * @param uri uri of the object
-         * @param parent parent
-         * @return POJO representing file data, null on exception (likely !exists)
-         */
-        internal fun fromUri(c: Context, uri: Uri, parent: Uri): FileData? {
-            val fd = FileData()
-            fd.uri = uri
-            fd.parent = parent
-
-            val columns = arrayOf(DocumentsContract.Document.COLUMN_MIME_TYPE, DocumentsContract.Document.COLUMN_LAST_MODIFIED, DocumentsContract.Document.COLUMN_SIZE, DocumentsContract.Document.COLUMN_FLAGS, DocumentsContract.Document.COLUMN_DISPLAY_NAME)
-
-            try {
-                c.contentResolver.query(uri, columns, null, null, null)!!.use { cursor ->
-                    fd.exists = cursor != null && cursor.count > 0
-                    if (!fd.exists)
-                        return fd
-
-                    cursor.moveToFirst()
-
-                    // Ignore if grant doesn't allow read
-                    val readPerm = c.checkCallingOrSelfUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
-                    val writePerm = c.checkCallingOrSelfUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
-                    val rawType = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE))
-                    val flags = cursor.getInt(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS))
-                    val hasMime = !TextUtils.isEmpty(rawType)
-                    val supportsDelete = flags and DocumentsContract.Document.FLAG_SUPPORTS_DELETE != 0
-                    val supportsCreate = flags and DocumentsContract.Document.FLAG_DIR_SUPPORTS_CREATE != 0
-                    val supportsWrite = flags and DocumentsContract.Document.FLAG_SUPPORTS_WRITE != 0
-                    val name = cursor.getString(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_DISPLAY_NAME))
-
-                    fd.isDirectory = DocumentsContract.Document.MIME_TYPE_DIR == rawType
-                    if (fd.isDirectory) {
-                        fd.type = null
-                        fd.isFile = false
-                    } else {
-                        fd.type = rawType
-                        fd.isFile = hasMime
-                    }
-
-                    fd.name = name ?: UsefulDocumentFile.getName(uri)
-                    fd.canRead = readPerm && hasMime
-                    fd.canWrite = writePerm && (supportsDelete || fd.isDirectory && supportsCreate || hasMime && supportsWrite)
-                    fd.lastModified = cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED))
-                    fd.length = cursor.getLong(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_SIZE))
-                    DocumentsContractApi19.closeQuietly(cursor)
-
-                    return fd
-                }
-            } catch (e: Exception) // This is what DocumentContract.exists does, likely means !exists
-            {
-                return null
-            }
-        }
-    }
-}
+private data class FileData (
+    val canRead: Boolean = false,
+    val canWrite: Boolean = false,
+    val exists: Boolean = false,
+    val type: String? = null,
+    val uri: Uri,
+    val isDirectory: Boolean = false,
+    val isFile: Boolean = false,
+    val lastModified: Long = 0,
+    val length: Long = 0,
+    val name: String? = null,
+    val parent: Uri? = null
+)
