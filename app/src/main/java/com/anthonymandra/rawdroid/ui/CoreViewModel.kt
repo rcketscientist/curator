@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.work.WorkManager
-import androidx.work.WorkStatus
+import androidx.work.WorkInfo
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.App
 import com.anthonymandra.rawdroid.ImageFilter
@@ -20,33 +20,33 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	protected val dataRepo = (app as App).dataRepo
 
 	private val workManager: WorkManager = WorkManager.getInstance()
-	private val metaReaderWorkStatus: LiveData<List<WorkStatus>>
-	private val metaWriterWorkStatus: LiveData<List<WorkStatus>>
-	private val searchWorkStatus: LiveData<List<WorkStatus>>
-	private val copyWorkStatus: LiveData<List<WorkStatus>>
-	private val saveWorkStatus: LiveData<List<WorkStatus>>
-	private val deleteWorkStatus: LiveData<List<WorkStatus>>
-	private val cleanWorkStatus: LiveData<List<WorkStatus>>
+	private val metaReaderWorkInfo: LiveData<List<WorkInfo>>
+	private val metaWriterWorkInfo: LiveData<List<WorkInfo>>
+	private val searchWorkInfo: LiveData<List<WorkInfo>>
+	private val copyWorkInfo: LiveData<List<WorkInfo>>
+	private val saveWorkInfo: LiveData<List<WorkInfo>>
+	private val deleteWorkInfo: LiveData<List<WorkInfo>>
+	private val cleanWorkInfo: LiveData<List<WorkInfo>>
 
 	val filter: MutableLiveData<ImageFilter> = MutableLiveData()
 
 	init {
-		searchWorkStatus = workManager.getStatusesByTagLiveData(SearchWorker.JOB_TAG)
-		metaReaderWorkStatus = workManager.getStatusesByTagLiveData(MetaReaderWorker.JOB_TAG)
-		metaWriterWorkStatus = workManager.getStatusesByTagLiveData(MetaWriterWorker.JOB_TAG)
-		copyWorkStatus = workManager.getStatusesByTagLiveData(CopyWorker.JOB_TAG)
-		saveWorkStatus = workManager.getStatusesByTagLiveData(SaveWorker.JOB_TAG)
-		deleteWorkStatus = workManager.getStatusesByTagLiveData(DeleteWorker.JOB_TAG)
-		cleanWorkStatus = workManager.getStatusesByTagLiveData(CleanWorker.JOB_TAG)
+		searchWorkInfo = workManager.getWorkInfosByTagLiveData(SearchWorker.JOB_TAG)
+		metaReaderWorkInfo = workManager.getWorkInfosByTagLiveData(MetaReaderWorker.JOB_TAG)
+		metaWriterWorkInfo = workManager.getWorkInfosByTagLiveData(MetaWriterWorker.JOB_TAG)
+		copyWorkInfo = workManager.getWorkInfosByTagLiveData(CopyWorker.JOB_TAG)
+		saveWorkInfo = workManager.getWorkInfosByTagLiveData(SaveWorker.JOB_TAG)
+		deleteWorkInfo = workManager.getWorkInfosByTagLiveData(DeleteWorker.JOB_TAG)
+		cleanWorkInfo = workManager.getWorkInfosByTagLiveData(CleanWorker.JOB_TAG)
 	}
 
-	val searchStatus get() = searchWorkStatus
-	val metaReaderStatus get() = metaReaderWorkStatus
-	val metaWriterStatus get() = metaWriterWorkStatus
-	val copyStatus get() = copyWorkStatus
-	val saveStatus get() = saveWorkStatus
-	val cleanStatus get() = copyWorkStatus
-	val deleteStatus get() = deleteWorkStatus
+	val searchStatus get() = searchWorkInfo
+	val metaReaderStatus get() = metaReaderWorkInfo
+	val metaWriterStatus get() = metaWriterWorkInfo
+	val copyStatus get() = copyWorkInfo
+	val saveStatus get() = saveWorkInfo
+	val cleanStatus get() = copyWorkInfo
+	val deleteStatus get() = deleteWorkInfo
 
 	fun startMetaReaderWorker() {
 		val input = filter.value ?: ImageFilter()

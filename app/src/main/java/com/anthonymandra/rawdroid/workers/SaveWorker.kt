@@ -72,7 +72,7 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		metadata.forEachIndexed { index, value ->
-			if (isCancelled) {
+			if (isStopped) {
 				builder
 					.setContentText("Cancelled")
 					.priority = NotificationCompat.PRIORITY_HIGH
@@ -88,8 +88,8 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 			notifications.notify(builder.build())
 
 			val source = UsefulDocumentFile.fromUri(applicationContext, Uri.parse(value.uri))
-			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration!!.extension)	// Can't be null, but maybe redesign to avoid ?
-			val destinationFile = parentFile.createFile(null, desiredName)
+			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration.extension)	// Can't be null, but maybe redesign to avoid ?
+			val destinationFile = parentFile.createFile(null, desiredName) ?: return@forEachIndexed
 
 			applicationContext.contentResolver.openFileDescriptor(source.uri, "r")?.use { inputPfd ->
 			applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")?.use { outputPfd ->

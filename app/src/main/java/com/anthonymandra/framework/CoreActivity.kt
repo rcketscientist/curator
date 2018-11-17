@@ -30,7 +30,6 @@ import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
-import com.anthonymandra.util.FileUtil
 import com.anthonymandra.util.MetaUtil
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
@@ -196,22 +195,20 @@ abstract class CoreActivity : AppCompatActivity() {
 	}
 
 	protected fun requestWritePermission(requestCode: Int) {
-		if (Util.hasLollipop()) {
-			runOnUiThread {
-				val image = ImageView(this)
-				image.setImageDrawable(getDrawable(com.anthonymandra.framework.R.drawable.document_api_guide))
-				val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-					.setTitle(com.anthonymandra.framework.R.string.dialogWriteRequestTitle)
-					.setView(image)
-				val dialog = builder.create()
-				image.setOnClickListener {
-					val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+		runOnUiThread {
+			val image = ImageView(this)
+			image.setImageDrawable(getDrawable(com.anthonymandra.framework.R.drawable.document_api_guide))
+			val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+				.setTitle(com.anthonymandra.framework.R.string.dialogWriteRequestTitle)
+				.setView(image)
+			val dialog = builder.create()
+			image.setOnClickListener {
+				val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
 //					intent.putExtra(DocumentsContract.EXTRA_PROMPT, getString(com.anthonymandra.framework.R.string.allowWrite))
-					startActivityForResult(intent, requestCode)
-					dialog.dismiss()
-				}
-				dialog.show()
+				startActivityForResult(intent, requestCode)
+				dialog.dismiss()
 			}
+			dialog.show()
 		}
 	}
 
@@ -578,10 +575,13 @@ abstract class CoreActivity : AppCompatActivity() {
 			.subscribeOn(Schedulers.from(AppExecutors.DISK))
 			.subscribeBy(
 				onNext = {
-					val info = MetaUtil.getImageFileInfo(this, UsefulDocumentFile.fromUri(this, it), parentMap)
-					val parsed = MetaUtil.readMetadata(this, ImageInfo.fromMetadataEntity(info))
-					dataRepo.insertMeta(parsed)
 					recycleBin.removeFile(it.toString())
+
+					val info = MetaUtil.getImageFileInfo(this, UsefulDocumentFile.fromUri(this, it), parentMap)
+					if (info != null) {
+						val parsed = MetaUtil.readMetadata(this, ImageInfo.fromMetadataEntity(info))
+						dataRepo.insertMeta(parsed)
+					}
 				},
 				onError = { /* TODO: Notifications */ },
 				onComplete = { /* TODO: Notifications */ }

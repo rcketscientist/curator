@@ -27,7 +27,7 @@ class SearchWorker(context: Context, params: WorkerParameters): Worker(context, 
 			}
 		}.toList()
 
-		val images = search(foldersToSearch).map {
+		val images = search(foldersToSearch).mapNotNull {
 			MetaUtil.getImageFileInfo(applicationContext, it, parentMap)
 		}
 
@@ -42,20 +42,16 @@ class SearchWorker(context: Context, params: WorkerParameters): Worker(context, 
 		//.nomedia cancels any results
 		if (files.any { ".nomedia" == it.name }) return emptyList()
 
-		val folders = files.filter {
-			it.cachedData?.let { fileInfo ->
-				fileInfo.isDirectory && fileInfo.canRead
-			} ?: false
-		}
-
 		val images = mutableListOf<UsefulDocumentFile>()
-		folders.forEach { folder ->
-			folder.listFiles()?.let{ files ->
-				images.addAll(search(files.toList()))
-			}
+		files.filter {
+			it.cacheFileData()
+			it.isDirectory && it.canRead
+		}.forEach { folder ->
+			images.addAll(search(folder.listFiles().toList()))
 		}
 
-		return images.plus(files.filter { ImageUtil.isImage(it.cachedData?.name) })
+		return images.plus(
+			files.filter { ImageUtil.isImage(it.name) })
 	}
 
 	companion object {

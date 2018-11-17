@@ -46,14 +46,6 @@ public class FileUtil
 	}
 
 	/**
-	 * @param uri The Uri to check.
-	 * @return Whether the Uri authority is Google Photos.
-	 */
-	public static boolean isGooglePhotosUri(Uri uri) {
-		return "com.google.android.apps.photos.content".equals(uri.getAuthority());
-	}
-
-	/**
 	 * Opens an InputStream to uri.  Checks if it's a local file to create a FileInputStream,
 	 * otherwise resorts to using the ContentResolver to request a stream.
 	 *
@@ -171,17 +163,14 @@ public class FileUtil
 	public static boolean copy(Context context, Uri source, Uri destination) throws IOException {
 		// TODO: Clean this up and protect that NPE
 		UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(context, destination);
-		UsefulDocumentFile.FileData destinationData = destinationFile.getData();
+		destinationFile.cacheFileData();
 
-		if(destinationData == null || !destinationData.exists) {
-			UsefulDocumentFile parent = destinationData != null ?
-				UsefulDocumentFile.fromUri(context, destinationData.parent) : destinationFile.getParentFile();
-			if (parent == null) {
-				return false;
-			}
-			parent.createFile(null,
-				destinationData != null ? destinationData.name : destinationFile.getName());
+		UsefulDocumentFile parent = destinationFile.getParentFile();
+		if (parent == null) {
+			return false;
 		}
+		parent.createFile(null, destinationFile.getName());
+
 		try (
 			InputStream inStream = context.getContentResolver().openInputStream(source);
 			OutputStream outStream = context.getContentResolver().openOutputStream(destination)) {

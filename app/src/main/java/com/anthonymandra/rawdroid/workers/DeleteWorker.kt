@@ -8,7 +8,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import androidx.work.*
-import com.anthonymandra.framework.DocumentActivity
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
@@ -39,7 +38,7 @@ class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, 
 	    val images = repo.synchImages(imagesIds)
 
 	    images.forEachIndexed { index, value ->
-		    if (isCancelled) {
+		    if (isStopped) {
 			    builder
 				    .setContentText("Cancelled")
 				    .priority = NotificationCompat.PRIORITY_HIGH
@@ -67,7 +66,6 @@ class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, 
         return Result.SUCCESS
     }
 
-	@Throws(DocumentActivity.WritePermissionException::class)
 	private fun deleteAssociatedFiles(image: ImageInfo): Boolean {
 		val associatedFiles = ImageUtil.getAssociatedFiles(applicationContext, Uri.parse(image.uri))
 		for (file in associatedFiles)
@@ -78,7 +76,7 @@ class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, 
 	@WorkerThread   // TODO: Move to fileutil
 	fun deleteFile(file: Uri): Boolean {
 		val document = UsefulDocumentFile.fromUri(applicationContext, file)
-		return document != null && document.delete()
+		return document.delete()
 	}
 
 	private fun NotificationManagerCompat.notify(notification: Notification) {

@@ -27,13 +27,11 @@ abstract class ImageConfiguration {
 
 	companion object {
 
-		fun from(type:ImageType, config: String?): ImageConfiguration? {
+		fun from(type:ImageType, config: String?): ImageConfiguration {
 			return when (type) {
-				ImageConfiguration.ImageType.JPEG ->
-					if (config != null) JpegConfiguration(config) else JpegConfiguration()
-				ImageConfiguration.ImageType.TIFF ->
-					if (config != null) TiffConfiguration(config) else TiffConfiguration()
-				else -> null
+				ImageType.JPEG -> if (config != null) JpegConfiguration(config) else JpegConfiguration()
+				ImageType.TIFF -> if (config != null) TiffConfiguration(config) else TiffConfiguration()
+				else -> if (config != null) JpegConfiguration(config) else JpegConfiguration()
 			}
 		}
 

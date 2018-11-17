@@ -112,7 +112,7 @@ class RenameDialog(
 		val xmpFile = ImageUtil.getXmpFile(context, source)
 		val jpgFile = ImageUtil.getJpgFile(context, source)
 
-		val filename = srcFile.name
+		val filename = srcFile.name ?: return
 		val sourceExt = filename.substring(filename.lastIndexOf("."), filename.length)
 
 		val srcRename = baseName + sourceExt
@@ -125,9 +125,9 @@ class RenameDialog(
 
 		// Do src first in case it's a jpg
 		if (srcFile.renameTo(srcRename)) {
-			image.name = srcFile.name
+			image.name = filename
 			image.uri = srcFile.uri.toString()
-			image.documentId = srcFile.documentId
+			image.documentId = srcFile.documentId ?: return
 			dataRepo.updateMeta(image).subscribe()
 		}
 
@@ -135,7 +135,7 @@ class RenameDialog(
 
 		if (jpgFile.renameTo(jpgRename)) {
 			val originalJpg = dataRepo.synchImage(jpgFile.uri.toString())
-			originalJpg.name = jpgFile.name
+			originalJpg.name = jpgFile.name ?: return
 			originalJpg.uri = jpgFile.uri.toString()
 			dataRepo.updateMeta(originalJpg).subscribe()
 		}

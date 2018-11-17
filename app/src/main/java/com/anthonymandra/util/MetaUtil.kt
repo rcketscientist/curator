@@ -200,7 +200,7 @@ object MetaUtil {
 	 */
 	fun getImageFileInfo(c: Context,
 								file: UsefulDocumentFile,
-								parentMap: MutableMap<String, Long>): MetadataEntity {
+								parentMap: MutableMap<String, Long>): MetadataEntity? {
 		return getImageFileInfo(c, file, parentMap, null)
 	}
 
@@ -208,7 +208,7 @@ object MetaUtil {
 	 * Parses file info and adds the [file] under [parentId]
 	 */
 	fun getImageFileInfo(c: Context,
-								file: UsefulDocumentFile): MetadataEntity {
+								file: UsefulDocumentFile): MetadataEntity? {
 		return getImageFileInfo(c, file, mutableMapOf(), null)
 	}
 
@@ -217,7 +217,7 @@ object MetaUtil {
 	 */
 	fun getImageFileInfo(c: Context,
 								file: UsefulDocumentFile,
-								parentId: Long): MetadataEntity {
+								parentId: Long): MetadataEntity? {
 		return getImageFileInfo(c, file, mutableMapOf(), parentId)
 	}
 
@@ -228,35 +228,27 @@ object MetaUtil {
 	 * *Optional* [parentId] will be used and no folder db lookup will occur.
 	 */
 	private fun getImageFileInfo(c: Context,
-								file: UsefulDocumentFile,
-								parentMap: MutableMap<String, Long>,
-								parentId: Long?): MetadataEntity {
+										  file: UsefulDocumentFile,
+										  parentMap: MutableMap<String, Long>,
+										  parentId: Long?): MetadataEntity? {
 		val repo = DataRepository.getInstance(c)
 		// FIXME: This requires a populated parentMap for existing parents, otherwise it will re-add and insert (-1)
 
-		val fd = file.cachedData
+		file.cacheFileData()
 		val metadata = MetadataEntity()
 
-		var parent: String? = null
-		if (fd != null) {
-			metadata.name = fd.name
-			parent = fd.parent.toString()
-			metadata.timestamp = fd.lastModified
-			metadata.size = fd.length
-		} else {
-			val docParent = file.parentFile
-			if (docParent != null) {
-				parent = docParent.uri.toString()
-			}
-		}
+		metadata.name = file.name
+		val parent = file.parentFile?.uri?.toString() ?: return null
+		metadata.timestamp = file.lastModified
+		metadata.size = file.length
 
 		if (parentId != null) {
 			metadata.parentId = parentId
-		} else if (parent != null) {
+		} else {
 			metadata.parentId = parentMap.getOrPut(parent) { repo.insertParent(FolderEntity(parent)) }
 		}
 
-		metadata.documentId = file.documentId
+		metadata.documentId = file.documentId ?: return null
 		metadata.uri = file.uri.toString()
 		metadata.type = ImageUtil.getImageType(c, file.uri).value
 		return metadata
