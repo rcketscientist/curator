@@ -46,7 +46,7 @@ class MetaReaderWorker(context: Context, params: WorkerParameters): Worker(conte
 
         val unprocessedImages = repo._getUnprocessedImages(filter)
         unprocessedImages.forEachIndexed { index, value ->
-            if (isCancelled) {
+            if (isStopped) {
                 builder
                     .setContentText("Cancelled")
                     .setProgress(0,0,false)

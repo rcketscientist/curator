@@ -46,7 +46,7 @@ class MetaWriterWorker(context: Context, params: WorkerParameters): Worker(conte
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		val metadata = repo.synchImages(images)
 		metadata.forEachIndexed { index, image ->
-			if (isCancelled) {
+			if (isStopped) {
 //				builder
 //					.setContentText("Cancelled")
 //					.priority = NotificationCompat.PRIORITY_HIGH

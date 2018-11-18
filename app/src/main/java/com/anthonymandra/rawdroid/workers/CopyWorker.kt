@@ -43,7 +43,7 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		val metadata = repo.synchImages(images)
 		metadata.forEachIndexed { index, value ->
-			if (isCancelled) {
+			if (this.isStopped) {
 				builder
 					.setContentText("Cancelled")
 					.priority = NotificationCompat.PRIORITY_HIGH
@@ -58,8 +58,9 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 				.priority = NotificationCompat.PRIORITY_DEFAULT
 			notifications.notify(builder.build())
 
-			val destinationFile = parentFile.createFile(null, value.name)
-			copyAssociatedFiles(value, destinationFile.uri)
+			parentFile.createFile(null, value.name)?.let {
+				copyAssociatedFiles(value, it.uri)
+			}
 		}
 
 		builder

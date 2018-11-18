@@ -23,10 +23,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.State
+import androidx.work.WorkInfo
 import com.afollestad.materialcab.MaterialCab
 import com.anthonymandra.framework.*
-import com.anthonymandra.rawdroid.data.MetadataEntity
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
@@ -122,7 +121,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			if (workStatus.state.isFinished) {
 				galleryToolbar.subtitle = null
 				endProgress()
-			} else if (workStatus.state == State.RUNNING) {
+			} else if (workStatus.state == WorkInfo.State.RUNNING) {
 				toolbarProgress.visibility = View.VISIBLE
 				toolbarProgress.isIndeterminate = true
 			}
@@ -141,7 +140,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 				if (imageCount < 1) {
 					//TODO: Alert
 				}
-			} else if (State.RUNNING == workStatus.state) {
+			} else if (WorkInfo.State.RUNNING == workStatus.state) {
 				toolbarProgress.visibility = View.VISIBLE
 				toolbarProgress.isIndeterminate = true
 				galleryToolbar.subtitle = "Searching..."
@@ -261,7 +260,13 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		super.onActivityResult(requestCode, resultCode, intent)
 
 		when (requestCode) {
-			REQUEST_SEARCH -> if (resultCode == RESULT_OK && intent != null) {
+			REQUEST_SEARCH -> if (resultCode == RESULT_OK) {
+				val treeUri = intent?.data ?: return
+
+				contentResolver.takePersistableUriPermission(treeUri,
+					Intent.FLAG_GRANT_READ_URI_PERMISSION or
+						Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+
 				scanRawFiles()
 			}
 			REQUEST_COPY_DIR -> if (resultCode == RESULT_OK && intent != null) {

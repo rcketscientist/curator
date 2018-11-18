@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.text.Layout
 import android.util.TypedValue
 import android.view.View
-import com.anthonymandra.framework.FileUtil
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.MetadataEntity
+import com.anthonymandra.util.FileUtil
 import com.github.amlcurran.showcaseview.MorphShowcaseDrawer
 import com.github.amlcurran.showcaseview.ShowcaseView
 import com.github.amlcurran.showcaseview.targets.MorphViewTarget
