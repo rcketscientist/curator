@@ -163,7 +163,6 @@ public class FileUtil
 	public static boolean copy(Context context, Uri source, Uri destination) throws IOException {
 		// TODO: Clean this up and protect that NPE
 		UsefulDocumentFile destinationFile = UsefulDocumentFile.fromUri(context, destination);
-		destinationFile.cacheFileData();
 
 		UsefulDocumentFile parent = destinationFile.getParentFile();
 		if (parent == null) {

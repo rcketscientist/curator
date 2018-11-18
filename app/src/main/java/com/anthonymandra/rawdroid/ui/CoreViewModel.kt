@@ -27,6 +27,9 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	private val saveWorkInfo: LiveData<List<WorkInfo>>
 	private val deleteWorkInfo: LiveData<List<WorkInfo>>
 	private val cleanWorkInfo: LiveData<List<WorkInfo>>
+	private val recycleWorkInfo: LiveData<List<WorkInfo>>
+	private val restoreWorkInfo: LiveData<List<WorkInfo>>
+
 
 	val filter: MutableLiveData<ImageFilter> = MutableLiveData()
 
@@ -38,6 +41,8 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 		saveWorkInfo = workManager.getWorkInfosByTagLiveData(SaveWorker.JOB_TAG)
 		deleteWorkInfo = workManager.getWorkInfosByTagLiveData(DeleteWorker.JOB_TAG)
 		cleanWorkInfo = workManager.getWorkInfosByTagLiveData(CleanWorker.JOB_TAG)
+		recycleWorkInfo = workManager.getWorkInfosByTagLiveData(RecycleWorker.JOB_TAG)
+		restoreWorkInfo = workManager.getWorkInfosByTagLiveData(RestoreWorker.JOB_TAG)
 	}
 
 	val searchStatus get() = searchWorkInfo
@@ -47,6 +52,8 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	val saveStatus get() = saveWorkInfo
 	val cleanStatus get() = copyWorkInfo
 	val deleteStatus get() = deleteWorkInfo
+	val recycleStatus get() = copyWorkInfo
+	val restoreStatus get() = deleteWorkInfo
 
 	fun startMetaReaderWorker() {
 		val input = filter.value ?: ImageFilter()
@@ -94,6 +101,14 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 
 	fun startDeleteWorker(sources: LongArray) {
 		workManager.enqueue(DeleteWorker.buildRequest(sources))
+	}
+
+	fun startRecycleWorker(sources: LongArray) {
+		workManager.enqueue(RecycleWorker.buildRequest(sources))
+	}
+
+	fun startRestoreWorker(sources: Array<String>) {
+		workManager.enqueue(RestoreWorker.buildRequest(sources))
 	}
 
 	fun setFilter(filter: ImageFilter) {

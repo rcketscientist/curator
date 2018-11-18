@@ -27,14 +27,14 @@ import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
-import com.anthonymandra.util.MetaUtil
+import com.anthonymandra.util.FileUtil
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -43,10 +43,23 @@ import java.util.*
 
 abstract class CoreActivity : AppCompatActivity() {
 
-	private lateinit var recycleBin: RecycleBin
 	private lateinit var mSwapDir: File
-
+	private lateinit var licenseHandler: LicenseHandler
 	protected lateinit var xmpEditFragment: XmpEditFragment
+	lateinit var notificationManager: NotificationManager
+
+	private val recycleBin: RecycleBin by lazy {
+		val binSizeMb: Int = try {
+			PreferenceManager.getDefaultSharedPreferences(this).getInt(
+				FullSettingsActivity.KEY_RecycleBinSize,
+				FullSettingsActivity.defRecycleBin)
+		} catch (e: NumberFormatException) {
+			FullSettingsActivity.defRecycleBin
+		}
+		RecycleBin.getInstance(this, binSizeMb * 1024 * 1024L)
+	}
+	protected val dataRepo by lazy { (application as App).dataRepo }
+	protected val rootPermissions: List<UriPermission> by lazy { contentResolver.persistedUriPermissions }
 
 	/**
 	 * Stores uris when lifecycle is interrupted (ie: requesting a destination folder)
@@ -54,10 +67,8 @@ abstract class CoreActivity : AppCompatActivity() {
 	//TODO: Pretty sure this isn't needed...
 	protected var mItemsForIntent = longArrayOf()
 
-	private lateinit var licenseHandler: LicenseHandler
 	protected abstract val selectedIds: LongArray
 
-	lateinit var notificationManager: NotificationManager
 
 	/**
 	 * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
@@ -65,9 +76,6 @@ abstract class CoreActivity : AppCompatActivity() {
 	 * @return The resource id of the layout to load
 	 */
 	protected abstract val contentView: Int
-
-	protected val dataRepo by lazy { (application as App).dataRepo }
-	protected val rootPermissions: List<UriPermission> by lazy { contentResolver.persistedUriPermissions }
 
 	/**
 	 * @return The root view for this activity.
@@ -102,10 +110,8 @@ abstract class CoreActivity : AppCompatActivity() {
 	override fun onResume() {
 		super.onResume()
 		createSwapDir()
-		createRecycleBin()
 
 		val needsRead = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
-
 		val needsWrite = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 
 		if (needsRead || needsWrite)
@@ -346,23 +352,6 @@ abstract class CoreActivity : AppCompatActivity() {
 			)
 	}
 
-	private fun createRecycleBin() {
-		val settings = PreferenceManager.getDefaultSharedPreferences(this)
-
-		val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true)
-		val binSizeMb: Int = try {
-			PreferenceManager.getDefaultSharedPreferences(this).getInt(
-				FullSettingsActivity.KEY_RecycleBinSize,
-				FullSettingsActivity.defRecycleBin)
-		} catch (e: NumberFormatException) {
-			0
-		}
-
-		if (useRecycle) {
-			recycleBin = RecycleBin(this, RECYCLE_BIN_DIR, binSizeMb * 1024 * 1024)
-		}
-	}
-
 	private fun showRecycleBin() {
 		val settings = PreferenceManager.getDefaultSharedPreferences(this)
 		val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true)
@@ -378,16 +367,16 @@ abstract class CoreActivity : AppCompatActivity() {
 		AlertDialog.Builder(this).setTitle(R.string.recycleBin)
 			.setNegativeButton(R.string.emptyRecycleBin) { _, _ -> recycleBin.clearCache() }
 			.setNeutralButton(R.string.neutral) { _, _ -> } // cancel, do nothing
-			.setPositiveButton(R.string.restoreFile) { _, _ ->
-				if (!filesToRestore.isEmpty()) {
-					restoreImages(filesToRestore.map { it.toUri() })
-				}
-			}
 			.setMultiChoiceItems(shortNames.toTypedArray(), null) { _, which, isChecked ->
 				if (isChecked)
 					filesToRestore.add(keys[which])
 				else
 					filesToRestore.remove(keys[which])
+			}
+			.setPositiveButton(R.string.restoreFile) { _, _ ->
+				if (!filesToRestore.isEmpty()) {
+					viewModel.startRestoreWorker(filesToRestore.toTypedArray())
+				}
 			}
 			.show()
 	}
@@ -416,26 +405,28 @@ abstract class CoreActivity : AppCompatActivity() {
 			message = getString(R.string.warningDeleteExceedsRecycle)
 		}
 
-		viewModel.images(itemsToDelete).subscribeBy { images ->
-			val spaceRequired: Long = images
-				.asSequence()
-				.filterNotNull()
-				.map { it.size }
-				.sum()
+		viewModel.images(itemsToDelete)
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribeBy { images ->
+				val spaceRequired: Long = images
+					.asSequence()
+					.filterNotNull()
+					.map { it.size }
+					.sum()
 
-			if (justDelete || recycleBin.binSize < spaceRequired) {
-				if (deleteConfirm) {
-					AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
-						.setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
-						.setPositiveButton(R.string.delete) { _, _ -> viewModel.startDeleteWorker(itemsToDelete) }
-						.show()
+				if (justDelete || recycleBin.binSize < spaceRequired) {
+					if (deleteConfirm) {
+						AlertDialog.Builder(this).setTitle(R.string.prefTitleDeleteConfirmation).setMessage(message)
+							.setNeutralButton(R.string.neutral) { _, _ -> } // do nothing
+							.setPositiveButton(R.string.delete) { _, _ -> viewModel.startDeleteWorker(itemsToDelete) }
+							.show()
+					} else {
+						viewModel.startDeleteWorker(itemsToDelete)
+					}
 				} else {
-					viewModel.startDeleteWorker(itemsToDelete)
+					viewModel.startRecycleWorker(images.map{ it.id }.toLongArray())
 				}
-			} else {
-				recycleImages(images)
 			}
-		}
 	}
 
 	private fun requestEmailIntent() {
@@ -545,49 +536,6 @@ abstract class CoreActivity : AppCompatActivity() {
 		}
 	}
 
-	// TODO: Need to look into way to make this an application singleton (ProcessLifecycleOwner?)
-	private fun recycleImages(images: List<ImageInfo>) {
-		Observable.fromArray(*images.toTypedArray())
-			.doOnNext {
-				recycleBin.addFile(it.uri.toUri())
-			}
-			.subscribeOn(Schedulers.from(AppExecutors.DISK))
-			.subscribeBy(
-				onNext = { dataRepo.deleteImage(it) },
-				onError = { /* TODO: Notifications */ },
-				onComplete = { /* TODO: Notifications */ }
-			)
-	}
-
-	private fun restoreImages(images: List<Uri>) {
-		var parentMap: MutableMap<String, Long> = mutableMapOf()
-
-		Observable.fromArray(*images.toTypedArray())
-			.doOnSubscribe { _ ->
-				parentMap = dataRepo.parents.associateByTo(
-					mutableMapOf(), {it.documentUri}, {it.id})
-			}
-			.doOnNext {
-				val recycledFile = recycleBin.getFile(it.toString()) ?: throw java.lang.Exception("Failed to restore: $it")
-				val uri = Uri.fromFile(recycledFile)
-				FileUtil.copy(this, uri, it)
-			}
-			.subscribeOn(Schedulers.from(AppExecutors.DISK))
-			.subscribeBy(
-				onNext = {
-					recycleBin.removeFile(it.toString())
-
-					val info = MetaUtil.getImageFileInfo(this, UsefulDocumentFile.fromUri(this, it), parentMap)
-					if (info != null) {
-						val parsed = MetaUtil.readMetadata(this, ImageInfo.fromMetadataEntity(info))
-						dataRepo.insertMeta(parsed)
-					}
-				},
-				onError = { /* TODO: Notifications */ },
-				onComplete = { /* TODO: Notifications */ }
-			)
-	}
-
 	protected abstract val viewModel: CoreViewModel
 	abstract fun setMaxProgress(max: Int)
 	abstract fun incrementProgress()
@@ -597,7 +545,6 @@ abstract class CoreActivity : AppCompatActivity() {
 		const val NOTIFICATION_CHANNEL = "notifications"
 
 		const val SWAP_BIN_DIR = "swap"
-		const val RECYCLE_BIN_DIR = "recycle"
 
 		private const val REQUEST_STORAGE_PERMISSION = 0
 		private const val REQUEST_SAVE_AS_DIR = 15

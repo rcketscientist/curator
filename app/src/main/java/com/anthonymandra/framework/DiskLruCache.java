@@ -126,7 +126,7 @@ public final class DiskLruCache implements Closeable {
 	private final File journalFile;
 	private final File journalFileTmp;
 	private final int appVersion;
-	private final long maxSize;
+	private long maxSize;
 	private final int valueCount;
 	private long size = 0;
 	private Writer journalWriter;
@@ -546,8 +546,17 @@ public final class DiskLruCache implements Closeable {
      * Returns the maximum number of bytes that this cache should use to store
      * its data.
      */
-    public long maxSize() {
+    public long getMaxSize() {
         return maxSize;
+    }
+
+    /**
+     * Changes the maximum number of bytes the cache can store and queues a job
+     * to trim the existing store, if necessary.
+     */
+    public synchronized void setMaxSize(long maxSize) {
+        this.maxSize = maxSize;
+        executorService.submit(cleanupCallable);
     }
 
     /**

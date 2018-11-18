@@ -171,6 +171,7 @@
     <string name="exportingThumb">Exporting Thumbnails…</string>
     <string name="deletingFiles">Deleting Files…</string>
     <string name="recyclingFiles">Recycling Files…</string>
+    <string name="restoringFiles">Restoring Files…</string>
     <string name="clear">Clear</string>
     <string name="reuse">Reuse</string>
     <string name="customKeywords">Custom Keywords</string>

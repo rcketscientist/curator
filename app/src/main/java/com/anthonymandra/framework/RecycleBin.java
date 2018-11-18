@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.anthonymandra.util.AppExecutors;
 import com.anthonymandra.util.FileUtil;
 
 import java.io.BufferedInputStream;
@@ -33,6 +34,8 @@ import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.Nullable;
+import io.reactivex.Completable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * This class holds our discarded images
@@ -43,53 +46,52 @@ public class RecycleBin {
 	// TODO: Single char replacements are not sufficient
 	private static final String pathReplacement = "~";
 	private static final String spaceReplacement = "`";
-	public static final String localPrefix = "file:~";
-	public static final String mtpPrefix = "mtp:~";
 	private static final int MESSAGE_CLEAR = 0;
 	private static final int MESSAGE_INIT_DISK_CACHE = 1;
 	private static final int MESSAGE_FLUSH = 2;
 	private static final int MESSAGE_CLOSE = 3;
-
-	// Default disk cache size
-	private static final int DEFAULT_DISK_CACHE_SIZE = 1024 * 1024 * 20; // 20MB
 	private static final int DISK_CACHE_INDEX = 0;
 
-	private Context mContext;
+	private static long mDiskCacheSize = 1024 * 1024 * 50;
+	private static RecycleBin INSTANCE = null;
+
 	private DiskLruCache mDiskLruCache;
 	private final Object mDiskCacheLock = new Object();
 	private boolean mDiskCacheStarting = true;
-	private int mDiskCacheSize = DEFAULT_DISK_CACHE_SIZE;
 	private File mDiskCacheDir;
 
 	/**
 	 * Create new recycling bin with the default parameters.
-	 *
 	 * @param context    The context to use
-	 * @param uniqueName A unique name that will be appended to the cache directory
 	 */
-	public RecycleBin(Context context, String uniqueName, int maxSize) {
-		mContext = context;
-		mDiskCacheSize = maxSize;
-		mDiskCacheDir = FileUtil.getDiskCacheDir(context, uniqueName);
+	private RecycleBin(Context context) {
+		mDiskCacheDir = FileUtil.getDiskCacheDir(context, "recycle");
 		initDiskCache();
 	}
 
-	/**
-	 * Deletes the given file.  This should be overridden if necessary to handle file system changes.
-	 *
-	 * @param toDelete file to delete
-	 * @return success
-	 */
-	protected boolean deleteFile(Uri toDelete) {
-		UsefulDocumentFile df = UsefulDocumentFile.fromUri(mContext, toDelete);
-		return df.delete();
+	public static RecycleBin getInstance(Context c) {
+		if (INSTANCE == null) {
+			INSTANCE = new RecycleBin(c);
+		}
+		return INSTANCE;
+	}
+
+	public static RecycleBin getInstance(Context c, long maxSize) {
+		setMaxSize(maxSize);
+		return getInstance(c);
+	}
+
+	public static void setMaxSize(long maxSize) {
+		mDiskCacheSize = maxSize;
+		if (INSTANCE != null) {
+			INSTANCE.getDiskCache().setMaxSize(maxSize);
+		}
 	}
 
 	/**
-	 * Adds a file to the recycling bin synchronously.  Recommended to be called asynchronously,
-	 * such as with {@link #addFileAsync(Uri), which will automatically run m AsyncTask}
+	 * Adds a file to the recycling bin synchronously.  Must be called in the background.
 	 */
-	public void addFile(Uri toRecycle) throws IOException {
+	public void addFileSynch(Context c, Uri toRecycle) throws IOException {
 		if (toRecycle == null) {
 			return;
 		}
@@ -108,13 +110,14 @@ public class RecycleBin {
 					}
 					final DiskLruCache.Editor editor = bin.edit(key);
 					if (editor != null) {
-						bis = new BufferedInputStream(FileUtil.getInputStream(mContext, toRecycle));
+						bis = new BufferedInputStream(FileUtil.getInputStream(c, toRecycle));
 						out = new BufferedOutputStream(editor.newOutputStream(DISK_CACHE_INDEX));
 
 						Util.copy(bis, out);
 						editor.commit();
 
-						deleteFile(toRecycle);
+						UsefulDocumentFile df = UsefulDocumentFile.fromUri(c, toRecycle);
+						df.delete();
 					}
 				} finally {
 					Util.closeSilently(bis);
@@ -217,7 +220,7 @@ public class RecycleBin {
 		final DiskLruCache bin = getDiskCache();
 		if (bin == null)
 			return 0;
-		return bin.maxSize();
+		return bin.getMaxSize();
 	}
 
 	protected class CacheAsyncTask extends AsyncTask<Object, Void, Void> {
@@ -340,48 +343,24 @@ public class RecycleBin {
 		}
 	}
 
-	public class AddFileTask extends AsyncTask<Uri, Void, Void> {
-		@Override
-		protected Void doInBackground(Uri... params) {
-			try {
-				// FIXME: It may not be possible to do this with the new permission infrastructure
-				addFile(params[0]);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
+	public void addFile(Context c, Uri uri) {
+		Completable.fromAction(() -> addFileSynch(c, uri))
+			.subscribeOn(Schedulers.from(AppExecutors.Companion.getDISK()))
+			.subscribe();
 	}
 
-	public class RemoveFileTask extends AsyncTask<String, Void, Void> {
-		@Override
-		protected Void doInBackground(String... params) {
-			removeFileInternal(params[0]);
-			return null;
-		}
+	public void remove(String key) {
+		Completable.fromAction(() -> removeFileInternal(key))
+			.subscribeOn(Schedulers.from(AppExecutors.Companion.getDISK()))
+			.subscribe();
+	}
+
+	public void remove(Uri file) {
+		remove(fileToKey(file.toString()));
 	}
 
 	public void initDiskCache() {
 		new CacheAsyncTask().execute(MESSAGE_INIT_DISK_CACHE);
-	}
-
-	/**
-	 * Adds a file to the recycling bin, then finally deletes it. Operates on its an {@link AsyncTask} for file IO
-	 *
-	 * @param recycledItem File to recycle and delete
-	 */
-	@Deprecated // Write permission issues would be lost
-	public void addFileAsync(Uri recycledItem) {
-		new AddFileTask().execute(recycledItem);
-	}
-
-	public void removeKey(String key) {
-		new RemoveFileTask().execute(key);
-	}
-
-	public void removeFile(String file) {
-		final String key = fileToKey(file);
-		new RemoveFileTask().execute(key);
 	}
 
 	public void clearCache() {

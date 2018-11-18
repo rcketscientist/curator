@@ -135,7 +135,7 @@ class RenameDialog(
 
 		if (jpgFile.renameTo(jpgRename)) {
 			val originalJpg = dataRepo.synchImage(jpgFile.uri.toString())
-			originalJpg.name = jpgFile.name ?: return
+			originalJpg.name = jpgFile.name
 			originalJpg.uri = jpgFile.uri.toString()
 			dataRepo.updateMeta(originalJpg).subscribe()
 		}
