@@ -40,7 +40,7 @@ class ViewerActivity : CoreActivity() {
 	private var autoHide = Timer()
 
 	override val selectedIds: LongArray
-		get() = listOfNotNull(viewerAdapter.getImage(pager.currentItem)?.id).toLongArray()
+		get() = listOfNotNull(viewerAdapter.getValue(pager.currentItem)?.id).toLongArray()
 
 	override val viewModel: GalleryViewModel by lazy {
 		ViewModelProviders.of(this).get(GalleryViewModel::class.java)
@@ -65,9 +65,8 @@ class ViewerActivity : CoreActivity() {
 		val settings = PreferenceManager.getDefaultSharedPreferences(this)
 		isImmersive = settings.getBoolean(FullSettingsActivity.KEY_UseImmersive, true)
 
-		viewerAdapter = ViewerAdapter(supportFragmentManager)
-
 		val startIndex = intent.getIntExtra(EXTRA_START_INDEX, 0)
+		viewerAdapter = ViewerAdapter(this, pager, startIndex)
 
 		if (intent.action == ACTION_VIEW || intent.action == ACTION_SEND) {	// External, add data
 			val data = intent.data
@@ -84,9 +83,9 @@ class ViewerActivity : CoreActivity() {
 			viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
 			viewModel.imageList.observe(this, Observer {
 				viewerAdapter.submitList(it)
-				// TODO: Can we get an update?  Will the entries reorder on changes?
-				// If se we could likely use the a custom data source like the temp shares
-				pager.setCurrentItem(startIndex, false)
+//				// TODO: Can we get an update?  Will the entries reorder on changes?
+//				// If se we could likely use the a custom data source like the temp shares
+//				pager.setCurrentItem(startIndex, false)
 			})
 		}
 
@@ -107,7 +106,7 @@ class ViewerActivity : CoreActivity() {
 			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 			override fun onPageSelected(position: Int) {
 				viewModel.showInterface()
-				currentImage = viewerAdapter.getImage(position)
+				currentImage = viewerAdapter.getValue(position)
 				currentImage?.let {
 					xmpEditFragment.initXmp(
 							it.rating?.toInt(),
@@ -206,12 +205,11 @@ class ViewerActivity : CoreActivity() {
 	private fun setWallpaper() {
 		try {
 			WallpaperManager.getInstance(this).setBitmap(ImageUtil.createBitmapToSize(
-					ImageUtil.getThumb(this, Uri.parse(currentImage?.uri)), displayWidth, displayHeight))
+				ImageUtil.getThumb(this, currentImage), displayWidth, displayHeight))
 		} catch (e: Exception) {
 			Log.e(ViewerActivity.TAG, e.toString())
 			Toast.makeText(this@ViewerActivity, R.string.resultWallpaperFailed, Toast.LENGTH_SHORT).show()
 		}
-
 	}
 
 	override fun setMaxProgress(max: Int) {}    //TODO: Clearly progress no longer belongs in core activity

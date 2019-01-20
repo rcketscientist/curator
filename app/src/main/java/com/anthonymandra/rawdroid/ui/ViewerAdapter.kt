@@ -1,30 +1,24 @@
 package com.anthonymandra.rawdroid.ui
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.paging.PagedList
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.rawdroid.data.ImageInfo
 
-class ViewerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm) {
-    private var images: PagedList<ImageInfo>? = null
+class ViewerAdapter(activity: FragmentActivity,
+						  pager: ViewPager?,
+						  startPos: Int? = 0)
+	: PagedListPagerAdapter<ImageInfo>(activity.supportFragmentManager, pager, startPos) {
 
-    override fun getItem(position: Int): Fragment {
-        val fragment = ViewPagerFragment()
-        fragment.source = images?.get(position)
-        return fragment
-    }
+	override var isSmoothScroll = false
 
-    override fun getCount(): Int {
-        return images?.size ?: 0
-    }
+	init {
+		activity.lifecycle.addObserver(this)
+	}
 
-    fun getImage(position: Int): ImageInfo? {
-        return images?.get(position)
-    }
-
-    fun submitList(pagedList: PagedList<ImageInfo>?) {
-        images = pagedList
-        notifyDataSetChanged()
-    }
+	override fun createItem(position: Int): Fragment {
+		val fragment = ViewPagerFragment()
+		fragment.source = getValue(position)
+		return fragment
+	}
 }

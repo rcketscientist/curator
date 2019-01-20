@@ -21,7 +21,7 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		val images = inputData.getLongArray(KEY_COPY_URIS)
 		val destination = inputData.getString(KEY_DEST_URI)?.toUri()
 
-		if (images == null || destination == null) return Result.FAILURE
+		if (images == null || destination == null) return Result.failure()
 
 		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
 
@@ -49,7 +49,7 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 					.priority = NotificationCompat.PRIORITY_HIGH
 				notifications.notify(builder.build())
 
-				return Result.SUCCESS
+				return Result.success()
 			}
 
 			builder
@@ -69,7 +69,7 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 			.priority = NotificationCompat.PRIORITY_HIGH
 		notifications.notify(builder.build())
 
-		return Result.SUCCESS
+		return Result.success()
 	}
 
 	private fun NotificationManagerCompat.notify(notification: Notification) {

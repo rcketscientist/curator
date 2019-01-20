@@ -314,7 +314,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
 				if (!selection.isEmpty())
 					selection.append(joiner)
 
-				selection.append(DbUtil.createIN(Meta.LABEL, filter.labels.size))
+				selection.append(DbUtil.createIN("label", filter.labels.size))
 				selectionArgs.addAll(filter.labels)
 			}
 
@@ -322,7 +322,7 @@ class DataRepository private constructor(private val database: AppDatabase) {
 				if (!selection.isEmpty())
 					selection.append(joiner)
 
-				selection.append(DbUtil.createIN(Meta.RATING, filter.ratings.size))
+				selection.append(DbUtil.createIN("rating", filter.ratings.size))
 				filter.ratings.mapTo(selectionArgs) { java.lang.Double.toString(it.toDouble()) }
 			}
 
@@ -337,11 +337,11 @@ class DataRepository private constructor(private val database: AppDatabase) {
 			val direction = if (filter.sortAscending) " ASC" else " DESC"
 
 			if (filter.segregateByType) {
-				order.append(Meta.TYPE).append(" COLLATE NOCASE").append(" ASC, ")
+				order.append("type").append(" COLLATE NOCASE").append(" ASC, ")
 			}
 			when (filter.sortColumn) {
-				ImageFilter.SortColumns.Date -> order.append(Meta.TIMESTAMP).append(direction)
-				ImageFilter.SortColumns.Name -> order.append(Meta.NAME).append(" COLLATE NOCASE").append(direction)
+				ImageFilter.SortColumns.Date -> order.append("timestamp").append(direction)
+				ImageFilter.SortColumns.Name -> order.append("name").append(" COLLATE NOCASE").append(direction)
 			}
 
 			query.append(coreQuery)

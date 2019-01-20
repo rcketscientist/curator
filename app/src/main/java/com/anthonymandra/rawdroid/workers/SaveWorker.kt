@@ -27,7 +27,7 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		val config = inputData.getString(KEY_CONFIG)
 		val insert = inputData.getBoolean(KEY_INSERT, false)
 
-		if (images == null || destination == null || saveType == null) return Result.FAILURE
+		if (images == null || destination == null || saveType == null) return Result.failure()
 
 		val imageConfiguration = ImageConfiguration.from(ImageConfiguration.ImageType.valueOf(saveType), config)
 		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
@@ -78,7 +78,7 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 					.priority = NotificationCompat.PRIORITY_HIGH
 				notifications.notify(builder.build())
 
-				return Result.SUCCESS
+				return Result.success()
 			}
 
 			builder
@@ -120,7 +120,7 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 			.priority = NotificationCompat.PRIORITY_HIGH
 		notifications.notify(builder.build())
 
-		return Result.SUCCESS
+		return Result.success()
 	}
 
 	private fun NotificationManagerCompat.notify(notification: Notification) {

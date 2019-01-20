@@ -2,6 +2,7 @@ package com.anthonymandra.rawdroid.ui
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import com.anthonymandra.content.Meta
 import com.anthonymandra.rawdroid.data.ImageInfo
@@ -30,15 +31,18 @@ internal class RawModelLoader(private val context: Context) : ModelLoader<ImageI
 
 	private inner class RawFetcher internal constructor(context: Context, private val source: ImageInfo) : DataFetcher<InputStream> {
 		private val context: Context = context.applicationContext
+		private var stream: ByteArrayInputStream? = null
 
 		override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in InputStream>) {
 			try {
-				val image = ImageUtil.getThumb(context, source.uri.toUri(), Meta.ImageType.fromInt(source.type))
+				Log.d("glide", "load: ${source.name}")
+				val image = ImageUtil.getThumb(context, source)
 				if (image == null || image.isEmpty()) {
 					callback.onLoadFailed(Exception("$source could not be processed."))
 					return
 				}
-				callback.onDataReady(ByteArrayInputStream(image))
+				stream = ByteArrayInputStream(image)
+				callback.onDataReady(stream)
 			} catch (e: Exception) {
 				callback.onLoadFailed(e)
 				e.printStackTrace()
@@ -47,10 +51,11 @@ internal class RawModelLoader(private val context: Context) : ModelLoader<ImageI
 		}
 
 		override fun cleanup() {
-			// Do nothing. It's safe to leave a ByteArrayInputStream open.
+			stream?.close()
 		}
 
 		override fun cancel() {
+			Log.d("glide", "cancel: ${source.name}")
 			// Do nothing.
 		}
 

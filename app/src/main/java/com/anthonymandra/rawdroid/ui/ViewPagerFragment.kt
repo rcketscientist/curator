@@ -47,18 +47,18 @@ class ViewPagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // TODO: this let never enters...
-//        source?.let { image ->
-            if (!source!!.processed) {
+        source?.let { image ->
+            if (!image.processed) {
                 // TODO: update meta
             } else {
                 populateMeta()
             }
             imageView.setRegionDecoderClass(RawImageRegionDecoder::class.java)
-            imageView.setImage(RawImageSource(source!!))
+            imageView.setImage(RawImageSource(image))
             imageView.setOnImageEventListener(object: SubsamplingScaleImageView.DefaultOnImageEventListener() {
                 override fun onImageLoaded(bitmap: WeakReference<Bitmap>) {
                     textViewScale?.post {
-                        textViewScale.text = (imageView.scale * 100).toInt().toString() + "%"
+                        textViewScale?.text = (imageView.scale * 100).toInt().toString() + "%"
                     }
 
                     //TODO: Is there really value to the reference?
@@ -77,7 +77,7 @@ class ViewPagerFragment : Fragment() {
             imageView.setOnClickListener {
                 viewModel.toggleInterface() //TODO: This needs to cancel the
             }
-//        }
+        }
 
         val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
         viewModel.isZoomLocked.observe(this, Observer {
@@ -153,7 +153,7 @@ class ViewPagerFragment : Fragment() {
     }
 
     private fun updateHistogram(bitmap: Bitmap) {
-        histogramView.clear()
+        histogramView?.clear()
 
         // TODO: Need some way to cancel?
         histogramSubscription = Single.create<Histogram.ColorBins> {

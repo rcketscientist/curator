@@ -24,7 +24,7 @@ class CleanWorker(context: Context, params: WorkerParameters): Worker(context, p
 
 	    repo.deleteImages(uriToRemove.toTypedArray())
 
-        return Result.SUCCESS
+        return Result.success()
     }
 
     companion object {

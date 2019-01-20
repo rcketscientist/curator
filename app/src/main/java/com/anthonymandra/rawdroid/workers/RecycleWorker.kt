@@ -21,7 +21,7 @@ import com.anthonymandra.util.Util
 class RecycleWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     override fun doWork(): Result {
 	    val repo = DataRepository.getInstance(this.applicationContext)
-	    val imagesIds = inputData.getLongArray(RecycleWorker.KEY_RECYCLE_IDS) ?: return Result.FAILURE
+	    val imagesIds = inputData.getLongArray(RecycleWorker.KEY_RECYCLE_IDS) ?: return Result.failure()
 
 		 val binSizeMb: Int = try {
 			 PreferenceManager.getDefaultSharedPreferences(applicationContext).getInt(
@@ -56,7 +56,7 @@ class RecycleWorker(context: Context, params: WorkerParameters): Worker(context,
 				    .priority = NotificationCompat.PRIORITY_HIGH
 			    notifications.notify(builder.build())
 
-			    return Result.SUCCESS
+			    return Result.success()
 		    }
 
 		    builder
@@ -75,7 +75,7 @@ class RecycleWorker(context: Context, params: WorkerParameters): Worker(context,
 		    .setProgress(0,0,false)
 		    .priority = NotificationCompat.PRIORITY_HIGH
 	    notifications.notify(builder.build())
-        return Result.SUCCESS
+        return Result.success()
     }
 
 	private fun deleteAssociatedFiles(image: ImageInfo): Boolean {

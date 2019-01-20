@@ -17,7 +17,7 @@ class RawImageRegionDecoder(
     }
 
     override fun init(context: Context?, source: RawImageSource): Point {
-        val imageData = ImageUtil.getThumb(context, source.source)
+        val imageData = ImageUtil.getThumb(context, source.source) ?: throw java.lang.RuntimeException("Failed to decode")
         decoder = BitmapRegionDecoder.newInstance(imageData, 0, imageData.size, false)
         return Point(decoder!!.width, decoder!!.height)
     }

@@ -53,7 +53,7 @@ class MetaReaderWorker(context: Context, params: WorkerParameters): Worker(conte
                     .priority = NotificationCompat.PRIORITY_HIGH
                 notifications.notify(builder.build())
 
-                return Result.SUCCESS
+                return Result.success()
             }
 
             builder
@@ -74,7 +74,7 @@ class MetaReaderWorker(context: Context, params: WorkerParameters): Worker(conte
             .priority = NotificationCompat.PRIORITY_HIGH
         notifications.notify(builder.build())
 
-        return Result.SUCCESS
+        return Result.success()
     }
 
     private fun NotificationManagerCompat.notify(notification: Notification) {
