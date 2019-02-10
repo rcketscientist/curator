@@ -1,14 +1,12 @@
 package com.anthonymandra.content;
 
-import android.net.Uri;
-import android.provider.BaseColumns;
 import android.util.SparseArray;
 
 import com.drew.lang.annotations.Nullable;
 
 import java.util.EnumSet;
 
-public class Meta implements BaseColumns
+public class Meta
 {
 	public enum ImageType
 	{

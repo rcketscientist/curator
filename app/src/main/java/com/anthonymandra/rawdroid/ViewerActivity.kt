@@ -66,7 +66,7 @@ class ViewerActivity : CoreActivity() {
 		isImmersive = settings.getBoolean(FullSettingsActivity.KEY_UseImmersive, true)
 
 		val startIndex = intent.getIntExtra(EXTRA_START_INDEX, 0)
-		viewerAdapter = ViewerAdapter(this, pager, startIndex)
+		viewerAdapter = ViewerAdapter(supportFragmentManager)
 
 		if (intent.action == ACTION_VIEW || intent.action == ACTION_SEND) {	// External, add data
 			val data = intent.data
@@ -81,11 +81,9 @@ class ViewerActivity : CoreActivity() {
 			createTempDataSource(stream)
 		} else {    // Gallery intent
 			viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
-			viewModel.imageList.observe(this, Observer {
+			viewModel.imageList(startIndex).observe(this, Observer {
 				viewerAdapter.submitList(it)
-//				// TODO: Can we get an update?  Will the entries reorder on changes?
-//				// If se we could likely use the a custom data source like the temp shares
-//				pager.setCurrentItem(startIndex, false)
+				pager.setCurrentItem(startIndex, false)
 			})
 		}
 
@@ -120,7 +118,7 @@ class ViewerActivity : CoreActivity() {
 		})
 		// TODO: Jetifier not working on page transformer
 //        pager.setPageTransformer(true, DepthPageTransformer())
-		pager.offscreenPageLimit = 2
+//		pager.offscreenPageLimit = 2
 
 		// TODO: We need some way to update meta when processed.  This is probably done automatically
 		// with the viewmodel, but that may change sorting.  This was previously done with a broadcast.
