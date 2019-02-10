@@ -95,7 +95,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		galleryAdapter.onItemClickListener = this
 		galleryAdapter.onItemLongClickListener = this
 
-		viewModel.imageList.observe(this, Observer {
+		viewModel.imageList().observe(this, Observer {
 			galleryAdapter.submitList(it)
 		})
 

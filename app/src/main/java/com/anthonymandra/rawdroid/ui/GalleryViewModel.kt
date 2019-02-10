@@ -12,10 +12,10 @@ import androidx.paging.PagedList
 import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.data.ImageInfo
 import io.reactivex.Single
+import java.util.concurrent.Executors
 
 class GalleryViewModel(app: Application) : CoreViewModel(app) {
     //TODO: Split out viewer viewmodel
-    val imageList: LiveData<PagedList<ImageInfo>>
     val filteredCount: LiveData<Int>
     val filteredProcessedCount: LiveData<Int>
     private val _isZoomLocked: MutableLiveData<Boolean> = MutableLiveData()
@@ -45,11 +45,22 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
 
     val metaVisibility = MetaVisibility()
 
-    init {
-        imageList = Transformations.switchMap(filter) { filter ->
-            LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30).build()
-        }
+	fun imageList(startLocation: Int = 0): LiveData<PagedList<ImageInfo>> {
+//		val config = PagedList.Config.Builder()
+//			.setInitialLoadSizeHint(10)
+//			.setPrefetchDistance(3)
+//			.setPageSize(30)
+//			.build()
 
+		return Transformations.switchMap(filter) { filter ->
+			LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30)
+				.setFetchExecutor(Executors.newSingleThreadExecutor())
+				.setInitialLoadKey(startLocation)
+				.build()
+		}
+	}
+
+	init {
         filteredCount = Transformations.switchMap(filter) { filter ->
             dataRepo.getImageCount(filter)
         }

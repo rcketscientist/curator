@@ -109,7 +109,18 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	override fun onResume() {
 		super.onResume()
-		createSwapDir()
+
+		Completable.fromAction {
+			mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR)
+			if (!mSwapDir.exists()) {
+				mSwapDir.mkdirs()
+			}
+		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
+			.subscribeBy(
+				// TODO:
+				onComplete = {},
+				onError = {}
+			)
 
 		val needsRead = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 		val needsWrite = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -133,7 +144,17 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		clearSwapDir()
+
+		if (::mSwapDir.isInitialized) {
+			Observable.fromIterable(mSwapDir.listFiles().asList())
+				.subscribeOn(Schedulers.from(AppExecutors.DISK))
+				.subscribeBy(
+					//TODO:
+					onError = {},
+					onComplete = {},
+					onNext = { it.delete() }
+				)
+		}
 		recycleBin.closeCache()
 	}
 
@@ -322,34 +343,6 @@ abstract class CoreActivity : AppCompatActivity() {
 		ft.show(xmpEditFragment)
 		ft.setCustomAnimations(android.R.anim.slide_out_right, android.R.anim.slide_in_left, android.R.anim.slide_out_right, android.R.anim.slide_in_left)
 		ft.commit()
-	}
-
-	/**
-	 * Create swap directory or clear the contents
-	 */
-	private fun createSwapDir() {
-		Completable.fromAction {
-			mSwapDir = FileUtil.getDiskCacheDir(this, SWAP_BIN_DIR)
-			if (!mSwapDir.exists()) {
-				mSwapDir.mkdirs()
-			}
-		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
-			.subscribeBy(
-				// TODO:
-				onComplete = {},
-				onError = {}
-			)
-	}
-
-	private fun clearSwapDir() {
-		Observable.fromIterable(mSwapDir.listFiles().asList())
-			.subscribeOn(Schedulers.from(AppExecutors.DISK))
-			.subscribeBy(
-				//TODO:
-				onError = {},
-				onComplete = {},
-				onNext = { it.delete() }
-			)
 	}
 
 	private fun showRecycleBin() {

@@ -35,7 +35,7 @@ class SearchWorker(context: Context, params: WorkerParameters): Worker(context, 
 			repo.synchInsertImages(*images.toTypedArray())
 		}
 
-		return Result.SUCCESS
+		return Result.success()
 	}
 
 	fun search(files: List<UsefulDocumentFile>): List<UsefulDocumentFile> {

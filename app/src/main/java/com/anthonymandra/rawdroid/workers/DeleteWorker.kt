@@ -18,7 +18,7 @@ import com.anthonymandra.util.Util
 class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     override fun doWork(): Result {
 	    val repo = DataRepository.getInstance(this.applicationContext)
-	    val imagesIds = inputData.getLongArray(DeleteWorker.KEY_DELETE_IDS) ?: return Result.FAILURE
+	    val imagesIds = inputData.getLongArray(DeleteWorker.KEY_DELETE_IDS) ?: return Result.failure()
 
 	    Util.createNotificationChannel(
 		    applicationContext,
@@ -44,7 +44,7 @@ class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, 
 				    .priority = NotificationCompat.PRIORITY_HIGH
 			    notifications.notify(builder.build())
 
-			    return Result.SUCCESS
+			    return Result.success()
 		    }
 
 		    builder
@@ -63,7 +63,7 @@ class DeleteWorker(context: Context, params: WorkerParameters): Worker(context, 
 		    .setProgress(0,0,false)
 		    .priority = NotificationCompat.PRIORITY_HIGH
 	    notifications.notify(builder.build())
-        return Result.SUCCESS
+        return Result.success()
     }
 
 	private fun deleteAssociatedFiles(image: ImageInfo): Boolean {

@@ -21,7 +21,7 @@ import com.anthonymandra.util.Util
 class RestoreWorker(context: Context, params: WorkerParameters): Worker(context, params) {
     override fun doWork(): Result {
 	    val repo = DataRepository.getInstance(this.applicationContext)
-	    val recycleKeys = inputData.getStringArray(RestoreWorker.KEY_RECYCLE_KEYS) ?: return Result.FAILURE
+	    val recycleKeys = inputData.getStringArray(RestoreWorker.KEY_RECYCLE_KEYS) ?: return Result.failure()
 		 val recycleBin = RecycleBin.getInstance(applicationContext)
 		 val failedRestores = mutableListOf<String>()
 
@@ -55,7 +55,7 @@ class RestoreWorker(context: Context, params: WorkerParameters): Worker(context,
 				 }
 			    notifications.notify(builder.build())
 
-			    return Result.SUCCESS
+			    return Result.success()
 		    }
 
 			 builder
@@ -92,7 +92,7 @@ class RestoreWorker(context: Context, params: WorkerParameters): Worker(context,
 		    .setProgress(0,0,false)
 		    .priority = NotificationCompat.PRIORITY_HIGH
 	    notifications.notify(builder.build())
-        return Result.SUCCESS
+        return Result.success()
     }
 
 	private fun deleteAssociatedFiles(image: ImageInfo): Boolean {

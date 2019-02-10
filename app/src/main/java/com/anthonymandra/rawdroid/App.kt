@@ -11,42 +11,52 @@ import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 
 class App : Application() {
-    val database: AppDatabase
-        get() = AppDatabase.getInstance(this)
+	val database: AppDatabase
+		get() = AppDatabase.getInstance(this)
 
-    val dataRepo: DataRepository
-        get() = DataRepository.getInstance(database)
+	val dataRepo: DataRepository
+		get() = DataRepository.getInstance(database)
 
-    override fun onCreate() {
-        super.onCreate()
+	override fun onCreate() {
+		super.onCreate()
 
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return
-        }
-        LeakCanary.install(this)
+		if (LeakCanary.isInAnalyzerProcess(this)) {
+			// This process is dedicated to LeakCanary for heap analysis.
+			// You should not init your app in this process.
+			return
+		}
+		LeakCanary.install(this)
 
-        val crashlyticsKit = Crashlytics.Builder()
-            .core(CrashlyticsCore.Builder().disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG).build())
-            .build()
+		val crashlyticsKit = Crashlytics.Builder()
+			.core(CrashlyticsCore.Builder().disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG).build())
+			.build()
 
-        Fabric.with(this, crashlyticsKit, CrashlyticsNdk())
+		Fabric.with(this, crashlyticsKit, CrashlyticsNdk())
 
-        if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-//                .detectDiskReads()    // TODO: VERY tmeporary, unknown source for a read...
-                .detectDiskWrites()
-                .detectNetwork()   // or .detectAll() for all detectable problems
-                .penaltyLog()
-                .penaltyDeath()
-                .build())
-            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                //					.detectLeakedClosableObjects()  disabled to avoid disklrucache and focus on cursors
-                .penaltyLog()
-                .penaltyDeath()
-                .build())
-        }
-    }
+		if (BuildConfig.DEBUG) {
+			StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+				.detectDiskReads()
+				.detectDiskWrites()
+				.detectCustomSlowCalls()
+//				.detectResourceMismatches()
+//				.detectUnbufferedIo()
+				.detectNetwork()
+				.penaltyLog()
+//				.penaltyDialog()
+//				.penaltyDeath()
+				.build())
+			StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
+//				.detectActivityLeaks()	FIXME: ViewerActivity leak
+//				.detectCleartextNetwork()
+//				.detectContentUriWithoutPermission()
+				.detectFileUriExposure()
+				.detectLeakedClosableObjects()
+				.detectLeakedRegistrationObjects()
+				.detectLeakedSqlLiteObjects()
+//				.detectUntaggedSockets().
+				.penaltyLog()
+//				.penaltyDeath()
+				.build())
+		}
+	}
 }

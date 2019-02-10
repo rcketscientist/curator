@@ -25,7 +25,7 @@ class MetaWriterWorker(context: Context, params: WorkerParameters): Worker(conte
 			XmpUpdateField.valueOf(it)
 		}
 
-		if (images == null) return Result.FAILURE
+		if (images == null) return Result.failure()
 		val subjects = if (subjectIds != null) repo.synchSubjects(subjectIds) else emptyList()
 
 //		Util.createNotificationChannel(
@@ -52,7 +52,7 @@ class MetaWriterWorker(context: Context, params: WorkerParameters): Worker(conte
 //					.priority = NotificationCompat.PRIORITY_HIGH
 //				notifications.notify(builder.build())
 
-				return Result.SUCCESS
+				return Result.success()
 			}
 
 //			builder
@@ -104,7 +104,7 @@ class MetaWriterWorker(context: Context, params: WorkerParameters): Worker(conte
 //			.priority = NotificationCompat.PRIORITY_HIGH
 //		notifications.notify(builder.build())
 
-		return Result.SUCCESS
+		return Result.success()
 	}
 
 	private fun NotificationManagerCompat.notify(notification: Notification) {
