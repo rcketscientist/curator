@@ -1,12 +1,12 @@
 package com.anthonymandra.rawdroid.workers
 
-import android.app.Notification
 import android.content.Context
 import android.net.Uri
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
@@ -18,7 +18,13 @@ import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.FileUtil
 import com.anthonymandra.util.Util
 
-class SaveWorker(context: Context, params: WorkerParameters): Worker(context, params) {
+class SaveWorker(context: Context, params: WorkerParameters) : CoreWorker(context, params) {
+	override val channelId = "save"
+	override val channelName = "Save Channel"
+	override val channelDescription = "Notifications for save tasks."
+	override val notificationTitle: String = applicationContext.getString(R.string.savingImages)
+	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
+
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)
 		val images = inputData.getLongArray(KEY_IMAGE_IDS)
@@ -32,20 +38,7 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		val imageConfiguration = ImageConfiguration.from(ImageConfiguration.ImageType.valueOf(saveType), config)
 		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
 
-		Util.createNotificationChannel(
-			applicationContext,
-			"save",
-			"Saving...",
-			"Notifications for save tasks.")
-
-		val builder = Util.createNotification(
-			applicationContext,
-			"copy",
-			applicationContext.getString(R.string.savingImages),
-			applicationContext.getString(R.string.preparing))
-
-		val notifications = NotificationManagerCompat.from(applicationContext)
-		notifications.notify(builder.build())
+		sendPeekNotification()
 
 		val metadata = repo.synchImages(images)
 
@@ -73,38 +66,31 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		metadata.forEachIndexed { index, value ->
 			if (isStopped) {
-				builder
-					.setContentText("Cancelled")
-					.priority = NotificationCompat.PRIORITY_HIGH
-				notifications.notify(builder.build())
-
+				sendCancelledNotification()
 				return Result.success()
 			}
 
-			builder
-					.setProgress(images.size, index, false)
-					.setContentText(value.name)
-					.priority = NotificationCompat.PRIORITY_DEFAULT
-			notifications.notify(builder.build())
+			sendUpdateNotification(value.name, index, images.size)
 
 			val source = UsefulDocumentFile.fromUri(applicationContext, Uri.parse(value.uri))
-			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration.extension)	// Can't be null, but maybe redesign to avoid ?
+			val desiredName = FileUtil.swapExtention(source.name, imageConfiguration.extension)
 			val destinationFile = parentFile.createFile(null, desiredName) ?: return@forEachIndexed
 
 			applicationContext.contentResolver.openFileDescriptor(source.uri, "r")?.use { inputPfd ->
-			applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")?.use { outputPfd ->
-				when (imageConfiguration.type) {
-					ImageConfiguration.ImageType.JPEG -> {
-						val quality = (imageConfiguration as JpegConfiguration).quality
-						ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+				applicationContext.contentResolver.openFileDescriptor(destinationFile.uri, "w")?.use { outputPfd ->
+					when (imageConfiguration.type) {
+						ImageConfiguration.ImageType.JPEG -> {
+							val quality = (imageConfiguration as JpegConfiguration).quality
+							ImageProcessor.writeThumb(inputPfd.fd, quality, outputPfd.fd)
+						}
+						ImageConfiguration.ImageType.TIFF -> {
+							val compress = (imageConfiguration as TiffConfiguration).compress
+							ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
+						}
+						else -> throw UnsupportedOperationException("unimplemented save type.")
 					}
-					ImageConfiguration.ImageType.TIFF -> {
-						val compress = (imageConfiguration as TiffConfiguration).compress
-						ImageProcessor.writeTiff(desiredName, inputPfd.fd, outputPfd.fd, compress)
-					}
-					else -> throw UnsupportedOperationException("unimplemented save type.")
 				}
-			}}
+			}
 
 			if (insert) {
 				// TODO: reuse the image meta and replace uri/id...?
@@ -114,17 +100,9 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 			}
 		}
 
-		builder
-			.setContentText("Complete")
-			.setProgress(0,0,false)
-			.priority = NotificationCompat.PRIORITY_HIGH
-		notifications.notify(builder.build())
+		sendCompletedNotification()
 
 		return Result.success()
-	}
-
-	private fun NotificationManagerCompat.notify(notification: Notification) {
-		this.notify(JOB_TAG, 0, notification)
 	}
 
 	companion object {
@@ -138,11 +116,11 @@ class SaveWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		@JvmStatic
 		fun buildRequest(images: LongArray, destination: Uri, config: ImageConfiguration, insert: Boolean): OneTimeWorkRequest {
 			val data = workDataOf(
-					KEY_IMAGE_IDS to images,
-					KEY_DEST_URI to destination.toString(),
-					KEY_TYPE to config.type.toString(),
-					KEY_CONFIG to config.parameters,
-					KEY_INSERT to insert
+				KEY_IMAGE_IDS to images,
+				KEY_DEST_URI to destination.toString(),
+				KEY_TYPE to config.type.toString(),
+				KEY_CONFIG to config.parameters,
+				KEY_INSERT to insert
 			)
 
 			return OneTimeWorkRequestBuilder<SaveWorker>()

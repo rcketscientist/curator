@@ -2,7 +2,6 @@ package com.anthonymandra.rawdroid.workers
 
 import android.app.Notification
 import android.content.Context
-import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -17,6 +16,12 @@ abstract class CoreWorker(context: Context, params: WorkerParameters) : Worker(c
 	abstract val notificationInitialContent: String
 	private val notifications = NotificationManagerCompat.from(applicationContext)
 	private val builder by lazy {
+		Util.createNotificationChannel(
+			applicationContext,
+			channelId,
+			channelName,
+			channelDescription)
+
 		Util.createNotification(
 			applicationContext,
 			channelId,

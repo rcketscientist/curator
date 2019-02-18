@@ -1,12 +1,12 @@
 package com.anthonymandra.rawdroid.workers
 
-import android.app.Notification
 import android.content.Context
 import android.net.Uri
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
@@ -17,7 +17,7 @@ import com.anthonymandra.util.Util
 
 class CopyWorker(context: Context, params: WorkerParameters): CoreWorker(context, params) {
 	override val channelId = "copy"
-	override val channelName = "Copying..."
+	override val channelName = "Copy Channel"
 	override val channelDescription = "Notifications for copy tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.copyingImages)
 	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
@@ -30,13 +30,7 @@ class CopyWorker(context: Context, params: WorkerParameters): CoreWorker(context
 		if (images == null || destination == null) return Result.failure()
 
 		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
-
-		Util.createNotificationChannel(
-			applicationContext,
-			"copy",
-			"Copying...",
-			"Notifications for copy tasks.")
-
+		
 		sendPeekNotification()
 
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
@@ -47,7 +41,7 @@ class CopyWorker(context: Context, params: WorkerParameters): CoreWorker(context
 				return Result.success()
 			}
 
-			sendUpdateNotification(value.name, images.size, index)
+			sendUpdateNotification(value.name, index, images.size)
 
 			parentFile.createFile(null, value.name)?.let {
 				copyAssociatedFiles(value, it.uri)
