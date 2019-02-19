@@ -260,20 +260,15 @@ public class Util
 
         // Make a channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create the NotificationChannel, but only on API 26+ because
-            // the NotificationChannel class is new and not in the support library
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
-            channel.setDescription(description);
+			  NotificationManager notificationManager =
+				  (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            // Add the channel
-            NotificationManager notificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
+			  if (notificationManager.getNotificationChannel(channelId) == null) {
+				  NotificationChannel channel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_HIGH);
+				  channel.setDescription(description);
+				  notificationManager.createNotificationChannel(channel);
+			  }
+		  }
     }
     public static NotificationCompat.Builder createNotification(
             Context context,

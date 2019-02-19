@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:foreground="@drawable/gallery_selector">
+    android:background="@drawable/gallery_selector">
 
     <!-- Square constraint ratio -->
     <ImageView
@@ -28,7 +28,7 @@
         android:alpha="0.8"
         android:src="@drawable/ic_tag"
         app:layout_constraintTop_toTopOf="@id/galleryImageView"
-        app:layout_constraintStart_toStartOf="@id/galleryImageView" />
+        app:layout_constraintEnd_toEndOf="@id/galleryImageView" />
 
     <RatingBar
         android:id="@+id/galleryRatingBar"

@@ -1,12 +1,12 @@
 package com.anthonymandra.rawdroid.workers
 
-import android.app.Notification
 import android.content.Context
 import android.net.Uri
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import androidx.work.*
+import androidx.work.OneTimeWorkRequest
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
@@ -15,7 +15,12 @@ import com.anthonymandra.util.FileUtil
 import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.util.Util
 
-class CopyWorker(context: Context, params: WorkerParameters): Worker(context, params) {
+class CopyWorker(context: Context, params: WorkerParameters): CoreWorker(context, params) {
+	override val channelId = "copy"
+	override val channelName = "Copy Channel"
+	override val channelDescription = "Notifications for copy tasks."
+	override val notificationTitle: String = applicationContext.getString(R.string.copyingImages)
+
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)
 		val images = inputData.getLongArray(KEY_COPY_URIS)
@@ -24,56 +29,25 @@ class CopyWorker(context: Context, params: WorkerParameters): Worker(context, pa
 		if (images == null || destination == null) return Result.failure()
 
 		val parentFile = UsefulDocumentFile.fromUri(applicationContext, destination)
-
-		Util.createNotificationChannel(
-			applicationContext,
-			"copy",
-			"Copying...",
-			"Notifications for copy tasks.")
-
-		val builder = Util.createNotification(
-			applicationContext,
-			"copy",
-			applicationContext.getString(R.string.copyingImages),
-			applicationContext.getString(R.string.preparing))
-
-		val notifications = NotificationManagerCompat.from(applicationContext)
-		notifications.notify(builder.build())
+		
+		sendPeekNotification()
 
 		// TODO: We could have an xmp field to save the xmp file check error, although that won't work if not processed
 		val metadata = repo.synchImages(images)
 		metadata.forEachIndexed { index, value ->
 			if (this.isStopped) {
-				builder
-					.setContentText("Cancelled")
-					.priority = NotificationCompat.PRIORITY_HIGH
-				notifications.notify(builder.build())
-
+				sendCancelledNotification()
 				return Result.success()
 			}
 
-			builder
-				.setProgress(images.size, index, false)
-				.setContentText(value.name)
-				.priority = NotificationCompat.PRIORITY_DEFAULT
-			notifications.notify(builder.build())
+			sendUpdateNotification(value.name, index, images.size)
 
 			parentFile.createFile(null, value.name)?.let {
 				copyAssociatedFiles(value, it.uri)
 			}
 		}
-
-		builder
-			.setContentText("Complete")
-			.setProgress(0,0,false)
-			.priority = NotificationCompat.PRIORITY_HIGH
-		notifications.notify(builder.build())
-
+		sendCompletedNotification()
 		return Result.success()
-	}
-
-	private fun NotificationManagerCompat.notify(notification: Notification) {
-		this.notify(JOB_TAG, 0, notification)
 	}
 
 	/**
