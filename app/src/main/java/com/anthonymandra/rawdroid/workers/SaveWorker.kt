@@ -23,7 +23,6 @@ class SaveWorker(context: Context, params: WorkerParameters) : CoreWorker(contex
 	override val channelName = "Save Channel"
 	override val channelDescription = "Notifications for save tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.savingImages)
-	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
 
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)

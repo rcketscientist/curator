@@ -23,7 +23,6 @@ class RecycleWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 	override val channelName = "Recycle Channel"
 	override val channelDescription = "Notifications for recycle tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.recyclingFiles)
-	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
 
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)

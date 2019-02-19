@@ -5,15 +5,14 @@ import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.anthonymandra.rawdroid.R
 import com.anthonymandra.util.Util
 
 abstract class CoreWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
-	// TODO: We need to make sure channels exist!
 	abstract val channelId: String
 	abstract val channelName: String
 	abstract val channelDescription: String
 	abstract val notificationTitle: String
-	abstract val notificationInitialContent: String
 	private val notifications = NotificationManagerCompat.from(applicationContext)
 	private val builder by lazy {
 		Util.createNotificationChannel(
@@ -26,16 +25,18 @@ abstract class CoreWorker(context: Context, params: WorkerParameters) : Worker(c
 			applicationContext,
 			channelId,
 			notificationTitle,
-			notificationInitialContent)
+			"")
 	}
 
 	private fun NotificationManagerCompat.notify(notification: Notification) {
 		this.notify(tags.first(), id.hashCode(), notification)
 	}
 
-	protected fun sendPeekNotification() {
+	protected fun sendPeekNotification(
+		contentText: String = applicationContext.getString(R.string.preparing)) {
 		builder
 			.setOnlyAlertOnce(true)
+			.setContentText(contentText)
 		notifications.notify(builder.build())
 	}
 

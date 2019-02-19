@@ -23,7 +23,6 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 	override val channelName = "Restore Channel"
 	override val channelDescription = "Notifications for restore tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.restoringFiles)
-	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
 
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)

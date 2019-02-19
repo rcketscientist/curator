@@ -16,7 +16,6 @@ class MetaReaderWorker(context: Context, params: WorkerParameters) : CoreWorker(
 	override val channelName = "Meta Processing Channel"
 	override val channelDescription = "Notifications for metadata tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.processingImages)
-	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
 
 	override fun doWork(): Result {
 		val filter = ImageFilter(

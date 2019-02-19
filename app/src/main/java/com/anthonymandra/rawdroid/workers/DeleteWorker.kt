@@ -20,7 +20,6 @@ class DeleteWorker(context: Context, params: WorkerParameters) : CoreWorker(cont
 	override val channelName = "Deletion Channel"
 	override val channelDescription = "Notifications for delete tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.deletingFiles)
-	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
 
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)

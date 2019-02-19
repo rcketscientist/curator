@@ -20,7 +20,6 @@ class CopyWorker(context: Context, params: WorkerParameters): CoreWorker(context
 	override val channelName = "Copy Channel"
 	override val channelDescription = "Notifications for copy tasks."
 	override val notificationTitle: String = applicationContext.getString(R.string.copyingImages)
-	override val notificationInitialContent: String = applicationContext.getString(R.string.preparing)
 
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)
