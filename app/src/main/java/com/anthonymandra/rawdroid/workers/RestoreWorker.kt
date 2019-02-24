@@ -2,7 +2,6 @@ package com.anthonymandra.rawdroid.workers
 
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
@@ -14,9 +13,7 @@ import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.FileUtil
-import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.util.MetaUtil
-import com.anthonymandra.util.Util
 
 class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(context, params) {
 	override val channelId = "restore"
@@ -26,7 +23,7 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 
 	override fun doWork(): Result {
 		val repo = DataRepository.getInstance(this.applicationContext)
-		val recycleKeys = inputData.getStringArray(RestoreWorker.KEY_RECYCLE_KEYS)
+		val recycleIds = inputData.getLongArray(RestoreWorker.KEY_RECYCLE_IDS)
 			?: return Result.failure()
 		val recycleBin = RecycleBin.getInstance(applicationContext)
 		val failedRestores = mutableListOf<String>()
@@ -34,9 +31,10 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 		sendPeekNotification()
 
 		val parentMap = repo.parents.associateByTo(mutableMapOf(), { it.documentUri }, { it.id })
+		val recycledImages = repo.recycledImagesSynch(*recycleIds)
 
-		recycleKeys.forEachIndexed { index, key ->
-			val restoredUri = key.toUri()
+		recycledImages.forEachIndexed { index, entity ->
+			val restoredUri = entity.path.toUri()
 			if (isStopped) {
 				sendCancelledNotification()
 				// TODO: More insight into failures
@@ -49,7 +47,7 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 				return Result.success()
 			}
 
-			sendUpdateNotification(restoredUri.lastPathSegment ?: "", index, recycleKeys.size)
+			sendUpdateNotification(restoredUri.lastPathSegment ?: "", index, recycleIds.size)
 
 			// TODO: More insight into failures
 //			 if (failedRestores.size > 0) {
@@ -58,14 +56,14 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 //			 }
 //			 notifications.notify(builder.build())
 
-			val recycledFile = recycleBin.getFile(key)
+			val recycledFile = recycleBin.getFile(entity.id)
 			if (recycledFile == null) {
-				failedRestores.add(key)
+				failedRestores.add(entity.path)
 				return@forEachIndexed
 			}
 			val recycledUri = Uri.fromFile(recycledFile)
 			FileUtil.copy(applicationContext, recycledUri, restoredUri)
-			recycleBin.remove(key)
+			recycleBin.remove(entity.id)
 			val info = MetaUtil.getImageFileInfo(
 				applicationContext,
 				UsefulDocumentFile.fromUri(applicationContext, restoredUri),
@@ -80,20 +78,14 @@ class RestoreWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 		return Result.success()
 	}
 
-	@WorkerThread
-	private fun deleteFile(file: Uri): Boolean {
-		val document = UsefulDocumentFile.fromUri(applicationContext, file)
-		return document.delete()
-	}
-
 	companion object {
 		const val JOB_TAG = "restore_job"
-		const val KEY_RECYCLE_KEYS = "recycle keys"
+		const val KEY_RECYCLE_IDS = "recycle ids"
 
 		@JvmStatic
-		fun buildRequest(imagesToRestore: Array<String>): OneTimeWorkRequest {
+		fun buildRequest(imagesToRestore: Array<Long>): OneTimeWorkRequest {
 			val data = workDataOf(
-				RestoreWorker.KEY_RECYCLE_KEYS to imagesToRestore
+				RestoreWorker.KEY_RECYCLE_IDS to imagesToRestore
 			)
 
 			return OneTimeWorkRequestBuilder<RestoreWorker>()

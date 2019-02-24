@@ -33,8 +33,9 @@ import com.anthonymandra.util.FileUtil
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -47,6 +48,7 @@ abstract class CoreActivity : AppCompatActivity() {
 	private lateinit var licenseHandler: LicenseHandler
 	protected lateinit var xmpEditFragment: XmpEditFragment
 	lateinit var notificationManager: NotificationManager
+	protected val compositeDisposable = CompositeDisposable()
 
 	private val recycleBin: RecycleBin by lazy {
 		val binSizeMb: Int = try {
@@ -115,12 +117,13 @@ abstract class CoreActivity : AppCompatActivity() {
 			if (!mSwapDir.exists()) {
 				mSwapDir.mkdirs()
 			}
-		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
+		}
+			.subscribeOn(Schedulers.from(AppExecutors.DISK))
 			.subscribeBy(
 				// TODO:
 				onComplete = {},
 				onError = {}
-			)
+			).addTo(compositeDisposable)
 
 		val needsRead = ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 		val needsWrite = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
@@ -146,16 +149,13 @@ abstract class CoreActivity : AppCompatActivity() {
 		super.onDestroy()
 
 		if (::mSwapDir.isInitialized) {
-			Observable.fromIterable(mSwapDir.listFiles().asList())
-				.subscribeOn(Schedulers.from(AppExecutors.DISK))
-				.subscribeBy(
-					//TODO:
-					onError = {},
-					onComplete = {},
-					onNext = { it.delete() }
-				)
+			// Is this main thread I/O an issue?
+			mSwapDir.listFiles().forEach {
+				it.delete()
+			}
 		}
 		recycleBin.closeCache()
+		compositeDisposable.dispose()
 	}
 
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -351,27 +351,28 @@ abstract class CoreActivity : AppCompatActivity() {
 
 		if (!useRecycle) return
 
-		val keys = recycleBin.keys
-		val filesToRestore = ArrayList<String>()
-		val shortNames = ArrayList<String>(keys.size)
+		viewModel.recycledImages(recycleBin.keys.toLongArray())
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribeBy { images ->
+				val filesToRestore = ArrayList<Long>()
+				val shortNames = images.mapNotNull { Uri.parse(it.path).lastPathSegment }
 
-		keys.mapNotNullTo(shortNames) { Uri.parse(it).lastPathSegment }
-
-		AlertDialog.Builder(this).setTitle(R.string.recycleBin)
-			.setNegativeButton(R.string.emptyRecycleBin) { _, _ -> recycleBin.clearCache() }
-			.setNeutralButton(R.string.neutral) { _, _ -> } // cancel, do nothing
-			.setMultiChoiceItems(shortNames.toTypedArray(), null) { _, which, isChecked ->
-				if (isChecked)
-					filesToRestore.add(keys[which])
-				else
-					filesToRestore.remove(keys[which])
-			}
-			.setPositiveButton(R.string.restoreFile) { _, _ ->
-				if (!filesToRestore.isEmpty()) {
-					viewModel.startRestoreWorker(filesToRestore.toTypedArray())
-				}
-			}
-			.show()
+				AlertDialog.Builder(this).setTitle(R.string.recycleBin)
+					.setNegativeButton(R.string.emptyRecycleBin) { _, _ -> recycleBin.clearCache() }
+					.setNeutralButton(R.string.neutral) { _, _ -> } // cancel, do nothing
+					.setMultiChoiceItems(shortNames.toTypedArray(), null) { _, which, isChecked ->
+						if (isChecked)
+							filesToRestore.add(images[which].id)
+						else
+							filesToRestore.remove(images[which].id)
+					}
+					.setPositiveButton(R.string.restoreFile) { _, _ ->
+						if (!filesToRestore.isEmpty()) {
+							viewModel.startRestoreWorker(filesToRestore.toTypedArray())
+						}
+					}
+					.show()
+			}.addTo(compositeDisposable)
 	}
 
 	private fun deleteImages(itemsToDelete: LongArray) {
@@ -417,9 +418,9 @@ abstract class CoreActivity : AppCompatActivity() {
 						viewModel.startDeleteWorker(itemsToDelete)
 					}
 				} else {
-					viewModel.startRecycleWorker(images.map{ it.id }.toLongArray())
+					viewModel.startRecycleWorker(images.map { it.id }.toLongArray())
 				}
-			}
+			}.addTo(compositeDisposable)
 	}
 
 	private fun requestEmailIntent() {
@@ -510,7 +511,7 @@ abstract class CoreActivity : AppCompatActivity() {
 				else
 					intent.putExtra(Intent.EXTRA_STREAM, uri)
 			}
-		}
+		}.addTo(compositeDisposable)
 
 		startActivity(Intent.createChooser(intent, getString(R.string.share)))
 	}
