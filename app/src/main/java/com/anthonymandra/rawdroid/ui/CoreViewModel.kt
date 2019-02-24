@@ -13,6 +13,7 @@ import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.XmpUpdateField
 import com.anthonymandra.rawdroid.XmpValues
 import com.anthonymandra.rawdroid.data.ImageInfo
+import com.anthonymandra.rawdroid.data.RecycleBinEntity
 import com.anthonymandra.rawdroid.workers.*
 import io.reactivex.Single
 
@@ -107,7 +108,7 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 		workManager.enqueue(RecycleWorker.buildRequest(sources))
 	}
 
-	fun startRestoreWorker(sources: Array<String>) {
+	fun startRestoreWorker(sources: Array<Long>) {
 		workManager.enqueue(RestoreWorker.buildRequest(sources))
 	}
 
@@ -117,5 +118,9 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 
 	fun images(ids: LongArray): Single<List<ImageInfo>> {
 		return dataRepo.images(ids)
+	}
+
+	fun recycledImages(ids: LongArray): Single<List<RecycleBinEntity>> {
+		return dataRepo.recycledImages(*ids)
 	}
 }

@@ -78,8 +78,33 @@ class DataRepository private constructor(private val database: AppDatabase) {
 	fun synchInsertImages(vararg entity: MetadataEntity) = database.metadataDao().insert(*entity)
 
 	fun insertImages(vararg entity: MetadataEntity): Single<List<Long>> {
-		return Single.create<List<Long>> { database.metadataDao().insert(*entity) }
-				.subscribeOn(Schedulers.from(AppExecutors.DISK))
+		return Single.create<List<Long>> { emitter ->
+				emitter.onSuccess(database.metadataDao().insert(*entity))
+			}.subscribeOn(Schedulers.from(AppExecutors.DISK))
+	}
+
+	fun recycledImages(vararg ids: Long): Single<List<RecycleBinEntity>> {
+		return Single.create<List<RecycleBinEntity>> { emitter ->
+				emitter.onSuccess(database.recycleBinDao().images(*ids))
+			}.subscribeOn(Schedulers.from(AppExecutors.DISK))
+	}
+	@WorkerThread
+	fun recycledImagesSynch(vararg ids: Long) = database.recycleBinDao().images(*ids)
+
+	@WorkerThread
+	fun deleteRecycledImage(id: Long) = database.recycleBinDao().delete(id)
+
+	@WorkerThread
+	fun clearRecycledImages() = database.recycleBinDao().deleteAll()
+
+	@WorkerThread
+	fun addRecycledImage(image: RecycleBinEntity) = database.recycleBinDao().insert(image)
+
+	@WorkerThread
+	fun addRecycledImage(path: String): Long  {
+		val pathStore = RecycleBinEntity()
+		pathStore.path = path
+		return database.recycleBinDao().insert(pathStore)
 	}
 
 	@WorkerThread
@@ -112,15 +137,13 @@ class DataRepository private constructor(private val database: AppDatabase) {
 
 	fun getChildSubjects(path: String): Single<List<SubjectEntity>> {
 		return Single.create<List<SubjectEntity>> { emitter ->
-			val descendants = database.subjectDao().getDescendants(path)
-			emitter.onSuccess(descendants)
+			emitter.onSuccess(database.subjectDao().getDescendants(path))
 		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
 	}
 
 	fun getParentSubjects(path: String): Single<List<SubjectEntity>> {
 		return Single.create<List<SubjectEntity>> { emitter ->
-			val ancestors = database.subjectDao().getAncestors(path)
-			emitter.onSuccess(ancestors)
+			emitter.onSuccess(database.subjectDao().getAncestors(path))
 		}.subscribeOn(Schedulers.from(AppExecutors.DISK))
 	}
 

@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.anthonymandra.rawdroid.data.DataRepository;
 import com.anthonymandra.util.AppExecutors;
 import com.anthonymandra.util.FileUtil;
 
@@ -28,12 +29,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.WorkerThread;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -59,6 +60,7 @@ public class RecycleBin {
 	private final Object mDiskCacheLock = new Object();
 	private boolean mDiskCacheStarting = true;
 	private File mDiskCacheDir;
+	private DataRepository mDatabase;
 
 	/**
 	 * Create new recycling bin with the default parameters.
@@ -66,6 +68,7 @@ public class RecycleBin {
 	 */
 	private RecycleBin(Context context) {
 		mDiskCacheDir = FileUtil.getDiskCacheDir(context, "recycle");
+		mDatabase = DataRepository.Companion.getInstance(context);
 		initDiskCache();
 	}
 
@@ -89,8 +92,9 @@ public class RecycleBin {
 	}
 
 	/**
-	 * Adds a file to the recycling bin synchronously.  Must be called in the background.
+	 * Adds a file to the recycling bin synchronously.
 	 */
+	@WorkerThread
 	public void addFileSynch(Context c, Uri toRecycle) throws IOException {
 		if (toRecycle == null) {
 			return;
@@ -100,7 +104,10 @@ public class RecycleBin {
 			// Add to disk cache
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null) {
-				final String key = fileToKey(toRecycle.toString());
+				/* TODO: This is less than ideal, we could insert a failed recycle
+				* We could remove in catch, but even that might not be enough, investigate
+				* For now we're safe because we display recycled files directly from bin `getKeys` */
+				final String key = Long.toString(mDatabase.addRecycledImage(toRecycle.toString()));
 				BufferedOutputStream out = null;
 				BufferedInputStream bis = null;
 				try {
@@ -130,43 +137,11 @@ public class RecycleBin {
 	/**
 	 * Get from disk cache.
 	 *
-	 * @param data Unique identifier for which item to get
-	 * @return The bitmap if found in cache, null otherwise
-	 */
-	public InputStream getInputStream(String data) {
-		final String key = fileToKey(data);
-		synchronized (mDiskCacheLock) {
-			while (mDiskCacheStarting) {
-				try {
-					mDiskCacheLock.wait();
-				} catch (InterruptedException e) {
-				}
-			}
-
-			final DiskLruCache bin = getDiskCache();
-			if (bin != null) {
-				try {
-					final DiskLruCache.Snapshot snapshot = bin.get(key);
-					if (snapshot != null) {
-						return snapshot.getInputStream(DISK_CACHE_INDEX);
-					}
-				} catch (final IOException e) {
-					Log.e(TAG, "getFileFromBin - " + e);
-				}
-			}
-			return null;
-		}
-	}
-
-	/**
-	 * Get from disk cache.
-	 *
-	 * @param data Unique identifier for which item to get
+	 * @param recycledId Unique identifier for which item to get
 	 * @return The bitmap if found in cache, null otherwise
 	 */
 	@Nullable
-	public File getFile(String data) {
-		final String key = fileToKey(data);
+	public File getFile(Long recycledId) {
 		synchronized (mDiskCacheLock) {
 			while (mDiskCacheStarting) {
 				try {
@@ -178,7 +153,7 @@ public class RecycleBin {
 			final DiskLruCache bin = getDiskCache();
 			if (bin != null) {
 				try {
-					return bin.getFile(key, DISK_CACHE_INDEX);
+					return bin.getFile(String.valueOf(recycledId), DISK_CACHE_INDEX);
 				} catch (final IOException e) {
 					Log.e(TAG, "getFileFromBin - " + e);
 				}
@@ -187,18 +162,8 @@ public class RecycleBin {
 		}
 	}
 
-	public static String keyToFile(String key) {
-		return key.replaceAll(pathReplacement, File.separator).replaceAll(spaceReplacement, " ");
-	}
-
-	public static String fileToKey(String file) {
-		return file.replaceAll(File.separator, pathReplacement).replaceAll(" ", spaceReplacement);
-	}
-
-	// AJM: Removed the retain fragment logic
-
-	public List<String> getKeys() {
-		List<String> keys = new ArrayList<>();
+	public List<Long> getKeys() {
+		List<Long> keys = new ArrayList<>();
 		final DiskLruCache bin = getDiskCache();
 		if (bin == null) {
 			return keys;
@@ -206,7 +171,7 @@ public class RecycleBin {
 
 		Set<String> coded = bin.getKeys();
 		for (String key : coded) {
-			keys.add(keyToFile(key));
+			keys.add(Long.valueOf(key));
 		}
 		return keys;
 	}
@@ -282,6 +247,7 @@ public class RecycleBin {
 				if (mDiskLruCache != null && !mDiskLruCache.isClosed()) {
 					try {
 						mDiskLruCache.delete();
+						mDatabase.clearRecycledImages();
 					} catch (IOException e) {
 						Log.e(TAG, "clearCache - " + e);
 					}
@@ -332,11 +298,13 @@ public class RecycleBin {
 		}
 	}
 
-	protected void removeFileInternal(String file) {
+	protected void removeFileInternal(Long recycledId) {
 		try {
 			final DiskLruCache bin = getDiskCache();
-			if (bin != null)
-				bin.remove(file);
+			if (bin != null) {
+				bin.remove(String.valueOf(recycledId));
+				mDatabase.deleteRecycledImage(recycledId);
+			}
 		} catch (IOException e) {
 			Log.e(TAG, e.toString());
 			e.printStackTrace();
@@ -349,14 +317,10 @@ public class RecycleBin {
 			.subscribe();
 	}
 
-	public void remove(String key) {
-		Completable.fromAction(() -> removeFileInternal(key))
+	public void remove(Long recycledId) {
+		Completable.fromAction(() -> removeFileInternal(recycledId))
 			.subscribeOn(Schedulers.from(AppExecutors.Companion.getDISK()))
 			.subscribe();
-	}
-
-	public void remove(Uri file) {
-		remove(fileToKey(file.toString()));
 	}
 
 	public void initDiskCache() {
