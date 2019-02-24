@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
-    <release version="5.6.3"
-             versioncode="506003"
-             summary="Release Candidate"
-             date="30 MAY 2017">
-        <change>Fix color label refresh in viewer</change>
-        <change>Simplify keyword database access</change>
-        <change>Skip hidden folders in image search.</change>
-        <change>Greatly reduced gallery overhead; images should process very quickly now.</change>
-        <change>Nav drawer will automatically dismiss when a search is started.</change>
+    <release version="6.1.2"
+        versioncode="601002"
+        summary="Change recycling bin storage to avoid excessive filepaths (dropbox)"
+        date="23 Feb 2019">
+    </release>
+    <release version="6.1.1"
+        versioncode="601001"
+        summary="Clean up notification channels"
+        date="18 Feb 2019">
+    </release>
+    <release version="6.1.0"
+        versioncode="601000"
+        summary="New viewer adapter"
+        date="10 Feb 2019">
+    </release>
+    <release version="6.0.0"
+        versioncode="600000"
+        summary="Complete database overhaul"
+        date="29 Oct 2018">
     </release>
     <release version="5.5.5"
              versioncode="505005"
