@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtil;
@@ -91,11 +92,23 @@ public class SwapProvider extends ContentProvider {
 			try {
 				swapFile.createNewFile();
 
+				Watermark wm = ImageUtil.getWatermark(getContext(), sourceUri);
+
 				boolean success = false;
 				try (
 					ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(sourceUri, "r");
 					ParcelFileDescriptor dest = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE)) {
-					success = ImageProcessor.writeThumb(src.getFd(), 100, dest.getFd());
+
+					if (wm != null)
+					{
+						success = ImageProcessor.writeThumb(src.getFd(), 100,
+							dest.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
+							wm.getWaterWidth(), wm.getWaterHeight());
+					}
+					else
+					{
+						success = ImageProcessor.writeThumb(src.getFd(), 100, dest.getFd());
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

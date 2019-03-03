@@ -6,6 +6,7 @@
         date="3 Mar 2019">
         <change>Fix meta write</change>
         <change>Fix share</change>
+        <change>Fix watermark</change>
     </release>
     <release version="6.1.2"
         versioncode="601002"

@@ -1,11 +1,13 @@
 package com.anthonymandra.util;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.ContentProviderClient;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -16,6 +18,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -27,6 +30,9 @@ import com.anthonymandra.content.Meta;
 import com.anthonymandra.framework.DocumentUtil;
 import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.ImageProcessor;
+import com.anthonymandra.imageprocessor.Margins;
+import com.anthonymandra.imageprocessor.Watermark;
+import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
 import com.anthonymandra.rawdroid.data.ImageInfo;
@@ -40,6 +46,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -735,5 +743,59 @@ public class ImageUtil {
 		canvas.drawText(text, 0, baseline, paint);
 
 		return watermark;
+	}
+
+	public static byte[] getBitmapBytes(Bitmap src)
+	{
+		ByteBuffer dst = ByteBuffer.allocate(src.getAllocationByteCount());
+		dst.order(ByteOrder.nativeOrder());
+		src.copyPixelsToBuffer(dst);
+		return dst.array();
+	}
+
+	@Nullable
+	public static Watermark getWatermark(final Context c, Uri source)
+	{
+		Bitmap watermark;
+		byte[] waterData;
+		int waterWidth, waterHeight;
+
+		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(c);
+		boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+
+		if (showWatermark)
+		{
+			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
+			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
+			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
+			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
+
+			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
+			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
+			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
+			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
+			Margins margins = new Margins(top, left, bottom, right);
+
+			if (watermarkText.isEmpty())
+			{
+				Toast.makeText(c, R.string.warningBlankWatermark, Toast.LENGTH_LONG).show();
+				return null;
+			}
+			else
+			{
+				watermark = ImageUtil.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+				if (watermark == null)
+					return null;
+				waterWidth = watermark.getWidth();
+				waterData = ImageUtil.getBitmapBytes(watermark);
+				waterHeight = watermark.getHeight();
+				return new Watermark(
+					waterWidth,
+					waterHeight,
+					margins,
+					waterData);
+			}
+		}
+		return null;
 	}
 }
