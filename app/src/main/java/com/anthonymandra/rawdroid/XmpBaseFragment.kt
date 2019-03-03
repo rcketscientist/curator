@@ -3,21 +3,15 @@ package com.anthonymandra.rawdroid
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.ArrayMap
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import com.anthonymandra.rawdroid.models.ColorKeys
 import com.anthonymandra.widget.RatingBar
 import com.anthonymandra.widget.XmpLabelGroup
 import java.util.*
-
-private const val DEFAULT_BLUE = "Blue"
-private const val DEFAULT_RED = "Red"
-private const val DEFAULT_GREEN = "Green"
-private const val DEFAULT_YELLOW = "Yellow"
-private const val DEFAULT_PURPLE = "Purple"
 
 abstract class XmpBaseFragment : Fragment(),
         RatingBar.OnRatingSelectionChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -27,7 +21,19 @@ abstract class XmpBaseFragment : Fragment(),
     private lateinit var keywordFragment: KeywordBaseFragment
     private var mPauseListener = false
 
-    private val colorKeys = ArrayMap<Label, String>(5)
+	@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+	private val colorKeys: ColorKeys by lazy {
+        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        sp.registerOnSharedPreferenceChangeListener(this)
+
+		 ColorKeys().also {
+            it.blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, it.blue)
+            it.red = sp.getString(FullSettingsActivity.KEY_XmpRed, it.red)
+            it.green = sp.getString(FullSettingsActivity.KEY_XmpGreen, it.green)
+            it.yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, it.yellow)
+            it.purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, it.purple)
+        }
+    }
 
     protected var subject: List<SubjectEntity>
         get() { return keywordFragment.selectedKeywords.toList() }
@@ -42,17 +48,17 @@ abstract class XmpBaseFragment : Fragment(),
             val checked = colorKey.checked
 
             val labels = ArrayList<String>()
-            checked.forEach { label -> labels.add(colorKeys[label]!!) } // TODO: This can't be null; this is the point of !!, but can I convince the compiler?
+            checked.forEach { label -> labels.add(colorKeys.customValue(label)) }
             return labels
         }
         set(labels) {
             for (label in labels) {
-                when (label) {
-                    colorKeys[Label.Blue] -> colorKey.setChecked(Label.Blue, true)
-                    colorKeys[Label.Red] -> colorKey.setChecked(Label.Red, true)
-                    colorKeys[Label.Green] -> colorKey.setChecked(Label.Yellow, true)
-                    colorKeys[Label.Yellow] -> colorKey.setChecked(Label.Green, true)
-                    colorKeys[Label.Purple] -> colorKey.setChecked(Label.Purple, true)
+                when (colorKeys.label(label)) {
+                    Label.Blue -> colorKey.setChecked(Label.Blue, true)
+                    Label.Red -> colorKey.setChecked(Label.Red, true)
+                    Label.Green -> colorKey.setChecked(Label.Yellow, true)
+                    Label.Yellow -> colorKey.setChecked(Label.Green, true)
+                    Label.Purple -> colorKey.setChecked(Label.Purple, true)
                     else -> Toast.makeText(context, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show()
                 }
             }
@@ -64,40 +70,26 @@ abstract class XmpBaseFragment : Fragment(),
         }
         set(xmp) = setXmp(xmp.rating, xmp.label, xmp.subject)
 
-    private fun updateColorKeys(sp: SharedPreferences) {
-        colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
-        colorKeys[Label.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
-        colorKeys[Label.Green] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
-        colorKeys[Label.Yellow] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
-        colorKeys[Label.Purple] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
-    }
-
-    private fun updateColorKey(sp: SharedPreferences, key: String) {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+	 private fun updateColorKey(sp: SharedPreferences, key: String) {
         when (key) {
             FullSettingsActivity.KEY_XmpBlue ->
-                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpBlue, DEFAULT_BLUE)
+                colorKeys.blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, colorKeys.blue)
             FullSettingsActivity.KEY_XmpRed ->
-                colorKeys[Label.Red] = sp.getString(FullSettingsActivity.KEY_XmpRed, DEFAULT_RED)
+                colorKeys.red = sp.getString(FullSettingsActivity.KEY_XmpRed, colorKeys.red)
             FullSettingsActivity.KEY_XmpGreen ->
-                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpGreen, DEFAULT_GREEN)
+                colorKeys.green = sp.getString(FullSettingsActivity.KEY_XmpGreen, colorKeys.green)
             FullSettingsActivity.KEY_XmpYellow ->
-                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpYellow, DEFAULT_YELLOW)
+                colorKeys.yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, colorKeys.yellow)
             FullSettingsActivity.KEY_XmpPurple ->
-                colorKeys[Label.Blue] = sp.getString(FullSettingsActivity.KEY_XmpPurple, DEFAULT_PURPLE)
+                colorKeys.purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, colorKeys.purple)
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val sp = PreferenceManager.getDefaultSharedPreferences(context)  // Note: This says to store a strong reference
-        sp.registerOnSharedPreferenceChangeListener(this)
-        updateColorKeys(sp)
     }
 
     override fun onPause() {
         super.onPause()
         PreferenceManager.getDefaultSharedPreferences(context)
-            .unregisterOnSharedPreferenceChangeListener(this)
+			  .unregisterOnSharedPreferenceChangeListener(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
