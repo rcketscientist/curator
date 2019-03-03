@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="6.1.3"
+        versioncode="601003"
+        summary="Bugs"
+        date="3 Mar 2019">
+        <change>Fix meta write</change>
+        <change>Fix share</change>
+        <change>Fix watermark</change>
+    </release>
     <release version="6.1.2"
         versioncode="601002"
         summary="Change recycling bin storage to avoid excessive filepaths (dropbox)"

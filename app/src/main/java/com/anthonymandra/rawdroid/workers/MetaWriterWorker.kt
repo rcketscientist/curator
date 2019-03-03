@@ -62,6 +62,7 @@ class MetaWriterWorker(context: Context, params: WorkerParameters) : Worker(cont
 				}
 			}
 
+			xmp.create()
 			applicationContext.contentResolver.openOutputStream(xmp.uri)?.use {
 				MetaUtil.writeXmp(it, meta)
 			}
