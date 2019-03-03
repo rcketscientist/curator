@@ -511,9 +511,10 @@ abstract class CoreActivity : AppCompatActivity() {
 				else
 					intent.putExtra(Intent.EXTRA_STREAM, uri)
 			}
-		}.addTo(compositeDisposable)
 
-		startActivity(Intent.createChooser(intent, getString(R.string.share)))
+			startActivity(Intent.createChooser(intent, getString(R.string.share)))
+
+		}.addTo(compositeDisposable)
 	}
 
 	open class LicenseHandler(context: Context) : Handler() {
