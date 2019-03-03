@@ -173,18 +173,6 @@ object MetaUtil {
 	}
 
 	/**
-	 * Serializes the `XMPMeta` into an `OutputStream`
-	 * @param c Context
-	 * @param file xmp file
-	 * @param meta populated metadata
-	 * @return serialize success
-	 */
-	@Throws(IOException::class, XMPException::class)
-	fun writeXmp(c: Context, file: UsefulDocumentFile, meta: XMPMeta) {
-		c.contentResolver.openOutputStream(file.uri)!!.use { os -> writeXmp(os, meta) }
-	}
-
-	/**
 	 * Serializes the XmpDirectory component of `Metadata` into an `OutputStream`
 	 * @param os Destination for the xmp data
 	 * @param meta populated metadata
