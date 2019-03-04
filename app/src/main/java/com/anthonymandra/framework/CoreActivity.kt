@@ -30,6 +30,7 @@ import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
+import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
@@ -492,6 +493,13 @@ abstract class CoreActivity : AppCompatActivity() {
 		val selection = if (limitImages) selectedIds.sliceArray(0..9) else selectedIds
 
 		viewModel.images(selection).subscribeBy { selectedImages ->
+			if (selectedImages.isEmpty()) {
+				Crashlytics.setString("selection", selectedIds.toString())
+				Crashlytics.log("Image lookup failed.")
+				Snackbar.make(rootView, R.string.warningImagesNotFound, Snackbar.LENGTH_SHORT).show()
+				return@subscribeBy
+			}
+
 			if (selectedImages.size > 1) {
 				intent.action = Intent.ACTION_SEND_MULTIPLE
 
@@ -505,7 +513,7 @@ abstract class CoreActivity : AppCompatActivity() {
 				)
 			} else {
 				intent.action = Intent.ACTION_SEND
-				val uri = Uri.parse(selectedImages[0].uri)
+				val uri = Uri.parse(selectedImages.first().uri)
 				if (convert)
 					intent.putExtra(Intent.EXTRA_STREAM, SwapProvider.createSwapUri(this, uri))
 				else
