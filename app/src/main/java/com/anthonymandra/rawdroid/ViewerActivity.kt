@@ -108,7 +108,7 @@ class ViewerActivity : CoreActivity() {
 				currentImage?.let {
 					xmpEditFragment.initXmp(
 							it.rating?.toInt(),
-							Collections.emptyList()/*it.subjectIds*/,
+							Collections.emptyList()/*it.subjectIds*/,	// TODO: Probably lazy load this, pass ImageInfo
 							it.label)
 				}
 				autoHide.cancel()
@@ -180,24 +180,24 @@ class ViewerActivity : CoreActivity() {
 	}
 
 	private fun editImage() {
-		val media = currentImage
-
-		val format = PreferenceManager.getDefaultSharedPreferences(this).getString(
+		currentImage?.let {
+			val format = PreferenceManager.getDefaultSharedPreferences(this).getString(
 				FullSettingsActivity.KEY_EditFormat,
 				resources.getStringArray(R.array.shareFormats)[0])
 
-		val intent = Intent(Intent.ACTION_EDIT)
-		intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-		intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+			val intent = Intent(Intent.ACTION_EDIT)
+			intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+			intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
 
-		if ("JPG" == format) {
-			intent.setDataAndType(SwapProvider.createSwapUri(this, Uri.parse(media?.uri)), "image/jpeg")
-		} else if ("RAW" == format) {
-			intent.setDataAndType(Uri.parse(media?.uri), "image/*")
+			if ("JPG" == format) {
+				intent.setDataAndType(SwapProvider.createSwapUri(this, Uri.parse(it.uri)), "image/jpeg")
+			} else if ("RAW" == format) {
+				intent.setDataAndType(Uri.parse(it.uri), "image/*")
+			}
+
+			val chooser = Intent.createChooser(intent, resources.getString(R.string.editWith))
+			startActivity(chooser)
 		}
-
-		val chooser = Intent.createChooser(intent, resources.getString(R.string.editWith))
-		startActivity(chooser)
 	}
 
 	private fun setWallpaper() {
