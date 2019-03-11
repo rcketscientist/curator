@@ -28,7 +28,9 @@ class App : Application() {
 		LeakCanary.install(this)
 
 		val crashlyticsKit = Crashlytics.Builder()
-			.core(CrashlyticsCore.Builder().disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG).build())
+			.core(CrashlyticsCore.Builder()
+				.disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG)
+				.build())
 			.build()
 
 		Fabric.with(this, crashlyticsKit, CrashlyticsNdk())
