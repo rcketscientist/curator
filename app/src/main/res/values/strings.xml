@@ -79,6 +79,7 @@
     <!-- Warnings -->
     <string name="warningFileWrongFormat">File is not the correct format.</string>
     <string name="warningNoItemsSelected">No items selected.</string>
+    <string name="warningImagesNotFound">Images not found.</string>
     <string name="warningNotEnoughSpace">Not enough space to import entire folder.</string>
     <string name="warningDeleteExceedsRecycle">Deleted file exceeds recycle bin size.  Delete permanently?  (Note: Size can be edited in settings)</string>
     <string name="warningDeleteDirect">Files will be deleted directly.</string>
