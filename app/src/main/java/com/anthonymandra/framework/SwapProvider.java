@@ -6,6 +6,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,6 +28,7 @@ import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 @SuppressWarnings("ALL")
@@ -73,10 +76,6 @@ public class SwapProvider extends ContentProvider {
 	public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode)
 		throws FileNotFoundException {
 		Uri sourceUri = Uri.parse(uri.getFragment());
-		// If it's a native file, just share it directly.
-		if (ImageUtil.isNative(sourceUri)) {
-			return getContext().getContentResolver().openFileDescriptor(sourceUri, mode);
-		}
 
 		String jpg = uri.getPath();
 
@@ -92,21 +91,34 @@ public class SwapProvider extends ContentProvider {
 			try {
 				swapFile.createNewFile();
 
-				Watermark wm = ImageUtil.getWatermark(getContext(), sourceUri);
+				Watermark wm = ImageUtil.getWatermark(getContext());
 
 				boolean success = false;
 				try (
 					ParcelFileDescriptor src = getContext().getContentResolver().openFileDescriptor(sourceUri, "r");
 					ParcelFileDescriptor dest = ParcelFileDescriptor.open(swapFile, ParcelFileDescriptor.MODE_READ_WRITE)) {
 
+					boolean isNative = ImageUtil.isNative(sourceUri);
+
 					if (wm != null)
 					{
+						if (isNative) {
+							Bitmap marked = ImageUtil.applyWatermark(BitmapFactory.decodeFileDescriptor(src.getFileDescriptor()), wm);
+							try(FileOutputStream out = new FileOutputStream(dest.getFileDescriptor())) {
+								marked.compress(Bitmap.CompressFormat.JPEG, 100, out);
+							}
+						}
 						success = ImageProcessor.writeThumb(src.getFd(), 100,
-							dest.getFd(), wm.getWatermark(), wm.getMargins().getArray(),
-							wm.getWaterWidth(), wm.getWaterHeight());
+							dest.getFd(), wm.getWatermarkBytes(), wm.getMargins().getArray(),
+							wm.getWidth(), wm.getHeight());
 					}
 					else
 					{
+						// If it's a native file, just share it directly.
+						if (isNative) {
+							return getContext().getContentResolver().openFileDescriptor(sourceUri, mode);
+						}
+
 						success = ImageProcessor.writeThumb(src.getFd(), 100, dest.getFd());
 					}
 				} catch (IOException e) {

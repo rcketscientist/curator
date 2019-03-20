@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
@@ -535,29 +536,6 @@ public class ImageUtil {
 		return result;
 	}
 
-	public static Bitmap addWatermark2(Context context, Bitmap src) {
-		int width = src.getWidth();
-		int height = src.getHeight();
-		Bitmap result = Bitmap.createBitmap(width, height, src.getConfig());
-
-		Canvas canvas = new Canvas(result);
-		canvas.drawBitmap(src, 0, 0, null);
-		int id = R.drawable.watermark1024;
-		if (width < 3072)
-			id = R.drawable.watermark512;
-		else if (width < 1536)
-			id = R.drawable.watermark256;
-		else if (width < 768)
-			id = R.drawable.watermark128;
-		BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inScaled = false;
-		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
-		watermark.setDensity(result.getDensity());
-		canvas.drawBitmap(watermark, width / 4 * 3, height / 4 * 3, null);
-
-		return result;
-	}
-
 	public static Bitmap addWatermark(Context context, File file, Bitmap src) {
 		int width = src.getWidth();
 		int height = src.getHeight();
@@ -607,22 +585,6 @@ public class ImageUtil {
 //        src.setPixels(source, 0, width, 0, 0, width, height);
 
 		return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
-	}
-
-	public static Bitmap getDemoWatermark(Context context, int srcWidth) {
-		int id;
-		if (srcWidth > 5120)
-			id = R.drawable.watermark1024;
-		else if (srcWidth > 2560)
-			id = R.drawable.watermark512;
-		else if (srcWidth > 1280)
-			id = R.drawable.watermark256;
-		else
-			id = R.drawable.watermark128;
-
-		BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inScaled = false;
-		return BitmapFactory.decodeResource(context.getResources(), id, o);
 	}
 
 	public static Bitmap addWatermark(Context context, Bitmap src) {
@@ -722,7 +684,39 @@ public class ImageUtil {
 		return result;
 	}
 
-	public static Bitmap getWatermarkText(String text, int alpha, int size, String location) {
+	public static Bitmap applyWatermark(Bitmap src, Watermark watermark) {
+		int width = src.getWidth();
+		int height = src.getHeight();
+
+		int pixels = watermark.getWidth() * watermark.getHeight();
+
+		int[] source = new int[width * height];
+		int[] mark = new int[pixels];
+
+		Point location = watermark.getLocation(height, width);
+
+		watermark.getWatermark().getPixels(mark, 0, watermark.getWidth(), 0, 0, watermark.getWidth(), watermark.getHeight());
+		src.getPixels(source, 0, width, 0, 0, width, height);
+
+		int i = 0;
+		for (int y = location.y; y < location.y + watermark.getHeight(); ++y) {
+			for (int x = location.x; x < location.x + watermark.getWidth(); ++x) {
+				int index = y * width + x;
+
+				float opacity = Color.alpha(mark[i]) / 255f;
+				source[index] = Color.argb(
+					Color.alpha(source[index]),
+					Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
+					Math.min(Color.green(source[index]) + (int) (Color.green(mark[i]) * opacity), 255),
+					Math.min(Color.blue(source[index]) + (int) (Color.blue(mark[i]) * opacity), 255));
+				++i;
+			}
+		}
+
+		return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
+	}
+
+	public static Bitmap getWatermarkText(String text, int alpha, int size) {
 		if (text.isEmpty())
 			return null;
 
@@ -745,21 +739,9 @@ public class ImageUtil {
 		return watermark;
 	}
 
-	public static byte[] getBitmapBytes(Bitmap src)
-	{
-		ByteBuffer dst = ByteBuffer.allocate(src.getAllocationByteCount());
-		dst.order(ByteOrder.nativeOrder());
-		src.copyPixelsToBuffer(dst);
-		return dst.array();
-	}
-
 	@Nullable
-	public static Watermark getWatermark(final Context c, Uri source)
+	public static Watermark getWatermark(final Context c)	// TODO: Should take a WatermarkConfig
 	{
-		Bitmap watermark;
-		byte[] waterData;
-		int waterWidth, waterHeight;
-
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(c);
 		boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
 
@@ -768,7 +750,6 @@ public class ImageUtil {
 			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
 			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
 			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
-			String watermarkLocation = pref.getString(FullSettingsActivity.KEY_WatermarkLocation, "Center");
 
 			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
 			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
@@ -783,17 +764,12 @@ public class ImageUtil {
 			}
 			else
 			{
-				watermark = ImageUtil.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize, watermarkLocation);
+				Bitmap watermark = ImageUtil.getWatermarkText(watermarkText, watermarkAlpha, watermarkSize);
 				if (watermark == null)
 					return null;
-				waterWidth = watermark.getWidth();
-				waterData = ImageUtil.getBitmapBytes(watermark);
-				waterHeight = watermark.getHeight();
 				return new Watermark(
-					waterWidth,
-					waterHeight,
 					margins,
-					waterData);
+					watermark);
 			}
 		}
 		return null;
