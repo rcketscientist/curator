@@ -10,6 +10,7 @@ import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.anthonymandra.rawdroid.FullSettingsActivity
+import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.data.ImageInfo
 import io.reactivex.Single
 import java.util.concurrent.Executors
@@ -78,7 +79,8 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
     }
 
     fun selectAll(): Single<LongArray> {
-        return dataRepo.selectAll()
+        val filterValue = filter.value ?: ImageFilter()
+        return dataRepo.selectAll(filterValue)
     }
 
     fun onZoomLockChanged(zoomLocked: Boolean) {

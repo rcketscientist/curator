@@ -31,7 +31,6 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	private val recycleWorkInfo: LiveData<List<WorkInfo>>
 	private val restoreWorkInfo: LiveData<List<WorkInfo>>
 
-
 	val filter: MutableLiveData<ImageFilter> = MutableLiveData()
 
 	init {
