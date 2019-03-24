@@ -105,12 +105,10 @@ public class SwapProvider extends ContentProvider {
 						if (isNative) {
 							Bitmap marked = ImageUtil.applyWatermark(BitmapFactory.decodeFileDescriptor(src.getFileDescriptor()), wm);
 							try(FileOutputStream out = new FileOutputStream(dest.getFileDescriptor())) {
-								marked.compress(Bitmap.CompressFormat.JPEG, 100, out);
+								success = marked.compress(Bitmap.CompressFormat.JPEG, 100, out);
 							}
 						}
-						success = ImageProcessor.writeThumb(src.getFd(), 100,
-							dest.getFd(), wm.getWatermarkBytes(), wm.getMargins().getArray(),
-							wm.getWidth(), wm.getHeight());
+						success = ImageProcessor.writeThumb(src.getFd(), 100, dest.getFd(), wm);
 					}
 					else
 					{

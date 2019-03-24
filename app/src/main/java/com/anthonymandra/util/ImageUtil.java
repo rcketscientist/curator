@@ -536,154 +536,6 @@ public class ImageUtil {
 		return result;
 	}
 
-	public static Bitmap addWatermark(Context context, File file, Bitmap src) {
-		int width = src.getWidth();
-		int height = src.getHeight();
-
-		int id = R.drawable.watermark1024;
-		if (width < 3072)
-			id = R.drawable.watermark512;
-		else if (width < 1536)
-			id = R.drawable.watermark256;
-		else if (width < 768)
-			id = R.drawable.watermark128;
-
-
-		BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inScaled = false;
-		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
-
-		int startX = width / 4 * 3;
-		int startY = height / 4 * 3;
-
-		int watermarkWidth = watermark.getWidth();
-		int watermarkHeight = watermark.getHeight();
-
-		int pixels = watermarkWidth * watermarkHeight;
-		int[] source = new int[width * height];
-		int[] mark = new int[pixels];
-
-		watermark.getPixels(mark, 0, watermarkWidth, 0, 0, watermarkWidth, watermarkHeight);
-		src.getPixels(source, 0, width, 0, 0, width, height);
-
-		int i = 0;
-		for (int y = startY; y < startY + watermarkHeight; ++y) {
-			for (int x = startX; x < startX + watermarkWidth; ++x) {
-				int index = y * width + x;
-				// Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
-				// Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
-				@SuppressLint("Range") float opacity = Color.alpha(mark[i]) / 510f;
-				source[index] = Color.argb(
-					Color.alpha(source[index]),
-					Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
-					Math.min(Color.green(source[index]) + (int) (Color.green(mark[i]) * opacity), 255),
-					Math.min(Color.blue(source[index]) + (int) (Color.blue(mark[i]) * opacity), 255));
-				++i;
-			}
-		}
-
-//        src.setPixels(source, 0, width, 0, 0, width, height);
-
-		return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
-	}
-
-	public static Bitmap addWatermark(Context context, Bitmap src) {
-		int width = src.getWidth();
-		int height = src.getHeight();
-
-		int id = R.drawable.watermark1024;
-		if (width < 3072)
-			id = R.drawable.watermark512;
-		else if (width < 1536)
-			id = R.drawable.watermark256;
-		else if (width < 768)
-			id = R.drawable.watermark128;
-
-		BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inScaled = false;
-		Bitmap watermark = BitmapFactory.decodeResource(context.getResources(), id, o);
-
-		int startX = width / 4 * 3;
-		int startY = height / 4 * 3;
-
-		int watermarkWidth = watermark.getWidth();
-		int watermarkHeight = watermark.getHeight();
-
-		int pixels = watermarkWidth * watermarkHeight;
-		int[] source = new int[width * height];
-		int[] mark = new int[pixels];
-
-		watermark.getPixels(mark, 0, watermarkWidth, 0, 0, watermarkWidth, watermarkHeight);
-		src.getPixels(source, 0, width, 0, 0, width, height);
-
-		int i = 0;
-		for (int y = startY; y < startY + watermarkHeight; ++y) {
-			for (int x = startX; x < startX + watermarkWidth; ++x) {
-				int index = y * width + x;
-				// Applying a 50% opacity on top of the given opacity.  Somewhat arbitrary, but looks the same as the canvas method.
-				// Perhaps this is because the canvas applies 50% to stacked images, maybe just luck...
-				@SuppressLint("Range") float opacity = Color.alpha(mark[i]) / 510f;
-				source[index] = Color.argb(
-					Color.alpha(source[index]),
-					Math.min(Color.red(source[index]) + (int) (Color.red(mark[i]) * opacity), 255),
-					Math.min(Color.green(source[index]) + (int) (Color.green(mark[i]) * opacity), 255),
-					Math.min(Color.blue(source[index]) + (int) (Color.blue(mark[i]) * opacity), 255));
-				++i;
-			}
-		}
-
-//        src.setPixels(source, 0, width, 0, 0, width, height);
-
-		return Bitmap.createBitmap(source, width, height, Bitmap.Config.ARGB_8888);
-	}
-
-	public static Bitmap addCustomWatermark(Bitmap src, String watermark, int alpha,
-														 int size, String location) {
-		int w = src.getWidth();
-		int h = src.getHeight();
-		Bitmap result = Bitmap.createBitmap(w, h, src.getConfig());
-
-		int x = 0, y = 0;
-
-		// We center the text in their respective quadrants
-		switch (location) {
-			case "Center":
-				x = w / 2;
-				y = h / 2;
-				break;
-			case "Lower Left":
-				x = w / 4;
-				y = h / 4 * 3;
-				break;
-			case "Lower Right":
-				x = w / 4 * 3;
-				y = h / 4 * 3;
-				break;
-			case "Upper Left":
-				x = w / 4;
-				y = h / 4;
-				break;
-			case "Upper Right":
-				x = w / 4 * 3;
-				y = h / 4;
-				break;
-		}
-
-		Canvas canvas = new Canvas(result);
-		canvas.drawBitmap(src, 0, 0, null);
-
-		Paint paint = new Paint();
-		paint.setColor(Color.WHITE);
-		paint.setShadowLayer(1, 1, 1, Color.BLACK);
-		paint.setAlpha(alpha);
-		paint.setTextSize(size);
-		paint.setAntiAlias(true);
-		paint.setTextAlign(Paint.Align.CENTER);
-		canvas.drawText(watermark, x, y, paint);
-
-		return result;
-	}
-
 	public static Bitmap applyWatermark(Bitmap src, Watermark watermark) {
 		int width = src.getWidth();
 		int height = src.getHeight();
@@ -720,10 +572,11 @@ public class ImageUtil {
 		if (text.isEmpty())
 			return null;
 
+		int opacityByte = (int) (alpha / 100f * 255);
 		Paint paint = new Paint();
 		paint.setColor(Color.WHITE);
 		paint.setShadowLayer(1, 1, 1, Color.BLACK);
-		paint.setAlpha(alpha);
+		paint.setAlpha(opacityByte);
 		paint.setTextSize(size);
 		paint.setAntiAlias(true);
 		paint.setTextAlign(Paint.Align.LEFT);
