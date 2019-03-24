@@ -112,7 +112,10 @@ abstract class CoreViewModel(app: Application) : AndroidViewModel(app) {
 	}
 
 	fun setFilter(filter: ImageFilter) {
-		this.filter.value = filter
+		// On configuration changes this could cause a state restart, so only set when differs
+		if (filter != this.filter.value) {
+			this.filter.value = filter
+		}
 	}
 
 	fun images(ids: LongArray): Single<List<ImageInfo>> {

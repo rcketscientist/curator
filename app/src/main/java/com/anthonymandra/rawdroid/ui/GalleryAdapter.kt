@@ -199,10 +199,14 @@ class GalleryAdapter : PagedListAdapter<ImageInfo, GalleryViewHolder>(DIFF_CALLB
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ImageInfo>() {
             override fun areContentsTheSame(oldItem: ImageInfo, newItem: ImageInfo): Boolean =
-                oldItem == newItem
+                oldItem.name == newItem.name &&
+                   oldItem.subjectIds.size == newItem.subjectIds.size &&
+                   oldItem.label == newItem.label &&
+                   oldItem.rating == newItem.rating
+
 
             override fun areItemsTheSame(oldItem: ImageInfo, newItem: ImageInfo): Boolean =
-                oldItem.uri == newItem.uri
+               oldItem.uri == newItem.uri
         }
     }
 }

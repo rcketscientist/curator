@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <changelog>
+    <release version="6.2.0"
+        versioncode="602000"
+        summary="Bugs"
+        date="24 Mar 2019">
+        <change>Update paging cache to allow fling in gallery</change>
+        <change>Maintain state through config changes (device orientation)</change>
+        <change>Fix aperture meta</change>
+        <change>Fix select all to obey filter</change>
+        <change>Fix jpg watermark</change>
+    </release>
     <release version="6.1.3"
         versioncode="601003"
         summary="Bugs"

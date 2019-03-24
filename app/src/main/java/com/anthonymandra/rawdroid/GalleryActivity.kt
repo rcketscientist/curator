@@ -10,6 +10,7 @@ import android.hardware.usb.UsbManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.preference.PreferenceManager
 import android.provider.DocumentsContract
 import android.util.DisplayMetrics
@@ -95,7 +96,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		galleryAdapter.onItemClickListener = this
 		galleryAdapter.onItemLongClickListener = this
 
-		viewModel.imageList().observe(this, Observer {
+		viewModel.galleryImages.observe(this, Observer {
 			galleryAdapter.submitList(it)
 		})
 
@@ -246,6 +247,20 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 	public override fun onPause() {
 		super.onPause()
+	}
+
+	override fun onSaveInstanceState(outState: Bundle?) {
+		super.onSaveInstanceState(outState)
+		galleryView.layoutManager?.let {
+			outState?.putParcelable("galleryState", it.onSaveInstanceState())
+		}
+	}
+
+	override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+		super.onRestoreInstanceState(savedInstanceState)
+		savedInstanceState?.getParcelable<Parcelable>("galleryState")?.let {
+			galleryView.layoutManager?.onRestoreInstanceState(it)
+		}
 	}
 
 	private fun scanRawFiles() {
