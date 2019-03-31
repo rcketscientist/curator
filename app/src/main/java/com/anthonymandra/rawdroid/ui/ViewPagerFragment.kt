@@ -136,7 +136,7 @@ class ViewPagerFragment : Fragment() {
             textViewModel.text = image.model
             textViewIso.text = image.iso
             textViewExposure.text = image.exposure
-            textViewAperture.text = image.exposure
+            textViewAperture.text = image.aperture
             textViewFocal.text = image.focalLength
             textViewDimensions.text = "${image.width} x ${image.height}"
             textViewAlt.text = image.altitude

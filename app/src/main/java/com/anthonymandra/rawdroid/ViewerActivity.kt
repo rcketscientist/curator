@@ -65,7 +65,6 @@ class ViewerActivity : CoreActivity() {
 		val settings = PreferenceManager.getDefaultSharedPreferences(this)
 		isImmersive = settings.getBoolean(FullSettingsActivity.KEY_UseImmersive, true)
 
-		val startIndex = intent.getIntExtra(EXTRA_START_INDEX, 0)
 		viewerAdapter = ViewerAdapter(supportFragmentManager)
 
 		if (intent.action == ACTION_VIEW || intent.action == ACTION_SEND) {	// External, add data
@@ -80,10 +79,14 @@ class ViewerActivity : CoreActivity() {
 			val stream = intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
 			createTempDataSource(stream)
 		} else {    // Gallery intent
+			// Use the bundled value on first run, reuse the viewmodel on config changes
+			if (viewModel.currentImageIndex == -1) {
+				viewModel.currentImageIndex = intent.getIntExtra(EXTRA_START_INDEX, 0)
+			}
 			viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
-			viewModel.imageList(startIndex).observe(this, Observer {
+			viewModel.imageList(viewModel.currentImageIndex).observe(this, Observer {
 				viewerAdapter.submitList(it)
-				pager.setCurrentItem(startIndex, false)
+				pager.setCurrentItem(viewModel.currentImageIndex, false)
 			})
 		}
 
@@ -103,6 +106,7 @@ class ViewerActivity : CoreActivity() {
 			override fun onPageScrollStateChanged(state: Int) {}
 			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 			override fun onPageSelected(position: Int) {
+				viewModel.currentImageIndex = position
 				viewModel.showInterface()
 				currentImage = viewerAdapter.getValue(position)
 				currentImage?.let {
