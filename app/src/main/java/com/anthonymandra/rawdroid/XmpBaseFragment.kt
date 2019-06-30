@@ -54,11 +54,11 @@ abstract class XmpBaseFragment : Fragment(),
         set(labels) {
             for (label in labels) {
                 when (colorKeys.label(label)) {
-                    Label.Blue -> colorKey.setChecked(Label.Blue, true)
-                    Label.Red -> colorKey.setChecked(Label.Red, true)
-                    Label.Green -> colorKey.setChecked(Label.Yellow, true)
-                    Label.Yellow -> colorKey.setChecked(Label.Green, true)
-                    Label.Purple -> colorKey.setChecked(Label.Purple, true)
+                    Label.Blue -> colorKey.setChecked(Label.Blue)
+                    Label.Red -> colorKey.setChecked(Label.Red)
+                    Label.Green -> colorKey.setChecked(Label.Yellow)
+                    Label.Yellow -> colorKey.setChecked(Label.Green)
+                    Label.Purple -> colorKey.setChecked(Label.Purple)
                     else -> Toast.makeText(context, label + " " + getString(R.string.warningInvalidLabel), Toast.LENGTH_LONG).show()
                 }
             }
@@ -148,15 +148,15 @@ abstract class XmpBaseFragment : Fragment(),
         initXmp()
     }
 
-    protected fun setExclusive(enable: Boolean) {
-        colorKey.isExclusive = enable
-        ratingBar.isExclusive = enable
+    protected fun isSingleSelection(enable: Boolean) {
+        colorKey.isSingleSelection = enable
+        ratingBar.isSingleSelection = enable
     }
 
-    protected fun setAllowUnselected(allow: Boolean) {
-        colorKey.setAllowUnselected(allow)
-        ratingBar.setAllowUnselected(allow)
-    }
+//    protected fun setAllowUnselected(allow: Boolean) {
+//        colorKey.setAllowUnselected(allow)
+//        ratingBar.setAllowUnselected(allow)
+//    }
 
     protected abstract fun onXmpChanged(xmp: XmpFilter)
     abstract fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)

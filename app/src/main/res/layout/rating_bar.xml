@@ -1,27 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       tools:parentTag="androidx.appcompat.widget.ToggleGroup">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating1"
-        style="@style/RatingButton"/>
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toggle_bluegrey">
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating2"
-        style="@style/RatingButton"/>
+        <com.google.android.button.MaterialButton
+            android:id="@+id/rating1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
+            />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating3"
-        style="@style/RatingButton"/>
+        <com.google.android.button.MaterialButton
+            android:id="@+id/rating2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
+            />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating4"
-        style="@style/RatingButton"/>
+        <com.google.android.button.MaterialButton
+            android:id="@+id/rating3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
+            />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating5"
-        style="@style/RatingButton"/>
+        <com.google.android.button.MaterialButton
+            android:id="@+id/rating4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
+            />
+
+        <com.google.android.button.MaterialButton
+            android:id="@+id/rating5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?attr/materialButtonOutlinedStyle"
+            />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </merge>

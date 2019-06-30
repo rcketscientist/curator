@@ -64,48 +64,58 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/sortHeader">
 
-        <androidx.appcompat.widget.ToggleGroup
+        <com.google.android.material.button.MaterialButtonToggleGroup
             android:id="@+id/sortToggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            app:exclusive="true"
+            app:singleSelection="true"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.ToggleButton
+            <com.google.android.button.MaterialButton
                 android:id="@+id/toggleSortAfirst"
-                style="@style/ImageActionToggleButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:button="@drawable/ic_a"
                 android:buttonTint="@color/white"
                 android:checked="true"
                 android:gravity="center"/>
 
-            <androidx.appcompat.widget.ToggleButton
+            <com.google.android.button.MaterialButton
                 android:id="@+id/toggleSortZfirst"
-                style="@style/ImageActionToggleButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:button="@drawable/ic_z"
                 android:buttonTint="@color/white"/>
 
-            <androidx.appcompat.widget.ToggleButton
+            <com.google.android.button.MaterialButton
                 android:id="@+id/toggleSortYoungFirst"
-                style="@style/ImageActionToggleButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:button="@drawable/ic_baby"
                 android:buttonTint="@color/white"/>
 
-            <androidx.appcompat.widget.ToggleButton
+            <com.google.android.button.MaterialButton
                 android:id="@+id/toggleSortOldFirst"
-                style="@style/ImageActionToggleButton"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
                 android:button="@drawable/ic_elder"
                 android:buttonTint="@color/white"/>
 
-        </androidx.appcompat.widget.ToggleGroup>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <androidx.appcompat.widget.ToggleButton
             android:id="@+id/segregateToggleButton"
-            style="@style/ImageActionToggleButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:button="@drawable/ic_jpeg_bottom_borderless"
             android:buttonTint="@color/white"
             android:layout_margin="4dp"
@@ -152,7 +162,7 @@
         android:layout_below="@+id/filterButtons"/>
 
     <!-- TODO: Without theme here the background drawable won't work...?-->
-    <androidx.appcompat.widget.ToggleButton
+    <com.google.android.button.MaterialButton
         android:id="@+id/toggleAnd"
         android:theme="@style/SidebarButton"
         android:layout_width="wrap_content"

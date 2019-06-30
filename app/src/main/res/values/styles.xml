@@ -75,7 +75,7 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="GalleryTheme" parent="@style/Theme.AppCompat.NoActionBar">
+    <style name="GalleryTheme" parent="Theme.MaterialComponents.NoActionBar">
 <!--        <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>-->
         <item name="colorAccent">@color/colorAccent</item>
@@ -83,8 +83,8 @@
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
         <item name="actionModeShareDrawable">@drawable/ic_share</item>
         <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
-        <item name="toggleGroupStyle">@style/Widget.Material.ToggleGroup</item>
-        <item name="toggleButtonStyle">@style/Widget.Material.ToggleButton</item>
+        <!--<item name="toggleGroupStyle">@style/Widget.Material.ToggleGroup</item>-->
+        <!--<item name="toggleButtonStyle">@style/Widget.Material.ToggleButton</item>-->
     </style>
 
     <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
@@ -159,17 +159,25 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="ImageActionToggleButton" parent="Widget.Material.ToggleButton">
+    <!--<style name="ImageActionToggleButton" parent="Widget.Material.ToggleButton">-->
+        <!--<item name="android:background">@drawable/toggle_bluegrey</item>-->
+    <!--</style>-->
+
+    <style name="LabelToggleButton">
         <item name="android:background">@drawable/toggle_bluegrey</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
-    <style name="LabelToggleButton" parent="@style/ImageActionToggleButton">
-        <item name="android:button">@drawable/ic_square_rounded</item>
-    </style>
-
-    <style name="RatingButton" parent="@style/ImageActionToggleButton">
+    <style name="RatingButton">
         <item name="android:background">@color/blueGreyIdleButton</item>
         <item name="android:button">@drawable/multi_select_star</item>
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center</item>
     </style>
 
 </resources>

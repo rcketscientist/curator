@@ -5,15 +5,15 @@ import android.util.AttributeSet;
 import android.widget.CompoundButton;
 
 import com.anthonymandra.rawdroid.R;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.ToggleGroup;
 
-public class RatingBar extends ToggleGroup
+public class RatingBar extends MaterialButtonToggleGroup
 {
     public interface OnRatingSelectionChangedListener
     {
@@ -42,29 +42,24 @@ public class RatingBar extends ToggleGroup
         mFour = findViewById(R.id.rating4);
         mFive = findViewById(R.id.rating5);
 
-        setOnCheckedChangeListener((group, checkedId) -> {
+        addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             // In exclusive mode this will behave like a factory rating bar
-            if (isExclusive())
-            {
+            if (isSingleSelection()) {
                 resetIcons();
 
-                 if(checkedId.length > 0)
-                 {
-                     switch (checkedId[0])
-                     {
-                         // Cascade selected stars down like a typical ratingbar
-                         case R.id.rating5:
-                             mFive.setButtonDrawable(R.drawable.ic_star);
-                         case R.id.rating4:
-                             mFour.setButtonDrawable(R.drawable.ic_star);
-                         case R.id.rating3:
-                             mThree.setButtonDrawable(R.drawable.ic_star);
-                         case R.id.rating2:
-                             mTwo.setButtonDrawable(R.drawable.ic_star);
-                         case R.id.rating1:
-                             mOne.setButtonDrawable(R.drawable.ic_star);
-                     }
-                 }
+                switch (checkedId) {
+                    // Cascade selected stars down like a typical ratingbar
+                    case R.id.rating5:
+                        mFive.setButtonDrawable(R.drawable.ic_star);
+                    case R.id.rating4:
+                        mFour.setButtonDrawable(R.drawable.ic_star);
+                    case R.id.rating3:
+                        mThree.setButtonDrawable(R.drawable.ic_star);
+                    case R.id.rating2:
+                        mTwo.setButtonDrawable(R.drawable.ic_star);
+                    case R.id.rating1:
+                        mOne.setButtonDrawable(R.drawable.ic_star);
+                }
             }
 
             if (mListener != null)
@@ -73,15 +68,15 @@ public class RatingBar extends ToggleGroup
     }
 
     @Override
-    public void setExclusive(boolean exclusive)
+    public void setSingleSelection(boolean singleSelection)
     {
-        super.setExclusive(exclusive);
+        super.setSingleSelection(singleSelection);
         setDrawable();
     }
 
     private void setDrawable()
     {
-        int drawableId = isExclusive() ? R.drawable.ic_star_border : R.drawable.multi_select_star;
+        int drawableId = isSingleSelection() ? R.drawable.ic_star_border : R.drawable.multi_select_star;
         mOne.setButtonDrawable(drawableId);
         mTwo.setButtonDrawable(drawableId);
         mThree.setButtonDrawable(drawableId);
