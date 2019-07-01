@@ -13,8 +13,7 @@ import com.anthonymandra.widget.RatingBar
 import com.anthonymandra.widget.XmpLabelGroup
 import java.util.*
 
-abstract class XmpBaseFragment : Fragment(),
-        RatingBar.OnRatingSelectionChangedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var ratingBar: RatingBar
     private lateinit var colorKey: XmpLabelGroup
@@ -102,6 +101,7 @@ abstract class XmpBaseFragment : Fragment(),
             if (!mPauseListener)
                 this@XmpBaseFragment.onRatingSelectionChanged(checked)
         }
+
         colorKey.setOnLabelSelectionChangedListener { checked ->
             if (!mPauseListener)
                 this@XmpBaseFragment.onLabelSelectionChanged(checked)
@@ -160,6 +160,7 @@ abstract class XmpBaseFragment : Fragment(),
 
     protected abstract fun onXmpChanged(xmp: XmpFilter)
     abstract fun onKeywordsSelected(selectedKeywords: Collection<SubjectEntity>)
+    abstract fun onRatingSelectionChanged(checked: List<Int>)
     abstract fun onLabelSelectionChanged(checked: List<Label>)
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {

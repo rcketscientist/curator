@@ -3,42 +3,31 @@
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/toggle_bluegrey">
+        android:layout_height="wrap_content">
 
-        <com.google.android.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/rating1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/RatingButton2"
             />
 
-        <com.google.android.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/rating2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/RatingButton2"
             />
 
-        <com.google.android.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/rating3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/RatingButton2"
             />
 
-        <com.google.android.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/rating4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/RatingButton2"
             />
 
-        <com.google.android.button.MaterialButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/rating5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?attr/materialButtonOutlinedStyle"
+            style="@style/RatingButton2"
             />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 </merge>

@@ -15,7 +15,6 @@ import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.rawdroid.ui.FolderDialog
 import com.anthonymandra.rawdroid.ui.SearchRequestListener
-import com.google.android.material.button.MaterialButton
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.xmp_filter_landscape.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
@@ -94,23 +93,23 @@ class XmpFilterFragment : XmpBaseFragment() {
         // Initial sort setting
         if (ascending) {
             if (ImageFilter.SortColumns.Name === sortColumn)
-                (toggleSortAfirst as MaterialButton).isChecked = true
+                toggleSortAfirst.isChecked = true
             else
-                (toggleSortOldFirst as MaterialButton).isChecked = true
+                toggleSortOldFirst.isChecked = true
         } else {
             if (ImageFilter.SortColumns.Name === sortColumn)
-                (toggleSortZfirst as MaterialButton).isChecked = true
+                toggleSortZfirst.isChecked = true
             else
-                (toggleSortYoungFirst as MaterialButton).isChecked = true
+                toggleSortYoungFirst.isChecked = true
         }
 
         // Initial segregate value
-        (segregateToggleButton as MaterialButton).isChecked = mSegregateByType
+        segregateToggleButton.isChecked = mSegregateByType
 
         clearFilterButton.setOnClickListener { clear() }
-        (toggleAnd as MaterialButton).addOnCheckedChangeListener { _, checked -> andOr = checked }
+        toggleAnd.addOnCheckedChangeListener { _, checked -> andOr = checked }
         sortToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked -> setSort(checkedId) }
-        (segregateToggleButton as MaterialButton).addOnCheckedChangeListener { _, isChecked -> segregate = isChecked }
+        segregateToggleButton.addOnCheckedChangeListener { _, isChecked -> segregate = isChecked }
         helpButton.setOnClickListener { startTutorial() }
         foldersButton.setOnClickListener { showFolderDialog() }
     }

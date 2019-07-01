@@ -70,56 +70,42 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             app:singleSelection="true"
+            app:checkedButton="@+id/toggleSortAfirst"
             android:orientation="horizontal">
 
-            <com.google.android.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortAfirst"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/ic_a"
-                android:buttonTint="@color/white"
+                style="@style/ImageToggleButton"
+                app:icon="@drawable/ic_a"
                 android:checked="true"
-                android:gravity="center"/>
+                />
 
-            <com.google.android.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortZfirst"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:button="@drawable/ic_z"
-                android:buttonTint="@color/white"/>
+                style="@style/ImageToggleButton"
+                app:icon="@drawable/ic_z"
+                />
 
-            <com.google.android.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortYoungFirst"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:button="@drawable/ic_baby"
-                android:buttonTint="@color/white"/>
+                style="@style/ImageToggleButton"
+                app:icon="@drawable/ic_baby"
+                />
 
-            <com.google.android.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortOldFirst"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:button="@drawable/ic_elder"
-                android:buttonTint="@color/white"/>
+                style="@style/ImageToggleButton"
+                app:icon="@drawable/ic_elder"
+                />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
-        <androidx.appcompat.widget.ToggleButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/segregateToggleButton"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:button="@drawable/ic_jpeg_bottom_borderless"
-            android:buttonTint="@color/white"
+            style="@style/ImageToggleButton"
+            app:icon="@drawable/ic_jpeg_bottom_borderless"
             android:layout_margin="4dp"
-            android:elevation="2dp"/>
+            />
 
     </LinearLayout>
 
@@ -162,12 +148,11 @@
         android:layout_below="@+id/filterButtons"/>
 
     <!-- TODO: Without theme here the background drawable won't work...?-->
-    <com.google.android.button.MaterialButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/toggleAnd"
-        android:theme="@style/SidebarButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/and_selector"
+        style="@style/ImageToggleButton"
+        app:icon="@drawable/and_selector"
+        android:checkable="true"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@id/filterLabelRating"
         android:layout_alignBottom="@id/filterLabelRating"

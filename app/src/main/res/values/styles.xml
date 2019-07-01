@@ -76,8 +76,12 @@
     </style>
 
     <style name="GalleryTheme" parent="Theme.MaterialComponents.NoActionBar">
-<!--        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>-->
+        <item name="colorPrimary">@color/secondaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
@@ -163,12 +167,19 @@
         <!--<item name="android:background">@drawable/toggle_bluegrey</item>-->
     <!--</style>-->
 
-    <style name="LabelToggleButton">
-        <item name="android:background">@drawable/toggle_bluegrey</item>
+    <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">50dp</item>
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:gravity">center</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconPadding">0dp</item>
+    </style>
+
+    <style name="LabelToggleButton" parent="ImageToggleButton">
+        <item name="icon">@drawable/ic_square_rounded</item>
+    </style>
+
+    <style name="RatingButton2" parent="ImageToggleButton">
+        <item name="icon">@drawable/multi_select_star</item>
     </style>
 
     <style name="RatingButton">
