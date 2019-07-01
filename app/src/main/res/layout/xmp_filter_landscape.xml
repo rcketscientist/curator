@@ -70,14 +70,12 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             app:singleSelection="true"
-            app:checkedButton="@+id/toggleSortAfirst"
-            android:orientation="horizontal">
+            app:checkedButton="@+id/toggleSortAfirst">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortAfirst"
                 style="@style/ImageToggleButton"
                 app:icon="@drawable/ic_a"
-                android:checked="true"
                 />
 
             <com.google.android.material.button.MaterialButton

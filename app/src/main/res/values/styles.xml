@@ -167,10 +167,11 @@
         <!--<item name="android:background">@drawable/toggle_bluegrey</item>-->
     <!--</style>-->
 
-    <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+    <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.TextButton">
         <item name="android:layout_width">50dp</item>
         <item name="android:layout_height">50dp</item>
-        <item name="iconTint">@color/white</item>
+        <item name="backgroundTint">@color/primaryLightColor</item>
+        <item name="iconTint">@drawable/icon_toggle_selector</item>
         <item name="iconPadding">0dp</item>
     </style>
 
