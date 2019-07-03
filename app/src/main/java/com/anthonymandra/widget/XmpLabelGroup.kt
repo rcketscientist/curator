@@ -9,7 +9,10 @@ import kotlinx.android.synthetic.main.material_color_key.view.*
 import java.util.*
 
 typealias OnLabelSelectionChangedListener = (List<Label>) -> Unit
-class XmpLabelGroup @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
+class XmpLabelGroup
+    @JvmOverloads
+    constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+        : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnLabelSelectionChangedListener? = null
 

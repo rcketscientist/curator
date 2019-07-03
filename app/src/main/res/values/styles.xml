@@ -163,33 +163,27 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <!--<style name="ImageActionToggleButton" parent="Widget.Material.ToggleButton">-->
-        <!--<item name="android:background">@drawable/toggle_bluegrey</item>-->
-    <!--</style>-->
-
     <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="backgroundTint">@color/primaryLightColor</item>
         <item name="iconTint">@drawable/icon_toggle_selector</item>
         <item name="iconPadding">0dp</item>
     </style>
 
+    <!-- I guess this is related to the different sizing on these svg v. labels -->
+    <style name="SortToggleButton" parent="ImageToggleButton">
+        <item name="android:paddingLeft">12dp</item>
+    </style>
+
     <style name="LabelToggleButton" parent="ImageToggleButton">
-        <item name="icon">@drawable/ic_square_rounded</item>
+        <item name="icon">@drawable/ic_square_rounded</item>\
+        <item name="android:paddingLeft">6dp</item>
     </style>
 
-    <style name="RatingButton2" parent="ImageToggleButton">
+    <style name="RatingButton" parent="ImageToggleButton">
         <item name="icon">@drawable/multi_select_star</item>
-    </style>
-
-    <style name="RatingButton">
-        <item name="android:background">@color/blueGreyIdleButton</item>
-        <item name="android:button">@drawable/multi_select_star</item>
-        <item name="android:layout_width">50dp</item>
-        <item name="android:layout_height">50dp</item>
-        <item name="android:layout_margin">5dp</item>
-        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">6dp</item>
     </style>
 
 </resources>

@@ -68,42 +68,37 @@
             android:id="@+id/sortToggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            app:singleSelection="true"
-            app:checkedButton="@+id/toggleSortAfirst">
+            app:checkedButton="@+id/toggleSortAfirst"
+            android:layout_margin="0dp"
+            app:singleSelection="true">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortAfirst"
-                style="@style/ImageToggleButton"
-                app:icon="@drawable/ic_a"
-                />
+                style="@style/SortToggleButton"
+                app:icon="@drawable/ic_a" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortZfirst"
-                style="@style/ImageToggleButton"
-                app:icon="@drawable/ic_z"
-                />
+                style="@style/SortToggleButton"
+                app:icon="@drawable/ic_z" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortYoungFirst"
-                style="@style/ImageToggleButton"
-                app:icon="@drawable/ic_baby"
-                />
+                style="@style/SortToggleButton"
+                app:icon="@drawable/ic_baby" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/toggleSortOldFirst"
-                style="@style/ImageToggleButton"
-                app:icon="@drawable/ic_elder"
-                />
+                style="@style/SortToggleButton"
+                app:icon="@drawable/ic_elder" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/segregateToggleButton"
-            style="@style/ImageToggleButton"
-            app:icon="@drawable/ic_jpeg_bottom_borderless"
-            android:layout_margin="4dp"
-            />
+            style="@style/SortToggleButton"
+            android:layout_marginLeft="8dp"
+            app:icon="@drawable/ic_jpeg_bottom_borderless" />
 
     </LinearLayout>
 
@@ -138,34 +133,6 @@
             android:background="@color/sidebarHeader"/>
     </RelativeLayout>
 
-    <include
-        android:id="@+id/filterLabelRating"
-        layout="@layout/xmp_core"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/filterButtons"/>
-
-    <!-- TODO: Without theme here the background drawable won't work...?-->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/toggleAnd"
-        style="@style/ImageToggleButton"
-        app:icon="@drawable/and_selector"
-        android:checkable="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@id/filterLabelRating"
-        android:layout_alignBottom="@id/filterLabelRating"
-        android:layout_toEndOf="@+id/filterLabelRating"/>
-
-    <fragment
-        android:id="@+id/keywordFragment"
-        android:name="com.anthonymandra.rawdroid.KeywordFilterFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/filterLabelRating"
-        android:layout_marginTop="4dp"
-        tools:layout="@layout/xmp_subject"
-        tools:listitem="@layout/keyword_entry"/>
-
     <LinearLayout
         android:id="@+id/filterButtons"
         android:layout_width="match_parent"
@@ -191,5 +158,39 @@
             app:srcCompat="@drawable/ic_filter_remove"/>
 
     </LinearLayout>
+
+    <include
+        android:id="@+id/filterLabelRating"
+        layout="@layout/xmp_core"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filterButtons"
+        android:layout_marginRight="0dp"
+        android:layout_marginLeft="4dp"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/toggleAnd"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/and_selector"
+        android:checkable="true"
+        android:paddingLeft="4dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/filterLabelRating"
+        android:layout_alignBottom="@id/filterLabelRating"
+        android:layout_toEndOf="@+id/filterLabelRating"
+        />
+
+    <fragment
+        android:id="@+id/keywordFragment"
+        android:name="com.anthonymandra.rawdroid.KeywordFilterFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filterLabelRating"
+        android:layout_marginTop="4dp"
+        tools:layout="@layout/xmp_subject"
+        tools:listitem="@layout/keyword_entry"/>
 
 </RelativeLayout>

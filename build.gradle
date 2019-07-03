@@ -11,17 +11,16 @@ buildscript {
 
         // Androidx
         annotationVersion = '1.1.0'
-        ktx = '1.0.1'
 
         exifVersion = '1.0.0-rc01'
         materialVersion = '1.1.0-alpha07'
-        coreVersion = '1.0.0-rc01'
+        coreVersion = '1.0.0-rc02'
 
         // Architecture
-        lifecycleVersion = '2.1.0-beta01'
+        lifecycleVersion = '2.1.0-rc01'
         roomVersion = '2.1.0'
         pagingVersion = '2.1.0'
-        coreTestingVersion = '2.1.0-beta01'
+        coreTestingVersion = '2.1.0-rc01'
         workVersion = '2.1.0-rc01'
     }
     dependencies {

@@ -247,7 +247,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         // rating
         sequence.addSequenceItem(getRectangularView(
-                filterLabelRating,
+                colorKey,
                 R.string.filterImages,
                 R.string.ratingLabelContent
         ))
