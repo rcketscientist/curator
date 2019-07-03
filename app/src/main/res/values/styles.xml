@@ -76,7 +76,7 @@
     </style>
 
     <style name="GalleryTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">@color/secondaryColor</item>
+        <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
@@ -163,22 +163,28 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="android:layout_width">48dp</item>
         <item name="android:layout_height">48dp</item>
         <item name="backgroundTint">@color/primaryLightColor</item>
-        <item name="iconTint">@drawable/icon_toggle_selector</item>
+        <item name="iconTint">@color/white</item>
         <item name="iconPadding">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetBottom">0dp</item>
     </style>
 
-    <!-- I guess this is related to the different sizing on these svg v. labels -->
     <style name="SortToggleButton" parent="ImageToggleButton">
+        <item name="iconTint">@drawable/toggle_icon_selector</item>
         <item name="android:paddingLeft">12dp</item>
     </style>
 
     <style name="LabelToggleButton" parent="ImageToggleButton">
         <item name="icon">@drawable/ic_square_rounded</item>\
-        <item name="android:paddingLeft">6dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@drawable/toggle_selector</item>
     </style>
 
     <style name="RatingButton" parent="ImageToggleButton">

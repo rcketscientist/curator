@@ -69,4 +69,6 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#ffffff</color>
 
+    <color name="selectionColor">@color/blue_500</color>
+
 </resources>

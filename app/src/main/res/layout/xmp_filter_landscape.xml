@@ -145,16 +145,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:theme="@style/SidebarButton"
+            android:backgroundTint="@color/primaryLightColor"
             app:srcCompat="@drawable/ic_folder_border"/>
 
         <ImageButton
             android:id="@+id/clearFilterButton"
-            android:theme="@style/SidebarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:tint="@color/red_300"
+            android:backgroundTint="@color/primaryLightColor"
             app:srcCompat="@drawable/ic_filter_remove"/>
 
     </LinearLayout>
@@ -171,7 +171,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/toggleAnd"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:icon="@drawable/and_selector"
