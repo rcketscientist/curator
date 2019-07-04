@@ -49,33 +49,53 @@ class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         addOnButtonCheckedListener { group, checkedId, isChecked ->
             // In exclusive mode this will behave like a factory rating bar
             if (isSingleSelection) {
-                resetIcons()
-
-                when (checkedId) {
-                    // Cascade selected stars down like a typical ratingbar
-                    R.id.rating5 -> {
-                        rating5.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                // If there's no checked button, clear
+                if (checkedButtonId == View.NO_ID) {
+                    rating1?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    rating2?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    rating3?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    rating4?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    rating5?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                }
+                else if (isChecked) {
+                    when (checkedId) {
+                        // Cascade selected stars down like a typical ratingbar
+                        R.id.rating5 -> {
+                            rating5.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                        }
+                        R.id.rating4 -> {
+                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                        }
+                        R.id.rating3 -> {
+                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                        }
+                        R.id.rating2 -> {
+                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating3.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                        }
+                        R.id.rating1 -> {
+                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating3.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating2.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                        }
                     }
-                    R.id.rating4 -> {
-                        rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                    }
-                    R.id.rating3 -> {
-                        rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                    }
-                    R.id.rating2 -> {
-                        rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                        rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                    }
-                    R.id.rating1 -> rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
                 }
             }
 
@@ -95,14 +115,6 @@ class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         rating3?.icon = resources.getDrawable(drawableId, context.theme)
         rating4?.icon = resources.getDrawable(drawableId, context.theme)
         rating5?.icon = resources.getDrawable(drawableId, context.theme)
-    }
-
-    private fun resetIcons() {
-        rating1?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-        rating2?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-        rating3?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-        rating4?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-        rating5?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
     }
 
     /**

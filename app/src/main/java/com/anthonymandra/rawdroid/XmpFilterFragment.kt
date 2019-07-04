@@ -16,6 +16,7 @@ import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.rawdroid.ui.FolderDialog
 import com.anthonymandra.rawdroid.ui.SearchRequestListener
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.xmp_core.*
 import kotlinx.android.synthetic.main.xmp_filter_landscape.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
@@ -247,7 +248,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         // rating
         sequence.addSequenceItem(getRectangularView(
-                filterLabelRating,
+                ratingBar,
                 R.string.filterImages,
                 R.string.ratingLabelContent
         ))

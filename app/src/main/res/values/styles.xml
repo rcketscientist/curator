@@ -75,7 +75,7 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="GalleryTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="GalleryTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
@@ -173,6 +173,8 @@
         <item name="android:insetTop">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:insetBottom">0dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@color/primaryLightColor</item>
     </style>
 
     <style name="SortToggleButton" parent="ImageToggleButton">
@@ -183,7 +185,6 @@
     <style name="LabelToggleButton" parent="ImageToggleButton">
         <item name="icon">@drawable/ic_square_rounded</item>\
         <item name="android:paddingLeft">12dp</item>
-        <item name="strokeWidth">2dp</item>
         <item name="strokeColor">@drawable/toggle_selector</item>
     </style>
 

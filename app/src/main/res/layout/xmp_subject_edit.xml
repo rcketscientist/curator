@@ -18,7 +18,7 @@
         android:background="@color/sidebarButton">
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -28,7 +28,7 @@
             android:layout_weight="1"/>
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
