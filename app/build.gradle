@@ -10,7 +10,7 @@ apply plugin: 'io.fabric'
 
 def versionMajor = 6
 def versionMinor = 2
-def versionPatch = 0
+def versionPatch = 1
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -66,7 +66,7 @@ android {
         debug {
             // Disable fabric build ID generation for debug builds
             ext.enableCrashlytics = false
-            jniDebuggable true
+            debuggable true
         }
     }
 
@@ -120,11 +120,10 @@ dependencies {
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation "androidx.core:core-ktx:$ktx"
+    implementation "androidx.core:core-ktx:$coreVersion"
 
     // UI
-    implementation 'com.anthonymandra:ToggleButtons:3.0.1'
-    implementation 'com.afollestad:material-cab:0.1.12'
+    implementation 'com.afollestad:material-cab:2.0.1'
     implementation 'me.zhanghai.android.materialprogressbar:library:1.6.1'
     implementation 'com.github.deano2390:MaterialShowcaseView:1.2.0'
     implementation 'com.eftimoff:android-viewpager-transformers:1.0.1@aar'
@@ -133,18 +132,14 @@ dependencies {
 
     // Rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.7'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
-    // Pretty sure I'm not using these
-//    implementation 'com.jakewharton.rxbinding2:rxbinding:2.2.0'
     implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.2.0'
 
     // Material extension contains many of the necessary androidx classes
     implementation "com.google.android.material:material:$materialVersion"
     implementation "androidx.annotation:annotation:$annotationVersion"
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    //    implementation "androidx.cardview:cardview:$cardviewVersion"
-
     // Android architecture
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
@@ -158,8 +153,8 @@ dependencies {
     // Instrumented
     androidTestImplementation "androidx.arch.core:core-testing:$coreTestingVersion"
     androidTestImplementation "androidx.annotation:annotation:$annotationVersion"
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test:rules:1.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'org.hamcrest:hamcrest-library:2.1'
     androidTestImplementation "androidx.work:work-testing:$workVersion"
 
@@ -171,13 +166,12 @@ dependencies {
 
     // Debug
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.5'
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
 
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
-    implementation 'com.crashlytics.sdk.android:crashlytics-ndk:2.0.5'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics-ndk:2.1.0'
 
-    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-core:17.0.0'
 }
 
 crashlytics {

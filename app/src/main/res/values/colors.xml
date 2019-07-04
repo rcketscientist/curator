@@ -59,4 +59,16 @@
 
     <color name="track_bar">#64aaaaaa</color>
 
+    <!-- Material Theme -->
+    <color name="primaryColor">#212121</color>
+    <color name="primaryLightColor">#484848</color>
+    <color name="primaryDarkColor">#000000</color>
+    <color name="secondaryColor">#3949ab</color>
+    <color name="secondaryLightColor">#6f74dd</color>
+    <color name="secondaryDarkColor">#00227b</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#ffffff</color>
+
+    <color name="selectionColor">@color/blue_500</color>
+
 </resources>

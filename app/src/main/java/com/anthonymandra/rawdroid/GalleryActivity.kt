@@ -25,7 +25,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
-import com.afollestad.materialcab.MaterialCab
+import com.afollestad.materialcab.attached.AttachedCab
+import com.afollestad.materialcab.attached.destroy
+import com.afollestad.materialcab.attached.isActive
+import com.afollestad.materialcab.createCab
 import com.anthonymandra.framework.*
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
@@ -48,13 +51,13 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 	protected lateinit var galleryAdapter: GalleryAdapter
 
-	private var mMaterialCab: MaterialCab? = null
+	private var mMaterialCab: AttachedCab? = null
 	private var mXmpFilterFragment: XmpFilterFragment? = null
 	override val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
 	private var imageCount = 0
 
 	protected val isContextModeActive: Boolean
-		get() = mMaterialCab?.isActive ?: false
+		get() = mMaterialCab.isActive()
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -249,7 +252,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		super.onPause()
 	}
 
-	override fun onSaveInstanceState(outState: Bundle?) {
+	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
 		galleryView.layoutManager?.let {
 			outState?.putParcelable("galleryState", it.onSaveInstanceState())
@@ -413,27 +416,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	}
 
 	override fun onSelectionUpdated(selectedIds: LongArray) {
-		mMaterialCab?.setTitle(selectedIds.size.toString() + " " + getString(R.string.selected))
+		mMaterialCab?.title(literal = selectedIds.size.toString() + " " + getString(R.string.selected))
 		xmpEditFragment.reset()   // reset the panel to ensure it's clear it's not tied to existing values
-	}
-
-	private inner class GalleryActionMode : MaterialCab.Callback {
-		override fun onCabCreated(cab: MaterialCab, menu: Menu): Boolean {
-			return true
-		}
-
-		override fun onCabItemClicked(item: MenuItem): Boolean {
-			val handled = onOptionsItemSelected(item)
-			if (handled)
-				endContextMode()
-			return handled
-		}
-
-		override fun onCabFinished(cab: MaterialCab): Boolean {
-			galleryAdapter.multiSelectMode = false
-			mMaterialCab = null
-			return true
-		}
 	}
 
 	fun selectAll() {
@@ -444,13 +428,26 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	}
 
 	protected fun startContextMode() {
-		mMaterialCab = MaterialCab(this, R.id.cab_stub)
-				.setMenu(R.menu.gallery_contextual)
-				.start(GalleryActionMode())
+		mMaterialCab = createCab(R.id.cab_stub) {
+			menu(R.menu.gallery_contextual)
+			slideDown()
+
+			onSelection {
+				val handled = onOptionsItemSelected(it)
+				if (handled)
+					endContextMode()
+				handled
+			}
+
+			onDestroy {
+				galleryAdapter.multiSelectMode = false
+				true
+			}
+		}
 	}
 
 	protected fun endContextMode() {
-		mMaterialCab?.finish()
+		mMaterialCab?.destroy()
 	}
 
 	override fun onItemLongClick(parent: RecyclerView.Adapter<*>, view: View, position: Int, id: Long) {

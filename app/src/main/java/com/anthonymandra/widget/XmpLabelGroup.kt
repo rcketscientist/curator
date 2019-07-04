@@ -2,47 +2,47 @@ package com.anthonymandra.widget
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.appcompat.widget.ToggleGroup
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.Label
+import com.google.android.material.button.MaterialButtonToggleGroup
 import kotlinx.android.synthetic.main.material_color_key.view.*
 import java.util.*
 
 typealias OnLabelSelectionChangedListener = (List<Label>) -> Unit
-class XmpLabelGroup @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ToggleGroup(context, attrs, defStyleAttr) {
+class XmpLabelGroup
+    @JvmOverloads
+    constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
+        : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnLabelSelectionChangedListener? = null
 
     val checked: List<Label>
         get() {
             val checked = ArrayList<Label>()
-            if (blueLabel.isChecked)
-                checked.add(Label.Blue)
-            if (redLabel.isChecked)
-                checked.add(Label.Red)
-            if (greenLabel.isChecked)
-                checked.add(Label.Green)
-            if (yellowLabel.isChecked)
-                checked.add(Label.Yellow)
-            if (purpleLabel.isChecked)
-                checked.add(Label.Purple)
+            checkedButtonIds.forEach {
+                when(it) {
+                    blueLabel.id -> checked.add(Label.Blue)
+                    redLabel.id -> checked.add(Label.Red)
+                    greenLabel.id  -> checked.add(Label.Green)
+                    yellowLabel.id  -> checked.add(Label.Yellow)
+                    purpleLabel.id  -> checked.add(Label.Purple)
+                }
+            }
             return checked
         }
 
-
-
     init {
         inflate(context, R.layout.material_color_key, this)
-        setOnCheckedChangeListener { _,_ -> mListener?.invoke(checked) }
+        addOnButtonCheckedListener { _, _, _ -> mListener?.invoke(checked) }
     }
 
-    fun setChecked(toCheck: Label, checked: Boolean) {
+    fun setChecked(toCheck: Label) {
         when (toCheck) {
-            Label.Blue -> blueLabel.isChecked = checked
-            Label.Red -> redLabel.isChecked = checked
-            Label.Green -> greenLabel.isChecked = checked
-            Label.Yellow -> yellowLabel.isChecked = checked
-            Label.Purple -> purpleLabel.isChecked = checked
+            Label.Blue -> check(blueLabel.id)
+            Label.Red -> check(redLabel.id)
+            Label.Green -> check(greenLabel.id)
+            Label.Yellow -> check(yellowLabel.id)
+            Label.Purple -> check(purpleLabel.id)
         }
     }
 

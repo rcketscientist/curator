@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-       xmlns:tools="http://schemas.android.com/tools"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       tools:parentTag="androidx.appcompat.widget.ToggleGroup">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="com.google.android.material.button.MaterialButtonToggleGroup">
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating1"
-        style="@style/RatingButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rating1"
+            style="@style/RatingButton"
+            />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating2"
-        style="@style/RatingButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rating2"
+            style="@style/RatingButton"
+            />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating3"
-        style="@style/RatingButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rating3"
+            style="@style/RatingButton" />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating4"
-        style="@style/RatingButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rating4"
+            style="@style/RatingButton"
+            />
 
-    <androidx.appcompat.widget.ToggleButton
-        android:id="@+id/rating5"
-        style="@style/RatingButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rating5"
+            style="@style/RatingButton"
+            />
 </merge>

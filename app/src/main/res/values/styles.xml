@@ -75,16 +75,20 @@
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="GalleryTheme" parent="@style/Theme.AppCompat.NoActionBar">
-<!--        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>-->
+    <style name="GalleryTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="toolbarStyle">@style/Widget.AppCompat.Toolbar</item>
         <item name="actionModeShareDrawable">@drawable/ic_share</item>
         <item name="actionOverflowButtonStyle">@style/Custom.Widget.ActionButton.Overflow</item>
-        <item name="toggleGroupStyle">@style/Widget.Material.ToggleGroup</item>
-        <item name="toggleButtonStyle">@style/Widget.Material.ToggleButton</item>
+        <!--<item name="toggleGroupStyle">@style/Widget.Material.ToggleGroup</item>-->
+        <!--<item name="toggleButtonStyle">@style/Widget.Material.ToggleButton</item>-->
     </style>
 
     <!--Fix for toolbar overflow being aligned wrong and seeming very close to last button-->
@@ -159,17 +163,34 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="ImageActionToggleButton" parent="Widget.Material.ToggleButton">
-        <item name="android:background">@drawable/toggle_bluegrey</item>
+    <style name="ImageToggleButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="backgroundTint">@color/primaryLightColor</item>
+        <item name="iconTint">@color/white</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="strokeColor">@color/primaryLightColor</item>
     </style>
 
-    <style name="LabelToggleButton" parent="@style/ImageActionToggleButton">
-        <item name="android:button">@drawable/ic_square_rounded</item>
+    <style name="SortToggleButton" parent="ImageToggleButton">
+        <item name="iconTint">@drawable/toggle_icon_selector</item>
+        <item name="android:paddingLeft">12dp</item>
     </style>
 
-    <style name="RatingButton" parent="@style/ImageActionToggleButton">
-        <item name="android:background">@color/blueGreyIdleButton</item>
-        <item name="android:button">@drawable/multi_select_star</item>
+    <style name="LabelToggleButton" parent="ImageToggleButton">
+        <item name="icon">@drawable/ic_square_rounded</item>\
+        <item name="android:paddingLeft">12dp</item>
+        <item name="strokeColor">@drawable/toggle_selector</item>
+    </style>
+
+    <style name="RatingButton" parent="ImageToggleButton">
+        <item name="icon">@drawable/multi_select_star</item>
+        <item name="android:paddingLeft">6dp</item>
     </style>
 
 </resources>

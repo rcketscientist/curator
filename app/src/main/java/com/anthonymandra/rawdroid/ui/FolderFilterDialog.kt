@@ -46,12 +46,13 @@ class FolderDialog : DialogFragment() {
         val y = arguments!!.getInt(ARG_Y)
 
         // Set the position of the dialog
-        val window = dialog.window
-        window!!.setGravity(Gravity.TOP or Gravity.START)
-        val params = window.attributes
-        params.x = x
-        params.y = y
-        window.attributes = params
+        dialog?.window?.let {
+            it.setGravity(Gravity.TOP or Gravity.START)
+            val params = it.attributes
+            params.x = x
+            params.y = y
+            it.attributes = params
+        }
 
         return v
     }

@@ -7,7 +7,6 @@ import com.anthonymandra.rawdroid.data.DataRepository
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.crashlytics.android.ndk.CrashlyticsNdk
-import com.squareup.leakcanary.LeakCanary
 import io.fabric.sdk.android.Fabric
 
 class App : Application() {
@@ -20,16 +19,9 @@ class App : Application() {
 	override fun onCreate() {
 		super.onCreate()
 
-		if (LeakCanary.isInAnalyzerProcess(this)) {
-			// This process is dedicated to LeakCanary for heap analysis.
-			// You should not init your app in this process.
-			return
-		}
-		LeakCanary.install(this)
-
 		val crashlyticsKit = Crashlytics.Builder()
 			.core(CrashlyticsCore.Builder()
-				.disabled(com.anthonymandra.rawdroid.BuildConfig.DEBUG)
+				.disabled(BuildConfig.DEBUG)
 				.build())
 			.build()
 

@@ -68,8 +68,8 @@ class XmpEditFragment : XmpBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setExclusive(true)
-        setAllowUnselected(true)
+        isSingleSelection(true)
+//        setAllowUnselected(true)
 
         clearMetaButton.setOnClickListener { clear() }
         recentMetaButton.setOnClickListener { mXmpChangedListener?.invoke(recentXmp) }
