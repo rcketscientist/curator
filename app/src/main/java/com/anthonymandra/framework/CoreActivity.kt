@@ -95,11 +95,11 @@ abstract class CoreActivity : AppCompatActivity() {
 		notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		createIoChannel()
 
-		if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
-			Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
-			//TODO: Add link to Curator store page
-			finish()
-		}
+//		if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
+//			Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
+//			//TODO: Add link to Curator store page
+//			finish()
+//		}
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
