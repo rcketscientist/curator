@@ -13,7 +13,7 @@
 [submodule "DocumentActivity"]
 	path = DocumentActivity
 	url = https://github.com/rcketscientist/DocumentActivity.git
-	branch = master
+	branch = dev
 [submodule "rawprocessor"]
 	path = rawprocessor
 	url = https://rcketscientist@bitbucket.org/rcketscientist/rawprocessor.git
