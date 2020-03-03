@@ -9,7 +9,7 @@
 [submodule "metadata-extractor"]
 	path = metadata-extractor
 	url = https://github.com/rcketscientist/metadata-extractor.git
-	branch = Android
+	branch = x3f
 [submodule "DocumentActivity"]
 	path = DocumentActivity
 	url = https://github.com/rcketscientist/DocumentActivity.git
@@ -21,3 +21,4 @@
 [submodule "ssiv"]
 	path = ssiv
 	url = https://github.com/rcketscientist/subsampling-scale-image-view.git
+	branch = develop

@@ -5,8 +5,16 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/DocumentActivity/library/documentActivity.iml" filepath="$PROJECT_DIR$/DocumentActivity/library/documentActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/inscription/inscription.iml" filepath="$PROJECT_DIR$/inscription/inscription.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DocumentActivity/library/library-documentActivity.iml" filepath="$PROJECT_DIR$/DocumentActivity/library/library-documentActivity.iml" group="rawdroid/documentActivity" />
+      <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/library-rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/library-rawprocessor.iml" group="rawdroid/rawprocessor" />
+      <module fileurl="file://$PROJECT_DIR$/showcaseView/library/library-showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/library/library-showcaseView.iml" group="rawdroid/showcaseView" />
+      <module fileurl="file://$PROJECT_DIR$/ssiv/library/library-ssiv.iml" filepath="$PROJECT_DIR$/ssiv/library/library-ssiv.iml" group="rawdroid/ssiv" />
       <module fileurl="file://$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" filepath="$PROJECT_DIR$/metadata-extractor/metadata-extractor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/proj-rawdroid.iml" filepath="$PROJECT_DIR$/proj-rawdroid.iml" group="rawdroid" />
       <module fileurl="file://$PROJECT_DIR$/rawdroid.iml" filepath="$PROJECT_DIR$/rawdroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/rawdroid-app.iml" filepath="$PROJECT_DIR$/app/rawdroid-app.iml" group="rawdroid/app" />
+      <module fileurl="file://$PROJECT_DIR$/inscription/rawdroid-inscription.iml" filepath="$PROJECT_DIR$/inscription/rawdroid-inscription.iml" group="rawdroid/inscription" />
+      <module fileurl="file://$PROJECT_DIR$/metadata-extractor/rawdroid-metadata-extractor.iml" filepath="$PROJECT_DIR$/metadata-extractor/rawdroid-metadata-extractor.iml" group="rawdroid/metadata-extractor" />
       <module fileurl="file://$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" filepath="$PROJECT_DIR$/rawprocessor/library/rawprocessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/showcaseView/library/showcaseView.iml" filepath="$PROJECT_DIR$/showcaseView/library/showcaseView.iml" />
       <module fileurl="file://$PROJECT_DIR$/ssiv/library/ssiv.iml" filepath="$PROJECT_DIR$/ssiv/library/ssiv.iml" />
