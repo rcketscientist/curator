@@ -149,12 +149,14 @@ abstract class CoreActivity : AppCompatActivity() {
 	override fun onDestroy() {
 		super.onDestroy()
 
-		if (::mSwapDir.isInitialized) {
-			// Is this main thread I/O an issue?
-			mSwapDir.listFiles().forEach {
-				it.delete()
+		Completable.fromAction {
+			if (::mSwapDir.isInitialized) {
+				mSwapDir.delete();
 			}
 		}
+		.subscribeOn(Schedulers.from(AppExecutors.DISK))
+		.subscribe()
+
 		recycleBin.closeCache()
 		compositeDisposable.dispose()
 	}
