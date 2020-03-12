@@ -1,16 +1,10 @@
 package com.anthonymandra.util;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.content.ContentProviderClient;
-import android.content.ContentProviderOperation;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.OperationApplicationException;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -18,9 +12,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.provider.BaseColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
@@ -33,10 +25,10 @@ import com.anthonymandra.framework.UsefulDocumentFile;
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.imageprocessor.Margins;
 import com.anthonymandra.imageprocessor.Watermark;
-import com.anthonymandra.rawdroid.FullSettingsActivity;
 import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
 import com.anthonymandra.rawdroid.data.ImageInfo;
+import com.anthonymandra.rawdroid.settings.WatermarkSettingsFragment;
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
@@ -47,8 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -596,18 +586,18 @@ public class ImageUtil {
 	public static Watermark getWatermark(final Context c)	// TODO: Should take a WatermarkConfig
 	{
 		SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(c);
-		boolean showWatermark = pref.getBoolean(FullSettingsActivity.KEY_EnableWatermark, false);
+		boolean showWatermark = pref.getBoolean(WatermarkSettingsFragment.KEY_EnableWatermark, false);
 
 		if (showWatermark)
 		{
-			String watermarkText = pref.getString(FullSettingsActivity.KEY_WatermarkText, "");
-			int watermarkAlpha = pref.getInt(FullSettingsActivity.KEY_WatermarkAlpha, 75);
-			int watermarkSize = pref.getInt(FullSettingsActivity.KEY_WatermarkSize, 150);
+			String watermarkText = pref.getString(WatermarkSettingsFragment.KEY_WatermarkText, "");
+			int watermarkAlpha = pref.getInt(WatermarkSettingsFragment.KEY_WatermarkAlpha, 75);
+			int watermarkSize = pref.getInt(WatermarkSettingsFragment.KEY_WatermarkSize, 150);
 
-			int top = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkTopMargin, "-1"));
-			int bottom = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkBottomMargin, "-1"));
-			int right = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkRightMargin, "-1"));
-			int left = Integer.parseInt(pref.getString(FullSettingsActivity.KEY_WatermarkLeftMargin, "-1"));
+			int top = Integer.parseInt(pref.getString(WatermarkSettingsFragment.KEY_WatermarkTopMargin, "-1"));
+			int bottom = Integer.parseInt(pref.getString(WatermarkSettingsFragment.KEY_WatermarkBottomMargin, "-1"));
+			int right = Integer.parseInt(pref.getString(WatermarkSettingsFragment.KEY_WatermarkRightMargin, "-1"));
+			int left = Integer.parseInt(pref.getString(WatermarkSettingsFragment.KEY_WatermarkLeftMargin, "-1"));
 			Margins margins = new Margins(top, left, bottom, right);
 
 			if (watermarkText.isEmpty())

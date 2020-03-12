@@ -2,21 +2,18 @@ package com.anthonymandra.rawdroid.workers
 
 import android.content.Context
 import android.net.Uri
-import android.preference.PreferenceManager
 import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.anthonymandra.framework.RecycleBin
 import com.anthonymandra.framework.UsefulDocumentFile
-import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.ImageInfo
+import com.anthonymandra.util.FileUtil
 import com.anthonymandra.util.ImageUtil
-import com.anthonymandra.util.Util
 
 class RecycleWorker(context: Context, params: WorkerParameters) : CoreWorker(context, params) {
 	override val channelId = "recycle"
@@ -29,14 +26,7 @@ class RecycleWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 		val imagesIds = inputData.getLongArray(RecycleWorker.KEY_RECYCLE_IDS)
 			?: return Result.failure()
 
-		val binSizeMb: Int = try {
-			PreferenceManager.getDefaultSharedPreferences(applicationContext).getInt(
-				FullSettingsActivity.KEY_RecycleBinSize,
-				FullSettingsActivity.defRecycleBin)
-		} catch (e: NumberFormatException) {
-			FullSettingsActivity.defRecycleBin
-		}
-		val recycleBin = RecycleBin.getInstance(applicationContext, binSizeMb * 1024 * 1024L)
+		val recycleBin = FileUtil.getRecycleBin(applicationContext)
 
 		sendPeekNotification()
 

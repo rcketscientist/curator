@@ -70,7 +70,7 @@
             android:name=".TutorialActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity
-            android:name=".FullSettingsActivity"/>
+            android:name=".settings.SettingsActivity"/>
 
         <activity-alias
             android:name=".ImportKeywords"

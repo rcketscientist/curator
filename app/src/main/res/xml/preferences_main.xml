@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:fragment="com.anthonymandra.rawdroid.settings.MetaSettingsFragment"
+        android:title="@string/metadata" />
+    <Preference
+        app:fragment="com.anthonymandra.rawdroid.settings.StorageSettingsFragment"
+        android:title="@string/storage" />
+    <Preference
+        app:fragment="com.anthonymandra.rawdroid.settings.ShareSettingsFragment"
+        android:title="@string/share" />
+    <Preference
+        app:fragment="com.anthonymandra.rawdroid.settings.ViewSettingsFragment"
+        android:title="@string/view" />
+    <Preference
+        app:fragment="com.anthonymandra.rawdroid.settings.WatermarkSettingsFragment"
+        android:title="@string/watermark" />
+    <Preference
+        app:fragment="com.anthonymandra.rawdroid.settings.LicenseSettingsFragment"
+        android:title="@string/license" />
+
+</PreferenceScreen>

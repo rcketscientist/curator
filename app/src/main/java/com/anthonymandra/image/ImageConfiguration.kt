@@ -3,7 +3,7 @@ package com.anthonymandra.image
 import android.content.Context
 import android.preference.PreferenceManager
 
-import com.anthonymandra.rawdroid.FullSettingsActivity
+import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
 
 abstract class ImageConfiguration {
 
@@ -20,8 +20,8 @@ abstract class ImageConfiguration {
 	fun savePreference(c: Context) {
 		val pref = PreferenceManager.getDefaultSharedPreferences(c)
 		val editor = pref.edit()
-		editor.putString(FullSettingsActivity.KEY_DefaultSaveType, type.toString())
-		editor.putString(FullSettingsActivity.KEY_DefaultSaveConfig, parameters)
+		editor.putString(StorageSettingsFragment.KEY_DefaultSaveType, type.toString())
+		editor.putString(StorageSettingsFragment.KEY_DefaultSaveConfig, parameters)
 		editor.apply()
 	}
 
@@ -37,8 +37,8 @@ abstract class ImageConfiguration {
 
 		fun fromPreference(c: Context): ImageConfiguration? {
 			val pref = PreferenceManager.getDefaultSharedPreferences(c)
-			val typeString = pref.getString(FullSettingsActivity.KEY_DefaultSaveType, null) ?: return null
-			val config = pref.getString(FullSettingsActivity.KEY_DefaultSaveConfig, null)
+			val typeString = pref.getString(StorageSettingsFragment.KEY_DefaultSaveType, null) ?: return null
+			val config = pref.getString(StorageSettingsFragment.KEY_DefaultSaveConfig, null)
 
 			val type = ImageType.valueOf(typeString)
 			return from(type, config)

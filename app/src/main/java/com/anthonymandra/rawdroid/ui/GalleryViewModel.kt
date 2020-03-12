@@ -11,9 +11,10 @@ import androidx.paging.Config
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import androidx.paging.toLiveData
-import com.anthonymandra.rawdroid.FullSettingsActivity
 import com.anthonymandra.rawdroid.ImageFilter
 import com.anthonymandra.rawdroid.data.ImageInfo
+import com.anthonymandra.rawdroid.settings.MetaSettingsFragment
+import com.anthonymandra.rawdroid.settings.ViewSettingsFragment
 import io.reactivex.Single
 import java.util.concurrent.Executors
 
@@ -123,16 +124,16 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
 		val comparator = if (isInterfaceVisible) "Never" else "Always"
 		val visibility = if (isInterfaceVisible) View.VISIBLE else View.INVISIBLE
 		// TODO: Change this to always set the value based on isInterfaceVisible && state
-		if (prefs.getString(FullSettingsActivity.KEY_ShowHist, "Automatic") != comparator) {
+		if (prefs.getString(ViewSettingsFragment.KEY_ShowHist, "Automatic") != comparator) {
 			_histogramVisibility.postValue(visibility)
 		}
-		if (prefs.getString(FullSettingsActivity.KEY_ShowMeta, "Automatic") != comparator) {
+		if (prefs.getString(ViewSettingsFragment.KEY_ShowMeta, "Automatic") != comparator) {
 			_metadataVisibility.postValue(visibility)
 		}
-		if (prefs.getString(FullSettingsActivity.KEY_ShowNav, "Automatic") != comparator) {
+		if (prefs.getString(ViewSettingsFragment.KEY_ShowNav, "Automatic") != comparator) {
 			_navigationVisibility.postValue(visibility)
 		}
-		if (prefs.getString(FullSettingsActivity.KEY_ShowToolbar, "Automatic") != comparator) {
+		if (prefs.getString(ViewSettingsFragment.KEY_ShowToolbar, "Automatic") != comparator) {
 			_toolbarVisibility.postValue(isInterfaceVisible)
 		}
 	}
@@ -141,25 +142,25 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
 	private fun updatePreferences(prefs: SharedPreferences) {
 //        shouldShowInterface = prefs.getBoolean(FullSettingsActivity.KEY_ShowImageInterface, true)
 		// Default true
-		metaVisibility.Aperture = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifAperture, true)) View.VISIBLE else View.GONE
-		metaVisibility.Date = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifDate, true)) View.VISIBLE else View.GONE
-		metaVisibility.Exposure = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifExposure, true)) View.VISIBLE else View.GONE
-		metaVisibility.Focal = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifFocal, true)) View.VISIBLE else View.GONE
-		metaVisibility.Model = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifModel, true)) View.VISIBLE else View.GONE
-		metaVisibility.Iso = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifIso, true)) View.VISIBLE else View.GONE
-		metaVisibility.Lens = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifLens, true)) View.VISIBLE else View.GONE
-		metaVisibility.Name = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifName, true)) View.VISIBLE else View.GONE
+		metaVisibility.Aperture = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifAperture, true)) View.VISIBLE else View.GONE
+		metaVisibility.Date = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifDate, true)) View.VISIBLE else View.GONE
+		metaVisibility.Exposure = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifExposure, true)) View.VISIBLE else View.GONE
+		metaVisibility.Focal = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifFocal, true)) View.VISIBLE else View.GONE
+		metaVisibility.Model = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifModel, true)) View.VISIBLE else View.GONE
+		metaVisibility.Iso = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifIso, true)) View.VISIBLE else View.GONE
+		metaVisibility.Lens = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifLens, true)) View.VISIBLE else View.GONE
+		metaVisibility.Name = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifName, true)) View.VISIBLE else View.GONE
 
 		// Default false
-		metaVisibility.Altitude = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifAltitude, false)) View.VISIBLE else View.GONE
-		metaVisibility.Dimensions = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifDimensions, false)) View.VISIBLE else View.GONE
-		metaVisibility.DriveMode = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifDriveMode, false)) View.VISIBLE else View.GONE
-		metaVisibility.ExposureMode = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifExposureMode, false)) View.VISIBLE else View.GONE
-		metaVisibility.ExposureProgram = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifExposureProgram, false)) View.VISIBLE else View.GONE
-		metaVisibility.Flash = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifFlash, false)) View.VISIBLE else View.GONE
-		metaVisibility.Latitude = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifLatitude, false)) View.VISIBLE else View.GONE
-		metaVisibility.Longitude = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifLongitude, false)) View.VISIBLE else View.GONE
-		metaVisibility.WhiteBalance = if (prefs.getBoolean(FullSettingsActivity.KEY_ExifWhiteBalance, false)) View.VISIBLE else View.GONE
+		metaVisibility.Altitude = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifAltitude, false)) View.VISIBLE else View.GONE
+		metaVisibility.Dimensions = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifDimensions, false)) View.VISIBLE else View.GONE
+		metaVisibility.DriveMode = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifDriveMode, false)) View.VISIBLE else View.GONE
+		metaVisibility.ExposureMode = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifExposureMode, false)) View.VISIBLE else View.GONE
+		metaVisibility.ExposureProgram = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifExposureProgram, false)) View.VISIBLE else View.GONE
+		metaVisibility.Flash = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifFlash, false)) View.VISIBLE else View.GONE
+		metaVisibility.Latitude = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifLatitude, false)) View.VISIBLE else View.GONE
+		metaVisibility.Longitude = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifLongitude, false)) View.VISIBLE else View.GONE
+		metaVisibility.WhiteBalance = if (prefs.getBoolean(MetaSettingsFragment.KEY_ExifWhiteBalance, false)) View.VISIBLE else View.GONE
 	}
 
 	data class MetaVisibility(

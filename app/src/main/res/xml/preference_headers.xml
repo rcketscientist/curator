@@ -2,22 +2,22 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <header
-        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentMeta"
+        android:fragment="com.anthonymandra.rawdroid.settings.SettingsActivity$SettingsFragmentMeta"
         android:title="@string/metadata" />
     <header
-        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentStorage"
+        android:fragment="com.anthonymandra.rawdroid.settings.SettingsActivity$SettingsFragmentStorage"
         android:title="@string/storage" />
     <header
-        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentShare"
+        android:fragment="com.anthonymandra.rawdroid.settings.SettingsActivity$SettingsFragmentShare"
         android:title="@string/share" />
     <header
-        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentView"
+        android:fragment="com.anthonymandra.rawdroid.settings.SettingsActivity$SettingsFragmentView"
         android:title="@string/view" />
     <header
-        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentWatermark"
+        android:fragment="com.anthonymandra.rawdroid.settings.SettingsActivity$SettingsFragmentWatermark"
         android:title="@string/watermark" />
     <header
-        android:fragment="com.anthonymandra.rawdroid.FullSettingsActivity$SettingsFragmentLicense"
+        android:fragment="com.anthonymandra.rawdroid.settings.SettingsActivity$SettingsFragmentLicense"
         android:title="@string/license" />
 
 </preference-headers>
