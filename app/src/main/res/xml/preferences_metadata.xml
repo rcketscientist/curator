@@ -1,111 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="XMP" >
+    <PreferenceCategory app:title="XMP" >
         <Preference
-            android:key="prefKeyImportKeywords"
-            android:summary="@string/prefSummaryImportKeywords"
-            android:title="@string/prefTitleImportKeywords" />
-        <com.anthonymandra.widget.FriendlyEditTextPreference
-            android:icon="@drawable/button_red"
-            android:key="prefKeyXmpRed"
-            android:defaultValue="Red"
-            android:title="Red"
-            android:summary="@string/prefAutoSummary"/>
-        <com.anthonymandra.widget.FriendlyEditTextPreference
-            android:icon="@drawable/button_blue"
-            android:key="prefKeyXmpBlue"
-            android:defaultValue="Blue"
-            android:title="Blue"
-            android:summary="@string/prefAutoSummary"/>
-        <com.anthonymandra.widget.FriendlyEditTextPreference
-            android:icon="@drawable/button_green"
-            android:key="prefKeyXmpGreen"
-            android:defaultValue="Green"
-            android:title="Green"
-            android:summary="@string/prefAutoSummary"/>
-        <com.anthonymandra.widget.FriendlyEditTextPreference
-            android:icon="@drawable/button_yellow"
-            android:key="prefKeyXmpYellow"
-            android:defaultValue="Yellow"
-            android:title="Yellow"
-            android:summary="@string/prefAutoSummary"/>
-        <com.anthonymandra.widget.FriendlyEditTextPreference
-            android:icon="@drawable/button_purple"
-            android:key="prefKeyXmpPurple"
-            android:defaultValue="Purple"
-            android:title="Purple"
-            android:summary="@string/prefAutoSummary"/>
+            app:key="prefKeyImportKeywords"
+            app:summary="@string/prefSummaryImportKeywords"
+            app:title="@string/prefTitleImportKeywords" />
+        <EditTextPreference
+            app:icon="@drawable/button_red"
+            app:key="prefKeyXmpRed"
+            app:defaultValue="Red"
+            app:title="Red"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            app:icon="@drawable/button_blue"
+            app:key="prefKeyXmpBlue"
+            app:defaultValue="Blue"
+            app:title="Blue"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            app:icon="@drawable/button_green"
+            app:key="prefKeyXmpGreen"
+            app:defaultValue="Green"
+            app:title="Green"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            app:icon="@drawable/button_yellow"
+            app:key="prefKeyXmpYellow"
+            app:defaultValue="Yellow"
+            app:title="Yellow"
+            app:useSimpleSummaryProvider="true"/>
+        <EditTextPreference
+            app:icon="@drawable/button_purple"
+            app:key="prefKeyXmpPurple"
+            app:defaultValue="Purple"
+            app:title="Purple"
+            app:useSimpleSummaryProvider="true"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/prefTitleFilter" >
+    <PreferenceCategory app:title="@string/prefTitleFilter" >
         <CheckBoxPreference
-            android:key="prefKeyExifAperture"
-            android:title="@string/aperture"
-            android:defaultValue="true" />
+            app:key="prefKeyExifAperture"
+            app:title="@string/aperture"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifAltitude"
-            android:title="@string/altitude"
-            android:defaultValue="false" />
+            app:key="prefKeyExifAltitude"
+            app:title="@string/altitude"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifDate"
-            android:title="@string/Date"
-            android:defaultValue="true" />
+            app:key="prefKeyExifDate"
+            app:title="@string/Date"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifDimensions"
-            android:title="@string/dimensions"
-            android:defaultValue="false" />
+            app:key="prefKeyExifDimensions"
+            app:title="@string/dimensions"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifDriveMode"
-            android:title="@string/driveMode"
-            android:defaultValue="false" />
+            app:key="prefKeyExifDriveMode"
+            app:title="@string/driveMode"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifExposure"
-            android:title="@string/exposure"
-            android:defaultValue="true" />
+            app:key="prefKeyExifExposure"
+            app:title="@string/exposure"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifExposureMode"
-            android:title="@string/expMode"
-            android:defaultValue="false" />
+            app:key="prefKeyExifExposureMode"
+            app:title="@string/expMode"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifExposureProgram"
-            android:title="@string/expProgram"
-            android:defaultValue="false" />
+            app:key="prefKeyExifExposureProgram"
+            app:title="@string/expProgram"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifFocal"
-            android:title="@string/focalLength"
-            android:defaultValue="true" />
+            app:key="prefKeyExifFocal"
+            app:title="@string/focalLength"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifFlash"
-            android:title="@string/flash"
-            android:defaultValue="false" />
+            app:key="prefKeyExifFlash"
+            app:title="@string/flash"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifName"
-            android:title="@string/Name"
-            android:defaultValue="true" />
+            app:key="prefKeyExifName"
+            app:title="@string/Name"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifLatitude"
-            android:title="@string/latitude"
-            android:defaultValue="false" />
+            app:key="prefKeyExifLatitude"
+            app:title="@string/latitude"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifLens"
-            android:title="@string/lens"
-            android:defaultValue="true" />
+            app:key="prefKeyExifLens"
+            app:title="@string/lens"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifLongitude"
-            android:title="@string/longitude"
-            android:defaultValue="false" />
+            app:key="prefKeyExifLongitude"
+            app:title="@string/longitude"
+            app:defaultValue="false" />
         <CheckBoxPreference
-            android:key="prefKeyExifModel"
-            android:title="@string/model"
-            android:defaultValue="true" />
+            app:key="prefKeyExifModel"
+            app:title="@string/model"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifIso"
-            android:title="@string/iso"
-            android:defaultValue="true" />
+            app:key="prefKeyExifIso"
+            app:title="@string/iso"
+            app:defaultValue="true" />
         <CheckBoxPreference
-            android:key="prefKeyExifWhiteBalance"
-            android:title="@string/whiteBalance"
-            android:defaultValue="false" />
+            app:key="prefKeyExifWhiteBalance"
+            app:title="@string/whiteBalance"
+            app:defaultValue="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

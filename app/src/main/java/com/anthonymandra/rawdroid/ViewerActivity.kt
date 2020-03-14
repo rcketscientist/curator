@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -17,9 +16,11 @@ import androidx.paging.PagedList
 import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.SwapProvider
-import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.data.TempViewerDataSource
+import com.anthonymandra.rawdroid.settings.MetaSettingsFragment
+import com.anthonymandra.rawdroid.settings.MetaSettingsFragment.Companion.KEY_MetaSize
+import com.anthonymandra.rawdroid.settings.ShareSettingsFragment
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.rawdroid.ui.ViewerAdapter
 import com.anthonymandra.util.AppExecutors
@@ -50,7 +51,12 @@ class ViewerActivity : CoreActivity() {
 	private var displayHeight = 0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-		theme.applyStyle(FullSettingsActivity.getMetaStyle(this), true)   //must be called before setContentView
+		val styleId = when (preferences.getString(KEY_MetaSize, "Medium")) {
+			"Small" -> R.style.MetaStyle_Small
+			"Large" -> R.style.MetaStyle_Large
+			else ->	R.style.MetaStyle_Medium
+		}
+		theme.applyStyle(styleId, true)   //must be called before setContentView
 
 		super.onCreate(savedInstanceState)
 
@@ -62,8 +68,7 @@ class ViewerActivity : CoreActivity() {
 		displayWidth = metrics.widthPixels
 		displayHeight = metrics.heightPixels
 
-		val settings = PreferenceManager.getDefaultSharedPreferences(this)
-		isImmersive = settings.getBoolean(FullSettingsActivity.KEY_UseImmersive, true)
+		isImmersive = preferences.getBoolean(MetaSettingsFragment.KEY_UseImmersive, true)
 
 		viewerAdapter = ViewerAdapter(supportFragmentManager)
 
@@ -185,8 +190,8 @@ class ViewerActivity : CoreActivity() {
 
 	private fun editImage() {
 		currentImage?.let {
-			val format = PreferenceManager.getDefaultSharedPreferences(this).getString(
-				FullSettingsActivity.KEY_EditFormat,
+			val format = preferences.getString(
+				ShareSettingsFragment.KEY_EditFormat,
 				resources.getStringArray(R.array.shareFormats)[0])
 
 			val intent = Intent(Intent.ACTION_EDIT)

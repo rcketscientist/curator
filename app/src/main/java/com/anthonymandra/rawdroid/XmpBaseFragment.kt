@@ -2,13 +2,14 @@ package com.anthonymandra.rawdroid
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.models.ColorKeys
+import com.anthonymandra.rawdroid.settings.MetaSettingsFragment
 import com.anthonymandra.widget.RatingBar
 import com.anthonymandra.widget.XmpLabelGroup
 import java.util.*
@@ -26,11 +27,11 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
         sp.registerOnSharedPreferenceChangeListener(this)
 
 		 ColorKeys().also {
-            it.blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, it.blue)
-            it.red = sp.getString(FullSettingsActivity.KEY_XmpRed, it.red)
-            it.green = sp.getString(FullSettingsActivity.KEY_XmpGreen, it.green)
-            it.yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, it.yellow)
-            it.purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, it.purple)
+            it.blue = sp.getString(MetaSettingsFragment.KEY_XmpBlue, it.blue)
+            it.red = sp.getString(MetaSettingsFragment.KEY_XmpRed, it.red)
+            it.green = sp.getString(MetaSettingsFragment.KEY_XmpGreen, it.green)
+            it.yellow = sp.getString(MetaSettingsFragment.KEY_XmpYellow, it.yellow)
+            it.purple = sp.getString(MetaSettingsFragment.KEY_XmpPurple, it.purple)
         }
     }
 
@@ -72,16 +73,16 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 	 private fun updateColorKey(sp: SharedPreferences, key: String) {
         when (key) {
-            FullSettingsActivity.KEY_XmpBlue ->
-                colorKeys.blue = sp.getString(FullSettingsActivity.KEY_XmpBlue, colorKeys.blue)
-            FullSettingsActivity.KEY_XmpRed ->
-                colorKeys.red = sp.getString(FullSettingsActivity.KEY_XmpRed, colorKeys.red)
-            FullSettingsActivity.KEY_XmpGreen ->
-                colorKeys.green = sp.getString(FullSettingsActivity.KEY_XmpGreen, colorKeys.green)
-            FullSettingsActivity.KEY_XmpYellow ->
-                colorKeys.yellow = sp.getString(FullSettingsActivity.KEY_XmpYellow, colorKeys.yellow)
-            FullSettingsActivity.KEY_XmpPurple ->
-                colorKeys.purple = sp.getString(FullSettingsActivity.KEY_XmpPurple, colorKeys.purple)
+            MetaSettingsFragment.KEY_XmpBlue ->
+                colorKeys.blue = sp.getString(MetaSettingsFragment.KEY_XmpBlue, colorKeys.blue)
+            MetaSettingsFragment.KEY_XmpRed ->
+                colorKeys.red = sp.getString(MetaSettingsFragment.KEY_XmpRed, colorKeys.red)
+            MetaSettingsFragment.KEY_XmpGreen ->
+                colorKeys.green = sp.getString(MetaSettingsFragment.KEY_XmpGreen, colorKeys.green)
+            MetaSettingsFragment.KEY_XmpYellow ->
+                colorKeys.yellow = sp.getString(MetaSettingsFragment.KEY_XmpYellow, colorKeys.yellow)
+            MetaSettingsFragment.KEY_XmpPurple ->
+                colorKeys.purple = sp.getString(MetaSettingsFragment.KEY_XmpPurple, colorKeys.purple)
         }
     }
 

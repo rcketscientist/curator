@@ -1,55 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <CheckBoxPreference
-        android:key="prefKeyEnableWatermark"
-        android:defaultValue="false"
-        android:title="@string/prefTitleEnableWatermark"
-        android:summary="@string/prefSummaryEnableWatermark" />
-    <com.anthonymandra.widget.FriendlyEditTextPreference
-        android:key="prefKeyWatermarkText"
-        android:title="@string/prefTitleWatermarkText"
-        android:summary="@string/prefAutoSummary"/>
-    <com.anthonymandra.widget.SeekBarPreference
-        android:key="prefKeyWatermarkSize"
-        android:title="@string/prefTitleWatermarkSize"
-        android:summary="%s pixels"
-        android:defaultValue="150"
-        android:text="Pixels"
-        android:max="600" />
-    <com.anthonymandra.widget.SeekBarPreference
-        android:key="prefKeyWatermarkAlpha"
-        android:title="@string/prefTitleWatermarkAlpha"
-        android:summary="%s %%"
-        android:defaultValue="75"
-        android:text="%"
-        android:max="100" />
-    <ListPreference
-        android:defaultValue="Center"
-        android:key="prefKeyWatermarkLocation"
-        android:title="@string/prefTitleWatermarkLocation"
-        android:entries="@array/watermarkLocations"
-        android:summary="@string/prefAutoSummary"
-        android:entryValues="@array/watermarkLocationsValues" />
-    <PreferenceCategory android:title="@string/margins" />
-    <com.anthonymandra.widget.FriendlyEditTextPreference
-        android:key="prefKeyWatermarkTopMargin"
-        android:title="@string/prefTitleTopMargin"
-        android:summary="@string/prefSummaryTopMargin"
-        android:inputType="number" />
-    <com.anthonymandra.widget.FriendlyEditTextPreference
-        android:key="prefKeyWatermarkBottomMargin"
-        android:title="@string/prefTitleBottomMargin"
-        android:summary="@string/prefSummaryBottomMargin"
-        android:inputType="number" />
-    <com.anthonymandra.widget.FriendlyEditTextPreference
-        android:key="prefKeyWatermarkLeftMargin"
-        android:title="@string/prefTitleLeftMargin"
-        android:summary="@string/prefSummaryLeftMargin"
-        android:inputType="number" />
-    <com.anthonymandra.widget.FriendlyEditTextPreference
-        android:key="prefKeyWatermarkRightMargin"
-        android:title="@string/prefTitleRightMargin"
-        android:summary="@string/prefSummaryRightMargin"
-        android:inputType="number" />
+        app:key="prefKeyEnableWatermark"
+        app:defaultValue="false"
+        app:title="@string/prefTitleEnableWatermark"
+        app:summary="@string/prefSummaryEnableWatermark" />
 
+    <PreferenceCategory app:title="@string/appearance"
+        app:dependency="prefKeyEnableWatermark">
+        <EditTextPreference
+            app:key="prefKeyWatermarkText"
+            app:title="@string/prefTitleWatermarkText"
+            app:useSimpleSummaryProvider="true"/>
+        <SeekBarPreference
+            app:key="prefKeyWatermarkSize"
+            app:title="@string/prefTitleWatermarkSize"
+            app:defaultValue="150"
+            android:max="600"
+            app:showSeekBarValue="true" />
+        <SeekBarPreference
+            app:key="prefKeyWatermarkAlpha"
+            app:title="@string/prefTitleWatermarkAlpha"
+            app:defaultValue="75"
+            android:max="100"
+            app:showSeekBarValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/location"
+        app:dependency="prefKeyEnableWatermark">
+        <ListPreference
+            app:defaultValue="Center"
+            app:key="prefKeyWatermarkLocation"
+            app:title="@string/prefTitleWatermarkLocation"
+            app:entries="@array/watermarkLocations"
+            app:useSimpleSummaryProvider="true"
+            app:entryValues="@array/watermarkLocationsValues" />
+        <EditTextPreference
+            app:key="prefKeyWatermarkTopMargin"
+            app:title="@string/prefSummaryTopMargin"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+        <EditTextPreference
+            app:key="prefKeyWatermarkBottomMargin"
+            app:title="@string/prefSummaryBottomMargin"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+        <EditTextPreference
+            app:key="prefKeyWatermarkLeftMargin"
+            app:title="@string/prefSummaryLeftMargin"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+        <EditTextPreference
+            app:key="prefKeyWatermarkRightMargin"
+            app:title="@string/prefSummaryRightMargin"
+            app:useSimpleSummaryProvider="true"
+            android:inputType="number" />
+    </PreferenceCategory>
 </PreferenceScreen>

@@ -4,14 +4,12 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.ActivityOptions
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.hardware.usb.UsbManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.preference.PreferenceManager
 import android.provider.DocumentsContract
 import android.util.DisplayMetrics
 import android.view.Menu
@@ -179,8 +177,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
  request permission for additional devices and jump out at the first recognized device.
  Well that and the fact Google will break all this in 6.1 */
 
-			val permissibleUsb = PreferenceManager.getDefaultSharedPreferences(this)
-					.getStringSet(PREFS_PERMISSIBLE_USB, HashSet())
+			val permissibleUsb = preferences.getStringSet(PREFS_PERMISSIBLE_USB, HashSet())
 
 			permissibleUsb?.let { permissions ->
 				permissions
@@ -205,19 +202,17 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	override fun onPostCreate(savedInstanceState: Bundle?) {
 		super.onPostCreate(savedInstanceState)
 
-		val settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-		if (settings.getBoolean(PREFS_SHOW_FILTER_HINT, true)) {
+		if (preferences.getBoolean(PREFS_SHOW_FILTER_HINT, true)) {
 			drawerLayout.openDrawer(GravityCompat.START)
-			val editor = settings.edit()
+			val editor = preferences.edit()
 			editor.putBoolean(PREFS_SHOW_FILTER_HINT, false)
 			editor.apply()
 		}
 	}
 
 	private fun doFirstRun() {
-		val settings = PreferenceManager.getDefaultSharedPreferences(this)
-		if (settings.getBoolean("isFirstRun", true)) {
-			val editor = settings.edit()
+		if (preferences.getBoolean("isFirstRun", true)) {
+			val editor = preferences.edit()
 			editor.putBoolean("isFirstRun", false)
 			editor.apply()
 
@@ -339,15 +334,14 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	//	}
 
 	private fun handleUsbAccessRequest(treeUri: Uri?) {
-		val prefs = PreferenceManager.getDefaultSharedPreferences(this)
 		// You must make a copy of the returned preference set or changes will not be recognized
-		val permissibleUsbDevices = HashSet(prefs.getStringSet(PREFS_PERMISSIBLE_USB, emptySet()))
+		val permissibleUsbDevices = HashSet(preferences.getStringSet(PREFS_PERMISSIBLE_USB, emptySet()))
 
 		// The following oddity is because permission uris are not valid without SAF
 		val makeUriUseful = UsefulDocumentFile.fromUri(this, treeUri!!)
 		permissibleUsbDevices.add(makeUriUseful.uri.toString())
 
-		val editor = prefs.edit()
+		val editor = preferences.edit()
 		editor.putStringSet(PREFS_PERMISSIBLE_USB, permissibleUsbDevices)
 		editor.apply()
 
@@ -488,7 +482,6 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		const val LICENSE_ERROR = 3
 
 		// Preference fields
-		const val PREFS_NAME = "RawDroidPrefs"
 		const val PREFS_SHOW_FILTER_HINT = "prefShowFilterHint"
 		const val PREFS_PERMISSIBLE_USB = "prefPermissibleUsb"
 

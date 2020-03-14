@@ -7,6 +7,9 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
+import androidx.preference.PreferenceManager;
+
+import com.anthonymandra.framework.RecycleBin;
 import com.anthonymandra.framework.UsefulDocumentFile;
 
 import java.io.File;
@@ -15,6 +18,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import static com.anthonymandra.rawdroid.settings.StorageSettingsFragment.DEFAULT_RECYCLE_BIN;
+import static com.anthonymandra.rawdroid.settings.StorageSettingsFragment.KEY_RecycleBinSize;
 
 /**
  * Utility class for helping parsing file systems.
@@ -200,5 +206,17 @@ public class FileUtil
 			success = sourceFile.delete();
 		}
 		return success;
+	}
+
+	public static RecycleBin getRecycleBin(Context context) {
+		int binSizeMb;
+		try {
+			binSizeMb = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+						KEY_RecycleBinSize, DEFAULT_RECYCLE_BIN);
+		} catch (NumberFormatException e) {
+			binSizeMb = DEFAULT_RECYCLE_BIN;
+		}
+
+		return RecycleBin.getInstance(context, binSizeMb * 1024 * 1024L);
 	}
 }

@@ -7,6 +7,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.UriPermission
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,7 +15,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.preference.PreferenceManager
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -23,10 +23,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import androidx.preference.PreferenceManager
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
+import com.anthonymandra.rawdroid.settings.SettingsActivity
+import com.anthonymandra.rawdroid.settings.ShareSettingsFragment
+import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
@@ -48,19 +52,12 @@ abstract class CoreActivity : AppCompatActivity() {
 	private lateinit var mSwapDir: File
 	private lateinit var licenseHandler: LicenseHandler
 	protected lateinit var xmpEditFragment: XmpEditFragment
+	protected lateinit var preferences: SharedPreferences
+
 	lateinit var notificationManager: NotificationManager
 	protected val compositeDisposable = CompositeDisposable()
 
-	private val recycleBin: RecycleBin by lazy {
-		val binSizeMb: Int = try {
-			PreferenceManager.getDefaultSharedPreferences(this).getInt(
-				FullSettingsActivity.KEY_RecycleBinSize,
-				FullSettingsActivity.defRecycleBin)
-		} catch (e: NumberFormatException) {
-			FullSettingsActivity.defRecycleBin
-		}
-		RecycleBin.getInstance(this, binSizeMb * 1024 * 1024L)
-	}
+	private val recycleBin: RecycleBin by lazy { FileUtil.getRecycleBin(this) }
 	protected val dataRepo by lazy { (application as App).dataRepo }
 	protected val rootPermissions: List<UriPermission> by lazy { contentResolver.persistedUriPermissions }
 
@@ -101,11 +98,14 @@ abstract class CoreActivity : AppCompatActivity() {
 //			finish()
 //		}
 
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
+		Schedulers.io().createWorker().schedule {
+			preferences = PreferenceManager.getDefaultSharedPreferences(this)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
+		}
 
 		findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }
 	}
@@ -350,7 +350,7 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	private fun showRecycleBin() {
 		val settings = PreferenceManager.getDefaultSharedPreferences(this)
-		val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true)
+		val useRecycle = settings.getBoolean(StorageSettingsFragment.KEY_DeleteConfirmation, true)
 
 		if (!useRecycle) return
 
@@ -385,8 +385,8 @@ abstract class CoreActivity : AppCompatActivity() {
 		}
 
 		val settings = PreferenceManager.getDefaultSharedPreferences(this)
-		val deleteConfirm = settings.getBoolean(FullSettingsActivity.KEY_DeleteConfirmation, true)
-		val useRecycle = settings.getBoolean(FullSettingsActivity.KEY_UseRecycleBin, true)
+		val deleteConfirm = settings.getBoolean(StorageSettingsFragment.KEY_DeleteConfirmation, true)
+		val useRecycle = settings.getBoolean(StorageSettingsFragment.KEY_UseRecycleBin, true)
 		val justDelete: Boolean?
 		val message: String
 
@@ -452,7 +452,7 @@ abstract class CoreActivity : AppCompatActivity() {
 	}
 
 	private fun requestSettings() {
-		val settings = Intent(this, FullSettingsActivity::class.java)
+		val settings = Intent(this, SettingsActivity::class.java)
 		startActivity(settings)
 	}
 
@@ -468,7 +468,7 @@ abstract class CoreActivity : AppCompatActivity() {
 		}
 
 		val format = PreferenceManager.getDefaultSharedPreferences(this).getString(
-			FullSettingsActivity.KEY_ShareFormat,
+			ShareSettingsFragment.KEY_ShareFormat,
 			resources.getStringArray(R.array.shareFormats)[0])
 
 		val intent = Intent()
