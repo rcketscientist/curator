@@ -1,12 +1,10 @@
 package com.anthonymandra.rawdroid
 
 import android.app.WallpaperManager
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.*
 import android.net.Uri
 import android.os.Bundle
-import androidx.preference.PreferenceManager
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.Menu
@@ -53,7 +51,7 @@ class ViewerActivity : CoreActivity() {
 	private var displayHeight = 0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
-		val styleId = when (PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_MetaSize, "Medium")) {
+		val styleId = when (preferences.getString(KEY_MetaSize, "Medium")) {
 			"Small" -> R.style.MetaStyle_Small
 			"Large" -> R.style.MetaStyle_Large
 			else ->	R.style.MetaStyle_Medium
@@ -70,8 +68,7 @@ class ViewerActivity : CoreActivity() {
 		displayWidth = metrics.widthPixels
 		displayHeight = metrics.heightPixels
 
-		val settings = PreferenceManager.getDefaultSharedPreferences(this)
-		isImmersive = settings.getBoolean(MetaSettingsFragment.KEY_UseImmersive, true)
+		isImmersive = preferences.getBoolean(MetaSettingsFragment.KEY_UseImmersive, true)
 
 		viewerAdapter = ViewerAdapter(supportFragmentManager)
 
@@ -193,7 +190,7 @@ class ViewerActivity : CoreActivity() {
 
 	private fun editImage() {
 		currentImage?.let {
-			val format = PreferenceManager.getDefaultSharedPreferences(this).getString(
+			val format = preferences.getString(
 				ShareSettingsFragment.KEY_EditFormat,
 				resources.getStringArray(R.array.shareFormats)[0])
 

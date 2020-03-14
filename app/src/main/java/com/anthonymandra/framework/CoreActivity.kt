@@ -7,6 +7,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.UriPermission
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,7 +15,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import androidx.preference.PreferenceManager
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import androidx.preference.PreferenceManager
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.BuildConfig
@@ -51,6 +52,8 @@ abstract class CoreActivity : AppCompatActivity() {
 	private lateinit var mSwapDir: File
 	private lateinit var licenseHandler: LicenseHandler
 	protected lateinit var xmpEditFragment: XmpEditFragment
+	protected lateinit var preferences: SharedPreferences
+
 	lateinit var notificationManager: NotificationManager
 	protected val compositeDisposable = CompositeDisposable()
 
@@ -95,11 +98,14 @@ abstract class CoreActivity : AppCompatActivity() {
 //			finish()
 //		}
 
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
+		Schedulers.io().createWorker().schedule {
+			preferences = PreferenceManager.getDefaultSharedPreferences(this)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
+			PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
+		}
 
 		findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }
 	}

@@ -1,6 +1,7 @@
 package com.anthonymandra.rawdroid
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
@@ -40,6 +42,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     private lateinit var viewModel: FilterViewModel
     private lateinit var mFolderDialog: FolderDialog
+    private lateinit var preferences: SharedPreferences
 
     private var andOr: Boolean
         get() = mAndTrueOrFalse
@@ -81,11 +84,13 @@ class XmpFilterFragment : XmpBaseFragment() {
 //        setAllowUnselected(true)
 
         // Pull up stored filter configuration
-        val pref = activity!!.getSharedPreferences(mPrefName, Context.MODE_PRIVATE)
-        mAndTrueOrFalse = pref.getBoolean(mPrefRelational, false)
-        ascending = pref.getBoolean(mPrefAscending, true)
-        sortColumn = ImageFilter.SortColumns.valueOf(pref.getString(mPrefColumn, ImageFilter.SortColumns.Name.toString()))
-        mSegregateByType = pref.getBoolean(mPrefSegregate, true)
+        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        mAndTrueOrFalse = preferences.getBoolean(mPrefRelational, false)
+        ascending = preferences.getBoolean(mPrefAscending, true)
+        preferences.getString(mPrefColumn, sortColumn.toString())?.let {
+            sortColumn = ImageFilter.SortColumns.valueOf(it)
+        }
+        mSegregateByType = preferences.getBoolean(mPrefSegregate, true)
 
         // Initial match setting
         toggleAnd.isChecked = mAndTrueOrFalse
@@ -185,8 +190,7 @@ class XmpFilterFragment : XmpBaseFragment() {
             if (activity == null)
                 return
 
-            val pref = activity!!.getSharedPreferences(mPrefName, Context.MODE_PRIVATE)
-            val editor = pref.edit()
+            val editor = preferences.edit()
 
             editor.putBoolean(mPrefAscending, ascending)
             editor.putBoolean(mPrefRelational, mAndTrueOrFalse)
@@ -291,7 +295,6 @@ class XmpFilterFragment : XmpBaseFragment() {
     companion object {
         private val TAG = XmpBaseFragment::class.java.simpleName
 
-        private const val mPrefName = "galleryFilter"
         private const val mPrefRelational = "relational"
         private const val mPrefAscending = "ascending"
         private const val mPrefColumn = "column"
