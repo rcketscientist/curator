@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
-        android:key="prefKeyLicense"
-        android:title="@string/unlicensed"
-        android:summary="@string/buypro" />
+        app:key="prefKeyLicense"
+        app:title="@string/unlicensed"
+        app:summary="@string/buypro" />
     <Preference
-        android:key="prefKeyManualLicense"
-        android:title="@string/prefTitleManualLicense"
-        android:summary="@string/prefSummaryManualLicense" />
+        app:key="prefKeyManualLicense"
+        app:title="@string/prefTitleManualLicense"
+        app:summary="@string/prefSummaryManualLicense" />
     <Preference
-        android:key="prefKeyContact"
-        android:title="@string/contact"
-        android:summary="@string/prefSummaryContact" />
+        app:key="prefKeyContact"
+        app:title="@string/contact"
+        app:summary="@string/prefSummaryContact" />
     <Preference
-        android:title="@string/chinaBuyProTitle"
-        android:summary="@string/chinaBuyProSummary" />
+        app:title="@string/chinaBuyProTitle"
+        app:summary="@string/chinaBuyProSummary" />
 </PreferenceScreen>

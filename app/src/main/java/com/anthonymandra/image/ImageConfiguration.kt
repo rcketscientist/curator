@@ -1,7 +1,7 @@
 package com.anthonymandra.image
 
 import android.content.Context
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 
 import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
 

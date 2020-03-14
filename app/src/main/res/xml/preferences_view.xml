@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory android:title="@string/viewer" >
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="@string/viewer" >
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="prefKeyUseImmersive"
-            android:summary="@string/prefSummaryUseImmersive"
-            android:title="@string/prefTitleUseImmersive" />
+            app:defaultValue="true"
+            app:key="prefKeyUseImmersive"
+            app:summary="@string/prefSummaryUseImmersive"
+            app:title="@string/prefTitleUseImmersive" />
 <!--        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="prefKeyShowImageInterface"
-            android:summary="@string/prefSummaryImageInterface"
-            android:title="@string/prefTitleImageInterface" />-->
+            app:defaultValue="true"
+            app:key="prefKeyShowImageInterface"
+            app:summary="@string/prefSummaryImageInterface"
+            app:title="@string/prefTitleImageInterface" />-->
         <ListPreference
-            android:defaultValue="Medium"
-            android:key="prefKeyMetaSize"
-            android:title="@string/prefTitleMetaFontSize"
-            android:summary="@string/prefAutoSummary"
-            android:entries="@array/metaSizeOptions"
-            android:entryValues="@array/metaSizeValues" />
+            app:defaultValue="Medium"
+            app:key="prefKeyMetaSize"
+            app:title="@string/prefTitleMetaFontSize"
+            app:entries="@array/metaSizeOptions"
+            app:entryValues="@array/metaSizeValues"
+            app:useSimpleSummaryProvider="true"/>
         <ListPreference
-            android:defaultValue="Automatic"
-            android:key="prefKeyShowNav"
-            android:title="@string/prefTitleShowNav"
-            android:summary="@string/prefAutoSummary"
-            android:entries="@array/showOptions"
-            android:entryValues="@array/showOptionsValues" />
+            app:defaultValue="Automatic"
+            app:key="prefKeyShowNav"
+            app:title="@string/prefTitleShowNav"
+            app:entries="@array/showOptions"
+            app:entryValues="@array/showOptionsValues"
+            app:useSimpleSummaryProvider="true"/>
         <ListPreference
-            android:defaultValue="Automatic"
-            android:key="prefKeyShowMeta"
-            android:title="@string/prefTitleShowMeta"
-            android:summary="@string/prefAutoSummary"
-            android:entries="@array/showOptions"
-            android:entryValues="@array/showOptionsValues"/>
+            app:defaultValue="Automatic"
+            app:key="prefKeyShowMeta"
+            app:title="@string/prefTitleShowMeta"
+            app:entries="@array/showOptions"
+            app:entryValues="@array/showOptionsValues"
+            app:useSimpleSummaryProvider="true"/>
         <ListPreference
-            android:defaultValue="Automatic"
-            android:key="prefKeyShowHist"
-            android:title="@string/prefTitleShowHist"
-            android:summary="@string/prefAutoSummary"
-            android:entries="@array/showOptions"
-            android:entryValues="@array/showOptionsValues"/>
+            app:defaultValue="Automatic"
+            app:key="prefKeyShowHist"
+            app:title="@string/prefTitleShowHist"
+            app:entries="@array/showOptions"
+            app:entryValues="@array/showOptionsValues"
+            app:useSimpleSummaryProvider="true"/>
         <ListPreference
-            android:defaultValue="Always"
-            android:key="prefKeyShowToolbar"
-            android:title="@string/prefTitleShowToolbar"
-            android:summary="@string/prefAutoSummary"
-            android:entries="@array/showOptions"
-            android:entryValues="@array/showOptionsValues"/>
+            app:defaultValue="Always"
+            app:key="prefKeyShowToolbar"
+            app:title="@string/prefTitleShowToolbar"
+            app:entries="@array/showOptions"
+            app:entryValues="@array/showOptionsValues"
+            app:useSimpleSummaryProvider="true"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

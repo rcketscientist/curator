@@ -2,7 +2,7 @@ package com.anthonymandra.rawdroid.ui
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
