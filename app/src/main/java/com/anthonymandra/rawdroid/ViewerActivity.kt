@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.PagedList
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.SwapProvider
 import com.anthonymandra.rawdroid.data.ImageInfo
@@ -70,7 +71,7 @@ class ViewerActivity : CoreActivity() {
 
 		isImmersive = preferences.getBoolean(MetaSettingsFragment.KEY_UseImmersive, true)
 
-		viewerAdapter = ViewerAdapter(supportFragmentManager)
+		viewerAdapter = ViewerAdapter(this)
 
 		if (intent.action == ACTION_VIEW || intent.action == ACTION_SEND) {	// External, add data
 			val data = intent.data
@@ -107,9 +108,7 @@ class ViewerActivity : CoreActivity() {
 		})
 
 		pager.adapter = viewerAdapter
-		pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-			override fun onPageScrollStateChanged(state: Int) {}
-			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+		pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
 			override fun onPageSelected(position: Int) {
 				viewModel.currentImageIndex = position
 				viewModel.showInterface()
@@ -125,6 +124,7 @@ class ViewerActivity : CoreActivity() {
 				autoHide.schedule(AutoHideMetaTask(), 3000)
 			}
 		})
+
 		// TODO: Jetifier not working on page transformer
 //        pager.setPageTransformer(true, DepthPageTransformer())
 //		pager.offscreenPageLimit = 2

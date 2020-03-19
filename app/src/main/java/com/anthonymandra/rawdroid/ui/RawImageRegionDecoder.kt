@@ -13,7 +13,7 @@ class RawImageRegionDecoder(
     private var decoder: BitmapRegionDecoder? = null
 
     override fun isReady(): Boolean {
-        return decoder?.isRecycled == true
+        return decoder?.isRecycled == false
     }
 
     override fun init(context: Context?, source: RawImageSource): Point {

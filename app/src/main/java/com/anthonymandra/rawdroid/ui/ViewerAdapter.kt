@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.rawdroid.data.ImageInfo
 
-class ViewerAdapter(fm: FragmentManager)
-	: PagedListPagerAdapter<ImageInfo>(fm) {
+class ViewerAdapter(activity: FragmentActivity)
+	: PagedListPagerAdapter<ImageInfo>(activity) {
 
 	override var isSmoothScroll = false
 

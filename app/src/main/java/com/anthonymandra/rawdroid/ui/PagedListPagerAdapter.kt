@@ -1,22 +1,18 @@
 package com.anthonymandra.rawdroid.ui
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.fragment.app.FragmentActivity
 import androidx.paging.PagedList
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-abstract class PagedListPagerAdapter<T>(fm: FragmentManager)
-	: FragmentStatePagerAdapter(fm) {
+abstract class PagedListPagerAdapter<T>(activity: FragmentActivity)
+	: FragmentStateAdapter(activity) {
 
 	var pagedList: PagedList<T>? = null
 		private set
 	private var callback = PagerCallback()
 
-	override fun getCount() = pagedList?.size ?: 0
+	override fun getItemCount() = pagedList?.size ?: 0
 
 	abstract fun createItem(position: Int): Fragment
 

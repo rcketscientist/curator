@@ -15,6 +15,7 @@ import com.anthonymandra.framework.Histogram
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.AppExecutors
+import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
@@ -46,7 +47,6 @@ class ViewPagerFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO: this let never enters...
         source?.let { image ->
             if (!image.processed) {
                 // TODO: update meta
