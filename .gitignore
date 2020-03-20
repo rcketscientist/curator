@@ -17,7 +17,7 @@ gen/
 .idea/libraries
 .idea/gradle.xml
 .idea/vcs.xml
-.idea/caches/*
+.idea/caches/
 local.properties
 captures/
 .idea/misc.xml
