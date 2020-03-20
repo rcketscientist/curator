@@ -9,8 +9,8 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.fabric'
 
 def versionMajor = 6
-def versionMinor = 2
-def versionPatch = 5
+def versionMinor = 3
+def versionPatch = 1
 
 //noinspection GroovyMissingReturnStatement
 android {
@@ -47,21 +47,11 @@ android {
         androidTest.assets.srcDirs += files(schemaLocation)
     }
 
-    signingConfigs {
-        release {
-            storeFile file("../key/my-release-key.keystore")
-            storePassword "***REMOVED***"
-            keyAlias "alias_name"
-            keyPassword "***REMOVED***"
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
         }
         debug {
             // Disable fabric build ID generation for debug builds
@@ -131,7 +121,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "com.github.bumptech.glide:compiler:4.9.0"
-    implementation 'androidx.preference:preference:1.1.0'
+    implementation 'androidx.preference:preference-ktx:1.1.0'
 
     // Rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'

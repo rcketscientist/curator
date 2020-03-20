@@ -26,7 +26,6 @@ import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
-import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.settings.SettingsActivity
 import com.anthonymandra.rawdroid.settings.ShareSettingsFragment

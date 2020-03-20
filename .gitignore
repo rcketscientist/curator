@@ -1,21 +1,28 @@
-/bin
-/gen
-/assets
-/libs/mips
-/libs/x86
-/libs/armeabi
-/libs/armeabi-v7a
-/out
-/obj
+#built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
 
 #Android studio
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/gradle.xml
 /.idea/vcs.xml
+/.idea/caches/build_file_checksums.ser
 /local.properties
 /captures
-*.iml #constant updates for line changes were too annoying
+/.idea/misc.xml
+*.iml
+build/
 
 #Gradle
 /.gradle
@@ -30,13 +37,7 @@
 /rawDroid/build/outputs/apk/manifest-merger-proAmazon-release-report.txt
 /rawDroid/build/outputs/apk/manifest-merger-demo-release-report.txt
 
+# Windows thumbs
 Thumbs.db
-obj
-/rawDroid/build/tmp
-/rawDroid/build/generated
-/rawDroid/build/intermediates
-/rawDroid/build/outputs/logs
-/build
-*.iml
-build
-/.idea/misc.xml
+
+
