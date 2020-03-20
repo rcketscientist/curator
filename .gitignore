@@ -13,29 +13,21 @@ bin/
 gen/
 
 #Android studio
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/gradle.xml
-/.idea/vcs.xml
-/.idea/caches/build_file_checksums.ser
-/local.properties
-/captures
-/.idea/misc.xml
+.idea/workspace.xml
+.idea/libraries
+.idea/gradle.xml
+.idea/vcs.xml
+.idea/caches/*
+local.properties
+captures/
+.idea/misc.xml
 *.iml
 build/
 
 #Gradle
-/.gradle
+.gradle/
 
-/rawDroid/src/main/obj
-/rawDroid/build/outputs/apk/rawDroid-pro-debug.apk
-/rawDroid/build/outputs/apk/rawDroid-pro-debug-unaligned.apk
-/rawDroid/build/outputs/apk/rawDroid-demo-debug-unaligned.apk
-/rawDroid/build/outputs/apk/rawDroid-demo-debug.apk
-/rawDroid/build/outputs/apk/manifest-merger-demo-debug-report.txt
-/rawDroid/build/outputs/apk/manifest-merger-pro-release-report.txt
-/rawDroid/build/outputs/apk/manifest-merger-proAmazon-release-report.txt
-/rawDroid/build/outputs/apk/manifest-merger-demo-release-report.txt
+/rawDroid/build/*
 
 # Windows thumbs
 Thumbs.db
