@@ -21,4 +21,4 @@
 [submodule "ssiv"]
 	path = ssiv
 	url = https://github.com/rcketscientist/subsampling-scale-image-view.git
-	branch = develop
+	branch = master
