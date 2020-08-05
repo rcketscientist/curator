@@ -19,7 +19,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
@@ -27,7 +27,8 @@ import com.afollestad.materialcab.attached.AttachedCab
 import com.afollestad.materialcab.attached.destroy
 import com.afollestad.materialcab.attached.isActive
 import com.afollestad.materialcab.createCab
-import com.anthonymandra.framework.*
+import com.anthonymandra.framework.CoreActivity
+import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
@@ -36,6 +37,7 @@ import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.WhatsNewDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
@@ -51,7 +53,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 	private var mMaterialCab: AttachedCab? = null
 	private var mXmpFilterFragment: XmpFilterFragment? = null
-	override val viewModel by lazy { ViewModelProviders.of(this).get(GalleryViewModel::class.java) }
+	override val viewModel by lazy { ViewModelProvider(this).get(GalleryViewModel::class.java) }
 	private var imageCount = 0
 
 	protected val isContextModeActive: Boolean
@@ -391,11 +393,12 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			selectAll()
 
 		viewModel.images(selectedIds)
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeBy {
-					val dialog = RenameDialog(this, it)
-					dialog.show()
-				}
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribeBy {
+				val dialog = RenameDialog(this, it)
+				dialog.show()
+			}
+			.addTo(compositeDisposable)
 	}
 
 	private fun requestCopyDestination() {
@@ -417,8 +420,9 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	fun selectAll() {
 		startContextMode()
 		viewModel.selectAll()
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribeBy { galleryAdapter.selectedItems = it }
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribeBy { galleryAdapter.selectedItems = it }
+			.addTo(compositeDisposable)
 	}
 
 	protected fun startContextMode() {

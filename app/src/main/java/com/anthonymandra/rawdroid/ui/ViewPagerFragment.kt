@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.WorkerThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.anthonymandra.framework.Histogram
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.ImageInfo
@@ -30,7 +30,8 @@ class ViewPagerFragment : Fragment() {
     var source: ImageInfo? = null
     private var histogramSubscription: Disposable? = null
     private val viewModel: GalleryViewModel by lazy {
-        ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java) }
+        ViewModelProvider(this).get(GalleryViewModel::class.java)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.full_image, container, false)
@@ -79,16 +80,16 @@ class ViewPagerFragment : Fragment() {
             }
         }
 
-        val viewModel = ViewModelProviders.of(activity!!).get(GalleryViewModel::class.java)
-        viewModel.isZoomLocked.observe(this, Observer {
+        val viewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
+        viewModel.isZoomLocked.observe(viewLifecycleOwner, Observer {
             imageView.isZoomEnabled = !it!!
         })
 
-        viewModel.metadataVisibility.observe(this, Observer { visible ->
+        viewModel.metadataVisibility.observe(viewLifecycleOwner, Observer { visible ->
             metaPanel.visibility = visible
         })
 
-        viewModel.histogramVisibility.observe(this, Observer { visible ->
+        viewModel.histogramVisibility.observe(viewLifecycleOwner, Observer { visible ->
             histogramView.visibility = visible
         })
 

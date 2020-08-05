@@ -10,7 +10,7 @@ import android.widget.CheckedTextView
 import android.widget.GridView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.anthonymandra.rawdroid.data.SubjectEntity
 import com.anthonymandra.rawdroid.ui.KeywordViewModel
 import com.jakewharton.rxbinding2.widget.itemClicks
@@ -39,7 +39,7 @@ abstract class KeywordBaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = SelectArrayAdapter(activity!!)
+        val adapter = SelectArrayAdapter(requireActivity())
         keywordGrid = view.findViewById(R.id.keywordGridView)
         keywordGrid.adapter = adapter
         val keywordListener = keywordGrid
@@ -55,8 +55,8 @@ abstract class KeywordBaseFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(KeywordViewModel::class.java)
-        viewModel.keywords.observe(this, Observer { keywords: List<SubjectEntity>? ->
+        viewModel = ViewModelProvider(this).get(KeywordViewModel::class.java)
+        viewModel.keywords.observe(viewLifecycleOwner, Observer { keywords: List<SubjectEntity>? ->
             updateKeywordGrid(keywords)
         })
     }

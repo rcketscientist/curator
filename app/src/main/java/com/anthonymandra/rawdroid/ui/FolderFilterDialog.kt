@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
@@ -42,8 +42,8 @@ class FolderDialog : DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.folder_visibility, container, false)
-        val x = arguments!!.getInt(ARG_X)
-        val y = arguments!!.getInt(ARG_Y)
+        val x = requireArguments().getInt(ARG_X)
+        val y = requireArguments().getInt(ARG_Y)
 
         // Set the position of the dialog
         dialog?.window?.let {
@@ -69,7 +69,7 @@ class FolderDialog : DialogFragment() {
             dismiss()
         }
 
-        viewModel = ViewModelProviders.of(this).get(FilterViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(FilterViewModel::class.java)
         viewModel.folders.observe(this, Observer { folders: List<FolderEntity>? ->
             if (folders == null) return@Observer
 

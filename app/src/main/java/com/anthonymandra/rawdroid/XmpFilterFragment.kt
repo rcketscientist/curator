@@ -1,6 +1,5 @@
 package com.anthonymandra.rawdroid
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +8,7 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.Label
@@ -123,8 +122,8 @@ class XmpFilterFragment : XmpBaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(FilterViewModel::class.java)
-        viewModel.folders.observe(this, Observer { folders: List<FolderEntity>? ->
+        viewModel = ViewModelProvider(this).get(FilterViewModel::class.java)
+        viewModel.folders.observe(viewLifecycleOwner, Observer { folders: List<FolderEntity>? ->
             mExcludedFolders = folders?.filter { it.excluded } ?: Collections.emptyList()
             mHiddenFolders = folders?.filter { !it.visible } ?: Collections.emptyList()
             onFilterUpdated()
@@ -146,7 +145,7 @@ class XmpFilterFragment : XmpBaseFragment() {
         mFolderDialog.setStyle(DialogFragment.STYLE_NO_TITLE, R.style.FolderDialog)
         mFolderDialog.setSearchRequestedListener { searchRequestCallback?.invoke() }
 
-        mFolderDialog.show(fragmentManager!!, TAG)
+        mFolderDialog.show(parentFragmentManager, TAG)
     }
 
     private fun setSort(checkedId: Int) {

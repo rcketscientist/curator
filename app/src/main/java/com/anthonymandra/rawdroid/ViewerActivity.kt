@@ -11,7 +11,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.paging.PagedList
 import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.framework.CoreActivity
@@ -28,6 +28,7 @@ import com.anthonymandra.util.ImageUtil
 import com.anthonymandra.util.MetaUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.viewer_pager.*
@@ -44,7 +45,7 @@ class ViewerActivity : CoreActivity() {
 		get() = listOfNotNull(viewerAdapter.getValue(pager.currentItem)?.id).toLongArray()
 
 	override val viewModel: GalleryViewModel by lazy {
-		ViewModelProviders.of(this).get(GalleryViewModel::class.java)
+		ViewModelProvider(this).get(GalleryViewModel::class.java)
 	}
 
 	private var displayWidth = 0
@@ -154,6 +155,7 @@ class ViewerActivity : CoreActivity() {
 						.setNotifyExecutor(AppExecutors.MAIN)
 						.build())
 			}
+			.addTo(compositeDisposable)
 	}
 
 	override fun onBackPressed() {
