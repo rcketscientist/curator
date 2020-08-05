@@ -5,7 +5,3 @@
 # Speed up builds
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
-
-# Settings were getting removed
--keep public class * extends androidx.preference.PreferenceFragmentCompat
-

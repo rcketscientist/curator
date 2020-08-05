@@ -52,7 +52,7 @@ abstract class CoreActivity : AppCompatActivity() {
 	private lateinit var mSwapDir: File
 	private lateinit var licenseHandler: LicenseHandler
 	protected lateinit var xmpEditFragment: XmpEditFragment
-	protected lateinit var preferences: SharedPreferences
+	protected val preferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
 	lateinit var notificationManager: NotificationManager
 	protected val compositeDisposable = CompositeDisposable()
@@ -98,14 +98,11 @@ abstract class CoreActivity : AppCompatActivity() {
 //			finish()
 //		}
 
-		Schedulers.io().createWorker().schedule {
-			preferences = PreferenceManager.getDefaultSharedPreferences(this)
-			PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
-			PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
-			PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
-			PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
-			PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
-		}
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
+		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
 
 		findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }
 	}
