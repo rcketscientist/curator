@@ -35,8 +35,13 @@ import java.util.Set;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
+import androidx.preference.PreferenceManager;
+
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.anthonymandra.rawdroid.settings.StorageSettingsFragment.DEFAULT_RECYCLE_BIN;
+import static com.anthonymandra.rawdroid.settings.StorageSettingsFragment.KEY_RecycleBinSize;
 
 /**
  * This class holds our discarded images
@@ -70,18 +75,23 @@ public class RecycleBin {
 		mDiskCacheDir = FileUtil.getDiskCacheDir(context, "recycle");
 		mDatabase = DataRepository.Companion.getInstance(context);
 		initDiskCache();
+
+		int binSizeMb;
+		try {
+			binSizeMb = PreferenceManager.getDefaultSharedPreferences(context).getInt(
+					KEY_RecycleBinSize, DEFAULT_RECYCLE_BIN);
+		} catch (NumberFormatException e) {
+			binSizeMb = DEFAULT_RECYCLE_BIN;
+		}
+		setMaxSize(binSizeMb);
 	}
 
 	public static RecycleBin getInstance(Context c) {
 		if (INSTANCE == null) {
 			INSTANCE = new RecycleBin(c);
 		}
-		return INSTANCE;
-	}
 
-	public static RecycleBin getInstance(Context c, long maxSize) {
-		setMaxSize(maxSize);
-		return getInstance(c);
+		return INSTANCE;
 	}
 
 	public static void setMaxSize(long maxSize) {

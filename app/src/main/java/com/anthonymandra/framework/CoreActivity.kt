@@ -34,7 +34,7 @@ import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
@@ -57,7 +57,7 @@ abstract class CoreActivity : AppCompatActivity() {
 	lateinit var notificationManager: NotificationManager
 	protected val compositeDisposable = CompositeDisposable()
 
-	private val recycleBin: RecycleBin by lazy { FileUtil.getRecycleBin(this) }
+	private val recycleBin: RecycleBin by lazy { RecycleBin.getInstance(this) }
 	protected val dataRepo by lazy { (application as App).dataRepo }
 	protected val rootPermissions: List<UriPermission> by lazy { contentResolver.persistedUriPermissions }
 
@@ -493,8 +493,8 @@ abstract class CoreActivity : AppCompatActivity() {
 
 		viewModel.images(selection).subscribeBy { selectedImages ->
 			if (selectedImages.isEmpty()) {
-				Crashlytics.setString("selection", selectedIds.toString())
-				Crashlytics.log("Image lookup failed.")
+				FirebaseCrashlytics.getInstance().setCustomKey("selection", selectedIds.toString())
+				FirebaseCrashlytics.getInstance().log("Image lookup failed.")
 				Snackbar.make(rootView, R.string.warningImagesNotFound, Snackbar.LENGTH_SHORT).show()
 				return@subscribeBy
 			}
