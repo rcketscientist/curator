@@ -15,7 +15,7 @@ import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.ImageUtil
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -99,7 +99,7 @@ class RenameDialog(
 							activity.incrementProgress()
 							activity.notificationManager.notify(0, builder.build())
 							it.printStackTrace()
-							Crashlytics.logException(it)
+							FirebaseCrashlytics.getInstance().recordException(it)
 						}
 				)
 	}

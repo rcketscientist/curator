@@ -8,6 +8,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.anthonymandra.framework.RecycleBin
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.DataRepository
@@ -26,7 +27,7 @@ class RecycleWorker(context: Context, params: WorkerParameters) : CoreWorker(con
 		val imagesIds = inputData.getLongArray(RecycleWorker.KEY_RECYCLE_IDS)
 			?: return Result.failure()
 
-		val recycleBin = FileUtil.getRecycleBin(applicationContext)
+		val recycleBin = RecycleBin.getInstance(applicationContext)
 
 		sendPeekNotification()
 

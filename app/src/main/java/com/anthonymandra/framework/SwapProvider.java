@@ -24,7 +24,7 @@ import com.anthonymandra.imageprocessor.Watermark;
 import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtil;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +61,7 @@ public class SwapProvider extends ContentProvider {
 	@Nullable
 	public static Uri createSwapUri(Context c, Uri uri) {
 		if (uri == null) {
-			Crashlytics.logException(new Exception("null uri requested swap)"));
+			FirebaseCrashlytics.getInstance().recordException(new Exception("null uri requested swap)"));
 			return null;
 		}
 		return new Uri.Builder()

@@ -11,7 +11,7 @@ import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 
 import com.anthonymandra.framework.License;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.LicenseChecker;
 import com.google.android.vending.licensing.LicenseCheckerCallback;
@@ -173,7 +173,7 @@ public class LicenseManager extends License {
 
         if (c.getPackageName().compareTo(BuildConfig.APPLICATION_ID) != 0)
         {
-            Crashlytics.logException(new Exception("SC001: " + c.getPackageName()));
+            FirebaseCrashlytics.getInstance().recordException(new Exception("SC001: " + c.getPackageName()));
             return true; // BOOM!
         }
 
@@ -183,13 +183,13 @@ public class LicenseManager extends License {
 
         if (installer == null)
         {
-            Crashlytics.logException(new Exception("SC002: " + c.getPackageName()));
+            FirebaseCrashlytics.getInstance().recordException(new Exception("SC002: " + c.getPackageName()));
             return true; // BOOM!
         }
 
         if (installer.compareTo(google) != 0 && installer.compareTo(amazon) != 0)
         {
-            Crashlytics.logException(new Exception("SC003: " + installer));
+            FirebaseCrashlytics.getInstance().recordException(new Exception("SC003: " + installer));
             return true; // BOOM!
         }
 

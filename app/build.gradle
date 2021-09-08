@@ -6,8 +6,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def versionMajor = 6
 def versionMinor = 2
@@ -72,9 +72,10 @@ android {
             }
         }
         debug {
-            // Disable fabric build ID generation for debug builds
-//            ext.enableCrashlytics = false
             debuggable true
+            firebaseCrashlytics {
+                mappingFileUploadEnabled false
+            }
         }
     }
 

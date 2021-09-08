@@ -42,6 +42,7 @@
         <activity
             android:name=".GalleryActivity"
             android:label="@string/app_name"
+			android:exported="false"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -54,21 +55,22 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/usb_storage_filter"/>
         </activity>
-        <activity
-            android:name=".CameraImportActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
-            </intent-filter>
+<!--        <activity-->
+<!--            android:name=".CameraImportActivity"-->
+<!--            android:configChanges="keyboardHidden|orientation|screenSize">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>-->
+<!--            </intent-filter>-->
 
-            <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/usb_camera_filter"/>
-        </activity>
+<!--            <meta-data-->
+<!--                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"-->
+<!--                android:resource="@xml/usb_camera_filter"/>-->
+<!--        </activity>-->
 
         <activity
             android:name=".TutorialActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+			android:exported="false"
+			android:configChanges="keyboardHidden|orientation|screenSize" />
 		<activity
             android:name=".settings.SettingsActivity"/>
 
@@ -198,9 +200,9 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="a2ac9da17c41a8a1b70fa478f3f705c6c2dc0ce6"/>
+<!--		<meta-data-->
+<!--			android:name="firebase_crashlytics_collection_enabled"-->
+<!--			android:value="false" />-->
 
     </application>
 
