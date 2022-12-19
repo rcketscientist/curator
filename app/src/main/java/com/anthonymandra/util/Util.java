@@ -27,8 +27,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import com.anthonymandra.rawdroid.GalleryActivity;
-import com.anthonymandra.rawdroid.R;
+import com.anthonymandra.curator.GalleryActivity;
+import com.anthonymandra.curator.R;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;

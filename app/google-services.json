@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:624493894373:android:03b56ac03ef25b99",
         "android_client_info": {
-          "package_name": "com.anthonymandra.rawdroid"
+          "package_name": "com.anthonymandra.curator"
         }
       },
       "oauth_client": [
@@ -31,50 +31,6 @@
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:624493894373:android:c5791276028b5a53",
-        "android_client_info": {
-          "package_name": "com.anthonymandra.rawdroidpro"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "624493894373-7u2tpur1l7vd2p39a1db8mutljvnuab0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.anthonymandra.rawdroidpro",
-            "certificate_hash": "01620bbd0312fc05c228a268dd1ff25a27011800"
-          }
-        },
-        {
-          "client_id": "624493894373-gqvipjrp05e91s6kj9bu4tqojopm64fg.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyCruRVV7qX1sa0eZpItRiEIQpO9Sc24AYY"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "624493894373-gqvipjrp05e91s6kj9bu4tqojopm64fg.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
         },
         "ads_service": {
           "status": 2

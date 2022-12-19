@@ -45,7 +45,7 @@
 
     <fragment
         android:id="@+id/editFragment"
-        android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+        android:name="com.anthonymandra.curator.XmpEditFragment"
         android:layout_width="@dimen/xmp_filter_width"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="neutral">Отмена</string>
 	<string name="saveAs">сохранить как…</string>
 <string name="wallpaper">Установить как фон</string>

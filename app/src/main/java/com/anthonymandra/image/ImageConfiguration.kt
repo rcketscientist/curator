@@ -3,7 +3,7 @@ package com.anthonymandra.image
 import android.content.Context
 import androidx.preference.PreferenceManager
 
-import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
+import com.anthonymandra.curator.settings.StorageSettingsFragment
 
 abstract class ImageConfiguration {
 

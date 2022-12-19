@@ -10,7 +10,7 @@
 //import android.widget.SeekBar;
 //import android.widget.TextView;
 //
-//import com.anthonymandra.rawdroid.R;
+//import com.anthonymandra.curator.R;
 //
 ////TODO: Move these to a library
 //public class SeekBarPreference extends DialogPreference

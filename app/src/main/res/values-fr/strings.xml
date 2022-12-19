@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="positive">Accepter</string>
 <string name="negative">Refuser</string>
 <string name="neutral">Annuler</string>
@@ -86,7 +86,7 @@
 <string name="prefTitleShowNativeFiles">Voir les images génériques</string>
 <string name="prefSummaryShowNativeFiles">Ceci montrera jpg,gif,bmp, et png</string>
 <string name="prefTitleShowUnknownFiles">Affiche les fichiers non supportées</string>
-<string name="prefSummaryShowUnknownFiles">Ceci affiche les fichiers non traités par RawDroid</string>
+<string name="prefSummaryShowUnknownFiles">Ceci affiche les fichiers non traités par Curator</string>
 <string name="prefTitleImportKeywords">Importer les mots clés</string>
 <string name="prefTitleShowNav">Afficher la navigation</string>
 <string name="prefTitleShowMeta">Afficher Meta données</string>

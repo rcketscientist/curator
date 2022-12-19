@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="positive">Accetta</string>
 <string name="negative">Declino</string>
 <string name="neutral">Annullare</string>
@@ -88,7 +88,7 @@
 <string name="prefTitleShowNativeFiles">Mostra immagini generiche</string>
 <string name="prefSummaryShowNativeFiles">Questo mostrerà jpg, gif, bmp, png e.</string>
 <string name="prefTitleShowUnknownFiles">Mostra file non gestiti</string>
-<string name="prefSummaryShowUnknownFiles">Questo vi mostrerà i file che RawDroid non elabora.</string>
+<string name="prefSummaryShowUnknownFiles">Questo vi mostrerà i file che Curator non elabora.</string>
 <string name="prefTitleImportKeywords">Importa parole chiave</string>
 <string name="prefSummaryImportKeywords">Clicca per importare un file di parole chiave delimitato da tabulazioni, come quella esportata da Lightroom.</string>
 <string name="prefTitleShowNav">Mostra  navigazione</string>
@@ -108,7 +108,7 @@
 <string name="restoreFile">Ripristina File</string>
 <string name="emptyRecycleBin">Svuota Cestino</string>
 <string name="saveJpg">Miniature di esportazione</string>
-	<string name="ratingRequest">Se vi piace  RawDroid si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
+	<string name="ratingRequest">Se vi piace Curator si prega di prestare un momento per votarla. Se si \'ho valutato sulla base di un bug che e stato corretto preghiamo di aggiornare il vostro voto. Grazie per il vostro supporto</string>
 <string name="importingImages">Importazione di immagini …</string>
 <string name="exportingThumb">Esportazione Miniature…</string>
 <string name="deletingFiles">Eliminazione dei file....</string>
@@ -142,7 +142,7 @@
 <string name="tutorialRename">Questo rinomina tutti i file selezionati con un modello selezionato.</string>
 <string name="tutorialImport">Questo consente di importare le immagini selezionate per una nuova destinazione</string>
 <string name="tutorialExport">Per esportare le immagini selezionate come una miniatura compressa in jpeg.</string>
-<string name="tutorialStart">Benvenuti nel tutorial di Rawdroid! 
+<string name="tutorialStart">Benvenuti nel tutorial di Curator!
 \nApprezzo tutti feedback, a volte è difficile spiegare una operazione o azione ai profani :).</string>
 <string name="tutorialConnectTitle">Come collegare Immagini</string>
 <string name="tutorialConnect1">Ci sono tre modi per accedere ai dati:</string>

@@ -13,8 +13,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -25,16 +23,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.anthonymandra.image.ImageConfiguration
-import com.anthonymandra.rawdroid.*
-import com.anthonymandra.rawdroid.BuildConfig
-import com.anthonymandra.rawdroid.R
-import com.anthonymandra.rawdroid.settings.SettingsActivity
-import com.anthonymandra.rawdroid.settings.ShareSettingsFragment
-import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
-import com.anthonymandra.rawdroid.ui.CoreViewModel
+import com.anthonymandra.curator.*
+import com.anthonymandra.curator.R
+import com.anthonymandra.curator.BuildConfig
+import com.anthonymandra.curator.settings.SettingsActivity
+import com.anthonymandra.curator.settings.ShareSettingsFragment
+import com.anthonymandra.curator.settings.StorageSettingsFragment
+import com.anthonymandra.curator.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
-import com.crashlytics.android.Crashlytics
+//import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
@@ -44,13 +42,10 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.io.File
-import java.lang.ref.WeakReference
 import java.util.*
 
 abstract class CoreActivity : AppCompatActivity() {
-
 	private lateinit var mSwapDir: File
-	private lateinit var licenseHandler: LicenseHandler
 	protected lateinit var xmpEditFragment: XmpEditFragment
 	protected val preferences: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
@@ -69,39 +64,20 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	protected abstract val selectedIds: LongArray
 
-
-	/**
-	 * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
-	 * The layout should conform to viewer template (xmp, meta, histogram, etc).
-	 * @return The resource id of the layout to load
-	 */
-	protected abstract val contentView: Int
-
 	/**
 	 * @return The root view for this activity.
 	 */
-	val rootView: View
-		get() = findViewById(android.R.id.content)
+	protected abstract val rootView: View
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(contentView)
-
-		licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
 
 		notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		createIoChannel()
 
-//		if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
-//			Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
-//			//TODO: Add link to Curator store page
-//			finish()
-//		}
-
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
 
 		findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }
@@ -147,9 +123,7 @@ abstract class CoreActivity : AppCompatActivity() {
 		super.onDestroy()
 
 		Completable.fromAction {
-			if (::mSwapDir.isInitialized) {
-				mSwapDir.delete();
-			}
+			if (::mSwapDir.isInitialized) mSwapDir.delete()
 		}
 		.subscribeOn(Schedulers.from(AppExecutors.DISK))
 		.subscribe()
@@ -367,7 +341,7 @@ abstract class CoreActivity : AppCompatActivity() {
 							filesToRestore.remove(images[which].id)
 					}
 					.setPositiveButton(R.string.restoreFile) { _, _ ->
-						if (!filesToRestore.isEmpty()) {
+						if (filesToRestore.isNotEmpty()) {
 							viewModel.startRestoreWorker(filesToRestore.toTypedArray())
 						}
 					}
@@ -404,7 +378,6 @@ abstract class CoreActivity : AppCompatActivity() {
 			.subscribeBy { images ->
 				val spaceRequired: Long = images
 					.asSequence()
-					.filterNotNull()
 					.map { it.size }
 					.sum()
 
@@ -429,13 +402,13 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	protected fun requestEmailIntent(subject: String?) {
 		val emailIntent = Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-			"mailto", "rawdroid@anthonymandra.com", null))
+			"mailto", "curator@anthonymandra.com", null))
 
 		if (subject != null) {
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
 		}
 
-		val body = "Variant:   " + BuildConfig.FLAVOR + "\n" +
+		val body =
 			"Version:   " + BuildConfig.VERSION_NAME + "\n" +
 			"Make:      " + Build.MANUFACTURER + "\n" +
 			"Model:     " + Build.MODEL + "\n" +
@@ -493,8 +466,8 @@ abstract class CoreActivity : AppCompatActivity() {
 
 		viewModel.images(selection).subscribeBy { selectedImages ->
 			if (selectedImages.isEmpty()) {
-				Crashlytics.setString("selection", selectedIds.toString())
-				Crashlytics.log("Image lookup failed.")
+//				Crashlytics.setString("selection", selectedIds.toString())
+//				Crashlytics.log("Image lookup failed.")
 				Snackbar.make(rootView, R.string.warningImagesNotFound, Snackbar.LENGTH_SHORT).show()
 				return@subscribeBy
 			}
@@ -524,20 +497,6 @@ abstract class CoreActivity : AppCompatActivity() {
 		}.addTo(compositeDisposable)
 	}
 
-	open class LicenseHandler(context: Context) : Handler() {
-		private val mContext: WeakReference<Context> = WeakReference(context)
-
-		override fun handleMessage(msg: Message) {
-			val state = msg.data.getSerializable(License.KEY_LICENSE_RESPONSE)
-			if (state == null || state.toString().startsWith("modified")) {
-				for (i in 0..2) //TODO: FIXME
-					Toast.makeText(mContext.get(), "An app on your device has attempted to modify Rawdroid.  Check Settings > License for more information.", Toast.LENGTH_LONG).show()
-			} else if (state == License.LicenseState.error) {
-				Toast.makeText(mContext.get(), "There was an error communicating with Google Play.  Check Settings > License for more information.", Toast.LENGTH_LONG).show()
-			}
-		}
-	}
-
 	protected abstract val viewModel: CoreViewModel
 	abstract fun setMaxProgress(max: Int)
 	abstract fun incrementProgress()
@@ -550,8 +509,6 @@ abstract class CoreActivity : AppCompatActivity() {
 
 		private const val REQUEST_STORAGE_PERMISSION = 0
 		private const val REQUEST_SAVE_AS_DIR = 15
-
-		private const val EXPIRATION = 5184000000L //~60 days
 
 		/**
 		 * Permissions required to read and write to storage.

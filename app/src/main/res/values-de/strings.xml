@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="positive">Annehmen</string>
 <string name="negative">Ablehnen</string>
 <string name="neutral">Abbrechen</string>
@@ -89,7 +89,7 @@
 <string name="prefTitleShowNativeFiles">Normale Bilddateien anzeigen</string>
 <string name="prefSummaryShowNativeFiles">Zeigt jpg, gif, bmp und png Bilder an.</string>
 <string name="prefTitleShowUnknownFiles">Unbekannte Dateiformate anzeigen</string>
-<string name="prefSummaryShowUnknownFiles">Zeigt auch Dateien an, die RawDroid nicht verarbeiten kann.</string>
+<string name="prefSummaryShowUnknownFiles">Zeigt auch Dateien an, die Curator nicht verarbeiten kann.</string>
 <string name="prefTitleImportKeywords">Schlagwörter importieren</string>
 <string name="prefTitleShowNav">zeige Navigation</string>
 <string name="prefTitleShowMeta">zeige Metadaten</string>
@@ -108,7 +108,7 @@
 <string name="restoreFile">Datei wiederherstellen</string>
 <string name="emptyRecycleBin">Papierkorb leeren</string>
 <string name="saveJpg">Bildvorschauen exportieren</string>
-	<string name="ratingRequest">Falls dir RawDroid gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.
+	<string name="ratingRequest">Falls dir Curator gefällt, wäre ich dir sehr dankbar, wenn du dir kurz Zeit nimmst, um eine Bewertung abzugeben.
 \n
 \nSollte deine bisherige Wertung wegen eines Fehlers sein, der mittlerweile behoben wurde, aktualisiere doch bitte deine Bewertung.
 \n

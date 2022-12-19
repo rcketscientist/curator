@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.anthonymandra.rawdroid.settings.StorageSettingsFragment.DEFAULT_RECYCLE_BIN;
-import static com.anthonymandra.rawdroid.settings.StorageSettingsFragment.KEY_RecycleBinSize;
+import static com.anthonymandra.curator.settings.StorageSettingsFragment.DEFAULT_RECYCLE_BIN;
+import static com.anthonymandra.curator.settings.StorageSettingsFragment.KEY_RecycleBinSize;
 
 /**
  * Utility class for helping parsing file systems.

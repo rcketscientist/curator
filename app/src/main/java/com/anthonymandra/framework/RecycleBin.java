@@ -21,7 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.anthonymandra.rawdroid.data.DataRepository;
+import com.anthonymandra.curator.data.DataRepository;
 import com.anthonymandra.util.AppExecutors;
 import com.anthonymandra.util.FileUtil;
 

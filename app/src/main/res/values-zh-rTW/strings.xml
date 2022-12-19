@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="positive">接受</string>
 <string name="negative">拒絕</string>
 <string name="neutral">取消</string>

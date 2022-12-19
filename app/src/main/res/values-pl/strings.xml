@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="positive">Akceptuj</string>
 <string name="negative">Odrzuć</string>
 <string name="neutral">Anuluj</string>
@@ -89,7 +89,7 @@
 <string name="prefTitleShowNativeFiles">Pokaż ogólne obrazy</string>
 <string name="prefSummaryShowNativeFiles">Pokazuje pliki typu jpg, gif, bmp i png.</string>
 <string name="prefTitleShowUnknownFiles">Pokaż nieobsługiwane pliki</string>
-<string name="prefSummaryShowUnknownFiles">Wskazuje, że RawDroid nie przetwarza.</string>
+<string name="prefSummaryShowUnknownFiles">Wskazuje, że Curator nie przetwarza.</string>
 <string name="prefTitleImportKeywords">Importuj słowa kluczowe</string>
 <string name="prefSummaryImportKeywords">Kliknij aby importować plik słów kluczowych rozdzielonych znakami tabulacji, tak jak zostały wyeksportowane z programu Lightroom.</string>
 <string name="prefTitleShowNav">Pokaż Nawigację</string>
@@ -109,7 +109,7 @@
 <string name="restoreFile">Odzyskaj plik</string>
 <string name="emptyRecycleBin">Opróżnij kosz</string>
 <string name="saveJpg">Eksportuj miniaturki</string>
-	<string name="ratingRequest">Jeżeli spodobał Ci się RawDroid, proszę poświęć chwilę na jego ocenę.
+	<string name="ratingRequest">Jeżeli spodobał Ci się Curator, proszę poświęć chwilę na jego ocenę.
 \nJeżeli na Twoją ocenę miał wpływ błąd, który został naprawiony, to proszę abyś zaktualizował swoją ocenę.
 \nDziękuję za wsparcie. </string>
 <string name="importingImages">Importuję obrazy…</string>
@@ -145,7 +145,7 @@
 <string name="tutorialRename">Zmienia nazwy wszystkich wybranych plików zgodnie z wybranym wzorcem.</string>
 <string name="tutorialImport">Importuje wybrane obrazy do nowego miejsca przeznaczenia.</string>
 <string name="tutorialExport">Eksportuje wybrane obrazy jako miniaturki jpg.</string>
-<string name="tutorialStart">Witaj w samouczku programu Rawdroid!
+<string name="tutorialStart">Witaj w samouczku programu Curator!
 \nBędę wdzięczny za wszelkie informacje zwrotne, czasem trudno jest wytłumaczyć intymny problem niezainicjowanym :).</string>
 <string name="tutorialConnectTitle">Jak połączyć obrazy</string>
 <string name="tutorialConnect1">Są trzy metody dostępu do danych:</string>

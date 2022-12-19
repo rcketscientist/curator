@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<string name="app_name">RawDroid</string>
+<string name="app_name">Curator</string>
 <string name="positive">了解</string>
 <string name="negative">断る</string>
 <string name="neutral">キャンセル</string>
@@ -84,7 +84,7 @@
 <string name="prefTitleShowNativeFiles">一般的な画像の表示</string>
 <string name="prefSummaryShowNativeFiles">.jpg .gif .bmp .pngを表示します。</string>
 <string name="prefTitleShowUnknownFiles">未処理ファイルの表示</string>
-<string name="prefSummaryShowUnknownFiles">Rawdroidが処理しないファイルを表示します。</string>
+<string name="prefSummaryShowUnknownFiles">Curatorが処理しないファイルを表示します。</string>
 <string name="prefTitleImportKeywords">キーワードのインポート</string>
 <string name="prefSummaryImportKeywords">Lightroomから出力したタブ区切りのキーワードファイルをインポートします。</string>
 <string name="prefTitleUseLegacyViewer">旧ビューワーを使用</string>
@@ -103,7 +103,7 @@
 <string name="prefTitleWatermarkLocation">透かしの位置</string>
 <string name="prefTitleWatermarkAlpha">透かしの透明度</string>
 
-<string name="buypro">機能のロックを解除し速度向上するために、クリックしてRawdroid Proにアップグレードしてください。</string>
+<string name="buypro">機能のロックを解除し速度向上するために、クリックしてCurator Proにアップグレードしてください。</string>
 
 <string-array name="showOptions">
 <item>自動</item>
@@ -126,7 +126,7 @@
 <string name="restoreFile">ファイル復元</string>
 <string name="emptyRecycleBin">ゴミ箱を空にする</string>
 <string name="saveJpg">サムネイル出力</string>
-	<string name="ratingRequest">Rawdroidをお楽しみいただいているなら評価にご協力をお願いします。
+	<string name="ratingRequest">Curatorをお楽しみいただいているなら評価にご協力をお願いします。
 \n
 \nもし修正済みのバグを元に評価されている場合は評価の更新をお願いします。
 \n
@@ -164,7 +164,7 @@
 <string name="tutorialRename">全ての選択されたファイルを選択したテンプレートでリネームします。</string>
 <string name="tutorialImport">新たなコピー先に選択画像をインポートします。</string>
 <string name="tutorialExport">選択された画像を圧縮されたjpgサムネイルとして出力します。</string>
-<string name="tutorialStart">Rawdroidのチュートリアルへようこそ！
+<string name="tutorialStart">Curatorのチュートリアルへようこそ！
 \n専門的な事柄について初心者の方に分かりやすく説明する為、このチュートリアルに対してのフィードバックを歓迎します(*・ω・)v</string>
 <string name="tutorialConnectTitle">画像にアクセスするには</string>
 <string name="tutorialConnect1">データにアクセスするには3つの方法があります。:</string>
@@ -187,7 +187,7 @@
 
 	<string name="no_thumbnail">サムネイルがありません</string>
 <string name="license">ライセンス</string>
-<string name="watermark">ウォーターマーク(Pro)</string>
+<string name="watermark">ウォーターマーク</string>
     <string name="Name_ascending">ファイル名 \u25BC</string>
 
 </resources>

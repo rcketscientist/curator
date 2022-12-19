@@ -1,1 +1,1 @@
-# Rawdroid is an android project that brings raw image decode and workflow capabilities
+# Curator is an android project that brings raw image decode and workflow capabilities

@@ -286,7 +286,7 @@
 
     <string name="no_thumbnail">No thumbnail</string>
     <string name="license">License</string>
-    <string name="watermark">Watermark ( Pro )</string>
+    <string name="watermark">Watermark</string>
     <string name="filterTitle">Filter</string>
     <string name="editTitle">Edit</string>
     <string name="drawer_open">filter open</string>

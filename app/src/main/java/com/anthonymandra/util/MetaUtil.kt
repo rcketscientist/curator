@@ -2,23 +2,23 @@
 
 package com.anthonymandra.util
 
+//import com.crashlytics.android.Crashlytics
 import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.net.toUri
-import com.adobe.xmp.XMPException
-import com.adobe.xmp.XMPMeta
-import com.adobe.xmp.XMPMetaFactory
-import com.adobe.xmp.impl.XMPMetaImpl
-import com.adobe.xmp.options.PropertyOptions
-import com.adobe.xmp.options.SerializeOptions
+import com.adobe.internal.xmp.XMPException
+import com.adobe.internal.xmp.XMPMeta
+import com.adobe.internal.xmp.XMPMetaFactory
+import com.adobe.internal.xmp.impl.XMPMetaImpl
+import com.adobe.internal.xmp.options.PropertyOptions
+import com.adobe.internal.xmp.options.SerializeOptions
+import com.anthonymandra.curator.data.DataRepository
+import com.anthonymandra.curator.data.FolderEntity
+import com.anthonymandra.curator.data.ImageInfo
+import com.anthonymandra.curator.data.MetadataEntity
 import com.anthonymandra.framework.UsefulDocumentFile
-import com.anthonymandra.rawdroid.data.DataRepository
-import com.anthonymandra.rawdroid.data.FolderEntity
-import com.anthonymandra.rawdroid.data.ImageInfo
-import com.anthonymandra.rawdroid.data.MetadataEntity
-import com.crashlytics.android.Crashlytics
 import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.Directory
 import com.drew.metadata.Metadata
@@ -83,9 +83,9 @@ object MetaUtil {
 				val date = mMetaExtractorFormat.parse(rawDate)
 				imageInfo.timestamp = date.time
 			} catch (e: ParseException) {
-				Crashlytics.logException(e)
+//				Crashlytics.logException(e)
 			} catch (e: ArrayIndexOutOfBoundsException) {
-				Crashlytics.logException(e)
+//				Crashlytics.logException(e)
 			}
 
 		}
@@ -116,8 +116,8 @@ object MetaUtil {
 			image = c.contentResolver.openInputStream(uri)
 			meta = ImageMetadataReader.readMetadata(image)
 		} catch (e: Exception) {
-			Crashlytics.setString("readMetaUri", uri.toString())
-			Crashlytics.logException(e)
+//			Crashlytics.setString("readMetaUri", uri.toString())
+//			Crashlytics.logException(e)
 		} finally {
 			Util.closeSilently(image)
 		}

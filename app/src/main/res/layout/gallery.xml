@@ -89,12 +89,12 @@
                 android:src="@drawable/ic_add_white_24dp"
                 app:layout_anchor="@id/galleryView"
                 app:layout_anchorGravity="bottom|right|end"
-                app:layout_behavior="com.anthonymandra.rawdroid.ui.FabBehavior" />
+                app:layout_behavior="com.anthonymandra.curator.ui.FabBehavior" />
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <fragment
             android:id="@+id/editFragment"
-            android:name="com.anthonymandra.rawdroid.XmpEditFragment"
+            android:name="com.anthonymandra.curator.XmpEditFragment"
             android:layout_width="@dimen/xmp_edit_width"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
@@ -106,7 +106,7 @@
 
     <fragment
         android:id="@+id/filterFragment"
-        android:name="com.anthonymandra.rawdroid.XmpFilterFragment"
+        android:name="com.anthonymandra.curator.XmpFilterFragment"
         android:layout_width="@dimen/xmp_filter_width"
         android:layout_height="wrap_content"
         android:layout_gravity="start"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.8">
+      <module name="rawdroid.app" target="11" />
+      <module name="rawdroid.documentActivity" target="11" />
+      <module name="rawdroid.inscription" target="11" />
+      <module name="rawdroid.metadata-extractor.main" target="1.6" />
+      <module name="rawdroid.rawprocessor" target="11" />
+      <module name="rawdroid.showcaseView" target="11" />
+      <module name="rawdroid.ssiv" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

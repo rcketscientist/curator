@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="chinaBuyProTitle">User suggestion for Chinese users:</string>
-    <string name="chinaBuyProSummary">我安装了一个叫做fqrouter的软件，设置里面有一项功能，打开完整版市场，于是我就可以在google play搜到rawdroid pro,然后使用我的信用卡付款，账单地址由于没有中国内地可以选，于是我选的香港，在网上随便找了一个香港的地址填了，然后就购买成功了。</string>
+    <string name="chinaBuyProSummary">我安装了一个叫做fqrouter的软件，设置里面有一项功能，打开完整版市场，于是我就可以在google play搜到curator pro,然后使用我的信用卡付款，账单地址由于没有中国内地可以选，于是我选的香港，在网上随便找了一个香港的地址填了，然后就购买成功了。</string>
 </resources>
