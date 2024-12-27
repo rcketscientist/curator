@@ -16,7 +16,6 @@ import com.github.amlcurran.showcaseview.targets.MorphViewTarget
 import com.github.amlcurran.showcaseview.targets.PointTarget
 import com.github.amlcurran.showcaseview.targets.Target
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.gallery.*
 import java.io.File
 import java.io.FileOutputStream
 
@@ -44,6 +43,8 @@ class TutorialActivity : GalleryActivity() {
 	private val tutorialParent = FolderEntity("blah", true, false, -1)
 
 	private val databaseIds = mutableListOf<Long>()
+
+	private lateinit var binding: ResultProfileBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)

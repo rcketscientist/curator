@@ -69,14 +69,6 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	protected abstract val selectedIds: LongArray
 
-
-	/**
-	 * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
-	 * The layout should conform to viewer template (xmp, meta, histogram, etc).
-	 * @return The resource id of the layout to load
-	 */
-	protected abstract val contentView: Int
-
 	/**
 	 * @return The root view for this activity.
 	 */
@@ -85,18 +77,11 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(contentView)
 
 		licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
 
 		notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		createIoChannel()
-
-//		if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
-//			Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
-//			//TODO: Add link to Curator store page
-//			finish()
-//		}
 
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
@@ -435,7 +420,7 @@ abstract class CoreActivity : AppCompatActivity() {
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
 		}
 
-		val body = "Variant:   " + BuildConfig.FLAVOR + "\n" +
+		val body =
 			"Version:   " + BuildConfig.VERSION_NAME + "\n" +
 			"Make:      " + Build.MANUFACTURER + "\n" +
 			"Model:     " + Build.MODEL + "\n" +

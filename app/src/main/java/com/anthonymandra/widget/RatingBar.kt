@@ -7,7 +7,6 @@ import android.view.View
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.Label
 import com.google.android.material.button.MaterialButtonToggleGroup
-import kotlinx.android.synthetic.main.rating_bar.view.*
 
 import java.util.ArrayList
 
@@ -15,6 +14,32 @@ typealias OnRatingSelectionChangedListener = (List<Int>) -> Unit
 class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnRatingSelectionChangedListener? = null
+    private lateinit var _binding: RatingBarBinding? = null
+    private val binding get() = _binding!!
+
+//    init {
+//        View.inflate(context, R.layout.rating_bar, this)
+//        attachButtons()
+//        setDrawable()
+//    }
+
+    // Was using an init block, remove this comment if it works with android lifecycle
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = RatingBarBinding.inflate(inflater, container, false)
+        val view = binding.root
+        attachButtons()
+        setDrawable()
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     val checkedRatings: List<Int>
         get() {
@@ -38,12 +63,6 @@ class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             val ratings = checkedRatings
             return if (ratings.isNotEmpty()) ratings[0] else null
         }
-
-    init {
-        View.inflate(context, R.layout.rating_bar, this)
-        attachButtons()
-        setDrawable()
-    }
 
     private fun attachButtons() {
         addOnButtonCheckedListener { group, checkedId, isChecked ->

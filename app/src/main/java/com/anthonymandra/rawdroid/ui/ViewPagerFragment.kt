@@ -20,8 +20,8 @@ import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.full_image.*
-import kotlinx.android.synthetic.main.meta_panel.*
+//import kotlinx.android.synthetic.main.full_image.*
+//import kotlinx.android.synthetic.main.meta_panel.*
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ForkJoinPool
@@ -33,16 +33,35 @@ class ViewPagerFragment : Fragment() {
         ViewModelProvider(this).get(GalleryViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.full_image, container, false)
+    private var _binding: FullImageBinding? = null
+    private val binding get() = _binding!!
 
-        if (savedInstanceState != null) {
-            if (source == null && savedInstanceState.containsKey(BUNDLE_SOURCE)) {
-                source = savedInstanceState.getParcelable(BUNDLE_SOURCE)
-            }
-        }
-        return rootView
+    // TODO: This kotlinx migrations is suspect
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FullImageBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+//        val rootView = inflater.inflate(R.layout.full_image, container, false)
+//
+//        if (savedInstanceState != null) {
+//            if (source == null && savedInstanceState.containsKey(BUNDLE_SOURCE)) {
+//                source = savedInstanceState.getParcelable(BUNDLE_SOURCE)
+//            }
+//        }
+//        return rootView
+//    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

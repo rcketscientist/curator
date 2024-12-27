@@ -17,8 +17,6 @@ import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.rawdroid.ui.FolderDialog
 import com.anthonymandra.rawdroid.ui.SearchRequestListener
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.xmp_core.*
-import kotlinx.android.synthetic.main.xmp_filter_landscape.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
@@ -73,8 +71,28 @@ class XmpFilterFragment : XmpBaseFragment() {
                 sortColumn,
                 mHiddenFolders.asSequence().map { it.id }.toSet())
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.xmp_filter_landscape, container, false)
+    private lateinit var _binding: XmpFilterLandscapeBinding? = null
+    private val binding get() = _binding!!
+
+//    init {
+//        inflate(context, R.layout.material_color_key, this)
+//        addOnButtonCheckedListener { _, _, _ -> mListener?.invoke(checked) }
+//    }
+
+    // Was using an init block, remove this comment if it works with android lifecycle
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = MaterialColorKeyBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,31 +110,31 @@ class XmpFilterFragment : XmpBaseFragment() {
         mSegregateByType = preferences.getBoolean(mPrefSegregate, true)
 
         // Initial match setting
-        toggleAnd.isChecked = mAndTrueOrFalse
+        binding.toggleAnd.isChecked = mAndTrueOrFalse
 
         // TODO: Pretty sure I shouldn't need all these casts
         // Initial sort setting
         if (ascending) {
             if (ImageFilter.SortColumns.Name === sortColumn)
-                toggleSortAfirst.isChecked = true
+                binding.toggleSortAfirst.isChecked = true
             else
-                toggleSortOldFirst.isChecked = true
+                binding.toggleSortOldFirst.isChecked = true
         } else {
             if (ImageFilter.SortColumns.Name === sortColumn)
-                toggleSortZfirst.isChecked = true
+                binding.toggleSortZfirst.isChecked = true
             else
-                toggleSortYoungFirst.isChecked = true
+                binding.toggleSortYoungFirst.isChecked = true
         }
 
         // Initial segregate value
-        segregateToggleButton.isChecked = mSegregateByType
+        binding.segregateToggleButton.isChecked = mSegregateByType
 
-        clearFilterButton.setOnClickListener { clear() }
-        toggleAnd.addOnCheckedChangeListener { _, checked -> andOr = checked }
-        sortToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked -> setSort(checkedId) }
-        segregateToggleButton.addOnCheckedChangeListener { _, isChecked -> segregate = isChecked }
-        helpButton.setOnClickListener { startTutorial() }
-        foldersButton.setOnClickListener { showFolderDialog() }
+        binding.clearFilterButton.setOnClickListener { clear() }
+        binding.toggleAnd.addOnCheckedChangeListener { _, checked -> andOr = checked }
+        binding.sortToggleGroup.addOnButtonCheckedListener { group, checkedId, isChecked -> setSort(checkedId) }
+        binding.segregateToggleButton.addOnCheckedChangeListener { _, isChecked -> segregate = isChecked }
+        binding.helpButton.setOnClickListener { startTutorial() }
+        binding.foldersButton.setOnClickListener { showFolderDialog() }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

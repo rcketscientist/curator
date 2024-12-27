@@ -39,11 +39,9 @@ import com.inscription.WhatsNewDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
 
 open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
-	override val contentView = R.layout.gallery
 	override val selectedIds: LongArray
 		get() {
 			return galleryAdapter.selectedItems
@@ -56,11 +54,15 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	override val viewModel by lazy { ViewModelProvider(this).get(GalleryViewModel::class.java) }
 	private var imageCount = 0
 
-	protected val isContextModeActive: Boolean
-		get() = mMaterialCab.isActive()
+	protected val isContextModeActive: Boolean get() = mMaterialCab.isActive()
+
+	private lateinit var binding: GalleryBinding
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		binding = GalleryBinding.inflate(layoutInflater)
+		val view = binding.root
+		setContentView(view)
 
 		window.setFlags(
 				WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -174,10 +176,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		super.onNewIntent(intent)
 		if (UsbManager.ACTION_USB_DEVICE_ATTACHED == intent.action) {
 			/* There is absolutely no way to uniquely identify a usb device across connections
- So what we'll do instead is rely on the funky SAF host as a unique ID
- The flaw here is the severe edge case that in a multi-device situation we will not
- request permission for additional devices and jump out at the first recognized device.
- Well that and the fact Google will break all this in 6.1 */
+			 So what we'll do instead is rely on the funky SAF host as a unique ID
+			 The flaw here is the severe edge case that in a multi-device situation we will not
+			 request permission for additional devices and jump out at the first recognized device.
+			 Well that and the fact Google will break all this in 6.1 */
 
 			val permissibleUsb = preferences.getStringSet(PREFS_PERMISSIBLE_USB, HashSet())
 

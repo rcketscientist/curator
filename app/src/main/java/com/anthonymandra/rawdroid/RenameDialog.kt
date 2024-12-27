@@ -19,17 +19,19 @@ import com.crashlytics.android.Crashlytics
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.format_name.*
 import java.util.*
 
 class RenameDialog(
-		private val activity: CoreActivity,
-		// TODO: We should order these by capture time
-		private val itemsToRename: Collection<ImageInfo>) : Dialog(activity) {
+	private val activity: CoreActivity,
+	// TODO: We should order these by capture time
+	private val itemsToRename: Collection<ImageInfo>) : Dialog(activity) {
+	private lateinit var binding: FormatNameBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.format_name)
+		binding = FormatNameBinding.inflate(layoutInflater)
+		val view = binding.root
+
 		setTitle(context.getString(R.string.renameImages))
 		setCanceledOnTouchOutside(true)
 

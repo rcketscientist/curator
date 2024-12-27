@@ -36,7 +36,7 @@ public class SwapProvider extends ContentProvider {
 	private static final String TAG = SwapProvider.class.getSimpleName();
 
 	// The authority is the symbolic name for the provider class
-	public static final String AUTHORITY = BuildConfig.PROVIDER_AUTHORITY_SWAP;
+	public static final String AUTHORITY = com.anthonymandra.rawdroid.SwapProvider;
 
 	// UriMatcher used to match against incoming requests
 	private UriMatcher uriMatcher;

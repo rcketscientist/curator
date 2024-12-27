@@ -16,8 +16,6 @@ import com.anthonymandra.framework.DocumentUtil
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.FolderEntity
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.folder_list_item.*
-import kotlinx.android.synthetic.main.folder_visibility.*
 
 typealias SearchRequestListener = () -> Unit
 class FolderDialog : DialogFragment() {
@@ -40,8 +38,12 @@ class FolderDialog : DialogFragment() {
         return dialog
     }
 
+    private var _binding: FolderVisibilityBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.folder_visibility, container, false)
+        _binding = FolderVisibilityBinding.inflate(inflater, container, false)
+        val view = binding.root
         val x = requireArguments().getInt(ARG_X)
         val y = requireArguments().getInt(ARG_Y)
 
@@ -54,7 +56,12 @@ class FolderDialog : DialogFragment() {
             it.attributes = params
         }
 
-        return v
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

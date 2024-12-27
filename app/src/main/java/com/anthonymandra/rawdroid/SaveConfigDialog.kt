@@ -13,19 +13,18 @@ import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
 import com.anthonymandra.image.TiffConfiguration
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.save_dialog.*
-import kotlinx.android.synthetic.main.save_jpg.*
-import kotlinx.android.synthetic.main.save_tiff.*
 
 typealias SaveConfigurationListener = (ImageConfiguration) -> Unit
 class SaveConfigDialog(activity: Activity) : Dialog(activity) {
 
     private var onSaveConfiguration: SaveConfigurationListener? = null
+    private lateinit var binding: SaveDialogBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.save_dialog)
-        setTitle(R.string.saveAs)
+        binding = SaveDialogBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val adapter = CustomPagerAdapter(tabContainer)
         tabContainer.adapter = adapter

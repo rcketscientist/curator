@@ -8,7 +8,6 @@ import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.util.MetaUtil
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.fileview.*
 
 @Suppress("DEPRECATION")
 class GalleryViewHolder(override val containerView: View)
@@ -20,6 +19,17 @@ class GalleryViewHolder(override val containerView: View)
 	private val yellow: Int = containerView.resources.getColor(R.color.startYellow)
 	private val green: Int = containerView.resources.getColor(R.color.startGreen)
 	private val red: Int = containerView.resources.getColor(R.color.startRed)
+
+	private var _binding: ResultProfileBinding? = null
+	private val binding get() = _binding!!
+
+	companion object {
+		fun create(parent: ViewGroup): GalleryViewHolder {
+			_binding = ResultProfileBinding.inflate(inflater, container, false)
+			val view = binding.root
+			return GalleryViewHolder(view)
+		}
+	}
 
 	fun bind(image: ImageInfo?) {
 		this.image = image
@@ -51,19 +61,12 @@ class GalleryViewHolder(override val containerView: View)
 		// FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
 		image?.let {
 			GlideApp.with(itemView.context)
-					.load(it)
-					.centerCrop()
-					.into(galleryImageView)
+				.load(it)
+				.centerCrop()
+				.into(galleryImageView)
 			// TODO: Glide handles exif orientation, how do we align behavior with non-exif thumbs?
 //            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
 		}
 	}
 
-	companion object {
-		fun create(parent: ViewGroup): GalleryViewHolder {
-			val view = LayoutInflater.from(parent.context)
-					.inflate(R.layout.fileview, parent, false)
-			return GalleryViewHolder(view)
-		}
-	}
 }

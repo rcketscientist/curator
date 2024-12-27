@@ -9,8 +9,6 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
-import kotlinx.android.synthetic.main.xmp_edit_landscape.*
-import kotlinx.android.synthetic.main.xmp_subject_edit.*
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
@@ -38,6 +36,24 @@ class XmpEditFragment : XmpBaseFragment() {
     private val rating: Int?
 			get() { return ratings.firstOrNull() }
 
+    private var _binding: XmpEditLandscapeBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = XmpEditLandscapeBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     fun setRatingListener(listener: RatingChangedListener) {
         mRatingListener = listener
     }
@@ -60,10 +76,6 @@ class XmpEditFragment : XmpBaseFragment() {
         recentXmp.subject = xmp.subject
 
 				mXmpChangedListener?.invoke(recentXmp)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.xmp_edit_landscape, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

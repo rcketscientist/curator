@@ -31,11 +31,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.viewer_pager.*
 import java.util.*
 
 class ViewerActivity : CoreActivity() {
-	override val contentView = R.layout.viewer_pager
 	private lateinit var viewerAdapter: ViewerAdapter
 	private var currentImage: ImageInfo? = null
 
@@ -51,6 +49,8 @@ class ViewerActivity : CoreActivity() {
 	private var displayWidth = 0
 	private var displayHeight = 0
 
+	private lateinit var binding: ViewerPagerBinding
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		val styleId = when (preferences.getString(KEY_MetaSize, "Medium")) {
 			"Small" -> R.style.MetaStyle_Small
@@ -60,6 +60,9 @@ class ViewerActivity : CoreActivity() {
 		theme.applyStyle(styleId, true)   //must be called before setContentView
 
 		super.onCreate(savedInstanceState)
+		binding = ViewerPagerBinding.inflate(layoutInflater)
+		val view = binding.root
+		setContentView(view)
 
 		setSupportActionBar(viewerToolbar)
 		supportActionBar?.setDisplayShowTitleEnabled(false)
