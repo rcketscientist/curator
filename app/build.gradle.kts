@@ -92,13 +92,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":showcaseView"))
+//    implementation(project(":showcaseView"))
     implementation(project(":inscription"))
     implementation(project(":metadata-extractor"))
     implementation(project(":rawprocessor"))
 //    implementation(project(":documentActivity"))
-//    implementation("com.anthonymandra.DocumentActivity.library:1.0.0")
     implementation(project(":ssiv"))
+    implementation("com.github.rcketscientist:DocumentActivity:1.0.0")
+    implementation("com.github.rcketscientist:showcaseview:4.0.0")
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
@@ -150,12 +151,18 @@ dependencies {
     testImplementation("androidx.room:room-testing:${rootProject.extra["roomVersion"]}")
 
     // Debug
-    debugImplementation("com.amitshekhar.android:debug-db:1.0.5")
+    debugImplementation("com.github.amitshekhariitbhu.Android-Debug-Database:debug-db:1.0.7")
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0-alpha-2")
 //
 //    implementation("com.google.firebase:firebase-analytics:17.4.4")
 //    implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")
 //    implementation("com.crashlytics.sdk.android:crashlytics-ndk:2.1.1")
+}
+
+repositories {
+    google()
+    mavenCentral()
+    maven { setUrl("https://jitpack.io") }
 }
 
 //crashlytics {

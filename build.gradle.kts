@@ -2,6 +2,7 @@
 plugins {
     id("com.android.application") version "7.4.0" apply false
 //    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
+    id("org.jetbrains.kotlin.plugin.parcelize") version "2.1.20-Beta1" apply false
     id("org.jetbrains.kotlin.kapt") version "2.1.0" apply false
 //    id("io.fabric.tools") version "1.31.2" apply false
 }
@@ -26,6 +27,7 @@ buildscript {
         classpath("com.android.tools.build:gradle:7.3.1")
 //        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.google.gms:google-services:4.3.3")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.20")
 //        classpath("io.fabric.tools:gradle:1.31.2")
     }
     repositories {
@@ -34,6 +36,11 @@ buildscript {
 }
 repositories {
     google()
+    jcenter()
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/rcketscientist/*")
+    }
 }
 
 //allprojects {
