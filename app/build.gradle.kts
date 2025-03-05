@@ -7,7 +7,6 @@ plugins {
 //    id("io.fabric")
 }
 
-//noinspection GroovyMissingReturnStatement
 android {
     val versionMajor = 6
     val versionMinor = 2
@@ -51,10 +50,10 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(project.properties["RELEASE_STORE_FILE"] as String)
-            storePassword = project.properties["RELEASE_STORE_PASSWORD"] as String
-            keyAlias = project.properties["RELEASE_KEY_ALIAS"] as String
-            keyPassword = project.properties["RELEASE_KEY_PASSWORD"] as String
+            storeFile = file(project.properties["RELEASE_STORE_FILE"] as String? ?: "dummy")
+            storePassword = project.properties["RELEASE_STORE_PASSWORD"] as String? ?: "dummy"
+            keyAlias = project.properties["RELEASE_KEY_ALIAS"] as String? ?: "dummy"
+            keyPassword = project.properties["RELEASE_KEY_PASSWORD"] as String? ?: "dummy"
         }
     }
 
