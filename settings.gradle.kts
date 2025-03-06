@@ -16,11 +16,6 @@ dependencyResolutionManagement {
 include("app")
 include("inscription")
 include("metadata-extractor")
-//include(":documentActivity")
-//project(":documentActivity").projectDir = file("DocumentActivity/library")
-
-//include(":showcaseView")
-//project(":showcaseView").projectDir = file("showcaseView/library")
 
 include(":rawprocessor")
 project(":rawprocessor").projectDir = file("rawprocessor/library")

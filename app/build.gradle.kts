@@ -92,11 +92,9 @@ android {
 }
 
 dependencies {
-//    implementation(project(":showcaseView"))
     implementation(project(":inscription"))
     implementation(project(":metadata-extractor"))
     implementation(project(":rawprocessor"))
-//    implementation(project(":documentActivity"))
     implementation(project(":ssiv"))
     implementation("com.github.rcketscientist:DocumentActivity:1.0.0")
     implementation("com.github.rcketscientist:showcaseview:4.0.0")
