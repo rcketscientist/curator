@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id("com.android.application") version "7.4.0" apply false
+    id("com.android.application") version "8.9.0" apply false
 //    id("org.jetbrains.kotlin.android") version "2.1.0" apply false
     id("org.jetbrains.kotlin.plugin.parcelize") version "2.1.20-Beta1" apply false
     id("org.jetbrains.kotlin.kapt") version "2.1.0" apply false
@@ -24,10 +24,10 @@ buildscript {
         set("workVersion", "2.4.0")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.android.tools.build:gradle:8.9.0")
 //        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-        classpath("com.google.gms:google-services:4.3.3")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.20")
+        classpath("com.google.gms:google-services:4.3.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21")
 //        classpath("io.fabric.tools:gradle:1.31.2")
     }
     repositories {

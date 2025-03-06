@@ -88,6 +88,7 @@ android {
         //https://stackoverflow.com/questions/59488983/why-i-still-get-cannot-inline-bytecode-built-with-jvm-target-1-8-into-bytecode
         jvmTarget = "1.8"
     }
+    namespace = "com.anthonymandra.rawdroid"
 }
 
 dependencies {
