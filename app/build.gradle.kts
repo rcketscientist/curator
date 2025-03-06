@@ -65,7 +65,7 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.txt"
             )
-//            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             // Disable fabric build ID generation for debug builds
@@ -160,7 +160,7 @@ dependencies {
 repositories {
     google()
     mavenCentral()
-    maven { setUrl("https://jitpack.io") }
+    maven { url = uri("https://jitpack.io") }
 }
 
 //crashlytics {
