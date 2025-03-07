@@ -150,7 +150,7 @@ dependencies {
 
     // Debug
     debugImplementation("com.github.amitshekhariitbhu.Android-Debug-Database:debug-db:1.0.7")
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0-alpha-2")
+//    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.0-alpha-2")
 //
 //    implementation("com.google.firebase:firebase-analytics:17.4.4")
 //    implementation("com.crashlytics.sdk.android:crashlytics:2.10.1")

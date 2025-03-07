@@ -11,7 +11,7 @@ buildscript {
 
     extra.apply {
         set("kotlinVersion", "2.1.0")
-        set("compileSdkVersion", "android-28")
+        set("compileSdkVersion", "android-35")
         set("annotationVersion", "1.1.0")
         set("exifVersion", "1.0.0")
         set("materialVersion", "1.1.0")

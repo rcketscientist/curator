@@ -8,6 +8,7 @@
    6. https://developer.android.com/training/data-storage/shared/photopicker
 7. edge-to-edge?
    8. https://developer.android.com/develop/ui/compose/layouts/insets
+9. revive leak canary?
 
 # Probably unnecessary migrations
 

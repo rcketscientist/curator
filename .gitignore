@@ -32,6 +32,7 @@ google-services.json
 # Android Profiling
 *.hprof
 
+.kotlin
 /build
 /app/build
 /captures
