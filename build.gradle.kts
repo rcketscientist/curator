@@ -18,7 +18,6 @@ buildscript {
         set("coreVersion", "1.3.1")
         set("lifecycleVersion", "2.2.0")
         set("roomVersion", "2.2.5")
-        set("roomVersion", "2.2.5")
         set("pagingVersion", "2.1.2")
         set("coreTestingVersion", "2.1.0")
         set("workVersion", "2.4.0")
@@ -54,5 +53,5 @@ repositories {
 //}
 
 tasks.create<Delete>("clean") {
-    delete = setOf ( rootProject.buildDir )
+    delete = setOf ( getLayout().buildDirectory)
 }
