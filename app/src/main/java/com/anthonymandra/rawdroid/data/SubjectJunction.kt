@@ -4,8 +4,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 
-import androidx.room.ForeignKey.CASCADE
-
 @Entity(
     tableName = "meta_subject_junction",
     primaryKeys = [ "metaId", "subjectId" ],
@@ -17,12 +15,12 @@ import androidx.room.ForeignKey.CASCADE
             entity = MetadataEntity::class,
             parentColumns = [ "id" ],
             childColumns = [ "metaId" ],
-            onDelete = CASCADE),
+            onDelete = ForeignKey.CASCADE),
         ForeignKey(
             entity = SubjectEntity::class,
             parentColumns = [ "id" ],
             childColumns = [ "subjectId" ],
-            onDelete = CASCADE)])
+            onDelete = ForeignKey.CASCADE)])
 data class SubjectJunction(
         var metaId: Long,
         var subjectId: Long)
