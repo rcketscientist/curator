@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import com.anthonymandra.rawdroid.databinding.XmpEditLandscapeBinding
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*

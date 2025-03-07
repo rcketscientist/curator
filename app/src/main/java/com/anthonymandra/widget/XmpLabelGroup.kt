@@ -1,9 +1,13 @@
 package com.anthonymandra.widget
 
 import android.content.Context
+import android.os.Bundle
 import android.util.AttributeSet
-import com.anthonymandra.rawdroid.R
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.anthonymandra.rawdroid.data.Label
+import com.anthonymandra.rawdroid.databinding.MaterialColorKeyBinding
 import com.google.android.material.button.MaterialButtonToggleGroup
 import java.util.*
 
@@ -14,7 +18,7 @@ class XmpLabelGroup
         : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnLabelSelectionChangedListener? = null
-    private lateinit var _binding: MaterialColorKeyBinding? = null
+    private var _binding: MaterialColorKeyBinding? = null
     private val binding get() = _binding!!
 
 //    init {

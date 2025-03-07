@@ -29,6 +29,7 @@ import com.afollestad.materialcab.attached.isActive
 import com.afollestad.materialcab.createCab
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.UsefulDocumentFile
+import com.anthonymandra.rawdroid.databinding.GalleryBinding
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil

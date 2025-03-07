@@ -13,6 +13,7 @@ import androidx.preference.PreferenceManager
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import com.anthonymandra.rawdroid.databinding.XmpFilterLandscapeBinding
 import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.rawdroid.ui.FolderDialog
 import com.anthonymandra.rawdroid.ui.SearchRequestListener
@@ -71,7 +72,7 @@ class XmpFilterFragment : XmpBaseFragment() {
                 sortColumn,
                 mHiddenFolders.asSequence().map { it.id }.toSet())
 
-    private lateinit var _binding: XmpFilterLandscapeBinding? = null
+    private var _binding: XmpFilterLandscapeBinding? = null
     private val binding get() = _binding!!
 
 //    init {
@@ -85,7 +86,7 @@ class XmpFilterFragment : XmpBaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = MaterialColorKeyBinding.inflate(inflater, container, false)
+        _binding = XmpFilterLandscapeBinding.inflate(inflater, container, false)
         val view = binding.root
         return view
     }

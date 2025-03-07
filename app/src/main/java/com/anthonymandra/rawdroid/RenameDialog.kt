@@ -13,6 +13,7 @@ import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
 import com.anthonymandra.rawdroid.data.ImageInfo
+import com.anthonymandra.rawdroid.databinding.FormatNameBinding
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.ImageUtil
 import com.crashlytics.android.Crashlytics

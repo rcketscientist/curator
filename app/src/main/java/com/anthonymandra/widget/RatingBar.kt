@@ -1,11 +1,15 @@
 package com.anthonymandra.widget
 
 import android.content.Context
+import android.os.Bundle
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.Label
+import com.anthonymandra.rawdroid.databinding.RatingBarBinding
 import com.google.android.material.button.MaterialButtonToggleGroup
 
 import java.util.ArrayList
@@ -14,7 +18,7 @@ typealias OnRatingSelectionChangedListener = (List<Int>) -> Unit
 class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnRatingSelectionChangedListener? = null
-    private lateinit var _binding: RatingBarBinding? = null
+    private var _binding: RatingBarBinding? = null
     private val binding get() = _binding!!
 
 //    init {

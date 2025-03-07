@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
 import com.anthonymandra.image.TiffConfiguration
+import com.anthonymandra.rawdroid.databinding.SaveDialogBinding
 import com.google.android.material.snackbar.Snackbar
 
 typealias SaveConfigurationListener = (ImageConfiguration) -> Unit

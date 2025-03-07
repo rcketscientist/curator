@@ -44,8 +44,6 @@ class TutorialActivity : GalleryActivity() {
 
 	private val databaseIds = mutableListOf<Long>()
 
-	private lateinit var binding: ResultProfileBinding
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 

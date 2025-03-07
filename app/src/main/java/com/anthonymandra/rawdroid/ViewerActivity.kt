@@ -18,6 +18,7 @@ import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.SwapProvider
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.data.TempViewerDataSource
+import com.anthonymandra.rawdroid.databinding.ViewerPagerBinding
 import com.anthonymandra.rawdroid.settings.MetaSettingsFragment
 import com.anthonymandra.rawdroid.settings.MetaSettingsFragment.Companion.KEY_MetaSize
 import com.anthonymandra.rawdroid.settings.ShareSettingsFragment
