@@ -41,14 +41,20 @@ class ViewPagerFragment : Fragment() {
     private var _metaBinding: MetaPanelBinding? = null
     private val metaBinding get() = _metaBinding!!
 
-    // TODO: This kotlinx migrations is suspect
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FullImageBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        if (savedInstanceState != null) {
+            if (source == null && savedInstanceState.containsKey(BUNDLE_SOURCE)) {
+                source = savedInstanceState.getParcelable(BUNDLE_SOURCE)
+            }
+        }
+
         return view
     }
 
@@ -56,17 +62,6 @@ class ViewPagerFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        val rootView = inflater.inflate(R.layout.full_image, container, false)
-//
-//        if (savedInstanceState != null) {
-//            if (source == null && savedInstanceState.containsKey(BUNDLE_SOURCE)) {
-//                source = savedInstanceState.getParcelable(BUNDLE_SOURCE)
-//            }
-//        }
-//        return rootView
-//    }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
