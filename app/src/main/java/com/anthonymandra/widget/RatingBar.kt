@@ -18,46 +18,27 @@ typealias OnRatingSelectionChangedListener = (List<Int>) -> Unit
 class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : MaterialButtonToggleGroup(context, attrs, defStyleAttr) {
 
     private var mListener: OnRatingSelectionChangedListener? = null
-    private var _binding: RatingBarBinding? = null
-    private val binding get() = _binding!!
+    private val binding: RatingBarBinding =
+        RatingBarBinding.inflate(LayoutInflater.from(context), this)
 
-//    init {
-//        View.inflate(context, R.layout.rating_bar, this)
-//        attachButtons()
-//        setDrawable()
-//    }
-
-    // Was using an init block, remove this comment if it works with android lifecycle
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = RatingBarBinding.inflate(inflater, container, false)
-        val view = binding.root
+    init {
         attachButtons()
         setDrawable()
-        return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     val checkedRatings: List<Int>
         get() {
             val checked = ArrayList<Int>()
-            if (rating5 == null) return checked // TODO: Need to address the different logic in material toggle, get rid of all these null handles
-            if (rating5.isChecked)
+            if (binding.rating5 == null) return checked // TODO: Need to address the different logic in material toggle, get rid of all these null handles
+            if (binding.rating5.isChecked)
                 checked.add(5)
-            if (rating4.isChecked)
+            if (binding.rating4.isChecked)
                 checked.add(4)
-            if (rating3.isChecked)
+            if (binding.rating3.isChecked)
                 checked.add(3)
-            if (rating2.isChecked)
+            if (binding.rating2.isChecked)
                 checked.add(2)
-            if (rating1.isChecked)
+            if (binding.rating1.isChecked)
                 checked.add(1)
             return checked
         }
@@ -74,49 +55,49 @@ class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             if (isSingleSelection) {
                 // If there's no checked button, clear
                 if (checkedButtonId == View.NO_ID) {
-                    rating1?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                    rating2?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                    rating3?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                    rating4?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                    rating5?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    binding.rating1?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    binding.rating2?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    binding.rating3?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    binding.rating4?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                    binding.rating5?.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
                 }
                 else if (isChecked) {
                     when (checkedId) {
                         // Cascade selected stars down like a typical ratingbar
                         R.id.rating5 -> {
-                            rating5.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating5.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
                         }
                         R.id.rating4 -> {
-                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating4.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
                         }
                         R.id.rating3 -> {
-                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating3.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
                         }
                         R.id.rating2 -> {
-                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating3.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
-                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating3.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating2.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
                         }
                         R.id.rating1 -> {
-                            rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating3.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating2.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
-                            rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
+                            binding.rating5.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating4.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating3.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating2.icon = resources.getDrawable(R.drawable.ic_star_border, context.theme)
+                            binding.rating1.icon = resources.getDrawable(R.drawable.ic_star, context.theme)
                         }
                     }
                 }
@@ -133,11 +114,11 @@ class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     private fun setDrawable() {
         val drawableId = if (isSingleSelection) R.drawable.ic_star_border else R.drawable.multi_select_star
-        rating1?.icon = resources.getDrawable(drawableId, context.theme)
-        rating2?.icon = resources.getDrawable(drawableId, context.theme)
-        rating3?.icon = resources.getDrawable(drawableId, context.theme)
-        rating4?.icon = resources.getDrawable(drawableId, context.theme)
-        rating5?.icon = resources.getDrawable(drawableId, context.theme)
+        binding.rating1?.icon = resources.getDrawable(drawableId, context.theme)
+        binding.rating2?.icon = resources.getDrawable(drawableId, context.theme)
+        binding.rating3?.icon = resources.getDrawable(drawableId, context.theme)
+        binding.rating4?.icon = resources.getDrawable(drawableId, context.theme)
+        binding.rating5?.icon = resources.getDrawable(drawableId, context.theme)
     }
 
     /**
@@ -156,11 +137,11 @@ class RatingBar @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     fun setRating(rating: Int?) {
         when (rating) {
-            5 -> rating5.isChecked = true
-            4 -> rating4.isChecked = true
-            3 -> rating3.isChecked = true
-            2 -> rating2.isChecked = true
-            1 -> rating1.isChecked = true
+            5 -> binding.rating5.isChecked = true
+            4 -> binding.rating4.isChecked = true
+            3 -> binding.rating3.isChecked = true
+            2 -> binding.rating2.isChecked = true
+            1 -> binding.rating1.isChecked = true
             else -> {
             }
         }

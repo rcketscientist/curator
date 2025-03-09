@@ -13,6 +13,8 @@ import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.image.JpegConfiguration
 import com.anthonymandra.image.TiffConfiguration
 import com.anthonymandra.rawdroid.databinding.SaveDialogBinding
+import com.anthonymandra.rawdroid.databinding.SaveJpgBinding
+import com.anthonymandra.rawdroid.databinding.SaveTiffBinding
 import com.google.android.material.snackbar.Snackbar
 
 typealias SaveConfigurationListener = (ImageConfiguration) -> Unit
@@ -20,6 +22,8 @@ class SaveConfigDialog(activity: Activity) : Dialog(activity) {
 
     private var onSaveConfiguration: SaveConfigurationListener? = null
     private lateinit var binding: SaveDialogBinding
+    private lateinit var jpgBinding: SaveJpgBinding
+    private lateinit var  tiffBinding: SaveTiffBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +31,13 @@ class SaveConfigDialog(activity: Activity) : Dialog(activity) {
         val view = binding.root
         setContentView(view)
 
-        val adapter = CustomPagerAdapter(tabContainer)
-        tabContainer.adapter = adapter
-        tabLayout.setupWithViewPager(tabContainer)
+        val adapter = CustomPagerAdapter(binding.tabContainer)
+        binding.tabContainer.adapter = adapter
+        binding.tabLayout.setupWithViewPager(binding.tabContainer)
 
-        checkBoxSetDefault.setOnCheckedChangeListener { _, isChecked ->
+        binding.checkBoxSetDefault.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                Snackbar.make(dialog,
+                Snackbar.make(binding.dialog,
                     Html.fromHtml(
                         context.getString(R.string.saveDefaultConfirm) +
                             "  <i>" + context.getString(R.string.settingsReset) + "</i>"),
@@ -42,9 +46,9 @@ class SaveConfigDialog(activity: Activity) : Dialog(activity) {
             }
         }
 
-        seekBarQuality.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        jpgBinding.seekBarQuality.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                valueQuality.text = progress.toString()
+                jpgBinding.valueQuality.text = progress.toString()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -52,20 +56,20 @@ class SaveConfigDialog(activity: Activity) : Dialog(activity) {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
 
-        buttonSave.setOnClickListener {
-            val formatConfig = when (tabLayout.selectedTabPosition) {
-                0 -> JpegConfiguration(seekBarQuality.progress)
-                1 -> TiffConfiguration(switchCompress.isChecked)
+        binding.buttonSave.setOnClickListener {
+            val formatConfig = when (binding.tabLayout.selectedTabPosition) {
+                0 -> JpegConfiguration(jpgBinding.seekBarQuality.progress)
+                1 -> TiffConfiguration(tiffBinding.switchCompress.isChecked)
                 else -> JpegConfiguration()
             }
             onSaveConfiguration?.invoke(formatConfig)
 
-            if (checkBoxSetDefault.isChecked)
+            if (binding.checkBoxSetDefault.isChecked)
                 formatConfig.savePreference(context)
 
             dismiss()
         }
-        buttonCancel.setOnClickListener { dismiss() }
+        binding.buttonCancel.setOnClickListener { dismiss() }
     }
 
     fun setSaveConfigurationListener(callback: SaveConfigurationListener) {

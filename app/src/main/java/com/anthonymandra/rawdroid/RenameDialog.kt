@@ -16,7 +16,7 @@ import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.databinding.FormatNameBinding
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.ImageUtil
-import com.crashlytics.android.Crashlytics
+//import com.crashlytics.android.Crashlytics
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
@@ -36,7 +36,7 @@ class RenameDialog(
 		setTitle(context.getString(R.string.renameImages))
 		setCanceledOnTouchOutside(true)
 
-		nameTextView.addTextChangedListener(object : TextWatcher {
+		binding.nameTextView.addTextChangedListener(object : TextWatcher {
 			override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
 			override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
@@ -47,7 +47,7 @@ class RenameDialog(
 			}
 		})
 
-		formatSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+		binding.formatSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 			@SuppressLint("SetTextI18n")
 			override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 				updateExample()
@@ -56,14 +56,14 @@ class RenameDialog(
 			override fun onNothingSelected(parent: AdapterView<*>) {}
 		}
 
-		renameButton.setOnClickListener {
-			val customName = nameTextView.text.toString()
-			val selected = formatSpinner.selectedItemPosition
+		binding.renameButton.setOnClickListener {
+			val customName = binding.nameTextView.text.toString()
+			val selected = binding.formatSpinner.selectedItemPosition
 			renameImages(itemsToRename, selected, customName)
 			dismiss()
 		}
 
-		cancelButton.setOnClickListener { dismiss() }
+		binding.cancelButton.setOnClickListener { dismiss() }
 	}
 
 	fun renameImages(images: Collection<ImageInfo>, format: Int, customName: String) {
@@ -102,7 +102,7 @@ class RenameDialog(
 							activity.incrementProgress()
 							activity.notificationManager.notify(0, builder.build())
 							it.printStackTrace()
-							Crashlytics.logException(it)
+//							Crashlytics.logException(it)
 						}
 				)
 	}
@@ -146,10 +146,10 @@ class RenameDialog(
 
 	@SuppressLint("SetTextI18n")
 	private fun updateExample() {
-		exampleTextView.text = "Ex: " + formatRename(formatSpinner.selectedItemPosition,
-				nameTextView.text.toString(),
-				itemsToRename.size - 1,
-				itemsToRename.size)
+		binding.exampleTextView.text = "Ex: " + formatRename(binding.formatSpinner.selectedItemPosition,
+			binding.nameTextView.text.toString(),
+			itemsToRename.size - 1,
+			itemsToRename.size)
 	}
 
 	private fun numDigits(x: Int): Int {

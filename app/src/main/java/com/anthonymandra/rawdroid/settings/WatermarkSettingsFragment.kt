@@ -6,9 +6,6 @@ import androidx.preference.CheckBoxPreference
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager.getDefaultSharedPreferences
-import com.anthonymandra.framework.License
-import com.anthonymandra.rawdroid.Constants
-import com.anthonymandra.rawdroid.LicenseManager
 import com.anthonymandra.rawdroid.R
 
 class WatermarkSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -39,7 +36,7 @@ class WatermarkSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             KEY_EnableWatermark -> updateWatermarkEnabled()
             KEY_WatermarkLocation -> updateWatermarkLocation()
@@ -52,14 +49,8 @@ class WatermarkSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.
     }
 
     private fun updateWatermarkEnabled() {
-        val isLicensed = Constants.VariantCode > 8 && LicenseManager.getLastResponse() == License.LicenseState.pro
         val enableWatermark: CheckBoxPreference? = findPreference(KEY_EnableWatermark)
-        enableWatermark?.isEnabled = isLicensed
-        if (!isLicensed) {
-            enableWatermark?.isChecked = false
-        } else {
-            enableWatermark?.isChecked = sharedPreferences.getBoolean(KEY_EnableWatermark, false)
-        }
+        enableWatermark?.isChecked = sharedPreferences.getBoolean(KEY_EnableWatermark, false)
     }
 
     private fun updateWatermarkLocation() {

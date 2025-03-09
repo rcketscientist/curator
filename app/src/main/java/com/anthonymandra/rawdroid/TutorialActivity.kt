@@ -123,14 +123,14 @@ class TutorialActivity : GalleryActivity() {
 		if (galleryAdapter.itemCount < position + 1)
 			closeTutorialWithError()
 		else
-			onItemClick(galleryAdapter, galleryView.getChildAt(position), position, position.toLong())
+			onItemClick(galleryAdapter, binding.galleryView.getChildAt(position), position, position.toLong())
 	}
 
 	private fun programmaticLongClick(position: Int) {
 		if (galleryAdapter.itemCount < position + 1)
 			closeTutorialWithError()
 		else
-			onItemLongClick(galleryAdapter, galleryView.getChildAt(position), position, position.toLong())
+			onItemLongClick(galleryAdapter, binding.galleryView.getChildAt(position), position, position.toLong())
 	}
 
 	private fun closeTutorialWithError() {
@@ -166,7 +166,7 @@ class TutorialActivity : GalleryActivity() {
 				-> {
 					tutorial.setContentTitle(getString(R.string.tutorialSelectTitle))
 					tutorial.setContentText(getString(R.string.tutorialSingleSelectText))
-					val view = galleryView.getChildAt(0)
+					val view = binding.galleryView.getChildAt(0)
 					if (view != null)
 						tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
 					else
@@ -179,7 +179,7 @@ class TutorialActivity : GalleryActivity() {
 						programmaticLongClick(0)
 
 					tutorial.setContentText(getString(R.string.tutorialMultiSelectText))
-					val view = galleryView.getChildAt(2)
+					val view = binding.galleryView.getChildAt(2)
 					if (view != null)
 						tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
 					else
@@ -217,7 +217,7 @@ class TutorialActivity : GalleryActivity() {
 					endContextMode()
 
 					tutorial.setContentText(getString(R.string.tutorialSelectBetweenText1))
-					val view = galleryView.getChildAt(1)        //WTF index is backwards.
+					val view = binding.galleryView.getChildAt(1)        //WTF index is backwards.
 					if (view != null)
 						tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
 					else
@@ -235,7 +235,7 @@ class TutorialActivity : GalleryActivity() {
 					tutorial.setContentText(getString(R.string.tutorialSelectBetweenText2))
 
 					setTutorialHomeView(tutorial, true)
-					val view = galleryView.getChildAt(3)    //WTF index is backwards.
+					val view = binding.galleryView.getChildAt(3)    //WTF index is backwards.
 					if (view != null)
 						tutorial.setShowcase(MorphViewTarget(view, galleryItemMargin), true)
 					else
@@ -348,7 +348,7 @@ class TutorialActivity : GalleryActivity() {
 		val itemView = findViewById<View>(itemId)
 		target = if (itemView == null) {
 			//List of all mToolbar items, assuming last is overflow
-			val views = galleryToolbar.touchables
+			val views = binding.galleryToolbar.touchables
 			MorphViewTarget(views[views.size - 1]) //overflow
 		} else {
 			MorphViewTarget(itemView)

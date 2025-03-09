@@ -41,7 +41,7 @@ class ViewerActivity : CoreActivity() {
 	private var autoHide = Timer()
 
 	override val selectedIds: LongArray
-		get() = listOfNotNull(viewerAdapter.getValue(pager.currentItem)?.id).toLongArray()
+		get() = listOfNotNull(viewerAdapter.getValue(binding.pager.currentItem)?.id).toLongArray()
 
 	override val viewModel: GalleryViewModel by lazy {
 		ViewModelProvider(this).get(GalleryViewModel::class.java)
@@ -65,7 +65,7 @@ class ViewerActivity : CoreActivity() {
 		val view = binding.root
 		setContentView(view)
 
-		setSupportActionBar(viewerToolbar)
+		setSupportActionBar(binding.viewerToolbar)
 		supportActionBar?.setDisplayShowTitleEnabled(false)
 
 		val metrics = DisplayMetrics()
@@ -87,21 +87,26 @@ class ViewerActivity : CoreActivity() {
 			}
 		} else if (intent.action == ACTION_SEND_MULTIPLE) {	// External, add data
 			val stream = intent.getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
-			createTempDataSource(stream)
+			if (stream != null) {
+				createTempDataSource(stream)
+			}
 		} else {    // Gallery intent
 			// Use the bundled value on first run, reuse the viewmodel on config changes
 			if (viewModel.currentImageIndex == -1) {
 				viewModel.currentImageIndex = intent.getIntExtra(EXTRA_START_INDEX, 0)
 			}
-			viewModel.setFilter(intent.getParcelableExtra(EXTRA_FILTER))
+			val filter = intent.getParcelableExtra(EXTRA_FILTER) as ImageFilter?
+			if (filter != null) {
+				viewModel.setFilter(filter)
+			}
 			viewModel.imageList(viewModel.currentImageIndex).observe(this, Observer {
 				viewerAdapter.submitList(it)
-				pager.setCurrentItem(viewModel.currentImageIndex, false)
+				binding.pager.setCurrentItem(viewModel.currentImageIndex, false)
 			})
 		}
 
 		viewModel.navigationVisibility.observe(this, Observer { visible ->
-			layoutNavButtons.visibility = visible
+			binding.layoutNavButtons.visibility = visible
 		})
 
 		viewModel.toolbarVisibility.observe(this, Observer { visible ->
@@ -111,8 +116,8 @@ class ViewerActivity : CoreActivity() {
 				supportActionBar?.hide()
 		})
 
-		pager.adapter = viewerAdapter
-		pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+		binding.pager.adapter = viewerAdapter
+		binding.pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
 			override fun onPageScrollStateChanged(state: Int) {}
 			override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 			override fun onPageSelected(position: Int) {
@@ -138,8 +143,12 @@ class ViewerActivity : CoreActivity() {
 		// with the viewmodel, but that may change sorting.  This was previously done with a broadcast.
 		// We could likely use a MetaReadWorker observer to check if the current image changed.
 
-		imageButtonNext.setOnClickListener { pager.currentItem = pager.currentItem + 1 }
-		imageButtonPrevious.setOnClickListener { pager.currentItem = pager.currentItem - 1 }
+		binding.imageButtonNext.setOnClickListener {
+			binding.pager.currentItem = binding.pager.currentItem + 1
+		}
+		binding.imageButtonPrevious.setOnClickListener {
+			binding.pager.currentItem = binding.pager.currentItem - 1
+		}
 	}
 
 	private fun createTempDataSource(imageUris: List<Uri>) {
@@ -164,7 +173,7 @@ class ViewerActivity : CoreActivity() {
 
 	override fun onBackPressed() {
 		val data = Intent()
-		data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, pager.currentItem)
+		data.putExtra(GalleryActivity.GALLERY_INDEX_EXTRA, binding.pager.currentItem)
 		setResult(RESULT_OK, data)
 		super.onBackPressed()
 	}

@@ -13,6 +13,7 @@ import androidx.preference.PreferenceManager
 import com.anthonymandra.rawdroid.data.FolderEntity
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
+import com.anthonymandra.rawdroid.databinding.XmpCoreBinding
 import com.anthonymandra.rawdroid.databinding.XmpFilterLandscapeBinding
 import com.anthonymandra.rawdroid.ui.FilterViewModel
 import com.anthonymandra.rawdroid.ui.FolderDialog
@@ -74,6 +75,9 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     private var _binding: XmpFilterLandscapeBinding? = null
     private val binding get() = _binding!!
+
+    private var _xmpBinding: XmpCoreBinding? = null
+    private val xmpBinding get() = _xmpBinding!!
 
 //    init {
 //        inflate(context, R.layout.material_color_key, this)
@@ -156,7 +160,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
     private fun showFolderDialog() {
         val position = IntArray(2)
-        foldersButton.getLocationOnScreen(position)
+        binding.foldersButton.getLocationOnScreen(position)
         mFolderDialog = FolderDialog.newInstance(
             position[0],
             position[1])
@@ -242,35 +246,35 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         // Sort group
         sequence.addSequenceItem(getRectangularView(
-                sortToggleGroup,
+            binding.sortToggleGroup,
                 R.string.sortImages,
                 R.string.sortCotent
         ))
 
         // Segregate
         sequence.addSequenceItem(getRectangularView(
-                segregateToggleButton,
+            binding.segregateToggleButton,
                 R.string.sortImages,
                 R.string.segregateContent
         ))
 
         // Folder
         sequence.addSequenceItem(getRectangularView(
-                foldersButton,
+            binding.foldersButton,
                 R.string.filterImages,
                 R.string.folderContent
         ))
 
         // Clear
         sequence.addSequenceItem(getRectangularView(
-                clearFilterButton,
+            binding.clearFilterButton,
                 R.string.filterImages,
                 R.string.clearFilterContent
         ))
 
         // rating
         sequence.addSequenceItem(getRectangularView(
-                ratingBar,
+            xmpBinding.ratingBar,
                 R.string.filterImages,
                 R.string.ratingLabelContent
         ))
@@ -284,7 +288,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 
         // Match
         sequence.addSequenceItem(getRectangularView(
-                toggleAnd,
+            binding.toggleAnd,
                 R.string.filterImages,
                 R.string.matchContent
         ))

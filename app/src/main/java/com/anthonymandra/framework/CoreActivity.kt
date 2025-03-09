@@ -26,7 +26,6 @@ import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
-import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.settings.SettingsActivity
 import com.anthonymandra.rawdroid.settings.ShareSettingsFragment
@@ -34,7 +33,6 @@ import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
@@ -420,8 +418,10 @@ abstract class CoreActivity : AppCompatActivity() {
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
 		}
 
+		val version = this.packageManager.getPackageInfo(this.packageName, PackageManager.GET_ACTIVITIES).versionCode;
+
 		val body =
-			"Version:   " + BuildConfig.VERSION_NAME + "\n" +
+			"Version:   " + version + "\n" +
 			"Make:      " + Build.MANUFACTURER + "\n" +
 			"Model:     " + Build.MODEL + "\n" +
 			"ABI:       " + Arrays.toString(Build.SUPPORTED_ABIS) + "\n" +
@@ -478,8 +478,8 @@ abstract class CoreActivity : AppCompatActivity() {
 
 		viewModel.images(selection).subscribeBy { selectedImages ->
 			if (selectedImages.isEmpty()) {
-				Crashlytics.setString("selection", selectedIds.toString())
-				Crashlytics.log("Image lookup failed.")
+//				Crashlytics.setString("selection", selectedIds.toString())
+//				Crashlytics.log("Image lookup failed.")
 				Snackbar.make(rootView, R.string.warningImagesNotFound, Snackbar.LENGTH_SHORT).show()
 				return@subscribeBy
 			}
