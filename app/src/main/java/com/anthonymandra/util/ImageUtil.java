@@ -29,7 +29,7 @@ import com.anthonymandra.rawdroid.R;
 import com.anthonymandra.rawdroid.data.AppDatabase;
 import com.anthonymandra.rawdroid.data.ImageInfo;
 import com.anthonymandra.rawdroid.settings.WatermarkSettingsFragment;
-import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.FileType;
 import com.drew.imaging.FileTypeDetector;
 
@@ -470,8 +470,8 @@ public class ImageUtil {
 			data.mark(data.available());
 			data.reset();
 		} catch (IOException e) {
-			Crashlytics.logException(new Exception(
-				"InputStream does not support mark: " + data.getClass().getName(), e));
+//			Crashlytics.logException(new Exception(
+//				"InputStream does not support mark: " + data.getClass().getName(), e));
 			return null;
 		}
 
@@ -498,8 +498,8 @@ public class ImageUtil {
 			data.mark(data.available());
 			data.reset();
 		} catch (IOException e) {
-			Crashlytics.logException(new Exception(
-				"InputStream does not support mark: " + data.getClass().getName(), e));
+//			Crashlytics.logException(new Exception(
+//				"InputStream does not support mark: " + data.getClass().getName(), e));
 			return null;
 		}
 

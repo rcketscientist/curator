@@ -21,10 +21,9 @@ import android.widget.Toast;
 
 import com.anthonymandra.imageprocessor.ImageProcessor;
 import com.anthonymandra.imageprocessor.Watermark;
-import com.anthonymandra.rawdroid.BuildConfig;
 import com.anthonymandra.util.FileUtil;
 import com.anthonymandra.util.ImageUtil;
-import com.crashlytics.android.Crashlytics;
+//import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +35,7 @@ public class SwapProvider extends ContentProvider {
 	private static final String TAG = SwapProvider.class.getSimpleName();
 
 	// The authority is the symbolic name for the provider class
-	public static final String AUTHORITY = com.anthonymandra.rawdroid.SwapProvider;
+	public static final String AUTHORITY = "com.anthonymandra.rawdroid.SwapProvider";
 
 	// UriMatcher used to match against incoming requests
 	private UriMatcher uriMatcher;
@@ -61,7 +60,7 @@ public class SwapProvider extends ContentProvider {
 	@Nullable
 	public static Uri createSwapUri(Context c, Uri uri) {
 		if (uri == null) {
-			Crashlytics.logException(new Exception("null uri requested swap)"));
+//			Crashlytics.logException(new Exception("null uri requested swap)"));
 			return null;
 		}
 		return new Uri.Builder()

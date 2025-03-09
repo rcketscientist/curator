@@ -98,6 +98,7 @@ dependencies {
     implementation(project(":ssiv"))
     implementation("com.github.rcketscientist:DocumentActivity:1.0.0")
     implementation("com.github.rcketscientist:showcaseview:4.0.0")
+    implementation("com.adobe.xmp:xmpcore:6.1.11")
 
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
