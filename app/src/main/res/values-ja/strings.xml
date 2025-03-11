@@ -187,7 +187,7 @@
 
 	<string name="no_thumbnail">サムネイルがありません</string>
 <string name="license">ライセンス</string>
-<string name="watermark">ウォーターマーク(Pro)</string>
+<string name="watermark">ウォーターマーク</string>
     <string name="Name_ascending">ファイル名 \u25BC</string>
 
 </resources>

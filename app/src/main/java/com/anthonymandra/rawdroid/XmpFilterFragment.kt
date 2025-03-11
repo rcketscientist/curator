@@ -106,7 +106,7 @@ class XmpFilterFragment : XmpBaseFragment() {
 //        setAllowUnselected(true)
 
         // Pull up stored filter configuration
-        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         mAndTrueOrFalse = preferences.getBoolean(mPrefRelational, false)
         ascending = preferences.getBoolean(mPrefAscending, true)
         preferences.getString(mPrefColumn, sortColumn.toString())?.let {

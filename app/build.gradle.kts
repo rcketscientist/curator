@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.kapt")
+    id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.parcelize")
 //    id("kotlin-android-extensions")
 //    id("io.fabric")
@@ -32,12 +33,8 @@ android {
         versionCode = versionMajor * 100000 + versionMinor * 1000 + versionPatch
         versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += mapOf(
-                    "room.schemaLocation" to schemaLocation
-                )
-            }
+        ksp {
+            arg("room.schemaLocation", schemaLocation)
         }
 
         // Specifies the fully-qualified class name of the test instrumentation runner.
@@ -101,17 +98,21 @@ dependencies {
     implementation("com.adobe.xmp:xmpcore:6.1.11")
 
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${rootProject.extra["kotlinVersion"]}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${rootProject.extra["kotlinVersion"]}")
     implementation("androidx.core:core-ktx:${rootProject.extra["coreVersion"]}")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+    implementation("androidx.paging:paging-runtime-ktx:${rootProject.extra["pagingVersion"]}")
+    implementation("androidx.work:work-runtime-ktx:${rootProject.extra["workVersion"]}")
 
     // UI
     implementation("com.afollestad:material-cab:2.0.1")
     implementation("me.zhanghai.android.materialprogressbar:library:1.6.1")
     implementation("com.github.deano2390:MaterialShowcaseView:1.2.0")
     implementation("com.eftimoff:android-viewpager-transformers:1.0.1@aar")
-    implementation("com.github.bumptech.glide:glide:4.11.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    kapt("com.github.bumptech.glide:compiler:4.11.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
     // Rx
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
@@ -125,18 +126,15 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:1.1.3")
 
     // Android architecture
-    implementation("androidx.fragment:fragment-ktx:1.2.5")
+    implementation("androidx.preference:preference:${rootProject.extra["preferenceVersion"]}")
     implementation("androidx.lifecycle:lifecycle-common-java8:${rootProject.extra["lifecycleVersion"]}")
     implementation("androidx.room:room-runtime:${rootProject.extra["roomVersion"]}")
     implementation("androidx.room:room-rxjava2:${rootProject.extra["roomVersion"]}")
-    kapt("androidx.room:room-compiler:${rootProject.extra["roomVersion"]}")
-    implementation("androidx.paging:paging-runtime-ktx:${rootProject.extra["pagingVersion"]}")
-    implementation("androidx.work:work-runtime-ktx:${rootProject.extra["workVersion"]}")
-    implementation("androidx.preference:preference-ktx:1.1.1")
+    ksp("androidx.room:room-compiler:${rootProject.extra["roomVersion"]}")
 
     // Testing and Debug
     // Instrumented
-    androidTestImplementation("androidx.arch.core:core-testing:${rootProject.extra["coreTestingVersion"]}")
+    androidTestImplementation("androidx.arch.core:core-testing:${rootProject.extra["archCoreVersion"]}")
     androidTestImplementation("androidx.annotation:annotation:${rootProject.extra["annotationVersion"]}")
     androidTestImplementation("androidx.test:runner:1.2.0")
     androidTestImplementation("androidx.test:rules:1.2.0")

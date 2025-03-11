@@ -144,8 +144,6 @@
     <string name="prefTitleShareFormat">Share Format</string>
     <string name="prefTitleEditFormat">Edit Format</string>
 
-    <string name="buypro">Click here to upgrade to Curator Pro to unlock features and improve speed!</string>
-
     <!-- Show options -->
     <string name="automatic">Automatic</string>
     <string name="always">Always</string>
@@ -185,7 +183,6 @@
     <string name="dialogWriteRequestTitle">Write Permission Guide</string>
     <string name="dialogWriteRequestMessage">The following screen will grant Curator write permission to the external SD card.  Choose the root directory 0000–0000 for full access.</string>
     <string name="welcomeTitle">Welcome to Curator!</string>
-    <string name="welcomeMessage">Curator will operate as a fully functional demo with watermarking until Curator Pro is purchased.  You are free to test all features on your device until you choose to upgrade.\n\nWould you like to run the tutorial now? (You can run it later at Help:Tutorial)</string>
     <string name="welcomeTutorial">Would you like to run the tutorial now? (You can run it later at Help:Tutorial)</string>
     <string name="writeAccessTitle">Write Access Disabled</string>
     <string name="requestWriteAccess">Google disabled write access.  You may grant Curator write access in the following window.  If you decline Curator will be view images but will be unable to write metadata, delete, save thumbnails, etc.  Curator will ONLY be able to access the folder you select, so the safest bet is to choose the whole sd card restoring previous access permissions to Curator.  Write access is used ONLY for actions related to image workflow.</string>
@@ -286,7 +283,7 @@
 
     <string name="no_thumbnail">No thumbnail</string>
     <string name="license">License</string>
-    <string name="watermark">Watermark ( Pro )</string>
+    <string name="watermark">Watermark</string>
     <string name="filterTitle">Filter</string>
     <string name="editTitle">Edit</string>
     <string name="drawer_open">filter open</string>

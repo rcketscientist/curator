@@ -2,25 +2,27 @@
 plugins {
     id("com.android.application") version "8.9.0" apply false
     id("org.jetbrains.kotlin.android") version "2.1.10" apply false
-    id("org.jetbrains.kotlin.plugin.parcelize") version "2.1.20-Beta1" apply false
-    id("org.jetbrains.kotlin.kapt") version "2.1.10" apply false
+    id("org.jetbrains.kotlin.plugin.parcelize") version "2.1.10" apply false
+//    id("org.jetbrains.kotlin.kapt") version "2.1.10" apply false
+    id("com.google.devtools.ksp") version "2.1.10-1.0.31" apply false
 //    id("io.fabric.tools") version "1.31.2" apply false
 }
 
 buildscript {
 
     extra.apply {
-        set("kotlinVersion", "2.1.0")
+        set("kotlinVersion", "2.1.10")
         set("compileSdkVersion", "android-35")
-        set("annotationVersion", "1.1.0")
-        set("exifVersion", "1.0.0")
-        set("materialVersion", "1.1.0")
-        set("coreVersion", "1.3.1")
-        set("lifecycleVersion", "2.2.0")
-        set("roomVersion", "2.2.5")
-        set("pagingVersion", "2.1.2")
-        set("coreTestingVersion", "2.1.0")
-        set("workVersion", "2.4.0")
+        set("annotationVersion", "1.9.1")
+        set("exifVersion", "1.4.0")
+        set("materialVersion", "1.1.0") // TODO: Compose
+        set("coreVersion", "1.15.0")
+        set("lifecycleVersion", "2.8.7")
+        set("roomVersion", "2.6.1")
+        set("preferenceVersion", "1.2.1")
+        set("pagingVersion", "3.3.6")
+        set("archCoreVersion", "2.2.0")
+        set("workVersion", "2.10.0")
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.9.0")

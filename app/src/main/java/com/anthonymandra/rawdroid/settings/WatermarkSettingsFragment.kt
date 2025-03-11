@@ -17,7 +17,7 @@ class WatermarkSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences_watermark, rootKey)
-        sharedPreferences = getDefaultSharedPreferences(context)
+        sharedPreferences = getDefaultSharedPreferences(requireContext())
 
         top = findPreference(KEY_WatermarkTopMargin)
         bottom = findPreference(KEY_WatermarkBottomMargin)

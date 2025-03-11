@@ -104,20 +104,20 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		galleryAdapter.onItemClickListener = this
 		galleryAdapter.onItemLongClickListener = this
 
-		viewModel.galleryImages.observe(this, Observer {
+		viewModel.galleryImages.observe(this) {
 			galleryAdapter.submitList(it)
-		})
+		}
 
 		// Current image total for title
-		viewModel.filteredCount.observe(this, Observer {
+		viewModel.filteredCount.observe(this) {
 			imageCount = it
 			binding.galleryToolbar.title = "$imageCount Images"
-		})
+		}
 
 		// Current processed image total for subtitle
-		viewModel.filteredProcessedCount.observe(this, Observer {
+		viewModel.filteredProcessedCount.observe(this) {
 			binding.galleryToolbar.subtitle = if (imageCount == it) null else "$it of $imageCount"
-		})
+		}
 
 		// Monitor the metadata parse status to display progress
 		viewModel.metaReaderStatus.observe(this, Observer {

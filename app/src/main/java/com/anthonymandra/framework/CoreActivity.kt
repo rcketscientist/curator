@@ -84,7 +84,6 @@ abstract class CoreActivity : AppCompatActivity() {
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
 
 		findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }

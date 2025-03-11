@@ -21,9 +21,9 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
     private lateinit var keywordFragment: KeywordBaseFragment
     private var mPauseListener = false
 
-	@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+//	@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 	private val colorKeys: ColorKeys by lazy {
-        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sp.registerOnSharedPreferenceChangeListener(this)
 
 		 ColorKeys().also {
@@ -88,7 +88,7 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
 
     override fun onPause() {
         super.onPause()
-        PreferenceManager.getDefaultSharedPreferences(context)
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
 			  .unregisterOnSharedPreferenceChangeListener(this)
     }
 
