@@ -98,7 +98,7 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
         colorKey = view.findViewById(R.id.colorKey)
         keywordFragment = childFragmentManager.findFragmentById(R.id.keywordFragment) as KeywordBaseFragment
 
-        ratingBar.setOnRatingSelectionChangedListener { checked ->
+         ratingBar.setOnRatingSelectionChangedListener { checked ->
             if (!mPauseListener)
                 this@XmpBaseFragment.onRatingSelectionChanged(checked)
         }

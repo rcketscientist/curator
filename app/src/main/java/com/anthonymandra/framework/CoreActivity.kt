@@ -15,6 +15,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.renderscript.ScriptGroup
+import android.renderscript.ScriptGroup.Binding
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -24,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
+import androidx.viewbinding.ViewBinding
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
 import com.anthonymandra.rawdroid.R
@@ -45,7 +48,8 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 
-abstract class CoreActivity : AppCompatActivity() {
+
+abstract class CoreActivity<Binding: ViewBinding> : AppCompatActivity() {
 
 	private lateinit var mSwapDir: File
 	private lateinit var licenseHandler: LicenseHandler
@@ -73,8 +77,13 @@ abstract class CoreActivity : AppCompatActivity() {
 	val rootView: View
 		get() = findViewById(android.R.id.content)
 
+	protected lateinit var binding: Binding
+	protected abstract fun inflateBinding(): Binding
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
+		binding = inflateBinding()
+		setContentView(binding.root)
 
 		licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
 

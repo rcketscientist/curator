@@ -18,6 +18,7 @@ import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.SwapProvider
 import com.anthonymandra.rawdroid.data.ImageInfo
 import com.anthonymandra.rawdroid.data.TempViewerDataSource
+import com.anthonymandra.rawdroid.databinding.GalleryBinding
 import com.anthonymandra.rawdroid.databinding.ViewerPagerBinding
 import com.anthonymandra.rawdroid.settings.MetaSettingsFragment
 import com.anthonymandra.rawdroid.settings.MetaSettingsFragment.Companion.KEY_MetaSize
@@ -34,7 +35,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-class ViewerActivity : CoreActivity() {
+class ViewerActivity : CoreActivity<ViewerPagerBinding>() {
 	private lateinit var viewerAdapter: ViewerAdapter
 	private var currentImage: ImageInfo? = null
 
@@ -50,7 +51,9 @@ class ViewerActivity : CoreActivity() {
 	private var displayWidth = 0
 	private var displayHeight = 0
 
-	private lateinit var binding: ViewerPagerBinding
+	override fun inflateBinding(): ViewerPagerBinding {
+		return ViewerPagerBinding.inflate(layoutInflater)
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		val styleId = when (preferences.getString(KEY_MetaSize, "Medium")) {
@@ -61,9 +64,6 @@ class ViewerActivity : CoreActivity() {
 		theme.applyStyle(styleId, true)   //must be called before setContentView
 
 		super.onCreate(savedInstanceState)
-		binding = ViewerPagerBinding.inflate(layoutInflater)
-		val view = binding.root
-		setContentView(view)
 
 		setSupportActionBar(binding.viewerToolbar)
 		supportActionBar?.setDisplayShowTitleEnabled(false)

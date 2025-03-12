@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
+import androidx.viewbinding.ViewBinding
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.UsefulDocumentFile
 import com.anthonymandra.rawdroid.data.DataRepository
@@ -22,10 +23,11 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-class RenameDialog(
-	private val activity: CoreActivity,
+class RenameDialog<T: ViewBinding>(
+	private val activity: CoreActivity<T>,
 	// TODO: We should order these by capture time
-	private val itemsToRename: Collection<ImageInfo>) : Dialog(activity) {
+	private val itemsToRename: Collection<ImageInfo>) : Dialog(activity
+	) {
 	private lateinit var binding: FormatNameBinding
 
 	override fun onCreate(savedInstanceState: Bundle?) {

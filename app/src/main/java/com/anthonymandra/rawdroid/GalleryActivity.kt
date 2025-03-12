@@ -42,7 +42,7 @@ import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import java.util.*
 
-open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
+open class GalleryActivity : CoreActivity<GalleryBinding>(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
 	override val selectedIds: LongArray
 		get() {
 			return galleryAdapter.selectedItems
@@ -57,13 +57,12 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 	protected val isContextModeActive: Boolean get() = mMaterialCab.isActive()
 
-	protected lateinit var binding: GalleryBinding
+	override fun inflateBinding(): GalleryBinding {
+		return GalleryBinding.inflate(layoutInflater)
+	}
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		binding = GalleryBinding.inflate(layoutInflater)
-		val view = binding.root
-		setContentView(view)
 
 		window.setFlags(
 				WindowManager.LayoutParams.FLAG_FULLSCREEN,
