@@ -1,13 +1,14 @@
 package com.anthonymandra.rawdroid
 
 import android.app.Application
+import android.content.pm.ApplicationInfo
 import android.os.StrictMode
 import com.anthonymandra.rawdroid.data.AppDatabase
 import com.anthonymandra.rawdroid.data.DataRepository
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
-import com.crashlytics.android.ndk.CrashlyticsNdk
-import io.fabric.sdk.android.Fabric
+//import com.crashlytics.android.Crashlytics
+//import com.crashlytics.android.core.CrashlyticsCore
+//import com.crashlytics.android.ndk.CrashlyticsNdk
+//import io.fabric.sdk.android.Fabric
 
 class App : Application() {
 	val database: AppDatabase
@@ -19,15 +20,16 @@ class App : Application() {
 	override fun onCreate() {
 		super.onCreate()
 
-		val crashlyticsKit = Crashlytics.Builder()
-			.core(CrashlyticsCore.Builder()
-				.disabled(BuildConfig.DEBUG)
-				.build())
-			.build()
+//		val crashlyticsKit = Crashlytics.Builder()
+//			.core(CrashlyticsCore.Builder()
+//				.disabled(BuildConfig.DEBUG)
+//				.build())
+//			.build()
 
-		Fabric.with(this, crashlyticsKit, CrashlyticsNdk())
+//		Fabric.with(this, crashlyticsKit, CrashlyticsNdk())
 
-		if (BuildConfig.DEBUG) {
+		val isDebuggable = 0 != applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE
+		if (isDebuggable) {
 			StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
 				.detectDiskReads()
 				.detectDiskWrites()

@@ -282,7 +282,7 @@ public class Util
                 .setContentTitle(title)
                 .setContentText(message)
                 .setContentIntent(PendingIntent.getActivity(context, 0,
-                        new Intent(context, GalleryActivity.class),0))
+                        new Intent(context, GalleryActivity.class), PendingIntent.FLAG_IMMUTABLE))
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setVibrate(new long[0]);

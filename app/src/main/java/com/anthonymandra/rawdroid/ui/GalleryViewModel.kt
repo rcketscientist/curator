@@ -6,7 +6,7 @@ import androidx.preference.PreferenceManager
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import androidx.paging.Config
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -50,7 +50,7 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
 
 	val metaVisibility = MetaVisibility()
 
-	val galleryImages = Transformations.switchMap(filter) { filter ->
+	val galleryImages = filter.switchMap { filter ->
 		dataRepo.getGalleryLiveData(filter).toLiveData(Config(
 			enablePlaceholders = true,
 			maxSize = 500,
@@ -68,7 +68,7 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
 
 
 
-		return Transformations.switchMap(filter) { filter ->
+		return filter.switchMap { filter ->
 			LivePagedListBuilder(dataRepo.getGalleryLiveData(filter), 30)
 				.setFetchExecutor(Executors.newSingleThreadExecutor())
 				.setInitialLoadKey(startLocation)
@@ -77,11 +77,11 @@ class GalleryViewModel(app: Application) : CoreViewModel(app) {
 	}
 
 	init {
-		filteredCount = Transformations.switchMap(filter) { filter ->
+		filteredCount = filter.switchMap { filter ->
 			dataRepo.getImageCount(filter)
 		}
 
-		filteredProcessedCount = Transformations.switchMap(filter) { filter ->
+		filteredProcessedCount = filter.switchMap { filter ->
 			dataRepo.getProcessedCount(filter)
 		}
 

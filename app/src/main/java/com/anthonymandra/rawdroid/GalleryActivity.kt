@@ -29,6 +29,7 @@ import com.afollestad.materialcab.attached.isActive
 import com.afollestad.materialcab.createCab
 import com.anthonymandra.framework.CoreActivity
 import com.anthonymandra.framework.UsefulDocumentFile
+import com.anthonymandra.rawdroid.databinding.GalleryBinding
 import com.anthonymandra.rawdroid.ui.GalleryAdapter
 import com.anthonymandra.rawdroid.ui.GalleryViewModel
 import com.anthonymandra.util.ImageUtil
@@ -39,11 +40,9 @@ import com.inscription.WhatsNewDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.gallery.*
 import java.util.*
 
-open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
-	override val contentView = R.layout.gallery
+open class GalleryActivity : CoreActivity<GalleryBinding>(), GalleryAdapter.OnItemClickListener, GalleryAdapter.OnItemLongClickListener, GalleryAdapter.OnSelectionUpdatedListener {
 	override val selectedIds: LongArray
 		get() {
 			return galleryAdapter.selectedItems
@@ -56,8 +55,11 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	override val viewModel by lazy { ViewModelProvider(this).get(GalleryViewModel::class.java) }
 	private var imageCount = 0
 
-	protected val isContextModeActive: Boolean
-		get() = mMaterialCab.isActive()
+	protected val isContextModeActive: Boolean get() = mMaterialCab.isActive()
+
+	override fun inflateBinding(): GalleryBinding {
+		return GalleryBinding.inflate(layoutInflater)
+	}
 
 	public override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -66,12 +68,14 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
-		setSupportActionBar(galleryToolbar)
-		fab.setOnClickListener {
+		setSupportActionBar(binding.galleryToolbar)
+		binding.fab.setOnClickListener {
 			requestWritePermission(REQUEST_SEARCH)
 		}
 
-		filterSidebarButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
+		binding.filterSidebarButton.setOnClickListener {
+			binding.drawerLayout.openDrawer(GravityCompat.START)
+		}
 
 		doFirstRun()
 
@@ -99,20 +103,20 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		galleryAdapter.onItemClickListener = this
 		galleryAdapter.onItemLongClickListener = this
 
-		viewModel.galleryImages.observe(this, Observer {
+		viewModel.galleryImages.observe(this) {
 			galleryAdapter.submitList(it)
-		})
+		}
 
 		// Current image total for title
-		viewModel.filteredCount.observe(this, Observer {
+		viewModel.filteredCount.observe(this) {
 			imageCount = it
-			galleryToolbar?.title = "$imageCount Images"
-		})
+			binding.galleryToolbar.title = "$imageCount Images"
+		}
 
 		// Current processed image total for subtitle
-		viewModel.filteredProcessedCount.observe(this, Observer {
-			galleryToolbar.subtitle = if (imageCount == it) null else "$it of $imageCount"
-		})
+		viewModel.filteredProcessedCount.observe(this) {
+			binding.galleryToolbar.subtitle = if (imageCount == it) null else "$it of $imageCount"
+		}
 
 		// Monitor the metadata parse status to display progress
 		viewModel.metaReaderStatus.observe(this, Observer {
@@ -123,11 +127,11 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			val workStatus = it[0]
 
 			if (workStatus.state.isFinished) {
-				galleryToolbar.subtitle = null
+				binding.galleryToolbar.subtitle = null
 				endProgress()
 			} else if (workStatus.state == WorkInfo.State.RUNNING) {
-				toolbarProgress.visibility = View.VISIBLE
-				toolbarProgress.isIndeterminate = true
+				binding.toolbarProgress.visibility = View.VISIBLE
+				binding.toolbarProgress.isIndeterminate = true
 			}
 		})
 
@@ -139,23 +143,23 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			val workStatus = it[0]
 
 			if (workStatus.state.isFinished) {
-				galleryToolbar.subtitle = null
+				binding.galleryToolbar.subtitle = null
 				endProgress()
 				if (imageCount < 1) {
 					//TODO: Alert
 				}
 			} else if (WorkInfo.State.RUNNING == workStatus.state) {
-				toolbarProgress.visibility = View.VISIBLE
-				toolbarProgress.isIndeterminate = true
-				galleryToolbar.subtitle = "Searching..."
+				binding.toolbarProgress.visibility = View.VISIBLE
+				binding.toolbarProgress.isIndeterminate = true
+				binding.galleryToolbar.subtitle = "Searching..."
 			}
 		})
 
 		val spacing = ItemOffsetDecoration(this, R.dimen.image_thumbnail_margin)
-		galleryView.layoutManager = galleryLayout
-		galleryView.addItemDecoration(spacing)
-		galleryView.setHasFixedSize(true)
-		galleryView.adapter = galleryAdapter
+		binding.galleryView.layoutManager = galleryLayout
+		binding.galleryView.addItemDecoration(spacing)
+		binding.galleryView.setHasFixedSize(true)
+		binding.galleryView.adapter = galleryAdapter
 
 		mXmpFilterFragment = supportFragmentManager.findFragmentById(R.id.filterFragment) as XmpFilterFragment
 		mXmpFilterFragment!!.registerXmpFilterChangedListener { filter: ImageFilter ->
@@ -163,7 +167,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		}
 		mXmpFilterFragment!!.registerSearchRootRequestedListener {
 			requestWritePermission(REQUEST_SEARCH)
-			drawerLayout.closeDrawer(GravityCompat.START)
+			binding.drawerLayout.closeDrawer(GravityCompat.START)
 		}
 
 		intent.data?.let { ImageUtil.importKeywords(this, it) }
@@ -174,10 +178,10 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		super.onNewIntent(intent)
 		if (UsbManager.ACTION_USB_DEVICE_ATTACHED == intent.action) {
 			/* There is absolutely no way to uniquely identify a usb device across connections
- So what we'll do instead is rely on the funky SAF host as a unique ID
- The flaw here is the severe edge case that in a multi-device situation we will not
- request permission for additional devices and jump out at the first recognized device.
- Well that and the fact Google will break all this in 6.1 */
+			 So what we'll do instead is rely on the funky SAF host as a unique ID
+			 The flaw here is the severe edge case that in a multi-device situation we will not
+			 request permission for additional devices and jump out at the first recognized device.
+			 Well that and the fact Google will break all this in 6.1 */
 
 			val permissibleUsb = preferences.getStringSet(PREFS_PERMISSIBLE_USB, HashSet())
 
@@ -205,7 +209,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 		super.onPostCreate(savedInstanceState)
 
 		if (preferences.getBoolean(PREFS_SHOW_FILTER_HINT, true)) {
-			drawerLayout.openDrawer(GravityCompat.START)
+			binding.drawerLayout.openDrawer(GravityCompat.START)
 			val editor = preferences.edit()
 			editor.putBoolean(PREFS_SHOW_FILTER_HINT, false)
 			editor.apply()
@@ -251,22 +255,22 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
-		galleryView.layoutManager?.let {
+		binding.galleryView.layoutManager?.let {
 			outState?.putParcelable("galleryState", it.onSaveInstanceState())
 		}
 	}
 
-	override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+	override fun onRestoreInstanceState(savedInstanceState: Bundle) {
 		super.onRestoreInstanceState(savedInstanceState)
 		savedInstanceState?.getParcelable<Parcelable>("galleryState")?.let {
-			galleryView.layoutManager?.onRestoreInstanceState(it)
+			binding.galleryView.layoutManager?.onRestoreInstanceState(it)
 		}
 	}
 
 	private fun scanRawFiles() {
-		toolbarProgress.visibility = View.VISIBLE
-		toolbarProgress.isIndeterminate = true
-		galleryToolbar.subtitle = "Cleaning..."
+		binding.toolbarProgress.visibility = View.VISIBLE
+		binding.toolbarProgress.isIndeterminate = true
+		binding.galleryToolbar.subtitle = "Cleaning..."
 
 		viewModel.startCleanSearchChain()
 	}
@@ -297,7 +301,8 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 			}
 			REQUEST_TUTORIAL -> {
 				if (resultCode == RESULT_ERROR) {
-					Snackbar.make(galleryView, "Tutorial error. Please contact support if this continues.", 5000)
+					Snackbar.make(binding.galleryView,
+						"Tutorial error. Please contact support if this continues.", 5000)
 							.setAction(R.string.contact) { requestEmailIntent("Tutorial Error") }
 							.show()
 				}
@@ -306,22 +311,22 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	}
 
 	private fun handlePhotoUpdate(index: Int) {
-		galleryView.smoothScrollToPosition(index)
+		binding.galleryView.smoothScrollToPosition(index)
 	}
 
 	override fun setMaxProgress(max: Int) {
-		toolbarProgress.max = max
-		toolbarProgress.progress = 0
-		toolbarProgress.isIndeterminate = false
-		toolbarProgress.visibility = View.VISIBLE
+		binding.toolbarProgress.max = max
+		binding.toolbarProgress.progress = 0
+		binding.toolbarProgress.isIndeterminate = false
+		binding.toolbarProgress.visibility = View.VISIBLE
 	}
 
 	override fun incrementProgress() {
-		toolbarProgress.incrementProgressBy(1)
+		binding.toolbarProgress.incrementProgressBy(1)
 	}
 
 	override fun endProgress() {
-		toolbarProgress.visibility = View.GONE
+		binding.toolbarProgress.visibility = View.GONE
 	}
 
 	//	private long getSelectedImageSize()
@@ -404,7 +409,7 @@ open class GalleryActivity : CoreActivity(), GalleryAdapter.OnItemClickListener,
 	private fun requestCopyDestination() {
 		storeSelectionForIntent()
 		if (mItemsForIntent.isEmpty()) {
-			Snackbar.make(galleryView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
+			Snackbar.make(binding.galleryView, R.string.warningNoItemsSelected, Snackbar.LENGTH_SHORT).show()
 			return
 		}
 

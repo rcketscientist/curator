@@ -6,9 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.ImageInfo
+import com.anthonymandra.rawdroid.databinding.FileviewBinding
+import com.anthonymandra.rawdroid.databinding.FolderVisibilityBinding
+import com.anthonymandra.rawdroid.databinding.GalleryBinding
 import com.anthonymandra.util.MetaUtil
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.fileview.*
+import java.util.Locale
 
 @Suppress("DEPRECATION")
 class GalleryViewHolder(override val containerView: View)
@@ -21,49 +24,55 @@ class GalleryViewHolder(override val containerView: View)
 	private val green: Int = containerView.resources.getColor(R.color.startGreen)
 	private val red: Int = containerView.resources.getColor(R.color.startRed)
 
+	private lateinit var binding: FileviewBinding
+
+	companion object {
+		// FIXME: I think this pattern has changed significantly in the recent RecyclerView
+		fun create(parent: ViewGroup): GalleryViewHolder {
+			val binding = FileviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+			val view = binding.root
+			val holder = GalleryViewHolder(view)
+			holder.binding = binding
+			return holder
+		}
+	}
+
 	fun bind(image: ImageInfo?) {
 		this.image = image
 
-		filenameView.text = image?.name
-		xmp.visibility = if (image?.subjectIds.orEmpty().isEmpty()) View.INVISIBLE else View.VISIBLE
+		binding.filenameView.text = image?.name
+		binding.xmp.visibility = if (image?.subjectIds.orEmpty().isEmpty()) View.INVISIBLE else View.VISIBLE
 
 		if (image?.rating != null) {
-			galleryRatingBar.rating = image.rating ?: 0f
-			galleryRatingBar.visibility = View.VISIBLE
+			binding.galleryRatingBar.rating = image.rating ?: 0f
+			binding.galleryRatingBar.visibility = View.VISIBLE
 		} else {
-			galleryRatingBar.visibility = View.INVISIBLE
+			binding.galleryRatingBar.visibility = View.INVISIBLE
 		}
 
 		if (image?.label != null) {
-			label.visibility = View.VISIBLE
-			when (image.label?.toLowerCase()) {
-				"purple" -> label.setBackgroundColor(purple)
-				"blue" -> label.setBackgroundColor(blue)
-				"yellow" -> label.setBackgroundColor(yellow)
-				"green" -> label.setBackgroundColor(green)
-				"red" -> label.setBackgroundColor(red)
-				else -> label.visibility = View.INVISIBLE
+			binding.label.visibility = View.VISIBLE
+			when (image.label?.lowercase(Locale.getDefault())) {
+				"purple" -> binding.label.setBackgroundColor(purple)
+				"blue" -> binding.label.setBackgroundColor(blue)
+				"yellow" -> binding.label.setBackgroundColor(yellow)
+				"green" -> binding.label.setBackgroundColor(green)
+				"red" -> binding.label.setBackgroundColor(red)
+				else -> binding.label.visibility = View.INVISIBLE
 			}
 		} else {
-			label.visibility = View.INVISIBLE
+			binding.label.visibility = View.INVISIBLE
 		}
 
 		// FIXME: Pretty sure this is deprecated, also it clear on fail (this will leave image remnant)
 		image?.let {
 			GlideApp.with(itemView.context)
-					.load(it)
-					.centerCrop()
-					.into(galleryImageView)
+				.load(it)
+				.centerCrop()
+				.into(binding.galleryImageView)
 			// TODO: Glide handles exif orientation, how do we align behavior with non-exif thumbs?
 //            galleryImageView.rotation = MetaUtil.getRotation(it.orientation).toFloat()
 		}
 	}
 
-	companion object {
-		fun create(parent: ViewGroup): GalleryViewHolder {
-			val view = LayoutInflater.from(parent.context)
-					.inflate(R.layout.fileview, parent, false)
-			return GalleryViewHolder(view)
-		}
-	}
 }

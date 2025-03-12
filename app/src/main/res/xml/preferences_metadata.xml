@@ -5,7 +5,7 @@
         <Preference
             app:key="prefKeyImportKeywords"
             app:summary="@string/prefSummaryImportKeywords"
-            app:title="@string/prefTitleImportKeywords" />
+            title="@string/prefTitleImportKeywords" />
         <EditTextPreference
             app:icon="@drawable/button_red"
             app:key="prefKeyXmpRed"

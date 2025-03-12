@@ -14,14 +14,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.anthonymandra.framework.Histogram
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.ImageInfo
+import com.anthonymandra.rawdroid.databinding.FullImageBinding
+import com.anthonymandra.rawdroid.databinding.MetaPanelBinding
 import com.anthonymandra.util.AppExecutors
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.full_image.*
-import kotlinx.android.synthetic.main.meta_panel.*
+//import kotlinx.android.synthetic.main.full_image.*
+//import kotlinx.android.synthetic.main.meta_panel.*
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.ForkJoinPool
@@ -33,15 +35,32 @@ class ViewPagerFragment : Fragment() {
         ViewModelProvider(this).get(GalleryViewModel::class.java)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.full_image, container, false)
+    private var _binding: FullImageBinding? = null
+    private val binding get() = _binding!!
+
+    private var _metaBinding: MetaPanelBinding? = null
+    private val metaBinding get() = _metaBinding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FullImageBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         if (savedInstanceState != null) {
             if (source == null && savedInstanceState.containsKey(BUNDLE_SOURCE)) {
                 source = savedInstanceState.getParcelable(BUNDLE_SOURCE)
             }
         }
-        return rootView
+
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     @SuppressLint("SetTextI18n")
@@ -54,12 +73,12 @@ class ViewPagerFragment : Fragment() {
             } else {
                 populateMeta()
             }
-            imageView.setRegionDecoderClass(RawImageRegionDecoder::class.java)
-            imageView.setImage(RawImageSource(image))
-            imageView.setOnImageEventListener(object: SubsamplingScaleImageView.DefaultOnImageEventListener() {
+            binding.imageView.setRegionDecoderClass(RawImageRegionDecoder::class.java)
+            binding.imageView.setImage(RawImageSource(image))
+            binding.imageView.setOnImageEventListener(object: SubsamplingScaleImageView.DefaultOnImageEventListener() {
                 override fun onImageLoaded(bitmap: WeakReference<Bitmap>) {
-                    textViewScale?.post {
-                        textViewScale?.text = (imageView.scale * 100).toInt().toString() + "%"
+                    binding.textViewScale.post {
+                        binding.textViewScale.text = (binding.imageView.scale * 100).toInt().toString() + "%"
                     }
 
                     //TODO: Is there really value to the reference?
@@ -68,53 +87,53 @@ class ViewPagerFragment : Fragment() {
                     }
                 }
             })
-            imageView.setOnStateChangedListener(object: SubsamplingScaleImageView.DefaultOnStateChangedListener() {
+            binding.imageView.setOnStateChangedListener(object: SubsamplingScaleImageView.DefaultOnStateChangedListener() {
                 override fun onScaleChanged(newScale: Float, origin: Int) {
-                    textViewScale?.post {
-                        textViewScale.text = (newScale * 100).toInt().toString() + "%"
+                    binding.textViewScale.post {
+                        binding.textViewScale.text = (newScale * 100).toInt().toString() + "%"
                     }
                 }
             })
-            imageView.setOnClickListener {
+            binding.imageView.setOnClickListener {
                 viewModel.toggleInterface() //TODO: This needs to cancel the
             }
         }
 
         val viewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
         viewModel.isZoomLocked.observe(viewLifecycleOwner, Observer {
-            imageView.isZoomEnabled = !it!!
+            binding.imageView.isZoomEnabled = !it!!
         })
 
         viewModel.metadataVisibility.observe(viewLifecycleOwner, Observer { visible ->
-            metaPanel.visibility = visible
+            binding.metaPanel.root.visibility = visible
         })
 
         viewModel.histogramVisibility.observe(viewLifecycleOwner, Observer { visible ->
-            histogramView.visibility = visible
+            metaBinding.histogramView.visibility = visible
         })
 
-        zoomButton.setOnCheckedChangeListener { _, isChecked ->
+        binding.zoomButton.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onZoomLockChanged(isChecked)
         }
 
         val metaRowVisibility = viewModel.metaVisibility
-        rowAltitude.visibility = metaRowVisibility.Altitude
-        rowAperture.visibility = metaRowVisibility.Aperture
-        rowDate.visibility = metaRowVisibility.Date
-        rowDimensions.visibility = metaRowVisibility.Dimensions
-        rowDriveMode.visibility = metaRowVisibility.DriveMode
-        rowExposure.visibility = metaRowVisibility.Exposure
-        rowExposureMode.visibility = metaRowVisibility.ExposureMode
-        rowExposureProgram.visibility = metaRowVisibility.ExposureProgram
-        rowFlash.visibility = metaRowVisibility.Flash
-        rowFocal.visibility = metaRowVisibility.Focal
-        rowIso.visibility = metaRowVisibility.Iso
-        rowLatitude.visibility = metaRowVisibility.Latitude
-        rowLongitude.visibility = metaRowVisibility.Longitude
-        rowLens.visibility = metaRowVisibility.Lens
-        rowModel.visibility = metaRowVisibility.Model
-        rowName.visibility = metaRowVisibility.Name
-        rowWhiteBalance.visibility = metaRowVisibility.WhiteBalance
+        metaBinding.rowAltitude.visibility = metaRowVisibility.Altitude
+        metaBinding.rowAperture.visibility = metaRowVisibility.Aperture
+        metaBinding.rowDate.visibility = metaRowVisibility.Date
+        metaBinding.rowDimensions.visibility = metaRowVisibility.Dimensions
+        metaBinding.rowDriveMode.visibility = metaRowVisibility.DriveMode
+        metaBinding.rowExposure.visibility = metaRowVisibility.Exposure
+        metaBinding.rowExposureMode.visibility = metaRowVisibility.ExposureMode
+        metaBinding.rowExposureProgram.visibility = metaRowVisibility.ExposureProgram
+        metaBinding.rowFlash.visibility = metaRowVisibility.Flash
+        metaBinding.rowFocal.visibility = metaRowVisibility.Focal
+        metaBinding.rowIso.visibility = metaRowVisibility.Iso
+        metaBinding.rowLatitude.visibility = metaRowVisibility.Latitude
+        metaBinding.rowLongitude.visibility = metaRowVisibility.Longitude
+        metaBinding.rowLens.visibility = metaRowVisibility.Lens
+        metaBinding.rowModel.visibility = metaRowVisibility.Model
+        metaBinding.rowName.visibility = metaRowVisibility.Name
+        metaBinding.rowWhiteBalance.visibility = metaRowVisibility.WhiteBalance
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -132,29 +151,29 @@ class ViewPagerFragment : Fragment() {
                 val d = Date(timestamp)
                 val df = DateFormat.getDateFormat(activity)
                 val tf = DateFormat.getTimeFormat(activity)
-                textViewDate.text = df.format(d) + " " + tf.format(d)
+                metaBinding.textViewDate.text = df.format(d) + " " + tf.format(d)
             }
-            textViewModel.text = image.model
-            textViewIso.text = image.iso
-            textViewExposure.text = image.exposure
-            textViewAperture.text = image.aperture
-            textViewFocal.text = image.focalLength
-            textViewDimensions.text = "${image.width} x ${image.height}"
-            textViewAlt.text = image.altitude
-            textViewFlash.text = image.flash
-            textViewLat.text = image.latitude
-            textViewLon.text = image.longitude
-            textViewName.text = image.name
-            textViewWhiteBalance.text = image.whiteBalance
-            textViewLens.text = image.lens
-            textViewDriveMode.text = image.driveMode
-            textViewExposureMode.text = image.exposureMode
-            textViewExposureProgram.text = image.exposureProgram
+            metaBinding.textViewModel.text = image.model
+            metaBinding.textViewIso.text = image.iso
+            metaBinding.textViewExposure.text = image.exposure
+            metaBinding.textViewAperture.text = image.aperture
+            metaBinding.textViewFocal.text = image.focalLength
+            metaBinding.textViewDimensions.text = "${image.width} x ${image.height}"
+            metaBinding.textViewAlt.text = image.altitude
+            metaBinding.textViewFlash.text = image.flash
+            metaBinding.textViewLat.text = image.latitude
+            metaBinding.textViewLon.text = image.longitude
+            metaBinding.textViewName.text = image.name
+            metaBinding.textViewWhiteBalance.text = image.whiteBalance
+            metaBinding.textViewLens.text = image.lens
+            metaBinding.textViewDriveMode.text = image.driveMode
+            metaBinding.textViewExposureMode.text = image.exposureMode
+            metaBinding.textViewExposureProgram.text = image.exposureProgram
         }
     }
 
     private fun updateHistogram(bitmap: Bitmap) {
-        histogramView?.clear()
+        metaBinding.histogramView.clear()
 
         // TODO: Need some way to cancel?
         histogramSubscription = Single.create<Histogram.ColorBins> {
@@ -165,7 +184,7 @@ class ViewPagerFragment : Fragment() {
         }.subscribeOn(Schedulers.from(AppExecutors.DISK))    // TODO: Memory based pool
          .observeOn(Schedulers.from(AppExecutors.MAIN))
          .subscribeBy (
-             onSuccess = { histogramView?.updateHistogram(it) },
+             onSuccess = { metaBinding.histogramView.updateHistogram(it) },
              onError = { it.printStackTrace() }     // TODO: Handle error state in histogramView
          )
     }

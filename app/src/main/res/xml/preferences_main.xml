@@ -15,8 +15,5 @@
     <Preference
         app:fragment="com.anthonymandra.rawdroid.settings.WatermarkSettingsFragment"
         app:title="@string/watermark" />
-    <Preference
-        app:fragment="com.anthonymandra.rawdroid.settings.LicenseSettingsFragment"
-        app:title="@string/license" />
 
 </PreferenceScreen>

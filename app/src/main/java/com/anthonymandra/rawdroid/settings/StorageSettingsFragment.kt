@@ -6,6 +6,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.anthonymandra.framework.RecycleBin
 import com.anthonymandra.rawdroid.R
 import com.google.android.material.snackbar.Snackbar
+import androidx.core.content.edit
 
 class StorageSettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -22,10 +23,10 @@ class StorageSettingsFragment : PreferenceFragmentCompat() {
 
         val button: Preference? = findPreference(KEY_ResetSaveDefault)
         button?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-            val editor = preferenceManager.sharedPreferences.edit()
-            editor.remove(KEY_DefaultSaveConfig)
-            editor.remove(KEY_DefaultSaveType)
-            editor.apply()
+            preferenceManager.sharedPreferences?.edit() {
+                remove(KEY_DefaultSaveConfig)
+                remove(KEY_DefaultSaveType)
+            }
             view?.let {
                 Snackbar.make(it, "Save default cleared!", Snackbar.LENGTH_SHORT).show()
             }

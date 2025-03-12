@@ -10,9 +10,9 @@ import com.anthonymandra.framework.Util;
 
 public class AppRater
 {
-	private final static String APP_TITLE = "Rawdroid";
-	private final static String APP_PNAME = "com.anthonymandra.rawdroid";
-	private final static String PREF_NAME = "Rawdroid.AppRater";
+	private final static String APP_TITLE = "Curator";
+	private final static String APP_PNAME = "com.anthonymandra.curator";
+	private final static String PREF_NAME = "Curator.AppRater";
 
 	private final static int DAYS_UNTIL_PROMPT = 5;
 	private final static int LAUNCHES_UNTIL_PROMPT = 7;

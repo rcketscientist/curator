@@ -1,14 +1,14 @@
 package com.anthonymandra.rawdroid.data
 
 import androidx.room.*
-import androidx.room.ForeignKey.CASCADE
 
 @Entity(tableName = "meta",
 	foreignKeys = [ForeignKey(
 		entity = FolderEntity::class,
 		parentColumns = ["id"],
 		childColumns = ["parentId"],
-		onDelete = CASCADE)],
+		onDelete = ForeignKey.CASCADE
+	)],
 	indices = [
 		Index(value = ["uri"], unique = true),
 		Index(value = ["documentId"], unique = true),

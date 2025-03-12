@@ -21,17 +21,17 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
     private lateinit var keywordFragment: KeywordBaseFragment
     private var mPauseListener = false
 
-	@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+//	@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 	private val colorKeys: ColorKeys by lazy {
-        val sp = PreferenceManager.getDefaultSharedPreferences(context)
+        val sp = PreferenceManager.getDefaultSharedPreferences(requireContext())
         sp.registerOnSharedPreferenceChangeListener(this)
 
 		 ColorKeys().also {
-            it.blue = sp.getString(MetaSettingsFragment.KEY_XmpBlue, it.blue)
-            it.red = sp.getString(MetaSettingsFragment.KEY_XmpRed, it.red)
-            it.green = sp.getString(MetaSettingsFragment.KEY_XmpGreen, it.green)
-            it.yellow = sp.getString(MetaSettingsFragment.KEY_XmpYellow, it.yellow)
-            it.purple = sp.getString(MetaSettingsFragment.KEY_XmpPurple, it.purple)
+            it.blue = sp.getString(MetaSettingsFragment.KEY_XmpBlue, it.blue)!!
+            it.red = sp.getString(MetaSettingsFragment.KEY_XmpRed, it.red)!!
+            it.green = sp.getString(MetaSettingsFragment.KEY_XmpGreen, it.green)!!
+            it.yellow = sp.getString(MetaSettingsFragment.KEY_XmpYellow, it.yellow)!!
+            it.purple = sp.getString(MetaSettingsFragment.KEY_XmpPurple, it.purple)!!
         }
     }
 
@@ -71,24 +71,24 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
         set(xmp) = setXmp(xmp.rating, xmp.label, xmp.subject)
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-	 private fun updateColorKey(sp: SharedPreferences, key: String) {
+	 private fun updateColorKey(sp: SharedPreferences, key: String?) {
         when (key) {
             MetaSettingsFragment.KEY_XmpBlue ->
-                colorKeys.blue = sp.getString(MetaSettingsFragment.KEY_XmpBlue, colorKeys.blue)
+                colorKeys.blue = sp.getString(MetaSettingsFragment.KEY_XmpBlue, colorKeys.blue)!!
             MetaSettingsFragment.KEY_XmpRed ->
-                colorKeys.red = sp.getString(MetaSettingsFragment.KEY_XmpRed, colorKeys.red)
+                colorKeys.red = sp.getString(MetaSettingsFragment.KEY_XmpRed, colorKeys.red)!!
             MetaSettingsFragment.KEY_XmpGreen ->
-                colorKeys.green = sp.getString(MetaSettingsFragment.KEY_XmpGreen, colorKeys.green)
+                colorKeys.green = sp.getString(MetaSettingsFragment.KEY_XmpGreen, colorKeys.green)!!
             MetaSettingsFragment.KEY_XmpYellow ->
-                colorKeys.yellow = sp.getString(MetaSettingsFragment.KEY_XmpYellow, colorKeys.yellow)
+                colorKeys.yellow = sp.getString(MetaSettingsFragment.KEY_XmpYellow, colorKeys.yellow)!!
             MetaSettingsFragment.KEY_XmpPurple ->
-                colorKeys.purple = sp.getString(MetaSettingsFragment.KEY_XmpPurple, colorKeys.purple)
+                colorKeys.purple = sp.getString(MetaSettingsFragment.KEY_XmpPurple, colorKeys.purple)!!
         }
     }
 
     override fun onPause() {
         super.onPause()
-        PreferenceManager.getDefaultSharedPreferences(context)
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
 			  .unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -98,7 +98,7 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
         colorKey = view.findViewById(R.id.colorKey)
         keywordFragment = childFragmentManager.findFragmentById(R.id.keywordFragment) as KeywordBaseFragment
 
-        ratingBar.setOnRatingSelectionChangedListener { checked ->
+         ratingBar.setOnRatingSelectionChangedListener { checked ->
             if (!mPauseListener)
                 this@XmpBaseFragment.onRatingSelectionChanged(checked)
         }
@@ -164,7 +164,7 @@ abstract class XmpBaseFragment : Fragment(), SharedPreferences.OnSharedPreferenc
     abstract fun onRatingSelectionChanged(checked: List<Int>)
     abstract fun onLabelSelectionChanged(checked: List<Label>)
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         updateColorKey(sharedPreferences, key)
     }
 }

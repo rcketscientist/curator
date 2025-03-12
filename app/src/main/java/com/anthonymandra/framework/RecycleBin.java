@@ -41,7 +41,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * This class holds our discarded images
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
+//@SuppressWarnings("ResultOfMethodCallIgnored")
 public class RecycleBin {
 	private static final String TAG = RecycleBin.class.getSimpleName();
 	// TODO: Single char replacements are not sufficient

@@ -15,9 +15,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.anthonymandra.framework.DocumentUtil
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.data.FolderEntity
+import com.anthonymandra.rawdroid.databinding.FolderListItemBinding
+import com.anthonymandra.rawdroid.databinding.FolderVisibilityBinding
 import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.folder_list_item.*
-import kotlinx.android.synthetic.main.folder_visibility.*
 
 typealias SearchRequestListener = () -> Unit
 class FolderDialog : DialogFragment() {
@@ -40,8 +40,15 @@ class FolderDialog : DialogFragment() {
         return dialog
     }
 
+    private var _binding: FolderVisibilityBinding? = null
+    private val binding get() = _binding!!
+
+    private var _folderBinding: FolderListItemBinding? = null
+    private val folderBinding get() = _folderBinding!!
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.folder_visibility, container, false)
+        _binding = FolderVisibilityBinding.inflate(inflater, container, false)
+        val view = binding.root
         val x = requireArguments().getInt(ARG_X)
         val y = requireArguments().getInt(ARG_Y)
 
@@ -54,7 +61,12 @@ class FolderDialog : DialogFragment() {
             it.attributes = params
         }
 
-        return v
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,9 +74,9 @@ class FolderDialog : DialogFragment() {
 
         mAdapter = FolderAdapter()
 
-        folderVisibilityListView.layoutManager = LinearLayoutManager(context)
-        folderVisibilityListView.adapter = mAdapter
-        buttonAddSearchRoot.setOnClickListener {
+        binding.folderVisibilityListView.layoutManager = LinearLayoutManager(context)
+        binding.folderVisibilityListView.adapter = mAdapter
+        binding.buttonAddSearchRoot.setOnClickListener {
             searchRequestCallback?.invoke()
             dismiss()
         }
@@ -106,14 +118,14 @@ class FolderDialog : DialogFragment() {
         fun bind(folder: FolderEntity?) {
             this.folder = folder
             if (folder == null) {
-                checkBoxFolderPath.text = ""
-                checkBoxFolderPath.isChecked = false
+                folderBinding.checkBoxFolderPath.text = ""
+                folderBinding.checkBoxFolderPath.isChecked = false
             }
             else {
                 updateView()
             }
 
-            checkBoxFolderPath.setOnCheckedChangeListener { _, isChecked ->
+            folderBinding.checkBoxFolderPath.setOnCheckedChangeListener { _, isChecked ->
                 if (folder == null) return@setOnCheckedChangeListener
 
                 folder.visible = isChecked
@@ -121,7 +133,7 @@ class FolderDialog : DialogFragment() {
                 viewModel.updateFolders(folder)
             }
 
-            excludeButton.setOnClickListener {
+            folderBinding.excludeButton.setOnClickListener {
                 if (folder == null) return@setOnClickListener
 
                 folder.excluded = !folder.excluded
@@ -134,14 +146,14 @@ class FolderDialog : DialogFragment() {
 
         private fun updateView() {
             folder?.let {
-                checkBoxFolderPath.text = DocumentUtil.getNicePath(Uri.parse(it.documentUri))
-                checkBoxFolderPath.isChecked = it.visible && !it.excluded
-                checkBoxFolderPath.isEnabled = !it.excluded
+                folderBinding.checkBoxFolderPath.text = DocumentUtil.getNicePath(Uri.parse(it.documentUri))
+                folderBinding.checkBoxFolderPath.isChecked = it.visible && !it.excluded
+                folderBinding.checkBoxFolderPath.isEnabled = !it.excluded
 
                 // If excluded disable visibility switch and strike-through
                 // If the flag is out of sync, toggle (xor) strike-through
-                if (it.excluded != (checkBoxFolderPath.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG == Paint.STRIKE_THRU_TEXT_FLAG)) {
-                    checkBoxFolderPath.paintFlags = checkBoxFolderPath.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
+                if (it.excluded != (folderBinding.checkBoxFolderPath.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG == Paint.STRIKE_THRU_TEXT_FLAG)) {
+                    folderBinding.checkBoxFolderPath.paintFlags = folderBinding.checkBoxFolderPath.paintFlags xor Paint.STRIKE_THRU_TEXT_FLAG
                 }
             }
         }

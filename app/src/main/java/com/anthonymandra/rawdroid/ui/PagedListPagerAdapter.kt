@@ -9,7 +9,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.paging.PagedList
 import androidx.viewpager.widget.ViewPager
 
-abstract class PagedListPagerAdapter<T>(fm: FragmentManager)
+abstract class PagedListPagerAdapter<T : Any>(fm: FragmentManager)
 	: FragmentStatePagerAdapter(fm) {
 
 	var pagedList: PagedList<T>? = null

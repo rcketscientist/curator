@@ -9,8 +9,9 @@ import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import com.anthonymandra.rawdroid.data.Label
 import com.anthonymandra.rawdroid.data.SubjectEntity
-import kotlinx.android.synthetic.main.xmp_edit_landscape.*
-import kotlinx.android.synthetic.main.xmp_subject_edit.*
+import com.anthonymandra.rawdroid.databinding.XmpCoreBinding
+import com.anthonymandra.rawdroid.databinding.XmpEditLandscapeBinding
+import com.anthonymandra.rawdroid.databinding.XmpSubjectEditBinding
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView
 import java.util.*
@@ -38,6 +39,30 @@ class XmpEditFragment : XmpBaseFragment() {
     private val rating: Int?
 			get() { return ratings.firstOrNull() }
 
+    private var _binding: XmpEditLandscapeBinding? = null
+    private val binding get() = _binding!!
+
+    private var _xmpBinding: XmpCoreBinding? = null
+    private val xmpBinding get() = _xmpBinding!!
+
+    private var _xmpEditBinding: XmpSubjectEditBinding? = null
+    private val xmpEditBinding get() = _xmpEditBinding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = XmpEditLandscapeBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     fun setRatingListener(listener: RatingChangedListener) {
         mRatingListener = listener
     }
@@ -62,18 +87,14 @@ class XmpEditFragment : XmpBaseFragment() {
 				mXmpChangedListener?.invoke(recentXmp)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.xmp_edit_landscape, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isSingleSelection(true)
 //        setAllowUnselected(true)
 
-        clearMetaButton.setOnClickListener { clear() }
-        recentMetaButton.setOnClickListener { mXmpChangedListener?.invoke(recentXmp) }
-        helpButton.setOnClickListener { startTutorial() }
+        binding.clearMetaButton.setOnClickListener { clear() }
+        binding.recentMetaButton.setOnClickListener { mXmpChangedListener?.invoke(recentXmp) }
+        binding.helpButton.setOnClickListener { startTutorial() }
     }
 
     /**
@@ -96,14 +117,14 @@ class XmpEditFragment : XmpBaseFragment() {
         if (c != null) {
             if (checked.isNotEmpty()) {
                 when (checked[0]) {
-                    Label.Blue -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyBlue)
-                    Label.Red -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyRed)
-                    Label.Green -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyGreen)
-                    Label.Yellow -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyYellow)
-                    Label.Purple -> recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyPurple)
+                    Label.Blue -> binding.recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyBlue)
+                    Label.Red -> binding.recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyRed)
+                    Label.Green -> binding.recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyGreen)
+                    Label.Yellow -> binding.recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyYellow)
+                    Label.Purple -> binding.recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.colorKeyPurple)
                 }
             } else {
-                recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.white)
+                binding.recentLabel.imageTintList = ContextCompat.getColorStateList(c, R.color.white)
             }
         }
 
@@ -116,17 +137,17 @@ class XmpEditFragment : XmpBaseFragment() {
         mRatingListener?.invoke(recentXmp.rating)
 
         if (recentXmp.rating == null) {
-            recentRating.setImageResource(R.drawable.ic_star_border)
+            binding.recentRating.setImageResource(R.drawable.ic_star_border)
             return
         }
 
         when (recentXmp.rating) {
-            5 -> recentRating.setImageResource(R.drawable.ic_star5)
-            4 -> recentRating.setImageResource(R.drawable.ic_star4)
-            3 -> recentRating.setImageResource(R.drawable.ic_star3)
-            2 -> recentRating.setImageResource(R.drawable.ic_star2)
-            1 -> recentRating.setImageResource(R.drawable.ic_star1)
-            else -> recentRating.setImageResource(R.drawable.ic_star_border)
+            5 -> binding.recentRating.setImageResource(R.drawable.ic_star5)
+            4 -> binding.recentRating.setImageResource(R.drawable.ic_star4)
+            3 -> binding.recentRating.setImageResource(R.drawable.ic_star3)
+            2 -> binding.recentRating.setImageResource(R.drawable.ic_star2)
+            1 -> binding.recentRating.setImageResource(R.drawable.ic_star1)
+            else -> binding.recentRating.setImageResource(R.drawable.ic_star_border)
         }
     }
 
@@ -137,17 +158,17 @@ class XmpEditFragment : XmpBaseFragment() {
 
         // Sort group
         sequence.addSequenceItem(getRectangularView(
-                recentMetaButton,
+            binding.recentMetaButton,
                 R.string.tutSetRecent))
 
         // Segregate
         sequence.addSequenceItem(getRectangularView(
-                clearMetaButton,
+            binding.clearMetaButton,
                 R.string.tutClearMeta))
 
         // rating
         sequence.addSequenceItem(getRectangularView(
-                metaLabelRating,
+            xmpBinding.ratingBar,
                 R.string.tutSetRatingLabel))
 
         // subject
@@ -157,12 +178,12 @@ class XmpEditFragment : XmpBaseFragment() {
 
         // Match
         sequence.addSequenceItem(getRectangularView(
-						addKeyword,
+            xmpEditBinding.addKeyword,
                 R.string.tutAddSubject))
 
         // Match
         sequence.addSequenceItem(getRectangularView(
-                editKeyword,
+            xmpEditBinding.editKeyword,
                 R.string.tutEditSubject))
 
         sequence.start()

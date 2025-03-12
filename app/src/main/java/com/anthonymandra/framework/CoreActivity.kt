@@ -15,6 +15,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.renderscript.ScriptGroup
+import android.renderscript.ScriptGroup.Binding
 import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
@@ -24,9 +26,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
 import androidx.preference.PreferenceManager
+import androidx.viewbinding.ViewBinding
 import com.anthonymandra.image.ImageConfiguration
 import com.anthonymandra.rawdroid.*
-import com.anthonymandra.rawdroid.BuildConfig
 import com.anthonymandra.rawdroid.R
 import com.anthonymandra.rawdroid.settings.SettingsActivity
 import com.anthonymandra.rawdroid.settings.ShareSettingsFragment
@@ -34,7 +36,6 @@ import com.anthonymandra.rawdroid.settings.StorageSettingsFragment
 import com.anthonymandra.rawdroid.ui.CoreViewModel
 import com.anthonymandra.util.AppExecutors
 import com.anthonymandra.util.FileUtil
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.snackbar.Snackbar
 import com.inscription.ChangeLogDialog
 import io.reactivex.Completable
@@ -47,7 +48,8 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 
-abstract class CoreActivity : AppCompatActivity() {
+
+abstract class CoreActivity<Binding: ViewBinding> : AppCompatActivity() {
 
 	private lateinit var mSwapDir: File
 	private lateinit var licenseHandler: LicenseHandler
@@ -69,39 +71,28 @@ abstract class CoreActivity : AppCompatActivity() {
 
 	protected abstract val selectedIds: LongArray
 
-
-	/**
-	 * Subclasses must define the layout id here.  It will be loaded in [.onCreate].
-	 * The layout should conform to viewer template (xmp, meta, histogram, etc).
-	 * @return The resource id of the layout to load
-	 */
-	protected abstract val contentView: Int
-
 	/**
 	 * @return The root view for this activity.
 	 */
 	val rootView: View
 		get() = findViewById(android.R.id.content)
 
+	protected lateinit var binding: Binding
+	protected abstract fun inflateBinding(): Binding
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(contentView)
+		binding = inflateBinding()
+		setContentView(binding.root)
 
 		licenseHandler = CoreActivity.LicenseHandler(this.applicationContext)
 
 		notificationManager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 		createIoChannel()
 
-//		if ("beta" == BuildConfig.FLAVOR_cycle && BuildConfig.BUILD_TIME + EXPIRATION < System.currentTimeMillis()) {
-//			Toast.makeText(this, "Beta has expired.", Toast.LENGTH_LONG).show()
-//			//TODO: Add link to Curator store page
-//			finish()
-//		}
-
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_metadata, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_storage, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_view, false)
-		PreferenceManager.setDefaultValues(this, R.xml.preferences_license, false)
 		PreferenceManager.setDefaultValues(this, R.xml.preferences_watermark, false)
 
 		findViewById<View>(R.id.xmpSidebarButton).setOnClickListener { toggleEditXmpFragment() }
@@ -435,8 +426,10 @@ abstract class CoreActivity : AppCompatActivity() {
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
 		}
 
-		val body = "Variant:   " + BuildConfig.FLAVOR + "\n" +
-			"Version:   " + BuildConfig.VERSION_NAME + "\n" +
+		val version = this.packageManager.getPackageInfo(this.packageName, PackageManager.GET_ACTIVITIES).versionCode;
+
+		val body =
+			"Version:   " + version + "\n" +
 			"Make:      " + Build.MANUFACTURER + "\n" +
 			"Model:     " + Build.MODEL + "\n" +
 			"ABI:       " + Arrays.toString(Build.SUPPORTED_ABIS) + "\n" +
@@ -493,8 +486,8 @@ abstract class CoreActivity : AppCompatActivity() {
 
 		viewModel.images(selection).subscribeBy { selectedImages ->
 			if (selectedImages.isEmpty()) {
-				Crashlytics.setString("selection", selectedIds.toString())
-				Crashlytics.log("Image lookup failed.")
+//				Crashlytics.setString("selection", selectedIds.toString())
+//				Crashlytics.log("Image lookup failed.")
 				Snackbar.make(rootView, R.string.warningImagesNotFound, Snackbar.LENGTH_SHORT).show()
 				return@subscribeBy
 			}
